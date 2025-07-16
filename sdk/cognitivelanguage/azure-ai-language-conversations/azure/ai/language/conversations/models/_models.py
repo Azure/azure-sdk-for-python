@@ -13,10 +13,10 @@ from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, U
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import (
-    AnalyzeConversationLROTaskKind,
-    AnalyzeConversationResultsKind,
-    AnalyzeConversationTaskKind,
-    AnalyzeConversationTaskResultsKind,
+    AnalyzeConversationInputKind,
+    AnalyzeConversationOperationActionKind,
+    AnalyzeConversationOperationResultsKind,
+    AnalyzeConversationResultKind,
     ExtraInformationKind,
     InputModality,
     ProjectKind,
@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class BaseResolution(_Model):
+class ResolutionBase(_Model):
     """The abstract base class for entity resolutions.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -74,7 +74,7 @@ class BaseResolution(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgeResolution(BaseResolution, discriminator="AgeResolution"):
+class AgeResolution(ResolutionBase, discriminator="AgeResolution"):
     """Represents the Age entity resolution model.
 
     :ivar resolution_kind: Represents the Age entity resolution model. Required. Resolution of an
@@ -114,12 +114,58 @@ class AgeResolution(BaseResolution, discriminator="AgeResolution"):
         super().__init__(*args, resolution_kind=ResolutionKind.AGE_RESOLUTION, **kwargs)
 
 
-class AnalysisParameters(_Model):
+class AIConversationLanguageUnderstandingActionContent(_Model):  # pylint: disable=name-too-long
+    """Input parameters base for a Conversation task.
+
+    :ivar project_name: The name of the project to use. Required.
+    :vartype project_name: str
+    :ivar deployment_name: The name of the deployment to use. Required.
+    :vartype deployment_name: str
+    :ivar string_index_type: Specifies the method used to interpret string offsets.  Defaults to
+     Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
+     `https://aka.ms/text-analytics-offsets <https://aka.ms/text-analytics-offsets>`_. Known values
+     are: "TextElements_v8", "UnicodeCodePoint", and "Utf16CodeUnit".
+    :vartype string_index_type: str or ~azure.ai.language.conversations.models.StringIndexType
+    """
+
+    project_name: str = rest_field(name="projectName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the project to use. Required."""
+    deployment_name: str = rest_field(name="deploymentName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the deployment to use. Required."""
+    string_index_type: Optional[Union[str, "_models.StringIndexType"]] = rest_field(
+        name="stringIndexType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the method used to interpret string offsets.  Defaults to Text Elements (Graphemes)
+     according to Unicode v8.0.0. For additional information see
+     `https://aka.ms/text-analytics-offsets <https://aka.ms/text-analytics-offsets>`_. Known values
+     are: \"TextElements_v8\", \"UnicodeCodePoint\", and \"Utf16CodeUnit\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        project_name: str,
+        deployment_name: str,
+        string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AnalysisConfig(_Model):
     """This is the parameter set of either the Orchestration project itself or one of the target
     services.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ConversationParameters, LuisParameters, QuestionAnsweringParameters
+    ConversationConfig, LuisConfig, QuestionAnsweringConfig
 
     :ivar target_project_kind: The type of a target service. Required. Known values are: "Luis",
      "Conversation", "QuestionAnswering", and "NonLinked".
@@ -158,497 +204,15 @@ class AnalysisParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AnalyzeConversationJobResult(_Model):
-    """Container for results of all tasks in the conversation job.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AnalyzeConversationConversationPiiResult, AnalyzeConversationSummarizationResult,
-    AnalyzeCustomConversationSummarizationResult
-
-    :ivar last_update_date_time: The last updated time in UTC for the task. Required.
-    :vartype last_update_date_time: ~datetime.datetime
-    :ivar status: The status of the task at the mentioned last update time. Required. Known values
-     are: "notStarted", "running", "succeeded", "partiallyCompleted", "failed", "cancelled", and
-     "cancelling".
-    :vartype status: str or ~azure.ai.language.conversations.models.State
-    :ivar task_name: task name.
-    :vartype task_name: str
-    :ivar kind: discriminator kind. Required. Known values are:
-     "conversationalSummarizationResults", "conversationalPIIResults", and
-     "customConversationalSummarizationResults".
-    :vartype kind: str or ~azure.ai.language.conversations.models.AnalyzeConversationResultsKind
-    """
-
-    __mapping__: Dict[str, _Model] = {}
-    last_update_date_time: datetime.datetime = rest_field(
-        name="lastUpdateDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The last updated time in UTC for the task. Required."""
-    status: Union[str, "_models.State"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The status of the task at the mentioned last update time. Required. Known values are:
-     \"notStarted\", \"running\", \"succeeded\", \"partiallyCompleted\", \"failed\", \"cancelled\",
-     and \"cancelling\"."""
-    task_name: Optional[str] = rest_field(name="taskName", visibility=["read", "create", "update", "delete", "query"])
-    """task name."""
-    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
-    """discriminator kind. Required. Known values are: \"conversationalSummarizationResults\",
-     \"conversationalPIIResults\", and \"customConversationalSummarizationResults\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        last_update_date_time: datetime.datetime,
-        status: Union[str, "_models.State"],
-        kind: str,
-        task_name: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AnalyzeConversationConversationPiiResult(AnalyzeConversationJobResult, discriminator="conversationalPIIResults"):
-    """Result from the personally identifiable information detection and redaction operation performed
-    on a list of conversations.
-
-    :ivar last_update_date_time: The last updated time in UTC for the task. Required.
-    :vartype last_update_date_time: ~datetime.datetime
-    :ivar status: The status of the task at the mentioned last update time. Required. Known values
-     are: "notStarted", "running", "succeeded", "partiallyCompleted", "failed", "cancelled", and
-     "cancelling".
-    :vartype status: str or ~azure.ai.language.conversations.models.State
-    :ivar task_name: task name.
-    :vartype task_name: str
-    :ivar kind: discriminator kind. Required. Conversational PII Results
-    :vartype kind: str or ~azure.ai.language.conversations.models.CONVERSATIONAL_PII_RESULTS
-    :ivar results: results. Required.
-    :vartype results: ~azure.ai.language.conversations.models.ConversationPiiResults
-    """
-
-    kind: Literal[AnalyzeConversationResultsKind.CONVERSATIONAL_PII_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """discriminator kind. Required. Conversational PII Results"""
-    results: "_models.ConversationPiiResults" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """results. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        last_update_date_time: datetime.datetime,
-        status: Union[str, "_models.State"],
-        results: "_models.ConversationPiiResults",
-        task_name: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeConversationResultsKind.CONVERSATIONAL_PII_RESULTS, **kwargs)
-
-
-class AnalyzeConversationJobsInput(_Model):
-    """It is a wrap up a Question Answering KB response.
-
-    :ivar display_name: Display name for the analysis job.
-    :vartype display_name: str
-    :ivar analysis_input: Analysis Input. Required.
-    :vartype analysis_input: ~azure.ai.language.conversations.models.MultiLanguageConversationInput
-    :ivar tasks: Set of tasks to execute on the input conversation. Required.
-    :vartype tasks:
-     list[~azure.ai.language.conversations.models.AnalyzeConversationOperationAction]
-    :ivar cancel_after: Optional duration in seconds after which the job will be canceled if not
-     completed.
-    :vartype cancel_after: float
-    """
-
-    display_name: Optional[str] = rest_field(
-        name="displayName", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Display name for the analysis job."""
-    analysis_input: "_models.MultiLanguageConversationInput" = rest_field(
-        name="analysisInput", visibility=["read", "create", "query"]
-    )
-    """Analysis Input. Required."""
-    tasks: List["_models.AnalyzeConversationOperationAction"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Set of tasks to execute on the input conversation. Required."""
-    cancel_after: Optional[float] = rest_field(
-        name="cancelAfter", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Optional duration in seconds after which the job will be canceled if not completed."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        analysis_input: "_models.MultiLanguageConversationInput",
-        tasks: List["_models.AnalyzeConversationOperationAction"],
-        display_name: Optional[str] = None,
-        cancel_after: Optional[float] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AnalyzeConversationJobState(_Model):
-    """Contains the status of the submitted job for analyzing a conversation, along with related
-    statistics.
-
-    :ivar display_name: display name.
-    :vartype display_name: str
-    :ivar created_date_time: Date and time job created. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar expiration_date_time: Date and time job expires.
-    :vartype expiration_date_time: ~datetime.datetime
-    :ivar job_id: job ID. Required.
-    :vartype job_id: str
-    :ivar last_updated_date_time: last updated date and time. Required.
-    :vartype last_updated_date_time: ~datetime.datetime
-    :ivar status: status. Required. Known values are: "notStarted", "running", "succeeded",
-     "partiallyCompleted", "failed", "cancelled", and "cancelling".
-    :vartype status: str or ~azure.ai.language.conversations.models.State
-    :ivar errors: errors.
-    :vartype errors: list[~azure.ai.language.conversations.models.Error]
-    :ivar next_link: next link.
-    :vartype next_link: str
-    :ivar tasks: Contains the state for the tasks that are being executed as part of the submitted
-     job for analyzing a conversation. Required.
-    :vartype tasks: ~azure.ai.language.conversations.models.Tasks
-    :ivar statistics: Contains the statistics for the submitted job.
-    :vartype statistics: ~azure.ai.language.conversations.models.ConversationRequestStatistics
-    """
-
-    display_name: Optional[str] = rest_field(
-        name="displayName", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """display name."""
-    created_date_time: datetime.datetime = rest_field(
-        name="createdDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """Date and time job created. Required."""
-    expiration_date_time: Optional[datetime.datetime] = rest_field(
-        name="expirationDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """Date and time job expires."""
-    job_id: str = rest_field(name="jobId", visibility=["read"])
-    """job ID. Required."""
-    last_updated_date_time: datetime.datetime = rest_field(
-        name="lastUpdatedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """last updated date and time. Required."""
-    status: Union[str, "_models.State"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
-     \"partiallyCompleted\", \"failed\", \"cancelled\", and \"cancelling\"."""
-    errors: Optional[List["_models.Error"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """errors."""
-    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
-    """next link."""
-    tasks: "_models.Tasks" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Contains the state for the tasks that are being executed as part of the submitted job for
-     analyzing a conversation. Required."""
-    statistics: Optional["_models.ConversationRequestStatistics"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Contains the statistics for the submitted job."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        status: Union[str, "_models.State"],
-        tasks: "_models.Tasks",
-        display_name: Optional[str] = None,
-        expiration_date_time: Optional[datetime.datetime] = None,
-        errors: Optional[List["_models.Error"]] = None,
-        next_link: Optional[str] = None,
-        statistics: Optional["_models.ConversationRequestStatistics"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AnalyzeConversationOperationAction(_Model):
-    """Base class for a long-running conversation input task.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AnalyzeConversationPiiTask, AnalyzeConversationSummarizationTask,
-    AnalyzeCustomConversationSummarizationTask
-
-    :ivar task_name: task name.
-    :vartype task_name: str
-    :ivar kind: Enumeration of supported analysis tasks on a collection of conversations. Required.
-     Known values are: "ConversationalSummarizationTask", "ConversationalPIITask", and
-     "CustomConversationalSummarizationTask".
-    :vartype kind: str or ~azure.ai.language.conversations.models.AnalyzeConversationLROTaskKind
-    """
-
-    __mapping__: Dict[str, _Model] = {}
-    task_name: Optional[str] = rest_field(name="taskName", visibility=["read", "create", "update", "delete", "query"])
-    """task name."""
-    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
-    """Enumeration of supported analysis tasks on a collection of conversations. Required. Known
-     values are: \"ConversationalSummarizationTask\", \"ConversationalPIITask\", and
-     \"CustomConversationalSummarizationTask\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        kind: str,
-        task_name: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AnalyzeConversationPiiTask(AnalyzeConversationOperationAction, discriminator="ConversationalPIITask"):
-    """Task definition for a PII redaction in conversations.
-
-    :ivar task_name: task name.
-    :vartype task_name: str
-    :ivar kind: discriminator kind. Required. Conversational PII Task
-    :vartype kind: str or ~azure.ai.language.conversations.models.CONVERSATIONAL_PII_TASK
-    :ivar parameters: parameters.
-    :vartype parameters: ~azure.ai.language.conversations.models.ConversationPiiTaskParameters
-    """
-
-    kind: Literal[AnalyzeConversationLROTaskKind.CONVERSATIONAL_PII_TASK] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """discriminator kind. Required. Conversational PII Task"""
-    parameters: Optional["_models.ConversationPiiTaskParameters"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """parameters."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        task_name: Optional[str] = None,
-        parameters: Optional["_models.ConversationPiiTaskParameters"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeConversationLROTaskKind.CONVERSATIONAL_PII_TASK, **kwargs)
-
-
-class AnalyzeConversationResult(_Model):
-    """Represents a conversation analysis response.
-
-    :ivar query: The conversation utterance given by the caller. Required.
-    :vartype query: str
-    :ivar detected_language: The system detected language for the query in BCP 47 language
-     representation..
-    :vartype detected_language: str
-    :ivar prediction: The prediction result of a conversation project. Required.
-    :vartype prediction: ~azure.ai.language.conversations.models.BasePrediction
-    """
-
-    query: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The conversation utterance given by the caller. Required."""
-    detected_language: Optional[str] = rest_field(
-        name="detectedLanguage", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The system detected language for the query in BCP 47 language representation.."""
-    prediction: "_models.BasePrediction" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The prediction result of a conversation project. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        query: str,
-        prediction: "_models.BasePrediction",
-        detected_language: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AnalyzeConversationSummarizationResult(
-    AnalyzeConversationJobResult, discriminator="conversationalSummarizationResults"
-):
-    """Result for the summarization task on the conversation.
-
-    :ivar last_update_date_time: The last updated time in UTC for the task. Required.
-    :vartype last_update_date_time: ~datetime.datetime
-    :ivar status: The status of the task at the mentioned last update time. Required. Known values
-     are: "notStarted", "running", "succeeded", "partiallyCompleted", "failed", "cancelled", and
-     "cancelling".
-    :vartype status: str or ~azure.ai.language.conversations.models.State
-    :ivar task_name: task name.
-    :vartype task_name: str
-    :ivar kind: discriminator kind. Required. Conversational Summarization Results
-    :vartype kind: str or
-     ~azure.ai.language.conversations.models.CONVERSATIONAL_SUMMARIZATION_RESULTS
-    :ivar results: results. Required.
-    :vartype results: ~azure.ai.language.conversations.models.SummaryResult
-    """
-
-    kind: Literal[AnalyzeConversationResultsKind.CONVERSATIONAL_SUMMARIZATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """discriminator kind. Required. Conversational Summarization Results"""
-    results: "_models.SummaryResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """results. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        last_update_date_time: datetime.datetime,
-        status: Union[str, "_models.State"],
-        results: "_models.SummaryResult",
-        task_name: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeConversationResultsKind.CONVERSATIONAL_SUMMARIZATION_RESULTS, **kwargs)
-
-
-class AnalyzeConversationSummarizationTask(
-    AnalyzeConversationOperationAction, discriminator="ConversationalSummarizationTask"
-):
-    """Task definition for conversational summarization.
-
-    :ivar task_name: task name.
-    :vartype task_name: str
-    :ivar kind: discriminator kind. Required. Conversational Summarization Task
-    :vartype kind: str or ~azure.ai.language.conversations.models.CONVERSATIONAL_SUMMARIZATION_TASK
-    :ivar parameters: parameters.
-    :vartype parameters:
-     ~azure.ai.language.conversations.models.ConversationSummarizationTaskParameters
-    """
-
-    kind: Literal[AnalyzeConversationLROTaskKind.CONVERSATIONAL_SUMMARIZATION_TASK] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """discriminator kind. Required. Conversational Summarization Task"""
-    parameters: Optional["_models.ConversationSummarizationTaskParameters"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """parameters."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        task_name: Optional[str] = None,
-        parameters: Optional["_models.ConversationSummarizationTaskParameters"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeConversationLROTaskKind.CONVERSATIONAL_SUMMARIZATION_TASK, **kwargs)
-
-
-class AnalyzeConversationTask(_Model):
-    """The base class of a conversation input task.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ConversationalTask, ConversationalAITask
-
-    :ivar kind: The base class of a conversation input task. Required. Known values are:
-     "Conversation" and "ConversationalAI".
-    :vartype kind: str or ~azure.ai.language.conversations.models.AnalyzeConversationTaskKind
-    """
-
-    __mapping__: Dict[str, _Model] = {}
-    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "query"])
-    """The base class of a conversation input task. Required. Known values are: \"Conversation\" and
-     \"ConversationalAI\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        kind: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AnalyzeConversationTaskResult(_Model):
+class AnalyzeConversationActionResult(_Model):
     """The base class of a conversation input task result.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ConversationalTaskResult, ConversationalAITaskResult
+    ConversationActionResult, ConversationalAITaskResult
 
     :ivar kind: The base class of a conversation input task result. Required. Known values are:
      "ConversationResult" and "ConversationalAIResult".
-    :vartype kind: str or
-     ~azure.ai.language.conversations.models.AnalyzeConversationTaskResultsKind
+    :vartype kind: str or ~azure.ai.language.conversations.models.AnalyzeConversationResultKind
     """
 
     __mapping__: Dict[str, _Model] = {}
@@ -674,39 +238,183 @@ class AnalyzeConversationTaskResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AnalyzeCustomConversationSummarizationResult(
-    AnalyzeConversationJobResult, discriminator="customConversationalSummarizationResults"
-):  # pylint: disable=name-too-long
-    """Result for the custom summarization task on the conversation.
+class AnalyzeConversationInput(_Model):
+    """The base class of a conversation input task.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ConversationLanguageUnderstandingInput, ConversationalAITask
+
+    :ivar kind: The base class of a conversation input task. Required. Known values are:
+     "Conversation" and "ConversationalAI".
+    :vartype kind: str or ~azure.ai.language.conversations.models.AnalyzeConversationInputKind
+    """
+
+    __mapping__: Dict[str, _Model] = {}
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "query"])
+    """The base class of a conversation input task. Required. Known values are: \"Conversation\" and
+     \"ConversationalAI\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AnalyzeConversationOperationAction(_Model):
+    """Base class for a long-running conversation input task.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    PiiOperationAction, SummarizationOperationAction, CustomSummarizationOperationAction
+
+    :ivar name: task name.
+    :vartype name: str
+    :ivar kind: Enumeration of supported analysis tasks on a collection of conversations. Required.
+     Known values are: "ConversationalSummarizationTask", "ConversationalPIITask", and
+     "CustomConversationalSummarizationTask".
+    :vartype kind: str or
+     ~azure.ai.language.conversations.models.AnalyzeConversationOperationActionKind
+    """
+
+    __mapping__: Dict[str, _Model] = {}
+    name: Optional[str] = rest_field(name="taskName", visibility=["read", "create", "update", "delete", "query"])
+    """task name."""
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
+    """Enumeration of supported analysis tasks on a collection of conversations. Required. Known
+     values are: \"ConversationalSummarizationTask\", \"ConversationalPIITask\", and
+     \"CustomConversationalSummarizationTask\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: str,
+        name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AnalyzeConversationOperationInput(_Model):
+    """It is a wrap up a Question Answering KB response.
+
+    :ivar display_name: Display name for the analysis job.
+    :vartype display_name: str
+    :ivar conversation_input: Analysis Input. Required.
+    :vartype conversation_input:
+     ~azure.ai.language.conversations.models.MultiLanguageConversationInput
+    :ivar actions: Set of tasks to execute on the input conversation. Required.
+    :vartype actions:
+     list[~azure.ai.language.conversations.models.AnalyzeConversationOperationAction]
+    :ivar cancel_after: Optional duration in seconds after which the job will be canceled if not
+     completed.
+    :vartype cancel_after: float
+    """
+
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Display name for the analysis job."""
+    conversation_input: "_models.MultiLanguageConversationInput" = rest_field(
+        name="analysisInput", visibility=["read", "create", "query"]
+    )
+    """Analysis Input. Required."""
+    actions: List["_models.AnalyzeConversationOperationAction"] = rest_field(
+        name="tasks", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Set of tasks to execute on the input conversation. Required."""
+    cancel_after: Optional[float] = rest_field(
+        name="cancelAfter", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional duration in seconds after which the job will be canceled if not completed."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        conversation_input: "_models.MultiLanguageConversationInput",
+        actions: List["_models.AnalyzeConversationOperationAction"],
+        display_name: Optional[str] = None,
+        cancel_after: Optional[float] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AnalyzeConversationOperationResult(_Model):
+    """Container for results of all tasks in the conversation job.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ConversationPiiOperationResult, SummarizationOperationResult,
+    CustomSummarizationOperationResult
 
     :ivar last_update_date_time: The last updated time in UTC for the task. Required.
     :vartype last_update_date_time: ~datetime.datetime
     :ivar status: The status of the task at the mentioned last update time. Required. Known values
      are: "notStarted", "running", "succeeded", "partiallyCompleted", "failed", "cancelled", and
      "cancelling".
-    :vartype status: str or ~azure.ai.language.conversations.models.State
-    :ivar task_name: task name.
-    :vartype task_name: str
-    :ivar kind: discriminator kind. Required. Custom Conversational Summarization Results
+    :vartype status: str or ~azure.ai.language.conversations.models.ConversationActionState
+    :ivar name: task name.
+    :vartype name: str
+    :ivar kind: discriminator kind. Required. Known values are:
+     "conversationalSummarizationResults", "conversationalPIIResults", and
+     "customConversationalSummarizationResults".
     :vartype kind: str or
-     ~azure.ai.language.conversations.models.CUSTOM_CONVERSATIONAL_SUMMARIZATION_RESULTS
-    :ivar results: Custom Summary Result. Required.
-    :vartype results: ~azure.ai.language.conversations.models.CustomSummaryResult
+     ~azure.ai.language.conversations.models.AnalyzeConversationOperationResultsKind
     """
 
-    kind: Literal[AnalyzeConversationResultsKind.CUSTOM_CONVERSATIONAL_SUMMARIZATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """discriminator kind. Required. Custom Conversational Summarization Results"""
-    results: "_models.CustomSummaryResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Custom Summary Result. Required."""
+    __mapping__: Dict[str, _Model] = {}
+    last_update_date_time: datetime.datetime = rest_field(
+        name="lastUpdateDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The last updated time in UTC for the task. Required."""
+    status: Union[str, "_models.ConversationActionState"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The status of the task at the mentioned last update time. Required. Known values are:
+     \"notStarted\", \"running\", \"succeeded\", \"partiallyCompleted\", \"failed\", \"cancelled\",
+     and \"cancelling\"."""
+    name: Optional[str] = rest_field(name="taskName", visibility=["read", "create", "update", "delete", "query"])
+    """task name."""
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
+    """discriminator kind. Required. Known values are: \"conversationalSummarizationResults\",
+     \"conversationalPIIResults\", and \"customConversationalSummarizationResults\"."""
 
     @overload
     def __init__(
         self,
         *,
         last_update_date_time: datetime.datetime,
-        status: Union[str, "_models.State"],
-        results: "_models.CustomSummaryResult",
-        task_name: Optional[str] = None,
+        status: Union[str, "_models.ConversationActionState"],
+        kind: str,
+        name: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -717,39 +425,89 @@ class AnalyzeCustomConversationSummarizationResult(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(
-            *args, kind=AnalyzeConversationResultsKind.CUSTOM_CONVERSATIONAL_SUMMARIZATION_RESULTS, **kwargs
-        )
+        super().__init__(*args, **kwargs)
 
 
-class AnalyzeCustomConversationSummarizationTask(
-    AnalyzeConversationOperationAction, discriminator="CustomConversationalSummarizationTask"
-):  # pylint: disable=name-too-long
-    """Task definition for custom conversational summarization.
+class AnalyzeConversationOperationState(_Model):
+    """Contains the status of the submitted job for analyzing a conversation, along with related
+    statistics.
 
-    :ivar task_name: task name.
-    :vartype task_name: str
-    :ivar kind: discriminator kind. Required. Custom Conversational Summarization Task
-    :vartype kind: str or
-     ~azure.ai.language.conversations.models.CUSTOM_CONVERSATIONAL_SUMMARIZATION_TASK
-    :ivar parameters: parameters.
-    :vartype parameters:
-     ~azure.ai.language.conversations.models.CustomConversationSummarizationTaskParameters
+    :ivar display_name: display name.
+    :vartype display_name: str
+    :ivar created_date_time: Date and time job created. Required.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar expiration_date_time: Date and time job expires.
+    :vartype expiration_date_time: ~datetime.datetime
+    :ivar job_id: job ID. Required.
+    :vartype job_id: str
+    :ivar last_updated_date_time: last updated date and time. Required.
+    :vartype last_updated_date_time: ~datetime.datetime
+    :ivar status: status. Required. Known values are: "notStarted", "running", "succeeded",
+     "partiallyCompleted", "failed", "cancelled", and "cancelling".
+    :vartype status: str or ~azure.ai.language.conversations.models.ConversationActionState
+    :ivar errors: errors.
+    :vartype errors: list[~azure.ai.language.conversations.models.ConversationError]
+    :ivar next_link: next link.
+    :vartype next_link: str
+    :ivar actions: Contains the state for the tasks that are being executed as part of the
+     submitted job for analyzing a conversation. Required.
+    :vartype actions: ~azure.ai.language.conversations.models.ConversationActions
+    :ivar statistics: Contains the statistics for the submitted job.
+    :vartype statistics: ~azure.ai.language.conversations.models.ConversationRequestStatistics
     """
 
-    kind: Literal[AnalyzeConversationLROTaskKind.CUSTOM_CONVERSATIONAL_SUMMARIZATION_TASK] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """discriminator kind. Required. Custom Conversational Summarization Task"""
-    parameters: Optional["_models.CustomConversationSummarizationTaskParameters"] = rest_field(
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """display name."""
+    created_date_time: datetime.datetime = rest_field(
+        name="createdDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Date and time job created. Required."""
+    expiration_date_time: Optional[datetime.datetime] = rest_field(
+        name="expirationDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Date and time job expires."""
+    job_id: str = rest_field(name="jobId", visibility=["read"])
+    """job ID. Required."""
+    last_updated_date_time: datetime.datetime = rest_field(
+        name="lastUpdatedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """last updated date and time. Required."""
+    status: Union[str, "_models.ConversationActionState"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """parameters."""
+    """status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
+     \"partiallyCompleted\", \"failed\", \"cancelled\", and \"cancelling\"."""
+    errors: Optional[List["_models.ConversationError"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """errors."""
+    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
+    """next link."""
+    actions: "_models.ConversationActions" = rest_field(
+        name="tasks", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Contains the state for the tasks that are being executed as part of the submitted job for
+     analyzing a conversation. Required."""
+    statistics: Optional["_models.ConversationRequestStatistics"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Contains the statistics for the submitted job."""
 
     @overload
     def __init__(
         self,
         *,
-        task_name: Optional[str] = None,
-        parameters: Optional["_models.CustomConversationSummarizationTaskParameters"] = None,
+        created_date_time: datetime.datetime,
+        last_updated_date_time: datetime.datetime,
+        status: Union[str, "_models.ConversationActionState"],
+        actions: "_models.ConversationActions",
+        display_name: Optional[str] = None,
+        expiration_date_time: Optional[datetime.datetime] = None,
+        errors: Optional[List["_models.ConversationError"]] = None,
+        next_link: Optional[str] = None,
+        statistics: Optional["_models.ConversationRequestStatistics"] = None,
     ) -> None: ...
 
     @overload
@@ -760,81 +518,37 @@ class AnalyzeCustomConversationSummarizationTask(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeConversationLROTaskKind.CUSTOM_CONVERSATIONAL_SUMMARIZATION_TASK, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
-class AnswersOptions(_Model):
-    """Parameters to query a knowledge base.
+class AnalyzeConversationResult(_Model):
+    """Represents a conversation analysis response.
 
-    :ivar qna_id: Exact QnA ID to fetch from the knowledge base, this field takes priority over
-     question.
-    :vartype qna_id: int
-    :ivar question: User question to query against the knowledge base.
-    :vartype question: str
-    :ivar top: Max number of answers to be returned for the question.
-    :vartype top: int
-    :ivar user_id: Unique identifier for the user.
-    :vartype user_id: str
-    :ivar confidence_score_threshold: Minimum threshold score for answers, value ranges from 0 to
-     1.
-    :vartype confidence_score_threshold: float
-    :ivar context: Context object with previous QnA's information.
-    :vartype context: ~azure.ai.language.conversations.models.KnowledgeBaseAnswerContext
-    :ivar ranker_type: Type of ranker to be used. Known values are: "Default" and "QuestionOnly".
-    :vartype ranker_type: str or ~azure.ai.language.conversations.models.RankerKind
-    :ivar filters: Filter QnAs based on given metadata list and knowledge base sources.
-    :vartype filters: ~azure.ai.language.conversations.models.QueryFilters
-    :ivar answer_span_request: To configure Answer span prediction feature.
-    :vartype answer_span_request: ~azure.ai.language.conversations.models.ShortAnswerOptions
-    :ivar include_unstructured_sources: (Optional) Flag to enable Query over Unstructured Sources.
-    :vartype include_unstructured_sources: bool
+    :ivar query: The conversation utterance given by the caller. Required.
+    :vartype query: str
+    :ivar detected_language: The system detected language for the query in BCP 47 language
+     representation..
+    :vartype detected_language: str
+    :ivar prediction: The prediction result of a conversation project. Required.
+    :vartype prediction: ~azure.ai.language.conversations.models.PredictionBase
     """
 
-    qna_id: Optional[int] = rest_field(name="qnaId", visibility=["read", "create", "update", "delete", "query"])
-    """Exact QnA ID to fetch from the knowledge base, this field takes priority over question."""
-    question: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """User question to query against the knowledge base."""
-    top: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Max number of answers to be returned for the question."""
-    user_id: Optional[str] = rest_field(name="userId", visibility=["read", "create", "update", "delete", "query"])
-    """Unique identifier for the user."""
-    confidence_score_threshold: Optional[float] = rest_field(
-        name="confidenceScoreThreshold", visibility=["read", "create", "update", "delete", "query"]
+    query: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The conversation utterance given by the caller. Required."""
+    detected_language: Optional[str] = rest_field(
+        name="detectedLanguage", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Minimum threshold score for answers, value ranges from 0 to 1."""
-    context: Optional["_models.KnowledgeBaseAnswerContext"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Context object with previous QnA's information."""
-    ranker_type: Optional[Union[str, "_models.RankerKind"]] = rest_field(
-        name="rankerType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Type of ranker to be used. Known values are: \"Default\" and \"QuestionOnly\"."""
-    filters: Optional["_models.QueryFilters"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Filter QnAs based on given metadata list and knowledge base sources."""
-    answer_span_request: Optional["_models.ShortAnswerOptions"] = rest_field(
-        name="answerSpanRequest", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """To configure Answer span prediction feature."""
-    include_unstructured_sources: Optional[bool] = rest_field(
-        name="includeUnstructuredSources", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """(Optional) Flag to enable Query over Unstructured Sources."""
+    """The system detected language for the query in BCP 47 language representation.."""
+    prediction: "_models.PredictionBase" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The prediction result of a conversation project. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        qna_id: Optional[int] = None,
-        question: Optional[str] = None,
-        top: Optional[int] = None,
-        user_id: Optional[str] = None,
-        confidence_score_threshold: Optional[float] = None,
-        context: Optional["_models.KnowledgeBaseAnswerContext"] = None,
-        ranker_type: Optional[Union[str, "_models.RankerKind"]] = None,
-        filters: Optional["_models.QueryFilters"] = None,
-        answer_span_request: Optional["_models.ShortAnswerOptions"] = None,
-        include_unstructured_sources: Optional[bool] = None,
+        query: str,
+        prediction: "_models.PredictionBase",
+        detected_language: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -923,7 +637,7 @@ class AnswersResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AreaResolution(BaseResolution, discriminator="AreaResolution"):
+class AreaResolution(ResolutionBase, discriminator="AreaResolution"):
     """Represents the area entity resolution model.
 
     :ivar resolution_kind: Represents the area entity resolution model. Required. Resolution of an
@@ -1000,84 +714,6 @@ class AudioTiming(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BaseExtraInformation(_Model):
-    """The abstract base object for entity extra information.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    EntitySubtype, ListKey, RegexKey
-
-    :ivar extra_information_kind: The extra information object kind. Required. Known values are:
-     "EntitySubtype", "ListKey", and "RegexKey".
-    :vartype extra_information_kind: str or
-     ~azure.ai.language.conversations.models.ExtraInformationKind
-    """
-
-    __mapping__: Dict[str, _Model] = {}
-    extra_information_kind: str = rest_discriminator(
-        name="extraInformationKind", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The extra information object kind. Required. Known values are: \"EntitySubtype\", \"ListKey\",
-     and \"RegexKey\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        extra_information_kind: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class BasePrediction(_Model):
-    """This is the base class of prediction.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ConversationPrediction, OrchestrationPrediction
-
-    :ivar project_kind: The type of the project. Required. Known values are: "Conversation",
-     "Orchestration", and "ConversationalAI".
-    :vartype project_kind: str or ~azure.ai.language.conversations.models.ProjectKind
-    :ivar top_intent: The intent with the highest score.
-    :vartype top_intent: str
-    """
-
-    __mapping__: Dict[str, _Model] = {}
-    project_kind: str = rest_discriminator(
-        name="projectKind", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The type of the project. Required. Known values are: \"Conversation\", \"Orchestration\", and
-     \"ConversationalAI\"."""
-    top_intent: Optional[str] = rest_field(name="topIntent", visibility=["read", "create", "update", "delete", "query"])
-    """The intent with the highest score."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        project_kind: str,
-        top_intent: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class BaseRedactionPolicy(_Model):
     """The abstract base class for RedactionPolicy.
 
@@ -1112,7 +748,7 @@ class BaseRedactionPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BooleanResolution(BaseResolution, discriminator="BooleanResolution"):
+class BooleanResolution(ResolutionBase, discriminator="BooleanResolution"):
     """A resolution for boolean expressions.
 
     :ivar resolution_kind: A resolution for boolean expressions. Required. Resolution of a boolean
@@ -1187,43 +823,77 @@ class CharacterMaskPolicyType(BaseRedactionPolicy, discriminator="characterMask"
         super().__init__(*args, policy_kind=RedactionPolicyKind.CHARACTER_MASK, **kwargs)
 
 
-class Conversation(_Model):
-    """Complete ordered set of utterances (spoken or written) by one or more speakers to be used for
-    analysis.
+class ConversationActionResult(AnalyzeConversationActionResult, discriminator="ConversationResult"):
+    """The results of a Conversation task.
 
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    TextConversation, TranscriptConversation
-
-    :ivar id: Unique identifier for the conversation. Required.
-    :vartype id: str
-    :ivar language: Language of the conversation item in BCP-47 format. Required.
-    :vartype language: str
-    :ivar modality: modality. Required. Known values are: "transcript" and "text".
-    :vartype modality: str or ~azure.ai.language.conversations.models.InputModality
-    :ivar domain: domain. Known values are: "finance", "healthcare", and "generic".
-    :vartype domain: str or ~azure.ai.language.conversations.models.ConversationDomain
+    :ivar kind: The results of a Conversation task. Required. Conversation result task kind
+    :vartype kind: str or ~azure.ai.language.conversations.models.CONVERSATION_RESULT
+    :ivar result: Represents a conversation analysis response. Required.
+    :vartype result: ~azure.ai.language.conversations.models.AnalyzeConversationResult
     """
 
-    __mapping__: Dict[str, _Model] = {}
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Unique identifier for the conversation. Required."""
-    language: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Language of the conversation item in BCP-47 format. Required."""
-    modality: str = rest_discriminator(name="modality", visibility=["read", "create", "update", "delete", "query"])
-    """modality. Required. Known values are: \"transcript\" and \"text\"."""
-    domain: Optional[Union[str, "_models.ConversationDomain"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """domain. Known values are: \"finance\", \"healthcare\", and \"generic\"."""
+    kind: Literal[AnalyzeConversationResultKind.CONVERSATION_RESULT] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The results of a Conversation task. Required. Conversation result task kind"""
+    result: "_models.AnalyzeConversationResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Represents a conversation analysis response. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        id: str,  # pylint: disable=redefined-builtin
-        language: str,
-        modality: str,
-        domain: Optional[Union[str, "_models.ConversationDomain"]] = None,
+        result: "_models.AnalyzeConversationResult",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, kind=AnalyzeConversationResultKind.CONVERSATION_RESULT, **kwargs)
+
+
+class ConversationActions(_Model):
+    """Contains the state for the tasks that are being executed as part of the submitted job for
+    analyzing a conversation.
+
+    :ivar completed: Count of tasks that finished successfully. Required.
+    :vartype completed: int
+    :ivar failed: Count of tasks that failed. Required.
+    :vartype failed: int
+    :ivar in_progress: Count of tasks that are currently in progress. Required.
+    :vartype in_progress: int
+    :ivar total: Total count of tasks submitted as part of the job. Required.
+    :vartype total: int
+    :ivar items_property: List of results from tasks (if available).
+    :vartype items_property:
+     list[~azure.ai.language.conversations.models.AnalyzeConversationOperationResult]
+    """
+
+    completed: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Count of tasks that finished successfully. Required."""
+    failed: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Count of tasks that failed. Required."""
+    in_progress: int = rest_field(name="inProgress", visibility=["read", "create", "update", "delete", "query"])
+    """Count of tasks that are currently in progress. Required."""
+    total: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Total count of tasks submitted as part of the job. Required."""
+    items_property: Optional[List["_models.AnalyzeConversationOperationResult"]] = rest_field(
+        name="items", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of results from tasks (if available)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        completed: int,
+        failed: int,
+        in_progress: int,
+        total: int,
+        items_property: Optional[List["_models.AnalyzeConversationOperationResult"]] = None,
     ) -> None: ...
 
     @overload
@@ -1327,9 +997,10 @@ class ConversationalAIEntity(_Model):
     :ivar conversation_item_index: The index of the conversation item where the entity appears.
     :vartype conversation_item_index: int
     :ivar resolutions: Entity resolution details, if available.
-    :vartype resolutions: list[~azure.ai.language.conversations.models.BaseResolution]
+    :vartype resolutions: list[~azure.ai.language.conversations.models.ResolutionBase]
     :ivar extra_information: Additional entity metadata.
-    :vartype extra_information: list[~azure.ai.language.conversations.models.BaseExtraInformation]
+    :vartype extra_information:
+     list[~azure.ai.language.conversations.models.ConversationEntityExtraInformation]
     """
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1352,11 +1023,11 @@ class ConversationalAIEntity(_Model):
         name="conversationItemIndex", visibility=["read", "create", "update", "delete", "query"]
     )
     """The index of the conversation item where the entity appears."""
-    resolutions: Optional[List["_models.BaseResolution"]] = rest_field(
+    resolutions: Optional[List["_models.ResolutionBase"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Entity resolution details, if available."""
-    extra_information: Optional[List["_models.BaseExtraInformation"]] = rest_field(
+    extra_information: Optional[List["_models.ConversationEntityExtraInformation"]] = rest_field(
         name="extraInformation", visibility=["read", "create", "update", "delete", "query"]
     )
     """Additional entity metadata."""
@@ -1372,54 +1043,8 @@ class ConversationalAIEntity(_Model):
         length: int,
         conversation_item_id: str,
         conversation_item_index: Optional[int] = None,
-        resolutions: Optional[List["_models.BaseResolution"]] = None,
-        extra_information: Optional[List["_models.BaseExtraInformation"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ConversationalAIInputParameters(_Model):
-    """Input parameters base for a Conversation task.
-
-    :ivar project_name: The name of the project to use. Required.
-    :vartype project_name: str
-    :ivar deployment_name: The name of the deployment to use. Required.
-    :vartype deployment_name: str
-    :ivar string_index_type: Specifies the method used to interpret string offsets.  Defaults to
-     Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
-     `https://aka.ms/text-analytics-offsets <https://aka.ms/text-analytics-offsets>`_. Known values
-     are: "TextElements_v8", "UnicodeCodePoint", and "Utf16CodeUnit".
-    :vartype string_index_type: str or ~azure.ai.language.conversations.models.StringIndexType
-    """
-
-    project_name: str = rest_field(name="projectName", visibility=["read", "create", "update", "delete", "query"])
-    """The name of the project to use. Required."""
-    deployment_name: str = rest_field(name="deploymentName", visibility=["read", "create", "update", "delete", "query"])
-    """The name of the deployment to use. Required."""
-    string_index_type: Optional[Union[str, "_models.StringIndexType"]] = rest_field(
-        name="stringIndexType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Specifies the method used to interpret string offsets.  Defaults to Text Elements (Graphemes)
-     according to Unicode v8.0.0. For additional information see
-     `https://aka.ms/text-analytics-offsets <https://aka.ms/text-analytics-offsets>`_. Known values
-     are: \"TextElements_v8\", \"UnicodeCodePoint\", and \"Utf16CodeUnit\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        project_name: str,
-        deployment_name: str,
-        string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
+        resolutions: Optional[List["_models.ResolutionBase"]] = None,
+        extra_information: Optional[List["_models.ConversationEntityExtraInformation"]] = None,
     ) -> None: ...
 
     @overload
@@ -1517,7 +1142,7 @@ class ConversationalAIResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConversationalAITask(AnalyzeConversationTask, discriminator="ConversationalAI"):
+class ConversationalAITask(AnalyzeConversationInput, discriminator="ConversationalAI"):
     """A conversational AI task.
 
     :ivar kind: Task kind. Required. Conversation task kind
@@ -1526,16 +1151,17 @@ class ConversationalAITask(AnalyzeConversationTask, discriminator="Conversationa
     :vartype analysis_input: ~azure.ai.language.conversations.models.ConversationalAIAnalysisInput
     :ivar parameters: Input parameters necessary for a Conversation language understanding task.
      Required.
-    :vartype parameters: ~azure.ai.language.conversations.models.ConversationalAIInputParameters
+    :vartype parameters:
+     ~azure.ai.language.conversations.models.AIConversationLanguageUnderstandingActionContent
     """
 
-    kind: Literal[AnalyzeConversationTaskKind.CONVERSATIONAL_AI] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    kind: Literal[AnalyzeConversationInputKind.CONVERSATIONAL_AI] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Task kind. Required. Conversation task kind"""
     analysis_input: "_models.ConversationalAIAnalysisInput" = rest_field(
         name="analysisInput", visibility=["read", "create", "update", "delete", "query"]
     )
     """The input ConversationItem and its optional parameters. Required."""
-    parameters: "_models.ConversationalAIInputParameters" = rest_field(
+    parameters: "_models.AIConversationLanguageUnderstandingActionContent" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Input parameters necessary for a Conversation language understanding task. Required."""
@@ -1545,7 +1171,7 @@ class ConversationalAITask(AnalyzeConversationTask, discriminator="Conversationa
         self,
         *,
         analysis_input: "_models.ConversationalAIAnalysisInput",
-        parameters: "_models.ConversationalAIInputParameters",
+        parameters: "_models.AIConversationLanguageUnderstandingActionContent",
     ) -> None: ...
 
     @overload
@@ -1556,10 +1182,10 @@ class ConversationalAITask(AnalyzeConversationTask, discriminator="Conversationa
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeConversationTaskKind.CONVERSATIONAL_AI, **kwargs)
+        super().__init__(*args, kind=AnalyzeConversationInputKind.CONVERSATIONAL_AI, **kwargs)
 
 
-class ConversationalAITaskResult(AnalyzeConversationTaskResult, discriminator="ConversationalAIResult"):
+class ConversationalAITaskResult(AnalyzeConversationActionResult, discriminator="ConversationalAIResult"):
     """The results of a ConversationalAI task.
 
     :ivar kind: The results of a Conversational AI task. Required. Conversation result task kind
@@ -1568,7 +1194,7 @@ class ConversationalAITaskResult(AnalyzeConversationTaskResult, discriminator="C
     :vartype result: ~azure.ai.language.conversations.models.ConversationalAIResult
     """
 
-    kind: Literal[AnalyzeConversationTaskResultsKind.CONVERSATIONAL_AI_RESULT] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    kind: Literal[AnalyzeConversationResultKind.CONVERSATIONAL_AI_RESULT] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The results of a Conversational AI task. Required. Conversation result task kind"""
     result: "_models.ConversationalAIResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Represents the conversational analysis response. Required."""
@@ -1588,10 +1214,10 @@ class ConversationalAITaskResult(AnalyzeConversationTaskResult, discriminator="C
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeConversationTaskResultsKind.CONVERSATIONAL_AI_RESULT, **kwargs)
+        super().__init__(*args, kind=AnalyzeConversationResultKind.CONVERSATIONAL_AI_RESULT, **kwargs)
 
 
-class ConversationalPiiResultWithResultBase(_Model):
+class ConversationalPiiResult(_Model):
     """Conversation PII result item.
 
     :ivar id: Unique, non-empty conversation identifier. Required.
@@ -1641,81 +1267,7 @@ class ConversationalPiiResultWithResultBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConversationalTask(AnalyzeConversationTask, discriminator="Conversation"):
-    """The input for a conversation language understanding task.
-
-    :ivar kind: Task kind. Required. Conversation task kind
-    :vartype kind: str or ~azure.ai.language.conversations.models.CONVERSATION
-    :ivar analysis_input: The input ConversationItem and its optional parameters. Required.
-    :vartype analysis_input: ~azure.ai.language.conversations.models.ConversationAnalysisOptions
-    :ivar parameters: Input parameters necessary for a Conversation language understanding task.
-     Required.
-    :vartype parameters: ~azure.ai.language.conversations.models.ConversationTaskParameters
-    """
-
-    kind: Literal[AnalyzeConversationTaskKind.CONVERSATION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Task kind. Required. Conversation task kind"""
-    analysis_input: "_models.ConversationAnalysisOptions" = rest_field(
-        name="analysisInput", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The input ConversationItem and its optional parameters. Required."""
-    parameters: "_models.ConversationTaskParameters" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Input parameters necessary for a Conversation language understanding task. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        analysis_input: "_models.ConversationAnalysisOptions",
-        parameters: "_models.ConversationTaskParameters",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeConversationTaskKind.CONVERSATION, **kwargs)
-
-
-class ConversationalTaskResult(AnalyzeConversationTaskResult, discriminator="ConversationResult"):
-    """The results of a Conversation task.
-
-    :ivar kind: The results of a Conversation task. Required. Conversation result task kind
-    :vartype kind: str or ~azure.ai.language.conversations.models.CONVERSATION_RESULT
-    :ivar result: Represents a conversation analysis response. Required.
-    :vartype result: ~azure.ai.language.conversations.models.AnalyzeConversationResult
-    """
-
-    kind: Literal[AnalyzeConversationTaskResultsKind.CONVERSATION_RESULT] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The results of a Conversation task. Required. Conversation result task kind"""
-    result: "_models.AnalyzeConversationResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Represents a conversation analysis response. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        result: "_models.AnalyzeConversationResult",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeConversationTaskResultsKind.CONVERSATION_RESULT, **kwargs)
-
-
-class ConversationAnalysisOptions(_Model):
+class ConversationAnalysisInput(_Model):
     """The input ConversationItem and its optional parameters.
 
     :ivar conversation_item: The abstract base for a user input formatted conversation (e.g., Text,
@@ -1746,7 +1298,7 @@ class ConversationAnalysisOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConversationCallingOptions(_Model):
+class ConversationCallingConfig(_Model):
     """The option to set to call a Conversation project.
 
     :ivar language: The language of the query in BCP 47 language representation.
@@ -1788,6 +1340,45 @@ class ConversationCallingOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ConversationConfig(AnalysisConfig, discriminator="Conversation"):
+    """This is a set of request parameters for Customized Conversation projects.
+
+    :ivar api_version: The API version to use when call a specific target service.
+    :vartype api_version: str
+    :ivar target_project_kind: This is a set of request parameters for Customized Conversation
+     projects. Required. Conversation target service type
+    :vartype target_project_kind: str or ~azure.ai.language.conversations.models.CONVERSATION
+    :ivar calling_options: The option to set to call a Conversation project.
+    :vartype calling_options: ~azure.ai.language.conversations.models.ConversationCallingConfig
+    """
+
+    target_project_kind: Literal[TargetProjectKind.CONVERSATION] = rest_discriminator(name="targetProjectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """This is a set of request parameters for Customized Conversation projects. Required.
+     Conversation target service type"""
+    calling_options: Optional["_models.ConversationCallingConfig"] = rest_field(
+        name="callingOptions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The option to set to call a Conversation project."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        api_version: Optional[str] = None,
+        calling_options: Optional["_models.ConversationCallingConfig"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, target_project_kind=TargetProjectKind.CONVERSATION, **kwargs)
+
+
 class ConversationEntity(_Model):
     """The entity extraction result of a Conversation project.
 
@@ -1799,12 +1390,13 @@ class ConversationEntity(_Model):
     :vartype offset: int
     :ivar length: The length of the text. Required.
     :vartype length: int
-    :ivar confidence_score: The entity confidence score. Required.
-    :vartype confidence_score: float
+    :ivar confidence: The entity confidence score. Required.
+    :vartype confidence: float
     :ivar resolutions: The collection of entity resolution objects.
-    :vartype resolutions: list[~azure.ai.language.conversations.models.BaseResolution]
+    :vartype resolutions: list[~azure.ai.language.conversations.models.ResolutionBase]
     :ivar extra_information: The collection of entity extra information objects.
-    :vartype extra_information: list[~azure.ai.language.conversations.models.BaseExtraInformation]
+    :vartype extra_information:
+     list[~azure.ai.language.conversations.models.ConversationEntityExtraInformation]
     """
 
     category: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1815,15 +1407,13 @@ class ConversationEntity(_Model):
     """The starting index of this entity in the query. Required."""
     length: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The length of the text. Required."""
-    confidence_score: float = rest_field(
-        name="confidenceScore", visibility=["read", "create", "update", "delete", "query"]
-    )
+    confidence: float = rest_field(name="confidenceScore", visibility=["read", "create", "update", "delete", "query"])
     """The entity confidence score. Required."""
-    resolutions: Optional[List["_models.BaseResolution"]] = rest_field(
+    resolutions: Optional[List["_models.ResolutionBase"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The collection of entity resolution objects."""
-    extra_information: Optional[List["_models.BaseExtraInformation"]] = rest_field(
+    extra_information: Optional[List["_models.ConversationEntityExtraInformation"]] = rest_field(
         name="extraInformation", visibility=["read", "create", "update", "delete", "query"]
     )
     """The collection of entity extra information objects."""
@@ -1836,9 +1426,161 @@ class ConversationEntity(_Model):
         text: str,
         offset: int,
         length: int,
-        confidence_score: float,
-        resolutions: Optional[List["_models.BaseResolution"]] = None,
-        extra_information: Optional[List["_models.BaseExtraInformation"]] = None,
+        confidence: float,
+        resolutions: Optional[List["_models.ResolutionBase"]] = None,
+        extra_information: Optional[List["_models.ConversationEntityExtraInformation"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ConversationEntityExtraInformation(_Model):
+    """The abstract base object for entity extra information.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    EntitySubtype, ListKey, RegexKey
+
+    :ivar extra_information_kind: The extra information object kind. Required. Known values are:
+     "EntitySubtype", "ListKey", and "RegexKey".
+    :vartype extra_information_kind: str or
+     ~azure.ai.language.conversations.models.ExtraInformationKind
+    """
+
+    __mapping__: Dict[str, _Model] = {}
+    extra_information_kind: str = rest_discriminator(
+        name="extraInformationKind", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The extra information object kind. Required. Known values are: \"EntitySubtype\", \"ListKey\",
+     and \"RegexKey\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        extra_information_kind: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ConversationError(_Model):
+    """The error object.
+
+    :ivar code: One of a server-defined set of error codes. Required. Known values are:
+     "InvalidRequest", "InvalidArgument", "Unauthorized", "Forbidden", "NotFound",
+     "ProjectNotFound", "OperationNotFound", "AzureCognitiveSearchNotFound",
+     "AzureCognitiveSearchIndexNotFound", "TooManyRequests", "AzureCognitiveSearchThrottling",
+     "AzureCognitiveSearchIndexLimitReached", "InternalServerError", "ServiceUnavailable",
+     "Timeout", "QuotaExceeded", "Conflict", and "Warning".
+    :vartype code: str or ~azure.ai.language.conversations.models.ConversationErrorCode
+    :ivar message: A human-readable representation of the error. Required.
+    :vartype message: str
+    :ivar target: The target of the error.
+    :vartype target: str
+    :ivar details: An array of details about specific errors that led to this reported error.
+    :vartype details: list[~azure.ai.language.conversations.models.ConversationError]
+    :ivar innererror: An object containing more specific information than the current object about
+     the error.
+    :vartype innererror: ~azure.ai.language.conversations.models.InnerErrorModel
+    """
+
+    code: Union[str, "_models.ConversationErrorCode"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """One of a server-defined set of error codes. Required. Known values are: \"InvalidRequest\",
+     \"InvalidArgument\", \"Unauthorized\", \"Forbidden\", \"NotFound\", \"ProjectNotFound\",
+     \"OperationNotFound\", \"AzureCognitiveSearchNotFound\", \"AzureCognitiveSearchIndexNotFound\",
+     \"TooManyRequests\", \"AzureCognitiveSearchThrottling\",
+     \"AzureCognitiveSearchIndexLimitReached\", \"InternalServerError\", \"ServiceUnavailable\",
+     \"Timeout\", \"QuotaExceeded\", \"Conflict\", and \"Warning\"."""
+    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A human-readable representation of the error. Required."""
+    target: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The target of the error."""
+    details: Optional[List["_models.ConversationError"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An array of details about specific errors that led to this reported error."""
+    innererror: Optional["_models.InnerErrorModel"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An object containing more specific information than the current object about the error."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: Union[str, "_models.ConversationErrorCode"],
+        message: str,
+        target: Optional[str] = None,
+        details: Optional[List["_models.ConversationError"]] = None,
+        innererror: Optional["_models.InnerErrorModel"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ConversationInput(_Model):
+    """Complete ordered set of utterances (spoken or written) by one or more speakers to be used for
+    analysis.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    TextConversation, TranscriptConversation
+
+    :ivar id: Unique identifier for the conversation. Required.
+    :vartype id: str
+    :ivar language: Language of the conversation item in BCP-47 format. Required.
+    :vartype language: str
+    :ivar modality: modality. Required. Known values are: "transcript" and "text".
+    :vartype modality: str or ~azure.ai.language.conversations.models.InputModality
+    :ivar domain: domain. Known values are: "finance", "healthcare", and "generic".
+    :vartype domain: str or ~azure.ai.language.conversations.models.ConversationDomain
+    """
+
+    __mapping__: Dict[str, _Model] = {}
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Unique identifier for the conversation. Required."""
+    language: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Language of the conversation item in BCP-47 format. Required."""
+    modality: str = rest_discriminator(name="modality", visibility=["read", "create", "update", "delete", "query"])
+    """modality. Required. Known values are: \"transcript\" and \"text\"."""
+    domain: Optional[Union[str, "_models.ConversationDomain"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """domain. Known values are: \"finance\", \"healthcare\", and \"generic\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        language: str,
+        modality: str,
+        domain: Optional[Union[str, "_models.ConversationDomain"]] = None,
     ) -> None: ...
 
     @overload
@@ -1857,15 +1599,13 @@ class ConversationIntent(_Model):
 
     :ivar category: A predicted class. Required.
     :vartype category: str
-    :ivar confidence_score: The confidence score of the class from 0.0 to 1.0. Required.
-    :vartype confidence_score: float
+    :ivar confidence: The confidence score of the class from 0.0 to 1.0. Required.
+    :vartype confidence: float
     """
 
     category: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A predicted class. Required."""
-    confidence_score: float = rest_field(
-        name="confidenceScore", visibility=["read", "create", "update", "delete", "query"]
-    )
+    confidence: float = rest_field(name="confidenceScore", visibility=["read", "create", "update", "delete", "query"])
     """The confidence score of the class from 0.0 to 1.0. Required."""
 
     @overload
@@ -1873,7 +1613,7 @@ class ConversationIntent(_Model):
         self,
         *,
         category: str,
-        confidence_score: float,
+        confidence: float,
     ) -> None: ...
 
     @overload
@@ -1953,122 +1693,67 @@ class ConversationItemRange(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConversationParameters(AnalysisParameters, discriminator="Conversation"):
-    """This is a set of request parameters for Customized Conversation projects.
+class ConversationLanguageUnderstandingActionContent(_Model):  # pylint: disable=name-too-long
+    """Input parameters necessary for a Conversation task.
 
-    :ivar api_version: The API version to use when call a specific target service.
-    :vartype api_version: str
-    :ivar target_project_kind: This is a set of request parameters for Customized Conversation
-     projects. Required. Conversation target service type
-    :vartype target_project_kind: str or ~azure.ai.language.conversations.models.CONVERSATION
-    :ivar calling_options: The option to set to call a Conversation project.
-    :vartype calling_options: ~azure.ai.language.conversations.models.ConversationCallingOptions
+    :ivar project_name: The name of the project to use. Required.
+    :vartype project_name: str
+    :ivar deployment_name: The name of the deployment to use. Required.
+    :vartype deployment_name: str
+    :ivar verbose: If true, the service will return more detailed information in the response.
+    :vartype verbose: bool
+    :ivar is_logging_enabled: If true, the service will keep the query for further review.
+    :vartype is_logging_enabled: bool
+    :ivar string_index_type: Specifies the method used to interpret string offsets.  Defaults to
+     Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
+     `https://aka.ms/text-analytics-offsets <https://aka.ms/text-analytics-offsets>`_. Known values
+     are: "TextElements_v8", "UnicodeCodePoint", and "Utf16CodeUnit".
+    :vartype string_index_type: str or ~azure.ai.language.conversations.models.StringIndexType
+    :ivar direct_target: The name of a target project to forward the request to.
+    :vartype direct_target: str
+    :ivar target_project_parameters: A dictionary representing the parameters for each target
+     project.
+    :vartype target_project_parameters: dict[str,
+     ~azure.ai.language.conversations.models.AnalysisConfig]
     """
 
-    target_project_kind: Literal[TargetProjectKind.CONVERSATION] = rest_discriminator(name="targetProjectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """This is a set of request parameters for Customized Conversation projects. Required.
-     Conversation target service type"""
-    calling_options: Optional["_models.ConversationCallingOptions"] = rest_field(
-        name="callingOptions", visibility=["read", "create", "update", "delete", "query"]
+    project_name: str = rest_field(name="projectName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the project to use. Required."""
+    deployment_name: str = rest_field(name="deploymentName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the deployment to use. Required."""
+    verbose: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """If true, the service will return more detailed information in the response."""
+    is_logging_enabled: Optional[bool] = rest_field(
+        name="isLoggingEnabled", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The option to set to call a Conversation project."""
+    """If true, the service will keep the query for further review."""
+    string_index_type: Optional[Union[str, "_models.StringIndexType"]] = rest_field(
+        name="stringIndexType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the method used to interpret string offsets.  Defaults to Text Elements (Graphemes)
+     according to Unicode v8.0.0. For additional information see
+     `https://aka.ms/text-analytics-offsets <https://aka.ms/text-analytics-offsets>`_. Known values
+     are: \"TextElements_v8\", \"UnicodeCodePoint\", and \"Utf16CodeUnit\"."""
+    direct_target: Optional[str] = rest_field(
+        name="directTarget", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of a target project to forward the request to."""
+    target_project_parameters: Optional[Dict[str, "_models.AnalysisConfig"]] = rest_field(
+        name="targetProjectParameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A dictionary representing the parameters for each target project."""
 
     @overload
     def __init__(
         self,
         *,
-        api_version: Optional[str] = None,
-        calling_options: Optional["_models.ConversationCallingOptions"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, target_project_kind=TargetProjectKind.CONVERSATION, **kwargs)
-
-
-class ConversationPiiItemResult(_Model):
-    """The result from PII detection and redaction operation for each conversation.
-
-    :ivar id: Id of the result. Required.
-    :vartype id: str
-    :ivar redacted_content: Transcript content response that the service generates, with all
-     necessary personally identifiable information redacted. Required.
-    :vartype redacted_content: ~azure.ai.language.conversations.models.RedactedTranscriptContent
-    :ivar entities: Array of Entities. Required.
-    :vartype entities: list[~azure.ai.language.conversations.models.Entity]
-    """
-
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Id of the result. Required."""
-    redacted_content: "_models.RedactedTranscriptContent" = rest_field(
-        name="redactedContent", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Transcript content response that the service generates, with all necessary personally
-     identifiable information redacted. Required."""
-    entities: List["_models.Entity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Array of Entities. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        redacted_content: "_models.RedactedTranscriptContent",
-        entities: List["_models.Entity"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ConversationPiiResults(_Model):
-    """The result from PII detection and redaction operation for each conversation.
-
-    :ivar errors: Errors by document id. Required.
-    :vartype errors: list[~azure.ai.language.conversations.models.DocumentError]
-    :ivar statistics: statistics.
-    :vartype statistics: ~azure.ai.language.conversations.models.RequestStatistics
-    :ivar model_version: This field indicates which model is used for scoring. Required.
-    :vartype model_version: str
-    :ivar conversations: array of conversations. Required.
-    :vartype conversations:
-     list[~azure.ai.language.conversations.models.ConversationalPiiResultWithResultBase]
-    """
-
-    errors: List["_models.DocumentError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Errors by document id. Required."""
-    statistics: Optional["_models.RequestStatistics"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """statistics."""
-    model_version: str = rest_field(name="modelVersion", visibility=["read", "create", "update", "delete", "query"])
-    """This field indicates which model is used for scoring. Required."""
-    conversations: List["_models.ConversationalPiiResultWithResultBase"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """array of conversations. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        errors: List["_models.DocumentError"],
-        model_version: str,
-        conversations: List["_models.ConversationalPiiResultWithResultBase"],
-        statistics: Optional["_models.RequestStatistics"] = None,
+        project_name: str,
+        deployment_name: str,
+        verbose: Optional[bool] = None,
+        is_logging_enabled: Optional[bool] = None,
+        string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
+        direct_target: Optional[str] = None,
+        target_project_parameters: Optional[Dict[str, "_models.AnalysisConfig"]] = None,
     ) -> None: ...
 
     @overload
@@ -2082,7 +1767,50 @@ class ConversationPiiResults(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConversationPiiTaskParameters(_Model):
+class ConversationLanguageUnderstandingInput(AnalyzeConversationInput, discriminator="Conversation"):
+    """The input for a conversation language understanding task.
+
+    :ivar kind: Task kind. Required. Conversation task kind
+    :vartype kind: str or ~azure.ai.language.conversations.models.CONVERSATION
+    :ivar conversation_input: The input ConversationItem and its optional parameters. Required.
+    :vartype conversation_input: ~azure.ai.language.conversations.models.ConversationAnalysisInput
+    :ivar action_content: Input parameters necessary for a Conversation language understanding
+     task. Required.
+    :vartype action_content:
+     ~azure.ai.language.conversations.models.ConversationLanguageUnderstandingActionContent
+    """
+
+    kind: Literal[AnalyzeConversationInputKind.CONVERSATION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Task kind. Required. Conversation task kind"""
+    conversation_input: "_models.ConversationAnalysisInput" = rest_field(
+        name="analysisInput", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The input ConversationItem and its optional parameters. Required."""
+    action_content: "_models.ConversationLanguageUnderstandingActionContent" = rest_field(
+        name="parameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Input parameters necessary for a Conversation language understanding task. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        conversation_input: "_models.ConversationAnalysisInput",
+        action_content: "_models.ConversationLanguageUnderstandingActionContent",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, kind=AnalyzeConversationInputKind.CONVERSATION, **kwargs)
+
+
+class ConversationPiiActionContent(_Model):
     """Supported parameters for a conversational pii task.
 
     :ivar logging_opt_out: logging opt out.
@@ -2109,7 +1837,7 @@ class ConversationPiiTaskParameters(_Model):
     :vartype redaction_character: str or ~azure.ai.language.conversations.models.RedactionCharacter
     :ivar exclude_pii_categories: List of categories that need to be excluded instead of included.
     :vartype exclude_pii_categories: list[str or
-     ~azure.ai.language.conversations.models.ConversationPiiCategoriesExclude]
+     ~azure.ai.language.conversations.models.ConversationPiiCategoryExclusions]
     :ivar redaction_policy: Optional parameter determine what type of redaction to use.
     :vartype redaction_policy: ~azure.ai.language.conversations.models.BaseRedactionPolicy
     """
@@ -2145,7 +1873,7 @@ class ConversationPiiTaskParameters(_Model):
      character will be * as before. We allow specific ascii characters for redaction. Known values
      are: \"!\", \"#\", \"$\", \"%\", \"&\", \"*\", \"+\", \"-\", \"=\", \"?\", \"@\", \"^\", \"_\",
      and \"~\"."""
-    exclude_pii_categories: Optional[List[Union[str, "_models.ConversationPiiCategoriesExclude"]]] = rest_field(
+    exclude_pii_categories: Optional[List[Union[str, "_models.ConversationPiiCategoryExclusions"]]] = rest_field(
         name="excludePiiCategories", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of categories that need to be excluded instead of included."""
@@ -2164,7 +1892,7 @@ class ConversationPiiTaskParameters(_Model):
         redact_audio_timing: Optional[bool] = None,
         redaction_source: Optional[Union[str, "_models.TranscriptContentType"]] = None,
         redaction_character: Optional[Union[str, "_models.RedactionCharacter"]] = None,
-        exclude_pii_categories: Optional[List[Union[str, "_models.ConversationPiiCategoriesExclude"]]] = None,
+        exclude_pii_categories: Optional[List[Union[str, "_models.ConversationPiiCategoryExclusions"]]] = None,
         redaction_policy: Optional["_models.BaseRedactionPolicy"] = None,
     ) -> None: ...
 
@@ -2179,7 +1907,181 @@ class ConversationPiiTaskParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConversationPrediction(BasePrediction, discriminator="Conversation"):
+class ConversationPiiItemResult(_Model):
+    """The result from PII detection and redaction operation for each conversation.
+
+    :ivar id: Id of the result. Required.
+    :vartype id: str
+    :ivar redacted_content: Transcript content response that the service generates, with all
+     necessary personally identifiable information redacted. Required.
+    :vartype redacted_content: ~azure.ai.language.conversations.models.RedactedTranscriptContent
+    :ivar entities: Array of Entities. Required.
+    :vartype entities: list[~azure.ai.language.conversations.models.NamedEntity]
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Id of the result. Required."""
+    redacted_content: "_models.RedactedTranscriptContent" = rest_field(
+        name="redactedContent", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Transcript content response that the service generates, with all necessary personally
+     identifiable information redacted. Required."""
+    entities: List["_models.NamedEntity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Array of Entities. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        redacted_content: "_models.RedactedTranscriptContent",
+        entities: List["_models.NamedEntity"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ConversationPiiOperationResult(AnalyzeConversationOperationResult, discriminator="conversationalPIIResults"):
+    """Result from the personally identifiable information detection and redaction operation performed
+    on a list of conversations.
+
+    :ivar last_update_date_time: The last updated time in UTC for the task. Required.
+    :vartype last_update_date_time: ~datetime.datetime
+    :ivar status: The status of the task at the mentioned last update time. Required. Known values
+     are: "notStarted", "running", "succeeded", "partiallyCompleted", "failed", "cancelled", and
+     "cancelling".
+    :vartype status: str or ~azure.ai.language.conversations.models.ConversationActionState
+    :ivar name: task name.
+    :vartype name: str
+    :ivar kind: discriminator kind. Required. Conversational PII Results
+    :vartype kind: str or ~azure.ai.language.conversations.models.PII_OPERATION_RESULTS
+    :ivar results: results. Required.
+    :vartype results: ~azure.ai.language.conversations.models.ConversationPiiResults
+    """
+
+    kind: Literal[AnalyzeConversationOperationResultsKind.PII_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """discriminator kind. Required. Conversational PII Results"""
+    results: "_models.ConversationPiiResults" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """results. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        last_update_date_time: datetime.datetime,
+        status: Union[str, "_models.ConversationActionState"],
+        results: "_models.ConversationPiiResults",
+        name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, kind=AnalyzeConversationOperationResultsKind.PII_OPERATION_RESULTS, **kwargs)
+
+
+class ConversationPiiResults(_Model):
+    """The result from PII detection and redaction operation for each conversation.
+
+    :ivar errors: Errors by document id. Required.
+    :vartype errors: list[~azure.ai.language.conversations.models.DocumentError]
+    :ivar statistics: statistics.
+    :vartype statistics: ~azure.ai.language.conversations.models.RequestStatistics
+    :ivar model_version: This field indicates which model is used for scoring. Required.
+    :vartype model_version: str
+    :ivar conversations: array of conversations. Required.
+    :vartype conversations: list[~azure.ai.language.conversations.models.ConversationalPiiResult]
+    """
+
+    errors: List["_models.DocumentError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Errors by document id. Required."""
+    statistics: Optional["_models.RequestStatistics"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """statistics."""
+    model_version: str = rest_field(name="modelVersion", visibility=["read", "create", "update", "delete", "query"])
+    """This field indicates which model is used for scoring. Required."""
+    conversations: List["_models.ConversationalPiiResult"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """array of conversations. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        errors: List["_models.DocumentError"],
+        model_version: str,
+        conversations: List["_models.ConversationalPiiResult"],
+        statistics: Optional["_models.RequestStatistics"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PredictionBase(_Model):
+    """This is the base class of prediction.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ConversationPrediction, OrchestrationPrediction
+
+    :ivar project_kind: The type of the project. Required. Known values are: "Conversation",
+     "Orchestration", and "ConversationalAI".
+    :vartype project_kind: str or ~azure.ai.language.conversations.models.ProjectKind
+    :ivar top_intent: The intent with the highest score.
+    :vartype top_intent: str
+    """
+
+    __mapping__: Dict[str, _Model] = {}
+    project_kind: str = rest_discriminator(
+        name="projectKind", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of the project. Required. Known values are: \"Conversation\", \"Orchestration\", and
+     \"ConversationalAI\"."""
+    top_intent: Optional[str] = rest_field(name="topIntent", visibility=["read", "create", "update", "delete", "query"])
+    """The intent with the highest score."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        project_kind: str,
+        top_intent: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ConversationPrediction(PredictionBase, discriminator="Conversation"):
     """Represents the prediction section of a Conversation project.
 
     :ivar top_intent: The intent with the highest score.
@@ -2424,7 +2326,7 @@ class ConversationStatistics(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConversationSummarizationTaskParameters(_Model):
+class ConversationSummarizationActionContent(_Model):
     """Supported parameters for pre-build conversational summarization task.
 
     :ivar logging_opt_out: logging opt out.
@@ -2512,8 +2414,8 @@ class TargetIntentResult(_Model):
     :vartype target_project_kind: str or ~azure.ai.language.conversations.models.TargetProjectKind
     :ivar api_version: The API version used to call a target service.
     :vartype api_version: str
-    :ivar confidence_score: The prediction score and it ranges from 0.0 to 1.0. Required.
-    :vartype confidence_score: float
+    :ivar confidence: The prediction score and it ranges from 0.0 to 1.0. Required.
+    :vartype confidence: float
     """
 
     __mapping__: Dict[str, _Model] = {}
@@ -2526,9 +2428,7 @@ class TargetIntentResult(_Model):
         name="apiVersion", visibility=["read", "create", "update", "delete", "query"]
     )
     """The API version used to call a target service."""
-    confidence_score: float = rest_field(
-        name="confidenceScore", visibility=["read", "create", "update", "delete", "query"]
-    )
+    confidence: float = rest_field(name="confidenceScore", visibility=["read", "create", "update", "delete", "query"])
     """The prediction score and it ranges from 0.0 to 1.0. Required."""
 
     @overload
@@ -2536,7 +2436,7 @@ class TargetIntentResult(_Model):
         self,
         *,
         target_project_kind: str,
-        confidence_score: float,
+        confidence: float,
         api_version: Optional[str] = None,
     ) -> None: ...
 
@@ -2556,8 +2456,8 @@ class ConversationTargetIntentResult(TargetIntentResult, discriminator="Conversa
 
     :ivar api_version: The API version used to call a target service.
     :vartype api_version: str
-    :ivar confidence_score: The prediction score and it ranges from 0.0 to 1.0. Required.
-    :vartype confidence_score: float
+    :ivar confidence: The prediction score and it ranges from 0.0 to 1.0. Required.
+    :vartype confidence: float
     :ivar target_project_kind: A wrap up of Conversation project response. Required. Conversation
      target service type
     :vartype target_project_kind: str or ~azure.ai.language.conversations.models.CONVERSATION
@@ -2576,7 +2476,7 @@ class ConversationTargetIntentResult(TargetIntentResult, discriminator="Conversa
     def __init__(
         self,
         *,
-        confidence_score: float,
+        confidence: float,
         api_version: Optional[str] = None,
         result: Optional["_models.ConversationResult"] = None,
     ) -> None: ...
@@ -2592,81 +2492,7 @@ class ConversationTargetIntentResult(TargetIntentResult, discriminator="Conversa
         super().__init__(*args, target_project_kind=TargetProjectKind.CONVERSATION, **kwargs)
 
 
-class ConversationTaskParameters(_Model):
-    """Input parameters necessary for a Conversation task.
-
-    :ivar project_name: The name of the project to use. Required.
-    :vartype project_name: str
-    :ivar deployment_name: The name of the deployment to use. Required.
-    :vartype deployment_name: str
-    :ivar verbose: If true, the service will return more detailed information in the response.
-    :vartype verbose: bool
-    :ivar is_logging_enabled: If true, the service will keep the query for further review.
-    :vartype is_logging_enabled: bool
-    :ivar string_index_type: Specifies the method used to interpret string offsets.  Defaults to
-     Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
-     `https://aka.ms/text-analytics-offsets <https://aka.ms/text-analytics-offsets>`_. Known values
-     are: "TextElements_v8", "UnicodeCodePoint", and "Utf16CodeUnit".
-    :vartype string_index_type: str or ~azure.ai.language.conversations.models.StringIndexType
-    :ivar direct_target: The name of a target project to forward the request to.
-    :vartype direct_target: str
-    :ivar target_project_parameters: A dictionary representing the parameters for each target
-     project.
-    :vartype target_project_parameters: dict[str,
-     ~azure.ai.language.conversations.models.AnalysisParameters]
-    """
-
-    project_name: str = rest_field(name="projectName", visibility=["read", "create", "update", "delete", "query"])
-    """The name of the project to use. Required."""
-    deployment_name: str = rest_field(name="deploymentName", visibility=["read", "create", "update", "delete", "query"])
-    """The name of the deployment to use. Required."""
-    verbose: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """If true, the service will return more detailed information in the response."""
-    is_logging_enabled: Optional[bool] = rest_field(
-        name="isLoggingEnabled", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """If true, the service will keep the query for further review."""
-    string_index_type: Optional[Union[str, "_models.StringIndexType"]] = rest_field(
-        name="stringIndexType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Specifies the method used to interpret string offsets.  Defaults to Text Elements (Graphemes)
-     according to Unicode v8.0.0. For additional information see
-     `https://aka.ms/text-analytics-offsets <https://aka.ms/text-analytics-offsets>`_. Known values
-     are: \"TextElements_v8\", \"UnicodeCodePoint\", and \"Utf16CodeUnit\"."""
-    direct_target: Optional[str] = rest_field(
-        name="directTarget", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The name of a target project to forward the request to."""
-    target_project_parameters: Optional[Dict[str, "_models.AnalysisParameters"]] = rest_field(
-        name="targetProjectParameters", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """A dictionary representing the parameters for each target project."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        project_name: str,
-        deployment_name: str,
-        verbose: Optional[bool] = None,
-        is_logging_enabled: Optional[bool] = None,
-        string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
-        direct_target: Optional[str] = None,
-        target_project_parameters: Optional[Dict[str, "_models.AnalysisParameters"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CurrencyResolution(BaseResolution, discriminator="CurrencyResolution"):
+class CurrencyResolution(ResolutionBase, discriminator="CurrencyResolution"):
     """Represents the currency entity resolution model.
 
     :ivar resolution_kind: Represents the currency entity resolution model. Required. Resolution of
@@ -2715,7 +2541,7 @@ class CurrencyResolution(BaseResolution, discriminator="CurrencyResolution"):
         super().__init__(*args, resolution_kind=ResolutionKind.CURRENCY_RESOLUTION, **kwargs)
 
 
-class CustomConversationSummarizationTaskParameters(_Model):  # pylint: disable=name-too-long
+class CustomConversationSummarizationActionContent(_Model):  # pylint: disable=name-too-long
     """Supported parameters for a custom conversation summarization task.
 
     :ivar logging_opt_out: logging opt out.
@@ -2787,6 +2613,97 @@ class CustomConversationSummarizationTaskParameters(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
+class CustomSummarizationOperationAction(
+    AnalyzeConversationOperationAction, discriminator="CustomConversationalSummarizationTask"
+):
+    """Task definition for custom conversational summarization.
+
+    :ivar name: task name.
+    :vartype name: str
+    :ivar kind: discriminator kind. Required. Custom Conversational Summarization Task
+    :vartype kind: str or
+     ~azure.ai.language.conversations.models.CUSTOM_CONVERSATIONAL_SUMMARIZATION_TASK
+    :ivar action_content: parameters.
+    :vartype action_content:
+     ~azure.ai.language.conversations.models.CustomConversationSummarizationActionContent
+    """
+
+    kind: Literal[AnalyzeConversationOperationActionKind.CUSTOM_CONVERSATIONAL_SUMMARIZATION_TASK] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """discriminator kind. Required. Custom Conversational Summarization Task"""
+    action_content: Optional["_models.CustomConversationSummarizationActionContent"] = rest_field(
+        name="parameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """parameters."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        action_content: Optional["_models.CustomConversationSummarizationActionContent"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(
+            *args, kind=AnalyzeConversationOperationActionKind.CUSTOM_CONVERSATIONAL_SUMMARIZATION_TASK, **kwargs
+        )
+
+
+class CustomSummarizationOperationResult(
+    AnalyzeConversationOperationResult, discriminator="customConversationalSummarizationResults"
+):
+    """Result for the custom summarization task on the conversation.
+
+    :ivar last_update_date_time: The last updated time in UTC for the task. Required.
+    :vartype last_update_date_time: ~datetime.datetime
+    :ivar status: The status of the task at the mentioned last update time. Required. Known values
+     are: "notStarted", "running", "succeeded", "partiallyCompleted", "failed", "cancelled", and
+     "cancelling".
+    :vartype status: str or ~azure.ai.language.conversations.models.ConversationActionState
+    :ivar name: task name.
+    :vartype name: str
+    :ivar kind: discriminator kind. Required. Custom Conversational Summarization Results
+    :vartype kind: str or
+     ~azure.ai.language.conversations.models.CUSTOM_SUMMARIZATION_OPERATION_RESULTS
+    :ivar results: Custom Summary Result. Required.
+    :vartype results: ~azure.ai.language.conversations.models.CustomSummaryResult
+    """
+
+    kind: Literal[AnalyzeConversationOperationResultsKind.CUSTOM_SUMMARIZATION_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """discriminator kind. Required. Custom Conversational Summarization Results"""
+    results: "_models.CustomSummaryResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Custom Summary Result. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        last_update_date_time: datetime.datetime,
+        status: Union[str, "_models.ConversationActionState"],
+        results: "_models.CustomSummaryResult",
+        name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(
+            *args, kind=AnalyzeConversationOperationResultsKind.CUSTOM_SUMMARIZATION_OPERATION_RESULTS, **kwargs
+        )
+
+
 class CustomSummaryResult(_Model):
     """Custom Summary Results.
 
@@ -2842,7 +2759,7 @@ class CustomSummaryResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DateTimeResolution(BaseResolution, discriminator="DateTimeResolution"):
+class DateTimeResolution(ResolutionBase, discriminator="DateTimeResolution"):
     """A resolution for datetime entity instances.
 
     :ivar resolution_kind: A resolution for datetime entity instances. Required. Resolution of a
@@ -2914,12 +2831,12 @@ class DocumentError(_Model):
     :ivar id: The ID of the input document. Required.
     :vartype id: str
     :ivar error: Error encountered. Required.
-    :vartype error: ~azure.ai.language.conversations.models.Error
+    :vartype error: ~azure.ai.language.conversations.models.ConversationError
     """
 
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the input document. Required."""
-    error: "_models.Error" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    error: "_models.ConversationError" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Error encountered. Required."""
 
     @overload
@@ -2927,86 +2844,7 @@ class DocumentError(_Model):
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        error: "_models.Error",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class Entity(_Model):
-    """Text that has been categorized into pre-defined classes or types such as: person, location,
-    event, product, and organization.
-
-    :ivar text: Entity text as appears in the request. Required.
-    :vartype text: str
-    :ivar category: Entity type. Required.
-    :vartype category: str
-    :ivar subcategory: (Optional) Entity sub type.
-    :vartype subcategory: str
-    :ivar offset: Start position for the entity text. Use of different 'stringIndexType' values can
-     affect the offset returned. Required.
-    :vartype offset: int
-    :ivar length: Length for the entity text. Use of different 'stringIndexType' values can affect
-     the length returned. Required.
-    :vartype length: int
-    :ivar confidence_score: Confidence score between 0 and 1 of the extracted entity. Required.
-    :vartype confidence_score: float
-    :ivar mask: Exact mask text to mask the PII entity.
-    :vartype mask: str
-    :ivar mask_offset: Offset of the mask text.
-    :vartype mask_offset: int
-    :ivar mask_length: Length of the mask text.
-    :vartype mask_length: int
-    """
-
-    text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Entity text as appears in the request. Required."""
-    category: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Entity type. Required."""
-    subcategory: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """(Optional) Entity sub type."""
-    offset: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Start position for the entity text. Use of different 'stringIndexType' values can affect the
-     offset returned. Required."""
-    length: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Length for the entity text. Use of different 'stringIndexType' values can affect the length
-     returned. Required."""
-    confidence_score: float = rest_field(
-        name="confidenceScore", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Confidence score between 0 and 1 of the extracted entity. Required."""
-    mask: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Exact mask text to mask the PII entity."""
-    mask_offset: Optional[int] = rest_field(
-        name="maskOffset", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Offset of the mask text."""
-    mask_length: Optional[int] = rest_field(
-        name="maskLength", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Length of the mask text."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        text: str,
-        category: str,
-        offset: int,
-        length: int,
-        confidence_score: float,
-        subcategory: Optional[str] = None,
-        mask: Optional[str] = None,
-        mask_offset: Optional[int] = None,
-        mask_length: Optional[int] = None,
+        error: "_models.ConversationError",
     ) -> None: ...
 
     @overload
@@ -3047,7 +2885,7 @@ class EntityMaskTypePolicyType(BaseRedactionPolicy, discriminator="entityMask"):
         super().__init__(*args, policy_kind=RedactionPolicyKind.ENTITY_MASK, **kwargs)
 
 
-class EntitySubtype(BaseExtraInformation, discriminator="EntitySubtype"):
+class EntitySubtype(ConversationEntityExtraInformation, discriminator="EntitySubtype"):
     """The concrete entity Subtype model of extra information.
 
     :ivar extra_information_kind: The extra information object kind. Required. Entity subtype extra
@@ -3123,82 +2961,21 @@ class EntityTag(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Error(_Model):
-    """The error object.
-
-    :ivar code: One of a server-defined set of error codes. Required. Known values are:
-     "InvalidRequest", "InvalidArgument", "Unauthorized", "Forbidden", "NotFound",
-     "ProjectNotFound", "OperationNotFound", "AzureCognitiveSearchNotFound",
-     "AzureCognitiveSearchIndexNotFound", "TooManyRequests", "AzureCognitiveSearchThrottling",
-     "AzureCognitiveSearchIndexLimitReached", "InternalServerError", "ServiceUnavailable",
-     "Timeout", "QuotaExceeded", "Conflict", and "Warning".
-    :vartype code: str or ~azure.ai.language.conversations.models.ErrorCode
-    :ivar message: A human-readable representation of the error. Required.
-    :vartype message: str
-    :ivar target: The target of the error.
-    :vartype target: str
-    :ivar details: An array of details about specific errors that led to this reported error.
-    :vartype details: list[~azure.ai.language.conversations.models.Error]
-    :ivar innererror: An object containing more specific information than the current object about
-     the error.
-    :vartype innererror: ~azure.ai.language.conversations.models.InnerErrorModel
-    """
-
-    code: Union[str, "_models.ErrorCode"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """One of a server-defined set of error codes. Required. Known values are: \"InvalidRequest\",
-     \"InvalidArgument\", \"Unauthorized\", \"Forbidden\", \"NotFound\", \"ProjectNotFound\",
-     \"OperationNotFound\", \"AzureCognitiveSearchNotFound\", \"AzureCognitiveSearchIndexNotFound\",
-     \"TooManyRequests\", \"AzureCognitiveSearchThrottling\",
-     \"AzureCognitiveSearchIndexLimitReached\", \"InternalServerError\", \"ServiceUnavailable\",
-     \"Timeout\", \"QuotaExceeded\", \"Conflict\", and \"Warning\"."""
-    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """A human-readable representation of the error. Required."""
-    target: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The target of the error."""
-    details: Optional[List["_models.Error"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """An array of details about specific errors that led to this reported error."""
-    innererror: Optional["_models.InnerErrorModel"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """An object containing more specific information than the current object about the error."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        code: Union[str, "_models.ErrorCode"],
-        message: str,
-        target: Optional[str] = None,
-        details: Optional[List["_models.Error"]] = None,
-        innererror: Optional["_models.InnerErrorModel"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class ErrorResponse(_Model):
     """Error response.
 
     :ivar error: The error object. Required.
-    :vartype error: ~azure.ai.language.conversations.models.Error
+    :vartype error: ~azure.ai.language.conversations.models.ConversationError
     """
 
-    error: "_models.Error" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    error: "_models.ConversationError" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The error object. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        error: "_models.Error",
+        error: "_models.ConversationError",
     ) -> None: ...
 
     @overload
@@ -3212,7 +2989,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InformationResolution(BaseResolution, discriminator="InformationResolution"):
+class InformationResolution(ResolutionBase, discriminator="InformationResolution"):
     """Represents the information (data) entity resolution model.
 
     :ivar resolution_kind: Represents the information (data) entity resolution model. Required.
@@ -3407,10 +3184,10 @@ class KnowledgeBaseAnswer(_Model):
     :vartype questions: list[str]
     :ivar answer: Answer text.
     :vartype answer: str
-    :ivar confidence_score: Answer confidence score, value ranges from 0 to 1.
-    :vartype confidence_score: float
-    :ivar id: ID of the QnA result.
-    :vartype id: int
+    :ivar confidence: Answer confidence score, value ranges from 0 to 1.
+    :vartype confidence: float
+    :ivar qna_id: ID of the QnA result.
+    :vartype qna_id: int
     :ivar source: Source of QnA result.
     :vartype source: str
     :ivar metadata: Metadata associated with the answer, useful to categorize or filter question
@@ -3418,19 +3195,19 @@ class KnowledgeBaseAnswer(_Model):
     :vartype metadata: dict[str, str]
     :ivar dialog: Dialog associated with Answer.
     :vartype dialog: ~azure.ai.language.conversations.models.KnowledgeBaseAnswerDialog
-    :ivar answer_span: Answer span object of QnA with respect to user's question.
-    :vartype answer_span: ~azure.ai.language.conversations.models.AnswerSpan
+    :ivar short_answer: Answer span object of QnA with respect to user's question.
+    :vartype short_answer: ~azure.ai.language.conversations.models.AnswerSpan
     """
 
     questions: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of questions associated with the answer."""
     answer: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Answer text."""
-    confidence_score: Optional[float] = rest_field(
+    confidence: Optional[float] = rest_field(
         name="confidenceScore", visibility=["read", "create", "update", "delete", "query"]
     )
     """Answer confidence score, value ranges from 0 to 1."""
-    id: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    qna_id: Optional[int] = rest_field(name="id", visibility=["read", "create", "update", "delete", "query"])
     """ID of the QnA result."""
     source: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Source of QnA result."""
@@ -3440,7 +3217,7 @@ class KnowledgeBaseAnswer(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Dialog associated with Answer."""
-    answer_span: Optional["_models.AnswerSpan"] = rest_field(
+    short_answer: Optional["_models.AnswerSpan"] = rest_field(
         name="answerSpan", visibility=["read", "create", "update", "delete", "query"]
     )
     """Answer span object of QnA with respect to user's question."""
@@ -3451,12 +3228,12 @@ class KnowledgeBaseAnswer(_Model):
         *,
         questions: Optional[List[str]] = None,
         answer: Optional[str] = None,
-        confidence_score: Optional[float] = None,
-        id: Optional[int] = None,  # pylint: disable=redefined-builtin
+        confidence: Optional[float] = None,
+        qna_id: Optional[int] = None,
         source: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
         dialog: Optional["_models.KnowledgeBaseAnswerDialog"] = None,
-        answer_span: Optional["_models.AnswerSpan"] = None,
+        short_answer: Optional["_models.AnswerSpan"] = None,
     ) -> None: ...
 
     @overload
@@ -3475,13 +3252,13 @@ class KnowledgeBaseAnswerContext(_Model):
 
     :ivar previous_qna_id: Previous turn top answer result QnA ID. Required.
     :vartype previous_qna_id: int
-    :ivar previous_user_query: Previous user query.
-    :vartype previous_user_query: str
+    :ivar previous_question: Previous user query.
+    :vartype previous_question: str
     """
 
     previous_qna_id: int = rest_field(name="previousQnaId", visibility=["read", "create", "update", "delete", "query"])
     """Previous turn top answer result QnA ID. Required."""
-    previous_user_query: Optional[str] = rest_field(
+    previous_question: Optional[str] = rest_field(
         name="previousUserQuery", visibility=["read", "create", "update", "delete", "query"]
     )
     """Previous user query."""
@@ -3491,7 +3268,7 @@ class KnowledgeBaseAnswerContext(_Model):
         self,
         *,
         previous_qna_id: int,
-        previous_user_query: Optional[str] = None,
+        previous_question: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -3588,7 +3365,7 @@ class KnowledgeBaseAnswerPrompt(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LengthResolution(BaseResolution, discriminator="LengthResolution"):
+class LengthResolution(ResolutionBase, discriminator="LengthResolution"):
     """Represents the length entity resolution model.
 
     :ivar resolution_kind: Represents the length entity resolution model. Required. Resolution of a
@@ -3631,7 +3408,7 @@ class LengthResolution(BaseResolution, discriminator="LengthResolution"):
         super().__init__(*args, resolution_kind=ResolutionKind.LENGTH_RESOLUTION, **kwargs)
 
 
-class ListKey(BaseExtraInformation, discriminator="ListKey"):
+class ListKey(ConversationEntityExtraInformation, discriminator="ListKey"):
     """The list key extra data kind.
 
     :ivar extra_information_kind: The list key extra data kind. Required. List key extra
@@ -3664,7 +3441,7 @@ class ListKey(BaseExtraInformation, discriminator="ListKey"):
         super().__init__(*args, extra_information_kind=ExtraInformationKind.LIST_KEY, **kwargs)
 
 
-class LuisCallingOptions(_Model):
+class LuisCallingConfig(_Model):
     """This customizes how the service calls LUIS Generally Available projects.
 
     :ivar verbose: Enable verbose response.
@@ -3726,7 +3503,7 @@ class LuisCallingOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LuisParameters(AnalysisParameters, discriminator="Luis"):
+class LuisConfig(AnalysisConfig, discriminator="Luis"):
     """This is a set of request parameters for LUIS Generally Available projects.
 
     :ivar api_version: The API version to use when call a specific target service.
@@ -3736,14 +3513,14 @@ class LuisParameters(AnalysisParameters, discriminator="Luis"):
     :ivar query: The utterance to predict.
     :vartype query: str
     :ivar calling_options: This customizes how the service calls LUIS Generally Available projects.
-    :vartype calling_options: ~azure.ai.language.conversations.models.LuisCallingOptions
+    :vartype calling_options: ~azure.ai.language.conversations.models.LuisCallingConfig
     """
 
     target_project_kind: Literal[TargetProjectKind.LUIS] = rest_discriminator(name="targetProjectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of a target service. Required. Luis target service type"""
     query: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The utterance to predict."""
-    calling_options: Optional["_models.LuisCallingOptions"] = rest_field(
+    calling_options: Optional["_models.LuisCallingConfig"] = rest_field(
         name="callingOptions", visibility=["read", "create", "update", "delete", "query"]
     )
     """This customizes how the service calls LUIS Generally Available projects."""
@@ -3754,7 +3531,7 @@ class LuisParameters(AnalysisParameters, discriminator="Luis"):
         *,
         api_version: Optional[str] = None,
         query: Optional[str] = None,
-        calling_options: Optional["_models.LuisCallingOptions"] = None,
+        calling_options: Optional["_models.LuisCallingConfig"] = None,
     ) -> None: ...
 
     @overload
@@ -3777,8 +3554,8 @@ class LuisTargetIntentResult(TargetIntentResult, discriminator="Luis"):
 
     :ivar api_version: The API version used to call a target service.
     :vartype api_version: str
-    :ivar confidence_score: The prediction score and it ranges from 0.0 to 1.0. Required.
-    :vartype confidence_score: float
+    :ivar confidence: The prediction score and it ranges from 0.0 to 1.0. Required.
+    :vartype confidence: float
     :ivar target_project_kind: Kind of the project. Required. Luis target service type
     :vartype target_project_kind: str or ~azure.ai.language.conversations.models.LUIS
     :ivar result: The actual response from a LUIS Generally Available application.
@@ -3794,7 +3571,7 @@ class LuisTargetIntentResult(TargetIntentResult, discriminator="Luis"):
     def __init__(
         self,
         *,
-        confidence_score: float,
+        confidence: float,
         api_version: Optional[str] = None,
         result: Optional["_models.LuisResult"] = None,
     ) -> None: ...
@@ -3885,17 +3662,98 @@ class MultiLanguageConversationInput(_Model):
     """Multi Language Conversation Analysis Input.
 
     :ivar conversations: Array of conversation items. Required.
-    :vartype conversations: list[~azure.ai.language.conversations.models.Conversation]
+    :vartype conversations: list[~azure.ai.language.conversations.models.ConversationInput]
     """
 
-    conversations: List["_models.Conversation"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    conversations: List["_models.ConversationInput"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Array of conversation items. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        conversations: List["_models.Conversation"],
+        conversations: List["_models.ConversationInput"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NamedEntity(_Model):
+    """Text that has been categorized into pre-defined classes or types such as: person, location,
+    event, product, and organization.
+
+    :ivar text: Entity text as appears in the request. Required.
+    :vartype text: str
+    :ivar category: Entity type. Required.
+    :vartype category: str
+    :ivar subcategory: (Optional) Entity sub type.
+    :vartype subcategory: str
+    :ivar offset: Start position for the entity text. Use of different 'stringIndexType' values can
+     affect the offset returned. Required.
+    :vartype offset: int
+    :ivar length: Length for the entity text. Use of different 'stringIndexType' values can affect
+     the length returned. Required.
+    :vartype length: int
+    :ivar confidence_score: Confidence score between 0 and 1 of the extracted entity. Required.
+    :vartype confidence_score: float
+    :ivar mask: Exact mask text to mask the PII entity.
+    :vartype mask: str
+    :ivar mask_offset: Offset of the mask text.
+    :vartype mask_offset: int
+    :ivar mask_length: Length of the mask text.
+    :vartype mask_length: int
+    """
+
+    text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Entity text as appears in the request. Required."""
+    category: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Entity type. Required."""
+    subcategory: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """(Optional) Entity sub type."""
+    offset: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Start position for the entity text. Use of different 'stringIndexType' values can affect the
+     offset returned. Required."""
+    length: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Length for the entity text. Use of different 'stringIndexType' values can affect the length
+     returned. Required."""
+    confidence_score: float = rest_field(
+        name="confidenceScore", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Confidence score between 0 and 1 of the extracted entity. Required."""
+    mask: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Exact mask text to mask the PII entity."""
+    mask_offset: Optional[int] = rest_field(
+        name="maskOffset", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Offset of the mask text."""
+    mask_length: Optional[int] = rest_field(
+        name="maskLength", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Length of the mask text."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        text: str,
+        category: str,
+        offset: int,
+        length: int,
+        confidence_score: float,
+        subcategory: Optional[str] = None,
+        mask: Optional[str] = None,
+        mask_offset: Optional[int] = None,
+        mask_length: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -3941,8 +3799,8 @@ class NoneLinkedTargetIntentResult(TargetIntentResult, discriminator="NonLinked"
 
     :ivar api_version: The API version used to call a target service.
     :vartype api_version: str
-    :ivar confidence_score: The prediction score and it ranges from 0.0 to 1.0. Required.
-    :vartype confidence_score: float
+    :ivar confidence: The prediction score and it ranges from 0.0 to 1.0. Required.
+    :vartype confidence: float
     :ivar target_project_kind: The actual response from a Conversation project. Required. NonLinked
      target service type
     :vartype target_project_kind: str or ~azure.ai.language.conversations.models.NON_LINKED
@@ -3961,7 +3819,7 @@ class NoneLinkedTargetIntentResult(TargetIntentResult, discriminator="NonLinked"
     def __init__(
         self,
         *,
-        confidence_score: float,
+        confidence: float,
         api_version: Optional[str] = None,
         result: Optional["_models.ConversationResult"] = None,
     ) -> None: ...
@@ -3977,7 +3835,7 @@ class NoneLinkedTargetIntentResult(TargetIntentResult, discriminator="NonLinked"
         super().__init__(*args, target_project_kind=TargetProjectKind.NON_LINKED, **kwargs)
 
 
-class NumberResolution(BaseResolution, discriminator="NumberResolution"):
+class NumberResolution(ResolutionBase, discriminator="NumberResolution"):
     """A resolution for numeric entity instances.
 
     :ivar resolution_kind: A resolution for numeric entity instances. Required. Resolution of a
@@ -4019,7 +3877,7 @@ class NumberResolution(BaseResolution, discriminator="NumberResolution"):
         super().__init__(*args, resolution_kind=ResolutionKind.NUMBER_RESOLUTION, **kwargs)
 
 
-class NumericRangeResolution(BaseResolution, discriminator="NumericRangeResolution"):
+class NumericRangeResolution(ResolutionBase, discriminator="NumericRangeResolution"):
     """represents the resolution of numeric intervals.
 
     :ivar resolution_kind: represents the resolution of numeric intervals. Required. Resolution of
@@ -4069,7 +3927,7 @@ class NumericRangeResolution(BaseResolution, discriminator="NumericRangeResoluti
         super().__init__(*args, resolution_kind=ResolutionKind.NUMERIC_RANGE_RESOLUTION, **kwargs)
 
 
-class OrchestrationPrediction(BasePrediction, discriminator="Orchestration"):
+class OrchestrationPrediction(PredictionBase, discriminator="Orchestration"):
     """This represents the prediction result of an Orchestration project.
 
     :ivar top_intent: The intent with the highest score.
@@ -4111,7 +3969,7 @@ class OrchestrationPrediction(BasePrediction, discriminator="Orchestration"):
         super().__init__(*args, project_kind=ProjectKind.ORCHESTRATION, **kwargs)
 
 
-class OrdinalResolution(BaseResolution, discriminator="OrdinalResolution"):
+class OrdinalResolution(ResolutionBase, discriminator="OrdinalResolution"):
     """A resolution for ordinal numbers entity instances.
 
     :ivar resolution_kind: A resolution for ordinal numbers entity instances. Required. Resolution
@@ -4160,6 +4018,43 @@ class OrdinalResolution(BaseResolution, discriminator="OrdinalResolution"):
         super().__init__(*args, resolution_kind=ResolutionKind.ORDINAL_RESOLUTION, **kwargs)
 
 
+class PiiOperationAction(AnalyzeConversationOperationAction, discriminator="ConversationalPIITask"):
+    """Task definition for a PII redaction in conversations.
+
+    :ivar name: task name.
+    :vartype name: str
+    :ivar kind: discriminator kind. Required. Conversational PII Task
+    :vartype kind: str or ~azure.ai.language.conversations.models.CONVERSATIONAL_PII_TASK
+    :ivar action_content: parameters.
+    :vartype action_content: ~azure.ai.language.conversations.models.ConversationPiiActionContent
+    """
+
+    kind: Literal[AnalyzeConversationOperationActionKind.CONVERSATIONAL_PII_TASK] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """discriminator kind. Required. Conversational PII Task"""
+    action_content: Optional["_models.ConversationPiiActionContent"] = rest_field(
+        name="parameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """parameters."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        action_content: Optional["_models.ConversationPiiActionContent"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, kind=AnalyzeConversationOperationActionKind.CONVERSATIONAL_PII_TASK, **kwargs)
+
+
 class QueryFilters(_Model):
     """filters over knowledge base.
 
@@ -4206,7 +4101,7 @@ class QueryFilters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QuestionAnsweringParameters(AnalysisParameters, discriminator="QuestionAnswering"):
+class QuestionAnsweringConfig(AnalysisConfig, discriminator="QuestionAnswering"):
     """This is a set of request parameters for Question Answering knowledge bases.
 
     :ivar api_version: The API version to use when call a specific target service.
@@ -4215,13 +4110,13 @@ class QuestionAnsweringParameters(AnalysisParameters, discriminator="QuestionAns
      bases. Required. QuestionAnswering target service type
     :vartype target_project_kind: str or ~azure.ai.language.conversations.models.QUESTION_ANSWERING
     :ivar calling_options: The options sent to a Question Answering KB.
-    :vartype calling_options: ~azure.ai.language.conversations.models.AnswersOptions
+    :vartype calling_options: ~azure.ai.language.conversations.models.QuestionAnswersConfig
     """
 
     target_project_kind: Literal[TargetProjectKind.QUESTION_ANSWERING] = rest_discriminator(name="targetProjectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """This is a set of request parameters for Question Answering knowledge bases. Required.
      QuestionAnswering target service type"""
-    calling_options: Optional["_models.AnswersOptions"] = rest_field(
+    calling_options: Optional["_models.QuestionAnswersConfig"] = rest_field(
         name="callingOptions", visibility=["read", "create", "update", "delete", "query"]
     )
     """The options sent to a Question Answering KB."""
@@ -4231,7 +4126,7 @@ class QuestionAnsweringParameters(AnalysisParameters, discriminator="QuestionAns
         self,
         *,
         api_version: Optional[str] = None,
-        calling_options: Optional["_models.AnswersOptions"] = None,
+        calling_options: Optional["_models.QuestionAnswersConfig"] = None,
     ) -> None: ...
 
     @overload
@@ -4250,8 +4145,8 @@ class QuestionAnsweringTargetIntentResult(TargetIntentResult, discriminator="Que
 
     :ivar api_version: The API version used to call a target service.
     :vartype api_version: str
-    :ivar confidence_score: The prediction score and it ranges from 0.0 to 1.0. Required.
-    :vartype confidence_score: float
+    :ivar confidence: The prediction score and it ranges from 0.0 to 1.0. Required.
+    :vartype confidence: float
     :ivar target_project_kind: It is a wrap up a Question Answering KB response. Required.
      QuestionAnswering target service type
     :vartype target_project_kind: str or ~azure.ai.language.conversations.models.QUESTION_ANSWERING
@@ -4269,7 +4164,7 @@ class QuestionAnsweringTargetIntentResult(TargetIntentResult, discriminator="Que
     def __init__(
         self,
         *,
-        confidence_score: float,
+        confidence: float,
         api_version: Optional[str] = None,
         result: Optional["_models.AnswersResult"] = None,
     ) -> None: ...
@@ -4285,14 +4180,99 @@ class QuestionAnsweringTargetIntentResult(TargetIntentResult, discriminator="Que
         super().__init__(*args, target_project_kind=TargetProjectKind.QUESTION_ANSWERING, **kwargs)
 
 
+class QuestionAnswersConfig(_Model):
+    """Parameters to query a knowledge base.
+
+    :ivar qna_id: Exact QnA ID to fetch from the knowledge base, this field takes priority over
+     question.
+    :vartype qna_id: int
+    :ivar question: User question to query against the knowledge base.
+    :vartype question: str
+    :ivar top: Max number of answers to be returned for the question.
+    :vartype top: int
+    :ivar user_id: Unique identifier for the user.
+    :vartype user_id: str
+    :ivar confidence_threshold: Minimum threshold score for answers, value ranges from 0 to 1.
+    :vartype confidence_threshold: float
+    :ivar answer_context: Context object with previous QnA's information.
+    :vartype answer_context: ~azure.ai.language.conversations.models.KnowledgeBaseAnswerContext
+    :ivar ranker_kind: Type of ranker to be used. Known values are: "Default" and "QuestionOnly".
+    :vartype ranker_kind: str or ~azure.ai.language.conversations.models.RankerKind
+    :ivar filters: Filter QnAs based on given metadata list and knowledge base sources.
+    :vartype filters: ~azure.ai.language.conversations.models.QueryFilters
+    :ivar short_answer_options: To configure Answer span prediction feature.
+    :vartype short_answer_options: ~azure.ai.language.conversations.models.ShortAnswerConfig
+    :ivar include_unstructured_sources: (Optional) Flag to enable Query over Unstructured Sources.
+    :vartype include_unstructured_sources: bool
+    """
+
+    qna_id: Optional[int] = rest_field(name="qnaId", visibility=["read", "create", "update", "delete", "query"])
+    """Exact QnA ID to fetch from the knowledge base, this field takes priority over question."""
+    question: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """User question to query against the knowledge base."""
+    top: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Max number of answers to be returned for the question."""
+    user_id: Optional[str] = rest_field(name="userId", visibility=["read", "create", "update", "delete", "query"])
+    """Unique identifier for the user."""
+    confidence_threshold: Optional[float] = rest_field(
+        name="confidenceScoreThreshold", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Minimum threshold score for answers, value ranges from 0 to 1."""
+    answer_context: Optional["_models.KnowledgeBaseAnswerContext"] = rest_field(
+        name="context", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Context object with previous QnA's information."""
+    ranker_kind: Optional[Union[str, "_models.RankerKind"]] = rest_field(
+        name="rankerType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of ranker to be used. Known values are: \"Default\" and \"QuestionOnly\"."""
+    filters: Optional["_models.QueryFilters"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Filter QnAs based on given metadata list and knowledge base sources."""
+    short_answer_options: Optional["_models.ShortAnswerConfig"] = rest_field(
+        name="answerSpanRequest", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """To configure Answer span prediction feature."""
+    include_unstructured_sources: Optional[bool] = rest_field(
+        name="includeUnstructuredSources", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """(Optional) Flag to enable Query over Unstructured Sources."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        qna_id: Optional[int] = None,
+        question: Optional[str] = None,
+        top: Optional[int] = None,
+        user_id: Optional[str] = None,
+        confidence_threshold: Optional[float] = None,
+        answer_context: Optional["_models.KnowledgeBaseAnswerContext"] = None,
+        ranker_kind: Optional[Union[str, "_models.RankerKind"]] = None,
+        filters: Optional["_models.QueryFilters"] = None,
+        short_answer_options: Optional["_models.ShortAnswerConfig"] = None,
+        include_unstructured_sources: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class RedactedTranscriptContent(_Model):
     """Transcript content response that the service generates, with all necessary personally
     identifiable information redacted.
 
-    :ivar itn: Redacted output for input in inverse-text-normalized format.
-    :vartype itn: str
-    :ivar masked_itn: Redacted output for input in masked inverse-text-normalized format.
-    :vartype masked_itn: str
+    :ivar inverse_text_normalized: Redacted output for input in inverse-text-normalized format.
+    :vartype inverse_text_normalized: str
+    :ivar masked_inverse_text_normalized: Redacted output for input in masked
+     inverse-text-normalized format.
+    :vartype masked_inverse_text_normalized: str
     :ivar text: Redacted output for input in text (Microsoft's speech-to-text 'display') format.
     :vartype text: str
     :ivar lexical: Redacted output for input in lexical format.
@@ -4301,9 +4281,13 @@ class RedactedTranscriptContent(_Model):
     :vartype audio_timings: list[~azure.ai.language.conversations.models.AudioTiming]
     """
 
-    itn: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    inverse_text_normalized: Optional[str] = rest_field(
+        name="itn", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Redacted output for input in inverse-text-normalized format."""
-    masked_itn: Optional[str] = rest_field(name="maskedItn", visibility=["read", "create", "update", "delete", "query"])
+    masked_inverse_text_normalized: Optional[str] = rest_field(
+        name="maskedItn", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Redacted output for input in masked inverse-text-normalized format."""
     text: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Redacted output for input in text (Microsoft's speech-to-text 'display') format."""
@@ -4318,8 +4302,8 @@ class RedactedTranscriptContent(_Model):
     def __init__(
         self,
         *,
-        itn: Optional[str] = None,
-        masked_itn: Optional[str] = None,
+        inverse_text_normalized: Optional[str] = None,
+        masked_inverse_text_normalized: Optional[str] = None,
         text: Optional[str] = None,
         lexical: Optional[str] = None,
         audio_timings: Optional[List["_models.AudioTiming"]] = None,
@@ -4336,7 +4320,7 @@ class RedactedTranscriptContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegexKey(BaseExtraInformation, discriminator="RegexKey"):
+class RegexKey(ConversationEntityExtraInformation, discriminator="RegexKey"):
     """The regex key extra data kind.
 
     :ivar extra_information_kind: The regex key extra data kind. Required. Regex key extra
@@ -4436,26 +4420,25 @@ class RequestStatistics(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ShortAnswerOptions(_Model):
+class ShortAnswerConfig(_Model):
     """To configure Answer span prediction feature.
 
     :ivar enable: Enable or disable Answer Span prediction.
     :vartype enable: bool
-    :ivar confidence_score_threshold: Minimum threshold score required to include an answer span,
-     value ranges from 0 to 1.
-    :vartype confidence_score_threshold: float
-    :ivar top_answers_with_span: Number of Top answers to be considered for span prediction from 1
-     to 10.
-    :vartype top_answers_with_span: int
+    :ivar confidence_threshold: Minimum threshold score required to include an answer span, value
+     ranges from 0 to 1.
+    :vartype confidence_threshold: float
+    :ivar top: Number of Top answers to be considered for span prediction from 1 to 10.
+    :vartype top: int
     """
 
     enable: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Enable or disable Answer Span prediction."""
-    confidence_score_threshold: Optional[float] = rest_field(
+    confidence_threshold: Optional[float] = rest_field(
         name="confidenceScoreThreshold", visibility=["read", "create", "update", "delete", "query"]
     )
     """Minimum threshold score required to include an answer span, value ranges from 0 to 1."""
-    top_answers_with_span: Optional[int] = rest_field(
+    top: Optional[int] = rest_field(
         name="topAnswersWithSpan", visibility=["read", "create", "update", "delete", "query"]
     )
     """Number of Top answers to be considered for span prediction from 1 to 10."""
@@ -4465,8 +4448,8 @@ class ShortAnswerOptions(_Model):
         self,
         *,
         enable: Optional[bool] = None,
-        confidence_score_threshold: Optional[float] = None,
-        top_answers_with_span: Optional[int] = None,
+        confidence_threshold: Optional[float] = None,
+        top: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -4480,7 +4463,7 @@ class ShortAnswerOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SpeedResolution(BaseResolution, discriminator="SpeedResolution"):
+class SpeedResolution(ResolutionBase, discriminator="SpeedResolution"):
     """Represents the speed entity resolution model.
 
     :ivar resolution_kind: Represents the speed entity resolution model. Required. Resolution of a
@@ -4523,6 +4506,89 @@ class SpeedResolution(BaseResolution, discriminator="SpeedResolution"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, resolution_kind=ResolutionKind.SPEED_RESOLUTION, **kwargs)
+
+
+class SummarizationOperationAction(AnalyzeConversationOperationAction, discriminator="ConversationalSummarizationTask"):
+    """Task definition for conversational summarization.
+
+    :ivar name: task name.
+    :vartype name: str
+    :ivar kind: discriminator kind. Required. Conversational Summarization Task
+    :vartype kind: str or ~azure.ai.language.conversations.models.CONVERSATIONAL_SUMMARIZATION_TASK
+    :ivar action_content: parameters.
+    :vartype action_content:
+     ~azure.ai.language.conversations.models.ConversationSummarizationActionContent
+    """
+
+    kind: Literal[AnalyzeConversationOperationActionKind.CONVERSATIONAL_SUMMARIZATION_TASK] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """discriminator kind. Required. Conversational Summarization Task"""
+    action_content: Optional["_models.ConversationSummarizationActionContent"] = rest_field(
+        name="parameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """parameters."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        action_content: Optional["_models.ConversationSummarizationActionContent"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, kind=AnalyzeConversationOperationActionKind.CONVERSATIONAL_SUMMARIZATION_TASK, **kwargs)
+
+
+class SummarizationOperationResult(
+    AnalyzeConversationOperationResult, discriminator="conversationalSummarizationResults"
+):
+    """Result for the summarization task on the conversation.
+
+    :ivar last_update_date_time: The last updated time in UTC for the task. Required.
+    :vartype last_update_date_time: ~datetime.datetime
+    :ivar status: The status of the task at the mentioned last update time. Required. Known values
+     are: "notStarted", "running", "succeeded", "partiallyCompleted", "failed", "cancelled", and
+     "cancelling".
+    :vartype status: str or ~azure.ai.language.conversations.models.ConversationActionState
+    :ivar name: task name.
+    :vartype name: str
+    :ivar kind: discriminator kind. Required. Conversational Summarization Results
+    :vartype kind: str or ~azure.ai.language.conversations.models.SUMMARIZATION_OPERATION_RESULTS
+    :ivar results: results. Required.
+    :vartype results: ~azure.ai.language.conversations.models.SummaryResult
+    """
+
+    kind: Literal[AnalyzeConversationOperationResultsKind.SUMMARIZATION_OPERATION_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """discriminator kind. Required. Conversational Summarization Results"""
+    results: "_models.SummaryResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """results. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        last_update_date_time: datetime.datetime,
+        status: Union[str, "_models.ConversationActionState"],
+        results: "_models.SummaryResult",
+        name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, kind=AnalyzeConversationOperationResultsKind.SUMMARIZATION_OPERATION_RESULTS, **kwargs)
 
 
 class SummaryResult(_Model):
@@ -4613,59 +4679,7 @@ class SummaryResultItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Tasks(_Model):
-    """Contains the state for the tasks that are being executed as part of the submitted job for
-    analyzing a conversation.
-
-    :ivar completed: Count of tasks that finished successfully. Required.
-    :vartype completed: int
-    :ivar failed: Count of tasks that failed. Required.
-    :vartype failed: int
-    :ivar in_progress: Count of tasks that are currently in progress. Required.
-    :vartype in_progress: int
-    :ivar total: Total count of tasks submitted as part of the job. Required.
-    :vartype total: int
-    :ivar items_property: List of results from tasks (if available).
-    :vartype items_property:
-     list[~azure.ai.language.conversations.models.AnalyzeConversationJobResult]
-    """
-
-    completed: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Count of tasks that finished successfully. Required."""
-    failed: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Count of tasks that failed. Required."""
-    in_progress: int = rest_field(name="inProgress", visibility=["read", "create", "update", "delete", "query"])
-    """Count of tasks that are currently in progress. Required."""
-    total: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Total count of tasks submitted as part of the job. Required."""
-    items_property: Optional[List["_models.AnalyzeConversationJobResult"]] = rest_field(
-        name="items", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """List of results from tasks (if available)."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        completed: int,
-        failed: int,
-        in_progress: int,
-        total: int,
-        items_property: Optional[List["_models.AnalyzeConversationJobResult"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TemperatureResolution(BaseResolution, discriminator="TemperatureResolution"):
+class TemperatureResolution(ResolutionBase, discriminator="TemperatureResolution"):
     """Represents the temperature entity resolution model.
 
     :ivar resolution_kind: Represents the temperature entity resolution model. Required. Resolution
@@ -4706,7 +4720,7 @@ class TemperatureResolution(BaseResolution, discriminator="TemperatureResolution
         super().__init__(*args, resolution_kind=ResolutionKind.TEMPERATURE_RESOLUTION, **kwargs)
 
 
-class TemporalSpanResolution(BaseResolution, discriminator="TemporalSpanResolution"):
+class TemporalSpanResolution(ResolutionBase, discriminator="TemporalSpanResolution"):
     """represents the resolution of a date and/or time span.
 
     :ivar resolution_kind: represents the resolution of a date and/or time span. Required.
@@ -4787,7 +4801,7 @@ class TemporalSpanResolution(BaseResolution, discriminator="TemporalSpanResoluti
         super().__init__(*args, resolution_kind=ResolutionKind.TEMPORAL_SPAN_RESOLUTION, **kwargs)
 
 
-class TextConversation(Conversation, discriminator="text"):
+class TextConversation(ConversationInput, discriminator="text"):
     """model for text conversation.
 
     :ivar id: Unique identifier for the conversation. Required.
@@ -4844,7 +4858,7 @@ class TextConversationItem(_Model):
      "transcript" and "text".
     :vartype modality: str or ~azure.ai.language.conversations.models.InputModality
     :ivar role: Role of the participant. Known values are: "customer", "agent", and "generic".
-    :vartype role: str or ~azure.ai.language.conversations.models.Role
+    :vartype role: str or ~azure.ai.language.conversations.models.ParticipantRole
     :ivar text: The text input. Required.
     :vartype text: str
     """
@@ -4860,7 +4874,9 @@ class TextConversationItem(_Model):
     )
     """Enumeration of supported conversational modalities. Known values are: \"transcript\" and
      \"text\"."""
-    role: Optional[Union[str, "_models.Role"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    role: Optional[Union[str, "_models.ParticipantRole"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Role of the participant. Known values are: \"customer\", \"agent\", and \"generic\"."""
     text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The text input. Required."""
@@ -4874,7 +4890,7 @@ class TextConversationItem(_Model):
         text: str,
         language: Optional[str] = None,
         modality: Optional[Union[str, "_models.InputModality"]] = None,
-        role: Optional[Union[str, "_models.Role"]] = None,
+        role: Optional[Union[str, "_models.ParticipantRole"]] = None,
     ) -> None: ...
 
     @overload
@@ -4888,7 +4904,7 @@ class TextConversationItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TranscriptConversation(Conversation, discriminator="transcript"):
+class TranscriptConversation(ConversationInput, discriminator="transcript"):
     """model for transcript conversation.
 
     :ivar id: Unique identifier for the conversation. Required.
@@ -4946,13 +4962,14 @@ class TranscriptConversationItem(_Model):
      "transcript" and "text".
     :vartype modality: str or ~azure.ai.language.conversations.models.InputModality
     :ivar role: Role of the participant. Known values are: "customer", "agent", and "generic".
-    :vartype role: str or ~azure.ai.language.conversations.models.Role
-    :ivar itn: Inverse text normalization (ITN) representation of input. The
+    :vartype role: str or ~azure.ai.language.conversations.models.ParticipantRole
+    :ivar inverse_text_normalized: Inverse text normalization (ITN) representation of input. The
      inverse-text-normalized form is the recognized text from Microsoft's speech-to-text API, with
      phone numbers, numbers, abbreviations, and other transformations applied. Required.
-    :vartype itn: str
-    :ivar masked_itn: Inverse-text-normalized format with profanity masking applied. Required.
-    :vartype masked_itn: str
+    :vartype inverse_text_normalized: str
+    :ivar masked_inverse_text_normalized: Inverse-text-normalized format with profanity masking
+     applied. Required.
+    :vartype masked_inverse_text_normalized: str
     :ivar text: Display form of the recognized text from the speech-to-text API, with punctuation
      and capitalization added. Required.
     :vartype text: str
@@ -4978,13 +4995,17 @@ class TranscriptConversationItem(_Model):
     )
     """Enumeration of supported conversational modalities. Known values are: \"transcript\" and
      \"text\"."""
-    role: Optional[Union[str, "_models.Role"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    role: Optional[Union[str, "_models.ParticipantRole"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Role of the participant. Known values are: \"customer\", \"agent\", and \"generic\"."""
-    itn: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    inverse_text_normalized: str = rest_field(name="itn", visibility=["read", "create", "update", "delete", "query"])
     """Inverse text normalization (ITN) representation of input. The inverse-text-normalized form is
      the recognized text from Microsoft's speech-to-text API, with phone numbers, numbers,
      abbreviations, and other transformations applied. Required."""
-    masked_itn: str = rest_field(name="maskedItn", visibility=["read", "create", "update", "delete", "query"])
+    masked_inverse_text_normalized: str = rest_field(
+        name="maskedItn", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Inverse-text-normalized format with profanity masking applied. Required."""
     text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Display form of the recognized text from the speech-to-text API, with punctuation and
@@ -5008,13 +5029,13 @@ class TranscriptConversationItem(_Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         participant_id: str,
-        itn: str,
-        masked_itn: str,
+        inverse_text_normalized: str,
+        masked_inverse_text_normalized: str,
         text: str,
         lexical: str,
         language: Optional[str] = None,
         modality: Optional[Union[str, "_models.InputModality"]] = None,
-        role: Optional[Union[str, "_models.Role"]] = None,
+        role: Optional[Union[str, "_models.ParticipantRole"]] = None,
         word_level_timings: Optional[List["_models.WordLevelTiming"]] = None,
         conversation_item_level_timing: Optional["_models.ConversationItemLevelTiming"] = None,
     ) -> None: ...
@@ -5030,7 +5051,7 @@ class TranscriptConversationItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeResolution(BaseResolution, discriminator="VolumeResolution"):
+class VolumeResolution(ResolutionBase, discriminator="VolumeResolution"):
     """Represents the volume entity resolution model.
 
     :ivar resolution_kind: Represents the volume entity resolution model. Required. Resolution of a
@@ -5077,7 +5098,7 @@ class VolumeResolution(BaseResolution, discriminator="VolumeResolution"):
         super().__init__(*args, resolution_kind=ResolutionKind.VOLUME_RESOLUTION, **kwargs)
 
 
-class WeightResolution(BaseResolution, discriminator="WeightResolution"):
+class WeightResolution(ResolutionBase, discriminator="WeightResolution"):
     """Represents the weight entity resolution model.
 
     :ivar resolution_kind: Represents the weight entity resolution model. Required. Resolution of a

@@ -21,16 +21,24 @@ load_dotenv()
 # For security, please avoid record sensitive identity information in recordings
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
-    conversations_subscription_id = os.environ.get(
-        "CONVERSATIONS_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000"
+    conversationanalysis_subscription_id = os.environ.get(
+        "CONVERSATIONANALYSIS_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000"
     )
-    conversations_tenant_id = os.environ.get("CONVERSATIONS_TENANT_ID", "00000000-0000-0000-0000-000000000000")
-    conversations_client_id = os.environ.get("CONVERSATIONS_CLIENT_ID", "00000000-0000-0000-0000-000000000000")
-    conversations_client_secret = os.environ.get("CONVERSATIONS_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=conversations_subscription_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=conversations_tenant_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=conversations_client_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=conversations_client_secret, value="00000000-0000-0000-0000-000000000000")
+    conversationanalysis_tenant_id = os.environ.get(
+        "CONVERSATIONANALYSIS_TENANT_ID", "00000000-0000-0000-0000-000000000000"
+    )
+    conversationanalysis_client_id = os.environ.get(
+        "CONVERSATIONANALYSIS_CLIENT_ID", "00000000-0000-0000-0000-000000000000"
+    )
+    conversationanalysis_client_secret = os.environ.get(
+        "CONVERSATIONANALYSIS_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000"
+    )
+    add_general_regex_sanitizer(
+        regex=conversationanalysis_subscription_id, value="00000000-0000-0000-0000-000000000000"
+    )
+    add_general_regex_sanitizer(regex=conversationanalysis_tenant_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=conversationanalysis_client_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=conversationanalysis_client_secret, value="00000000-0000-0000-0000-000000000000")
 
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
     add_header_regex_sanitizer(key="Cookie", value="cookie;")

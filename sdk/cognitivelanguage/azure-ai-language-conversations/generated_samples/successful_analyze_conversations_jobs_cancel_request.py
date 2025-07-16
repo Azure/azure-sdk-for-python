@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.ai.language.conversations import ConversationsClient
+from azure.ai.language.conversations import ConversationAnalysisClient
 
 """
 # PREREQUISITES
@@ -17,12 +17,12 @@ from azure.ai.language.conversations import ConversationsClient
 
 
 def main():
-    client = ConversationsClient(
+    client = ConversationAnalysisClient(
         endpoint="{Endpoint}",
         credential="CREDENTIAL",
     )
 
-    client.begin_analyze_conversations_cancel_job(
+    client.begin_cancel_analyze_conversations(
         job_id="c0f2a446-05d9-48fc-ba8f-3ef4af8d0b18",
     ).result()
 
