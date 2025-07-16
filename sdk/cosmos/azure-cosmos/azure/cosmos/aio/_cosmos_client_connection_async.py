@@ -71,9 +71,9 @@ from .. import _session
 from .. import _utils
 from ..partition_key import (
     _Undefined,
-    PartitionKey,
     _return_undefined_or_empty_partition_key,
-    NonePartitionKeyValue, _Empty
+    NonePartitionKeyValue, _Empty,
+    _get_partition_key_from_partition_key_definition
 )
 from ._auth_policy_async import AsyncCosmosBearerTokenCredentialPolicy
 from .._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
@@ -787,6 +787,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Create will use WriteEndpoint since it uses POST operation
         request_params = _request_object.RequestObject(resource_type, documents._OperationType.Create, headers)
         request_params.set_excluded_location_from_options(options)
+        request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
         await base.set_session_token_header_async(self, headers, path, request_params, options)
         result, last_response_headers = await self.__Post(path, request_params, body, headers, **kwargs)
         self.last_response_headers = last_response_headers
@@ -928,6 +929,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Upsert will use WriteEndpoint since it uses POST operation
         request_params = _request_object.RequestObject(resource_type, documents._OperationType.Upsert, headers)
         request_params.set_excluded_location_from_options(options)
+        request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
         await base.set_session_token_header_async(self, headers, path, request_params, options)
         result, last_response_headers = await self.__Post(path, request_params, body, headers, **kwargs)
         self.last_response_headers = last_response_headers
@@ -1495,6 +1497,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Patch will use WriteEndpoint since it uses PUT operation
         request_params = _request_object.RequestObject(resource_type, documents._OperationType.Patch, headers)
         request_params.set_excluded_location_from_options(options)
+        request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
         await base.set_session_token_header_async(self, headers, path, request_params, options)
         request_data = {}
         if options.get("filterPredicate"):
@@ -1601,6 +1604,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Replace will use WriteEndpoint since it uses PUT operation
         request_params = _request_object.RequestObject(resource_type, documents._OperationType.Replace, headers)
         request_params.set_excluded_location_from_options(options)
+        request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
         await base.set_session_token_header_async(self, headers, path, request_params, options)
         result, last_response_headers = await self.__Put(path, request_params, resource, headers, **kwargs)
         self.last_response_headers = last_response_headers
@@ -1926,6 +1930,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Delete will use WriteEndpoint since it uses DELETE operation
         request_params = _request_object.RequestObject(resource_type, documents._OperationType.Delete, headers)
         request_params.set_excluded_location_from_options(options)
+        request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
         await base.set_session_token_header_async(self, headers, path, request_params, options)
         result, last_response_headers = await self.__Delete(path, request_params, headers, **kwargs)
         self.last_response_headers = last_response_headers
@@ -2975,9 +2980,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         partition_key_obj = None
         if cont_prop and partition_key_value is not None:
             partition_key_definition = cont_prop["partitionKey"]
-            partition_key_obj = PartitionKey(path=partition_key_definition["paths"],
-                                             kind=partition_key_definition["kind"],
-                                             version=partition_key_definition["version"])
+            partition_key_obj = _get_partition_key_from_partition_key_definition(partition_key_definition)
             is_prefix_partition_query = partition_key_obj._is_prefix_partition_key(partition_key_value)
 
         if is_prefix_partition_query and partition_key_obj:

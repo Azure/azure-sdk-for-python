@@ -73,7 +73,8 @@ from .partition_key import (
     _Empty,
     PartitionKey,
     _return_undefined_or_empty_partition_key,
-    NonePartitionKeyValue
+    NonePartitionKeyValue,
+    _get_partition_key_from_partition_key_definition
 )
 
 PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]  # pylint: disable=line-too-long
@@ -2074,6 +2075,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                        documents._OperationType.Patch,
                                        headers)
         request_params.set_excluded_location_from_options(options)
+        request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
         base.set_session_token_header(self, headers, path, request_params, options)
         request_data = {}
         if options.get("filterPredicate"):
@@ -2695,6 +2697,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Create will use WriteEndpoint since it uses POST operation
         request_params = RequestObject(resource_type, documents._OperationType.Create, headers)
         request_params.set_excluded_location_from_options(options)
+        request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
         base.set_session_token_header(self, headers, path, request_params, options)
         result, last_response_headers = self.__Post(path, request_params, body, headers, **kwargs)
         self.last_response_headers = last_response_headers
@@ -2742,6 +2745,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Upsert will use WriteEndpoint since it uses POST operation
         request_params = RequestObject(resource_type, documents._OperationType.Upsert, headers)
         request_params.set_excluded_location_from_options(options)
+        request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
         base.set_session_token_header(self, headers, path, request_params, options)
         result, last_response_headers = self.__Post(path, request_params, body, headers, **kwargs)
         self.last_response_headers = last_response_headers
@@ -2787,6 +2791,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Replace will use WriteEndpoint since it uses PUT operation
         request_params = RequestObject(resource_type, documents._OperationType.Replace, headers)
         request_params.set_excluded_location_from_options(options)
+        request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
         base.set_session_token_header(self, headers, path, request_params, options)
         result, last_response_headers = self.__Put(path, request_params, resource, headers, **kwargs)
         self.last_response_headers = last_response_headers
@@ -2875,6 +2880,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Delete will use WriteEndpoint since it uses DELETE operation
         request_params = RequestObject(resource_type, documents._OperationType.Delete, headers)
         request_params.set_excluded_location_from_options(options)
+        request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
         base.set_session_token_header(self, headers, path, request_params, options)
         result, last_response_headers = self.__Delete(path, request_params, headers, **kwargs)
         self.last_response_headers = last_response_headers
@@ -3176,11 +3182,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             # here get the over lapping ranges
             # Default to empty Dictionary, but unlikely to be empty as we first check if we have it in kwargs
             pk_properties: Union[PartitionKey, Dict] = kwargs.pop("partitionKeyDefinition", {})
-            partition_key_definition = PartitionKey(
-                path=pk_properties["paths"],
-                kind=pk_properties["kind"],
-                version=pk_properties["version"])
-            partition_key_value = pk_properties["partition_key"]
+            partition_key_definition = _get_partition_key_from_partition_key_definition(pk_properties)
+            partition_key_value: Sequence[
+                Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]] = cast(
+                Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]],
+                pk_properties.get("partition_key")
+            )
             feedrangeEPK = partition_key_definition._get_epk_range_for_prefix_partition_key(
                 partition_key_value
             )  # cspell:disable-line

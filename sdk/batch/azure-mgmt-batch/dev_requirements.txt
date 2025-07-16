@@ -3,5 +3,5 @@ azure-mgmt-keyvault<9.0.0
 azure-mgmt-network<19.0.0
 -e ../../resources/azure-mgmt-resource
 -e ../../storage/azure-mgmt-storage
-../../identity/azure-identity
+-e ../../identity/azure-identity
 aiohttp

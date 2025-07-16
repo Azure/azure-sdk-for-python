@@ -50,8 +50,6 @@ project_client = AIProjectClient(
 )
 
 
-# When using FunctionTool with ToolSet in agent creation, the tool call events are handled inside the create_stream
-# method and functions gets automatically called by default.
 class MyEventHandler(AgentEventHandler):
 
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:

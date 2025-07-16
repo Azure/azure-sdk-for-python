@@ -93,7 +93,7 @@
 
 # ServiceLabel: %Communication - Call Automation
 # PRLabel: %Communication - Call Automation
-/sdk/communication/azure-communication-callautomation/               @minwoolee-msft
+/sdk/communication/azure-communication-callautomation/               @minwoolee-msft @fhaghbin-msft @juntuchen-msft @v-dharmarajv
 
 # ServiceLabel: %Communication - Chat
 # PRLabel: %Communication - Chat
@@ -236,10 +236,10 @@
 # ServiceLabel: %Durable Task Scheduler %Service Attention
 /sdk/durabletask/                                                    @berndverst @kaibocai @torosent @RyanLettieri @philliphoff @cgillum
 
-# AzureSdkOwners: @kashifkhan
+# AzureSdkOwners: @shankarsama @rajeshka
 # ServiceLabel: %Event Grid
 # PRLabel: %Event Grid
-/sdk/eventgrid/                                                      @kashifkhan @l0lawrence
+/sdk/eventgrid/                                                      @shankarsama @rajeshka
 
 # PRLabel: %Image Analysis
 # ServiceLabel: %Image Analysis %Service Attention
@@ -255,7 +255,7 @@
 
 # PRLabel: %AI Projects
 # ServiceLabel: %AI Projects %Service Attention
-/sdk/ai/azure-ai-projects/                                           @dargilco @jhakulin
+/sdk/ai/azure-ai-projects/                                           @dargilco @jhakulin @trangevi @glharper @nick863 @howieleung
 
 
 # PRLabel: %HDInsight

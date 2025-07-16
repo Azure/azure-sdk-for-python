@@ -14,8 +14,8 @@ USAGE:
     python list_job_documents.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT - the service URL endpoint for a de-identification service.
-    2) AZURE_STORAGE_ACCOUNT_LOCATION - an Azure Storage container endpoint, like "https://<storageaccount>.blob.core.windows.net/<container>".
+    1) HEALTHDATAAISERVICES_DEID_SERVICE_ENDPOINT - the service URL endpoint for a de-identification service.
+    2) HEALTHDATAAISERVICES_STORAGE_ACCOUNT_LOCATION - an Azure Storage container endpoint, like "https://<storageaccount>.blob.core.windows.net/<container>".
     3) INPUT_PREFIX - the prefix of the input document name(s) in the container.
         For example, providing "folder1" would create a job that would process documents like "https://<storageaccount>.blob.core.windows.net/<container>/folder1/document1.txt".
     4) OUTPUT_PREFIX - the prefix of the output document name(s) in the container. This will appear as a folder which will be created if it does not exist, and defaults to "_output" if not provided.
@@ -35,9 +35,9 @@ import uuid
 
 
 def list_job_documents():
-    endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
-    storage_location = os.environ["AZURE_STORAGE_ACCOUNT_LOCATION"]
-    inputPrefix = os.environ["INPUT_PREFIX"]
+    endpoint = os.environ["HEALTHDATAAISERVICES_DEID_SERVICE_ENDPOINT"]
+    storage_location = os.environ["HEALTHDATAAISERVICES_STORAGE_ACCOUNT_LOCATION"]
+    inputPrefix = os.environ.get("INPUT_PREFIX", "example_patient_1")
     outputPrefix = os.environ.get("OUTPUT_PREFIX", "_output")
 
     credential = DefaultAzureCredential()

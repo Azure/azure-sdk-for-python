@@ -37,6 +37,7 @@ from azure.core import MatchConditions
 from . import documents
 from . import http_constants
 from . import _runtime_constants
+from ._constants import _Constants as Constants
 from .auth import _get_authorization_header
 from .offer import ThroughputProperties
 from .partition_key import _Empty, _Undefined
@@ -64,6 +65,7 @@ _COMMON_OPTIONS = {
     'query_version': 'queryVersion',
     'priority': 'priorityLevel',
     'no_response': 'responsePayloadOnWriteDisabled',
+    'retry_write': Constants.Kwargs.RETRY_WRITE,
     'max_item_count': 'maxItemCount',
     'throughput_bucket': 'throughputBucket',
     'excluded_locations': 'excludedLocations'
@@ -841,8 +843,8 @@ def _replace_throughput(
                 new_throughput_properties['content']['offerAutopilotSettings']['maxThroughput'] = max_throughput
                 if increment_percent:
                     new_throughput_properties['content']['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy']['incrementPercent'] = increment_percent  # pylint: disable=line-too-long
-                if throughput.offer_throughput:
-                    new_throughput_properties["content"]["offerThroughput"] = throughput.offer_throughput
+            if throughput.offer_throughput:
+                new_throughput_properties["content"]["offerThroughput"] = throughput.offer_throughput
         except AttributeError as e:
             raise TypeError("offer_throughput must be int or an instance of ThroughputProperties") from e
 

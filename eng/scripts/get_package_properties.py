@@ -47,7 +47,7 @@ if __name__ == "__main__":
     # Use abspath for the os.walk because if setup parsing fails it often changes cwd which throws off the relative walk
     for root, dirs, files in os.walk(os.path.abspath(args.search_path)):
         if re.search(r"sdk[\\/][^\\/]+[\\/][^\\/]+$", root):
-            if "setup.py" in files:
+            if "setup.py" in files or "pyproject.toml" in files:
                 try:
                     parsed = ParsedSetup.from_path(root)
 

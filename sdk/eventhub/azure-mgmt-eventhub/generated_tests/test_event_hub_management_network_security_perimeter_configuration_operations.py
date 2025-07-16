@@ -24,7 +24,7 @@ class TestEventHubManagementNetworkSecurityPerimeterConfigurationOperations(Azur
         response = self.client.network_security_perimeter_configuration.list(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself

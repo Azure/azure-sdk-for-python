@@ -21,7 +21,8 @@ jobs:
     timeoutInMinutes: 90
 
     pool:
-      name: 'azsdk-pool-mms-ubuntu-2004-general'
+      name: 'azsdk-pool'
+      demands: ImageOverride -equals 'ubuntu-24.04'
 
     steps:
       - template: ../steps/release-candidate-steps.yml
@@ -35,7 +36,8 @@ jobs:
       timeoutInMinutes: 90
 
       pool:
-        name: 'azsdk-pool-mms-ubuntu-2004-general'
+        name: 'azsdk-pool'
+        demands: ImageOverride -equals 'ubuntu-24.04'
 
       steps:
         - task: UsePythonVersion@0
