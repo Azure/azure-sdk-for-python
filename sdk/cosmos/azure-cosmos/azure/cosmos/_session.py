@@ -22,6 +22,7 @@
 """Session Consistency Tracking in the Azure Cosmos database service.
 """
 
+import logging
 import sys
 import traceback
 import threading
@@ -36,6 +37,8 @@ from .exceptions import CosmosHttpResponseError
 from .partition_key import PartitionKey
 
 # pylint: disable=protected-access,too-many-nested-blocks
+
+logger = logging.getLogger("azure.cosmos.SessionContainer")
 
 class SessionContainer(object):
     def __init__(self):
@@ -120,6 +123,7 @@ class SessionContainer(object):
                     return session_token
                 return ""
             except Exception as e:  # pylint: disable=broad-except
+                logger.debug("Error while resolving session token: %s", e)
                 return ""
 
     async def get_session_token_async(
