@@ -24,3 +24,8 @@ steps:
         ${{ parameters.AdditionalTestArgs }}
     env: ${{ parameters.EnvVars }}
     condition: and(succeededOrFailed(), ne(variables['Skip.Bandit'],'true'))
+
+
+  - pwsh: |
+      exit 1
+    displayName: "Fail Analyze"
