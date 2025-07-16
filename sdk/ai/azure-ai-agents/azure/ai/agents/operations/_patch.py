@@ -538,6 +538,7 @@ class RunsOperations(RunsOperationsGenerated):
             additional_instructions=additional_instructions,
             additional_messages=additional_messages,
             tools=toolset.definitions if toolset else None,
+            tool_resources=toolset.resources if toolset else None,
             temperature=temperature,
             top_p=top_p,
             max_prompt_tokens=max_prompt_tokens,
