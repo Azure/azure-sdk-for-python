@@ -1,0 +1,10 @@
+files: sdk/evaluation/azure-ai-evaluation/
+repos:
+- repo: local
+  hooks:
+  - id: black
+    name: black (azure-ai-evaluation)
+    entry: bash -c 'cd sdk/evaluation/azure-ai-evaluation && python -m black --config=../../../eng/black-pyproject.toml .'
+    language: system
+    types: [python]
+    pass_filenames: false
