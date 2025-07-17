@@ -67,7 +67,7 @@ class TestLatestSessionToken(unittest.TestCase):
         # testing with storing session tokens by feed range that maps to physical pk
         phys_feed_ranges_and_session_tokens = []
         phys_previous_session_token = ""
-        pk_feed_range = container.feed_range_from_partition_key('A1')
+        pk_feed_range = container.feed_range_from_partition_key(target_pk)
         phys_target_session_token, phys_target_feed_range, phys_previous_session_token = self.create_items_physical_pk(container, pk_feed_range,
                                                                                                         phys_previous_session_token,
                                                                                                         phys_feed_ranges_and_session_tokens)
@@ -95,7 +95,7 @@ class TestLatestSessionToken(unittest.TestCase):
         phys_session_token = container.get_latest_session_token(phys_feed_ranges_and_session_tokens, phys_target_feed_range)
         pk_range_id, session_token = parse_session_token(phys_session_token)
 
-        assert 335 <= session_token.global_lsn <= 385
+        assert 350 <= session_token.global_lsn <= 380
         assert '2' in pk_range_id
         self.database.delete_container(container.id)
 

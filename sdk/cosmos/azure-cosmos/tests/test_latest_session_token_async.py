@@ -70,7 +70,7 @@ class TestLatestSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
         # testing with storing session tokens by feed range that maps to physical pk
         phys_feed_ranges_and_session_tokens = []
         phys_previous_session_token = ""
-        pk_feed_range = await container.feed_range_from_partition_key('A1')
+        pk_feed_range = await container.feed_range_from_partition_key(target_pk)
         phys_target_session_token, phys_target_feed_range, phys_previous_session_token = await self.create_items_physical_pk_async(container, pk_feed_range,
                                                                                                                                    phys_previous_session_token,
                                                                                                                                    phys_feed_ranges_and_session_tokens)
@@ -98,7 +98,7 @@ class TestLatestSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
         phys_session_token = await container.get_latest_session_token(phys_feed_ranges_and_session_tokens, phys_target_feed_range)
         pk_range_id, session_token = parse_session_token(phys_session_token)
 
-        assert session_token.global_lsn >= 360
+        assert 350 <= session_token.global_lsn <= 380
         assert '2' in pk_range_id
         await self.database.delete_container(container.id)
 
