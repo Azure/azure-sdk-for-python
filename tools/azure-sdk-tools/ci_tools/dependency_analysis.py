@@ -59,9 +59,8 @@ def get_lib_deps(base_dir: str) -> Tuple[Dict[str, Dict[str, Any]], Dict[str, Di
     packages = {}
     dependencies = {}
 
-    def parse_setup(setup_path: str) -> None:
-        """Attempts to parse either a setup.py or pyproject.toml file to extract package information."""
-        parsed = ParsedSetup.from_path(setup_path)
+    for lib_dir in discover_targeted_packages("azure*", base_dir):
+        parsed = ParsedSetup.from_path(lib_dir)
         lib_name, version, requires = parsed.name, parsed.version, parsed.requires
 
         packages[lib_name] = {"version": version, "source": lib_dir, "deps": []}
@@ -75,19 +74,6 @@ def get_lib_deps(base_dir: str) -> Tuple[Dict[str, Dict[str, Any]], Dict[str, Di
 
             packages[lib_name]["deps"].append({"name": req_name, "version": str(spec)})
             record_dep(dependencies, req_name, str(spec), lib_name)
-
-    for lib_dir in discover_targeted_packages("azure*", base_dir):
-        setup_path = os.path.join(lib_dir, "setup.py")
-        try:
-            parse_setup(setup_path)
-        # If we can't parse setup.py, we try to parse pyproject.toml
-        except:
-            pyproject_path = os.path.join(lib_dir, "pyproject.toml")
-            try:
-                parse_setup(pyproject_path)
-            # If we can't parse pyproject.toml either, we print an error message with attempted paths
-            except:
-                print(f"Failed to parse {setup_path} or {pyproject_path}")
     return packages, dependencies
 
 
