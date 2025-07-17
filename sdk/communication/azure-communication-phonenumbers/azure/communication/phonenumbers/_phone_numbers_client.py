@@ -304,7 +304,7 @@ class PhoneNumbersClient:
         :param country_code: The ISO 3166-2 country/region two letter code, e.g. US. Required.
         :type country_code: str
         :keyword phone_number_type: An optional parameter for the type of phone numbers, e.g. geographic, tollFree, mobile.
-        Default value is None.
+         Default value is None.
         :paramtype phone_number_type: ~azure.communication.phonenumbers.PhoneNumberType
         :keyword administrative_division: An optional parameter for the name of the state or province
          in which to search for the area code. e.g. California. Default value is None.
