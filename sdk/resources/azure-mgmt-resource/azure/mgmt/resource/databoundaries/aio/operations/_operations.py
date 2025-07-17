@@ -31,7 +31,7 @@ from ...operations._operations import (
     build_data_boundaries_get_tenant_request,
     build_data_boundaries_put_request,
 )
-from .._configuration import DataBoundaryConfiguration
+from .._configuration import DataBoundaryMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -43,7 +43,7 @@ class DataBoundariesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.resource.databoundaries.aio.DataBoundary`'s
+        :class:`~azure.mgmt.resource.databoundaries.aio.DataBoundaryMgmtClient`'s
         :attr:`data_boundaries` attribute.
     """
 
@@ -52,7 +52,7 @@ class DataBoundariesOperations:
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DataBoundaryConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DataBoundaryMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
