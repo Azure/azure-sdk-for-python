@@ -184,7 +184,6 @@ class DefaultAzureCredential(ChainedTokenCredential):
             },
             "broker": {
                 "exclude_param": "exclude_broker_credential",
-                "env_name": "interactivebrowserbrokercredential",
                 "default_exclude": False,
             },
         }
