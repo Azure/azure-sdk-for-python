@@ -7,6 +7,7 @@
 - Updated service API version to use API version 2023-10-31 by default.
 - Updated internal implementation while maintaining API compatibility.
 - Improved type annotations throughout the library.
+- Added `isodate` dependency.
 
 ## 1.2.0 (2022-05-31)
  - GA release
@@ -45,7 +46,7 @@
 - User Agent value updated according to guidelines.
 - Updated JSON patch parameter typehints to `List[Dict[str, object]]`.
 - Updated constructor credential typehint to `azure.core.credentials.TokenCredential`
-- Samples and documentation updated. 
+- Samples and documentation updated.
 
 
 ## 1.0.0b1 (2020-10-31)
