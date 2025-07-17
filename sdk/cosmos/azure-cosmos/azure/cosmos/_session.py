@@ -157,11 +157,20 @@ class SessionContainer(object):
                 if is_name_based:
                     # get the collection name
                     collection_name = _base.GetItemContainerLink(resource_path)
-                    collection_rid = self.collection_name_to_rid[collection_name]
+                    if collection_name in self.collection_name_to_rid:
+                        # if the collection name is already in the map, use the rid from there
+                        collection_rid = self.collection_name_to_rid[collection_name]
+                    else:
+                        # if the collection name is not in the map, we need to get the rid from containers cache
+                        collection_rid = next(
+                            (v["_rid"] for k, v in container_properties_cache.items() if collection_name in k),
+                            None
+                        )
                 else:
                     collection_rid = _base.GetItemContainerLink(resource_path)
 
-                if collection_rid in self.rid_to_session_token and collection_name in container_properties_cache:
+                if collection_rid in self.rid_to_session_token and (collection_name in container_properties_cache or
+                                                                    collection_rid in container_properties_cache):
                     token_dict = self.rid_to_session_token[collection_rid]
                     if partition_key_range_id is not None:
                         # if we find a cached session token for the relevant pk range id, use that session token

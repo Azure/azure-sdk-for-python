@@ -174,12 +174,13 @@ class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
         try:
             await self.created_container.read_item(item=created_document['id'], partition_key='mypk')
         except exceptions.CosmosHttpResponseError as e:
-            self.assertEqual(self.client.client_connection.session.get_session_token(
+            session_token = await self.client.client_connection.session.get_session_token_async(
                 'dbs/' + self.created_db.id + '/colls/' + self.created_container.id,
                 None,
+                {},
                 None,
-                None,
-                None), "")
+                None)
+            self.assertEqual(session_token, "")
             self.assertEqual(e.status_code, StatusCodes.NOT_FOUND)
             self.assertEqual(e.sub_status, SubStatusCodes.READ_SESSION_NOTAVAILABLE)
         _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
