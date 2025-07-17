@@ -1,3 +1,4 @@
+import asyncio
 import os
 import logging
 from typing import Dict, Union, List, Optional, Any
@@ -162,8 +163,8 @@ class CriticAgent(PromptyEvaluatorBase[Dict[str, Union[str, List[str]]]]):
         )
 
         converter = AIAgentConverter(project_client)
-        conversation = converter.prepare_evaluation_data(thread_ids=thread_id)
-        evaluators_to_run = self._select_evaluators(conversation)
+        conversation = converter.prepare_evaluation_data(thread_ids=thread_id)[-1]
+        evaluators_to_run = asyncio.run(self._select_evaluators(conversation))
         evaluator_instances = {name: self.evaluator_instances[name] for name in evaluators_to_run["evaluators"]}
         conversation_results = self._run_evaluators_on_conversation(
             evaluator_instances, conversation
@@ -296,7 +297,7 @@ class CriticAgent(PromptyEvaluatorBase[Dict[str, Union[str, List[str]]]]):
 
         return results
 
-    def _select_evaluators(self, eval_input: Dict[str, Any]):
+    async def _select_evaluators(self, eval_input: Dict[str, Any]):
         """
         Select appropriate evaluators based on the conversation history and tool definitions.
 
@@ -310,7 +311,7 @@ class CriticAgent(PromptyEvaluatorBase[Dict[str, Union[str, List[str]]]]):
         if tool_definitions:
             eval_input["tool_definitions"] = reformat_tool_definitions(tool_definitions, logger)
 
-        llm_output = self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+        llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
         if isinstance(llm_output, dict):
             evaluators = llm_output.get("evaluators", [])
             evaluators = [evaluator for evaluator in evaluators if evaluator in self._DEFAULT_AGENT_EVALUATORS]
