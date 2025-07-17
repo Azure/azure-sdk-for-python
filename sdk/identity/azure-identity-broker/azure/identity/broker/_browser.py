@@ -58,7 +58,8 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
         are required to also provide its window handle, so that the sign in UI window will properly pop up on top
         of your window.
     :keyword bool use_default_broker_account: Enables automatically using the default broker account for
-        authentication instead of prompting the user with an account picker. Defaults to False.
+        authentication instead of prompting the user with an account picker. This is currently only supported on Windows
+        and WSL. Defaults to False.
     :keyword bool enable_msa_passthrough: Determines whether Microsoft Account (MSA) passthrough is enabled. Note, this
         is only needed for select legacy first-party applications. Defaults to False.
     :keyword bool disable_instance_discovery: Determines whether or not instance discovery is performed when attempting
@@ -78,6 +79,7 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
         self._parent_window_handle = kwargs.pop("parent_window_handle", None)
         self._enable_msa_passthrough = kwargs.pop("enable_msa_passthrough", False)
         self._use_default_broker_account = kwargs.pop("use_default_broker_account", False)
+        self._disable_interactive_fallback = kwargs.pop("disable_interactive_fallback", False)
         super().__init__(**kwargs)
 
     @wrap_exceptions
@@ -93,6 +95,7 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
                 http_method=pop["resource_request_method"], url=pop["resource_request_url"], nonce=pop["nonce"]
             )
         if sys.platform.startswith("win") or is_wsl():
+            result = {}
             if self._use_default_broker_account:
                 try:
                     result = app.acquire_token_interactive(
@@ -110,6 +113,10 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
                         return result
                 except socket.error:
                     pass
+
+                if self._disable_interactive_fallback:
+                    self._check_result(result)
+
             try:
                 result = app.acquire_token_interactive(
                     scopes=scopes_list,
@@ -124,14 +131,8 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
                 )
             except socket.error as ex:
                 raise CredentialUnavailableError(message="Couldn't start an HTTP server.") from ex
-            if "access_token" not in result and "error_description" in result:
-                if within_dac.get():
-                    raise CredentialUnavailableError(message=result["error_description"])
-                raise ClientAuthenticationError(message=result.get("error_description"))
-            if "access_token" not in result:
-                if within_dac.get():
-                    raise CredentialUnavailableError(message="Failed to authenticate user")
-                raise ClientAuthenticationError(message="Failed to authenticate user")
+
+            self._check_result(result)
         else:
             try:
                 result = app.acquire_token_interactive(
@@ -157,15 +158,18 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
                     parent_window_handle=self._parent_window_handle,
                     enable_msa_passthrough=self._enable_msa_passthrough,
                 )
-                if "access_token" in result:
-                    return result
-                if "error_description" in result:
-                    if within_dac.get():
-                        # pylint: disable=raise-missing-from
-                        raise CredentialUnavailableError(message=result["error_description"])
-                    # pylint: disable=raise-missing-from
-                    raise ClientAuthenticationError(message=result.get("error_description"))
+            self._check_result(result)
         return result
+
+    def _check_result(self, result: Dict[str, Any]) -> None:
+        if "access_token" not in result and "error_description" in result:
+            if within_dac.get():
+                raise CredentialUnavailableError(message=result["error_description"])
+            raise ClientAuthenticationError(message=result.get("error_description"))
+        if "access_token" not in result:
+            if within_dac.get():
+                raise CredentialUnavailableError(message="Failed to authenticate user")
+            raise ClientAuthenticationError(message="Failed to authenticate user")
 
     def _get_app(self, **kwargs: Any) -> msal.ClientApplication:
         tenant_id = resolve_tenant(
