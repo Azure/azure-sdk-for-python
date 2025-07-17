@@ -22,7 +22,7 @@ This guide assumes the following package folder structure:
 
 ---
 
-## Phase 1: Environment Setup
+## Phase 1
 
 ### Step 1: Configure Environment Variables
 
