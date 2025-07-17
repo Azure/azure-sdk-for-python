@@ -8,10 +8,12 @@ from azure.monitor.opentelemetry.exporter.export.logs._exporter import AzureMoni
 from azure.monitor.opentelemetry.exporter.export.metrics._exporter import AzureMonitorMetricExporter
 from azure.monitor.opentelemetry.exporter.export.trace._exporter import AzureMonitorTraceExporter
 from azure.monitor.opentelemetry.exporter.export.trace._sampling import ApplicationInsightsSampler
+from azure.monitor.opentelemetry.exporter.export.trace._rate_limited_sampling import RateLimitedSampler
 from ._version import VERSION
 
 __all__ = [
     "ApplicationInsightsSampler",
+    "RateLimitedSampler",
     "AzureMonitorMetricExporter",
     "AzureMonitorLogExporter",
     "AzureMonitorTraceExporter",
