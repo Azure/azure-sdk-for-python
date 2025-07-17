@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b40 (Unreleased)
+## 1.0.0b40 (2025-07-17)
 
 ### Features Added
 
@@ -13,12 +13,6 @@
 - Customer Facing Statsbeat: Added logic for retry item count
   ([#41971](https://github.com/Azure/azure-sdk-for-python/pull/41971))
 
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.0.0b39 (2025-06-25)
 
