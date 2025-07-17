@@ -35,6 +35,7 @@ class BrokerCredential(SupportsTokenInfo):
                     "tenant_id": self._tenant_id,
                     "parent_window_handle": msal.PublicClientApplication.CONSOLE_WINDOW_HANDLE,
                     "use_default_broker_account": True,
+                    "disable_interactive_fallback": True,
                     **kwargs,
                 }
                 if self._client_id:

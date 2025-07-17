@@ -74,6 +74,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
     :keyword str interactive_browser_tenant_id: Tenant ID to use when authenticating a user through
         :class:`~azure.identity.InteractiveBrowserCredential`. Defaults to the value of environment variable
         AZURE_TENANT_ID, if any. If unspecified, users will authenticate in their home tenants.
+    :keyword str broker_tenant_id: The tenant ID to use when using brokered authentication. Defaults to the value of
+        environment variable AZURE_TENANT_ID, if any. If unspecified, users will authenticate in their home tenants.
     :keyword str managed_identity_client_id: The client ID of a user-assigned managed identity. Defaults to the value
         of the environment variable AZURE_CLIENT_ID, if any. If not specified, a system-assigned identity will be used.
     :keyword str workload_identity_client_id: The client ID of an identity assigned to the pod. Defaults to the value
@@ -82,6 +84,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
         Defaults to the value of environment variable AZURE_TENANT_ID, if any.
     :keyword str interactive_browser_client_id: The client ID to be used in interactive browser credential. If not
         specified, users will authenticate to an Azure development application.
+    :keyword str broker_client_id: The client ID to be used in brokered authentication. If not specified, users will
+        authenticate to an Azure development application.
     :keyword str shared_cache_username: Preferred username for :class:`~azure.identity.SharedTokenCacheCredential`.
         Defaults to the value of environment variable AZURE_USERNAME, if any.
     :keyword str shared_cache_tenant_id: Preferred tenant for :class:`~azure.identity.SharedTokenCacheCredential`.
@@ -123,6 +127,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
             "workload_identity_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
         )
         interactive_browser_client_id = kwargs.pop("interactive_browser_client_id", None)
+
+        broker_tenant_id = kwargs.pop("broker_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID))
+        broker_client_id = kwargs.pop("broker_client_id", None)
 
         shared_cache_username = kwargs.pop("shared_cache_username", os.environ.get(EnvironmentVariables.AZURE_USERNAME))
         shared_cache_tenant_id = kwargs.pop(
@@ -257,9 +264,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
             else:
                 credentials.append(InteractiveBrowserCredential(tenant_id=interactive_browser_tenant_id, **kwargs))
         if not exclude_broker_credential:
-            broker_credential_args = {"tenant_id": interactive_browser_tenant_id, **kwargs}
-            if interactive_browser_client_id:
-                broker_credential_args["client_id"] = interactive_browser_client_id
+            broker_credential_args = {"tenant_id": broker_tenant_id, **kwargs}
+            if broker_client_id:
+                broker_credential_args["client_id"] = broker_client_id
             credentials.append(BrokerCredential(**broker_credential_args))
 
         within_dac.set(False)

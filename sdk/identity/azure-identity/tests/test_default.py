@@ -458,7 +458,34 @@ def test_broker_credential():
         broker_credentials = [c for c in credential.credentials if c.__class__.__name__ == "BrokerCredential"]
         assert len(broker_credentials) == 1, "BrokerCredential should be in the chain"
     # InteractiveBrowserBrokerCredential should be instantiated by BrokerCredential
-    assert mock_credential.call_count > 1, "InteractiveBrowserBrokerCredential should be instantiated"
+    assert mock_credential.call_count >= 1, "InteractiveBrowserBrokerCredential should be instantiated"
+
+
+def test_broker_credential_client_id():
+    """Test that DefaultAzureCredential allows configuring a client ID for BrokerCredential"""
+
+    client_id = "broker-client-id"
+    credential = DefaultAzureCredential(broker_client_id=client_id)
+    broker_credentials = [c for c in credential.credentials if c.__class__.__name__ == "BrokerCredential"]
+    assert (
+        len(broker_credentials) == 1
+    ), "BrokerCredential should be in the chain even when broker package is not installed"
+    broker_credential = broker_credentials[0]
+    assert broker_credential._client_id == client_id, "Credential should be instantiated with the specified client ID"
+
+
+def test_broker_credential_tenant_id():
+    """Test that DefaultAzureCredential allows configuring a tenant ID for BrokerCredential"""
+
+    tenant_id = "broker-tenant-id"
+
+    credential = DefaultAzureCredential(broker_tenant_id=tenant_id)
+    broker_credentials = [c for c in credential.credentials if c.__class__.__name__ == "BrokerCredential"]
+    assert (
+        len(broker_credentials) == 1
+    ), "BrokerCredential should be in the chain even when broker package is not installed"
+    broker_credential = broker_credentials[0]
+    assert broker_credential._tenant_id == tenant_id, "Credential should be instantiated with the specified tenant ID"
 
 
 def test_broker_credential_requirements_not_installed():
