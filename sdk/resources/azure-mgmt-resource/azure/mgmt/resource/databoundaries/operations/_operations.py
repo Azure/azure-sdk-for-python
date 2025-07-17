@@ -25,7 +25,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
-from .._configuration import DataBoundaryMgmtClientConfiguration
+from .._configuration import DataBoundaryConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
@@ -119,7 +119,7 @@ class DataBoundariesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.resource.databoundaries.v2024_08_01.DataBoundaryMgmtClient`'s
+        :class:`~azure.mgmt.resource.databoundaries.DataBoundary`'s
         :attr:`data_boundaries` attribute.
     """
 
@@ -128,10 +128,9 @@ class DataBoundariesOperations:
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DataBoundaryMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DataBoundaryConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @overload
     def put(
@@ -146,15 +145,15 @@ class DataBoundariesOperations:
 
         :param default: Default string modeled as parameter for auto generation to work correctly.
          "default" Required.
-        :type default: str or ~azure.mgmt.resource.databoundaries.v2024_08_01.models.DefaultName
+        :type default: str or ~azure.mgmt.resource.databoundaries.models.DefaultName
         :param data_boundary_definition: The data boundary to opt the tenant to. Required.
         :type data_boundary_definition:
-         ~azure.mgmt.resource.databoundaries.v2024_08_01.models.DataBoundaryDefinition
+         ~azure.mgmt.resource.databoundaries.models.DataBoundaryDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: DataBoundaryDefinition or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.databoundaries.v2024_08_01.models.DataBoundaryDefinition
+        :rtype: ~azure.mgmt.resource.databoundaries.models.DataBoundaryDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -171,14 +170,14 @@ class DataBoundariesOperations:
 
         :param default: Default string modeled as parameter for auto generation to work correctly.
          "default" Required.
-        :type default: str or ~azure.mgmt.resource.databoundaries.v2024_08_01.models.DefaultName
+        :type default: str or ~azure.mgmt.resource.databoundaries.models.DefaultName
         :param data_boundary_definition: The data boundary to opt the tenant to. Required.
         :type data_boundary_definition: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: DataBoundaryDefinition or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.databoundaries.v2024_08_01.models.DataBoundaryDefinition
+        :rtype: ~azure.mgmt.resource.databoundaries.models.DataBoundaryDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -193,13 +192,13 @@ class DataBoundariesOperations:
 
         :param default: Default string modeled as parameter for auto generation to work correctly.
          "default" Required.
-        :type default: str or ~azure.mgmt.resource.databoundaries.v2024_08_01.models.DefaultName
+        :type default: str or ~azure.mgmt.resource.databoundaries.models.DefaultName
         :param data_boundary_definition: The data boundary to opt the tenant to. Is either a
          DataBoundaryDefinition type or a IO[bytes] type. Required.
         :type data_boundary_definition:
-         ~azure.mgmt.resource.databoundaries.v2024_08_01.models.DataBoundaryDefinition or IO[bytes]
+         ~azure.mgmt.resource.databoundaries.models.DataBoundaryDefinition or IO[bytes]
         :return: DataBoundaryDefinition or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.databoundaries.v2024_08_01.models.DataBoundaryDefinition
+        :rtype: ~azure.mgmt.resource.databoundaries.models.DataBoundaryDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -213,7 +212,7 @@ class DataBoundariesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2024-08-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DataBoundaryDefinition] = kwargs.pop("cls", None)
 
@@ -261,9 +260,9 @@ class DataBoundariesOperations:
 
         :param default: Default string modeled as parameter for auto generation to work correctly.
          "default" Required.
-        :type default: str or ~azure.mgmt.resource.databoundaries.v2024_08_01.models.DefaultName
+        :type default: str or ~azure.mgmt.resource.databoundaries.models.DefaultName
         :return: DataBoundaryDefinition or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.databoundaries.v2024_08_01.models.DataBoundaryDefinition
+        :rtype: ~azure.mgmt.resource.databoundaries.models.DataBoundaryDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -277,7 +276,7 @@ class DataBoundariesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2024-08-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.DataBoundaryDefinition] = kwargs.pop("cls", None)
 
         _request = build_data_boundaries_get_tenant_request(
@@ -317,9 +316,9 @@ class DataBoundariesOperations:
         :type scope: str
         :param default: Default string modeled as parameter for auto generation to work correctly.
          "default" Required.
-        :type default: str or ~azure.mgmt.resource.databoundaries.v2024_08_01.models.DefaultName
+        :type default: str or ~azure.mgmt.resource.databoundaries.models.DefaultName
         :return: DataBoundaryDefinition or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.databoundaries.v2024_08_01.models.DataBoundaryDefinition
+        :rtype: ~azure.mgmt.resource.databoundaries.models.DataBoundaryDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -333,7 +332,7 @@ class DataBoundariesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2024-08-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.DataBoundaryDefinition] = kwargs.pop("cls", None)
 
         _request = build_data_boundaries_get_scope_request(
