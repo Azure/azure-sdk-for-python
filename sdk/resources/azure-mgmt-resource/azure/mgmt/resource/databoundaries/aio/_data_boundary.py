@@ -19,19 +19,19 @@ from azure.mgmt.core.tools import get_arm_endpoints
 
 from .. import models as _models
 from .._utils.serialization import Deserializer, Serializer
-from ._configuration import DataBoundaryMgmtClientConfiguration
+from ._configuration import DataBoundaryConfiguration
 from .operations import DataBoundariesOperations
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class DataBoundaryMgmtClient:
+class DataBoundary:
     """Provides APIs for data boundary operations.
 
     :ivar data_boundaries: DataBoundariesOperations operations
     :vartype data_boundaries:
-     azure.mgmt.resource.databoundaries.v2024_08_01.aio.operations.DataBoundariesOperations
+     azure.mgmt.resource.databoundaries.aio.operations.DataBoundariesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param base_url: Service URL. Default value is None.
@@ -47,9 +47,7 @@ class DataBoundaryMgmtClient:
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = DataBoundaryMgmtClientConfiguration(
-            credential=credential, credential_scopes=credential_scopes, **kwargs
-        )
+        self._config = DataBoundaryConfiguration(credential=credential, credential_scopes=credential_scopes, **kwargs)
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:
@@ -77,9 +75,7 @@ class DataBoundaryMgmtClient:
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.data_boundaries = DataBoundariesOperations(
-            self._client, self._config, self._serialize, self._deserialize, "2024-08-01"
-        )
+        self.data_boundaries = DataBoundariesOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
