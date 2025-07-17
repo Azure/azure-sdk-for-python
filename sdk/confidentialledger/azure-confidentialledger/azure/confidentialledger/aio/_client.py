@@ -103,8 +103,8 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientOperationsMixin):
 class ConfidentialLedgerCertificateClient(ConfidentialLedgerCertificateClientOperationsMixin):
     """ConfidentialLedgerCertificateClient.
 
-    :param endpoint: Required.
-    :type endpoint: str
+    :keyword endpoint: Default value is "https://identity.confidential-ledger.core.azure.com".
+    :paramtype endpoint: str
     :keyword api_version: The API version to use for this operation. Default value is
      "2024-12-09-preview". Note that overriding this default value may result in unsupported
      behavior.
@@ -112,7 +112,7 @@ class ConfidentialLedgerCertificateClient(ConfidentialLedgerCertificateClientOpe
     """
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
-        self, endpoint: str, **kwargs: Any
+        self, *, endpoint: str = "https://identity.confidential-ledger.core.azure.com", **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}"
         self._config = ConfidentialLedgerCertificateClientConfiguration(endpoint=endpoint, **kwargs)

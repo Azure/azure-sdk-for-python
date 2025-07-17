@@ -57,7 +57,7 @@ class ConfidentialLedgerCertificateClientConfiguration:  # pylint: disable=too-m
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param endpoint: Required.
+    :param endpoint: Default value is "https://identity.confidential-ledger.core.azure.com".
     :type endpoint: str
     :keyword api_version: The API version to use for this operation. Default value is
      "2024-12-09-preview". Note that overriding this default value may result in unsupported
@@ -65,11 +65,8 @@ class ConfidentialLedgerCertificateClientConfiguration:  # pylint: disable=too-m
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, **kwargs: Any) -> None:
+    def __init__(self, endpoint: str = "https://identity.confidential-ledger.core.azure.com", **kwargs: Any) -> None:
         api_version: str = kwargs.pop("api_version", "2024-12-09-preview")
-
-        if endpoint is None:
-            raise ValueError("Parameter 'endpoint' must not be None.")
 
         self.endpoint = endpoint
         self.api_version = api_version
