@@ -31,7 +31,7 @@ class Resource(_serialization.Model):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~azure.mgmt.resource.databoundaries.v2024_08_01.models.SystemData
+    :vartype system_data: ~azure.mgmt.resource.databoundaries.models.SystemData
     """
 
     _validation = {
@@ -73,7 +73,7 @@ class ProxyResource(Resource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~azure.mgmt.resource.databoundaries.v2024_08_01.models.SystemData
+    :vartype system_data: ~azure.mgmt.resource.databoundaries.models.SystemData
     """
 
 
@@ -92,10 +92,9 @@ class DataBoundaryDefinition(ProxyResource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~azure.mgmt.resource.databoundaries.v2024_08_01.models.SystemData
+    :vartype system_data: ~azure.mgmt.resource.databoundaries.models.SystemData
     :ivar properties: Data boundary properties.
-    :vartype properties:
-     ~azure.mgmt.resource.databoundaries.v2024_08_01.models.DataBoundaryProperties
+    :vartype properties: ~azure.mgmt.resource.databoundaries.models.DataBoundaryProperties
     """
 
     _validation = {
@@ -116,8 +115,7 @@ class DataBoundaryDefinition(ProxyResource):
     def __init__(self, *, properties: Optional["_models.DataBoundaryProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: Data boundary properties.
-        :paramtype properties:
-         ~azure.mgmt.resource.databoundaries.v2024_08_01.models.DataBoundaryProperties
+        :paramtype properties: ~azure.mgmt.resource.databoundaries.models.DataBoundaryProperties
         """
         super().__init__(**kwargs)
         self.properties = properties
@@ -130,12 +128,11 @@ class DataBoundaryProperties(_serialization.Model):
 
     :ivar data_boundary: The data boundary definition. Known values are: "NotDefined", "Global",
      "EU", and "Global".
-    :vartype data_boundary: str or
-     ~azure.mgmt.resource.databoundaries.v2024_08_01.models.DataBoundary
+    :vartype data_boundary: str or ~azure.mgmt.resource.databoundaries.models.DataBoundary
     :ivar provisioning_state: Denotes the state of provisioning. Known values are: "Accepted",
      "Running", "Creating", "Canceled", "Failed", "Succeeded", and "Updating".
     :vartype provisioning_state: str or
-     ~azure.mgmt.resource.databoundaries.v2024_08_01.models.ProvisioningState
+     ~azure.mgmt.resource.databoundaries.models.ProvisioningState
     """
 
     _validation = {
@@ -151,8 +148,7 @@ class DataBoundaryProperties(_serialization.Model):
         """
         :keyword data_boundary: The data boundary definition. Known values are: "NotDefined", "Global",
          "EU", and "Global".
-        :paramtype data_boundary: str or
-         ~azure.mgmt.resource.databoundaries.v2024_08_01.models.DataBoundary
+        :paramtype data_boundary: str or ~azure.mgmt.resource.databoundaries.models.DataBoundary
         """
         super().__init__(**kwargs)
         self.data_boundary = data_boundary
@@ -199,10 +195,9 @@ class ErrorDetail(_serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~azure.mgmt.resource.databoundaries.v2024_08_01.models.ErrorDetail]
+    :vartype details: list[~azure.mgmt.resource.databoundaries.models.ErrorDetail]
     :ivar additional_info: The error additional info.
-    :vartype additional_info:
-     list[~azure.mgmt.resource.databoundaries.v2024_08_01.models.ErrorAdditionalInfo]
+    :vartype additional_info: list[~azure.mgmt.resource.databoundaries.models.ErrorAdditionalInfo]
     """
 
     _validation = {
@@ -236,7 +231,7 @@ class ErrorResponse(_serialization.Model):
     operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
-    :vartype error: ~azure.mgmt.resource.databoundaries.v2024_08_01.models.ErrorDetail
+    :vartype error: ~azure.mgmt.resource.databoundaries.models.ErrorDetail
     """
 
     _attribute_map = {
@@ -246,7 +241,7 @@ class ErrorResponse(_serialization.Model):
     def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
-        :paramtype error: ~azure.mgmt.resource.databoundaries.v2024_08_01.models.ErrorDetail
+        :paramtype error: ~azure.mgmt.resource.databoundaries.models.ErrorDetail
         """
         super().__init__(**kwargs)
         self.error = error
@@ -259,16 +254,14 @@ class SystemData(_serialization.Model):
     :vartype created_by: str
     :ivar created_by_type: The type of identity that created the resource. Known values are:
      "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: str or
-     ~azure.mgmt.resource.databoundaries.v2024_08_01.models.CreatedByType
+    :vartype created_by_type: str or ~azure.mgmt.resource.databoundaries.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
     :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: str or
-     ~azure.mgmt.resource.databoundaries.v2024_08_01.models.CreatedByType
+    :vartype last_modified_by_type: str or ~azure.mgmt.resource.databoundaries.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
     """
@@ -298,8 +291,7 @@ class SystemData(_serialization.Model):
         :paramtype created_by: str
         :keyword created_by_type: The type of identity that created the resource. Known values are:
          "User", "Application", "ManagedIdentity", and "Key".
-        :paramtype created_by_type: str or
-         ~azure.mgmt.resource.databoundaries.v2024_08_01.models.CreatedByType
+        :paramtype created_by_type: str or ~azure.mgmt.resource.databoundaries.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
@@ -307,7 +299,7 @@ class SystemData(_serialization.Model):
         :keyword last_modified_by_type: The type of identity that last modified the resource. Known
          values are: "User", "Application", "ManagedIdentity", and "Key".
         :paramtype last_modified_by_type: str or
-         ~azure.mgmt.resource.databoundaries.v2024_08_01.models.CreatedByType
+         ~azure.mgmt.resource.databoundaries.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
