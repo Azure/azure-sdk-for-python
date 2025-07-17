@@ -25,53 +25,57 @@ This guide assumes the following package folder structure:
 ## Phase 1: Environment Setup
 
 ### Step 1: Configure Environment Variables
-1. **Check for `.env` file** in the repository root
-2. **If missing**, create `.env` with the following content:
-   ```env
-   AZURE_TEST_RUN_LIVE=true
-   AZURE_TEST_USE_CLI_AUTH=true
-   AZURE_SUBSCRIPTION_ID=<YOUR_AZURE_SUBSCRIPTION_ID>
-   AZURE_TENANT_ID=<YOUR_AZURE_TENANT_ID>
-   ```
-3. **Prompt user** to fill in actual values for subscription ID and tenant ID and wait for user to confirm until they complete.
+
+**CHECK** whether `.env` exists in repository root
+
+IF `.env` missing in the repository root
+  CREATE `.env` with the following content:
+    ```env
+    AZURE_TEST_RUN_LIVE=true
+    AZURE_TEST_USE_CLI_AUTH=true
+    AZURE_SUBSCRIPTION_ID=<YOUR_AZURE_SUBSCRIPTION_ID>
+    AZURE_TENANT_ID=<YOUR_AZURE_TENANT_ID>
+    ```
+  **Prompt user** to fill in actual values for subscription ID and tenant ID and wait for user to confirm until they complete.
 
 ### Step 2: Set Up Virtual Environment
-1. **Check for `.venv` folder** in repository root
-2. **If missing**, create virtual environment:
-   ```bash
-   python -m venv .venv
-   ```
-3. **Activate** the virtual environment:
-   - **Windows**: `.venv\Scripts\activate`
-   - **Linux/macOS**: `source .venv/bin/activate`
-   
-   > **Note**: Activation only needs to be done once per session
 
-4. **Install Azure CLI** (if not present):
+**CHECK** whether `.env` exists in repository root
+
+IF `.venv` missing in repository root
+    CREATE virtual environment:
+      ```bash
+      python -m venv .venv
+      ```
+
+ALWAYS **Activate** the virtual environment:
+    - **Windows**: `.venv\Scripts\activate`
+    - **Linux/macOS**: `source .venv/bin/activate`
+
+### Step 3: install azure-cli
+
+**CHECK** whether azure-cli is installed in virtual environment
+IF azure-cli is not installed
    ```bash
    pip install azure-cli
    ```
-   > **Note**: Run command in virtual environment
 
-5. **Authenticate with Azure**:
-   ```bash
-   az login
-   ```
-   > **Note**: Run command in virtual environment
+### Step 4: az login
+```bash
+az login
+```
 
+### Step 5: Identify Source Test File
+**Ask user** for the generated test file name in `generated_tests/`
+**CHECK** whether `{TEST_FILE}_test.py` exists under folder `tests`
+IF `{TEST_FILE}_test.py` missing
+   CREATE `{TEST_FILE}_test.py` under folder `tests`
+   THEN COPY content from the generated test file
 
-### Step 3: Identify Source Test File
-1. **Ask user** for the generated test file name in `generated_tests/`
-2. **Create target test file** in `tests/` folder:
-   - If no file named `{TEST_FILE}_test.py` exists, create it
-   - Copy content from the generated test file
-
-### Step 4: Prepare Test Infrastructure
-1. **Remove skip decorators**: Delete `@pytest.mark.skip` from test methods
-
-2. **Update dependencies**: Add `azure-mgmt-resource-bicep` to `dev_requirements.txt` if missing
-
-3. **Add deployment helper** to `conftest.py` if the `deployment_resource` function doesn't exist:
+### Step 6: Prepare Test Infrastructure
+Delete `@pytest.mark.skip` from test methods
+Add `azure-mgmt-resource-bicep` to `dev_requirements.txt` IF missing
+Copy the following content to `conftest.py` if `deployment_resource` function doesn't exist:
 
    ```python
    # conftest.py
@@ -126,15 +130,15 @@ This guide assumes the following package folder structure:
        ).result()
    ```
 
-4. **Install package and dependencies**:
+### Step 7: Install Dev Dependencies
+
+Install package and dependencies:
    ```bash
    cd <package-root>  # Navigate to folder containing setup.py
    pip install -e .   # Install package in editable mode
    pip install -r dev_requirements.txt  # Install development dependencies
    ```
-   > **Note**: Run command in virtual environment
-
-5. **Create data directory**: Create `tests/data/` folder if it doesn't exist
+Create `tests/data/` folder if it doesn't exist
 
 ---
 
@@ -145,14 +149,14 @@ This guide assumes the following package folder structure:
 - **Run each test individually** to isolate issues
 - **Iteratively fix and rerun** until all tests pass
 
-### Step 5: Test Execution Loop
+### Step 8: Test Execution Loop
+
 For **each test case** in the target test file:
 
 1. **Run the test**:
    ```bash
    pytest tests/{test_file_name}.py::{test_method_name} -v
    ```
-   > **Note**: Run command in virtual environment
 
 2. **If test fails**:
    - Analyze error message
