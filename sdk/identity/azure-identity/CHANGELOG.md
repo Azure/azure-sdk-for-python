@@ -1,6 +1,6 @@
 # Release History
 
-## 1.24.0b1 (Unreleased)
+## 1.24.0b1 (2025-07-17)
 
 ### Features Added
 
@@ -10,14 +10,12 @@
   - `VisualStudioCodeCredential` is now included in the `DefaultAzureCredential` token chain by default.
 - `DefaultAzureCredential` now supports authentication with the currently signed-in Windows account, provided the `azure-identity-broker` package is installed. This auth mechanism is added at the end of the `DefaultAzureCredential` credential chain.  ([#40335](https://github.com/Azure/azure-sdk-for-python/pull/40335))
 
-### Breaking Changes
+## 1.23.1 (2025-07-15)
 
 ### Bugs Fixed
 
 - Fixed an issue with `AzurePowerShellCredential` not working correctly for users still using older versions of PowerShell (e.g., Windows PowerShell 5.1) where `-AsPlainText` is not supported in the `ConvertFrom-SecureString` cmdlet.  ([#41675](https://github.com/Azure/azure-sdk-for-python/pull/41675))
 - Fixed an issue with `AzureCliCredential` being unable to find the correct `az` executable for certain Python versions on Windows. ([#41806](https://github.com/Azure/azure-sdk-for-python/pull/41806))
-
-### Other Changes
 
 ## 1.23.0 (2025-05-13)
 
