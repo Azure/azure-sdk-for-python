@@ -70,81 +70,48 @@ class AgentConfig(_Model):
         self.type: Literal["agent"] = "agent"
 
 
-class CreateSpeechRequest(_Model):
-    """CreateSpeechRequest.
+class AzureCustomVoice(_Model):
+    """Voice configuration for Azure custom voice.
 
-    :ivar model: One of the available `TTS models </docs/models#tts>`_: ``tts-1``, ``tts-1-hd`` or
-     ``gpt-4o-mini-tts``. Required. Is one of the following types: Literal["tts-1"],
-     Literal["tts-1-hd"], Literal["gpt-4o-mini-tts"], str
-    :vartype model: str or str or str or str
-    :ivar input: The text to generate audio for. The maximum length is 4096 characters. Required.
-    :vartype input: str
-    :ivar instructions: Control the voice of your generated audio with additional instructions.
-     Does not work with ``tts-1`` or ``tts-1-hd``.
-    :vartype instructions: str
-    :ivar voice: The voice to use when generating the audio. Supported voices are ``alloy``,
-     ``ash``, ``ballad``, ``coral``, ``echo``, ``fable``, ``onyx``, ``nova``, ``sage``, ``shimmer``,
-     and ``verse``. Previews of the voices are available in the `Text to speech guide
-     </docs/guides/text-to-speech#voice-options>`_. Required. Known values are: "alloy", "ash",
-     "ballad", "coral", "echo", "sage", "shimmer", and "verse".
-    :vartype voice: str or ~azure.ai.voicelive.models.VoiceIdsShared
-    :ivar response_format: The format to audio in. Supported formats are ``mp3``, ``opus``,
-     ``aac``, ``flac``, ``wav``, and ``pcm``. Is one of the following types: Literal["mp3"],
-     Literal["opus"], Literal["aac"], Literal["flac"], Literal["wav"], Literal["pcm"]
-    :vartype response_format: str or str or str or str or str or str
-    :ivar speed: The speed of the generated audio. Select a value from ``0.25`` to ``4.0``. ``1.0``
-     is the default.
-    :vartype speed: float
-    :ivar stream_format: The format to stream the audio in. Supported formats are ``sse`` and
-     ``audio``. ``sse`` is not supported for ``tts-1`` or ``tts-1-hd``. Is either a Literal["sse"]
-     type or a Literal["audio"] type.
-    :vartype stream_format: str or str
+    :ivar name: Name of the voice. Required.
+    :vartype name: str
+    :ivar endpoint_id: Custom endpoint ID. Required.
+    :vartype endpoint_id: str
+    :ivar type: Voice type identifier. Required. Is either a Literal["azure-custom"] type or a
+     Literal["custom"] type.
+    :vartype type: str or str
+    :ivar temperature: Optional temperature for generation.
+    :vartype temperature: float
+    :ivar custom_lexicon_url: Optional custom lexicon URL.
+    :vartype custom_lexicon_url: str
+    :ivar prefer_locales: Preferred locale list for voice rendering.
+    :vartype prefer_locales: list[str]
     """
 
-    model: Union[Literal["tts-1"], Literal["tts-1-hd"], Literal["gpt-4o-mini-tts"], str] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """One of the available `TTS models </docs/models#tts>`_: ``tts-1``, ``tts-1-hd`` or
-     ``gpt-4o-mini-tts``. Required. Is one of the following types: Literal[\"tts-1\"],
-     Literal[\"tts-1-hd\"], Literal[\"gpt-4o-mini-tts\"], str"""
-    input: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The text to generate audio for. The maximum length is 4096 characters. Required."""
-    instructions: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Control the voice of your generated audio with additional instructions. Does not work with
-     ``tts-1`` or ``tts-1-hd``."""
-    voice: Union[str, "_models.VoiceIdsShared"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The voice to use when generating the audio. Supported voices are ``alloy``, ``ash``,
-     ``ballad``, ``coral``, ``echo``, ``fable``, ``onyx``, ``nova``, ``sage``, ``shimmer``, and
-     ``verse``. Previews of the voices are available in the `Text to speech guide
-     </docs/guides/text-to-speech#voice-options>`_. Required. Known values are: \"alloy\", \"ash\",
-     \"ballad\", \"coral\", \"echo\", \"sage\", \"shimmer\", and \"verse\"."""
-    response_format: Optional[Literal["mp3", "opus", "aac", "flac", "wav", "pcm"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The format to audio in. Supported formats are ``mp3``, ``opus``, ``aac``, ``flac``, ``wav``,
-     and ``pcm``. Is one of the following types: Literal[\"mp3\"], Literal[\"opus\"],
-     Literal[\"aac\"], Literal[\"flac\"], Literal[\"wav\"], Literal[\"pcm\"]"""
-    speed: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The speed of the generated audio. Select a value from ``0.25`` to ``4.0``. ``1.0`` is the
-     default."""
-    stream_format: Optional[Literal["sse", "audio"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The format to stream the audio in. Supported formats are ``sse`` and ``audio``. ``sse`` is not
-     supported for ``tts-1`` or ``tts-1-hd``. Is either a Literal[\"sse\"] type or a
-     Literal[\"audio\"] type."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the voice. Required."""
+    endpoint_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Custom endpoint ID. Required."""
+    type: Literal["azure-custom", "custom"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Voice type identifier. Required. Is either a Literal[\"azure-custom\"] type or a
+     Literal[\"custom\"] type."""
+    temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional temperature for generation."""
+    custom_lexicon_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional custom lexicon URL."""
+    prefer_locales: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Preferred locale list for voice rendering."""
 
     @overload
     def __init__(
         self,
         *,
-        model: Union[Literal["tts-1"], Literal["tts-1-hd"], Literal["gpt-4o-mini-tts"], str],
-        input: str,
-        voice: Union[str, "_models.VoiceIdsShared"],
-        instructions: Optional[str] = None,
-        response_format: Optional[Literal["mp3", "opus", "aac", "flac", "wav", "pcm"]] = None,
-        speed: Optional[float] = None,
-        stream_format: Optional[Literal["sse", "audio"]] = None,
+        name: str,
+        endpoint_id: str,
+        type: Literal["azure-custom", "custom"],
+        temperature: Optional[float] = None,
+        custom_lexicon_url: Optional[str] = None,
+        prefer_locales: Optional[List[str]] = None,
     ) -> None: ...
 
     @overload
@@ -158,21 +125,37 @@ class CreateSpeechRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CreateSpeechResponseStreamEvent(_Model):
-    """CreateSpeechResponseStreamEvent.
+class AzurePersonalVoice(_Model):
+    """Voice configuration for Azure personal voice.
 
-    :ivar type: Required. Known values are: "speech.audio.delta" and "speech.audio.done".
-    :vartype type: str or ~azure.ai.voicelive.models.CreateSpeechResponseStreamEventType
+    :ivar name: Name of the voice. Required.
+    :vartype name: str
+    :ivar type: Voice type identifier. Required. Is either a Literal["azure-personal"] type or a
+     Literal["personal"] type.
+    :vartype type: str or str
+    :ivar model: Personal voice model identifier. Required. Is one of the following types:
+     Literal["DragonLatestNeural"], Literal["PhoenixLatestNeural"], Literal["PhoenixV2Neural"]
+    :vartype model: str or str or str
     """
 
-    type: Union[str, "_models.CreateSpeechResponseStreamEventType"] = rest_discriminator(
-        name="type", visibility=["read", "create", "update", "delete", "query"]
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the voice. Required."""
+    type: Literal["azure-personal", "personal"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Voice type identifier. Required. Is either a Literal[\"azure-personal\"] type or a
+     Literal[\"personal\"] type."""
+    model: Literal["DragonLatestNeural", "PhoenixLatestNeural", "PhoenixV2Neural"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
     )
-    """Required. Known values are: \"speech.audio.delta\" and \"speech.audio.done\"."""
+    """Personal voice model identifier. Required. Is one of the following types:
+     Literal[\"DragonLatestNeural\"], Literal[\"PhoenixLatestNeural\"], Literal[\"PhoenixV2Neural\"]"""
 
     @overload
     def __init__(
         self,
+        *,
+        name: str,
+        type: Literal["azure-personal", "personal"],
+        model: Literal["DragonLatestNeural", "PhoenixLatestNeural", "PhoenixV2Neural"],
     ) -> None: ...
 
     @overload
@@ -186,64 +169,35 @@ class CreateSpeechResponseStreamEvent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Error(_Model):
-    """Error object returned in case of API failure.
+class AzureStandardVoice(_Model):
+    """Voice configuration for Azure standard or platform voices.
 
-    :ivar code: Error code, or null if unspecified.
-    :vartype code: str
-    :ivar message: Human-readable error message. Required.
-    :vartype message: str
-    :ivar param: Parameter name related to the error, if applicable.
-    :vartype param: str
-    :ivar type: Type or category of the error. Required.
-    :vartype type: str
+    :ivar name: Name of the voice. Required.
+    :vartype name: str
+    :ivar type: Voice type identifier. Required. Is either a Literal["azure-standard"] type or a
+     Literal["azure-platform"] type.
+    :vartype type: str or str
+    :ivar temperature: Optional temperature for generation.
+    :vartype temperature: float
     """
 
-    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Error code, or null if unspecified."""
-    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Human-readable error message. Required."""
-    param: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Parameter name related to the error, if applicable."""
-    type: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Type or category of the error. Required."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the voice. Required."""
+    type: Literal["azure-standard", "azure-platform"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Voice type identifier. Required. Is either a Literal[\"azure-standard\"] type or a
+     Literal[\"azure-platform\"] type."""
+    temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional temperature for generation."""
 
     @overload
     def __init__(
         self,
         *,
-        message: str,
-        type: str,
-        code: Optional[str] = None,
-        param: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ErrorResponse(_Model):
-    """Standard error response envelope.
-
-    :ivar error: Error object returned in case of API failure. Required.
-    :vartype error: ~azure.ai.voicelive.models.Error
-    """
-
-    error: "_models.Error" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Error object returned in case of API failure. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        error: "_models.Error",
+        name: str,
+        type: Literal["azure-standard", "azure-platform"],
+        temperature: Optional[float] = None,
     ) -> None: ...
 
     @overload
@@ -353,34 +307,6 @@ class Point2D(_Model):
         *,
         x: int,
         y: int,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TranscriptTextUsage(_Model):
-    """TranscriptTextUsage.
-
-    :ivar type: Required. Known values are: "tokens" and "duration".
-    :vartype type: str or ~azure.ai.voicelive.models.TranscriptTextUsageType
-    """
-
-    type: Union[str, "_models.TranscriptTextUsageType"] = rest_discriminator(
-        name="type", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Required. Known values are: \"tokens\" and \"duration\"."""
-
-    @overload
-    def __init__(
-        self,
     ) -> None: ...
 
     @overload
@@ -1110,9 +1036,11 @@ class VoiceLiveRequestSession(_Model):
     :vartype modalities: list[str or ~azure.ai.voicelive.models.VoiceLiveModality]
     :ivar animation:
     :vartype animation: ~azure.ai.voicelive.models.VoiceLiveAnimation
-    :ivar voice: Known values are: "alloy", "ash", "ballad", "coral", "echo", "sage", "shimmer",
-     and "verse".
-    :vartype voice: str or ~azure.ai.voicelive.models.VoiceIdsShared
+    :ivar voice: Is one of the following types: Union[str, "_models.OAIVoice"], AzureStandardVoice,
+     AzureCustomVoice, AzurePersonalVoice, Union[str, "_models.Phi4mmVoice"]
+    :vartype voice: str or ~azure.ai.voicelive.models.OAIVoice or
+     ~azure.ai.voicelive.models.AzureStandardVoice or ~azure.ai.voicelive.models.AzureCustomVoice or
+     ~azure.ai.voicelive.models.AzurePersonalVoice or str or ~azure.ai.voicelive.models.Phi4mmVoice
     :ivar instructions:
     :vartype instructions: str
     :ivar input_audio:
@@ -1157,11 +1085,9 @@ class VoiceLiveRequestSession(_Model):
     animation: Optional["_models.VoiceLiveAnimation"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    voice: Optional[Union[str, "_models.VoiceIdsShared"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Known values are: \"alloy\", \"ash\", \"ballad\", \"coral\", \"echo\", \"sage\", \"shimmer\",
-     and \"verse\"."""
+    voice: Optional["_types.Voice"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Is one of the following types: Union[str, \"_models.OAIVoice\"], AzureStandardVoice,
+     AzureCustomVoice, AzurePersonalVoice, Union[str, \"_models.Phi4mmVoice\"]"""
     instructions: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     input_audio: Optional["_models.VoiceLiveInputAudio"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -1214,7 +1140,7 @@ class VoiceLiveRequestSession(_Model):
         model: Optional[str] = None,
         modalities: Optional[List[Union[str, "_models.VoiceLiveModality"]]] = None,
         animation: Optional["_models.VoiceLiveAnimation"] = None,
-        voice: Optional[Union[str, "_models.VoiceIdsShared"]] = None,
+        voice: Optional["_types.Voice"] = None,
         instructions: Optional[str] = None,
         input_audio: Optional["_models.VoiceLiveInputAudio"] = None,
         input_audio_sampling_rate: Optional[int] = None,
@@ -1305,11 +1231,12 @@ class VoiceLiveResponse(_Model):
      by server VAD, the response will be added to the default conversation, thus
      the ``conversation_id`` will be an id like ``conv_1234``.
     :vartype conversation_id: str
-    :ivar voice: The voice the model used to respond.
-     Current voice options are ``alloy``, ``ash``, ``ballad``, ``coral``, ``echo``, ``fable``,
-     ``onyx``, ``nova``, ``sage``, ``shimmer``, and ``verse``. Known values are: "alloy", "ash",
-     "ballad", "coral", "echo", "sage", "shimmer", and "verse".
-    :vartype voice: str or ~azure.ai.voicelive.models.VoiceIdsShared
+    :ivar voice: supported voice identifiers and configurations. Is one of the following types:
+     Union[str, "_models.OAIVoice"], AzureStandardVoice, AzureCustomVoice, AzurePersonalVoice,
+     Union[str, "_models.Phi4mmVoice"]
+    :vartype voice: str or ~azure.ai.voicelive.models.OAIVoice or
+     ~azure.ai.voicelive.models.AzureStandardVoice or ~azure.ai.voicelive.models.AzureCustomVoice or
+     ~azure.ai.voicelive.models.AzurePersonalVoice or str or ~azure.ai.voicelive.models.Phi4mmVoice
     :ivar modalities: The set of modalities the model used to respond. If there are multiple
      modalities,
      the model will pick one, for example if ``modalities`` is ``["text", "audio"]``, the model
@@ -1362,13 +1289,10 @@ class VoiceLiveResponse(_Model):
      the value of ``conversation_id`` will be ``null``. If responses are being triggered
      by server VAD, the response will be added to the default conversation, thus
      the ``conversation_id`` will be an id like ``conv_1234``."""
-    voice: Optional[Union[str, "_models.VoiceIdsShared"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The voice the model used to respond.
-     Current voice options are ``alloy``, ``ash``, ``ballad``, ``coral``, ``echo``, ``fable``,
-     ``onyx``, ``nova``, ``sage``, ``shimmer``, and ``verse``. Known values are: \"alloy\", \"ash\",
-     \"ballad\", \"coral\", \"echo\", \"sage\", \"shimmer\", and \"verse\"."""
+    voice: Optional["_types.Voice"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """supported voice identifiers and configurations. Is one of the following types: Union[str,
+     \"_models.OAIVoice\"], AzureStandardVoice, AzureCustomVoice, AzurePersonalVoice, Union[str,
+     \"_models.Phi4mmVoice\"]"""
     modalities: Optional[List[Literal["text", "audio"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1400,7 +1324,7 @@ class VoiceLiveResponse(_Model):
         output: Optional[List["_models.VoiceLiveConversationResponseItem"]] = None,
         usage: Optional["_models.VoiceLiveResponseUsage"] = None,
         conversation_id: Optional[str] = None,
-        voice: Optional[Union[str, "_models.VoiceIdsShared"]] = None,
+        voice: Optional["_types.Voice"] = None,
         modalities: Optional[List[Literal["text", "audio"]]] = None,
         output_audio_format: Optional[Literal["pcm16", "g711_ulaw", "g711_alaw"]] = None,
         temperature: Optional[float] = None,
@@ -1602,135 +1526,139 @@ class VoiceLiveResponseMessageItem(VoiceLiveConversationResponseItem, discrimina
 class VoiceLiveResponseSession(_Model):
     """VoiceLiveResponseSession.
 
-    :ivar id: Required.
+    :ivar id:
     :vartype id: str
-    :ivar model: Required.
+    :ivar model:
     :vartype model: str
-    :ivar modalities: Required.
+    :ivar modalities:
     :vartype modalities: list[str or ~azure.ai.voicelive.models.VoiceLiveModality]
-    :ivar instructions: Required.
+    :ivar instructions:
     :vartype instructions: str
     :ivar animation:
     :vartype animation: ~azure.ai.voicelive.models.VoiceLiveAnimation
-    :ivar voice: Required. Known values are: "alloy", "ash", "ballad", "coral", "echo", "sage",
-     "shimmer", and "verse".
-    :vartype voice: str or ~azure.ai.voicelive.models.VoiceIdsShared
+    :ivar voice: Is one of the following types: Union[str, "_models.OAIVoice"], AzureStandardVoice,
+     AzureCustomVoice, AzurePersonalVoice, Union[str, "_models.Phi4mmVoice"]
+    :vartype voice: str or ~azure.ai.voicelive.models.OAIVoice or
+     ~azure.ai.voicelive.models.AzureStandardVoice or ~azure.ai.voicelive.models.AzureCustomVoice or
+     ~azure.ai.voicelive.models.AzurePersonalVoice or str or ~azure.ai.voicelive.models.Phi4mmVoice
     :ivar input_audio:
     :vartype input_audio: ~azure.ai.voicelive.models.VoiceLiveInputAudio
-    :ivar input_audio_format: Required. Known values are: "pcm16", "g711_ulaw", and "g711_alaw".
+    :ivar input_audio_format: Known values are: "pcm16", "g711_ulaw", and "g711_alaw".
     :vartype input_audio_format: str or ~azure.ai.voicelive.models.VoiceLiveAudioFormat
-    :ivar output_audio_format: Required. Known values are: "pcm16", "g711_ulaw", and "g711_alaw".
+    :ivar output_audio_format: Known values are: "pcm16", "g711_ulaw", and "g711_alaw".
     :vartype output_audio_format: str or ~azure.ai.voicelive.models.VoiceLiveAudioFormat
     :ivar input_audio_sampling_rate:
     :vartype input_audio_sampling_rate: int
-    :ivar turn_detection: Required.
+    :ivar turn_detection:
     :vartype turn_detection: ~azure.ai.voicelive.models.VoiceLiveTurnDetection
-    :ivar input_audio_noise_reduction: Required.
+    :ivar input_audio_noise_reduction:
     :vartype input_audio_noise_reduction: ~azure.ai.voicelive.models.VoiceLiveAudioNoiseReduction
     :ivar input_audio_echo_cancellation:
     :vartype input_audio_echo_cancellation:
      ~azure.ai.voicelive.models.VoiceLiveAudioEchoCancellation
     :ivar avatar:
     :vartype avatar: ~azure.ai.voicelive.models.VoiceLiveAvatarConfig
-    :ivar input_audio_transcription: Required.
+    :ivar input_audio_transcription:
     :vartype input_audio_transcription:
      ~azure.ai.voicelive.models.VoiceLiveAudioInputTranscriptionSettings
-    :ivar tools: Required.
+    :ivar output_audio_timestamp_types:
+    :vartype output_audio_timestamp_types: list[str or
+     ~azure.ai.voicelive.models.VoiceLiveAudioTimestampType]
+    :ivar tools:
     :vartype tools: list[~azure.ai.voicelive.models.VoiceLiveTool]
-    :ivar tool_choice: Required. Is either a Union[str, "_models.VoiceLiveToolChoiceLiteral"] type
-     or a VoiceLiveToolChoiceObject type.
+    :ivar tool_choice: Is either a Union[str, "_models.VoiceLiveToolChoiceLiteral"] type or a
+     VoiceLiveToolChoiceObject type.
     :vartype tool_choice: str or ~azure.ai.voicelive.models.VoiceLiveToolChoiceLiteral or
      ~azure.ai.voicelive.models.VoiceLiveToolChoiceObject
-    :ivar temperature: Required.
+    :ivar temperature:
     :vartype temperature: float
-    :ivar max_response_output_tokens: Required. Is either a int type or a Literal["inf"] type.
+    :ivar max_response_output_tokens: Is either a int type or a Literal["inf"] type.
     :vartype max_response_output_tokens: int or str
     :ivar agent:
     :vartype agent: ~azure.ai.voicelive.models.AgentConfig
     """
 
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
-    model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
-    modalities: List[Union[str, "_models.VoiceLiveModality"]] = rest_field(
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    model: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    modalities: Optional[List[Union[str, "_models.VoiceLiveModality"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Required."""
-    instructions: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
+    instructions: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     animation: Optional["_models.VoiceLiveAnimation"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    voice: Union[str, "_models.VoiceIdsShared"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required. Known values are: \"alloy\", \"ash\", \"ballad\", \"coral\", \"echo\", \"sage\",
-     \"shimmer\", and \"verse\"."""
+    voice: Optional["_types.Voice"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Is one of the following types: Union[str, \"_models.OAIVoice\"], AzureStandardVoice,
+     AzureCustomVoice, AzurePersonalVoice, Union[str, \"_models.Phi4mmVoice\"]"""
     input_audio: Optional["_models.VoiceLiveInputAudio"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    input_audio_format: Union[str, "_models.VoiceLiveAudioFormat"] = rest_field(
+    input_audio_format: Optional[Union[str, "_models.VoiceLiveAudioFormat"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Required. Known values are: \"pcm16\", \"g711_ulaw\", and \"g711_alaw\"."""
-    output_audio_format: Union[str, "_models.VoiceLiveAudioFormat"] = rest_field(
+    """Known values are: \"pcm16\", \"g711_ulaw\", and \"g711_alaw\"."""
+    output_audio_format: Optional[Union[str, "_models.VoiceLiveAudioFormat"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Required. Known values are: \"pcm16\", \"g711_ulaw\", and \"g711_alaw\"."""
+    """Known values are: \"pcm16\", \"g711_ulaw\", and \"g711_alaw\"."""
     input_audio_sampling_rate: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    turn_detection: "_models.VoiceLiveTurnDetection" = rest_field(
+    turn_detection: Optional["_models.VoiceLiveTurnDetection"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Required."""
-    input_audio_noise_reduction: "_models.VoiceLiveAudioNoiseReduction" = rest_field(
+    input_audio_noise_reduction: Optional["_models.VoiceLiveAudioNoiseReduction"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Required."""
     input_audio_echo_cancellation: Optional["_models.VoiceLiveAudioEchoCancellation"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     avatar: Optional["_models.VoiceLiveAvatarConfig"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    input_audio_transcription: "_models.VoiceLiveAudioInputTranscriptionSettings" = rest_field(
+    input_audio_transcription: Optional["_models.VoiceLiveAudioInputTranscriptionSettings"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Required."""
-    tools: List["_models.VoiceLiveTool"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
-    tool_choice: "_types.VoiceLiveToolChoice" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required. Is either a Union[str, \"_models.VoiceLiveToolChoiceLiteral\"] type or a
+    output_audio_timestamp_types: Optional[List[Union[str, "_models.VoiceLiveAudioTimestampType"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    tools: Optional[List["_models.VoiceLiveTool"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    tool_choice: Optional["_types.VoiceLiveToolChoice"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Is either a Union[str, \"_models.VoiceLiveToolChoiceLiteral\"] type or a
      VoiceLiveToolChoiceObject type."""
-    temperature: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
-    max_response_output_tokens: Union[int, Literal["inf"]] = rest_field(
+    temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    max_response_output_tokens: Optional[Union[int, Literal["inf"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Required. Is either a int type or a Literal[\"inf\"] type."""
+    """Is either a int type or a Literal[\"inf\"] type."""
     agent: Optional["_models.AgentConfig"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
 
     @overload
     def __init__(
         self,
         *,
-        id: str,  # pylint: disable=redefined-builtin
-        model: str,
-        modalities: List[Union[str, "_models.VoiceLiveModality"]],
-        instructions: str,
-        voice: Union[str, "_models.VoiceIdsShared"],
-        input_audio_format: Union[str, "_models.VoiceLiveAudioFormat"],
-        output_audio_format: Union[str, "_models.VoiceLiveAudioFormat"],
-        turn_detection: "_models.VoiceLiveTurnDetection",
-        input_audio_noise_reduction: "_models.VoiceLiveAudioNoiseReduction",
-        input_audio_transcription: "_models.VoiceLiveAudioInputTranscriptionSettings",
-        tools: List["_models.VoiceLiveTool"],
-        tool_choice: "_types.VoiceLiveToolChoice",
-        temperature: float,
-        max_response_output_tokens: Union[int, Literal["inf"]],
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        model: Optional[str] = None,
+        modalities: Optional[List[Union[str, "_models.VoiceLiveModality"]]] = None,
+        instructions: Optional[str] = None,
         animation: Optional["_models.VoiceLiveAnimation"] = None,
+        voice: Optional["_types.Voice"] = None,
         input_audio: Optional["_models.VoiceLiveInputAudio"] = None,
+        input_audio_format: Optional[Union[str, "_models.VoiceLiveAudioFormat"]] = None,
+        output_audio_format: Optional[Union[str, "_models.VoiceLiveAudioFormat"]] = None,
         input_audio_sampling_rate: Optional[int] = None,
+        turn_detection: Optional["_models.VoiceLiveTurnDetection"] = None,
+        input_audio_noise_reduction: Optional["_models.VoiceLiveAudioNoiseReduction"] = None,
         input_audio_echo_cancellation: Optional["_models.VoiceLiveAudioEchoCancellation"] = None,
         avatar: Optional["_models.VoiceLiveAvatarConfig"] = None,
+        input_audio_transcription: Optional["_models.VoiceLiveAudioInputTranscriptionSettings"] = None,
+        output_audio_timestamp_types: Optional[List[Union[str, "_models.VoiceLiveAudioTimestampType"]]] = None,
+        tools: Optional[List["_models.VoiceLiveTool"]] = None,
+        tool_choice: Optional["_types.VoiceLiveToolChoice"] = None,
+        temperature: Optional[float] = None,
+        max_response_output_tokens: Optional[Union[int, Literal["inf"]]] = None,
         agent: Optional["_models.AgentConfig"] = None,
     ) -> None: ...
 
@@ -2282,10 +2210,6 @@ class VoiceLiveServerEventConversationItemInputAudioTranscriptionCompleted(
     :vartype content_index: int
     :ivar transcript: The transcribed text. Required.
     :vartype transcript: str
-    :ivar logprobs: The log probabilities of the transcription.
-    :vartype logprobs: list[~azure.ai.voicelive.models.LogProbProperties]
-    :ivar usage: Usage statistics for the transcription. Required.
-    :vartype usage: ~azure.ai.voicelive.models.TranscriptTextUsage
     """
 
     type: Literal[VoiceLiveServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_COMPLETED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -2297,12 +2221,6 @@ class VoiceLiveServerEventConversationItemInputAudioTranscriptionCompleted(
     """The index of the content part containing the audio. Required."""
     transcript: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The transcribed text. Required."""
-    logprobs: Optional[List["_models.LogProbProperties"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The log probabilities of the transcription."""
-    usage: "_models.TranscriptTextUsage" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Usage statistics for the transcription. Required."""
 
     @overload
     def __init__(
@@ -2311,9 +2229,7 @@ class VoiceLiveServerEventConversationItemInputAudioTranscriptionCompleted(
         item_id: str,
         content_index: int,
         transcript: str,
-        usage: "_models.TranscriptTextUsage",
         event_id: Optional[str] = None,
-        logprobs: Optional[List["_models.LogProbProperties"]] = None,
     ) -> None: ...
 
     @overload

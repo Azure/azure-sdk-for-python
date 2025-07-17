@@ -44,6 +44,7 @@ except ImportError:
 from azure.core.credentials import AzureKeyCredential
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.voicelive.aio import AsyncVoiceLiveClient
+from azure.ai.voicelive.models import VoiceLiveServerEventSessionUpdated, VoiceLiveRequestSession
 
 
 class AudioProcessor:
@@ -220,16 +221,17 @@ async def main():
         ) as connection:
             # Set up the session
             print("Setting up session...")
-            await connection.session.update(
-                session={
-                    "modalities": ["audio", "text"],
-                    "voice": args.voice,
-                    "instructions": "You are a helpful assistant. Keep your responses concise and natural.",
-                    "turn_detection": {"type": "server_vad", "threshold": 0.6, "silence_duration_ms": 700},
-                    "input_audio_format": "pcm16",
-                    "output_audio_format": "pcm16",
-                }
+            s = VoiceLiveRequestSession(
+                modalities=["audio", "text"],
+                instructions="You are a helpful assistant. Keep your responses concise and natural.",
+                turn_detection={
+                    "type": "server_vad",
+                    "threshold": 0.6,
+                    "silence_duration_ms": 700,
+                },
+                input_audio_format="pcm16",
             )
+            await connection.session.update(session=s)
 
             # Start recording
             audio_processor.start_recording()

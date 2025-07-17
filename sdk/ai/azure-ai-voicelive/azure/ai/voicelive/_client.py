@@ -16,16 +16,13 @@ from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import VoiceLiveClientConfiguration
+from ._operations._operations import _VoiceLiveClientOperationsMixin
 from ._utils.serialization import Deserializer, Serializer
-from .operations import AudioOperations
-from .operations._operations import _VoiceLiveClientOperationsMixin
 
 
 class VoiceLiveClient(_VoiceLiveClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """VoiceLiveClient.
 
-    :ivar audio: AudioOperations operations
-    :vartype audio: azure.ai.voicelive.operations.AudioOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential
     :keyword endpoint: Service host. Default value is "wss://api.voicelive.com/v1".
@@ -60,7 +57,6 @@ class VoiceLiveClient(_VoiceLiveClientOperationsMixin):  # pylint: disable=clien
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.audio = AudioOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

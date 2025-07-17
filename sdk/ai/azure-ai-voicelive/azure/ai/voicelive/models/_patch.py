@@ -180,7 +180,13 @@ class VoiceLiveServerEvent(VoiceLiveServerEventGenerated):
 
         # Create and return the event instance
         try:
-            return event_class(**data)
+            # Make a copy of the data and remove 'type' to avoid duplicate parameter
+            event_data = data.copy()
+            if event_type in event_class_map:
+                # Remove 'type' for subclasses that already set it via discriminator
+                event_data.pop('type', None)  
+            
+            return event_class(**event_data)
         except TypeError as e:
             log.warning(f"Could not create {event_class.__name__} from data: {e}. Falling back to base class.")
             # Fallback to base class with minimal fields

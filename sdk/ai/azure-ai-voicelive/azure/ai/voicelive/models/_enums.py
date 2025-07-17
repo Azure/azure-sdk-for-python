@@ -10,22 +10,8 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class CreateSpeechResponseStreamEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of CreateSpeechResponseStreamEventType."""
-
-    SPEECH_AUDIO_DELTA = "speech.audio.delta"
-    SPEECH_AUDIO_DONE = "speech.audio.done"
-
-
-class TranscriptTextUsageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of TranscriptTextUsageType."""
-
-    TOKENS = "tokens"
-    DURATION = "duration"
-
-
-class VoiceIdsShared(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Identifier for selecting a built-in voice."""
+class OAIVoice(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Voice identifier for OpenAI-provided voices."""
 
     ALLOY = "alloy"
     ASH = "ash"
@@ -35,6 +21,12 @@ class VoiceIdsShared(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SAGE = "sage"
     SHIMMER = "shimmer"
     VERSE = "verse"
+
+
+class Phi4mmVoice(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Voice identifier for Phi4mm voices."""
+
+    COSYVOICE = "cosyvoice"
 
 
 class VoiceLiveAnimationOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

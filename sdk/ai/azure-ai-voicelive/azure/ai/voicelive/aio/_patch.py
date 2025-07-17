@@ -17,7 +17,7 @@ from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 
 from ._client import VoiceLiveClient as VoiceLiveClientGenerated
-from ..models import VoiceLiveClientEvent, VoiceLiveServerEvent
+from ..models import VoiceLiveClientEvent, VoiceLiveServerEvent, VoiceLiveRequestSession
 
 __all__: List[str] = [
     "AsyncVoiceLiveClient",
@@ -63,7 +63,7 @@ class AsyncVoiceLiveSessionResource:
         """
         self._connection = connection
 
-    async def update(self, *, session: Dict[str, Any], event_id: Optional[str] = None) -> None:
+    async def update(self, *, session: Dict[str, Any] | VoiceLiveRequestSession, event_id: Optional[str] = None) -> None:
         """Update the session configuration.
 
         :param session: Session configuration parameters.
@@ -71,6 +71,9 @@ class AsyncVoiceLiveSessionResource:
         :param event_id: Optional ID for the event.
         :type event_id: Optional[str]
         """
+        if isinstance(session, VoiceLiveRequestSession):
+            session = session.as_dict()
+        
         event = {"type": "session.update", "session": session}
         if event_id:
             event["event_id"] = event_id
