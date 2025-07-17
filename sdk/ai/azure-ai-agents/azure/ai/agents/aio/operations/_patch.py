@@ -115,6 +115,7 @@ class RunsOperations(RunsOperationsGenerated):
         additional_instructions: Optional[str] = None,
         additional_messages: Optional[List[_models.ThreadMessageOptions]] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_prompt_tokens: Optional[int] = None,
@@ -156,6 +157,9 @@ class RunsOperations(RunsOperationsGenerated):
         :keyword tools: The overridden list of enabled tools that the agent should use to run the
          thread. Default value is None.
         :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
+        :keyword tool_resources: The overridden enabled tool resources that the agent should use to run
+         the thread. Default value is None.
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output
          more random, while lower values like 0.2 will make it more focused and deterministic. Default
@@ -281,6 +285,7 @@ class RunsOperations(RunsOperationsGenerated):
         additional_instructions: Optional[str] = None,
         additional_messages: Optional[List[_models.ThreadMessageOptions]] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_prompt_tokens: Optional[int] = None,
@@ -321,6 +326,9 @@ class RunsOperations(RunsOperationsGenerated):
         :keyword tools: The overridden list of enabled tools that the agent should use to run the
          thread. Default value is None.
         :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
+        :keyword tool_resources: The overridden enabled tool resources that the agent should use to run
+         the thread. Default value is None.
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output
          more random, while lower values like 0.2 will make it more focused and deterministic. Default
@@ -389,6 +397,7 @@ class RunsOperations(RunsOperationsGenerated):
                 additional_instructions=additional_instructions,
                 additional_messages=additional_messages,
                 tools=tools,
+                tool_resources=tool_resources,
                 stream_parameter=False,
                 stream=False,
                 temperature=temperature,
@@ -600,6 +609,7 @@ class RunsOperations(RunsOperationsGenerated):
         additional_instructions: Optional[str] = None,
         additional_messages: Optional[List[_models.ThreadMessageOptions]] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_prompt_tokens: Optional[int] = None,
@@ -642,6 +652,9 @@ class RunsOperations(RunsOperationsGenerated):
         :keyword tools: The overridden list of enabled tools that the agent should use to run the
          thread. Default value is None.
         :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
+        :keyword tool_resources: The overridden enabled tool resources that the agent should use to run
+         the thread. Default value is None.
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output
          more random, while lower values like 0.2 will make it more focused and deterministic. Default
@@ -711,6 +724,7 @@ class RunsOperations(RunsOperationsGenerated):
         additional_instructions: Optional[str] = None,
         additional_messages: Optional[List[_models.ThreadMessageOptions]] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_prompt_tokens: Optional[int] = None,
@@ -753,6 +767,9 @@ class RunsOperations(RunsOperationsGenerated):
         :keyword tools: The overridden list of enabled tools that the agent should use to run the
          thread. Default value is None.
         :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
+        :keyword tool_resources: The overridden enabled tool resources that the agent should use to run
+         the thread. Default value is None.
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output
          more random, while lower values like 0.2 will make it more focused and deterministic. Default
@@ -891,6 +908,7 @@ class RunsOperations(RunsOperationsGenerated):
         additional_instructions: Optional[str] = None,
         additional_messages: Optional[List[_models.ThreadMessageOptions]] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_prompt_tokens: Optional[int] = None,
@@ -934,6 +952,9 @@ class RunsOperations(RunsOperationsGenerated):
         :keyword tools: The overridden list of enabled tools that the agent should use to run the
          thread. Default value is None.
         :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
+        :keyword tool_resources: The overridden enabled tool resources that the agent should use to run
+         the thread. Default value is None.
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output
          more random, while lower values like 0.2 will make it more focused and deterministic. Default
@@ -1005,6 +1026,7 @@ class RunsOperations(RunsOperationsGenerated):
                 additional_instructions=additional_instructions,
                 additional_messages=additional_messages,
                 tools=tools,
+                tool_resources=tool_resources,
                 stream_parameter=True,
                 stream=True,
                 temperature=temperature,
