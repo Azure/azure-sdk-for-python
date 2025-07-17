@@ -44,7 +44,7 @@ from ._shared.utils import parse_connection_str
 from ._version import SDK_MONIKER
 from ._api_versions import DEFAULT_VERSION
 
-_DEFAULT_POLLING_INTERVAL_IN_SECONDS = 2
+_DEFAULT_POLLING_INTERVAL_IN_SECONDS = 2  # Default polling interval for long-running operations
 
 
 class PhoneNumbersClient:
@@ -283,8 +283,7 @@ class PhoneNumbersClient:
          default value is 0. Default value is 0.
         :paramtype skip: int
         :return: An iterator like instance of PhoneNumberCountry
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.PhoneNumberCountry]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.PhoneNumberCountry]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return self._phone_number_client.phone_numbers.list_available_countries(
@@ -292,13 +291,20 @@ class PhoneNumbersClient:
         )
 
     @distributed_trace
-    def list_available_localities(self, country_code: str, **kwargs: Any) -> ItemPaged[PhoneNumberLocality]:
+    def list_available_localities(
+        self,
+        country_code: str,
+        **kwargs: Any
+    ) -> ItemPaged[PhoneNumberLocality]:
         """Gets the list of cities or towns with available phone numbers.
 
         Gets the list of cities or towns with available phone numbers.
 
         :param country_code: The ISO 3166-2 country/region two letter code, e.g. US. Required.
         :type country_code: str
+        :keyword phone_number_type: An optional parameter for the type of phone numbers, 
+         e.g. geographic, tollFree, mobile. Default value is None.
+        :paramtype phone_number_type: ~azure.communication.phonenumbers.PhoneNumberType
         :keyword administrative_division: An optional parameter for the name of the state or province
          in which to search for the area code. e.g. California. Default value is None.
         :paramtype administrative_division: str
@@ -306,15 +312,14 @@ class PhoneNumbersClient:
          default value is 0. Default value is 0.
         :paramtype skip: int
         :return: An iterator like instance of PhoneNumberLocality
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.PhoneNumberLocality]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.PhoneNumberLocality]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return self._phone_number_client.phone_numbers.list_available_localities(
             country_code,
-            administrative_division=kwargs.pop(
-                "administrative_division", None),
+            administrative_division=kwargs.pop("administrative_division", None),
             accept_language=self._accepted_language,
+            phone_number_type=kwargs.pop("phone_number_type", None),
             **kwargs
         )
 
@@ -336,8 +341,7 @@ class PhoneNumbersClient:
          default value is 0. Default value is 0.
         :paramtype skip: int
         :return: An iterator like instance of PhoneNumberOffering
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.PhoneNumberOffering]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.PhoneNumberOffering]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return self._phone_number_client.phone_numbers.list_offerings(
@@ -386,7 +390,11 @@ class PhoneNumbersClient:
 
     @distributed_trace
     def search_operator_information(
-        self, phone_numbers: Union[str, List[str]], *, options: Optional[OperatorInformationOptions] = None, **kwargs: Any  # pylint: disable=line-too-long
+        self,
+        phone_numbers: Union[str, List[str]],
+        *,
+        options: Optional[OperatorInformationOptions] = None,
+        **kwargs: Any
     ) -> OperatorInformationResult:
         """Searches for operator information for a given list of phone numbers.
 
@@ -436,8 +444,7 @@ class PhoneNumbersClient:
          purposes. The default value is 100. Default value is 100.
         :paramtype max_page_size: int
         :return: An iterator like instance of PhoneNumbersReservation
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.PhoneNumbersReservation]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.PhoneNumbersReservation]
         """
 
         # This allows mapping the generated model to the public model.
