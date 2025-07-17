@@ -43,9 +43,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
     5. The identity currently logged in to the Azure CLI.
     6. The identity currently logged in to Azure PowerShell.
     7. The identity currently logged in to the Azure Developer CLI.
-    8. Brokered authentication. On Windows and WSL, this uses an authentication broker such as
-       Web Account Manager (WAM). On other platforms or when the azure-identity-broker package is not installed,
-       this credential will raise CredentialUnavailableError.
+    8. Brokered authentication. On Windows and WSL only, this uses the default account logged in via
+       Web Account Manager (WAM) if the `azure-identity-broker` package is installed.
 
     This default behavior is configurable with keyword arguments.
 
@@ -69,8 +68,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
     :keyword bool exclude_interactive_browser_credential: Whether to exclude interactive browser authentication (see
         :class:`~azure.identity.InteractiveBrowserCredential`). Defaults to **True**.
     :keyword bool exclude_broker_credential: Whether to exclude the broker credential from the credential chain.
-        Defaults to **False**. When False, the broker credential is always included in the chain but will raise
-        CredentialUnavailableError if the azure-identity-broker package is not installed.
+        Defaults to **False**.
     :keyword str interactive_browser_tenant_id: Tenant ID to use when authenticating a user through
         :class:`~azure.identity.InteractiveBrowserCredential`. Defaults to the value of environment variable
         AZURE_TENANT_ID, if any. If unspecified, users will authenticate in their home tenants.
