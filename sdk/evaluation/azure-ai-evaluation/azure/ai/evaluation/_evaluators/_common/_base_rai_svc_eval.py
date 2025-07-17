@@ -36,12 +36,14 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         aggregated. Per-turn results are still be available in the output via the "evaluation_per_turn" key
         when this occurs. Default is False, resulting full conversation evaluation and aggregation.
     :type eval_last_turn: bool
-    :param conversation_aggregation_type: The type of aggregation to perform on the per-turn results of a conversation
-        to produce a single result.
+    :param conversation_aggregation_type: The type of aggregation to perform on the per-turn results of a conversation        to produce a single result.
         Default is ~azure.ai.evaluation._AggregationType.MEAN.
     :type conversation_aggregation_type: ~azure.ai.evaluation._AggregationType
     :param threshold: The threshold for the evaluation. Default is 3.
     :type threshold: Optional[int]
+    :param _evaluate_query: If True, the query will be included in the evaluation data when evaluating
+        query-response pairs. If False, only the response will be evaluated. Default is False.
+    :type _evaluate_query: bool
     :param _higher_is_better: If True, higher scores are better. Default is True.
     :type _higher_is_better: Optional[bool]
     """
@@ -55,6 +57,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         eval_last_turn: bool = False,
         conversation_aggregation_type: _AggregationType = _AggregationType.MEAN,
         threshold: int = 3,
+        _evaluate_query: bool = False,
         _higher_is_better: Optional[bool] = False,
     ):
         super().__init__(
@@ -67,6 +70,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         self._azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self._credential = credential
         self._threshold = threshold
+        self._evaluate_query = _evaluate_query
         self._higher_is_better = _higher_is_better
 
     @override
@@ -101,7 +105,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         :return: The evaluation result.
         :rtype: Dict
         """
-        if "query" in eval_input and "response" in eval_input:
+        if "response" in eval_input:
             return await self._evaluate_query_response(eval_input)
 
         conversation = eval_input.get("conversation", None)
@@ -131,17 +135,20 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         return result
 
     async def _evaluate_query_response(self, eval_input: Dict) -> Dict[str, T]:
-        query = str(eval_input.get("query", None))
-        response = str(eval_input.get("response", None))
-        if query is None or response is None:
+        query = eval_input.get("query", None)
+        response = eval_input.get("response", None)
+        if response is None:
             raise EvaluationException(
                 message="Not implemented",
                 internal_message=(
-                    "Reached query/response evaluation without supplying query or response."
+                    "Reached query/response evaluation without supplying response."
                     + " This should have failed earlier."
                 ),
             )
-        input_data = {"query": query, "response": response}
+        input_data = {"response": str(response)}
+
+        if query is not None and self._evaluate_query:
+            input_data["query"] = str(query)
 
         if "context" in self._singleton_inputs:
             context = eval_input.get("context", None)
