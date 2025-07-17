@@ -32,6 +32,8 @@ from ._evaluators._code_vulnerability import CodeVulnerabilityEvaluator
 from ._evaluators._ungrounded_attributes import UngroundedAttributesEvaluator
 from ._evaluators._tool_call_accuracy import ToolCallAccuracyEvaluator
 from ._evaluators._document_retrieval import DocumentRetrievalEvaluator
+from ._agents._critic_agent import CriticAgent
+
 from ._model_configurations import (
     AzureAIProject,
     AzureOpenAIModelConfiguration,
@@ -110,6 +112,7 @@ __all__ = [
     "AzureOpenAIStringCheckGrader",
     "AzureOpenAITextSimilarityGrader",
     "AzureOpenAIScoreModelGrader",
+    "CriticAgent",
 ]
 
 __all__.extend([p for p in _patch_all if p not in __all__])
