@@ -51,7 +51,7 @@ This guide assumes the following package folder structure:
    ```bash
    pip install azure-cli
    ```
-   > **Note**: Installation may take several minutes but is only required once
+   > **Note**: Run command in virtual environment
 
 5. **Authenticate with Azure**:
    ```bash
