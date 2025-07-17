@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
@@ -13,17 +14,20 @@ class TestConversationalSummarization(AzureRecordedTestCase):
 
     def test_polling_interval(self, conversation_creds):
         # test default
-        client = ConversationAnalysisClient(conversation_creds["endpoint"], AzureKeyCredential(conversation_creds["key"]))
+        client = ConversationAnalysisClient(
+            conversation_creds["endpoint"], AzureKeyCredential(conversation_creds["key"])
+        )
         assert client._config.polling_interval == 5
         # test override
-        client = ConversationAnalysisClient(conversation_creds["endpoint"], AzureKeyCredential(conversation_creds["key"]), polling_interval=1)
+        client = ConversationAnalysisClient(
+            conversation_creds["endpoint"], AzureKeyCredential(conversation_creds["key"]), polling_interval=1
+        )
         assert client._config.polling_interval == 1
 
     def test_conversational_summarization(self, recorded_test, conversation_creds):
         # analyze query
         client = ConversationAnalysisClient(
-            conversation_creds["endpoint"],
-            AzureKeyCredential(conversation_creds["key"])
+            conversation_creds["endpoint"], AzureKeyCredential(conversation_creds["key"])
         )
         with client:
             poller = client.begin_conversation_analysis(
@@ -38,26 +42,26 @@ class TestConversationalSummarization(AzureRecordedTestCase):
                                         "modality": "text",
                                         "id": "1",
                                         "role": "Agent",
-                                        "participantId": "Agent"
+                                        "participantId": "Agent",
                                     },
                                     {
                                         "text": "How to upgrade Office? I am getting error messages the whole day.",
                                         "modality": "text",
                                         "id": "2",
                                         "role": "Customer",
-                                        "participantId": "Customer"
+                                        "participantId": "Customer",
                                     },
                                     {
                                         "text": "Press the upgrade button please. Then sign in and follow the instructions.",
                                         "modality": "text",
                                         "id": "3",
                                         "role": "Agent",
-                                        "participantId": "Agent"
-                                    }
+                                        "participantId": "Agent",
+                                    },
                                 ],
                                 "modality": "text",
                                 "id": "conversation1",
-                                "language": "en"
+                                "language": "en",
                             },
                         ]
                     },
@@ -65,18 +69,14 @@ class TestConversationalSummarization(AzureRecordedTestCase):
                         {
                             "taskName": "Issue task",
                             "kind": "ConversationalSummarizationTask",
-                            "parameters": {
-                                "summaryAspects": ["issue"]
-                            }
+                            "parameters": {"summaryAspects": ["issue"]},
                         },
                         {
                             "taskName": "Resolution task",
                             "kind": "ConversationalSummarizationTask",
-                            "parameters": {
-                                "summaryAspects": ["resolution"]
-                            }
+                            "parameters": {"summaryAspects": ["resolution"]},
                         },
-                    ]
+                    ],
                 }
             )
 
@@ -101,72 +101,57 @@ class TestConversationalSummarization(AzureRecordedTestCase):
     def test_conv_summ_chapter_narrative(self, recorded_test, conversation_creds):
         # analyze query
         client = ConversationAnalysisClient(
-            conversation_creds["endpoint"],
-            AzureKeyCredential(conversation_creds["key"])
+            conversation_creds["endpoint"], AzureKeyCredential(conversation_creds["key"])
         )
         with client:
             poller = client.begin_conversation_analysis(
                 task={
-                  "displayName": "Conversation Summarization Example",
-                  "analysisInput": {
-                    "conversations": [
-                      {
-                        "id": "1",
-                        "language": "en",
-                        "modality": "transcript",
-                        "conversationItems": [
-                          {
-                            "participantId": "speaker 1",
-                            "id": "1",
-                            "text": "Let's get started.",
-                            "lexical": "",
-                            "itn": "",
-                            "maskedItn": "",
-                            "conversationItemLevelTiming": {
-                              "offset": 0,
-                              "duration": 20000000
+                    "displayName": "Conversation Summarization Example",
+                    "analysisInput": {
+                        "conversations": [
+                            {
+                                "id": "1",
+                                "language": "en",
+                                "modality": "transcript",
+                                "conversationItems": [
+                                    {
+                                        "participantId": "speaker 1",
+                                        "id": "1",
+                                        "text": "Let's get started.",
+                                        "lexical": "",
+                                        "itn": "",
+                                        "maskedItn": "",
+                                        "conversationItemLevelTiming": {"offset": 0, "duration": 20000000},
+                                    },
+                                    {
+                                        "participantId": "speaker 2",
+                                        "id": "2",
+                                        "text": "OK. How many remaining bugs do we have now?",
+                                        "lexical": "",
+                                        "itn": "",
+                                        "maskedItn": "",
+                                        "conversationItemLevelTiming": {"offset": 20000000, "duration": 50000000},
+                                    },
+                                    {
+                                        "participantId": "speaker 3",
+                                        "id": "3",
+                                        "text": "Only 3.",
+                                        "lexical": "",
+                                        "itn": "",
+                                        "maskedItn": "",
+                                        "conversationItemLevelTiming": {"offset": 50000000, "duration": 60000000},
+                                    },
+                                ],
                             }
-                          },
-                          {
-                            "participantId": "speaker 2",
-                            "id": "2",
-                            "text": "OK. How many remaining bugs do we have now?",
-                            "lexical": "",
-                            "itn": "",
-                            "maskedItn": "",
-                            "conversationItemLevelTiming": {
-                              "offset": 20000000,
-                              "duration": 50000000
-                            }
-                          },
-                          {
-                            "participantId": "speaker 3",
-                            "id": "3",
-                            "text": "Only 3.",
-                            "lexical": "",
-                            "itn": "",
-                            "maskedItn": "",
-                            "conversationItemLevelTiming": {
-                              "offset": 50000000,
-                              "duration": 60000000
-                            }
-                          }
                         ]
-                      }
-                    ]
-                  },
-                  "tasks": [
-                    {
-                      "taskName": "Conversation Summarization Task 1",
-                      "kind": "ConversationalSummarizationTask",
-                      "parameters": {
-                        "summaryAspects": [
-                          "chapterTitle",
-                          "narrative"
-                        ]
-                      }
-                    }
-                  ]
+                    },
+                    "tasks": [
+                        {
+                            "taskName": "Conversation Summarization Task 1",
+                            "kind": "ConversationalSummarizationTask",
+                            "parameters": {"summaryAspects": ["chapterTitle", "narrative"]},
+                        }
+                    ],
                 }
             )
 
