@@ -173,7 +173,7 @@ class TestSession(unittest.TestCase):
             self.assertEqual(self.client.client_connection.session.get_session_token(
                 'dbs/' + self.created_db.id + '/colls/' + self.created_collection.id,
                 None,
-                None,
+                {},
                 None,
                 None), "")
             self.assertEqual(e.status_code, StatusCodes.NOT_FOUND)
