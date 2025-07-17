@@ -70,11 +70,11 @@ az login
 **CHECK** whether `{TEST_FILE}_test.py` exists under folder `tests`
 IF `{TEST_FILE}_test.py` missing
    CREATE `{TEST_FILE}_test.py` under folder `tests`
-   THEN COPY content of `TEST_FILE` to `{TEST_FILE}_test.py`
+   THEN COPY content of `TEST_FILE` to `{TEST_FILE}_test.py` with command
 
 ### Step 6: Prepare Test Infrastructure
 Delete `@pytest.mark.skip` from test methods
-Add `azure-mgmt-resource-bicep` to `dev_requirements.txt` IF missing
+Add `azure-mgmt-resource-deployments` to `dev_requirements.txt` IF missing
 Copy the following content to `conftest.py` if `deployment_resource` function doesn't exist:
 
    ```python
