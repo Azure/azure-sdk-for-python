@@ -74,7 +74,4 @@ setup(
         "azure-ai-agents>=1.0.0",
     ],
     python_requires=">=3.9",
-    extras_require={
-        "prompts": ["prompty"],
-    },
 )

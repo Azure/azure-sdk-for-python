@@ -9,7 +9,6 @@ resources in your Azure AI Foundry Project. Use it to:
 * **Enumerate connected Azure resources** in your Foundry project using the `.connections` operations.
 * **Upload documents and create Datasets** to reference them using the `.datasets` operations.
 * **Create and enumerate Search Indexes** using the `.indexes` operations.
-* **Read a Prompty file or string** and render messages for inference clients, using the `PromptTemplate` class.
 * **Enable OpenTelemetry tracing** using the `enable_telemetry` function.
 
 The client library uses the version `v1` of the AI Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects/ga-rest-api-reference).

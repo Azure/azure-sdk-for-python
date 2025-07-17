@@ -1,5 +1,15 @@
 # Release History
 
+## 1.0.0 (Unreleased)
+
+First stable version of the client library.
+
+### Breaking changes
+
+* Features that are still in preview were removed from this stable release. This includes:
+  * Class `PromptTemplate`.
+
+
 ## 1.0.0b12 (2025-06-23)
 
 ### Breaking changes
