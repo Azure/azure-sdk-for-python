@@ -66,11 +66,11 @@ az login
 ```
 
 ### Step 5: Identify Source Test File
-**Ask user** for the generated test file name in `generated_tests/`
+**Ask user** for the generated test file name (call it `TEST_FILE`) in `generated_tests/`
 **CHECK** whether `{TEST_FILE}_test.py` exists under folder `tests`
 IF `{TEST_FILE}_test.py` missing
    CREATE `{TEST_FILE}_test.py` under folder `tests`
-   THEN COPY content from the generated test file
+   THEN COPY content of `TEST_FILE` to `{TEST_FILE}_test.py`
 
 ### Step 6: Prepare Test Infrastructure
 Delete `@pytest.mark.skip` from test methods
