@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=useless-super-delegation
 
+import datetime
 from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
@@ -15,6 +16,123 @@ from ._enums import CredentialType, DatasetType, DeploymentType, IndexType, Pend
 
 if TYPE_CHECKING:
     from .. import models as _models
+
+
+class AgentBlueprint(_Model):
+    """AgentBlueprint resource Definition.
+
+    :ivar id: Asset ID, a unique identifier for the asset.
+    :vartype id: str
+    :ivar name: The name of the resource. Required.
+    :vartype name: str
+    :ivar version: The version of the resource. Required.
+    :vartype version: str
+    :ivar description: The asset description text.
+    :vartype description: str
+    :ivar tags: Tag dictionary. Tags can be added, removed, and updated.
+    :vartype tags: dict[str, str]
+    :ivar display_name: display name of the blueprint. Required.
+    :vartype display_name: str
+    :ivar system_data: System related metadata.
+    :vartype system_data: ~azure.ai.projects.models.SystemData
+    :ivar catalog_info: Catalog information for the blueprint. Required.
+    :vartype catalog_info: ~azure.ai.projects.models.AgentBlueprintCatalogInformation
+    :ivar implementation: Instructions for deploying an agent using this blueprint. Required.
+    :vartype implementation: ~azure.ai.projects.models.AgentImplementationDetails
+    :ivar dependencies: Dependencies that need to be specified to create an agent instance from
+     this blueprint.
+    :vartype dependencies: dict[str, ~azure.ai.projects.models.BaseAgentDependency]
+    :ivar parameters: Definitions of parameters to be specified when creating an agent instance
+     from this blueprint.
+    :vartype parameters: dict[str, ~azure.ai.projects.models.BaseParameterDefinition]
+    """
+
+    id: Optional[str] = rest_field(visibility=["read"])
+    """Asset ID, a unique identifier for the asset."""
+    name: str = rest_field(visibility=["read"])
+    """The name of the resource. Required."""
+    version: str = rest_field(visibility=["read"])
+    """The version of the resource. Required."""
+    description: Optional[str] = rest_field(visibility=["create", "update"])
+    """The asset description text."""
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["create", "update"])
+    """Tag dictionary. Tags can be added, removed, and updated."""
+    display_name: str = rest_field(name="displayName", visibility=["read", "create", "update", "delete", "query"])
+    """display name of the blueprint. Required."""
+    system_data: Optional["_models.SystemData"] = rest_field(name="SystemData", visibility=["read"])
+    """System related metadata."""
+    catalog_info: "_models.AgentBlueprintCatalogInformation" = rest_field(
+        name="catalogInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Catalog information for the blueprint. Required."""
+    implementation: "_models.AgentImplementationDetails" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Instructions for deploying an agent using this blueprint. Required."""
+    dependencies: Optional[Dict[str, "_models.BaseAgentDependency"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Dependencies that need to be specified to create an agent instance from this blueprint."""
+    parameters: Optional[Dict[str, "_models.BaseParameterDefinition"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Definitions of parameters to be specified when creating an agent instance from this blueprint."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        display_name: str,
+        catalog_info: "_models.AgentBlueprintCatalogInformation",
+        implementation: "_models.AgentImplementationDetails",
+        description: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        dependencies: Optional[Dict[str, "_models.BaseAgentDependency"]] = None,
+        parameters: Optional[Dict[str, "_models.BaseParameterDefinition"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentBlueprintCatalogInformation(_Model):
+    """Catalog information for the agent blueprint.
+
+    :ivar publisher_id: The id of the publisher of the asset. Required.
+    :vartype publisher_id: str
+    :ivar license: The license the asset is under. Required.
+    :vartype license: str
+    """
+
+    publisher_id: str = rest_field(name="publisherId", visibility=["read", "create", "update", "delete", "query"])
+    """The id of the publisher of the asset. Required."""
+    license: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The license the asset is under. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        publisher_id: str,
+        license: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class AgentEvaluation(_Model):
@@ -267,6 +385,39 @@ class AgentEvaluationSamplingConfiguration(_Model):
         name: str,
         sampling_percent: float,
         max_request_rate: float,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentImplementationDetails(_Model):
+    """An abstract representation of instructions on how to deploy and run the agent.
+
+    :ivar type: type of agent. Required.
+    :vartype type: str
+    :ivar instructions: instructions/prompt for the agent. Required.
+    :vartype instructions: str
+    """
+
+    type: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """type of agent. Required."""
+    instructions: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """instructions/prompt for the agent. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+        instructions: str,
     ) -> None: ...
 
     @overload
@@ -555,11 +706,123 @@ class AzureOpenAIModelConfiguration(TargetConfig, discriminator="AzureOpenAIMode
         super().__init__(*args, type="AzureOpenAIModel", **kwargs)
 
 
+class BaseAgentDependency(_Model):
+    """An abstract representation of a dependency for the agent.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ModelDependency, ToolDependency
+
+    :ivar type: type of dependency. Required. Default value is None.
+    :vartype type: str
+    """
+
+    __mapping__: Dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """type of dependency. Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BaseParameterDefinition(_Model):
+    """Base parameter definition for an asset.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ConnectionParameterDefinition, StringParameterDefinition
+
+    :ivar type: type of the parameter. Required. Default value is None.
+    :vartype type: str
+    :ivar display_name: display name of the parameter. Required.
+    :vartype display_name: str
+    :ivar description: description of the parameter. Required.
+    :vartype description: str
+    :ivar required: indicates if the parameter is required. Required.
+    :vartype required: bool
+    """
+
+    __mapping__: Dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """type of the parameter. Required. Default value is None."""
+    display_name: str = rest_field(name="displayName", visibility=["read", "create", "update", "delete", "query"])
+    """display name of the parameter. Required."""
+    description: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """description of the parameter. Required."""
+    required: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """indicates if the parameter is required. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+        display_name: str,
+        description: str,
+        required: bool,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BaseParameterValue(_Model):
+    """base parameter value for an asset's parameter.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ConnectionParameterValue, StringParameterValue
+
+    :ivar type: Discriminator property for BaseParameterValue. Required. Default value is None.
+    :vartype type: str
+    """
+
+    __mapping__: Dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type")
+    """Discriminator property for BaseParameterValue. Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class BlobReference(_Model):
     """Blob reference details.
 
     :ivar blob_uri: Blob URI path for client to upload data. Example:
-     ``https://blob.windows.core.net/Container/Path``. Required.
+     `https://blob.windows.core.net/Container/Path <https://blob.windows.core.net/Container/Path>`_.
+     Required.
     :vartype blob_uri: str
     :ivar storage_account_arm_id: ARM ID of the storage account to use. Required.
     :vartype storage_account_arm_id: str
@@ -568,7 +831,8 @@ class BlobReference(_Model):
     """
 
     blob_uri: str = rest_field(name="blobUri", visibility=["read", "create", "update", "delete", "query"])
-    """Blob URI path for client to upload data. Example: ``https://blob.windows.core.net/Container/Path``. Required."""
+    """Blob URI path for client to upload data. Example: `https://blob.windows.core.net/Container/Path
+     <https://blob.windows.core.net/Container/Path>`_. Required."""
     storage_account_arm_id: str = rest_field(
         name="storageAccountArmId", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -634,6 +898,79 @@ class Connection(_Model):
     """The credentials used by the connection. Required."""
     metadata: Dict[str, str] = rest_field(visibility=["read"])
     """Metadata of the connection. Required."""
+
+
+class ConnectionParameterDefinition(BaseParameterDefinition, discriminator="connection"):
+    """connection parameter definition for an asset.
+
+    :ivar display_name: display name of the parameter. Required.
+    :vartype display_name: str
+    :ivar description: description of the parameter. Required.
+    :vartype description: str
+    :ivar required: indicates if the parameter is required. Required.
+    :vartype required: bool
+    :ivar type: Required. Default value is "connection".
+    :vartype type: str
+    :ivar connection_type: type of the connection. Required.
+    :vartype connection_type: str
+    """
+
+    type: Literal["connection"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Default value is \"connection\"."""
+    connection_type: str = rest_field(name="connectionType", visibility=["read", "create", "update", "delete", "query"])
+    """type of the connection. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        display_name: str,
+        description: str,
+        required: bool,
+        connection_type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="connection", **kwargs)
+
+
+class ConnectionParameterValue(BaseParameterValue, discriminator="connection"):
+    """connection parameter value.
+
+    :ivar type: Required. Default value is "connection".
+    :vartype type: str
+    :ivar connection_name: value of the parameter. Required.
+    :vartype connection_name: str
+    """
+
+    type: Literal["connection"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Default value is \"connection\"."""
+    connection_name: str = rest_field(name="connectionName", visibility=["read", "create", "update", "delete", "query"])
+    """value of the parameter. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="connection", **kwargs)
 
 
 class CosmosDBIndex(Index, discriminator="CosmosDBNoSqlVectorStore"):
@@ -738,7 +1075,8 @@ class DatasetVersion(_Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     FileDatasetVersion, FolderDatasetVersion
 
-    :ivar data_uri: URI of the data. Example: ``https://go.microsoft.com/fwlink/?linkid=2202330``. Required.
+    :ivar data_uri: URI of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330
+     <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required.
     :vartype data_uri: str
     :ivar type: Dataset type. Required. Known values are: "uri_file" and "uri_folder".
     :vartype type: str or ~azure.ai.projects.models.DatasetType
@@ -763,7 +1101,8 @@ class DatasetVersion(_Model):
 
     __mapping__: Dict[str, _Model] = {}
     data_uri: str = rest_field(name="dataUri", visibility=["read", "create"])
-    """URI of the data. Example: ``https://go.microsoft.com/fwlink/?linkid=2202330``. Required."""
+    """URI of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330
+     <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required."""
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Dataset type. Required. Known values are: \"uri_file\" and \"uri_folder\"."""
     is_reference: Optional[bool] = rest_field(name="isReference", visibility=["read"])
@@ -1071,7 +1410,8 @@ class FieldMapping(_Model):
 class FileDatasetVersion(DatasetVersion, discriminator="uri_file"):
     """FileDatasetVersion Definition.
 
-    :ivar data_uri: URI of the data. Example: ``https://go.microsoft.com/fwlink/?linkid=2202330``. Required.
+    :ivar data_uri: URI of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330
+     <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required.
     :vartype data_uri: str
     :ivar is_reference: Indicates if the dataset holds a reference to the storage, or the dataset
      manages storage itself. If true, the underlying data will not be deleted when the dataset
@@ -1121,7 +1461,8 @@ class FileDatasetVersion(DatasetVersion, discriminator="uri_file"):
 class FolderDatasetVersion(DatasetVersion, discriminator="uri_folder"):
     """FileDatasetVersion Definition.
 
-    :ivar data_uri: URI of the data. Example: ``https://go.microsoft.com/fwlink/?linkid=2202330``. Required.
+    :ivar data_uri: URI of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330
+     <https://go.microsoft.com/fwlink/?linkid=2202330>`_. Required.
     :vartype data_uri: str
     :ivar is_reference: Indicates if the dataset holds a reference to the storage, or the dataset
      manages storage itself. If true, the underlying data will not be deleted when the dataset
@@ -1274,6 +1615,45 @@ class ManagedAzureAISearchIndex(Index, discriminator="ManagedAzureSearch"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, type=IndexType.MANAGED_AZURE_SEARCH, **kwargs)
+
+
+class ModelDependency(BaseAgentDependency, discriminator="model"):
+    """Representation of a model dependency for the agent.
+
+    :ivar type: type of dependency. Required. Default value is "model".
+    :vartype type: str
+    :ivar recommended_model: identifier of the recommended model. Required.
+    :vartype recommended_model: str
+    :ivar parameters: parameters for the model.
+    :vartype parameters: dict[str, str]
+    """
+
+    type: Literal["model"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """type of dependency. Required. Default value is \"model\"."""
+    recommended_model: str = rest_field(
+        name="recommendedModel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """identifier of the recommended model. Required."""
+    parameters: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """parameters for the model."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        recommended_model: str,
+        parameters: Optional[Dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="model", **kwargs)
 
 
 class ModelDeployment(Deployment, discriminator="ModelDeployment"):
@@ -1591,6 +1971,45 @@ class SASCredentials(BaseCredentials, discriminator="SAS"):
         super().__init__(*args, type=CredentialType.SAS, **kwargs)
 
 
+class ScaffoldRequest(_Model):
+    """Represents the request for a blueprint scaffold operation."""
+
+
+class ScaffoldResponse(_Model):
+    """Represents the response for a blueprint scaffold request.
+
+    :ivar parameters: The parameters for the blueprint. Required.
+    :vartype parameters: dict[str, ~azure.ai.projects.models.BaseParameterValue]
+    :ivar meta: comment metadata for each parameter. Required.
+    :vartype meta: dict[str, str]
+    """
+
+    parameters: Dict[str, "_models.BaseParameterValue"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The parameters for the blueprint. Required."""
+    meta: Dict[str, str] = rest_field(name="_meta", visibility=["read", "create", "update", "delete", "query"])
+    """comment metadata for each parameter. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        parameters: Dict[str, "_models.BaseParameterValue"],
+        meta: Dict[str, str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Sku(_Model):
     """Sku information.
 
@@ -1637,3 +2056,136 @@ class Sku(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class StringParameterDefinition(BaseParameterDefinition, discriminator="string"):
+    """String parameter definition for an asset.
+
+    :ivar display_name: display name of the parameter. Required.
+    :vartype display_name: str
+    :ivar description: description of the parameter. Required.
+    :vartype description: str
+    :ivar required: indicates if the parameter is required. Required.
+    :vartype required: bool
+    :ivar type: Required. Default value is "string".
+    :vartype type: str
+    :ivar default_value: default value of the parameter.
+    :vartype default_value: str
+    """
+
+    type: Literal["string"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Default value is \"string\"."""
+    default_value: Optional[str] = rest_field(
+        name="defaultValue", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """default value of the parameter."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        display_name: str,
+        description: str,
+        required: bool,
+        default_value: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="string", **kwargs)
+
+
+class StringParameterValue(BaseParameterValue, discriminator="string"):
+    """string parameter value.
+
+    :ivar type: Required. Default value is "string".
+    :vartype type: str
+    :ivar value: value of the parameter. Required.
+    :vartype value: str
+    """
+
+    type: Literal["string"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Default value is \"string\"."""
+    value: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """value of the parameter. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="string", **kwargs)
+
+
+class SystemData(_Model):
+    """System metadata for an asset.
+
+    :ivar created_by: The creator of the asset.
+    :vartype created_by: str
+    :ivar created_at: The datetime of when the asset was created.
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_at: The datetime of when the asset was last modified.
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read"])
+    """The creator of the asset."""
+    created_at: Optional[datetime.datetime] = rest_field(name="createdAt", visibility=["read"], format="rfc3339")
+    """The datetime of when the asset was created."""
+    last_modified_at: Optional[datetime.datetime] = rest_field(
+        name="lastModifiedAt", visibility=["read"], format="rfc3339"
+    )
+    """The datetime of when the asset was last modified."""
+
+
+class ToolDependency(BaseAgentDependency, discriminator="tool"):
+    """Representation of a tool dependency for the agent.
+
+    :ivar type: type of dependency. Required. Default value is "tool".
+    :vartype type: str
+    :ivar asset_id: identifier for the tool. Required.
+    :vartype asset_id: dict[str, str]
+    :ivar description: optional description of how the blueprint will use the tool.
+    :vartype description: str
+    """
+
+    type: Literal["tool"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """type of dependency. Required. Default value is \"tool\"."""
+    asset_id: Dict[str, str] = rest_field(name="assetId", visibility=["read", "create", "update", "delete", "query"])
+    """identifier for the tool. Required."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """optional description of how the blueprint will use the tool."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        asset_id: Dict[str, str],
+        description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="tool", **kwargs)

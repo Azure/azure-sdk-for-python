@@ -17,6 +17,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 from ._configuration import AIProjectClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
+    AgentBlueprintsOperations,
     ConnectionsOperations,
     DatasetsOperations,
     DeploymentsOperations,
@@ -29,7 +30,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class AIProjectClient:
+class AIProjectClient:  # pylint: disable=too-many-instance-attributes
     """AIProjectClient.
 
     :ivar connections: ConnectionsOperations operations
@@ -44,6 +45,8 @@ class AIProjectClient:
     :vartype deployments: azure.ai.projects.operations.DeploymentsOperations
     :ivar red_teams: RedTeamsOperations operations
     :vartype red_teams: azure.ai.projects.operations.RedTeamsOperations
+    :ivar agent_blueprints: AgentBlueprintsOperations operations
+    :vartype agent_blueprints: azure.ai.projects.operations.AgentBlueprintsOperations
     :param endpoint: Project endpoint. In the form
      "https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/_project"
      if your Foundry Hub has only one Project, or to use the default Project in your Hub. Or in the
@@ -92,6 +95,9 @@ class AIProjectClient:
         self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.red_teams = RedTeamsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.agent_blueprints = AgentBlueprintsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
