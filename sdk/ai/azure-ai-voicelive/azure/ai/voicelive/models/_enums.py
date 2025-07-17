@@ -25,19 +25,24 @@ class TranscriptTextUsageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class VoiceIdsShared(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of VoiceIdsShared."""
+    """Identifier for selecting a built-in voice."""
 
     ALLOY = "alloy"
     ASH = "ash"
     BALLAD = "ballad"
     CORAL = "coral"
     ECHO = "echo"
-    FABLE = "fable"
-    ONYX = "onyx"
-    NOVA = "nova"
     SAGE = "sage"
     SHIMMER = "shimmer"
     VERSE = "verse"
+
+
+class VoiceLiveAnimationOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the types of animation data to output."""
+
+    BLENDSHAPES = "blendshapes"
+    VISEME_ID = "viseme_id"
+    EMOTION = "emotion"
 
 
 class VoiceLiveAudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -48,34 +53,32 @@ class VoiceLiveAudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     G711_ALAW = "g711_alaw"
 
 
-class VoiceLiveAudioInputTranscriptionModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of VoiceLiveAudioInputTranscriptionModel."""
+class VoiceLiveAudioTimestampType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Output timestamp types supported in audio response content."""
 
-    WHISPER1 = "whisper-1"
-
-
-class VoiceLiveAudioNoiseReductionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of VoiceLiveAudioNoiseReductionType."""
-
-    NEAR_FIELD = "near_field"
-    FAR_FIELD = "far_field"
+    WORD = "word"
+    """Timestamps per word in the output audio."""
 
 
 class VoiceLiveClientEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of VoiceLiveClientEventType."""
+    """Client event types used in VoiceLive protocol."""
 
     SESSION_UPDATE = "session.update"
     INPUT_AUDIO_BUFFER_APPEND = "input_audio_buffer.append"
     INPUT_AUDIO_BUFFER_COMMIT = "input_audio_buffer.commit"
     INPUT_AUDIO_BUFFER_CLEAR = "input_audio_buffer.clear"
-    OUTPUT_AUDIO_BUFFER_CLEAR = "output_audio_buffer.clear"
+    INPUT_AUDIO_TURN_START = "input_audio.turn.start"
+    INPUT_AUDIO_TURN_APPEND = "input_audio.turn.append"
+    INPUT_AUDIO_TURN_END = "input_audio.turn.end"
+    INPUT_AUDIO_TURN_CANCEL = "input_audio.turn.cancel"
+    INPUT_AUDIO_CLEAR = "input_audio.clear"
     CONVERSATION_ITEM_CREATE = "conversation.item.create"
     CONVERSATION_ITEM_RETRIEVE = "conversation.item.retrieve"
     CONVERSATION_ITEM_TRUNCATE = "conversation.item.truncate"
     CONVERSATION_ITEM_DELETE = "conversation.item.delete"
     RESPONSE_CREATE = "response.create"
     RESPONSE_CANCEL = "response.cancel"
-    TRANSCRIPTION_SESSION_UPDATE = "transcription_session.update"
+    SESSION_AVATAR_CONNECT = "session.avatar.connect"
 
 
 class VoiceLiveContentPartType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -116,12 +119,15 @@ class VoiceLiveModality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     TEXT = "text"
     AUDIO = "audio"
+    ANIMATION = "animation"
+    AVATAR = "avatar"
 
 
 class VoiceLiveServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of VoiceLiveServerEventType."""
+    """Server event types used in VoiceLive protocol."""
 
     ERROR = "error"
+    SESSION_AVATAR_CONNECTING = "session.avatar.connecting"
     SESSION_CREATED = "session.created"
     SESSION_UPDATED = "session.updated"
     CONVERSATION_CREATED = "conversation.created"
@@ -136,9 +142,6 @@ class VoiceLiveServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INPUT_AUDIO_BUFFER_CLEARED = "input_audio_buffer.cleared"
     INPUT_AUDIO_BUFFER_SPEECH_STARTED = "input_audio_buffer.speech_started"
     INPUT_AUDIO_BUFFER_SPEECH_STOPPED = "input_audio_buffer.speech_stopped"
-    OUTPUT_AUDIO_BUFFER_CLEARED = "output_audio_buffer.cleared"
-    OUTPUT_AUDIO_BUFFER_STARTED = "output_audio_buffer.started"
-    OUTPUT_AUDIO_BUFFER_STOPPED = "output_audio_buffer.stopped"
     RESPONSE_CREATED = "response.created"
     RESPONSE_DONE = "response.done"
     RESPONSE_OUTPUT_ITEM_ADDED = "response.output_item.added"
@@ -151,10 +154,13 @@ class VoiceLiveServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RESPONSE_AUDIO_TRANSCRIPT_DONE = "response.audio_transcript.done"
     RESPONSE_AUDIO_DELTA = "response.audio.delta"
     RESPONSE_AUDIO_DONE = "response.audio.done"
-    RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA = "response.function_call_arguments.delta"
-    RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE = "response.function_call_arguments.done"
-    TRANSCRIPTION_SESSION_UPDATED = "transcription_session.updated"
-    RATE_LIMITS_UPDATED = "rate_limits.updated"
+    RESPONSE_ANIMATION_BLENDSHAPES_DELTA = "response.animation_blendshapes.delta"
+    RESPONSE_ANIMATION_BLENDSHAPES_DONE = "response.animation_blendshapes.done"
+    RESPONSE_EMOTION_HYPOTHESIS = "response.emotion_hypothesis"
+    RESPONSE_AUDIO_TIMESTAMP_DELTA = "response.audio_timestamp.delta"
+    RESPONSE_AUDIO_TIMESTAMP_DONE = "response.audio_timestamp.done"
+    RESPONSE_ANIMATION_VISEME_DELTA = "response.animation_viseme.delta"
+    RESPONSE_ANIMATION_VISEME_DONE = "response.animation_viseme.done"
 
 
 class VoiceLiveToolChoiceLiteral(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -174,15 +180,3 @@ class VoiceLiveToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     FUNCTION = "function"
-
-
-class VoiceLiveTurnDetectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of VoiceLiveTurnDetectionType."""
-
-    SERVER_VAD = "server_vad"
-    """Indicates that server-side voice activity detection (VAD) should be enabled, allowing the
-    server to determine when
-    add_user_audio commands present ends of speech and should be automatically committed.
-    
-    The API will also detect when the user begins talking, sending a generation_canceled command."""
-    SEMANTIC_VAD = "semantic_vad"

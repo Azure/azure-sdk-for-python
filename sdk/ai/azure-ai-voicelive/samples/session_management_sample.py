@@ -19,19 +19,13 @@ import os
 import logging
 import time
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.voicelive import (
-    VoiceLiveClient, 
-    VoiceLiveConnectionError,
-    VoiceLiveConnectionClosed
-)
-from azure.ai.voicelive.models import (
-    VoiceLiveServerEventSessionUpdated,
-    VoiceLiveServerEventError
-)
+from azure.ai.voicelive import VoiceLiveClient, VoiceLiveConnectionError, VoiceLiveConnectionClosed
+from azure.ai.voicelive.models import VoiceLiveServerEventSessionUpdated, VoiceLiveServerEventError
 
 # Set up logger
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
 
 def main():
     """Main function demonstrating session management and error handling."""
@@ -41,29 +35,22 @@ def main():
         raise ValueError("API key not found. Set the AZURE_VOICELIVE_API_KEY environment variable.")
 
     # Initialize the client
-    client = VoiceLiveClient(
-        credential=AzureKeyCredential(api_key),
-        endpoint="wss://api.voicelive.com/v1"
-    )
+    client = VoiceLiveClient(credential=AzureKeyCredential(api_key), endpoint="wss://api.voicelive.com/v1")
 
     try:
         # Connect to the VoiceLive WebSocket API with error handling
         with client.connect(
             model="gpt-4o-realtime-preview",
-            websocket_connection_options={"max_size": 10 * 1024 * 1024}  # 10MB max message size
+            websocket_connection_options={"max_size": 10 * 1024 * 1024},  # 10MB max message size
         ) as connection:
             # Demonstrate sequential session updates with different configurations
-            
+
             # First update: Configure for text only
             logger.info("Updating session for text-only mode...")
             connection.session.update(
-                session={
-                    "modalities": ["text"],
-                    "turn_detection": {"type": "server_vad"}
-                },
-                event_id="config-update-1"
+                session={"modalities": ["text"], "turn_detection": {"type": "server_vad"}}, event_id="config-update-1"
             )
-            
+
             # Wait for the session update confirmation
             session_updated = False
             for event in connection:
@@ -75,22 +62,18 @@ def main():
                 elif isinstance(event, VoiceLiveServerEventError):
                     logger.error(f"Session update failed: {event.error.message}")
                     raise VoiceLiveConnectionError(f"Session update failed: {event.error.message}")
-            
+
             if not session_updated:
                 logger.warning("Did not receive session update confirmation")
-            
+
             time.sleep(1)  # Small delay between updates
-            
+
             # Second update: Update to include audio
             logger.info("Updating session to include audio...")
             connection.session.update(
-                session={
-                    "modalities": ["text", "audio"],
-                    "voice": "alloy"
-                },
-                event_id="config-update-2"
+                session={"modalities": ["text", "audio"], "voice": "alloy"}, event_id="config-update-2"
             )
-            
+
             # Process events again
             for event in connection:
                 if isinstance(event, VoiceLiveServerEventSessionUpdated):
@@ -101,11 +84,11 @@ def main():
                 elif isinstance(event, VoiceLiveServerEventError):
                     logger.error(f"Session update failed: {event.error.message}")
                     raise VoiceLiveConnectionError(f"Session update failed: {event.error.message}")
-            
+
             # Clean up by closing the connection manually
             logger.info("Closing connection...")
             connection.close(code=1000, reason="Session management demo completed")
-            
+
     except ImportError as e:
         logger.error(f"Required package not installed: {e}")
         logger.info("Please install the 'websockets' package with 'pip install websockets'")
@@ -115,6 +98,7 @@ def main():
         logger.error(f"Connection error: {e}")
     except Exception as e:
         logger.error(f"Unexpected error: {e}", exc_info=True)
+
 
 if __name__ == "__main__":
     main()

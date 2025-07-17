@@ -63,7 +63,7 @@ def build_voice_live_force_models_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    accept = _headers.pop("Accept", "application/json")
+    accept = _headers.pop("Accept", None)
 
     # Construct URL
     _url = "/"
@@ -71,7 +71,8 @@ def build_voice_live_force_models_request(**kwargs: Any) -> HttpRequest:
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if accept is not None:
+        _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
 
@@ -246,7 +247,7 @@ class _VoiceLiveClientOperationsMixin(
         session: _models.VoiceLiveClientEventSessionUpdate,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.VoiceLiveServerEventSessionUpdated:
+    ) -> _models.VoiceLiveServerEventResponseAudioDone:
         """force_models.
 
         :keyword session: Required.
@@ -254,16 +255,16 @@ class _VoiceLiveClientOperationsMixin(
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: VoiceLiveServerEventSessionUpdated. The VoiceLiveServerEventSessionUpdated is
+        :return: VoiceLiveServerEventResponseAudioDone. The VoiceLiveServerEventResponseAudioDone is
          compatible with MutableMapping
-        :rtype: ~azure.ai.voicelive.models.VoiceLiveServerEventSessionUpdated
+        :rtype: ~azure.ai.voicelive.models.VoiceLiveServerEventResponseAudioDone
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def force_models(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.VoiceLiveServerEventSessionUpdated:
+    ) -> _models.VoiceLiveServerEventResponseAudioDone:
         """force_models.
 
         :param body: Required.
@@ -271,16 +272,16 @@ class _VoiceLiveClientOperationsMixin(
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: VoiceLiveServerEventSessionUpdated. The VoiceLiveServerEventSessionUpdated is
+        :return: VoiceLiveServerEventResponseAudioDone. The VoiceLiveServerEventResponseAudioDone is
          compatible with MutableMapping
-        :rtype: ~azure.ai.voicelive.models.VoiceLiveServerEventSessionUpdated
+        :rtype: ~azure.ai.voicelive.models.VoiceLiveServerEventResponseAudioDone
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def force_models(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.VoiceLiveServerEventSessionUpdated:
+    ) -> _models.VoiceLiveServerEventResponseAudioDone:
         """force_models.
 
         :param body: Required.
@@ -288,9 +289,9 @@ class _VoiceLiveClientOperationsMixin(
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: VoiceLiveServerEventSessionUpdated. The VoiceLiveServerEventSessionUpdated is
+        :return: VoiceLiveServerEventResponseAudioDone. The VoiceLiveServerEventResponseAudioDone is
          compatible with MutableMapping
-        :rtype: ~azure.ai.voicelive.models.VoiceLiveServerEventSessionUpdated
+        :rtype: ~azure.ai.voicelive.models.VoiceLiveServerEventResponseAudioDone
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -301,16 +302,16 @@ class _VoiceLiveClientOperationsMixin(
         *,
         session: _models.VoiceLiveClientEventSessionUpdate = _Unset,
         **kwargs: Any
-    ) -> _models.VoiceLiveServerEventSessionUpdated:
+    ) -> _models.VoiceLiveServerEventResponseAudioDone:
         """force_models.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
         :keyword session: Required.
         :paramtype session: ~azure.ai.voicelive.models.VoiceLiveClientEventSessionUpdate
-        :return: VoiceLiveServerEventSessionUpdated. The VoiceLiveServerEventSessionUpdated is
+        :return: VoiceLiveServerEventResponseAudioDone. The VoiceLiveServerEventResponseAudioDone is
          compatible with MutableMapping
-        :rtype: ~azure.ai.voicelive.models.VoiceLiveServerEventSessionUpdated
+        :rtype: ~azure.ai.voicelive.models.VoiceLiveServerEventResponseAudioDone
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -325,7 +326,7 @@ class _VoiceLiveClientOperationsMixin(
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.VoiceLiveServerEventSessionUpdated] = kwargs.pop("cls", None)
+        cls: ClsType[_models.VoiceLiveServerEventResponseAudioDone] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if session is _Unset:
@@ -369,7 +370,7 @@ class _VoiceLiveClientOperationsMixin(
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.VoiceLiveServerEventSessionUpdated, response.json())
+            deserialized = _deserialize(_models.VoiceLiveServerEventResponseAudioDone, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

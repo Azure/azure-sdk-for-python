@@ -51,9 +51,9 @@ async def main():
     )
     parser.add_argument(
         "--api-key",
-        help="Azure VoiceLive API key. If not provided, will use the AZURE_VOICELIVE_KEY environment variable.",
+        help="Azure VoiceLive API key. If not provided, will use the AZURE_VOICELIVE_API_KEY environment variable.",
         type=str,
-        default=os.environ.get("AZURE_VOICELIVE_KEY"),
+        default=os.environ.get("AZURE_VOICELIVE_API_KEY"),
     )
     parser.add_argument(
         "--use-token-credential",
@@ -85,37 +85,43 @@ async def main():
         type=str,
         default=os.environ.get("VOICELIVE_INSTRUCTIONS", "You are a helpful assistant. Keep your responses concise."),
     )
-    
+    parser.add_argument(
+        "--api-version",
+        help="API version to use",
+        type=str,
+        default=os.environ.get("VOICELIVE_API_VERSION", "2025-05-01-preview"),
+    )
     args = parser.parse_args()
-    
+
     # Validate arguments
     if not args.api_key and not args.use_token_credential:
         raise ValueError(
             "Please provide an API key using --api-key or set the AZURE_VOICELIVE_KEY environment variable, "
             "or use --use-token-credential to use Azure authentication."
         )
-    
+
     # Create client with the appropriate credential
     if args.use_token_credential:
         credential = DefaultAzureCredential()
     else:
         credential = AzureKeyCredential(args.api_key)
-    
+
     # Initialize the client
     client = AsyncVoiceLiveClient(
         credential=credential,
         endpoint=args.endpoint,
     )
-    
+
     # Connect to the WebSocket API
     print(f"Connecting to {args.endpoint} with model {args.model}")
     async with client.connect(
         model=args.model,
+        api_version=args.api_version,
         websocket_connection_options={
             "max_size": 10 * 1024 * 1024,  # 10 MB
             "ping_interval": 20,  # 20 seconds
             "ping_timeout": 20,  # 20 seconds
-        }
+        },
     ) as connection:
         # Set up the session
         print("Setting up session...")
@@ -124,38 +130,40 @@ async def main():
                 "instructions": args.instructions,
                 "voice": args.voice,
                 "modalities": ["text"],  # Using text-only for this example
-                "turn_detection": {"type": "server_vad"}  # Server-side voice activity detection
+                "turn_detection": {"type": "server_vad"},  # Server-side voice activity detection
             }
         )
-        
+
         # Process events
         print("Processing events...")
         async for event in connection:
             print(f"Received event: {event.type}")
-            
+
             if event.type == "session.updated":
                 print(f"Session initialized with ID: {event.session.id}")
-                
+
                 # Create a user message
                 await connection.conversation.item.create(
                     item={
                         "type": "message",
                         "role": "user",
-                        "content": [{"type": "text", "text": "Hello! Tell me about Azure VoiceLive in a brief paragraph."}]
+                        "content": [
+                            {"type": "text", "text": "Hello! Tell me about Azure VoiceLive in a brief paragraph."}
+                        ],
                     }
                 )
-                
+
             elif event.type == "conversation.item.created":
                 print(f"Item created with ID: {event.item.id}")
-                
+
                 # If it's a user message that was created, request a response
                 if hasattr(event, "item") and event.item.role == "user":
                     print("Requesting model response...")
                     await connection.response.create()
-                
+
             elif event.type == "response.text.delta":
                 print(event.delta, end="", flush=True)
-                
+
             elif event.type == "response.done":
                 print("\nResponse complete")
                 print("Conversation completed. Exiting...")

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -32,9 +33,6 @@ from ._models import (
     VoiceLiveServerEventInputAudioBufferCleared,
     VoiceLiveServerEventInputAudioBufferSpeechStarted,
     VoiceLiveServerEventInputAudioBufferSpeechStopped,
-    VoiceLiveServerEventOutputAudioBufferCleared,
-    VoiceLiveServerEventOutputAudioBufferStarted,
-    VoiceLiveServerEventOutputAudioBufferStopped,
     VoiceLiveServerEventResponseCreated,
     VoiceLiveServerEventResponseDone,
     VoiceLiveServerEventResponseOutputItemAdded,
@@ -45,10 +43,6 @@ from ._models import (
     VoiceLiveServerEventResponseAudioTranscriptDelta,
     VoiceLiveServerEventResponseAudioTranscriptDone,
     VoiceLiveServerEventResponseAudioDone,
-    VoiceLiveServerEventResponseFunctionCallArgumentsDelta,
-    VoiceLiveServerEventResponseFunctionCallArgumentsDone,
-    VoiceLiveServerEventTranscriptionSessionUpdated,
-    VoiceLiveServerEventRateLimitsUpdated,
     VoiceLiveResponseSession,
 )
 from ._enums import VoiceLiveServerEventType, VoiceLiveClientEventType
@@ -63,19 +57,19 @@ log = logging.getLogger(__name__)
 
 class VoiceLiveClientEvent(VoiceLiveClientEventGenerated):
     """Extended VoiceLiveClientEvent with serialization."""
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert the event to a dictionary.
-        
+
         :return: Dictionary representation of the event.
         :rtype: Dict[str, Any]
         """
         result = {"type": self.type}
-        
+
         # Add event_id if present
         if hasattr(self, "event_id") and self.event_id is not None:
             result["event_id"] = self.event_id
-            
+
         # Add specific fields based on event type
         if self.type == VoiceLiveClientEventType.SESSION_UPDATE:
             result["session"] = {}
@@ -86,16 +80,16 @@ class VoiceLiveClientEvent(VoiceLiveClientEventGenerated):
                 else:
                     # Include all public properties
                     for attr in dir(self.session):
-                        if not attr.startswith('_') and not callable(getattr(self.session, attr)):
+                        if not attr.startswith("_") and not callable(getattr(self.session, attr)):
                             value = getattr(self.session, attr)
                             if value is not None:
                                 result["session"][attr] = value
-        
+
         return result
-        
+
     def serialize(self) -> str:
         """Serialize the event to JSON.
-        
+
         :return: JSON string representation of the event.
         :rtype: str
         """
@@ -104,11 +98,11 @@ class VoiceLiveClientEvent(VoiceLiveClientEventGenerated):
 
 class VoiceLiveServerEvent(VoiceLiveServerEventGenerated):
     """Extended VoiceLiveServerEvent with deserialization."""
-    
+
     @classmethod
     def deserialize(cls, data: Union[str, bytes]) -> "VoiceLiveServerEvent":
         """Deserialize a JSON string or bytes to a VoiceLiveServerEvent.
-        
+
         :param data: JSON string or bytes to deserialize.
         :type data: Union[str, bytes]
         :return: A VoiceLiveServerEvent instance.
@@ -117,21 +111,21 @@ class VoiceLiveServerEvent(VoiceLiveServerEventGenerated):
         """
         if isinstance(data, bytes):
             data = data.decode("utf-8")
-        
+
         # Parse JSON
         data_dict = json.loads(data)
-        
+
         # Determine the event type
         event_type = data_dict.get("type")
         if not event_type:
             raise ValueError("Event data is missing 'type' field")
-        
+
         return cls.from_dict(data_dict)
-    
+
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "VoiceLiveServerEvent":
         """Create an event instance from a dictionary.
-        
+
         :param data: Dictionary containing event data.
         :type data: Dict[str, Any]
         :return: A VoiceLiveServerEvent instance.
@@ -139,7 +133,7 @@ class VoiceLiveServerEvent(VoiceLiveServerEventGenerated):
         """
         # Determine the event type
         event_type = data.get("type")
-        
+
         # Map event type to appropriate class
         event_class_map = {
             VoiceLiveServerEventType.SESSION_CREATED: VoiceLiveServerEventSessionCreated,
@@ -159,9 +153,6 @@ class VoiceLiveServerEvent(VoiceLiveServerEventGenerated):
             VoiceLiveServerEventType.INPUT_AUDIO_BUFFER_CLEARED: VoiceLiveServerEventInputAudioBufferCleared,
             VoiceLiveServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STARTED: VoiceLiveServerEventInputAudioBufferSpeechStarted,
             VoiceLiveServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STOPPED: VoiceLiveServerEventInputAudioBufferSpeechStopped,
-            VoiceLiveServerEventType.OUTPUT_AUDIO_BUFFER_CLEARED: VoiceLiveServerEventOutputAudioBufferCleared,
-            VoiceLiveServerEventType.OUTPUT_AUDIO_BUFFER_STARTED: VoiceLiveServerEventOutputAudioBufferStarted,
-            VoiceLiveServerEventType.OUTPUT_AUDIO_BUFFER_STOPPED: VoiceLiveServerEventOutputAudioBufferStopped,
             VoiceLiveServerEventType.RESPONSE_CREATED: VoiceLiveServerEventResponseCreated,
             VoiceLiveServerEventType.RESPONSE_DONE: VoiceLiveServerEventResponseDone,
             VoiceLiveServerEventType.RESPONSE_OUTPUT_ITEM_ADDED: VoiceLiveServerEventResponseOutputItemAdded,
@@ -172,25 +163,21 @@ class VoiceLiveServerEvent(VoiceLiveServerEventGenerated):
             VoiceLiveServerEventType.RESPONSE_AUDIO_TRANSCRIPT_DELTA: VoiceLiveServerEventResponseAudioTranscriptDelta,
             VoiceLiveServerEventType.RESPONSE_AUDIO_TRANSCRIPT_DONE: VoiceLiveServerEventResponseAudioTranscriptDone,
             VoiceLiveServerEventType.RESPONSE_AUDIO_DONE: VoiceLiveServerEventResponseAudioDone,
-            VoiceLiveServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA: VoiceLiveServerEventResponseFunctionCallArgumentsDelta,
-            VoiceLiveServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE: VoiceLiveServerEventResponseFunctionCallArgumentsDone,
-            VoiceLiveServerEventType.TRANSCRIPTION_SESSION_UPDATED: VoiceLiveServerEventTranscriptionSessionUpdated,
-            VoiceLiveServerEventType.RATE_LIMITS_UPDATED: VoiceLiveServerEventRateLimitsUpdated,
         }
-        
+
         # Get the appropriate class or default to base class
         event_class = event_class_map.get(event_type, cls)
-        
+
         # Special handling for certain event types
         if event_type in [VoiceLiveServerEventType.SESSION_CREATED, VoiceLiveServerEventType.SESSION_UPDATED]:
             # Extract session data for special handling
             session_data = data.get("session", {})
-            
+
             # Convert session data to VoiceLiveResponseSession object if not already
             if isinstance(session_data, dict):
                 session = VoiceLiveResponseSession(**session_data)
                 data["session"] = session
-        
+
         # Create and return the event instance
         try:
             return event_class(**data)

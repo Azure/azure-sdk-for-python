@@ -23,50 +23,45 @@ import time
 from azure.ai.voicelive import VoiceLiveClient
 from azure.core.credentials import AzureKeyCredential
 
+
 def main():
     # Get credentials from environment variables
     api_key = os.environ.get("AZURE_VOICELIVE_API_KEY", "your-api-key")
     endpoint = os.environ.get("AZURE_VOICELIVE_ENDPOINT", "wss://api.voicelive.com/v1")
-    
+
     print(f"Using endpoint: {endpoint}")
-    
+
     # Create client
-    client = VoiceLiveClient(
-        credential=AzureKeyCredential(api_key),
-        endpoint=endpoint
-    )
-    
+    client = VoiceLiveClient(credential=AzureKeyCredential(api_key), endpoint=endpoint)
+
     # Define model to use
-    model = "voicelive-model-name"  # Replace with actual model name
-    
+    model = os.environ.get("VOICELIVE_MODEL", "voicelive-model-name")  # Replace with actual model name
+    api_version = os.environ.get("VOICELIVE_API_VERSION", "2025-05-01-preview")  # Default API version
+
     print("Connecting to WebSocket...")
     try:
         # Connect to the WebSocket API
-        with client.connect(model=model) as connection:
+        with client.connect(model=model, api_version=api_version) as connection:
             # Send a simple session update event
-            connection.send({
-                "type": "session.update",
-                "session": {
-                    "modalities": ["audio", "text"]
-                }
-            })
-            
+            connection.send({"type": "session.update", "session": {"modalities": ["audio", "text"]}})
+
             print("Sent session update request. Waiting for response...")
-            
+
             # Receive events for a few seconds
             timeout = time.time() + 10  # 10 second timeout
             for event in connection:
                 print(f"Received event: {event}")
-                
+
                 # Exit after session is updated or timeout
-                if event.get('type') == 'session.updated' or time.time() > timeout:
+                if event.get("type") == "session.updated" or time.time() > timeout:
                     break
-    
+
     except ImportError:
         print("You need to install the websockets and httpx packages to run this sample:")
         print("pip install azure-ai-voicelive[websockets]")
     except Exception as e:
         print(f"Error during WebSocket connection: {e}")
+
 
 if __name__ == "__main__":
     main()

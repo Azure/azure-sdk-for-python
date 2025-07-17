@@ -17,7 +17,7 @@ USAGE:
     python sample_voicelive_audio_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_VOICELIVE_KEY - The Azure VoiceLive key.
+    1) AZURE_VOICELIVE_API_KEY - The Azure VoiceLive key.
 
 REQUIREMENTS:
     - websockets
@@ -57,21 +57,17 @@ class AudioProcessor:
         self.output_stream = None
         self.audio_queue = queue.Queue()
         self.is_recording = False
-        self.output_buffer = b''
+        self.output_buffer = b""
         self.playing_thread = None
-        
+
     def start_recording(self):
         """Start recording audio from the microphone"""
         self.is_recording = True
         self.input_stream = self.p.open(
-            format=self.audio_format,
-            channels=self.channels,
-            rate=self.rate,
-            input=True,
-            frames_per_buffer=self.chunk
+            format=self.audio_format, channels=self.channels, rate=self.rate, input=True, frames_per_buffer=self.chunk
         )
         print("Started recording. Speak into the microphone.")
-        
+
     def stop_recording(self):
         """Stop recording audio"""
         self.is_recording = False
@@ -80,7 +76,7 @@ class AudioProcessor:
             self.input_stream.close()
             self.input_stream = None
         print("Stopped recording")
-        
+
     def read_audio_chunk(self):
         """Read a chunk of audio from the input stream"""
         if self.input_stream and self.is_recording:
@@ -90,7 +86,7 @@ class AudioProcessor:
             except Exception as e:
                 print(f"Error recording audio: {e}")
         return None
-        
+
     def setup_output_stream(self):
         """Set up the audio output stream"""
         if not self.output_stream:
@@ -99,9 +95,9 @@ class AudioProcessor:
                 channels=self.channels,
                 rate=self.rate,
                 output=True,
-                frames_per_buffer=self.chunk
+                frames_per_buffer=self.chunk,
             )
-            
+
     def add_to_output_buffer(self, audio_data):
         """Add audio data to the output buffer"""
         self.output_buffer += audio_data
@@ -109,18 +105,18 @@ class AudioProcessor:
             self.playing_thread = threading.Thread(target=self._play_audio)
             self.playing_thread.daemon = True
             self.playing_thread.start()
-            
+
     def _play_audio(self):
         """Play audio from the output buffer"""
         self.setup_output_stream()
         while len(self.output_buffer) > 0:
-            chunk = self.output_buffer[:self.chunk]
-            self.output_buffer = self.output_buffer[self.chunk:]
+            chunk = self.output_buffer[: self.chunk]
+            self.output_buffer = self.output_buffer[self.chunk :]
             if len(chunk) > 0:
                 self.output_stream.write(chunk)
             else:
                 break
-                
+
     def close(self):
         """Clean up audio resources"""
         self.stop_recording()
@@ -137,7 +133,7 @@ async def process_microphone_input(connection, audio_processor):
             chunk = audio_processor.read_audio_chunk()
             if chunk:
                 # Encode audio chunk to base64
-                audio_b64 = base64.b64encode(chunk).decode('utf-8')
+                audio_b64 = base64.b64encode(chunk).decode("utf-8")
                 # Send to VoiceLive
                 await connection.input_audio_buffer.append(audio=audio_b64)
             await asyncio.sleep(0.01)  # Short sleep to prevent CPU spinning
@@ -152,9 +148,9 @@ async def main():
     )
     parser.add_argument(
         "--api-key",
-        help="Azure VoiceLive API key. If not provided, will use the AZURE_VOICELIVE_KEY environment variable.",
+        help="Azure VoiceLive API key. If not provided, will use the AZURE_VOICELIVE_API_KEY environment variable.",
         type=str,
-        default=os.environ.get("AZURE_VOICELIVE_KEY"),
+        default=os.environ.get("AZURE_VOICELIVE_API_KEY"),
     )
     parser.add_argument(
         "--use-token-credential",
@@ -165,7 +161,7 @@ async def main():
         "--model",
         help="VoiceLive model to use",
         type=str,
-        default="gpt-4o-realtime-preview",
+        default="gpt-4o",
     )
     parser.add_argument(
         "--voice",
@@ -178,43 +174,49 @@ async def main():
         "--endpoint",
         help="Azure VoiceLive endpoint",
         type=str,
-        default="wss://api.voicelive.com/v1",
+        default=os.environ.get("AZURE_VOICELIVE_ENDPOINT", "wss://api.voicelive.com/v1"),
     )
-    
+    parser.add_argument(
+        "--api-version",
+        help="API version to use",
+        type=str,
+        default=os.environ.get("VOICELIVE_API_VERSION", "2025-05-01-preview"),
+    )
     args = parser.parse_args()
-    
+
     # Validate arguments
     if not args.api_key and not args.use_token_credential:
         raise ValueError(
             "Please provide an API key using --api-key or set the AZURE_VOICELIVE_KEY environment variable, "
             "or use --use-token-credential to use Azure authentication."
         )
-    
+
     # Create client with the appropriate credential
     if args.use_token_credential:
         credential = DefaultAzureCredential()
     else:
         credential = AzureKeyCredential(args.api_key)
-    
+
     # Initialize the audio processor
     audio_processor = AudioProcessor()
-    
+
     try:
         # Initialize the client
         client = AsyncVoiceLiveClient(
             credential=credential,
             endpoint=args.endpoint,
         )
-        
+
         # Connect to the WebSocket API
         print(f"Connecting to {args.endpoint} with model {args.model}")
         async with client.connect(
             model=args.model,
+            api_version=args.api_version,
             websocket_connection_options={
                 "max_size": 10 * 1024 * 1024,  # 10 MB
                 "ping_interval": 20,  # 20 seconds
                 "ping_timeout": 20,  # 20 seconds
-            }
+            },
         ) as connection:
             # Set up the session
             print("Setting up session...")
@@ -223,59 +225,55 @@ async def main():
                     "modalities": ["audio", "text"],
                     "voice": args.voice,
                     "instructions": "You are a helpful assistant. Keep your responses concise and natural.",
-                    "turn_detection": {
-                        "type": "server_vad",
-                        "threshold": 0.6,
-                        "silence_duration_ms": 700
-                    },
+                    "turn_detection": {"type": "server_vad", "threshold": 0.6, "silence_duration_ms": 700},
                     "input_audio_format": "pcm16",
-                    "output_audio_format": "pcm16"
+                    "output_audio_format": "pcm16",
                 }
             )
-            
+
             # Start recording
             audio_processor.start_recording()
-            
+
             # Start a task to process microphone input
             input_task = asyncio.create_task(process_microphone_input(connection, audio_processor))
-            
+
             # Process events
             print("Speak into the microphone to interact with the assistant...")
             try:
                 async for event in connection:
                     # print(f"Received event: {event.type}")
-                    
+
                     if event.type == "session.updated":
                         print(f"Session initialized with ID: {event.session.id}")
                         print("Listening for your voice...")
-                        
+
                     elif event.type == "input_audio_buffer.speech_started":
                         print("Speech detected...")
-                        
+
                     elif event.type == "input_audio_buffer.speech_stopped":
                         print("Pause detected, processing your input...")
-                        
+
                     elif event.type == "conversation.item.created":
                         if hasattr(event, "item") and event.item.role == "assistant":
                             print("Assistant is responding...")
-                        
+
                     elif event.type == "response.text.delta":
                         print(event.delta, end="", flush=True)
-                        
+
                     elif event.type == "response.audio.delta":
                         # Process audio response
                         audio_data = base64.b64decode(event.audio)
                         audio_processor.add_to_output_buffer(audio_data)
-                        
+
                     elif event.type == "response.done":
                         print("\nResponse complete")
                         print("Listening for your voice...")
-                        
+
                     # Keep processing for 2 minutes then exit
                     if time.time() - start_time > 120:
                         print("\nDemo time limit reached. Exiting...")
                         break
-                        
+
             except KeyboardInterrupt:
                 print("\nUser interrupted. Exiting...")
             finally:
@@ -287,7 +285,7 @@ async def main():
                     except asyncio.CancelledError:
                         pass
                 audio_processor.stop_recording()
-                
+
     except Exception as e:
         print(f"Error: {e}")
     finally:
