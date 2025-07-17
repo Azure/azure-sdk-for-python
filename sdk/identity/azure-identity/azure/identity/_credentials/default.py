@@ -8,8 +8,9 @@ from typing import List, Any, Optional, cast
 
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions, SupportsTokenInfo, TokenCredential
 from .._constants import EnvironmentVariables
-from .._internal import get_default_authority, normalize_authority, within_dac, process_credential_exclusions
+from .._internal.utils import get_default_authority, normalize_authority, within_dac, process_credential_exclusions
 from .azure_powershell import AzurePowerShellCredential
+from .broker import BrokerCredential
 from .browser import InteractiveBrowserCredential
 from .chained import ChainedTokenCredential
 from .environment import EnvironmentCredential
@@ -42,6 +43,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
     5. The identity currently logged in to the Azure CLI.
     6. The identity currently logged in to Azure PowerShell.
     7. The identity currently logged in to the Azure Developer CLI.
+    8. Brokered authentication. On Windows and WSL only, this uses the default account logged in via
+       Web Account Manager (WAM) if the `azure-identity-broker` package is installed.
 
     This default behavior is configurable with keyword arguments.
 
@@ -64,9 +67,13 @@ class DefaultAzureCredential(ChainedTokenCredential):
         **False**.
     :keyword bool exclude_interactive_browser_credential: Whether to exclude interactive browser authentication (see
         :class:`~azure.identity.InteractiveBrowserCredential`). Defaults to **True**.
+    :keyword bool exclude_broker_credential: Whether to exclude the broker credential from the credential chain.
+        Defaults to **False**.
     :keyword str interactive_browser_tenant_id: Tenant ID to use when authenticating a user through
         :class:`~azure.identity.InteractiveBrowserCredential`. Defaults to the value of environment variable
         AZURE_TENANT_ID, if any. If unspecified, users will authenticate in their home tenants.
+    :keyword str broker_tenant_id: The tenant ID to use when using brokered authentication. Defaults to the value of
+        environment variable AZURE_TENANT_ID, if any. If unspecified, users will authenticate in their home tenants.
     :keyword str managed_identity_client_id: The client ID of a user-assigned managed identity. Defaults to the value
         of the environment variable AZURE_CLIENT_ID, if any. If not specified, a system-assigned identity will be used.
     :keyword str workload_identity_client_id: The client ID of an identity assigned to the pod. Defaults to the value
@@ -75,6 +82,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
         Defaults to the value of environment variable AZURE_TENANT_ID, if any.
     :keyword str interactive_browser_client_id: The client ID to be used in interactive browser credential. If not
         specified, users will authenticate to an Azure development application.
+    :keyword str broker_client_id: The client ID to be used in brokered authentication. If not specified, users will
+        authenticate to an Azure development application.
     :keyword str shared_cache_username: Preferred username for :class:`~azure.identity.SharedTokenCacheCredential`.
         Defaults to the value of environment variable AZURE_USERNAME, if any.
     :keyword str shared_cache_tenant_id: Preferred tenant for :class:`~azure.identity.SharedTokenCacheCredential`.
@@ -117,6 +126,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
         )
         interactive_browser_client_id = kwargs.pop("interactive_browser_client_id", None)
 
+        broker_tenant_id = kwargs.pop("broker_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID))
+        broker_client_id = kwargs.pop("broker_client_id", None)
+
         shared_cache_username = kwargs.pop("shared_cache_username", os.environ.get(EnvironmentVariables.AZURE_USERNAME))
         shared_cache_tenant_id = kwargs.pop(
             "shared_cache_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
@@ -147,6 +159,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
             },
             "visual_studio_code": {
                 "exclude_param": "exclude_visual_studio_code_credential",
+                "env_name": "visualstudiocodecredential",
                 "default_exclude": False,
             },
             "cli": {
@@ -168,6 +181,10 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 "exclude_param": "exclude_interactive_browser_credential",
                 "env_name": "interactivebrowsercredential",
                 "default_exclude": True,
+            },
+            "broker": {
+                "exclude_param": "exclude_broker_credential",
+                "default_exclude": False,
             },
         }
 
@@ -192,6 +209,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         exclude_developer_cli_credential = exclude_flags["developer_cli"]
         exclude_powershell_credential = exclude_flags["powershell"]
         exclude_interactive_browser_credential = exclude_flags["interactive_browser"]
+        exclude_broker_credential = exclude_flags["broker"]
 
         credentials: List[SupportsTokenInfo] = []
         within_dac.set(True)
@@ -242,6 +260,12 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 )
             else:
                 credentials.append(InteractiveBrowserCredential(tenant_id=interactive_browser_tenant_id, **kwargs))
+        if not exclude_broker_credential:
+            broker_credential_args = {"tenant_id": broker_tenant_id, **kwargs}
+            if broker_client_id:
+                broker_credential_args["client_id"] = broker_client_id
+            credentials.append(BrokerCredential(**broker_credential_args))
+
         within_dac.set(False)
         super(DefaultAzureCredential, self).__init__(*credentials)
 
