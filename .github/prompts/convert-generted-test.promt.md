@@ -49,7 +49,7 @@ IF `.venv` missing in repository root
       ```
 
 ALWAYS **Activate** the virtual environment:
-    - **Windows**: `.venv\Scripts\activate`
+    - **Windows**: `.venv\Scripts\Activate.ps1`
     - **Linux/macOS**: `source .venv/bin/activate`
 
 ### Step 3: install azure-cli
