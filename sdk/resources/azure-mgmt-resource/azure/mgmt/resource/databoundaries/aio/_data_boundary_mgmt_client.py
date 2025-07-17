@@ -7,33 +7,33 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Optional, TYPE_CHECKING, cast
+from typing import Any, Awaitable, Optional, TYPE_CHECKING, cast
 from typing_extensions import Self
 
 from azure.core.pipeline import policies
-from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.settings import settings
-from azure.mgmt.core import ARMPipelineClient
-from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
+from azure.mgmt.core import AsyncARMPipelineClient
+from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
-from . import models as _models
-from ._configuration import DataBoundaryConfiguration
-from ._utils.serialization import Deserializer, Serializer
+from .. import models as _models
+from .._utils.serialization import Deserializer, Serializer
+from ._configuration import DataBoundaryMgmtClientConfiguration
 from .operations import DataBoundariesOperations
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
-class DataBoundary:
+class DataBoundaryMgmtClient:
     """Provides APIs for data boundary operations.
 
     :ivar data_boundaries: DataBoundariesOperations operations
     :vartype data_boundaries:
-     azure.mgmt.resource.databoundaries.operations.DataBoundariesOperations
+     azure.mgmt.resource.databoundaries.aio.operations.DataBoundariesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param base_url: Service URL. Default value is None.
     :type base_url: str
     :keyword api_version: Api Version. Default value is "2024-08-01". Note that overriding this
@@ -41,13 +41,15 @@ class DataBoundary:
     :paramtype api_version: str
     """
 
-    def __init__(self, credential: "TokenCredential", base_url: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, credential: "AsyncTokenCredential", base_url: Optional[str] = None, **kwargs: Any) -> None:
         _cloud = kwargs.pop("cloud_setting", None) or settings.current.azure_cloud  # type: ignore
         _endpoints = get_arm_endpoints(_cloud)
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = DataBoundaryConfiguration(credential=credential, credential_scopes=credential_scopes, **kwargs)
+        self._config = DataBoundaryMgmtClientConfiguration(
+            credential=credential, credential_scopes=credential_scopes, **kwargs
+        )
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:
@@ -57,7 +59,7 @@ class DataBoundary:
                 self._config.user_agent_policy,
                 self._config.proxy_policy,
                 policies.ContentDecodePolicy(**kwargs),
-                ARMAutoResourceProviderRegistrationPolicy(),
+                AsyncARMAutoResourceProviderRegistrationPolicy(),
                 self._config.redirect_policy,
                 self._config.retry_policy,
                 self._config.authentication_policy,
@@ -67,7 +69,9 @@ class DataBoundary:
                 policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
                 self._config.http_logging_policy,
             ]
-        self._client: ARMPipelineClient = ARMPipelineClient(base_url=cast(str, base_url), policies=_policies, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(
+            base_url=cast(str, base_url), policies=_policies, **kwargs
+        )
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -75,14 +79,16 @@ class DataBoundary:
         self._serialize.client_side_validation = False
         self.data_boundaries = DataBoundariesOperations(self._client, self._config, self._serialize, self._deserialize)
 
-    def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
+    def _send_request(
+        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest("GET", "https://www.example.org/")
         <HttpRequest [GET], url: 'https://www.example.org/'>
-        >>> response = client._send_request(request)
-        <HttpResponse: 200 OK>
+        >>> response = await client._send_request(request)
+        <AsyncHttpResponse: 200 OK>
 
         For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
@@ -90,19 +96,19 @@ class DataBoundary:
         :type request: ~azure.core.rest.HttpRequest
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.rest.HttpResponse
+        :rtype: ~azure.core.rest.AsyncHttpResponse
         """
 
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
         return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
-    def close(self) -> None:
-        self._client.close()
+    async def close(self) -> None:
+        await self._client.close()
 
-    def __enter__(self) -> Self:
-        self._client.__enter__()
+    async def __aenter__(self) -> Self:
+        await self._client.__aenter__()
         return self
 
-    def __exit__(self, *exc_details: Any) -> None:
-        self._client.__exit__(*exc_details)
+    async def __aexit__(self, *exc_details: Any) -> None:
+        await self._client.__aexit__(*exc_details)

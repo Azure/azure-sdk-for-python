@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
-from ._data_boundary import DataBoundary  # type: ignore
+from ._data_boundary_mgmt_client import DataBoundaryMgmtClient  # type: ignore
 from ._version import VERSION
 
 __version__ = VERSION
@@ -25,7 +25,7 @@ except ImportError:
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "DataBoundary",
+    "DataBoundaryMgmtClient",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 

@@ -24,7 +24,7 @@ from ._models_py3 import (  # type: ignore
     SystemData,
 )
 
-from ._data_boundary_enums import (  # type: ignore
+from ._data_boundary_mgmt_client_enums import (  # type: ignore
     CreatedByType,
     DataBoundary,
     DefaultName,
