@@ -1,0 +1,164 @@
+"""
+Example usage of the enhanced CriticAgent for agent evaluation.
+
+This demonstrates both conversation-based and agent-based evaluation modes.
+"""
+
+import os
+from azure.ai.evaluation import AzureOpenAIModelConfiguration, AzureAIProject
+from azure.ai.evaluation._agents._critic_agent import CriticAgent
+from dotenv import load_dotenv
+
+
+def example_conversation_evaluation():
+    """Example of evaluating a conversation thread using CriticAgent."""
+    
+    # Initialize model configuration
+    model_config = AzureOpenAIModelConfiguration(
+        azure_endpoint=os.environ.get("AZURE_OPENAI_ENDPOINT"),
+        api_key=os.environ.get("AZURE_OPENAI_API_KEY"),
+        azure_deployment=os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
+        api_version=os.environ.get("AZURE_OPENAI_API_VERSION", "2024-02-01")
+    )
+    
+    # Initialize CriticAgent
+    critic_agent = CriticAgent(model_config=model_config)
+    
+    # Example conversation history
+    conversation_history = [
+        {"role": "system", "content": "You are a helpful customer service agent."},
+        {"role": "user", "content": [{"type": "text", "text": "What is the status of my order #123?"}]},
+        {"role": "assistant", "content": [
+            {"type": "tool_call", "tool_call": {
+                "id": "tool_001",
+                "type": "function", 
+                "function": {"name": "get_order", "arguments": {"order_id": "123"}}
+            }}
+        ]},
+        {"role": "tool", "tool_call_id": "tool_001", "content": [
+            {"type": "tool_result", "tool_result": '{"order": {"id": "123", "status": "shipped"}}'}
+        ]},
+        {"role": "assistant", "content": [{"type": "text", "text": "Your order #123 has been shipped."}]}
+    ]
+    
+    tool_definitions = [
+        {
+            "name": "get_order",
+            "description": "Get order details",
+            "parameters": {"type": "object", "properties": {"order_id": {"type": "string"}}}
+        }
+    ]
+    
+    # Evaluate the conversation
+    result = critic_agent.evaluate(
+        identifier="thread_123",
+        conversation_history=conversation_history,
+        tool_definitions=tool_definitions
+    )
+    
+    print("Conversation Evaluation Result:")
+    print(result)
+    return result
+
+
+def example_agent_evaluation():
+    """Example of evaluating an agent using agent_id and Azure AI Project."""
+    
+    # Initialize model configuration
+    model_config = AzureOpenAIModelConfiguration(
+        azure_endpoint=os.environ.get("AZURE_OPENAI_ENDPOINT"),
+        api_key=os.environ.get("AZURE_OPENAI_API_KEY"),
+        azure_deployment=os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
+        api_version=os.environ.get("AZURE_OPENAI_API_VERSION", "2024-02-01")
+    )
+    
+    # Initialize CriticAgent
+    critic_agent = CriticAgent(model_config=model_config)
+    
+    # Azure AI Project configuration
+    azure_ai_project = {
+        "subscription_id": os.environ.get("AZURE_SUBSCRIPTION_ID"),
+        "resource_group_name": os.environ.get("RESOURCE_GROUP_NAME"),
+        "project_name": os.environ.get("PROJECT_NAME")
+    }
+    
+    # Evaluate specific agent with default evaluators
+    result_default = critic_agent.evaluate(
+        identifier="agent_456",
+        azure_ai_project=azure_ai_project
+    )
+    
+    print("Agent Evaluation Result (Default Evaluators):")
+    print(result_default)
+    
+    # Evaluate with specific evaluators
+    result_specific = critic_agent.evaluate(
+        identifier="asst_J3Z9NXjcDW8NrtQZIUcIp2Hr",
+        azure_ai_project=azure_ai_project,
+        evaluation=["IntentResolution", "TaskAdherence"]
+    )
+    
+    print("Agent Evaluation Result (Specific Evaluators):")
+    print(result_specific)
+    
+    return result_default, result_specific
+
+
+def example_mixed_evaluation():
+    """Example showing how to use different evaluation modes."""
+    
+    model_config = AzureOpenAIModelConfiguration(
+        azure_endpoint=os.environ.get("AZURE_OPENAI_ENDPOINT"),
+        api_key=os.environ.get("AZURE_OPENAI_API_KEY"),
+        azure_deployment=os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
+        api_version=os.environ.get("AZURE_OPENAI_API_VERSION", "2024-02-01")
+    )
+    #
+    critic_agent = CriticAgent(model_config=model_config)
+
+    # Mode 1: Traditional evaluation (thread_id only)
+    print("=== Mode 1: Thread Evaluation ===")
+    try:
+        thread_result = critic_agent.evaluate(
+            identifier="thread_789",
+            conversation_history=[
+                {"role": "user", "content": "Hello"},
+                {"role": "assistant", "content": "Hi! How can I help you today?"}
+            ]
+        )
+        print(thread_result)
+    except Exception as e:
+        print(f"Thread evaluation error (expected in demo): {e}")
+
+    # Mode 2: Agent evaluation with Azure AI Project
+    print("\n=== Mode 2: Agent Evaluation ===")
+    # subscription_id: str
+    # resource_group_name: str
+    # project_name: str
+    azure_ai_project = {
+        "azure_endpoint": os.environ.get("PROJECT_ENDPOINT"),
+
+    }
+    
+    try:
+        agent_result = critic_agent.evaluate(
+            identifier="asst_J3Z9NXjcDW8NrtQZIUcIp2Hr",
+            azure_ai_project=azure_ai_project,
+            evaluation=["IntentResolution", "ToolCallAccuracy", "TaskAdherence"]
+        )
+        print(agent_result)
+    except Exception as e:
+        print(f"Agent evaluation error (expected without proper setup): {e}")
+
+
+if __name__ == "__main__":
+    print("CriticAgent Usage Examples")
+    print("=" * 50)
+    # load_dotenv("C:\\Users\\ghyadav\\work\\ghyadav_azure_sdk\\azure-sdk-for-python\\sdk\\evaluation\\azure-ai-evaluation\\critic_agent\\ghyadav.env")  # Load environment variables from .env file
+    # Run examples (will require proper environment setup)
+
+    load_dotenv("C:\\Users\\ghyadav\\work\\ghyadav_azure_sdk\\azure-sdk-for-python\\sdk\\evaluation\\azure-ai-evaluation\\azure\\ai\\evaluation\\_agents\\_critic_agent\\eval_ws.env")
+    try:
+        example_mixed_evaluation()
+    except Exception as e:
+        print(f"Demo completed with expected configuration errors: {e}")
