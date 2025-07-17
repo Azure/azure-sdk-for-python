@@ -58,22 +58,24 @@ def record_dep(dependencies: Dict[str, Dict[str, Any]], req_name: str, spec: str
 def get_lib_deps(base_dir: str) -> Tuple[Dict[str, Dict[str, Any]], Dict[str, Dict[str, Any]]]:
     packages = {}
     dependencies = {}
-
     for lib_dir in discover_targeted_packages("azure*", base_dir):
-        parsed = ParsedSetup.from_path(lib_dir)
-        lib_name, version, requires = parsed.name, parsed.version, parsed.requires
+        try:
+            parsed = ParsedSetup.from_path(lib_dir)
+            lib_name, version, requires = parsed.name, parsed.version, parsed.requires
 
-        packages[lib_name] = {"version": version, "source": lib_dir, "deps": []}
+            packages[lib_name] = {"version": version, "source": lib_dir, "deps": []}
 
-        for req in requires:
-            req_obj = parse_require(req)
-            req_name = req_obj.name
-            spec = req_obj.specifier if len(req_obj.specifier) else None
-            if spec is None:
-                spec = ""
+            for req in requires:
+                req_obj = parse_require(req)
+                req_name = req_obj.name
+                spec = req_obj.specifier if len(req_obj.specifier) else None
+                if spec is None:
+                    spec = ""
 
-            packages[lib_name]["deps"].append({"name": req_name, "version": str(spec)})
-            record_dep(dependencies, req_name, str(spec), lib_name)
+                packages[lib_name]["deps"].append({"name": req_name, "version": str(spec)})
+                record_dep(dependencies, req_name, str(spec), lib_name)
+        except:
+            print(f"Failed to parse setup.py or pyproject.toml at {lib_dir}")
     return packages, dependencies
 
 
