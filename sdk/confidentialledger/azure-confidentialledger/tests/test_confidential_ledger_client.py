@@ -21,6 +21,8 @@ from azure.confidentialledger import (
     ConfidentialLedgerClient,
 )
 
+from azure.confidentialledger.models import Role
+
 from _shared.constants import (
     TEST_PROXY_CERT,
     USER_CERTIFICATE_THUMBPRINT,
@@ -582,14 +584,16 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
 
         role_name = "modify"
 
-        client.create_user_defined_role([{"role_name": role_name, "role_actions": ["/content/read"]}])
+        client.create_user_defined_role([Role({"role_name": role_name, "role_actions": ["/content/read"]})])
         time.sleep(3)
 
         roles = client.get_user_defined_role(role_name=role_name)
         assert roles[0]["role_name"] == role_name
         assert roles[0]["role_actions"] == ["/content/read"]
 
-        client.update_user_defined_role([{"role_name": role_name, "role_actions": ["/content/write", "/content/read"]}])
+        client.update_user_defined_role(
+            [Role({"role_name": role_name, "role_actions": ["/content/write", "/content/read"]})]
+        )
         time.sleep(3)
 
         roles = client.get_user_defined_role(role_name=role_name)

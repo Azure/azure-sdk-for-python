@@ -7,10 +7,10 @@ from devtools_testutils import (
     EnvironmentVariableLoader,
 )
 
-from azure.confidentialledger.certificate import (
+from azure.confidentialledger import (
     ConfidentialLedgerCertificateClient,
 )
-from azure.confidentialledger.certificate.aio import (
+from azure.confidentialledger.aio import (
     ConfidentialLedgerCertificateClient as ConfidentialLedgerCertificateClientAsync,
 )
 
