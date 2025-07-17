@@ -19,6 +19,7 @@ This guide assumes the following package folder structure:
 - **Source**: Generated test files are located in `generated_tests/`
 - **Target**: All working test cases must be placed in `tests/`
 - **Configuration**: `conftest.py` is located in the same `tests/` folder
+- ALWAYS run command in PYTHON VIRTUAL ENVIRONMENT
 
 ---
 
@@ -41,14 +42,12 @@ IF `.env` missing in the repository root
 ### Step 2: Set Up Virtual Environment
 
 **CHECK** whether `.env` exists in repository root
-
 IF `.venv` missing in repository root
     CREATE virtual environment:
       ```bash
       python -m venv .venv
       ```
-
-ALWAYS **Activate** the virtual environment:
+ALWAYS **Activate** the virtual environment to **make sure the following command is running in virtual environment**:
     - **Windows**: `.venv\Scripts\Activate.ps1`
     - **Linux/macOS**: `source .venv/bin/activate`
 
@@ -71,6 +70,8 @@ az login
 IF `{TEST_FILE}_test.py` missing
    CREATE `{TEST_FILE}_test.py` under folder `tests`
    THEN COPY content of `TEST_FILE` to `{TEST_FILE}_test.py` with command
+ELSE
+   Add test cases of `TEST_FILE` to `{TEST_FILE}_test.py` if missing
 
 ### Step 6: Prepare Test Infrastructure
 Delete `@pytest.mark.skip` from test methods
