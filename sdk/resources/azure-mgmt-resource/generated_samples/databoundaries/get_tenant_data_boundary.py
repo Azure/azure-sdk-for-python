@@ -9,7 +9,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.resource.databoundaries import DataBoundary
+from azure.mgmt.resource.databoundaries import DataBoundaryMgmtClient
 
 """
 # PREREQUISITES
@@ -26,7 +26,7 @@ from azure.mgmt.resource.databoundaries import DataBoundary
 
 
 def main():
-    client = DataBoundary(
+    client = DataBoundaryMgmtClient(
         credential=DefaultAzureCredential(),
     )
 
