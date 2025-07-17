@@ -1,0 +1,11 @@
+{
+    "CrossLanguagePackageId": "Microsoft.EventGrid",
+    "CrossLanguageDefinitionId": {
+        "azure.eventgrid.models.AcknowledgeResult": "Microsoft.EventGrid.AcknowledgeResult",
+        "azure.eventgrid.models.FailedLockToken": "Microsoft.EventGrid.FailedLockToken",
+        "azure.eventgrid.models.RejectResult": "Microsoft.EventGrid.RejectResult",
+        "azure.eventgrid.models.ReleaseResult": "Microsoft.EventGrid.ReleaseResult",
+        "azure.eventgrid.models.RenewLocksResult": "Microsoft.EventGrid.RenewCloudEventLocksResult",
+        "azure.eventgrid.models.ReleaseDelay": "Microsoft.EventGrid.ReleaseDelay"
+    }
+}
