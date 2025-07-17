@@ -4,6 +4,10 @@
 
 ## 1.1.0b5 (Unreleased)
 
+### Features Added
+
+- Support `tool_resources` for run async operations.
+
 ### Bugs Fixed
 
 - `AgentsResponseFormatOption`, `MessageInputContent`, `MessageAttachmentToolDefinition`, `AgentsToolChoiceOption` are now public.
