@@ -72,6 +72,8 @@ jobs:
       os: linux
 
     steps:
+    - template: /eng/pipelines/templates/steps/install-uv.yml
+
     - template: /eng/pipelines/templates/steps/build-package-artifacts.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
@@ -91,6 +93,8 @@ jobs:
       os: windows
 
     steps:
+    - template: /eng/pipelines/templates/steps/install-uv.yml
+
     - template: /eng/pipelines/templates/steps/build-package-artifacts.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
@@ -110,6 +114,8 @@ jobs:
       os: macOS
 
     steps:
+    - template: /eng/pipelines/templates/steps/install-uv.yml
+
     - template: /eng/pipelines/templates/steps/build-package-artifacts.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
@@ -135,6 +141,8 @@ jobs:
       os: linux
 
     steps:
+    - template: /eng/pipelines/templates/steps/install-uv.yml
+
     - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 
     - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
@@ -167,6 +175,8 @@ jobs:
       os: linux
 
     steps:
+    - template: /eng/pipelines/templates/steps/install-uv.yml
+
     - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 
     - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
@@ -198,6 +208,8 @@ jobs:
       os: linux
 
     steps:
+    - template: /eng/pipelines/templates/steps/install-uv.yml
+
     - template: /eng/common/pipelines/templates/steps/check-spelling.yml
       parameters:
         ContinueOnError: false
@@ -264,6 +276,7 @@ jobs:
           - task: UsePythonVersion@0
             inputs:
               versionSpec: '3.12'
+          - template: /eng/pipelines/templates/steps/install-uv.yml
           - template: /eng/common/pipelines/templates/steps/save-package-properties.yml
             parameters:
               ServiceDirectory: ${{parameters.ServiceDirectory}}
