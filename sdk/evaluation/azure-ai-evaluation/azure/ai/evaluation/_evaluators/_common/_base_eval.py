@@ -219,9 +219,9 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
             if len(queries) == len(responses):
                 pairs = list(zip(queries, responses))
             elif len(queries) < len(responses):
-                pairs = list(zip(queries, responses[:len(queries)]))
+                pairs = list(zip(queries, responses[: len(queries)]))
             else:
-                pairs = list(zip(queries[:len(responses)], responses))
+                pairs = list(zip(queries[: len(responses)], responses))
 
             for query, response in pairs:
                 context = {}
@@ -245,7 +245,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                 if include_ground_truth:
                     eval_input["ground_truth"] = response.get("ground_truth", "")
                 eval_inputs.append(eval_input)
-                
+
             return eval_inputs
 
         return converter
@@ -299,21 +299,21 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
             while user_idx < len(user_messages) and assistant_idx < len(assistant_messages):
                 # Create conversation messages for this pair
                 conversation_messages = []
-                
+
                 # Add system messages if present
                 if system_messages:
                     conversation_messages.extend(system_messages)
-                
+
                 # Add the user and assistant messages
                 conversation_messages.append(user_messages[user_idx])
                 conversation_messages.append(assistant_messages[assistant_idx])
-                
+
                 # Create a conversation object using the Conversation class
                 conversation_obj = Conversation(messages=conversation_messages)
-                
+
                 # Add to result
                 eval_conv_inputs.append({"conversation": conversation_obj})
-                
+
                 user_idx += 1
                 assistant_idx += 1
 
