@@ -60,6 +60,7 @@ def get_lib_deps(base_dir: str) -> Tuple[Dict[str, Dict[str, Any]], Dict[str, Di
     dependencies = {}
 
     def parse_setup(setup_path: str) -> None:
+        """Attempts to parse either a setup.py or pyproject.toml file to extract package information."""
         parsed = ParsedSetup.from_path(setup_path)
         lib_name, version, requires = parsed.name, parsed.version, parsed.requires
 
@@ -79,10 +80,12 @@ def get_lib_deps(base_dir: str) -> Tuple[Dict[str, Dict[str, Any]], Dict[str, Di
         setup_path = os.path.join(lib_dir, "setup.py")
         try:
             parse_setup(setup_path)
+        # If we can't parse setup.py, we try to parse pyproject.toml
         except:
             pyproject_path = os.path.join(lib_dir, "pyproject.toml")
             try:
                 parse_setup(pyproject_path)
+            # If we can't parse pyproject.toml either, we print an error message with attempted paths
             except:
                 print(f"Failed to parse {setup_path} or {pyproject_path}")
     return packages, dependencies
