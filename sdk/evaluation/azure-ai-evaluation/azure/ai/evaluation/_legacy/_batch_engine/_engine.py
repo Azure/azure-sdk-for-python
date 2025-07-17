@@ -20,7 +20,21 @@ from concurrent.futures import Executor
 from functools import partial
 from contextlib import contextmanager
 from datetime import datetime, timezone
-from typing import Any, Callable, Dict, Final, Generator, Mapping, MutableMapping, Optional, Sequence, Set, Tuple, cast
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Final,
+    Generator,
+    Mapping,
+    MutableMapping,
+    Optional,
+    Sequence,
+    Set,
+    Tuple,
+    cast,
+    Literal,
+)
 from uuid import uuid4
 
 from ._utils import DEFAULTS_KEY, get_int_env_var, get_value_from_path, is_async_callable
@@ -85,15 +99,13 @@ class BatchEngine:
     async def run(
         self,
         data: Sequence[Mapping[str, Any]],
-        column_mapping: Mapping[str, str],
+        column_mapping: Optional[Mapping[str, str]],
         *,
         id: Optional[str] = None,
         max_lines: Optional[int] = None,
     ) -> BatchResult:
         if not data:
             raise BatchEngineValidationError("Please provide a non-empty data mapping.")
-        if not column_mapping:
-            raise BatchEngineValidationError("The column mapping is required.")
 
         start_time = datetime.now(timezone.utc)
 
@@ -114,12 +126,52 @@ class BatchEngine:
         # TODO ralphe: Make sure this works
         self._is_canceled = True
 
-    @staticmethod
     def _apply_column_mapping(
+        self,
+        data: Sequence[Mapping[str, Any]],
+        column_mapping: Optional[Mapping[str, str]],
+        max_lines: Optional[int],
+    ) -> Sequence[Mapping[str, str]]:
+
+        resolved_column_mapping: Mapping[str, str] = self._resolve_column_mapping(column_mapping)
+        resolved_column_mapping.update(self._generate_defaults_for_column_mapping())
+        return self._apply_column_mapping_to_lines(data, resolved_column_mapping, max_lines)
+
+    def _resolve_column_mapping(
+        self,
+        column_mapping: Optional[Mapping[str, str]],
+    ) -> Mapping[str, str]:
+        parameters = inspect.signature(self._func).parameters
+        default_column_mapping: Dict[str, str] = {
+            name: f"${{data.{name}}}"
+            for name, value in parameters.items()
+            if name not in ["self", "cls", "args", "kwargs"]
+        }
+        resolved_mapping: Dict[str, str] = default_column_mapping.copy()
+
+        for name, value in parameters.items():
+            if value and value.default is not inspect.Parameter.empty:
+                resolved_mapping.pop(name)
+
+        resolved_mapping.update(column_mapping or {})
+        return resolved_mapping
+
+    def _generate_defaults_for_column_mapping(self) -> Mapping[Literal["$defaults$"], Any]:
+
+        return {
+            DEFAULTS_KEY: {
+                name: value.default
+                for name, value in inspect.signature(self._func).parameters.items()
+                if value.default is not inspect.Parameter.empty
+            }
+        }
+
+    @staticmethod
+    def _apply_column_mapping_to_lines(
         data: Sequence[Mapping[str, Any]],
         column_mapping: Mapping[str, str],
         max_lines: Optional[int],
-    ) -> Sequence[Mapping[str, str]]:
+    ) -> Sequence[Mapping[str, Any]]:
         data = data[:max_lines] if max_lines else data
 
         inputs: Sequence[Mapping[str, Any]] = []

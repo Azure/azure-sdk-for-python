@@ -46,11 +46,6 @@ class RunSubmitter:
         **kwargs,
     ) -> Run:
 
-        # if the column mappings are not provided, generate them based on the arguments to the
-        # flow function.
-        if column_mapping is None:
-            column_mapping = self._generate_column_mapping(dynamic_callable)
-
         # The old code always spun up two threads here using a ThreadPoolExecutor:
         # 1. One thread essentially did nothing of value (since tracing was disabled, and we
         #    don't care about checking for the latest PromptFlow version number now)
@@ -174,30 +169,15 @@ class RunSubmitter:
             run.result = batch_result
 
     @staticmethod
-    def _generate_column_mapping(function: Callable) -> Mapping[str, Any]:
-        args = inspect.signature(function).parameters
-        default_values: Dict[str, Any] = {}
-        mapping: Dict[str, Any] = {}
-        for key, value in args.items():
-            if key in ["self", "cls"] or value.kind in [value.VAR_POSITIONAL, value.VAR_KEYWORD]:
-                continue
-
-            mapping[key] = f"${{data.{key}}}"
-            if value.default != inspect.Parameter.empty:
-                default_values[key] = value.default
-
-        return {
-            **mapping,
-            DEFAULTS_KEY: default_values,
-        }
-
-    @staticmethod
     def _validate_inputs(run: Run):
         if not run.inputs and not run.previous_run:
             raise BatchEngineValidationError("Either data, or a previous run must be specified for the evaluation run.")
 
     @staticmethod
-    def _validate_column_mapping(column_mapping: Mapping[str, str]):
+    def _validate_column_mapping(column_mapping: Optional[Mapping[str, str]]):
+        if not column_mapping:
+            return
+
         if not isinstance(column_mapping, Mapping):
             raise BatchEngineValidationError(f"Column mapping must be a dict, got {type(column_mapping)}.")
 
