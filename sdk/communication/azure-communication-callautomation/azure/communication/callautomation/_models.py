@@ -398,6 +398,7 @@ class MediaStreamingOptions:
 
     def __init__(
         self,
+        *,
         transport_url: str,
         transport_type: Union[str, 'MediaStreamingTransportType'],
         content_type: Union[str, 'MediaStreamingContentType'],
@@ -422,7 +423,7 @@ class MediaStreamingOptions:
             audio_channel_type=self.audio_channel_type,
             start_media_streaming=self.start_media_streaming,
             enable_bidirectional = self.enable_bidirectional,
-            audio_format=self.audio_format
+            audio_format=self.audio_format,
         )
 
 class TranscriptionOptions:
@@ -459,6 +460,7 @@ class TranscriptionOptions:
 
     def __init__(
         self,
+        *,
         transport_url: str,
         transport_type: Union[str, "TranscriptionTransportType"],
         locale: str,
