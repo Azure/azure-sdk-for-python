@@ -60,8 +60,6 @@ class PrivateLinkResourcesOperations:
     ) -> AsyncItemPaged["_models.PrivateLinkResource"]:
         """List all private link resources information for this grafana resource.
 
-        List all private link resources information for this grafana resource.
-
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
@@ -146,8 +144,6 @@ class PrivateLinkResourcesOperations:
         self, resource_group_name: str, workspace_name: str, private_link_resource_name: str, **kwargs: Any
     ) -> _models.PrivateLinkResource:
         """Get specific private link resource information for this grafana resource.
-
-        Get specific private link resource information for this grafana resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.

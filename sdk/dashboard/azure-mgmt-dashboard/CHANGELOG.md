@@ -1,5 +1,51 @@
 # Release History
 
+## 2.0.0b1 (2025-07-21)
+
+### Features Added
+
+  - Client `DashboardManagementClient` added operation group `dashboards`
+  - Client `DashboardManagementClient` added operation group `managed_dashboards`
+  - Client `DashboardManagementClient` added operation group `integration_fabrics`
+  - Model `GrafanaConfigurations` added property `snapshots`
+  - Model `GrafanaConfigurations` added property `users`
+  - Model `GrafanaConfigurations` added property `security`
+  - Model `GrafanaConfigurations` added property `unified_alerting_screenshots`
+  - Added model `IntegrationFabric`
+  - Added model `IntegrationFabricListResponse`
+  - Added model `IntegrationFabricProperties`
+  - Added model `IntegrationFabricPropertiesUpdateParameters`
+  - Added model `IntegrationFabricUpdateParameters`
+  - Added model `ManagedDashboard`
+  - Added model `ManagedDashboardListResponse`
+  - Added model `ManagedDashboardUpdateParameters`
+  - Added model `ProxyResource`
+  - Added model `Security`
+  - Added model `Snapshots`
+  - Added model `UnifiedAlertingScreenshots`
+  - Added model `Users`
+  - Model `GrafanaOperations` added method `begin_update`
+  - Added operation group `DashboardsOperations`
+  - Added operation group `IntegrationFabricsOperations`
+  - Added operation group `ManagedDashboardsOperations`
+
+### Breaking Changes
+
+  - Parameter `location` of method `ManagedGrafana.__init__` is now required
+  - Parameter `value` of method `ManagedGrafanaListResponse.__init__` is now required
+  - Parameter `public_network_access` of method `ManagedGrafanaProperties.__init__` is now optional
+  - Parameter `zone_redundancy` of method `ManagedGrafanaProperties.__init__` is now optional
+  - Parameter `api_key` of method `ManagedGrafanaProperties.__init__` is now optional
+  - Parameter `deterministic_outbound_ip` of method `ManagedGrafanaProperties.__init__` is now optional
+  - Parameter `zone_redundancy` of method `ManagedGrafanaPropertiesUpdateParameters.__init__` is now optional
+  - Parameter `api_key` of method `ManagedGrafanaPropertiesUpdateParameters.__init__` is now optional
+  - Parameter `deterministic_outbound_ip` of method `ManagedGrafanaPropertiesUpdateParameters.__init__` is now optional
+  - Parameter `public_network_access` of method `ManagedGrafanaPropertiesUpdateParameters.__init__` is now optional
+  - Parameter `value` of method `ManagedPrivateEndpointModelListResponse.__init__` is now required
+  - Parameter `value` of method `PrivateEndpointConnectionListResult.__init__` is now required
+  - Parameter `value` of method `PrivateLinkResourceListResult.__init__` is now required
+  - Deleted or renamed method `GrafanaOperations.update`
+
 ## 1.1.0 (2023-11-20)
 
 ### Features Added

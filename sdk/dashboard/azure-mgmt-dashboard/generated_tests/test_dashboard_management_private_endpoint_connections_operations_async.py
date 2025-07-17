@@ -21,6 +21,18 @@ class TestDashboardManagementPrivateEndpointConnectionsOperationsAsync(AzureMgmt
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
+    async def test_private_endpoint_connections_list(self, resource_group):
+        response = self.client.private_endpoint_connections.list(
+            resource_group_name=resource_group.name,
+            workspace_name="str",
+            api_version="2024-11-01-preview",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
     async def test_private_endpoint_connections_get(self, resource_group):
         response = await self.client.private_endpoint_connections.get(
             resource_group_name=resource_group.name,
@@ -59,17 +71,5 @@ class TestDashboardManagementPrivateEndpointConnectionsOperationsAsync(AzureMgmt
             )
         ).result()  # call '.result()' to poll until service return final result
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_private_endpoint_connections_list(self, resource_group):
-        response = self.client.private_endpoint_connections.list(
-            resource_group_name=resource_group.name,
-            workspace_name="str",
-            api_version="2024-11-01-preview",
-        )
-        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

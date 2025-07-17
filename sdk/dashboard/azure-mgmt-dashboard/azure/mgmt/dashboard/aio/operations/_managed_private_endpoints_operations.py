@@ -72,8 +72,6 @@ class ManagedPrivateEndpointsOperations:
     ) -> AsyncItemPaged["_models.ManagedPrivateEndpointModel"]:
         """List all managed private endpoints of a grafana resource.
 
-        List all managed private endpoints of a grafana resource.
-
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
@@ -154,128 +152,11 @@ class ManagedPrivateEndpointsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    async def _refresh_initial(
-        self, resource_group_name: str, workspace_name: str, **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_refresh_request(
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def begin_refresh(self, resource_group_name: str, workspace_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
-        """Refresh and sync managed private endpoints of a grafana resource to latest state.
-
-        Refresh and sync managed private endpoints of a grafana resource to latest state.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param workspace_name: The workspace name of Azure Managed Grafana. Required.
-        :type workspace_name: str
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._refresh_initial(
-                resource_group_name=resource_group_name,
-                workspace_name=workspace_name,
-                api_version=api_version,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod,
-                AsyncARMPolling(lro_delay, lro_options={"final-state-via": "azure-async-operation"}, **kwargs),
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
     @distributed_trace_async
     async def get(
         self, resource_group_name: str, workspace_name: str, managed_private_endpoint_name: str, **kwargs: Any
     ) -> _models.ManagedPrivateEndpointModel:
         """Get a specific managed private endpoint of a grafana resource.
-
-        Get a specific managed private endpoint of a grafana resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -400,6 +281,7 @@ class ManagedPrivateEndpointsOperations:
             response_headers["Azure-AsyncOperation"] = self._deserialize(
                 "str", response.headers.get("Azure-AsyncOperation")
             )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -420,8 +302,6 @@ class ManagedPrivateEndpointsOperations:
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedPrivateEndpointModel]:
         """Create or update a managed private endpoint for a grafana resource.
-
-        Create or update a managed private endpoint for a grafana resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -457,8 +337,6 @@ class ManagedPrivateEndpointsOperations:
     ) -> AsyncLROPoller[_models.ManagedPrivateEndpointModel]:
         """Create or update a managed private endpoint for a grafana resource.
 
-        Create or update a managed private endpoint for a grafana resource.
-
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
@@ -490,8 +368,6 @@ class ManagedPrivateEndpointsOperations:
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedPrivateEndpointModel]:
         """Create or update a managed private endpoint for a grafana resource.
-
-        Create or update a managed private endpoint for a grafana resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -629,6 +505,7 @@ class ManagedPrivateEndpointsOperations:
             response_headers["Azure-AsyncOperation"] = self._deserialize(
                 "str", response.headers.get("Azure-AsyncOperation")
             )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -649,8 +526,6 @@ class ManagedPrivateEndpointsOperations:
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedPrivateEndpointModel]:
         """Update a managed private endpoint for an existing grafana resource.
-
-        Update a managed private endpoint for an existing grafana resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -687,8 +562,6 @@ class ManagedPrivateEndpointsOperations:
     ) -> AsyncLROPoller[_models.ManagedPrivateEndpointModel]:
         """Update a managed private endpoint for an existing grafana resource.
 
-        Update a managed private endpoint for an existing grafana resource.
-
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
@@ -720,8 +593,6 @@ class ManagedPrivateEndpointsOperations:
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedPrivateEndpointModel]:
         """Update a managed private endpoint for an existing grafana resource.
-
-        Update a managed private endpoint for an existing grafana resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -843,6 +714,7 @@ class ManagedPrivateEndpointsOperations:
             response_headers["Azure-AsyncOperation"] = self._deserialize(
                 "str", response.headers.get("Azure-AsyncOperation")
             )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -856,8 +728,6 @@ class ManagedPrivateEndpointsOperations:
         self, resource_group_name: str, workspace_name: str, managed_private_endpoint_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete a managed private endpoint for a grafana resource.
-
-        Delete a managed private endpoint for a grafana resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -884,6 +754,120 @@ class ManagedPrivateEndpointsOperations:
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
                 managed_private_endpoint_name=managed_private_endpoint_name,
+                api_version=api_version,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod,
+                AsyncARMPolling(lro_delay, lro_options={"final-state-via": "azure-async-operation"}, **kwargs),
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    async def _refresh_initial(
+        self, resource_group_name: str, workspace_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_refresh_request(
+            resource_group_name=resource_group_name,
+            workspace_name=workspace_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def begin_refresh(self, resource_group_name: str, workspace_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
+        """Refresh and sync managed private endpoints of a grafana resource to latest state.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param workspace_name: The workspace name of Azure Managed Grafana. Required.
+        :type workspace_name: str
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._refresh_initial(
+                resource_group_name=resource_group_name,
+                workspace_name=workspace_name,
                 api_version=api_version,
                 cls=lambda x, y, z: x,
                 headers=_headers,

@@ -33,20 +33,6 @@ class TestDashboardManagementManagedPrivateEndpointsOperationsAsync(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_managed_private_endpoints_begin_refresh(self, resource_group):
-        response = await (
-            await self.client.managed_private_endpoints.begin_refresh(
-                resource_group_name=resource_group.name,
-                workspace_name="str",
-                api_version="2024-11-01-preview",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
     async def test_managed_private_endpoints_get(self, resource_group):
         response = await self.client.managed_private_endpoints.get(
             resource_group_name=resource_group.name,
@@ -120,6 +106,20 @@ class TestDashboardManagementManagedPrivateEndpointsOperationsAsync(AzureMgmtRec
                 resource_group_name=resource_group.name,
                 workspace_name="str",
                 managed_private_endpoint_name="str",
+                api_version="2024-11-01-preview",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_managed_private_endpoints_begin_refresh(self, resource_group):
+        response = await (
+            await self.client.managed_private_endpoints.begin_refresh(
+                resource_group_name=resource_group.name,
+                workspace_name="str",
                 api_version="2024-11-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result

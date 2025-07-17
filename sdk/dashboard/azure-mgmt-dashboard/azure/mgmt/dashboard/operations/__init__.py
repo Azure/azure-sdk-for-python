@@ -13,13 +13,13 @@ if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
 from ._operations import Operations  # type: ignore
+from ._dashboards_operations import DashboardsOperations  # type: ignore
 from ._grafana_operations import GrafanaOperations  # type: ignore
+from ._managed_dashboards_operations import ManagedDashboardsOperations  # type: ignore
+from ._integration_fabrics_operations import IntegrationFabricsOperations  # type: ignore
+from ._managed_private_endpoints_operations import ManagedPrivateEndpointsOperations  # type: ignore
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations  # type: ignore
 from ._private_link_resources_operations import PrivateLinkResourcesOperations  # type: ignore
-from ._managed_private_endpoints_operations import ManagedPrivateEndpointsOperations  # type: ignore
-from ._integration_fabrics_operations import IntegrationFabricsOperations  # type: ignore
-from ._dashboards_operations import DashboardsOperations  # type: ignore
-from ._managed_dashboards_operations import ManagedDashboardsOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -27,13 +27,13 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "Operations",
+    "DashboardsOperations",
     "GrafanaOperations",
+    "ManagedDashboardsOperations",
+    "IntegrationFabricsOperations",
+    "ManagedPrivateEndpointsOperations",
     "PrivateEndpointConnectionsOperations",
     "PrivateLinkResourcesOperations",
-    "ManagedPrivateEndpointsOperations",
-    "IntegrationFabricsOperations",
-    "DashboardsOperations",
-    "ManagedDashboardsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()
