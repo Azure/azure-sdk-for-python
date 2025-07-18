@@ -131,7 +131,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
         self._configure_encryption(kwargs)
 
-    def __enter__(self) -> Self: 
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 

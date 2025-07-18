@@ -12,8 +12,8 @@ from typing import (
     Any, AnyStr, AsyncIterable, AsyncIterator, cast, Dict, List, IO, Iterable, Optional, overload, Union,
     TYPE_CHECKING
 )
-from typing_extensions import Self
 from urllib.parse import unquote, urlparse
+from typing_extensions import Self
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
@@ -147,7 +147,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         self._client = self._build_generated_client()
         self._configure_encryption(kwargs)
 
-    async def __aenter__(self) -> Self: 
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 
@@ -234,7 +234,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         container_name: str,
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
-    ) -> Self: 
+    ) -> Self:
         """Create ContainerClient from a Connection String.
 
         :param str conn_str:

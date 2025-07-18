@@ -221,7 +221,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
         **kwargs: Any
-    ) -> Self: 
+    ) -> Self:
         """Create BlobClient from a blob url. This doesn't support customized blob url with '/' in blob name.
 
         :param str blob_url:
