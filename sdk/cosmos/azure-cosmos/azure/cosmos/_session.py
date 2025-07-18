@@ -162,10 +162,7 @@ class SessionContainer(object):
                         collection_rid = self.collection_name_to_rid[collection_name]
                     else:
                         # if the collection name is not in the map, we need to get the rid from containers cache
-                        collection_rid = next(
-                            (v["_rid"] for k, v in container_properties_cache.items() if collection_name in k),
-                            None
-                        )
+                        collection_rid = container_properties_cache.get(collection_name, {}).get("_rid")
                 else:
                     collection_rid = _base.GetItemContainerLink(resource_path)
 
@@ -216,6 +213,7 @@ class SessionContainer(object):
         :param dict response_headers:
         :return: None
         """
+        # pylint: disable=too-many-statements
 
         # there are two pieces of information that we need to update session token-
         # self link which has the rid representation of the resource, and
@@ -271,8 +269,8 @@ class SessionContainer(object):
                 # and recreated
                 existing_rid = self.collection_name_to_rid[collection_name]
                 if collection_rid is not None:
-                    if len(collection_rid) != len(existing_rid):
-                        # the collection_rid can come in with the database rid as well, so we need to trim out the string
+                    if len(collection_rid) > 24:
+                        # the collection_rid can come in with the database rid as well, so we parse the whole string
                         url_parts = [part for part in collection_rid.split('/') if part]
                         collection_rid = url_parts[-1]
                 if collection_rid != existing_rid:
