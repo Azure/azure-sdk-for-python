@@ -12,6 +12,7 @@ import logging
 from typing import Any, Dict, List, Optional, Union, AsyncIterator
 from typing_extensions import TypedDict
 
+import aiohttp
 import httpx
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
@@ -357,11 +358,15 @@ class AsyncVoiceLiveTranscriptionSessionResource:
 class AsyncVoiceLiveConnection:
     """Represents an async live WebSocket connection to the Voice Live API."""
 
-    def __init__(self, connection) -> None:
+    def __init__(self, session: aiohttp.ClientSession, connection: aiohttp.ClientWebSocketResponse) -> None:
         """Initialize an AsyncVoiceLiveConnection.
 
+        :param session: The aiohttp ClientSession.
+        :type session: aiohttp.ClientSession
         :param connection: The underlying WebSocket connection.
+        :type connection: aiohttp.ClientWebSocketResponse
         """
+        self._session = session
         self._connection = connection
 
         # Add all resource attributes
@@ -406,10 +411,29 @@ class AsyncVoiceLiveConnection:
         :raises VoiceLiveConnectionClosed: If the connection is closed.
         """
         try:
-            message = await self._connection.recv()
-            log.debug(f"Received websocket message: %s", message)
-            return message
-        except Exception as e:
+            msg = await self._connection.receive()
+            
+            if msg.type == aiohttp.WSMsgType.TEXT:
+                log.debug(f"Received websocket text message: %s", msg.data)
+                return msg.data.encode('utf-8')
+            elif msg.type == aiohttp.WSMsgType.BINARY:
+                log.debug(f"Received websocket binary message: %s", msg.data)
+                return msg.data
+            elif msg.type == aiohttp.WSMsgType.CLOSE:
+                code = self._connection.close_code or 1000
+                reason = self._connection.close_reason or ""
+                log.debug(f"WebSocket connection closed with code {code}: {reason}")
+                raise VoiceLiveConnectionClosed(code, reason)
+            elif msg.type == aiohttp.WSMsgType.ERROR:
+                log.error(f"WebSocket connection error: {self._connection.exception()}")
+                raise VoiceLiveConnectionClosed(1006, str(self._connection.exception()))
+            elif msg.type == aiohttp.WSMsgType.CLOSED:
+                log.debug("WebSocket connection already closed")
+                raise VoiceLiveConnectionClosed(1000, "Connection closed")
+            else:
+                log.warning(f"Unexpected WebSocket message type: {msg.type}")
+                return b""
+        except aiohttp.ClientError as e:
             code = getattr(e, "code", 1006)  # Default to 1006 (Abnormal Closure) if no code
             reason = str(e)
             raise VoiceLiveConnectionClosed(code, reason) from e
@@ -426,7 +450,7 @@ class AsyncVoiceLiveConnection:
                 data = json.dumps(event)
             else:
                 data = event.serialize()
-            await self._connection.send(data)
+            await self._connection.send_str(data)
         except Exception as e:
             log.error(f"Failed to send event: {e}")
             raise VoiceLiveConnectionError(f"Failed to send event: {e}") from e
@@ -440,25 +464,29 @@ class AsyncVoiceLiveConnection:
         :type reason: str
         """
         try:
-            await self._connection.close(code=code, reason=reason)
+            await self._connection.close(code=code, message=reason)
         except Exception as e:
             log.warning(f"Error closing connection: {e}")
+        
+        try:
+            await self._session.close()
+        except Exception as e:
+            log.warning(f"Error closing session: {e}")
 
 
 class WebsocketConnectionOptions(TypedDict, total=False):
     """Websocket connection options for VoiceLive API WebSocket connections.
 
-    Based on options from the websockets library.
+    Based on options compatible with aiohttp library.
     """
 
-    # Common websockets options
-    compression: Optional[str]
-    max_size: Optional[int]
-    max_queue: Optional[int]
-    open_timeout: Optional[float]
-    close_timeout: Optional[float]
-    ping_interval: Optional[float]
-    ping_timeout: Optional[float]
+    # Common websocket options
+    compression: Optional[bool]
+    max_msg_size: Optional[int]  # Replaces max_size from websockets
+    timeout: Optional[float]  # Replaces close_timeout from websockets
+    heartbeat: Optional[float]  # Replaces ping_interval from websockets
+    autoclose: Optional[bool]  # Whether to automatically close the connection
+    autoping: Optional[bool]  # Whether to automatically respond to pings
 
 
 class AsyncVoiceLiveConnectionManager:
@@ -478,24 +506,48 @@ class AsyncVoiceLiveConnectionManager:
         self.__model = model
         self.__api_version = api_version
         self.__connection = None
+        self.__session = None
         self.__extra_query = extra_query
         self.__extra_headers = extra_headers
-        self.__websocket_connection_options = websocket_connection_options
+        self.__websocket_connection_options = self._map_websocket_options(websocket_connection_options)
+
+    def _map_websocket_options(self, options: Dict[str, Any]) -> Dict[str, Any]:
+        """Map websockets options to aiohttp options.
+
+        :param options: The original websockets options.
+        :type options: Dict[str, Any]
+        :return: Mapped aiohttp options.
+        :rtype: Dict[str, Any]
+        """
+        mapped_options = {}
+        
+        # Map options with different names
+        if "max_size" in options:
+            mapped_options["max_msg_size"] = options.pop("max_size")
+        if "close_timeout" in options:
+            mapped_options["timeout"] = options.pop("close_timeout")
+        if "ping_interval" in options:
+            mapped_options["heartbeat"] = options.pop("ping_interval")
+            
+        # Add compatible options that can be used directly
+        if "compression" in options:
+            mapped_options["compress"] = options.pop("compression")
+            
+        # Add any remaining options that might be directly compatible
+        for key, value in options.items():
+            if key not in ("ping_timeout", "open_timeout", "max_queue"):  # Skip options that aren't supported
+                mapped_options[key] = value
+                
+        return mapped_options
 
     async def __aenter__(self) -> AsyncVoiceLiveConnection:
         """Create and return an async WebSocket connection.
 
         :return: A AsyncVoiceLiveConnection instance.
         :rtype: ~azure.ai.voicelive.aio.AsyncVoiceLiveConnection
-        :raises ImportError: If the websockets package is not installed.
+        :raises ImportError: If the aiohttp package is not installed.
         :raises VoiceLiveConnectionError: If the connection cannot be established.
         """
-        try:
-            from websockets.client import connect
-            from websockets.exceptions import WebSocketException
-        except ImportError as exc:
-            raise ImportError("You need to install `websockets` to use WebSocket functionality") from exc
-
         try:
             url = self._prepare_url()
             log.debug("Connecting to %s", url)
@@ -507,15 +559,22 @@ class AsyncVoiceLiveConnectionManager:
             auth_headers = await self.__client._get_auth_headers()
             headers = {**auth_headers, **self.__extra_headers}
 
-            connection = await connect(
-                str(url),
-                extra_headers=headers,
-                **self.__websocket_connection_options,
-            )
+            # Create session and connection
+            self.__session = aiohttp.ClientSession()
+            
+            try:
+                self.__connection_obj = await self.__session.ws_connect(
+                    str(url),
+                    headers=headers,
+                    **self.__websocket_connection_options
+                )
 
-            self.__connection = AsyncVoiceLiveConnection(connection)
-            return self.__connection
-        except WebSocketException as e:
+                self.__connection = AsyncVoiceLiveConnection(self.__session, self.__connection_obj)
+                return self.__connection
+            except aiohttp.ClientError as e:
+                await self.__session.close()
+                raise VoiceLiveConnectionError(f"Failed to establish WebSocket connection: {e}") from e
+        except Exception as e:
             raise VoiceLiveConnectionError(f"Failed to establish WebSocket connection: {e}") from e
 
     def _prepare_url(self) -> httpx.URL:

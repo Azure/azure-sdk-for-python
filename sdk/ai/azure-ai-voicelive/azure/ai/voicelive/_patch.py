@@ -7,11 +7,13 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+import asyncio
 import json
 import logging
 from typing import Any, Dict, Iterator, List, Optional, Sequence, Tuple, Union
 from typing_extensions import TypedDict
 
+import aiohttp
 import httpx
 from azure.core.credentials import AzureKeyCredential
 
@@ -39,15 +41,16 @@ log = logging.getLogger(__name__)
 class WebsocketConnectionOptions(TypedDict, total=False):
     """Websocket connection options for VoiceLive API WebSocket connections.
 
-    Based on options from the websockets library.
+    Based on options compatible with aiohttp library.
     """
 
-    extensions: Optional[Sequence[Any]]
-    subprotocols: Optional[Sequence[str]]
-    compression: Optional[str]
-    max_size: Optional[int]
-    max_queue: Optional[Union[int, Tuple[Optional[int], Optional[int]]]]
-    write_limit: Optional[Union[int, Tuple[int, Optional[int]]]]
+    # Common websocket options
+    compression: Optional[bool]
+    max_msg_size: Optional[int]  # Replaces max_size from websockets
+    timeout: Optional[float]  # Replaces close_timeout from websockets
+    heartbeat: Optional[float]  # Replaces ping_interval from websockets
+    autoclose: Optional[bool]  # Whether to automatically close the connection
+    autoping: Optional[bool]  # Whether to automatically respond to pings
 
 
 class VoiceLiveConnectionError(Exception):
@@ -360,6 +363,88 @@ class VoiceLiveTranscriptionSessionResource:
         self._connection.send(event)
 
 
+class _AsyncWebSocketConnection:
+    """Internal class for managing async WebSocket connection in a sync context."""
+
+    def __init__(self, session, connection):
+        self._session = session
+        self._connection = connection
+        self._loop = asyncio.new_event_loop()
+        self._queue = asyncio.Queue(loop=self._loop)
+        self._running = True
+        self._thread = None
+
+    async def _receiver(self):
+        """Background task to receive messages from the WebSocket."""
+        try:
+            while self._running:
+                msg = await self._connection.receive()
+                
+                if msg.type == aiohttp.WSMsgType.TEXT:
+                    await self._queue.put(('text', msg.data.encode('utf-8')))
+                elif msg.type == aiohttp.WSMsgType.BINARY:
+                    await self._queue.put(('binary', msg.data))
+                elif msg.type in (aiohttp.WSMsgType.CLOSE, aiohttp.WSMsgType.CLOSED, aiohttp.WSMsgType.ERROR):
+                    code = self._connection.close_code or 1000
+                    reason = self._connection.close_reason or ""
+                    await self._queue.put(('close', (code, reason)))
+                    break
+        except Exception as e:
+            if self._running:
+                await self._queue.put(('error', e))
+
+    def start(self):
+        """Start the background receiving task."""
+        def run_loop():
+            asyncio.set_event_loop(self._loop)
+            self._loop.run_forever()
+            
+        import threading
+        self._thread = threading.Thread(target=run_loop, daemon=True)
+        self._thread.start()
+        
+        # Start the receiver task
+        asyncio.run_coroutine_threadsafe(self._receiver(), self._loop)
+
+    def recv(self, decode=True):
+        """Receive a message from the WebSocket."""
+        future = asyncio.run_coroutine_threadsafe(self._queue.get(), self._loop)
+        msg_type, msg_data = future.result()
+        
+        if msg_type == 'close':
+            code, reason = msg_data
+            raise VoiceLiveConnectionClosed(code, reason)
+        elif msg_type == 'error':
+            raise VoiceLiveConnectionError(f"WebSocket error: {msg_data}")
+        else:
+            return msg_data  # Return bytes data
+
+    def send(self, data):
+        """Send a message to the WebSocket."""
+        if isinstance(data, str):
+            coro = self._connection.send_str(data)
+        else:
+            coro = self._connection.send_bytes(data)
+        future = asyncio.run_coroutine_threadsafe(coro, self._loop)
+        future.result()  # Wait for the send to complete
+
+    def close(self, code=1000, reason=""):
+        """Close the WebSocket connection."""
+        self._running = False
+        
+        async def _close():
+            await self._connection.close(code=code, message=reason)
+            await self._session.close()
+            
+        future = asyncio.run_coroutine_threadsafe(_close(), self._loop)
+        future.result()  # Wait for close to complete
+        
+        # Stop the event loop
+        self._loop.call_soon_threadsafe(self._loop.stop)
+        if self._thread is not None:
+            self._thread.join(timeout=5.0)
+
+
 class VoiceLiveConnection:
     """Represents a live WebSocket connection to the Voice Live API."""
 
@@ -470,22 +555,47 @@ class VoiceLiveConnectionManager:
         self.__connection = None
         self.__extra_query = extra_query
         self.__extra_headers = extra_headers
-        self.__websocket_connection_options = websocket_connection_options
+        self.__websocket_connection_options = self._map_websocket_options(websocket_connection_options)
+
+    def _map_websocket_options(self, options: Dict[str, Any]) -> Dict[str, Any]:
+        """Map websockets options to aiohttp options.
+
+        :param options: The original websockets options.
+        :type options: Dict[str, Any]
+        :return: Mapped aiohttp options.
+        :rtype: Dict[str, Any]
+        """
+        mapped_options = {}
+        
+        # Map options with different names
+        if "max_size" in options:
+            mapped_options["max_msg_size"] = options.pop("max_size")
+        if "close_timeout" in options:
+            mapped_options["timeout"] = options.pop("close_timeout")
+        if "ping_interval" in options:
+            mapped_options["heartbeat"] = options.pop("ping_interval")
+            
+        # Add compatible options that can be used directly
+        if "compression" in options:
+            mapped_options["compress"] = options.pop("compression")
+            
+        # Add any remaining options that might be directly compatible
+        for key, value in options.items():
+            if key not in ("ping_timeout", "open_timeout", "max_queue"):  # Skip options that aren't supported
+                mapped_options[key] = value
+                
+        return mapped_options
 
     def __enter__(self) -> VoiceLiveConnection:
         """Create and return a WebSocket connection.
 
         :return: A VoiceLiveConnection instance.
         :rtype: ~azure.ai.voicelive.VoiceLiveConnection
-        :raises ImportError: If the websockets package is not installed.
+        :raises ImportError: If the aiohttp package is not installed.
         :raises VoiceLiveConnectionError: If the connection cannot be established.
         """
-        try:
-            from websockets.sync.client import connect
-            from websockets.exceptions import WebSocketException
-        except ImportError as exc:
-            raise ImportError("You need to install `websockets` to use WebSocket functionality") from exc
-
+        loop = asyncio.new_event_loop()
+        
         try:
             url = self._prepare_url()
             log.debug("Connecting to %s", url)
@@ -494,19 +604,33 @@ class VoiceLiveConnectionManager:
                 log.debug("Connection options: %s", self.__websocket_connection_options)
 
             # Get auth headers
-            # TODO: Support tokens.
             auth_headers = {"api-key": self.__client._config.credential.key}
             headers = {**auth_headers, **self.__extra_headers}
 
-            connection = connect(
-                str(url),
-                additional_headers=headers,
-                **self.__websocket_connection_options,
-            )
+            async def setup_connection():
+                session = aiohttp.ClientSession()
+                try:
+                    ws_connection = await session.ws_connect(
+                        str(url),
+                        headers=headers,
+                        **self.__websocket_connection_options,
+                    )
+                    return session, ws_connection
+                except Exception as e:
+                    await session.close()
+                    raise e
 
-            self.__connection = VoiceLiveConnection(connection)
+            session, ws_connection = loop.run_until_complete(setup_connection())
+            
+            # Create the async connection wrapper
+            async_connection = _AsyncWebSocketConnection(session, ws_connection)
+            async_connection.start()
+            
+            self.__connection = VoiceLiveConnection(async_connection)
             return self.__connection
-        except WebSocketException as e:
+            
+        except Exception as e:
+            loop.close()
             raise VoiceLiveConnectionError(f"Failed to establish WebSocket connection: {e}") from e
 
     def _prepare_url(self) -> httpx.URL:

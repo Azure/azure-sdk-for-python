@@ -41,6 +41,7 @@ def main():
     print("Connecting to WebSocket...")
     try:
         # Connect to the WebSocket API
+        # Note: Using aiohttp instead of websockets package
         with client.connect(model=model, api_version=api_version) as connection:
             # Send a simple session update event
             connection.send({"type": "session.update", "session": {"modalities": ["audio", "text"]}})
@@ -57,8 +58,8 @@ def main():
                     break
 
     except ImportError:
-        print("You need to install the websockets and httpx packages to run this sample:")
-        print("pip install azure-ai-voicelive[websockets]")
+        print("You need to install the aiohttp package to run this sample:")
+        print("pip install azure-ai-voicelive")
     except Exception as e:
         print(f"Error during WebSocket connection: {e}")
 

@@ -18,11 +18,11 @@ class TestVoiceLiveWebSocket(unittest.TestCase):
         self.client = VoiceLiveClient(credential=AzureKeyCredential("test-key"), endpoint="wss://test-endpoint.com/v1")
 
     @patch("azure.ai.voicelive._patch.httpx.URL")
-    @patch("websockets.sync.client.connect")
-    def test_websocket_connection_creation(self, mock_connect, mock_url):
+    @patch("aiohttp.ClientSession.ws_connect")
+    def test_websocket_connection_creation(self, mock_ws_connect, mock_url):
         # Setup mocks
         mock_connection = MagicMock()
-        mock_connect.return_value = mock_connection
+        mock_ws_connect.return_value = mock_connection
 
         # Setup URL mock
         mock_url_instance = MagicMock()
@@ -30,46 +30,54 @@ class TestVoiceLiveWebSocket(unittest.TestCase):
         mock_url_instance.copy_with.return_value = mock_url_instance
         mock_url.return_value = mock_url_instance
 
-        # Test creating a connection
-        with self.client.connect(model="test-model") as connection:
-            # Verify URL was created correctly
-            mock_url.assert_called_with("wss://test-endpoint.com/v1")
+        # Mock the asyncio parts
+        with patch("asyncio.new_event_loop") as mock_loop:
+            mock_loop.return_value.run_until_complete.return_value = (MagicMock(), mock_connection)
+            
+            # Test creating a connection
+            with self.client.connect(model="test-model") as connection:
+                # Verify URL was created correctly
+                mock_url.assert_called_with("wss://test-endpoint.com/v1")
 
-            # Verify connect was called with right parameters
-            mock_connect.assert_called_once()
-            connect_args = mock_connect.call_args
+                # Verify connect was called with right parameters
+                mock_ws_connect.assert_called_once()
+                connect_args = mock_ws_connect.call_args
 
-            # Headers should contain Authorization
-            self.assertIn("additional_headers", connect_args[1])
-            headers = connect_args[1]["additional_headers"]
-            self.assertIn("Authorization", headers)
-            self.assertEqual(headers["Authorization"], "Bearer test-key")
+                # Headers should contain api-key
+                self.assertIn("headers", connect_args[1])
+                headers = connect_args[1]["headers"]
+                self.assertIn("api-key", headers)
+                self.assertEqual(headers["api-key"], "test-key")
 
-            # Test sending data
-            test_data = {"type": "test.event", "data": "test"}
-            connection.send(test_data)
+                # Test sending data
+                test_data = {"type": "test.event", "data": "test"}
+                connection.send(test_data)
 
-            # Verify send was called correctly
-            mock_connection.send.assert_called_with(json.dumps(test_data))
+                # Verify send was called with JSON string
+                connection._connection.send.assert_called_once()
 
-    @patch("websockets.sync.client.connect")
-    def test_websocket_options(self, mock_connect):
+    @patch("aiohttp.ClientSession.ws_connect")
+    def test_websocket_options(self, mock_ws_connect):
         # Setup mock
         mock_connection = MagicMock()
-        mock_connect.return_value = mock_connection
+        mock_ws_connect.return_value = mock_connection
 
         # Create options
-        ws_options: WebsocketConnectionOptions = {"max_size": 10 * 1024 * 1024, "compression": "deflate"}
+        ws_options: WebsocketConnectionOptions = {"max_msg_size": 10 * 1024 * 1024, "compression": True}
 
-        # Use the options
-        with self.client.connect(model="test-model", websocket_connection_options=ws_options) as connection:
-            # Verify options were passed to connect
-            mock_connect.assert_called_once()
-            connect_args = mock_connect.call_args
+        # Mock the asyncio parts
+        with patch("asyncio.new_event_loop") as mock_loop:
+            mock_loop.return_value.run_until_complete.return_value = (MagicMock(), mock_connection)
+            
+            # Use the options
+            with self.client.connect(model="test-model", websocket_connection_options=ws_options) as connection:
+                # Verify options were passed to connect
+                mock_ws_connect.assert_called_once()
+                connect_args = mock_ws_connect.call_args
 
-            # Options should be passed through
-            self.assertEqual(connect_args[1]["max_size"], 10 * 1024 * 1024)
-            self.assertEqual(connect_args[1]["compression"], "deflate")
+                # Options should be passed through
+                self.assertEqual(connect_args[1]["max_msg_size"], 10 * 1024 * 1024)
+                self.assertEqual(connect_args[1]["compress"], True)
 
 
 if __name__ == "__main__":

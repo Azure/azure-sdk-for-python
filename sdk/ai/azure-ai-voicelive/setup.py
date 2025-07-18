@@ -66,7 +66,8 @@ setup(
         "isodate>=0.6.1",
         "azure-core>=1.30.0",
         "typing-extensions>=4.6.0",
-        "httpx"
+        "httpx",
+        "aiohttp>=3.8.0"
     ],
     python_requires=">=3.9",
 )

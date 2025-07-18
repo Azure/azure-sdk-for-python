@@ -264,7 +264,7 @@ async def main():
 
                     elif event.type == "response.audio.delta":
                         # Process audio response
-                        audio_data = base64.b64decode(event.audio)
+                        audio_data = base64.b64decode(event.delta)
                         audio_processor.add_to_output_buffer(audio_data)
 
                     elif event.type == "response.done":
