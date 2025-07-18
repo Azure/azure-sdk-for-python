@@ -90,8 +90,7 @@ class DatabaseProxy(object):
         self,
         client_connection: CosmosClientConnection,
         id: str,
-        properties: Optional[Dict[str, Any]] = None,
-        header: Optional[CosmosDict] = None
+        properties: Optional[Dict[str, Any]] = None
     ) -> None:
         """
         :param client_connection: Client from which this database was retrieved.
@@ -460,11 +459,14 @@ class DatabaseProxy(object):
                 DeprecationWarning)
         try:
             container_proxy = self.get_container_client(id)
-            await container_proxy.read(
+            headers = await container_proxy.read(
                 initial_headers=initial_headers,
                 **kwargs
             )
-            return container_proxy
+            if not return_headers:
+                return container_proxy
+            else:
+                return headers
         except CosmosResourceNotFoundError:
             return await self.create_container(
                 id=id,

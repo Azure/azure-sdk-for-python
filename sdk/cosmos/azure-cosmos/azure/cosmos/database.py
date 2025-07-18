@@ -85,8 +85,7 @@ class DatabaseProxy(object):
         self,
         client_connection: CosmosClientConnection,
         id: str,
-        properties: Optional[Dict[str, Any]] = None,
-        header: Optional[CosmosDict] = None
+        properties: Optional[Dict[str, Any]] = None
     ) -> None:
         """
         :param ClientSession client_connection: Client from which this database was retrieved.
@@ -462,12 +461,15 @@ class DatabaseProxy(object):
 
         try:
             container_proxy = self.get_container_client(id)
-            container_proxy.read(
+            headers = container_proxy.read(
                 populate_query_metrics=populate_query_metrics,
                 initial_headers=initial_headers,
                 **kwargs
             )
-            return container_proxy
+            if not return_headers:
+                return container_proxy
+            else:
+                return headers
         except CosmosResourceNotFoundError:
             return self.create_container(
                 id=id,

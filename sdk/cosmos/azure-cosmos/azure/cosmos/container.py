@@ -98,15 +98,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         client_connection: CosmosClientConnection,
         database_link: str,
         id: str,
-        properties: Optional[Dict[str, Any]] = None,
-        header: Optional[CosmosDict] = None
+        properties: Optional[Dict[str, Any]] = None
     ) -> None:
         self.id = id
         self.container_link = "{}/colls/{}".format(database_link, self.id)
         self.client_connection = client_connection
         self._is_system_key: Optional[bool] = None
         self._scripts: Optional[ScriptsProxy] = None
-        self._response_headers = header
         if properties:
             self.client_connection._set_container_properties_cache(self.container_link,
                                                                    _build_properties_cache(properties,
@@ -125,14 +123,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if self.container_link not in self.__get_client_container_caches():
             self.read(**kwargs)
         return self.__get_client_container_caches()[self.container_link]
-
-    def get_response_headers(self) -> CosmosDict:
-        """Returns a copy of the response headers associated to this response
-
-        :return: Dict of response headers
-        :rtype: dict[str, Any]
-        """
-        return self._response_headers
 
     @property
     def is_system_key(self) -> bool:

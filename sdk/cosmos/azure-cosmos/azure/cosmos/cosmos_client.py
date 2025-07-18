@@ -450,11 +450,14 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             kwargs["initial_headers"] = initial_headers
         try:
             database_proxy = self.get_database_client(id)
-            database_proxy.read(
+            headers = database_proxy.read(
                 populate_query_metrics=populate_query_metrics,
                 **kwargs
             )
-            return database_proxy
+            if not return_headers:
+                return database_proxy
+            else:
+                return headers
         except CosmosResourceNotFoundError:
             return self.create_database(
                 id,
