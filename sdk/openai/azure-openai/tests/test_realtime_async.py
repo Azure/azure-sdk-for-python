@@ -129,7 +129,7 @@ class TestRealtimeAsync(AzureRecordedTestCase):
             azure_endpoint=os.environ[ENV_AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT],
             api_key=os.environ[ENV_AZURE_OPENAI_SWEDENCENTRAL_KEY],
             api_version=api_version,
-            azure_deployment="gpt-4o-realtime-preview-1001",
+            azure_deployment="gpt-4o-mini-realtime-preview-1217",
         )
         async with client_async.beta.realtime.connect(
             model="invalid"

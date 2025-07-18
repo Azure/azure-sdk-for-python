@@ -252,6 +252,7 @@ class TestCompletionsAsync(AzureRecordedTestCase):
         assert completion.choices[0].logprobs.top_logprobs
         assert completion.choices[0].logprobs.text_offset
 
+    @pytest.mark.skip("Error: Setting 'echo' and 'best_of' at the same time is not supported for this model.")
     @configure_async
     @pytest.mark.asyncio
     @pytest.mark.parametrize(

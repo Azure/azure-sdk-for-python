@@ -122,7 +122,7 @@ class TestRealtime(AzureRecordedTestCase):
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT),
             api_key=os.getenv(ENV_AZURE_OPENAI_SWEDENCENTRAL_KEY),
             api_version=api_version,
-            azure_deployment="gpt-4o-realtime-preview-1001"
+            azure_deployment="gpt-4o-mini-realtime-preview-1217"
         )
         
         with client.beta.realtime.connect(
