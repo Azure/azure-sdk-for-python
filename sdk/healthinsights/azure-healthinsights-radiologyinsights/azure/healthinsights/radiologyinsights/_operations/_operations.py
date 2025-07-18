@@ -73,7 +73,7 @@ def build_radiology_insights_infer_radiology_insights_request(  # pylint: disabl
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class RadiologyInsightsClientOperationsMixin(
+class _RadiologyInsightsClientOperationsMixin(
     ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], RadiologyInsightsClientConfiguration]
 ):
 

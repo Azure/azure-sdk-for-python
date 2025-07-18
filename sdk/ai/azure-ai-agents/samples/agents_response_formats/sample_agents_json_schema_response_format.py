@@ -43,6 +43,7 @@ class Planets(str, Enum):
     Mars = "Mars"
     Mercury = "Mercury"
 
+
 class Planet(BaseModel):
     planet: Planets
     mass: float

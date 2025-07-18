@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -14,7 +15,7 @@ from azure.keyvault.keys import KeyClient
 # 2. azure-keyvault-keys and azure-identity libraries (pip install these)
 #
 # 3. Set environment variable VAULT_URL with the URL of your key vault
-#    
+#
 # 4. Set up your environment to use azure-identity's DefaultAzureCredential. For more information about how to configure
 #    the DefaultAzureCredential, refer to https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
 #
@@ -55,7 +56,7 @@ request = HttpRequest("GET", f"keys/{key.name}/{key.properties.version}")
 response = client.send_request(request)
 
 # The return value is an azure.core.rest.HttpResponse -- the key information is in the response body.
-# We can get a dictionary of the body content with the `json` method. 
+# We can get a dictionary of the body content with the `json` method.
 response_body = response.json()
 print(f"\n.. Key with ID {response_body['key']['kid']} was found.")
 
