@@ -181,7 +181,7 @@ async def main() -> None:
         async for msg in messages:
             if msg.text_messages:
                 last_text = msg.text_messages[-1].text.value
-                for annotation in msg.text_messages[-1].text.annotations:                    
+                for annotation in msg.text_messages[-1].text.annotations:
                     citation = (
                         file_name if annotation["file_citation"]["file_id"] == file.id else annotation["file_citation"]["file_id"]
                     )
