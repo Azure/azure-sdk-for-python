@@ -198,12 +198,12 @@ class BatchEngine:
                     continue
 
                 dict_path = match.group(1)
-                found, value = get_value_from_path(dict_path, input)
+                found, mapped_value = get_value_from_path(dict_path, input)
                 if not found:  # try default value
-                    found, value = get_value_from_path(dict_path, defaults)
+                    found, mapped_value = get_value_from_path(dict_path, defaults)
 
                 if found:
-                    mapped[key] = value
+                    mapped[key] = mapped_value
                 else:
                     missing_inputs.add(dict_path)
 
