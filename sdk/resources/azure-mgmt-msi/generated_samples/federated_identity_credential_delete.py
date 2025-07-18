@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.msi import ManagedServiceIdentityClient
 
 """
@@ -29,12 +31,11 @@ def main():
         subscription_id="c267c0e7-0a73-4789-9e17-d26aeb0904e5",
     )
 
-    response = client.federated_identity_credentials.delete(
+    client.federated_identity_credentials.delete(
         resource_group_name="rgName",
         resource_name="resourceName",
         federated_identity_credential_resource_name="ficResourceName",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/msi/resource-manager/Microsoft.ManagedIdentity/stable/2023-01-31/examples/FederatedIdentityCredentialDelete.json
