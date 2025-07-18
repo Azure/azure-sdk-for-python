@@ -1,3 +1,4 @@
+from random import sample
 from typing import Callable, List, Dict, Any, Optional, Union
 import json
 import os
@@ -21,7 +22,6 @@ from ._models import _EvaluationCase
 from ._configuration import (
     _AgentBoosterConfig,
     _PromptConfiguration,
-    _RefinementConfig,
 )
 from ._utils import _CritiqueGenerator, _PromptImprover
 
@@ -53,11 +53,12 @@ class _AgentBooster:
         model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
         agent_id: str,
         evaluators: Optional[List[Callable]] = None,
+        sample_size: int = 10,
         max_iterations: int = 3,
-        improvement_threshold: float = 0.1,
-        early_stopping: bool = True,
-        verbose: bool = False,
         improvement_intent: Optional[str] = None,
+        # improvement_threshold: float = 0.1,
+        # early_stopping: bool = True,
+        verbose: bool = False,
     ):
         self._verbose = verbose
 
@@ -69,18 +70,12 @@ class _AgentBooster:
         # Validate model configuration
         self._validate_model_config()
 
-        # Initialize configuration using Azure SDK patterns
-        refinement_config = _RefinementConfig(
-            max_iterations=max_iterations,
-            improvement_threshold=improvement_threshold,
-            early_stopping=early_stopping,
-            improvement_intent=improvement_intent,
-        )
-
-        self._config = _AgentBoosterConfig(
+        self._config: _AgentBoosterConfig = _AgentBoosterConfig(
             model_config=self._model_config,
-            refinement=refinement_config,
             evaluators=evaluators,
+            sample_size=sample_size,
+            max_iterations=max_iterations,
+            improvement_intent=improvement_intent,
         )
 
         # Initialize critique generator and prompt improver with client factory
@@ -128,22 +123,24 @@ class _AgentBooster:
         self,
         data_file: str,
         max_iterations: Optional[int] = None,
-        improvement_threshold: Optional[float] = None,
-        early_stopping: Optional[bool] = None,
+        # improvement_threshold: Optional[float] = None,
+        # early_stopping: Optional[bool] = None,
     ) -> Dict:
         """
         Run the complete iterative refinement process.
         """
         # Use config values or method parameters
-        max_iterations = max_iterations or self._config.refinement.max_iterations
-        improvement_threshold = (
-            improvement_threshold or self._config.refinement.improvement_threshold
-        )
-        early_stopping = (
-            early_stopping
-            if early_stopping is not None
-            else self._config.refinement.early_stopping
-        )
+        max_iterations = max_iterations or self._config["max_iterations"]
+
+        # TODO: Implement early stopping logic
+        # improvement_threshold = (
+        #     improvement_threshold or self._config["improvement_threshold"]
+        # )
+        # early_stopping = (
+        #     early_stopping
+        #     if early_stopping is not None
+        #     else self._config["early_stopping"]
+        # )
 
         self.refinement_history = []
         self.current_iteration = 0
@@ -157,17 +154,22 @@ class _AgentBooster:
 
         if self._verbose:
             print(f"Starting refinement with {max_iterations} max iterations")
-            print(f"Improvement threshold: {improvement_threshold}")
-            print(f"Initial prompt: {current_prompt_config.system_prompt[:100]}...")
+            # print(f"Improvement threshold: {improvement_threshold}")
+            print(f"Initial prompt: {current_prompt_config['system_prompt'][:100]}...")
 
         queries = self._load_queries(data_file)
 
         # Run iterations
         for iteration in range(max_iterations):
+            # Sample queries
+            sampled_queries = sample(
+                queries, min(len(queries), self._config["sample_size"])
+            )
+
             # Run single iteration
             iteration_result = self._run_single_iteration(
                 prompt_config=current_prompt_config,
-                queries=queries,
+                queries=sampled_queries,
             )
 
             current_prompt_config = self._boost(
@@ -274,7 +276,7 @@ class _AgentBooster:
             run = self._project_client.agents.runs.create_and_process(
                 thread_id=thread.id,
                 agent_id=self._agent.id,
-                instructions=prompt_config.system_prompt,
+                instructions=prompt_config["system_prompt"],
             )
 
             if run.status == "failed":
@@ -296,11 +298,11 @@ class _AgentBooster:
         :param evaluator_class: Evaluator class that follows the Azure AI evaluation interface.
         :type evaluator_class: type
         """
-        if self._config.evaluators is None:
-            self._config.evaluators = []
+        if self._config["evaluators"] is None:
+            self._config["evaluators"] = []
 
-        if evaluator_class not in self._config.evaluators:
-            self._config.evaluators.append(evaluator_class)
+        if evaluator_class not in self._config["evaluators"]:
+            self._config["evaluators"].append(evaluator_class)
             if self._verbose:
                 print(f"Added custom evaluator: {evaluator_class.__name__}")
 
@@ -310,14 +312,14 @@ class _AgentBooster:
         :param evaluators: List of evaluator classes that follow the Azure AI evaluation interface.
         :type evaluators: List
         """
-        self._config.evaluators = evaluators
+        self._config["evaluators"] = evaluators
         if self._verbose:
             evaluator_names = [e.__name__ for e in evaluators]
             print(f"Set custom evaluators: {evaluator_names}")
 
     def reset_to_default_evaluators(self):
         """Reset to use default evaluators (IntentResolutionEvaluator, ToolCallAccuracyEvaluator)."""
-        self._config.evaluators = None
+        self._config["evaluators"] = None
         if self._verbose:
             print("Reset to default evaluators")
 
@@ -335,11 +337,11 @@ class _AgentBooster:
 
         default_evaluators = [IntentResolutionEvaluator, ToolCallAccuracyEvaluator]
 
-        if self._config.evaluators is None:
-            self._config.evaluators = default_evaluators.copy()
+        if self._config["evaluators"] is None:
+            self._config["evaluators"] = default_evaluators.copy()
 
-        if evaluator_class not in self._config.evaluators:
-            self._config.evaluators.append(evaluator_class)
+        if evaluator_class not in self._config["evaluators"]:
+            self._config["evaluators"].append(evaluator_class)
             if self._verbose:
                 print(f"Added custom evaluator to defaults: {evaluator_class.__name__}")
 
@@ -370,11 +372,11 @@ class _AgentBooster:
         :return: Dictionary of evaluator names to evaluator instances.
         :rtype: Dict
         """
-        if self._config.evaluators:
+        if self._config["evaluators"]:
             # Use custom evaluators
             evaluators = {
                 evaluator.__name__: evaluator(model_config=self._model_config)
-                for evaluator in self._config.evaluators
+                for evaluator in self._config["evaluators"]
             }
             if self._verbose:
                 print(f"Using custom evaluators: {list(evaluators.keys())}")
@@ -427,8 +429,8 @@ class _AgentBooster:
             return prompt_config
 
         # Generate and process critiques
-        system_prompt = prompt_config.system_prompt
-        tools = prompt_config.tools
+        system_prompt = prompt_config["system_prompt"]
+        tools = prompt_config["tools"]
 
         critiques = self._generate_critiques(cases, system_prompt, tools)
 
@@ -530,7 +532,7 @@ class _AgentBooster:
             original_prompt,
             meta_critique,
             tools,
-            self._config.refinement.improvement_intent,
+            self._config["improvement_intent"],
         )
 
         return improved
