@@ -336,12 +336,8 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
         target = trace_utils._get_target_for_dependency_from_peer(span.attributes)
         if span.kind is SpanKind.CLIENT:
             gen_ai_attributes_val = ""
-             # gen_ai take precedence over other mappings (ex. HTTP) even if their attributes are also present on the span.
-             # following mappings will override the type
             if gen_ai_attributes.GEN_AI_SYSTEM in span.attributes:  # GenAI
                 gen_ai_attributes_val = span.attributes[gen_ai_attributes.GEN_AI_SYSTEM]
-                if gen_ai_attributes_val:
-                    data.type = _GEN_AI_ATTRIBUTE_PREFIX.format(gen_ai_attributes_val)
             if _AZURE_SDK_NAMESPACE_NAME in span.attributes:  # Azure specific resources
                 # Currently only eventhub and servicebus are supported
                 # https://github.com/Azure/azure-sdk-for-python/issues/9256
@@ -415,9 +411,14 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                     target,  # type: ignore
                     span.attributes,
                 )
+            elif gen_ai_attributes.GEN_AI_SYSTEM in span.attributes:  # GenAI
+                data.type = _GEN_AI_ATTRIBUTE_PREFIX.format(gen_ai_attributes_val)
             else:
                 data.type = "N/A"
-            
+            # gen_ai take precedence over other mappings (ex. HTTP) even if their attributes are also present on the span.
+            # following mappings will override the type
+            if gen_ai_attributes_val:
+                data.type = _GEN_AI_ATTRIBUTE_PREFIX.format(gen_ai_attributes_val)
             # If no fields are available to set target using standard rules, set Dependency Target to gen_ai.system if present
             if not target and gen_ai_attributes_val:
                 target = gen_ai_attributes_val

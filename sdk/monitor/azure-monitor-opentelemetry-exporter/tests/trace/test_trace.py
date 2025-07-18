@@ -778,7 +778,8 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.result_code, "0")
 
         self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
-        self.assertEqual(envelope.data.base_data.type, "N/A")
+        self.assertEqual(envelope.data.base_data.type, "GenAI | az.ai.inference")
+        self.assertEqual(envelope.data.base_data.target, "az.ai.inference")
         self.assertEqual(len(envelope.data.base_data.properties), 1)
         
     def test_span_to_envelope_client_internal_gen_ai_type(self):
@@ -802,7 +803,6 @@ class TestAzureTraceExporter(unittest.TestCase):
         span.end(end_time=end_time)
         span._status = Status(status_code=StatusCode.UNSET)
         envelope = exporter._span_to_envelope(span)
-
         self.assertEqual(envelope.data.base_data.type, "GenAI | az.ai.inference")
     
     def test_span_to_envelope_client_mutiple_types_with_gen_ai(self):
@@ -820,6 +820,8 @@ class TestAzureTraceExporter(unittest.TestCase):
             attributes={
                 "gen_ai.system": "az.ai.inference",
                 "az.namespace": "Microsoft.EventHub",
+                "peer.address": "test_address",
+                "message_bus.destination": "test_destination",
             },
             kind=SpanKind.INTERNAL,
         )
@@ -829,6 +831,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(span)
 
         self.assertEqual(envelope.data.base_data.type, "GenAI | az.ai.inference")
+        self.assertEqual(envelope.data.base_data.target, "test_address/test_destination")
 
     def test_span_to_envelope_client_azure(self):
         exporter = self._exporter
