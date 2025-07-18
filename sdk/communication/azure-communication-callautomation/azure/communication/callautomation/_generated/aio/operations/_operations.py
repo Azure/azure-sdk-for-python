@@ -42,6 +42,7 @@ from ...operations._operations import (
     build_call_connection_get_participant_request,
     build_call_connection_get_participants_request,
     build_call_connection_hangup_call_request,
+    build_call_connection_move_participants_request,
     build_call_connection_mute_request,
     build_call_connection_remove_participant_request,
     build_call_connection_terminate_call_request,
@@ -60,6 +61,7 @@ from ...operations._operations import (
     build_call_media_unhold_request,
     build_call_media_update_transcription_request,
     build_call_recording_get_recording_properties_request,
+    build_call_recording_get_recording_result_request,
     build_call_recording_pause_recording_request,
     build_call_recording_resume_recording_request,
     build_call_recording_start_recording_request,
@@ -1502,6 +1504,133 @@ class CallConnectionOperations:
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize("CancelAddParticipantResponse", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def move_participants(
+        self,
+        call_connection_id: str,
+        move_participant_request: _models.MoveParticipantsRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.MoveParticipantsResponse:
+        """Add a participant to the call.
+
+        Add a participant to the call.
+
+        :param call_connection_id: The call connection Id. Required.
+        :type call_connection_id: str
+        :param move_participant_request: The move participants request. Required.
+        :type move_participant_request:
+         ~azure.communication.callautomation.models.MoveParticipantsRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MoveParticipantsResponse
+        :rtype: ~azure.communication.callautomation.models.MoveParticipantsResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def move_participants(
+        self,
+        call_connection_id: str,
+        move_participant_request: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.MoveParticipantsResponse:
+        """Add a participant to the call.
+
+        Add a participant to the call.
+
+        :param call_connection_id: The call connection Id. Required.
+        :type call_connection_id: str
+        :param move_participant_request: The move participants request. Required.
+        :type move_participant_request: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MoveParticipantsResponse
+        :rtype: ~azure.communication.callautomation.models.MoveParticipantsResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def move_participants(
+        self,
+        call_connection_id: str,
+        move_participant_request: Union[_models.MoveParticipantsRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.MoveParticipantsResponse:
+        """Add a participant to the call.
+
+        Add a participant to the call.
+
+        :param call_connection_id: The call connection Id. Required.
+        :type call_connection_id: str
+        :param move_participant_request: The move participants request. Is either a
+         MoveParticipantsRequest type or a IO[bytes] type. Required.
+        :type move_participant_request:
+         ~azure.communication.callautomation.models.MoveParticipantsRequest or IO[bytes]
+        :return: MoveParticipantsResponse
+        :rtype: ~azure.communication.callautomation.models.MoveParticipantsResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.MoveParticipantsResponse] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(move_participant_request, (IOBase, bytes)):
+            _content = move_participant_request
+        else:
+            _json = self._serialize.body(move_participant_request, "MoveParticipantsRequest")
+
+        _request = build_call_connection_move_participants_request(
+            call_connection_id=call_connection_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize("MoveParticipantsResponse", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3431,3 +3560,58 @@ class CallRecordingOperations:
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace_async
+    async def get_recording_result(self, recording_id: str, **kwargs: Any) -> _models.RecordingResultResponse:
+        """Get recording result. This includes the download URLs for the recording chunks.
+
+        Get recording result. This includes the download URLs for the recording chunks.
+
+        :param recording_id: The recording id. Required.
+        :type recording_id: str
+        :return: RecordingResultResponse
+        :rtype: ~azure.communication.callautomation.models.RecordingResultResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.RecordingResultResponse] = kwargs.pop("cls", None)
+
+        _request = build_call_recording_get_recording_result_request(
+            recording_id=recording_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize("RecordingResultResponse", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
