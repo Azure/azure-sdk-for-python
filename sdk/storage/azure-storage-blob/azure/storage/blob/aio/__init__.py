@@ -76,7 +76,7 @@ async def upload_blob_to_url(
     :return: Blob-updated property dict (Etag and last modified)
     :rtype: dict[str, Any]
     """
-    async with BlobClient.from_blob_url(blob_url, credential=credential) as client:
+    async with BlobClient.from_blob_url(blob_url, credential=credential) as client:  # pylint: disable=not-async-context-manager
         return await client.upload_blob(data=data, blob_type=BlobType.BLOCKBLOB, **kwargs)
 
 
@@ -140,7 +140,7 @@ async def download_blob_from_url(
     :rtype: None
     """
     overwrite = kwargs.pop('overwrite', False)
-    async with BlobClient.from_blob_url(blob_url, credential=credential) as client:
+    async with BlobClient.from_blob_url(blob_url, credential=credential) as client:  # pylint: disable=not-async-context-manager
         if hasattr(output, 'write'):
             await _download_to_stream(client, output, **kwargs)
         else:

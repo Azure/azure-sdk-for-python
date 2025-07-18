@@ -7,11 +7,11 @@
 
 import functools
 import warnings
-from contextlib import AbstractContextManager
 from typing import (
     Any, Dict, List, Optional, Union,
     TYPE_CHECKING
 )
+from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
@@ -51,7 +51,7 @@ if TYPE_CHECKING:
     from ._shared.models import UserDelegationKey
 
 
-class BlobServiceClient(AbstractContextManager, StorageAccountHostsMixin, StorageEncryptionMixin):
+class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     """A client to interact with the Blob Service at the account level.
 
     This client provides operations to retrieve and configure the account properties
@@ -131,7 +131,7 @@ class BlobServiceClient(AbstractContextManager, StorageAccountHostsMixin, Storag
         self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
         self._configure_encryption(kwargs)
 
-    def __enter__(self) -> "BlobServiceClient":
+    def __enter__(self) -> Self: 
         self._client.__enter__()
         return self
 
@@ -163,7 +163,7 @@ class BlobServiceClient(AbstractContextManager, StorageAccountHostsMixin, Storag
         cls, conn_str: str,
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
-    ) -> "BlobServiceClient":
+    ) -> Self:
         """Create BlobServiceClient from a Connection String.
 
         :param str conn_str:

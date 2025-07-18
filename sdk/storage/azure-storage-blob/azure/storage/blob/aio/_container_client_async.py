@@ -7,12 +7,12 @@
 
 import functools
 import warnings
-from contextlib import AbstractAsyncContextManager
 from datetime import datetime
 from typing import (
     Any, AnyStr, AsyncIterable, AsyncIterator, cast, Dict, List, IO, Iterable, Optional, overload, Union,
     TYPE_CHECKING
 )
+from typing_extensions import Self
 from urllib.parse import unquote, urlparse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -63,7 +63,6 @@ if TYPE_CHECKING:
 
 
 class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public-methods
-    AbstractAsyncContextManager,
     AsyncStorageAccountHostsMixin,
     StorageAccountHostsMixin,
     StorageEncryptionMixin
@@ -148,7 +147,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         self._client = self._build_generated_client()
         self._configure_encryption(kwargs)
 
-    async def __aenter__(self) -> "ContainerClient":
+    async def __aenter__(self) -> Self: 
         await self._client.__aenter__()
         return self
 
@@ -182,7 +181,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         cls, container_url: str,
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
-    ) -> "ContainerClient":
+    ) -> Self:
         """Create ContainerClient from a container url.
 
         :param str container_url:
@@ -235,7 +234,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         container_name: str,
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
-    ) -> "ContainerClient":
+    ) -> Self: 
         """Create ContainerClient from a Connection String.
 
         :param str conn_str:

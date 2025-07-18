@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 # pylint: skip-file
 
-from contextlib import AbstractAsyncContextManager
 from datetime import datetime
 from types import TracebackType
 from typing import (
@@ -15,6 +14,7 @@ from typing import (
     Optional,
     Union,
 )
+from typing_extensions import Self
 
 from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
@@ -43,7 +43,7 @@ from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.models import UserDelegationKey
 
 class BlobServiceClient(  # type: ignore [misc]
-    AbstractAsyncContextManager, AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin
+    AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin
 ):
     def __init__(
         self,
@@ -64,7 +64,7 @@ class BlobServiceClient(  # type: ignore [misc]
         audience: Optional[str] = None,
         **kwargs: Any
     ) -> None: ...
-    async def __aenter__(self) -> "BlobServiceClient": ...
+    async def __aenter__(self) -> Self: ...
     async def __aexit__(
         self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
     ) -> None: ...
@@ -88,7 +88,7 @@ class BlobServiceClient(  # type: ignore [misc]
         max_chunk_get_size: int = 4 * 1024 * 1024,
         audience: Optional[str] = None,
         **kwargs: Any
-    ) -> "BlobServiceClient": ...
+    ) -> Self: ...
     @distributed_trace_async
     async def get_user_delegation_key(
         self, key_start_time: datetime, key_expiry_time: datetime, *, timeout: Optional[int] = None, **kwargs: Any

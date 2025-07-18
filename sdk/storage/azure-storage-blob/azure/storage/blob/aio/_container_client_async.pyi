@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 # pylint: skip-file
 
-from contextlib import AbstractAsyncContextManager
 from datetime import datetime
 from types import TracebackType
 from typing import (
@@ -57,7 +56,7 @@ from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 
 class ContainerClient(  # type: ignore[misc]
-    AbstractAsyncContextManager, AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin
+    AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin
 ):
     account_name: str
     container_name: str
@@ -81,7 +80,7 @@ class ContainerClient(  # type: ignore[misc]
         use_byte_buffer: Optional[bool] = None,
         **kwargs: Any
     ) -> None: ...
-    async def __aenter__(self) -> "ContainerClient": ...
+    async def __aenter__(self) -> Self: ...
     async def __aexit__(
         self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
     ) -> None: ...
@@ -105,7 +104,7 @@ class ContainerClient(  # type: ignore[misc]
         min_large_block_upload_threshold: int = 4 * 1024 * 1024 + 1,
         use_byte_buffer: Optional[bool] = None,
         **kwargs: Any
-    ) -> "ContainerClient": ...
+    ) -> Self: ...
     @classmethod
     def from_connection_string(
         cls,
@@ -126,7 +125,7 @@ class ContainerClient(  # type: ignore[misc]
         min_large_block_upload_threshold: int = 4 * 1024 * 1024 + 1,
         use_byte_buffer: Optional[bool] = None,
         **kwargs: Any
-    ) -> "ContainerClient": ...
+    ) -> Self: ...
     @distributed_trace_async
     async def create_container(
         self,

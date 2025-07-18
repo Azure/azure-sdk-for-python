@@ -7,11 +7,11 @@
 
 import functools
 import warnings
-from contextlib import AbstractAsyncContextManager
 from typing import (
     Any, cast, Dict, Iterable, List, Optional, Union,
     TYPE_CHECKING
 )
+from typing_extensions import Self
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import HttpResponseError
@@ -59,7 +59,6 @@ if TYPE_CHECKING:
 
 
 class BlobServiceClient(  # type: ignore [misc]
-    AbstractAsyncContextManager,
     AsyncStorageAccountHostsMixin,
     StorageAccountHostsMixin,
     StorageEncryptionMixin
@@ -140,7 +139,7 @@ class BlobServiceClient(  # type: ignore [misc]
         self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
         self._configure_encryption(kwargs)
 
-    async def __aenter__(self) -> "BlobServiceClient":
+    async def __aenter__(self) -> Self: 
         await self._client.__aenter__()
         return self
 
@@ -172,7 +171,7 @@ class BlobServiceClient(  # type: ignore [misc]
         cls, conn_str: str,
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
-    ) -> "BlobServiceClient":
+    ) -> Self:
         """Create BlobServiceClient from a Connection String.
 
         :param str conn_str:

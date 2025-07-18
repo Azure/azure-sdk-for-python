@@ -6,7 +6,6 @@
 # pylint: disable=too-many-lines, docstring-keyword-should-match-keyword-only
 
 import warnings
-from contextlib import AbstractAsyncContextManager
 from datetime import datetime
 from functools import partial
 from typing import (
@@ -14,6 +13,7 @@ from typing import (
     Iterable, List, Optional, Tuple, Union,
     TYPE_CHECKING
 )
+from typing_extensions import Self
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
@@ -99,7 +99,6 @@ if TYPE_CHECKING:
 
 
 class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-methods
-    AbstractAsyncContextManager,
     AsyncStorageAccountHostsMixin,
     StorageAccountHostsMixin,
     StorageEncryptionMixin
@@ -201,7 +200,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
         self._configure_encryption(kwargs)
 
-    async def __aenter__(self) -> "BlobClient":
+    async def __aenter__(self) -> Self: 
         await self._client.__aenter__()
         return self
 
@@ -232,7 +231,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
         **kwargs: Any
-    ) -> "BlobClient":
+    ) -> Self:
         """Create BlobClient from a blob url. This doesn't support customized blob url with '/' in blob name.
 
         :param str blob_url:
@@ -280,7 +279,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
-    ) -> "BlobClient":
+    ) -> Self:
         """Create BlobClient from a Connection String.
 
         :param str conn_str:

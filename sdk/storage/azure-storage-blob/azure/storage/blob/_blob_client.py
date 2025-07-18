@@ -6,13 +6,13 @@
 # pylint: disable=too-many-lines, docstring-keyword-should-match-keyword-only
 
 import warnings
-from contextlib import AbstractContextManager
 from datetime import datetime
 from functools import partial
 from typing import (
     Any, AnyStr, cast, Dict, IO, Iterable, List, Optional, Tuple, Union,
     TYPE_CHECKING
 )
+from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
@@ -89,7 +89,7 @@ if TYPE_CHECKING:
     )
 
 
-class BlobClient(AbstractContextManager, StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: disable=too-many-public-methods
+class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: disable=too-many-public-methods
     """A client to interact with a specific blob, although that blob may not yet exist.
 
     For more optional configuration, please click
@@ -190,7 +190,7 @@ class BlobClient(AbstractContextManager, StorageAccountHostsMixin, StorageEncryp
         self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
         self._configure_encryption(kwargs)
 
-    def __enter__(self) -> "BlobClient":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 
@@ -221,7 +221,7 @@ class BlobClient(AbstractContextManager, StorageAccountHostsMixin, StorageEncryp
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
         **kwargs: Any
-    ) -> "BlobClient":
+    ) -> Self: 
         """Create BlobClient from a blob url. This doesn't support customized blob url with '/' in blob name.
 
         :param str blob_url:
@@ -269,7 +269,7 @@ class BlobClient(AbstractContextManager, StorageAccountHostsMixin, StorageEncryp
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
-    ) -> "BlobClient":
+    ) -> Self:
         """Create BlobClient from a Connection String.
 
         :param str conn_str:

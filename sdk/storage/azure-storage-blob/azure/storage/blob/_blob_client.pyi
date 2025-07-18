@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 # pylint: skip-file
 
-from contextlib import AbstractContextManager
 from datetime import datetime
 from types import TracebackType
 from typing import (
@@ -22,6 +21,7 @@ from typing import (
     Tuple,
     Union,
 )
+from typing_extensions import Self
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
@@ -52,7 +52,7 @@ from ._models import (
 from ._quick_query_helper import BlobQueryReader
 from ._shared.base_client import StorageAccountHostsMixin
 
-class BlobClient(AbstractContextManager, StorageAccountHostsMixin, StorageEncryptionMixin):
+class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     def __init__(
         self,
         account_url: str,
@@ -76,7 +76,7 @@ class BlobClient(AbstractContextManager, StorageAccountHostsMixin, StorageEncryp
         use_byte_buffer: Optional[bool] = None,
         **kwargs: Any
     ) -> None: ...
-    def __enter__(self) -> "BlobClient": ...
+    def __enter__(self) -> Self: ...
     def __exit__(
         self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
     ) -> None: ...
@@ -102,7 +102,7 @@ class BlobClient(AbstractContextManager, StorageAccountHostsMixin, StorageEncryp
         min_large_block_upload_threshold: int = 4 * 1024 * 1024 + 1,
         use_byte_buffer: Optional[bool] = None,
         **kwargs: Any
-    ) -> "BlobClient": ...
+    ) -> Self: ...
     @classmethod
     def from_connection_string(
         cls,
@@ -126,7 +126,7 @@ class BlobClient(AbstractContextManager, StorageAccountHostsMixin, StorageEncryp
         min_large_block_upload_threshold: int = 4 * 1024 * 1024 + 1,
         use_byte_buffer: Optional[bool] = None,
         **kwargs: Any
-    ) -> "BlobClient": ...
+    ) -> Self: ...
     @distributed_trace
     def get_account_information(self, **kwargs: Any) -> Dict[str, str]: ...
     @distributed_trace
