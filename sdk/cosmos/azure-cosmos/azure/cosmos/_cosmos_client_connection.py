@@ -1260,7 +1260,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     lambda _, b: b, query, options, **kwargs)
 
         return ItemPaged(
-            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
+            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable,
+            resource_type=http_constants.ResourceType.PartitionKeyRange
         )
 
     def CreateItem(
