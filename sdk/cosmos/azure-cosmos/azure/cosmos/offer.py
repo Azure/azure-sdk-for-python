@@ -23,6 +23,9 @@
 
 from typing import Any, Dict, Optional
 
+from requests.structures import CaseInsensitiveDict
+from ._cosmos_responses import CosmosDict
+
 
 class ThroughputProperties:
     """Represents the throughput properties in an Azure Cosmos DB SQL API container.
@@ -44,5 +47,14 @@ class ThroughputProperties:
         self.properties: Optional[Dict[str, Any]] = args[1] if len(args) > 1 else kwargs.get('properties')
         self.auto_scale_max_throughput: Optional[int] = kwargs.get('auto_scale_max_throughput')
         self.auto_scale_increment_percent: Optional[int] = kwargs.get('auto_scale_increment_percent')
+        self.headers : Optional[CosmosDict] = kwargs.get('headers')
+
+    def get_response_headers(self) -> CaseInsensitiveDict:
+        """Returns a copy of the response headers associated to this response
+
+        :return: Dict of response headers
+        :rtype: ~azure.core.CaseInsensitiveDict
+        """
+        return self.headers
 
 Offer = ThroughputProperties

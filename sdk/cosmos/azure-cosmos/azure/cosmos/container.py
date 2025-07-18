@@ -1333,7 +1333,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         data = self.client_connection.ReplaceOffer(
             offer_link=throughput_properties[0]["_self"], offer=throughput_properties[0], **kwargs)
 
-        return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
+        return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data, headers=data)
 
     @distributed_trace
     def list_conflicts(

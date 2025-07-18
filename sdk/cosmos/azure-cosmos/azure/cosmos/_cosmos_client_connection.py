@@ -2496,7 +2496,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         offer_link: str,
         offer: Dict[str, Any],
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDict:
         """Replaces an offer and returns it.
 
         :param str offer_link:
