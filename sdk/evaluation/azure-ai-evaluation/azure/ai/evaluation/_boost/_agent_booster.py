@@ -12,7 +12,7 @@ from azure.ai.evaluation import (
     OpenAIModelConfiguration,
 )
 from azure.ai.evaluation._converters._ai_services import AIAgentConverter
-from azure.ai.evaluation._constants import DEFAULT_AOAI_API_VERSION
+from azure.ai.evaluation._constants import DEFAULT_AOAI_API_VERSION, experimental
 from azure.ai.evaluation._user_agent import UserAgentSingleton
 
 from openai import AzureOpenAI, OpenAI
@@ -23,179 +23,28 @@ from ._configuration import (
     _PromptConfiguration,
     _RefinementConfig,
 )
+from ._utils import _CritiqueGenerator, _PromptImprover
 
 
-class _CritiqueGenerator:
-    """Generates critiques for prompts based on evaluation results."""
-
-    def __init__(
-        self,
-        client: Union[AzureOpenAI, OpenAI],
-        model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
-    ):
-        """Initialize with client factory for lazy client creation.
-
-        Args:
-            client: OpenAI client instance
-            model_config: Model configuration object
-        """
-        self.client = client
-        self._model_config = model_config
-
-    def get_model_name(self) -> str:
-        """Get the model name from the configuration."""
-        if isinstance(self.client, AzureOpenAI):
-            return self._model_config.get("azure_deployment", "")
-        return self._model_config.get("model", "")
-
-    def generate_critique(
-        self,
-        case: _EvaluationCase,
-        system_prompt: str,
-        tools: Optional[List[Dict[str, Any]]] = None,
-    ) -> str:
-        """Generate a critique for a single evaluation case."""
-
-        critique_prompt = self._build_critique_prompt(case, system_prompt, tools)
-
-        response = self.client.chat.completions.create(
-            model=self.get_model_name(),
-            messages=[{"role": "user", "content": critique_prompt}],
-            temperature=0.3,
-        )
-
-        return response.choices[0].message.content or ""
-
-    def aggregate_critiques(self, critiques: List[str]) -> str:
-        """Aggregate multiple critiques into a meta-critique."""
-
-        if not critiques:
-            return "No critiques to aggregate."
-
-        if len(critiques) == 1:
-            return critiques[0]
-
-        aggregate_prompt = f"""
-You are an expert prompt engineer. I have {len(critiques)} individual critiques of a system prompt. 
-Please synthesize them into a single, comprehensive meta-critique that identifies the most important issues and improvements.
-
-Individual Critiques:
-{chr(10).join(f"{i+1}. {critique}" for i, critique in enumerate(critiques))}
-
-Provide a synthesized meta-critique that captures the key insights:
-"""
-
-        response = self.client.chat.completions.create(
-            model=self.get_model_name(),
-            messages=[{"role": "user", "content": aggregate_prompt}],
-            temperature=0.3,
-        )
-
-        return response.choices[0].message.content or ""
-
-    def _build_critique_prompt(
-        self,
-        case: _EvaluationCase,
-        system_prompt: str,
-        tools: Optional[List[Dict[str, Any]]] = None,
-    ) -> str:
-        """Build the critique prompt."""
-
-        score_summary = "\n".join(
-            f"- {metric}: {score:.2f}" for metric, score in case.scores.items()
-        )
-
-        tools_summary = ""
-        if tools:
-            tools_summary = f"\n\nTools Available:\n{json.dumps(tools, indent=2)}"
-
-        return f"""
-You are an expert prompt engineer. Analyze the following system prompt and its evaluation scores to provide a detailed critique.
-
-System Prompt:
-{system_prompt}
-
-Evaluation Scores:
-{score_summary}{tools_summary}
-
-Conversation:
-{json.dumps(case.conversation, indent=2)}
-
-Please provide a detailed critique focusing on:
-1. What aspects of the prompt led to these scores
-2. Specific improvements that could be made
-3. How the prompt could better handle this type of conversation
-4. Any tool usage considerations (if tools are available)
-
-Provide actionable, specific feedback:
-"""
-
-
-class _PromptImprover:
-    """Improves prompts based on critiques."""
-
-    def __init__(
-        self,
-        client: Union[AzureOpenAI, OpenAI],
-        model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
-    ):
-        """Initialize with client factory for lazy client creation.
-
-        Args:
-            client: OpenAI client instance
-            model_config: Model configuration object
-        """
-        self.client = client
-        self._model_config = model_config
-
-    def get_model_name(self) -> str:
-        """Get the model name from the configuration."""
-        if isinstance(self.client, AzureOpenAI):
-            return self._model_config.get("azure_deployment", "")
-        return self._model_config.get("model", "")
-
-    def improve_prompt(
-        self,
-        original_prompt: str,
-        meta_critique: str,
-        tools: Optional[List[Dict[str, Any]]] = None,
-    ) -> str:
-        """Improve a prompt based on the meta-critique."""
-
-        tools_context = ""
-        if tools:
-            tools_context = f"""
-Tools Available:
-{json.dumps(tools, indent=2)}
-
-Consider tool usage in your improvements.
-"""
-
-        improvement_prompt = f"""
-You are an expert prompt engineer. Given an original system prompt and a detailed critique, create an improved version.
-
-Original Prompt:
-{original_prompt}
-
-Critique:
-{meta_critique}{tools_context}
-
-Create an improved system prompt that addresses the issues raised in the critique. 
-Return ONLY the improved prompt text, no explanations or additional formatting.
-"""
-
-        response = self.client.chat.completions.create(
-            model=self.get_model_name(),
-            messages=[{"role": "user", "content": improvement_prompt}],
-            temperature=0.1,
-        )
-
-        return (response.choices[0].message.content or "").strip()
-
-
+@experimental
 class _AgentBooster:
     """
     Comprehensive system for iterative prompt refinement using evaluation feedback.
+
+    Features a streamlined human-in-the-loop workflow:
+    1. Human specifies improvement intent in configuration (optional)
+    2. AI analyzes evaluation results and generates targeted improvements
+    3. Human reviews and approves final changes (optional)
+
+    Example usage:
+    ```python
+    booster = _AgentBooster(
+        project_client=client,
+        model_config=config,
+        agent_id="agent_123",
+        improvement_intent="Make responses more concise and technical",
+    )
+    ```
     """
 
     def __init__(
@@ -207,13 +56,15 @@ class _AgentBooster:
         max_iterations: int = 3,
         improvement_threshold: float = 0.1,
         early_stopping: bool = True,
+        verbose: bool = False,
+        improvement_intent: Optional[str] = None,
     ):
-        self.verbose = True  # Enable verbose logging for debugging
+        self._verbose = verbose
 
         # Initialize Azure AI Project client
         self._project_client = project_client
         self._model_config = model_config
-        self.agent = self._project_client.agents.get_agent(agent_id)
+        self._agent = self._project_client.agents.get_agent(agent_id)
 
         # Validate model configuration
         self._validate_model_config()
@@ -223,9 +74,10 @@ class _AgentBooster:
             max_iterations=max_iterations,
             improvement_threshold=improvement_threshold,
             early_stopping=early_stopping,
+            improvement_intent=improvement_intent,
         )
-        
-        self.config = _AgentBoosterConfig(
+
+        self._config = _AgentBoosterConfig(
             model_config=self._model_config,
             refinement=refinement_config,
             evaluators=evaluators,
@@ -245,13 +97,16 @@ class _AgentBooster:
         self.best_iteration = 0
 
     def _validate_model_config(self) -> None:
-        """Validate the model configuration using Azure SDK patterns."""
+        """Validate the model configuration using Azure SDK patterns.
+
+        :raises ValueError: If the model configuration is invalid or missing required fields.
+        """
         from azure.ai.evaluation._common.utils import parse_model_config_type
-        
+
         try:
             # Parse and validate the model configuration type
             parse_model_config_type(self._model_config)
-            
+
             # Validate required fields based on model type
             if "azure_endpoint" in self._model_config:
                 # Azure OpenAI configuration
@@ -265,7 +120,7 @@ class _AgentBooster:
                 for field in required_fields:
                     if field not in self._model_config or not self._model_config[field]:
                         raise ValueError(f"Missing required field: {field}")
-                        
+
         except Exception as e:
             raise ValueError(f"Invalid model configuration: {e}")
 
@@ -280,14 +135,14 @@ class _AgentBooster:
         Run the complete iterative refinement process.
         """
         # Use config values or method parameters
-        max_iterations = max_iterations or self.config.refinement.max_iterations
+        max_iterations = max_iterations or self._config.refinement.max_iterations
         improvement_threshold = (
-            improvement_threshold or self.config.refinement.improvement_threshold
+            improvement_threshold or self._config.refinement.improvement_threshold
         )
         early_stopping = (
             early_stopping
             if early_stopping is not None
-            else self.config.refinement.early_stopping
+            else self._config.refinement.early_stopping
         )
 
         self.refinement_history = []
@@ -296,11 +151,11 @@ class _AgentBooster:
         self.best_iteration = 0
 
         current_prompt_config = _PromptConfiguration(
-            system_prompt=self.agent.instructions,
-            tools=[], # TODO: Add logic to handle tools configuration
+            system_prompt=self._agent.instructions,
+            tools=[],  # TODO: Add logic to handle tools configuration
         )
 
-        if self.verbose:
+        if self._verbose:
             print(f"Starting refinement with {max_iterations} max iterations")
             print(f"Improvement threshold: {improvement_threshold}")
             print(f"Initial prompt: {current_prompt_config.system_prompt[:100]}...")
@@ -320,7 +175,7 @@ class _AgentBooster:
                 prompt_config=current_prompt_config,
             )
 
-            if self.verbose:
+            if self._verbose:
                 print(f"Iteration {iteration + 1} completed")
 
             self.refinement_history.append(
@@ -335,7 +190,7 @@ class _AgentBooster:
         with open("refinement_history.json", "w") as f:
             json.dump(self.refinement_history, f, indent=2)
 
-        if self.verbose:
+        if self._verbose:
             print(
                 "Refinement process completed. History saved to refinement_history.json"
             )
@@ -348,17 +203,18 @@ class _AgentBooster:
         }
 
     def boost(self, iteration_result: EvaluationResult) -> _PromptConfiguration:
-        """
-        Boost the agent based on the evaluation results.
-        This method should implement the logic to improve the prompt configuration.
-        """
-        if not iteration_result:
-            raise ValueError(
-                "Iteration result is empty. Cannot boost agent without results."
-            )
+        """Boost the agent based on the evaluation results.
 
+        This method implements the logic to improve the prompt configuration.
+
+        :param iteration_result: Results from evaluation containing scores and conversation data.
+        :type iteration_result: EvaluationResult
+        :return: Improved prompt configuration.
+        :rtype: _PromptConfiguration
+        :raises ValueError: If iteration_result is empty.
+        """
         current_prompt_config = _PromptConfiguration(
-            system_prompt=self.agent.instructions,
+            system_prompt=self._agent.instructions,
             tools=[],
         )
 
@@ -367,8 +223,13 @@ class _AgentBooster:
         return new_prompt_config
 
     def _load_queries(self, data_file: str) -> list[str]:
-        """
-        Load queries from the provided data file as a jsonl file.
+        """Load queries from the provided data file as a jsonl file.
+
+        :param data_file: Path to the JSONL file containing queries.
+        :type data_file: str
+        :return: List of queries loaded from the file.
+        :rtype: list[str]
+        :raises FileNotFoundError: If the data file does not exist.
         """
         if not os.path.exists(data_file):
             raise FileNotFoundError(f"Data file not found: {data_file}")
@@ -380,7 +241,7 @@ class _AgentBooster:
                     data = json.loads(line)
                     queries.append(data.get("query", ""))
                 except json.JSONDecodeError:
-                    if self.verbose:
+                    if self._verbose:
                         print(f"Skipping invalid line: {line.strip()}")
 
         return queries
@@ -388,8 +249,16 @@ class _AgentBooster:
     def _generate_responses(
         self, queries: list[str], prompt_config: _PromptConfiguration
     ) -> str:
-        """Generate responses for the given queries using the current prompt configuration."""
-        if self.verbose:
+        """Generate responses for the given queries using the current prompt configuration.
+
+        :param queries: List of queries to generate responses for.
+        :type queries: list[str]
+        :param prompt_config: Current prompt configuration to use for generation.
+        :type prompt_config: _PromptConfiguration
+        :return: Path to the temporary file containing generated responses.
+        :rtype: str
+        """
+        if self._verbose:
             print(f"Generating responses for {len(queries)} queries")
 
         thread_ids: List[str] = []
@@ -404,12 +273,12 @@ class _AgentBooster:
 
             run = self._project_client.agents.runs.create_and_process(
                 thread_id=thread.id,
-                agent_id=self.agent.id,
+                agent_id=self._agent.id,
                 instructions=prompt_config.system_prompt,
             )
 
             if run.status == "failed":
-                if self.verbose:
+                if self._verbose:
                     print(f"Run failed: {run.last_error}")
                 continue
 
@@ -422,44 +291,41 @@ class _AgentBooster:
         return temp_file.name
 
     def add_evaluator(self, evaluator_class):
-        """
-        Add a custom evaluator to the configuration.
+        """Add a custom evaluator to the configuration.
 
-        Args:
-            evaluator_class: Evaluator class that follows the Azure AI evaluation interface
+        :param evaluator_class: Evaluator class that follows the Azure AI evaluation interface.
+        :type evaluator_class: type
         """
-        if self.config.evaluators is None:
-            self.config.evaluators = []
+        if self._config.evaluators is None:
+            self._config.evaluators = []
 
-        if evaluator_class not in self.config.evaluators:
-            self.config.evaluators.append(evaluator_class)
-            if self.verbose:
+        if evaluator_class not in self._config.evaluators:
+            self._config.evaluators.append(evaluator_class)
+            if self._verbose:
                 print(f"Added custom evaluator: {evaluator_class.__name__}")
 
     def set_evaluators(self, evaluators: List):
-        """
-        Set custom evaluators, replacing any existing ones.
+        """Set custom evaluators, replacing any existing ones.
 
-        Args:
-            evaluators: List of evaluator classes that follow the Azure AI evaluation interface
+        :param evaluators: List of evaluator classes that follow the Azure AI evaluation interface.
+        :type evaluators: List
         """
-        self.config.evaluators = evaluators
-        if self.verbose:
+        self._config.evaluators = evaluators
+        if self._verbose:
             evaluator_names = [e.__name__ for e in evaluators]
             print(f"Set custom evaluators: {evaluator_names}")
 
     def reset_to_default_evaluators(self):
         """Reset to use default evaluators (IntentResolutionEvaluator, ToolCallAccuracyEvaluator)."""
-        self.config.evaluators = None
-        if self.verbose:
+        self._config.evaluators = None
+        if self._verbose:
             print("Reset to default evaluators")
 
     def add_to_default_evaluators(self, evaluator_class):
-        """
-        Add a custom evaluator to the default evaluators.
+        """Add a custom evaluator to the default evaluators.
 
-        Args:
-            evaluator_class: Evaluator class that follows the Azure AI evaluation interface
+        :param evaluator_class: Evaluator class that follows the Azure AI evaluation interface.
+        :type evaluator_class: type
         """
         # Get default evaluators and add the custom one
         from azure.ai.evaluation import (
@@ -469,27 +335,23 @@ class _AgentBooster:
 
         default_evaluators = [IntentResolutionEvaluator, ToolCallAccuracyEvaluator]
 
-        if self.config.evaluators is None:
-            self.config.evaluators = default_evaluators.copy()
+        if self._config.evaluators is None:
+            self._config.evaluators = default_evaluators.copy()
 
-        if evaluator_class not in self.config.evaluators:
-            self.config.evaluators.append(evaluator_class)
-            if self.verbose:
+        if evaluator_class not in self._config.evaluators:
+            self._config.evaluators.append(evaluator_class)
+            if self._verbose:
                 print(f"Added custom evaluator to defaults: {evaluator_class.__name__}")
 
     def _get_default_evaluators(self) -> Dict:
-        """
-        Get default evaluators for evaluation.
+        """Get default evaluators for evaluation.
 
         Default evaluators include:
         - IntentResolutionEvaluator: Evaluates how well the agent resolves user intents
         - ToolCallAccuracyEvaluator: Evaluates the accuracy of tool calls made by the agent
 
-        Args:
-            model_config: Model configuration dictionary for evaluators
-
-        Returns:
-            Dictionary of evaluator names to evaluator instances
+        :return: Dictionary of evaluator names to evaluator instances.
+        :rtype: Dict
         """
         from azure.ai.evaluation import (
             IntentResolutionEvaluator,
@@ -503,34 +365,34 @@ class _AgentBooster:
         }
 
     def _get_evaluators(self) -> Dict:
-        """
-        Get evaluators to use for evaluation (custom or default).
+        """Get evaluators to use for evaluation (custom or default).
 
-        Args:
-            model_config: Model configuration dictionary for evaluators
-
-        Returns:
-            Dictionary of evaluator names to evaluator instances
+        :return: Dictionary of evaluator names to evaluator instances.
+        :rtype: Dict
         """
-        if self.config.evaluators:
+        if self._config.evaluators:
             # Use custom evaluators
             evaluators = {
                 evaluator.__name__: evaluator(model_config=self._model_config)
-                for evaluator in self.config.evaluators
+                for evaluator in self._config.evaluators
             }
-            if self.verbose:
+            if self._verbose:
                 print(f"Using custom evaluators: {list(evaluators.keys())}")
             return evaluators
         else:
             # Use default evaluators
             evaluators = self._get_default_evaluators()
-            if self.verbose:
+            if self._verbose:
                 print(f"Using default evaluators: {list(evaluators.keys())}")
             return evaluators
 
     def _evaluate_responses(self, response_file_path: str):
-        """
-        Evaluate the generated responses using the provided evaluators.
+        """Evaluate the generated responses using the provided evaluators.
+
+        :param response_file_path: Path to the file containing generated responses.
+        :type response_file_path: str
+        :return: Evaluation results.
+        :rtype: EvaluationResult
         """
         if not os.path.exists(response_file_path):
             raise FileNotFoundError(f"Response file not found: {response_file_path}")
@@ -545,29 +407,20 @@ class _AgentBooster:
     def _boost(
         self, iteration_result: EvaluationResult, prompt_config: _PromptConfiguration
     ) -> _PromptConfiguration:
+        """Analyze evaluation results and return an improved prompt configuration.
+
+        :param iteration_result: Results from evaluation containing scores and conversation data.
+        :type iteration_result: EvaluationResult
+        :param prompt_config: Current prompt configuration.
+        :type prompt_config: _PromptConfiguration
+        :return: Improved prompt configuration.
+        :rtype: _PromptConfiguration
         """
-        Analyze evaluation results and return an improved prompt configuration.
-
-        Args:
-            iteration_result: Results from evaluation containing scores and conversation data
-            prompt_config: Current prompt configuration
-
-        Returns:
-            Improved PromptConfiguration
-        """
-
-        if not iteration_result:
-            if self.verbose:
-                print(
-                    "No evaluation results provided. Returning original prompt configuration."
-                )
-            return prompt_config
-
         # Extract evaluation cases from results
         cases = self._extract_evaluation_cases(iteration_result)
 
         if not cases:
-            if self.verbose:
+            if self._verbose:
                 print(
                     "No evaluation cases found. Returning original prompt configuration."
                 )
@@ -580,20 +433,20 @@ class _AgentBooster:
         critiques = self._generate_critiques(cases, system_prompt, tools)
 
         if not critiques:
-            if self.verbose:
+            if self._verbose:
                 print(
                     "No critiques generated. Returning original prompt configuration."
                 )
             return prompt_config
 
-        # Create improved prompt
+        # Create improved prompt using human intent and evaluation data
         improved_prompt = self._create_improved_prompt(system_prompt, critiques, tools)
 
         # Return new configuration with improved prompt
         new_config = _PromptConfiguration(system_prompt=improved_prompt, tools=tools)
 
         # Print summary
-        if self.verbose:
+        if self._verbose:
             self._print_boost_summary(
                 cases, critiques, system_prompt, improved_prompt, tools
             )
@@ -603,7 +456,13 @@ class _AgentBooster:
     def _extract_evaluation_cases(
         self, eval_results: EvaluationResult
     ) -> List[_EvaluationCase]:
-        """Extract evaluation cases from results."""
+        """Extract evaluation cases from results.
+
+        :param eval_results: Evaluation results containing case data.
+        :type eval_results: EvaluationResult
+        :return: List of extracted evaluation cases.
+        :rtype: List[_EvaluationCase]
+        """
         cases = []
 
         for i, row in enumerate(eval_results.get("rows", [])):
@@ -621,7 +480,17 @@ class _AgentBooster:
         system_prompt: str,
         tools: List[Dict[str, Any]],
     ) -> List[str]:
-        """Generate critiques for all cases."""
+        """Generate critiques for all cases.
+
+        :param cases: List of evaluation cases to critique.
+        :type cases: List[_EvaluationCase]
+        :param system_prompt: Current system prompt text.
+        :type system_prompt: str
+        :param tools: List of tool configurations.
+        :type tools: List[Dict[str, Any]]
+        :return: List of generated critique messages.
+        :rtype: List[str]
+        """
         critiques = []
 
         for case in cases:
@@ -629,7 +498,7 @@ class _AgentBooster:
                 case, system_prompt, tools
             )
             critiques.append(critique)
-            if self.verbose:
+            if self._verbose:
                 print(f"Generated critique for {case.case_id}")
 
         return critiques
@@ -637,17 +506,34 @@ class _AgentBooster:
     def _create_improved_prompt(
         self, original_prompt: str, critiques: List[str], tools: List[Dict[str, Any]]
     ) -> str:
-        """Create improved prompt from critiques."""
+        """Create improved prompt from critiques and optional human intent.
 
-        if self.verbose:
+        :param original_prompt: The original prompt to improve.
+        :type original_prompt: str
+        :param critiques: List of critique messages.
+        :type critiques: List[str]
+        :param tools: List of tool configurations.
+        :type tools: List[Dict[str, Any]]
+        :return: Improved prompt text.
+        :rtype: str
+        """
+
+        if self._verbose:
             print("Aggregating critiques into meta-critique...")
         meta_critique = self._critique_generator.aggregate_critiques(critiques)
 
-        if self.verbose:
+        if self._verbose:
             print("Generating improved prompt...")
-        return self._prompt_improver.improve_prompt(
-            original_prompt, meta_critique, tools
+
+        # Include human intent in the improvement process
+        improved = self._prompt_improver.improve_prompt(
+            original_prompt,
+            meta_critique,
+            tools,
+            self._config.refinement.improvement_intent,
         )
+
+        return improved
 
     def _print_boost_summary(
         self,
@@ -657,7 +543,19 @@ class _AgentBooster:
         improved_prompt: str,
         tools: List[Dict[str, Any]],
     ):
-        """Print improvement summary."""
+        """Print improvement summary.
+
+        :param cases: List of evaluation cases processed.
+        :type cases: List[_EvaluationCase]
+        :param critiques: List of critique messages generated.
+        :type critiques: List[str]
+        :param original_prompt: The original prompt before improvement.
+        :type original_prompt: str
+        :param improved_prompt: The improved prompt after processing.
+        :type improved_prompt: str
+        :param tools: List of tool configurations.
+        :type tools: List[Dict[str, Any]]
+        """
 
         print("\n" + "=" * 50)
         print("BOOST SUMMARY")
@@ -684,15 +582,21 @@ class _AgentBooster:
     def _run_single_iteration(
         self, prompt_config: _PromptConfiguration, queries: list[str]
     ):
-        """
-        Run a single iteration of evaluation and improvement.
+        """Run a single iteration of evaluation and improvement.
+
+        :param prompt_config: Current prompt configuration to use.
+        :type prompt_config: _PromptConfiguration
+        :param queries: List of queries to process.
+        :type queries: list[str]
+        :return: Evaluation results from this iteration.
+        :rtype: EvaluationResult
         """
         response_file_path = self._generate_responses(queries, prompt_config)
-        if self.verbose:
+        if self._verbose:
             print(f"Generated responses saved to: {response_file_path}")
 
         evaluation_results = self._evaluate_responses(response_file_path)
-        if self.verbose:
+        if self._verbose:
             print(f"Evaluation results: {evaluation_results}")
 
         return evaluation_results

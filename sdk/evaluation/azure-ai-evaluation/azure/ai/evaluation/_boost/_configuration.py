@@ -23,7 +23,8 @@ class _RefinementConfig:
     improvement_threshold: float = 0.1  # Fixed: Use consistent default
     early_stopping: bool = True
     verbose: bool = False
-    
+    improvement_intent: Optional[str] = None
+
     def __post_init__(self):
         """Validate configuration values."""
         if self.max_iterations <= 0:
@@ -39,4 +40,6 @@ class _AgentBoosterConfig:
     model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]
     refinement: _RefinementConfig
     temp_dir: Optional[str] = None
-    evaluators: Optional[List[Callable]] = None  # Custom evaluators; if None, uses default evaluators
+    evaluators: Optional[List[Callable]] = (
+        None  # Custom evaluators; if None, uses default evaluators
+    )
