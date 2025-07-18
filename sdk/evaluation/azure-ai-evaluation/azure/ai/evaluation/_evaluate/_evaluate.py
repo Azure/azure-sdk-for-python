@@ -102,17 +102,31 @@ def _aggregate_other_metrics(df: pd.DataFrame) -> Tuple[List[str], Dict[str, flo
     renamed_cols = []
     metric_columns = {}
     for col in df.columns:
-        metric_prefix = col.split(".")[0]
-        metric_name = col.split(".")[1]
-        if metric_name in METRIC_COLUMN_NAME_REPLACEMENTS:
-            renamed_cols.append(col)
-            new_col_name = metric_prefix + "." + METRIC_COLUMN_NAME_REPLACEMENTS[metric_name]
-            col_with_numeric_values = cast(List[float], pd.to_numeric(df[col], errors="coerce"))
-            try:
-                metric_columns[new_col_name] = round(list_mean_nan_safe(col_with_numeric_values), 2)
-            except EvaluationException:  # only exception that can be cause is all NaN values
-                msg = f"All score evaluations are NaN/None for column {col}. No aggregation can be performed."
-                LOGGER.warning(msg)
+        parts = col.split(".")
+        if len(parts) >= 2:
+            metric_prefix = parts[0]
+            metric_name = parts[1]
+            if metric_name in METRIC_COLUMN_NAME_REPLACEMENTS:
+                renamed_cols.append(col)
+                new_col_name = metric_prefix + "." + METRIC_COLUMN_NAME_REPLACEMENTS[metric_name]
+                col_with_numeric_values = cast(List[float], pd.to_numeric(df[col], errors="coerce"))
+                try:
+                    metric_columns[new_col_name] = round(list_mean_nan_safe(col_with_numeric_values), 2)
+                except EvaluationException:  # only exception that can be cause is all NaN values
+                    msg = f"All score evaluations are NaN/None for column {col}. No aggregation can be performed."
+                    LOGGER.warning(msg)
+        else:
+            # Direct format without evaluator name prefix
+            metric_name = col
+            if metric_name in METRIC_COLUMN_NAME_REPLACEMENTS:
+                renamed_cols.append(col)
+                new_col_name = METRIC_COLUMN_NAME_REPLACEMENTS[metric_name]
+                col_with_numeric_values = cast(List[float], pd.to_numeric(df[col], errors="coerce"))
+                try:
+                    metric_columns[new_col_name] = round(list_mean_nan_safe(col_with_numeric_values), 2)
+                except EvaluationException:  # only exception that can be cause is all NaN values
+                    msg = f"All score evaluations are NaN/None for column {col}. No aggregation can be performed."
+                    LOGGER.warning(msg)
 
     return renamed_cols, metric_columns
 
@@ -141,22 +155,39 @@ def _aggregate_content_safety_metrics(
     ]
     content_safety_cols = []
     for col in df.columns:
-        evaluator_name = col.split(".")[0]
-        metric_name = col.split(".")[1]
-        if evaluator_name in evaluators:
-            # Check the namespace of the evaluator
-            module = inspect.getmodule(evaluators[evaluator_name])
-            if (
-                module
-                and metric_name.endswith("_score")
-                and metric_name.replace("_score", "") in content_safety_metrics
-            ):
+        # Handle both formats: either "evaluator_name.metric_name" or directly "metric_name"
+        parts = col.split(".")
+        if len(parts) >= 2:
+            evaluator_name = parts[0]
+            metric_name = parts[1]
+            if evaluator_name in evaluators:
+                # Check the namespace of the evaluator
+                module = inspect.getmodule(evaluators[evaluator_name])
+                if (
+                    module
+                    and metric_name.endswith("_score")
+                    and metric_name.replace("_score", "") in content_safety_metrics
+                ):
+                    content_safety_cols.append(col)
+        else:
+            # Direct format without evaluator name prefix
+            metric_name = col
+            if metric_name.endswith("_score") and metric_name.replace("_score", "") in content_safety_metrics:
                 content_safety_cols.append(col)
 
     content_safety_df = df[content_safety_cols]
     defect_rates = {}
     for col in content_safety_df.columns:
-        defect_rate_name = col.replace("_score", "_defect_rate")
+        # Preserve the evaluator prefix if it exists
+        parts = col.split(".")
+        if len(parts) >= 2:
+            evaluator_name = parts[0]
+            metric_name = parts[1]
+            defect_rate_name = f"{evaluator_name}.{metric_name.replace('_score', '_defect_rate')}"
+        else:
+            # Direct format without evaluator name prefix
+            defect_rate_name = col.replace("_score", "_defect_rate")
+        
         col_with_numeric_values = cast(List[float], pd.to_numeric(content_safety_df[col], errors="coerce"))
         try:
             col_with_boolean_values = apply_transform_nan_safe(
@@ -193,16 +224,34 @@ def _aggregate_label_defect_metrics(df: pd.DataFrame) -> Tuple[List[str], Dict[s
     label_cols = []
     details_cols = []
     for col in df.columns:
-        metric_name = col.split(".")[1]
-        if metric_name.endswith("_label") and metric_name.replace("_label", "").lower() in handled_metrics:
-            label_cols.append(col)
-        if metric_name.endswith("_details") and metric_name.replace("_details", "").lower() in handled_metrics:
-            details_cols = col
+        parts = col.split(".")
+        if len(parts) >= 2:
+            metric_name = parts[1]
+            if metric_name.endswith("_label") and metric_name.replace("_label", "").lower() in handled_metrics:
+                label_cols.append(col)
+            if metric_name.endswith("_details") and metric_name.replace("_details", "").lower() in handled_metrics:
+                details_cols = col
+        else:
+            # Direct format without evaluator name prefix
+            metric_name = col
+            if metric_name.endswith("_label") and metric_name.replace("_label", "").lower() in handled_metrics:
+                label_cols.append(col)
+            if metric_name.endswith("_details") and metric_name.replace("_details", "").lower() in handled_metrics:
+                details_cols = col
 
     label_df = df[label_cols]
     defect_rates = {}
     for col in label_df.columns:
-        defect_rate_name = col.replace("_label", "_defect_rate")
+        # Preserve the evaluator prefix if it exists
+        parts = col.split(".")
+        if len(parts) >= 2:
+            evaluator_name = parts[0]
+            metric_name = parts[1]
+            defect_rate_name = f"{evaluator_name}.{metric_name.replace('_label', '_defect_rate')}"
+        else:
+            # Direct format without evaluator name prefix
+            defect_rate_name = col.replace("_label", "_defect_rate")
+            
         col_with_boolean_values = cast(List[float], pd.to_numeric(label_df[col], errors="coerce"))
         try:
             defect_rates[defect_rate_name] = round(list_mean_nan_safe(col_with_boolean_values), 2)
@@ -252,20 +301,25 @@ def _aggregation_binary_output(df: pd.DataFrame) -> Dict[str, float]:
     results = {}
 
     # Find all columns that end with "_result"
-    result_columns = [col for col in df.columns if col.startswith("outputs.") and col.endswith("_result")]
+    # This now checks for both "outputs.<evaluator>.<metric>_result" and direct "<metric>_result" formats
+    result_columns = [col for col in df.columns if (col.startswith("outputs.") or not "." in col) and col.endswith("_result")]
 
     for col in result_columns:
         # Extract the evaluator name from the column name
-        # (outputs.<evaluator>.<metric>_result)
         parts = col.split(".")
         evaluator_name = None
+        
         if len(parts) >= 3:
+            # Format: outputs.<evaluator>.<metric>_result
             evaluator_name = parts[1]
+        elif len(parts) >= 2:
+            # Format: <evaluator>.<metric>_result
+            evaluator_name = parts[0]
         else:
-            LOGGER.warning(
-                "Skipping column '%s' due to unexpected format. Expected at least three parts separated by '.'", col
-            )
-            continue
+            # Format: <metric>_result - use the metric name without _result as evaluator name
+            metric_name = col.replace("_result", "")
+            evaluator_name = metric_name
+            
         if evaluator_name:
             # Count the occurrences of each unique value (pass/fail)
             value_counts = df[col].value_counts().to_dict()
