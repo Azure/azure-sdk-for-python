@@ -2067,7 +2067,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             options = {}
 
         headers = base.GetHeaders(self, self.default_headers, "patch", path, document_id, resource_type,
-                                  documents._OperationType.Patch, options)
+                                  documents._OperationType.Patch, options, client_id=self.client_id)
         # Patch will use WriteEndpoint since it uses PUT operation
         request_params = RequestObject(resource_type,
                                        documents._OperationType.Patch,
@@ -2161,7 +2161,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         base._populate_batch_headers(initial_headers)
         headers = base.GetHeaders(self, initial_headers, "post", path, collection_id,
                                   http_constants.ResourceType.Document,
-                                  documents._OperationType.Batch, options)
+                                  documents._OperationType.Batch, options, client_id=self.client_id)
         request_params = RequestObject(http_constants.ResourceType.Document,
                                        documents._OperationType.Batch,
                                        headers)
@@ -2224,7 +2224,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = '{}{}/{}'.format(path, "operations", "partitionkeydelete")
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         headers = base.GetHeaders(self, self.default_headers, "post", path, collection_id,
-                                  http_constants.ResourceType.PartitionKey, documents._OperationType.Delete, options)
+                                  http_constants.ResourceType.PartitionKey, documents._OperationType.Delete, options,
+                                  client_id=self.client_id)
         request_params = RequestObject(http_constants.ResourceType.PartitionKey,
                                        documents._OperationType.Delete,
                                        headers)
@@ -2397,7 +2398,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         sproc_id = base.GetResourceIdOrFullNameFromLink(sproc_link)
         headers = base.GetHeaders(self, initial_headers, "post", path, sproc_id,
                                   http_constants.ResourceType.StoredProcedure,
-                                  documents._OperationType.ExecuteJavaScript, options)
+                                  documents._OperationType.ExecuteJavaScript, options,
+                                  client_id=self.client_id)
 
         # ExecuteStoredProcedure will use WriteEndpoint since it uses POST operation
         request_params = RequestObject(http_constants.ResourceType.StoredProcedure,
@@ -2688,7 +2690,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         initial_headers = initial_headers or self.default_headers
         headers = base.GetHeaders(self, initial_headers, "post", path, id, typ, documents._OperationType.Create,
-                                  options)
+                                  options, client_id=self.client_id)
         # Create will use WriteEndpoint since it uses POST operation
 
         request_params = RequestObject(typ, documents._OperationType.Create, headers)
@@ -2735,7 +2737,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         initial_headers = initial_headers or self.default_headers
         headers = base.GetHeaders(self, initial_headers, "post", path, id, typ, documents._OperationType.Upsert,
-                                  options)
+                                  options, client_id=self.client_id)
         headers[http_constants.HttpHeaders.IsUpsert] = True
 
         # Upsert will use WriteEndpoint since it uses POST operation
@@ -2782,7 +2784,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         initial_headers = initial_headers or self.default_headers
         headers = base.GetHeaders(self, initial_headers, "put", path, id, typ, documents._OperationType.Replace,
-                                  options)
+                                  options, client_id=self.client_id)
         # Replace will use WriteEndpoint since it uses PUT operation
         request_params = RequestObject(typ, documents._OperationType.Replace, headers)
         request_params.set_excluded_location_from_options(options)
@@ -2825,7 +2827,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             options = {}
 
         initial_headers = initial_headers or self.default_headers
-        headers = base.GetHeaders(self, initial_headers, "get", path, id, typ, documents._OperationType.Read, options)
+        headers = base.GetHeaders(self, initial_headers, "get", path, id, typ, documents._OperationType.Read,
+                                  options, client_id=self.client_id)
         # Read will use ReadEndpoint since it uses GET operation
         request_params = RequestObject(typ, documents._OperationType.Read, headers)
         request_params.set_excluded_location_from_options(options)
@@ -2865,7 +2868,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         initial_headers = initial_headers or self.default_headers
         headers = base.GetHeaders(self, initial_headers, "delete", path, id, typ, documents._OperationType.Delete,
-                                  options)
+                                  options, client_id=self.client_id)
         # Delete will use WriteEndpoint since it uses DELETE operation
         request_params = RequestObject(typ, documents._OperationType.Delete, headers)
         request_params.set_excluded_location_from_options(options)
@@ -3112,7 +3115,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 resource_type,
                 op_typ,
                 options,
-                partition_key_range_id
+                partition_key_range_id,
+                client_id=self.client_id
             )
 
             request_params = RequestObject(
@@ -3159,7 +3163,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             resource_type,
             documents._OperationType.SqlQuery,
             options,
-            partition_key_range_id
+            partition_key_range_id,
+            client_id=self.client_id
         )
 
         request_params = RequestObject(resource_type, documents._OperationType.SqlQuery, req_headers)

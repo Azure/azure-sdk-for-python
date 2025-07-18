@@ -9,6 +9,7 @@
 #### Bugs Fixed
 
 #### Other Changes
+* Client ID will now be included in headers for all requests. See [PR #####]().
 
 ### 4.14.0b1 (2025-07-14)
 
