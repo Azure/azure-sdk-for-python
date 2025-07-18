@@ -50,6 +50,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/containerregistry/resource-manager/Microsoft.ContainerRegistry/stable/2025-04-01/examples/WebhookCreate.json
+# x-ms-original-file: specification/containerregistry/resource-manager/Microsoft.ContainerRegistry/preview/2025-03-01-preview/examples/WebhookCreate.json
 if __name__ == "__main__":
     main()
