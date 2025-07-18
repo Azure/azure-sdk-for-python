@@ -47,8 +47,7 @@ def main():
         ledger_endpoint = os.environ["CONFIDENTIALLEDGER_ENDPOINT"]
     except KeyError:
         LOG.error(
-            "Missing environment variable 'CONFIDENTIALLEDGER_ENDPOINT' - "
-            "please set it before running the example"
+            "Missing environment variable 'CONFIDENTIALLEDGER_ENDPOINT' - " "please set it before running the example"
         )
         sys.exit(1)
 
@@ -81,14 +80,10 @@ def main():
 
         # Write a ledger entry and wait for the transaction to be committed.
         entry_contents = "Hello world!"
-        post_poller = ledger_client.begin_create_ledger_entry(
-            {"contents": entry_contents}
-        )
+        post_poller = ledger_client.begin_create_ledger_entry({"contents": entry_contents})
         post_entry_result = post_poller.result()
         transaction_id = post_entry_result["transactionId"]
-        print(
-            f"Wrote '{entry_contents}' to the ledger at transaction {transaction_id}."
-        )
+        print(f"Wrote '{entry_contents}' to the ledger at transaction {transaction_id}.")
 
         # Get a receipt for a ledger entry.
         # A receipt can be retrieved for any transaction id to provide cryptographic proof of the

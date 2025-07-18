@@ -1,7 +1,7 @@
 from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
 
-from azure.confidentialledger.certificate.aio import (
+from azure.confidentialledger.aio import (
     ConfidentialLedgerCertificateClient,
 )
 
@@ -20,11 +20,7 @@ class TestConfidentialLedgerCertificateClient(AzureRecordedTestCase):
         )
 
         try:
-            network_identity = (
-                await client.get_ledger_identity(
-                    ledger_id=confidentialledger_id
-                )
-            )
+            network_identity = await client.get_ledger_identity(ledger_id=confidentialledger_id)
 
             assert network_identity["ledgerId"] == confidentialledger_id
             assert network_identity["ledgerTlsCertificate"]
