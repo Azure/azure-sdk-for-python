@@ -2,13 +2,17 @@
 
 ## 1.0.0 (Unreleased)
 
-First stable version of the client library.
+First stable version of the client library. The client library now uses version `v1` of the
+AI Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects/ga-rest-api-reference).
 
 ### Breaking changes
 
 * Features that are still in preview were removed from this stable release. This includes:
   * Class `PromptTemplate`.
-
+  * Evaluation operations (`.evaluations`)
+  * Red-Team operations (`.red_teams`)
+* Class `SasCredential` was renamed to `BlobReferenceSasCredential`
+* Class `Sku` was renamed to `ModelDeploymentSku`
 
 ## 1.0.0b12 (2025-06-23)
 
