@@ -1,5 +1,13 @@
 # Release History
 
+## 7.1.0 (2025-07-16)
+
+### Features Added
+
+  - Model `Identity` added property `isolation_scope`
+  - Model `IdentityUpdate` added property `isolation_scope`
+  - Added enum `IsolationScope`
+
 ## 7.1.0b1 (2023-02-16)
 
 ### Other Changes
