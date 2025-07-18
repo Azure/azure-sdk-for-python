@@ -2879,9 +2879,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                     documents._OperationType.Delete, options)
         # Delete will use WriteEndpoint since it uses DELETE operation
         request_params = RequestObject(resource_type, documents._OperationType.Delete, headers)
-        request_params.set_excluded_location_from_options(options)
         base.set_session_token_header(self, headers, path, request_params, options)
         request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
+        request_params.set_excluded_location_from_options(options)
         result, last_response_headers = self.__Delete(path, request_params, headers, **kwargs)
         self.last_response_headers = last_response_headers
 

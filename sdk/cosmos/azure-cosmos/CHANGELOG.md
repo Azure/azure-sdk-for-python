@@ -7,13 +7,15 @@
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed session container compound session token logic. The SDK will now only send the relevant partition-local session tokens for each read request, as opposed to the entire compound session token for the container. See [PR 40366](https://github.com/Azure/azure-sdk-for-python/pull/40366).
+* Write requests for single-write region accounts will no longer send session tokens when using session consistency. See [PR 40366](https://github.com/Azure/azure-sdk-for-python/pull/40366).
 
 #### Other Changes
 
 ### 4.14.0b1 (2025-07-14)
 
 #### Features Added
-* Added option to enable automatic retries for write operations. See [PR 41272](https://github.com/Azure/azure-sdk-for-python/pull/41272).
+* Added option to enable automatic retries for write document operations. See [PR 41272](https://github.com/Azure/azure-sdk-for-python/pull/41272).
 
 #### Breaking Changes
 * Adds cross region retries when no preferred locations are set. This is only a breaking change for customers using bounded staleness consistency. See [PR 39714](https://github.com/Azure/azure-sdk-for-python/pull/39714)
@@ -37,11 +39,8 @@
 #### Bugs Fixed
 * Fixed how resource tokens are parsed for metadata calls in the lifecycle of a document operation. See [PR 40302](https://github.com/Azure/azure-sdk-for-python/pull/40302).
 * Fixed issue where Query Change Feed did not return items if the container uses legacy Hash V1 Partition Keys. This also fixes issues with not being able to change feed query for Specific Partition Key Values for HPK. See [PR 41270](https://github.com/Azure/azure-sdk-for-python/pull/41270/)
-* Fixed session container compound session token logic. The SDK will now only send the relevant partition-local session tokens for each read request, as opposed to the entire compound session token for the container. See [PR 40366](https://github.com/Azure/azure-sdk-for-python/pull/40366).
-* Write requests for single-write region accounts will no longer send session tokens when using session consistency. See [PR 40366](https://github.com/Azure/azure-sdk-for-python/pull/40366).
 
 #### Other Changes
-* Cross-partition queries will now always send a query plan before attempting to execute. See [PR 40366](https://github.com/Azure/azure-sdk-for-python/pull/40366).
 * Added Client Generated Activity IDs to all Requests. Cosmos Diagnostics Logs will more clearly show the Activity ID for each request and response. [PR 41013](https://github.com/Azure/azure-sdk-for-python/pull/41013)
 
 ### 4.12.0b1 (2025-05-19)
