@@ -421,7 +421,7 @@ class AsyncVoiceLiveConnection:
                 return msg.data
             elif msg.type == aiohttp.WSMsgType.CLOSE:
                 code = self._connection.close_code or 1000
-                reason = self._connection.close_reason or ""
+                reason = ""
                 log.debug(f"WebSocket connection closed with code {code}: {reason}")
                 raise VoiceLiveConnectionClosed(code, reason)
             elif msg.type == aiohttp.WSMsgType.ERROR:

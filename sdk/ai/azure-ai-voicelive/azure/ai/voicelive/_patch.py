@@ -386,7 +386,7 @@ class _AsyncWebSocketConnection:
                     await self._queue.put(("binary", msg.data))
                 elif msg.type in (aiohttp.WSMsgType.CLOSE, aiohttp.WSMsgType.CLOSED, aiohttp.WSMsgType.ERROR):
                     code = self._connection.close_code or 1000
-                    reason = self._connection.close_reason or ""
+                    reason =  ""
                     await self._queue.put(("close", (code, reason)))
                     break
         except Exception as e:
@@ -616,6 +616,7 @@ class VoiceLiveConnectionManager:
                         str(url),
                         headers=headers,
                         **self.__websocket_connection_options,
+                        proxy="http://localhost:8888"
                     )
                     return session, ws_connection
                 except Exception as e:
