@@ -67,7 +67,8 @@ def add_sanitizers(test_proxy, environment_variables):
         compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
     )
     add_general_regex_sanitizer(
-        value="fakeresource", regex="(?<=\\/\\/)[a-z-]+(?=\\.westus2-1\\.ingest\\.monitor\\.azure\\.com)"
+        regex="http[s]?://.+\\.ingest\\.monitor\\.azure\\.com",
+        value="http://fakeresource.ingest.monitor.azure.com",
     )
     add_body_key_sanitizer(json_path="access_token", value="fakekey")
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
