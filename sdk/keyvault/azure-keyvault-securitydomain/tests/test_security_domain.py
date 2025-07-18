@@ -11,7 +11,8 @@ from azure.keyvault.securitydomain import SecurityDomainClient
 
 from _shared.test_case import KeyVaultTestCase
 from _test_case import ClientPreparer
-from utils import get_certificate_info, use_wrapping_keys, write_security_domain, write_transfer_key
+from utils import get_certificate_info, write_security_domain, write_transfer_key
+from wrapping import use_wrapping_keys
 
 
 class TestSecurityDomain(KeyVaultTestCase):
