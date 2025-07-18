@@ -48,7 +48,7 @@ if TYPE_CHECKING:
     from ._models import AccessPolicy, DirectoryProperties, FileProperties, ShareProperties
 
 
-class ShareClient(StorageAccountHostsMixin):
+class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-methods
     """A client to interact with a specific share, although that share may not yet exist.
 
     For operations relating to a specific directory or file in this share, the clients for
@@ -131,6 +131,22 @@ class ShareClient(StorageAccountHostsMixin):
                                         allow_source_trailing_dot=self.allow_source_trailing_dot,
                                         file_request_intent=self.file_request_intent)
         self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
+
+    def __enter__(self) -> Self:
+        self._client.__enter__()
+        return self
+
+    def __exit__(self, *args) -> None:
+        self._client.__exit__(*args)
+
+    def close(self) -> None:
+        """This method is to close the sockets opened by the client.
+        It need not be used when using with a context manager.
+
+        :return: None
+        :rtype: None
+        """
+        self._client.close()
 
     @classmethod
     def from_share_url(

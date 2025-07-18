@@ -150,6 +150,22 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         self._client = self._build_generated_client()
         self._configure_encryption(kwargs)
 
+    def __enter__(self) -> Self:
+        self._client.__enter__()
+        return self
+
+    def __exit__(self, *args) -> None:
+        self._client.__exit__(*args)
+
+    def close(self) -> None:
+        """This method is to close the sockets opened by the client.
+        It need not be used when using with a context manager.
+
+        :return: None
+        :rtype: None
+        """
+        self._client.close()
+
     def _build_generated_client(self) -> AzureBlobStorage:
         client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         client._config.version = self._api_version  # type: ignore [assignment] # pylint: disable=protected-access
@@ -796,6 +812,9 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             Options include: 'snapshots', 'metadata', 'uncommittedblobs', 'copy', 'deleted', 'deletedwithversions',
             'tags', 'versions', 'immutabilitypolicy', 'legalhold'.
         :type include: list[str] or str
+        :keyword int results_per_page:
+            Controls the maximum number of Blobs that will be included in each page of results if using
+            `ItemPaged.by_page()`.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -845,6 +864,9 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         :keyword str name_starts_with:
             Filters the results to return only blobs whose names
             begin with the specified prefix.
+        :keyword int results_per_page:
+            Controls the maximum number of Blobs that will be included in each page of results if using
+            `ItemPaged.by_page()`.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
