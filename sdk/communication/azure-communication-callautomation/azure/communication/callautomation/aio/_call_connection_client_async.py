@@ -21,7 +21,11 @@ from .._models import (
     CallParticipant,
     CallConnectionProperties,
     AddParticipantResult,
+    PiiRedactionOptions,
     RemoveParticipantResult,
+    MoveParticipantsResult,
+    SummarizationOptions,
+    TeamsPhoneCallDetails,
     TransferCallResult,
     MuteParticipantResult,
     SendDtmfTonesResult,
@@ -32,6 +36,7 @@ from .._generated.aio import AzureCommunicationCallAutomationService
 from .._generated.models import (
     AddParticipantRequest,
     RemoveParticipantRequest,
+    MoveParticipantsRequest,
     TransferToParticipantRequest,
     PlayRequest,
     RecognizeRequest,
@@ -216,6 +221,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         transferee: Optional["CommunicationIdentifier"] = None,
         sip_headers: Optional[Dict[str, str]] = None,
         voip_headers: Optional[Dict[str, str]] = None,
+        teams_phone_call_details: Optional[TeamsPhoneCallDetails] = None,
         source_caller_id_number: Optional["PhoneNumberIdentifier"] = None,
         **kwargs,
     ) -> TransferCallResult:
@@ -236,6 +242,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :paramtype sip_headers: dict[str, str]
         :keyword voip_headers: Custom context for VOIP
         :paramtype voip_headers: dict[str, str]
+        :keyword teams_phone_call_details: Teams phone call details for the transfer.
+        :paramtype teams_phone_call_details: ~azure.communication.callautomation.TeamsPhoneCallDetails or None
         :keyword source_caller_id_number: The source caller Id, a phone number, that's will be used as the
          transferor's(Contoso) caller id when transfering a call a pstn target.
         :paramtype source_caller_id_number: ~azure.communication.callautomation.PhoneNumberIdentifier or None
@@ -244,8 +252,9 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         user_custom_context = (
-            CustomCallingContext(voip_headers=voip_headers, sip_headers=sip_headers)
-            if sip_headers or voip_headers
+            CustomCallingContext(voip_headers=voip_headers, sip_headers=sip_headers,
+                                 teams_phone_call_details=teams_phone_call_details)
+            if sip_headers or voip_headers or teams_phone_call_details
             else None
         )
         request = TransferToParticipantRequest(
@@ -273,6 +282,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         operation_callback_url: Optional[str] = None,
         sip_headers: Optional[Dict[str, str]] = None,
         voip_headers: Optional[Dict[str, str]] = None,
+        teams_phone_call_details: Optional[TeamsPhoneCallDetails] = None,
         **kwargs,
     ) -> AddParticipantResult:
         """Add a participant to this call.
@@ -299,6 +309,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :paramtype sip_headers: Dict[str, str] or None
         :keyword voip_headers: Voip Headers for Voip Call
         :paramtype voip_headers: Dict[str, str] or None
+        :keyword teams_phone_call_details: Teams phone call details for the participant being added.
+        :paramtype teams_phone_call_details: ~azure.communication.callautomation.TeamsPhoneCallDetails or None
         :return: AddParticipantResult
         :rtype: ~azure.communication.callautomation.AddParticipantResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -310,8 +322,9 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             target_participant = target_participant.target
 
         user_custom_context = None
-        if sip_headers or voip_headers:
-            user_custom_context = CustomCallingContext(voip_headers=voip_headers, sip_headers=sip_headers)
+        if sip_headers or voip_headers or teams_phone_call_details:
+            user_custom_context = CustomCallingContext(voip_headers=voip_headers, sip_headers=sip_headers,
+                                                       teams_phone_call_details=teams_phone_call_details)
         add_participant_request = AddParticipantRequest(
             participant_to_add=serialize_identifier(target_participant),
             source_caller_id_number=serialize_phone_identifier(source_caller_id_number),
@@ -362,6 +375,45 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         )
 
         return RemoveParticipantResult._from_generated(response)  # pylint:disable=protected-access
+
+    @distributed_trace_async
+    async def move_participants(
+        self,
+        target_participants: List["CommunicationIdentifier"],
+        from_call: str,
+        *,
+        operation_context: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
+        **kwargs,
+    ) -> MoveParticipantsResult:
+        """Move participants from another call to this call.
+        :param target_participants: The participants to move to this call.
+        :type target_participants: list[~azure.communication.callautomation.CommunicationIdentifier]
+        :param from_call: The CallConnectionId for the call you want to move the participant from.
+        :type from_call: str
+        :keyword operation_context: Value that can be used to track this call and its associated events.
+        :paramtype operation_context: str
+        :keyword operation_callback_url: Set a callback URL that overrides the default callback URL set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URL set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_url: str or None
+        :return: MoveParticipantsResult
+        :rtype: ~azure.communication.callautomation.MoveParticipantsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        move_participants_request = MoveParticipantsRequest(
+            target_participants=[serialize_identifier(participant) for participant in target_participants],
+            from_call=from_call,
+            operation_context=operation_context,
+            operation_callback_uri=operation_callback_url,
+        )
+        process_repeatability_first_sent(kwargs)
+        response = await self._call_connection_client.move_participants(
+            self._call_connection_id, move_participants_request, **kwargs
+        )
+
+        return MoveParticipantsResult._from_generated(response)  # pylint:disable=protected-access
 
     @overload
     async def play_media(
@@ -621,6 +673,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         end_silence_timeout: Optional[int] = None,
         speech_recognition_model_endpoint_id: Optional[str] = None,
         operation_callback_url: Optional[str] = None,
+        speech_languages: Optional[List[str]] = None,
+        enable_sentiment_analysis: Optional[bool] = None,
         **kwargs,
     ) -> None:
         """Recognize inputs from specific participant in this call.
@@ -668,6 +722,11 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
          This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
         :paramtype operation_callback_url: str or None
+        :keyword speech_languages: Gets or sets a list of languages for Language Identification.
+        :paramtype speech_languages: list[str]
+        :keyword enable_sentiment_analysis: Gets or sets a value indicating if sentiment analysis should
+         be used.
+        :paramtype enable_sentiment_analysis: bool
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -678,6 +737,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             target_participant=serialize_identifier(target_participant),
             speech_language=speech_language,
             speech_recognition_model_endpoint_id=speech_recognition_model_endpoint_id,
+            enable_sentiment_analysis=enable_sentiment_analysis,
         )
 
         play_prompt_single: Optional[Union['FileSource', 'TextSource', 'SsmlSource']] = None
@@ -715,7 +775,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             options.choices = [choice._to_generated() for choice in choices]  # pylint:disable=protected-access
         else:
             raise ValueError(f"Input type '{input_type}' is not supported.")
-
+        if speech_languages:
+            options.speech_languages = speech_languages
         recognize_request = RecognizeRequest(
             recognize_input_type=input_type,
             play_prompt=play_prompt_single._to_generated() if play_prompt_single else None,  # pylint:disable=protected-access
@@ -904,6 +965,10 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         operation_context: Optional[str] = None,
         speech_recognition_model_endpoint_id: Optional[str] = None,
         operation_callback_url: Optional[str] = None,
+        pii_redaction_options: Optional["PiiRedactionOptions"] = None,
+        enable_sentiment_analysis: Optional[bool] = None,
+        locales: Optional[List[str]] = None,
+        summarization_options: Optional["SummarizationOptions"] = None,
         **kwargs
     ) -> None:
         """Starts transcription in the call.
@@ -919,6 +984,16 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
          This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
         :paramtype operation_callback_url: str or None
+        :keyword pii_redaction_options: PII redaction configuration options.
+        :paramtype pii_redaction_options:
+         ~azure.communication.callautomation.models.PiiRedactionOptions
+        :keyword enable_sentiment_analysis: Indicating if sentiment analysis should be used.
+        :paramtype enable_sentiment_analysis: bool
+        :keyword locales: List of languages for Language Identification.
+        :paramtype locales: list[str]
+        :keyword summarization_options: Summarization configuration options.
+        :paramtype summarization_options:
+         ~azure.communication.callautomation.models.SummarizationOptions
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -928,6 +1003,10 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             operation_context=operation_context,
             speech_recognition_model_endpoint_id=speech_recognition_model_endpoint_id,
             operation_callback_uri=operation_callback_url,
+            pii_redaction_options=pii_redaction_options._to_generated() if pii_redaction_options else None,  # pylint:disable=protected-access
+            enable_sentiment_analysis=enable_sentiment_analysis,
+            locales=locales,
+            summarization_options=summarization_options._to_generated() if summarization_options else None,  # pylint:disable=protected-access
             **kwargs
         )
         await self._call_media_client.start_transcription(self._call_connection_id, start_transcription_request)
@@ -967,6 +1046,9 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         operation_context: Optional[str] = None,
         speech_recognition_model_endpoint_id: Optional[str] = None,
         operation_callback_url: Optional[str] = None,
+        pii_redaction_options: Optional["PiiRedactionOptions"] = None,
+        enable_sentiment_analysis: Optional[bool] = None,
+        summarization_options: Optional["SummarizationOptions"] = None,
         **kwargs) -> None:
         """API to change transcription language.
 
@@ -981,6 +1063,12 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
          This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
         :paramtype operation_callback_url: str or None
+        :keyword pii_redaction_options: PII redaction configuration options.
+        :paramtype pii_redaction_options: ~azure.communication.callautomation.models.PiiRedactionOptions
+        :keyword enable_sentiment_analysis: Indicating if sentiment analysis should be used.
+        :paramtype enable_sentiment_analysis: bool
+        :keyword summarization_options: Summarization configuration options.
+        :paramtype summarization_options: ~azure.communication.callautomation.models.SummarizationOptions
         :type locale: str
         :return: None
         :rtype: None
@@ -991,6 +1079,9 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             operation_context=operation_context,
             speech_recognition_model_endpoint_id=speech_recognition_model_endpoint_id,
             operation_callback_uri=operation_callback_url,
+            pii_redaction_options=pii_redaction_options._to_generated() if pii_redaction_options else None,  # pylint:disable=protected-access
+            enable_sentiment_analysis=enable_sentiment_analysis,
+            summarization_options=summarization_options._to_generated() if summarization_options else None,  # pylint:disable=protected-access
             **kwargs)
         await self._call_media_client.update_transcription(self._call_connection_id, update_transcription_request)
 

@@ -27,6 +27,7 @@ from ._models import (
     CancelAddParticipantOperationResult,
     AzureBlobContainerRecordingStorage,
     AzureCommunicationsRecordingStorage,
+    MoveParticipantsResult,
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -80,6 +81,7 @@ __all__ = [
     "RecordingProperties",
     "AddParticipantResult",
     "RemoveParticipantResult",
+    "MoveParticipantsResult",
     "TransferCallResult",
     "MuteParticipantResult",
     "SendDtmfTonesResult",
