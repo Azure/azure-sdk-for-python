@@ -1,5 +1,15 @@
 # Release History
 
+## 1.24.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.24.0b1 (2025-07-17)
 
 ### Features Added
