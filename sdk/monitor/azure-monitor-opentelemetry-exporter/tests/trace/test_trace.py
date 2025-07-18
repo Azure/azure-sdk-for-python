@@ -823,7 +823,7 @@ class TestAzureTraceExporter(unittest.TestCase):
                 "peer.address": "test_address",
                 "message_bus.destination": "test_destination",
             },
-            kind=SpanKind.INTERNAL,
+            kind=SpanKind.CLIENT,
         )
         span.start(start_time=start_time)
         span.end(end_time=end_time)
