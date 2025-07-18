@@ -65,7 +65,7 @@ ENV_OPENAI_TTS_MODEL = "tts-1"
 
 
 def skip_openai_test(api_type) -> bool:
-    return in_ci() and "openai" in api_type and "tests-weekly" not in os.getenv("SYSTEM_DEFINITIONNAME", "")
+    return False
 
 
 @pytest.fixture

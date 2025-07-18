@@ -3,5 +3,5 @@
 aiohttp
 pillow
 pydantic
-git+https://github.com/openai/openai-python@next
+git+https://github.com/johanste/openai-python@bearer-token-tests
 websockets >= 13, < 15
