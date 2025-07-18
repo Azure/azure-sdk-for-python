@@ -270,10 +270,11 @@ class SessionContainer(object):
                 # this means that potentially, the collection was deleted
                 # and recreated
                 existing_rid = self.collection_name_to_rid[collection_name]
-                if collection_rid is not None and len(collection_rid) != len(existing_rid):
-                    # the collection_rid can come in with the database rid as well, so we need to trim out the string
-                    url_parts = [part for part in collection_rid.split('/') if part]
-                    collection_rid = url_parts[-1]
+                if collection_rid is not None:
+                    if len(collection_rid) != len(existing_rid):
+                        # the collection_rid can come in with the database rid as well, so we need to trim out the string
+                        url_parts = [part for part in collection_rid.split('/') if part]
+                        collection_rid = url_parts[-1]
                 if collection_rid != existing_rid:
                     # flush the session tokens for the old rid, and
                     # update the new rid into the collection name to rid map.
