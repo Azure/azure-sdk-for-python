@@ -18,7 +18,7 @@ from cryptography.x509 import load_pem_x509_certificate
 PATH_PREFIX = os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir, "resources"))
 CERT_PATH_PREFIX = f"{PATH_PREFIX}/certificate"
 SECURITY_DOMAIN_PATH = f"{PATH_PREFIX}/security-domain.json"
-TRANSFER_KEY_PATH = f"{PATH_PREFIX}/transfer-key.json"
+TRANSFER_KEY_PATH = f"{PATH_PREFIX}/transfer-key.pem"
 
 
 def _int_to_bytes(i):
