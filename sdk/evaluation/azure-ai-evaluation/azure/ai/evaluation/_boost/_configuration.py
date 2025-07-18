@@ -1,5 +1,4 @@
-from dataclasses import dataclass
-from typing import Dict, List, Any, Optional, Callable, Union
+from typing import Dict, List, Any, Optional, Callable, Union, TypedDict
 
 from azure.ai.evaluation._model_configurations import (
     AzureOpenAIModelConfiguration,
@@ -7,39 +6,21 @@ from azure.ai.evaluation._model_configurations import (
 )
 
 
-@dataclass
-class _PromptConfiguration:
+class _PromptConfiguration(TypedDict):
     """Configuration for prompt settings."""
 
     system_prompt: str
     tools: List[Dict[str, Any]]
 
 
-@dataclass
-class _RefinementConfig:
-    """Configuration for the refinement process."""
-
-    max_iterations: int = 3
-    improvement_threshold: float = 0.1  # Fixed: Use consistent default
-    early_stopping: bool = True
-    verbose: bool = False
-    improvement_intent: Optional[str] = None
-
-    def __post_init__(self):
-        """Validate configuration values."""
-        if self.max_iterations <= 0:
-            raise ValueError("max_iterations must be greater than 0")
-        if self.improvement_threshold < 0 or self.improvement_threshold > 1:
-            raise ValueError("improvement_threshold must be between 0 and 1")
-
-
-@dataclass
-class _AgentBoosterConfig:
+class _AgentBoosterConfig(TypedDict):
     """Main configuration for AgentBooster."""
 
     model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]
-    refinement: _RefinementConfig
-    temp_dir: Optional[str] = None
-    evaluators: Optional[List[Callable]] = (
-        None  # Custom evaluators; if None, uses default evaluators
-    )
+    evaluators: Optional[List[Callable]]  # Default: None (uses default evaluators)
+
+    max_iterations: int  # Default: 3
+    # improvement_threshold: float  # Default: 0.1
+    # early_stopping: bool  # Default: True
+    improvement_intent: Optional[str]  # Default: None
+    sample_size: int  # Default: 10
