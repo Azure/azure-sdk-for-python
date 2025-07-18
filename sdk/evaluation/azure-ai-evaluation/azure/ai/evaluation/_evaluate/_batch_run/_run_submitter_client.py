@@ -16,8 +16,9 @@ from ..._legacy._batch_engine._run_submitter import RunSubmitter
 from ..._legacy._batch_engine._config import BatchEngineConfig
 from ..._legacy._batch_engine._run import Run
 from ..._legacy._adapters._constants import LINE_NUMBER
+from ..._legacy._adapters.types import AttrDict
 from ..._legacy._common._thread_pool_executor_with_context import ThreadPoolExecutorWithContext
-
+from ..._evaluate._utils import _has_aggregator
 
 LOGGER = logging.getLogger(__name__)
 
@@ -97,7 +98,32 @@ class RunSubmitterClient:
 
     def get_metrics(self, client_run: BatchClientRun) -> Dict[str, Any]:
         run = self._get_run(client_run)
-        return dict(run.metrics)
+        return {**run.metrics, **self._get_aggregated_metrics(client_run)}
+
+    def _get_aggregated_metrics(self, client_run: BatchClientRun) -> Dict[str, Any]:
+        aggregated_metrics = None
+        run = self._get_run(client_run)
+        try:
+            if _has_aggregator(run.dynamic_callable):
+                result_df = pd.DataFrame(run.outputs)
+                if len(result_df.columns) == 1 and result_df.columns[0] == "output":
+                    aggregate_input = result_df["output"].tolist()
+                else:
+                    aggregate_input = [AttrDict(item) for item in result_df.to_dict("records")]
+
+                aggr_func = getattr(run.dynamic_callable, "__aggregate__")
+                aggregated_metrics = aggr_func(aggregate_input)
+
+        except Exception as ex:  # pylint: disable=broad-exception-caught
+            LOGGER.warning("Error calculating aggregations for evaluator, failed with error %s", ex)
+
+        if not isinstance(aggregated_metrics, dict):
+            LOGGER.warning(
+                "Aggregated metrics for evaluator is not a dictionary will not be logged as metrics",
+            )
+            return {}
+
+        return aggregated_metrics
 
     def get_run_summary(self, client_run: BatchClientRun) -> Dict[str, Any]:
         run = self._get_run(client_run)
