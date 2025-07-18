@@ -2,7 +2,7 @@ import unittest
 from datetime import datetime
 from azure.communication.identity._shared.utils import create_access_token
 from azure.communication.identity._shared.utils import get_current_utc_as_int
-import dateutil.tz
+import isodate
 import base64
 
 from azure.communication.identity._shared.utils import _convert_datetime_to_utc_int
@@ -20,24 +20,24 @@ class UtilsTest(unittest.TestCase):
 
     def test_convert_datetime_to_utc_int(self):
         # UTC
-        utc_time_in_sec = _convert_datetime_to_utc_int(datetime(1970, 1, 1, 0, 0, 0, 0, tzinfo=dateutil.tz.tzutc()))
+        utc_time_in_sec = _convert_datetime_to_utc_int(datetime(1970, 1, 1, 0, 0, 0, 0, tzinfo=isodate.tzinfo.utc))
         assert utc_time_in_sec == 0
         # UTC naive (without a timezone specified)
         utc_naive_time_in_sec = _convert_datetime_to_utc_int(datetime(1970, 1, 1, 0, 0, 0, 0))
         assert utc_naive_time_in_sec == 0
         # PST is UTC-8
         pst_time_in_sec = _convert_datetime_to_utc_int(
-            datetime(1970, 1, 1, 0, 0, 0, 0, tzinfo=dateutil.tz.gettz("America/Vancouver"))
+            datetime(1970, 1, 1, 0, 0, 0, 0, tzinfo=isodate.tzinfo.gettz("America/Vancouver"))
         )
         assert pst_time_in_sec == 8 * 3600
         # EST is UTC-5
         est_time_in_sec = _convert_datetime_to_utc_int(
-            datetime(1970, 1, 1, 0, 0, 0, 0, tzinfo=dateutil.tz.gettz("America/New_York"))
+            datetime(1970, 1, 1, 0, 0, 0, 0, tzinfo=isodate.tzinfo.gettz("America/New_York"))
         )
         assert est_time_in_sec == 5 * 3600
         # CST is UTC+8
         cst_time_in_sec = _convert_datetime_to_utc_int(
-            datetime(1970, 1, 1, 0, 0, 0, 0, tzinfo=dateutil.tz.gettz("Asia/Shanghai"))
+            datetime(1970, 1, 1, 0, 0, 0, 0, tzinfo=isodate.tzinfo.gettz("Asia/Shanghai"))
         )
         assert cst_time_in_sec == -8 * 3600
 
