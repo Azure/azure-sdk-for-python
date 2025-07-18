@@ -1,14 +1,11 @@
 # Release History
 
-## 1.6.11 (Unreleased)
+## 1.6.11 (2025-07-17)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Add configuring of logging format and logger name via environment variables
+    ([#42035](https://github.com/Azure/azure-sdk-for-python/pull/42035))
 
 ## 1.6.10 (2025-05-30)
 

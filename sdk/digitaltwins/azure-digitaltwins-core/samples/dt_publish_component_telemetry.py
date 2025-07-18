@@ -21,6 +21,8 @@ try:
 
     # - AZURE_URL: The tenant ID in Azure Active Directory
     url = os.getenv("AZURE_URL")
+    if url is None:
+        raise ValueError("AZURE_URL environment variable is not set")
 
     # DefaultAzureCredential expects the following three environment variables:
     # - AZURE_TENANT_ID: The tenant ID in Azure Active Directory
@@ -32,7 +34,7 @@ try:
     # Publish telemetry message
     digita_twin_id = "<DIGITAL TWIN ID>"
     component_name = "<COMPONENT_NAME>"
-    telemetry_payload = '{"Telemetry1": 5}'
+    telemetry_payload = {"Telemetry1": 5}
     service_client.publish_component_telemetry(
         digita_twin_id,
         component_name,

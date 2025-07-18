@@ -11,7 +11,11 @@ from unittest import mock
 # pylint: disable=import-error
 from opentelemetry.trace import get_tracer_provider, set_tracer_provider
 from opentelemetry.sdk import trace, resources
+from opentelemetry.sdk.trace import TracerProvider
+
 from opentelemetry.sdk.trace.export import SpanExportResult
+from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 from opentelemetry.semconv.attributes.exception_attributes import (
     EXCEPTION_ESCAPED,
@@ -22,6 +26,14 @@ from opentelemetry.semconv.attributes.exception_attributes import (
 from opentelemetry.trace import Link, SpanContext, SpanKind
 from opentelemetry.trace.status import Status, StatusCode
 
+from azure.core.settings import settings
+from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
+
+try:
+    from azure.core.instrumentation import get_tracer as get_azure_sdk_tracer
+except ImportError:
+    # azure.core.instrumentation is not available in older versions of azure-core
+    get_azure_sdk_tracer = None
 from azure.monitor.opentelemetry.exporter.export._base import ExportResult
 from azure.monitor.opentelemetry.exporter.export.trace._exporter import (
     AzureMonitorTraceExporter,
@@ -31,6 +43,7 @@ from azure.monitor.opentelemetry.exporter.export.trace._exporter import (
 from azure.monitor.opentelemetry.exporter._constants import (
     _AZURE_SDK_NAMESPACE_NAME,
     _AZURE_SDK_OPENTELEMETRY_NAME,
+    _AZURE_AI_SDK_NAME,
 )
 from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys
 from azure.monitor.opentelemetry.exporter._utils import azure_monitor_context
@@ -1128,7 +1141,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             "url.path": "/path",
             "url.query": "query",
             "server.address": "www.example.org",
-            "server.port": "80"
+            "server.port": "80",
         }
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.url, "https://www.example.org:80/path?query")
@@ -1687,8 +1700,89 @@ class TestAzureTraceExporterUtils(unittest.TestCase):
 
     def test_check_instrumentation_span_azure_sdk(self):
         span = mock.Mock()
-        span.attributes = {_AZURE_SDK_NAMESPACE_NAME: "Microsoft.EventHub"}
-        span.instrumentation_scope.name = "__main__"
+        span.attributes = {}
+        span.instrumentation_scope.name = "azure.foo.bar.__init__"
+
         with mock.patch("azure.monitor.opentelemetry.exporter._utils.add_instrumentation") as add:
             _check_instrumentation_span(span)
             add.assert_called_once_with(_AZURE_SDK_OPENTELEMETRY_NAME)
+
+    @mock.patch("opentelemetry.trace.get_tracer_provider")
+    def test_check_instrumentation_span_azure_sdk_otel_span(self, mock_get_tracer_provider):
+        mock_get_tracer_provider.return_value = self.get_tracer_provider()
+
+        with OpenTelemetrySpan() as azure_sdk_span:
+            with mock.patch("azure.monitor.opentelemetry.exporter._utils.add_instrumentation") as add:
+                _check_instrumentation_span(azure_sdk_span.span_instance)
+                add.assert_called_once_with(_AZURE_SDK_OPENTELEMETRY_NAME)
+
+            with mock.patch("azure.monitor.opentelemetry.exporter._utils.add_instrumentation") as add:
+                azure_sdk_span.add_attribute(_AZURE_SDK_NAMESPACE_NAME, "Microsoft.ServiceBus")
+                _check_instrumentation_span(azure_sdk_span.span_instance)
+                add.assert_called_once_with(_AZURE_SDK_OPENTELEMETRY_NAME)
+
+            with mock.patch("azure.monitor.opentelemetry.exporter._utils.add_instrumentation") as add:
+                azure_sdk_span.add_attribute(_AZURE_SDK_NAMESPACE_NAME, "Microsoft.CognitiveServices")
+                _check_instrumentation_span(azure_sdk_span.span_instance)
+                add.assert_called_once_with(_AZURE_AI_SDK_NAME)
+
+    @mock.patch("opentelemetry.trace.get_tracer_provider")
+    def test_check_instrumentation_span_azure_sdk_span_impl(self, mock_get_tracer_provider):
+        mock_get_tracer_provider.return_value = self.get_tracer_provider()
+
+        settings.tracing_implementation = "opentelemetry"
+        try:
+            azure_sdk_span = settings.tracing_implementation()(name="test")
+
+            with mock.patch("azure.monitor.opentelemetry.exporter._utils.add_instrumentation") as add:
+                _check_instrumentation_span(azure_sdk_span.span_instance)
+                add.assert_called_once_with(_AZURE_SDK_OPENTELEMETRY_NAME)
+
+            with mock.patch("azure.monitor.opentelemetry.exporter._utils.add_instrumentation") as add:
+                azure_sdk_span.add_attribute(_AZURE_SDK_NAMESPACE_NAME, "Microsoft.ServiceBus")
+                _check_instrumentation_span(azure_sdk_span.span_instance)
+                add.assert_called_once_with(_AZURE_SDK_OPENTELEMETRY_NAME)
+
+            with mock.patch("azure.monitor.opentelemetry.exporter._utils.add_instrumentation") as add:
+                azure_sdk_span.add_attribute(_AZURE_SDK_NAMESPACE_NAME, "Microsoft.CognitiveServices")
+                _check_instrumentation_span(azure_sdk_span.span_instance)
+                add.assert_called_once_with(_AZURE_AI_SDK_NAME)
+
+        finally:
+            settings.tracing_implementation = None
+
+    @mock.patch("opentelemetry.trace.get_tracer_provider")
+    def test_check_instrumentation_span_azure_sdk_get_tracer(self, mock_get_tracer_provider):
+        mock_get_tracer_provider.return_value = self.get_tracer_provider()
+
+        if not get_azure_sdk_tracer:
+            self.skipTest("azure.core.instrumentation is not available")
+
+        azure_sdk_tracer = get_azure_sdk_tracer(library_name="azure-foo-bar")
+        azure_sdk_span = azure_sdk_tracer.start_span(name="test")
+
+        with mock.patch("azure.monitor.opentelemetry.exporter._utils.add_instrumentation") as add:
+            _check_instrumentation_span(azure_sdk_span)
+            add.assert_called_once_with(_AZURE_SDK_OPENTELEMETRY_NAME)
+
+        with mock.patch("azure.monitor.opentelemetry.exporter._utils.add_instrumentation") as add:
+            azure_sdk_span.set_attribute(_AZURE_SDK_NAMESPACE_NAME, "Microsoft.ServiceBus")
+            _check_instrumentation_span(azure_sdk_span)
+            add.assert_called_once_with(_AZURE_SDK_OPENTELEMETRY_NAME)
+
+        with mock.patch("azure.monitor.opentelemetry.exporter._utils.add_instrumentation") as add:
+            azure_sdk_span.set_attribute(_AZURE_SDK_NAMESPACE_NAME, "Microsoft.CognitiveServices")
+            _check_instrumentation_span(azure_sdk_span)
+            add.assert_called_once_with(_AZURE_AI_SDK_NAME)
+
+        not_azure_sdk_span = get_azure_sdk_tracer(library_name="not-azure-foo-bar").start_span(name="test")
+        with mock.patch("azure.monitor.opentelemetry.exporter._utils.add_instrumentation") as add:
+            _check_instrumentation_span(not_azure_sdk_span)
+            add.assert_not_called()
+
+    def get_tracer_provider(self):
+        tracer_provider = TracerProvider()
+        span_exporter = InMemorySpanExporter()
+        processor = SimpleSpanProcessor(span_exporter)
+        tracer_provider.add_span_processor(processor)
+        return tracer_provider

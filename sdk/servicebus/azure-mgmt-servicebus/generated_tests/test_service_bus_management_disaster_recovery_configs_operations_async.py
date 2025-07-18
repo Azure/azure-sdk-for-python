@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.servicebus.v2021_11_01.aio import ServiceBusManagementClient
+from azure.mgmt.servicebus.aio import ServiceBusManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -25,7 +25,7 @@ class TestServiceBusManagementDisasterRecoveryConfigsOperationsAsync(AzureMgmtRe
         response = self.client.disaster_recovery_configs.list(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -57,7 +57,7 @@ class TestServiceBusManagementDisasterRecoveryConfigsOperationsAsync(AzureMgmtRe
                 },
                 "type": "str",
             },
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -70,7 +70,7 @@ class TestServiceBusManagementDisasterRecoveryConfigsOperationsAsync(AzureMgmtRe
             resource_group_name=resource_group.name,
             namespace_name="str",
             alias="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -83,7 +83,7 @@ class TestServiceBusManagementDisasterRecoveryConfigsOperationsAsync(AzureMgmtRe
             resource_group_name=resource_group.name,
             namespace_name="str",
             alias="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -96,7 +96,7 @@ class TestServiceBusManagementDisasterRecoveryConfigsOperationsAsync(AzureMgmtRe
             resource_group_name=resource_group.name,
             namespace_name="str",
             alias="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -109,7 +109,7 @@ class TestServiceBusManagementDisasterRecoveryConfigsOperationsAsync(AzureMgmtRe
             resource_group_name=resource_group.name,
             namespace_name="str",
             alias="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -122,7 +122,7 @@ class TestServiceBusManagementDisasterRecoveryConfigsOperationsAsync(AzureMgmtRe
             resource_group_name=resource_group.name,
             namespace_name="str",
             alias="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -136,7 +136,7 @@ class TestServiceBusManagementDisasterRecoveryConfigsOperationsAsync(AzureMgmtRe
             namespace_name="str",
             alias="str",
             authorization_rule_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -150,7 +150,7 @@ class TestServiceBusManagementDisasterRecoveryConfigsOperationsAsync(AzureMgmtRe
             namespace_name="str",
             alias="str",
             authorization_rule_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -163,7 +163,7 @@ class TestServiceBusManagementDisasterRecoveryConfigsOperationsAsync(AzureMgmtRe
             resource_group_name=resource_group.name,
             namespace_name="str",
             parameters={"name": "str"},
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself

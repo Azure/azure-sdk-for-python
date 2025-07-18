@@ -194,6 +194,7 @@ class _RP_Names(Enum):
 # Special constant for azure-sdk opentelemetry instrumentation
 _AZURE_SDK_OPENTELEMETRY_NAME = "azure-sdk-opentelemetry"
 _AZURE_SDK_NAMESPACE_NAME = "az.namespace"
+_AZURE_AI_SDK_NAME = "azure-ai-opentelemetry"
 
 _BASE = 2
 
@@ -253,6 +254,7 @@ _INSTRUMENTATIONS_LIST = [
     "openai_v2",
     "vertexai",
     # Instrumentations below this line have not been added to statsbeat report yet
+    _AZURE_AI_SDK_NAME
 ]
 
 _INSTRUMENTATIONS_BIT_MAP = {_INSTRUMENTATIONS_LIST[i]: _BASE**i for i in range(len(_INSTRUMENTATIONS_LIST))}
