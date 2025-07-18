@@ -3,6 +3,7 @@
 ## 12.27.0 (Unreleased)
 
 ### Features Added
+- Stable release of features from 12.27.0b1
 
 ## 12.26.0 (2025-07-16)
 
