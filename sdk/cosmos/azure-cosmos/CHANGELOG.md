@@ -9,7 +9,7 @@
 #### Bugs Fixed
 
 #### Other Changes
-* Client ID will now be included in headers for all requests. See [PR #####]().
+* Client ID will now be included in headers for all requests. See [PR 42104](https://github.com/Azure/azure-sdk-for-python/pull/42104).
 
 ### 4.14.0b1 (2025-07-14)
 
