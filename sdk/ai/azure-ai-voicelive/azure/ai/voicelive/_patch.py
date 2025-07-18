@@ -370,7 +370,7 @@ class _AsyncWebSocketConnection:
         self._session = session
         self._connection = connection
         self._loop = asyncio.new_event_loop()
-        self._queue = asyncio.Queue(loop=self._loop)
+        self._queue = asyncio.Queue()
         self._running = True
         self._thread = None
 
