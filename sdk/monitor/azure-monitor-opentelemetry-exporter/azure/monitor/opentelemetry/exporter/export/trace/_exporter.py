@@ -415,11 +415,13 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                 data.type = _GEN_AI_ATTRIBUTE_PREFIX.format(gen_ai_attributes_val)
             else:
                 data.type = "N/A"
-            # gen_ai take precedence over other mappings (ex. HTTP) even if their attributes are also present on the span.
+            # gen_ai take precedence over other mappings (ex. HTTP)
+            # even if their attributes are also present on the span.
             # following mappings will override the type
             if gen_ai_attributes_val:
                 data.type = _GEN_AI_ATTRIBUTE_PREFIX.format(gen_ai_attributes_val)
-            # If no fields are available to set target using standard rules, set Dependency Target to gen_ai.system if present
+            # If no fields are available to set target using standard rules, 
+            # set Dependency Target to gen_ai.system if present
             if not target and not data.target and gen_ai_attributes_val:
                 target = gen_ai_attributes_val
         elif span.kind is SpanKind.PRODUCER:  # Messaging
