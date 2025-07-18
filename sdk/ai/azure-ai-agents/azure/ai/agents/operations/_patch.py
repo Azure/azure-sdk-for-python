@@ -538,6 +538,7 @@ class RunsOperations(RunsOperationsGenerated):
             additional_instructions=additional_instructions,
             additional_messages=additional_messages,
             tools=toolset.definitions if toolset else None,
+            tool_resources=toolset.resources if toolset else None,
             temperature=temperature,
             top_p=top_p,
             max_prompt_tokens=max_prompt_tokens,
@@ -1383,7 +1384,7 @@ class FilesOperations(FilesOperationsGenerated):
         """Uploads a file for use by other operations.
 
         :keyword file_path: The path to the file to upload.
-        :type file_path: str
+        :paramtype file_path: str
         :keyword purpose: Known values are: "assistants", "assistants_output", and "vision".
         :paramtype purpose: str or ~azure.ai.agents.models.FilePurpose
         :return: FileInfo. The FileInfo is compatible with MutableMapping
@@ -1544,7 +1545,7 @@ class FilesOperations(FilesOperationsGenerated):
         """Uploads a file for use by other operations.
 
         :keyword file_path: The path to the file on the local filesystem to upload.
-        :type file_path: str
+        :paramtype file_path: str
         :keyword purpose: Known values are: "assistants", "assistants_output", and "vision".
         :paramtype purpose: str or ~azure.ai.agents.models.FilePurpose
         :keyword polling_interval: Time to wait before polling for the status of the uploaded file. Default value
