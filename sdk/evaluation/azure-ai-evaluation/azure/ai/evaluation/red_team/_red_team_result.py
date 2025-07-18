@@ -185,11 +185,14 @@ class RedTeamingParameters(TypedDict):
     :type attack_complexity: List[str]
     :param techniques_used: Dictionary mapping complexity levels to lists of converter techniques used
     :type techniques_used: Dict[str, List[str]]
+    :param attack_success_thresholds: Thresholds used for determining attack success per risk category
+    :type attack_success_thresholds: Dict[str, Any]
     """
 
     attack_objective_generated_from: AttackObjectiveSource
     attack_complexity: List[str]
     techniques_used: Dict[str, List[str]]
+    attack_success_thresholds: Dict[str, Dict[str, int]]
 
 
 @experimental
@@ -228,6 +231,8 @@ class AttackDetails(TypedDict):
     :type conversation: List[Dict[str, str]]
     :param risk_assessment: Dictionary containing content safety assessment for the conversation
     :type risk_assessment: Optional[RiskAssessment]
+    :param attack_success_threshold: The threshold value used to determine attack success
+    :type attack_success_threshold: Optional[int]
     """
 
     attack_success: Optional[bool]
@@ -236,6 +241,7 @@ class AttackDetails(TypedDict):
     risk_category: str
     conversation: List[Dict[str, str]]
     risk_assessment: Optional[RiskAssessment]
+    attack_success_threshold: Optional[int]
 
 
 @experimental
