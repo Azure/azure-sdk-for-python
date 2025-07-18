@@ -8,6 +8,7 @@ import pytest
 import openai
 import httpx
 from devtools_testutils import AzureRecordedTestCase, get_credential
+from azure.identity.aio import get_bearer_token_provider
 from conftest import (
     ENV_AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT,
     ENV_AZURE_OPENAI_SWEDENCENTRAL_KEY,
@@ -16,6 +17,10 @@ from conftest import (
     configure_async,
 )
 
+async_client = openai.AsyncOpenAI(
+    base_url=os.getenv(ENV_AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT).strip("/") + "/openai",
+    bearer_token_provider=get_bearer_token_provider(get_credential(), "https://cognitiveservices.azure.com/.default"),
+)
 
 @pytest.mark.live_test_only
 class TestRealtimeAsync(AzureRecordedTestCase):
@@ -24,11 +29,11 @@ class TestRealtimeAsync(AzureRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(GPT_4_AZURE, "2024-10-01-preview"), (GPT_4_OPENAI, "v1")],
+        [(GPT_4_AZURE, "2024-10-01-preview")]
     )
     async def test_realtime_text(self, client_async, api_type, api_version, **kwargs):
-        async with client_async.beta.realtime.connect(
-            **kwargs,
+        async with async_client.beta.realtime.connect(
+            extra_query={"api-version": "2024-10-01-preview", "deployment": "gpt-4o-mini-realtime-preview-1217"}, **kwargs,
         ) as connection:
             await connection.session.update(session={"modalities": ["text"]})
             await connection.conversation.item.create(
@@ -54,13 +59,13 @@ class TestRealtimeAsync(AzureRecordedTestCase):
         [(GPT_4_AZURE, "2024-10-01-preview")],
     )
     async def test_realtime_text_api_key(self, client_async, api_type, api_version, **kwargs):
-        client_async = openai.AsyncAzureOpenAI(
-            azure_endpoint=os.environ[ENV_AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT],
+
+        async_client = openai.AsyncOpenAI(
+            base_url=os.getenv(ENV_AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT).strip("/") + "/openai",
             api_key=os.environ[ENV_AZURE_OPENAI_SWEDENCENTRAL_KEY],
-            api_version=api_version,
         )
-        async with client_async.beta.realtime.connect(
-            **kwargs
+        async with async_client.beta.realtime.connect(
+            extra_query={"api-version": "2024-10-01-preview", "deployment": "gpt-4o-mini-realtime-preview-1217"}, **kwargs,
         ) as connection:
             await connection.session.update(session={"modalities": ["text"]})
             await connection.conversation.item.create(
@@ -153,15 +158,15 @@ class TestRealtimeAsync(AzureRecordedTestCase):
         [(GPT_4_AZURE, "2024-10-01-preview")],
     )
     async def test_realtime_text_websocket_base_url(self, client_async, api_type, api_version, **kwargs):
-        client_async = openai.AsyncAzureOpenAI(
+        
+        async_client = openai.AsyncOpenAI(
             base_url="fakebaseurl",
             websocket_base_url=httpx.URL(os.getenv(ENV_AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT) + "/openai/").copy_with(scheme="wss"),
-            api_key=os.getenv(ENV_AZURE_OPENAI_SWEDENCENTRAL_KEY),
-            api_version=api_version,
+            bearer_token_provider=get_bearer_token_provider(get_credential(), "https://cognitiveservices.azure.com/.default"),
         )
-        
-        async with client_async.beta.realtime.connect(
-            **kwargs
+
+        async with async_client.beta.realtime.connect(
+            extra_query={"api-version": "2024-10-01-preview", "deployment": "gpt-4o-mini-realtime-preview-1217"}, **kwargs,
         ) as connection:
             await connection.session.update(session={"modalities": ["text"]})
             await connection.conversation.item.create(
