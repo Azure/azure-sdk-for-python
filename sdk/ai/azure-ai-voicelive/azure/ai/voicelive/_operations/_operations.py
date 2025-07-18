@@ -64,62 +64,24 @@ class _VoiceLiveClientOperationsMixin(
 ):
 
     @overload
-    def force_models(
+    def _force_models(
         self,
         *,
         session: _models.VoiceLiveClientEventSessionUpdate,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.VoiceLiveServerEventResponseAudioDone:
-        """force_models.
-
-        :keyword session: Required.
-        :paramtype session: ~azure.ai.voicelive.models.VoiceLiveClientEventSessionUpdate
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: VoiceLiveServerEventResponseAudioDone. The VoiceLiveServerEventResponseAudioDone is
-         compatible with MutableMapping
-        :rtype: ~azure.ai.voicelive.models.VoiceLiveServerEventResponseAudioDone
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models.VoiceLiveServerEventResponseAudioDone: ...
     @overload
-    def force_models(
+    def _force_models(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.VoiceLiveServerEventResponseAudioDone:
-        """force_models.
-
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: VoiceLiveServerEventResponseAudioDone. The VoiceLiveServerEventResponseAudioDone is
-         compatible with MutableMapping
-        :rtype: ~azure.ai.voicelive.models.VoiceLiveServerEventResponseAudioDone
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models.VoiceLiveServerEventResponseAudioDone: ...
     @overload
-    def force_models(
+    def _force_models(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.VoiceLiveServerEventResponseAudioDone:
-        """force_models.
-
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: VoiceLiveServerEventResponseAudioDone. The VoiceLiveServerEventResponseAudioDone is
-         compatible with MutableMapping
-        :rtype: ~azure.ai.voicelive.models.VoiceLiveServerEventResponseAudioDone
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models.VoiceLiveServerEventResponseAudioDone: ...
 
     @distributed_trace
-    def force_models(
+    def _force_models(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,

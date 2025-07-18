@@ -184,8 +184,8 @@ class VoiceLiveServerEvent(VoiceLiveServerEventGenerated):
             event_data = data.copy()
             if event_type in event_class_map:
                 # Remove 'type' for subclasses that already set it via discriminator
-                event_data.pop('type', None)  
-            
+                event_data.pop("type", None)
+
             return event_class(**event_data)
         except TypeError as e:
             log.warning(f"Could not create {event_class.__name__} from data: {e}. Falling back to base class.")

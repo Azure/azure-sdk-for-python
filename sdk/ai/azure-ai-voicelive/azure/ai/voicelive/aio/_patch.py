@@ -63,7 +63,9 @@ class AsyncVoiceLiveSessionResource:
         """
         self._connection = connection
 
-    async def update(self, *, session: Dict[str, Any] | VoiceLiveRequestSession, event_id: Optional[str] = None) -> None:
+    async def update(
+        self, *, session: Dict[str, Any] | VoiceLiveRequestSession, event_id: Optional[str] = None
+    ) -> None:
         """Update the session configuration.
 
         :param session: Session configuration parameters.
@@ -73,7 +75,7 @@ class AsyncVoiceLiveSessionResource:
         """
         if isinstance(session, VoiceLiveRequestSession):
             session = session.as_dict()
-        
+
         event = {"type": "session.update", "session": session}
         if event_id:
             event["event_id"] = event_id

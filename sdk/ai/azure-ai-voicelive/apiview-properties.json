@@ -89,8 +89,6 @@
         "azure.ai.voicelive.models.VoiceLiveAudioTimestampType": "VoiceLive.VoiceLiveAudioTimestampType",
         "azure.ai.voicelive.models.VoiceLiveToolType": "VoiceLive.VoiceLiveToolType",
         "azure.ai.voicelive.models.VoiceLiveToolChoiceLiteral": "VoiceLive.VoiceLiveToolChoiceLiteral",
-        "azure.ai.voicelive.models.VoiceLiveClientEventType": "VoiceLive.VoiceLiveClientEventType",
-        "azure.ai.voicelive.VoiceLiveClient.force_models": "VoiceLive.force_models",
-        "azure.ai.voicelive.aio.VoiceLiveClient.force_models": "VoiceLive.force_models"
+        "azure.ai.voicelive.models.VoiceLiveClientEventType": "VoiceLive.VoiceLiveClientEventType"
     }
 }
