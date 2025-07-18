@@ -3,6 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from typing import Dict, List, Tuple, Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ._models import ChatParticipant
+    from ._generated.models import ChatError
 
 
 def _to_utc_datetime(value):
@@ -23,8 +28,11 @@ class CommunicationErrorResponseConverter(object):
     """
 
     @classmethod
-    def convert(cls, participants, chat_errors):
-        # type: (...) -> list[(ChatThreadParticipant, ChatError)]
+    def convert(
+        cls,
+        participants: List["ChatParticipant"],
+        chat_errors: Optional[List["ChatError"]]
+    ) -> List[Tuple[Optional["ChatParticipant"], "ChatError"]]:
         """
         Util function to convert AddChatParticipantsResult.
 
@@ -40,8 +48,7 @@ class CommunicationErrorResponseConverter(object):
         :rtype: list[(~azure.communication.chat.ChatParticipant, ~azure.communication.chat.ChatError)]
         """
 
-        def create_dict(participants):
-            # type: (...) -> Dict(str, ChatThreadParticipant)
+        def create_dict(participants: List["ChatParticipant"]) -> Dict[str, "ChatParticipant"]:
             """
             Create dictionary of id -> ChatParticipant
 
