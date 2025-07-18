@@ -1,5 +1,653 @@
 # Release History
 
+## 7.1.0b1 (2025-07-16)
+
+### Features Added
+
+  - Model `SecurityCenter` added property `locations`
+  - Model `SecurityCenter` added property `tasks`
+  - Model `SecurityCenter` added property `auto_provisioning_settings`
+  - Model `SecurityCenter` added property `compliances`
+  - Model `SecurityCenter` added property `information_protection_policies`
+  - Model `SecurityCenter` added property `workspace_settings`
+  - Model `SecurityCenter` added property `alerts_suppression_rules`
+  - Model `SecurityCenter` added property `regulatory_compliance_standards`
+  - Model `SecurityCenter` added property `regulatory_compliance_controls`
+  - Model `SecurityCenter` added property `regulatory_compliance_assessments`
+  - Model `SecurityCenter` added property `sub_assessments`
+  - Model `SecurityCenter` added property `connectors`
+  - Model `SecurityCenter` added property `software_inventories`
+  - Model `SecurityCenter` added property `custom_assessment_automations`
+  - Model `SecurityCenter` added property `custom_entity_store_assignments`
+  - Model `SecurityCenter` added property `mde_onboardings`
+  - Model `SecurityCenter` added property `governance_assignments`
+  - Model `SecurityCenter` added property `governance_rules`
+  - Model `SecurityCenter` added property `applications`
+  - Model `SecurityCenter` added property `application`
+  - Model `SecurityCenter` added property `security_connector_applications`
+  - Model `SecurityCenter` added property `security_connector_application`
+  - Model `SecurityCenter` added property `security_operators`
+  - Model `SecurityCenter` added property `sql_vulnerability_assessment_baseline_rules`
+  - Model `SecurityCenter` added property `sql_vulnerability_assessment_scans`
+  - Model `SecurityCenter` added property `sql_vulnerability_assessment_scan_results`
+  - Model `SecurityCenter` added property `sensitivity_settings`
+  - Model `SecurityCenter` added property `health_reports`
+  - Model `SecurityCenter` added property `automations`
+  - Model `SecurityCenter` added property `security_contacts`
+  - Model `SecurityCenter` added property `security_connectors`
+  - Model `SecurityCenter` added property `defender_for_storage`
+  - Model `SecurityCenter` added property `operations`
+  - Model `SecurityCenter` added property `assessments_metadata`
+  - Model `SecurityCenter` added property `assessments`
+  - Model `SecurityCenter` added property `compliance_results`
+  - Model `SecurityCenter` added property `advanced_threat_protection`
+  - Model `SecurityCenter` added property `device_security_groups`
+  - Model `SecurityCenter` added property `iot_security_solution_analytics`
+  - Model `SecurityCenter` added property `iot_security_solutions_analytics_aggregated_alert`
+  - Model `SecurityCenter` added property `iot_security_solutions_analytics_recommendation`
+  - Model `SecurityCenter` added property `iot_security_solution`
+  - Model `SecurityCenter` added property `allowed_connections`
+  - Model `SecurityCenter` added property `discovered_security_solutions`
+  - Model `SecurityCenter` added property `external_security_solutions`
+  - Model `SecurityCenter` added property `jit_network_access_policies`
+  - Model `SecurityCenter` added property `secure_scores`
+  - Model `SecurityCenter` added property `secure_score_controls`
+  - Model `SecurityCenter` added property `secure_score_control_definitions`
+  - Model `SecurityCenter` added property `security_solutions`
+  - Model `SecurityCenter` added property `security_solutions_reference_data`
+  - Model `SecurityCenter` added property `server_vulnerability_assessment`
+  - Model `SecurityCenter` added property `topology`
+  - Model `SecurityCenter` added property `alerts`
+  - Model `SecurityCenter` added property `settings`
+  - Model `SecurityCenter` added property `server_vulnerability_assessments_settings`
+  - Model `SecurityCenter` added property `api_collections`
+  - Model `SecurityCenter` added property `pricings`
+  - Model `SecurityCenter` added property `security_standards`
+  - Model `SecurityCenter` added property `standard_assignments`
+  - Model `SecurityCenter` added property `custom_recommendations`
+  - Model `DevOpsConfigurationProperties` added property `agentless_configuration`
+  - Added model `AadConnectivityState`
+  - Added enum `AadConnectivityStateEnum`
+  - Added model `AadExternalSecuritySolution`
+  - Added model `AadSolutionProperties`
+  - Added model `AccessTokenAuthentication`
+  - Added enum `ActionType`
+  - Added model `ActiveConnectionsNotInAllowedRange`
+  - Added model `AdditionalData`
+  - Added enum `AdditionalWorkspaceDataType`
+  - Added enum `AdditionalWorkspaceType`
+  - Added model `AdditionalWorkspacesProperties`
+  - Added model `AdvancedThreatProtectionSetting`
+  - Added model `AgentlessConfiguration`
+  - Added enum `AgentlessEnablement`
+  - Added model `Alert`
+  - Added model `AlertEntity`
+  - Added model `AlertList`
+  - Added model `AlertPropertiesSupportingEvidence`
+  - Added enum `AlertSeverity`
+  - Added model `AlertSimulatorBundlesRequestProperties`
+  - Added model `AlertSimulatorRequestBody`
+  - Added model `AlertSimulatorRequestProperties`
+  - Added enum `AlertStatus`
+  - Added model `AlertSyncSettings`
+  - Added model `AlertsSuppressionRule`
+  - Added model `AlertsSuppressionRulesList`
+  - Added model `AllowedConnectionsList`
+  - Added model `AllowedConnectionsResource`
+  - Added model `AllowlistCustomAlertRule`
+  - Added model `AmqpC2DMessagesNotInAllowedRange`
+  - Added model `AmqpC2DRejectedMessagesNotInAllowedRange`
+  - Added model `AmqpD2CMessagesNotInAllowedRange`
+  - Added model `ApiCollection`
+  - Added model `ApiCollectionList`
+  - Added model `Application`
+  - Added model `ApplicationCondition`
+  - Added enum `ApplicationConditionOperator`
+  - Added enum `ApplicationSourceResourceType`
+  - Added model `ApplicationsList`
+  - Added model `ArcAutoProvisioning`
+  - Added model `ArcAutoProvisioningAws`
+  - Added model `ArcAutoProvisioningConfiguration`
+  - Added model `ArcAutoProvisioningGcp`
+  - Added model `AscLocation`
+  - Added model `AscLocationList`
+  - Added enum `AssessedResourceType`
+  - Added model `AssessmentLinks`
+  - Added model `AssessmentStatus`
+  - Added enum `AssessmentStatusCode`
+  - Added model `AssessmentStatusResponse`
+  - Added enum `AssessmentType`
+  - Added model `AssignedAssessmentItem`
+  - Added model `AssignedStandardItem`
+  - Added model `AtaExternalSecuritySolution`
+  - Added model `AtaSolutionProperties`
+  - Added enum `AttestationComplianceState`
+  - Added model `AttestationEvidence`
+  - Added model `Authentication`
+  - Added model `AuthenticationDetailsProperties`
+  - Added enum `AuthenticationProvisioningState`
+  - Added enum `AuthenticationType`
+  - Added enum `AutoProvision`
+  - Added model `AutoProvisioningSetting`
+  - Added model `AutoProvisioningSettingList`
+  - Added model `Automation`
+  - Added model `AutomationAction`
+  - Added model `AutomationActionEventHub`
+  - Added model `AutomationActionLogicApp`
+  - Added model `AutomationActionWorkspace`
+  - Added model `AutomationList`
+  - Added model `AutomationRuleSet`
+  - Added model `AutomationScope`
+  - Added model `AutomationSource`
+  - Added model `AutomationTriggeringRule`
+  - Added model `AutomationUpdateModel`
+  - Added model `AutomationValidationStatus`
+  - Added model `AwAssumeRoleAuthenticationDetailsProperties`
+  - Added model `AwsCredsAuthenticationDetailsProperties`
+  - Added model `AwsEnvironmentData`
+  - Added model `AwsOrganizationalData`
+  - Added model `AwsOrganizationalDataMaster`
+  - Added model `AwsOrganizationalDataMember`
+  - Added model `AzureDevOpsScopeEnvironmentData`
+  - Added model `AzureResourceDetails`
+  - Added model `AzureResourceIdentifier`
+  - Added model `AzureResourceLink`
+  - Added model `AzureServersSetting`
+  - Added model `AzureTrackedResourceLocation`
+  - Added model `Baseline`
+  - Added model `BaselineAdjustedResult`
+  - Added model `BenchmarkReference`
+  - Added enum `BlobScanResultsOptions`
+  - Added model `BlobsScanSummary`
+  - Added model `BuiltInInfoType`
+  - Added enum `BundleType`
+  - Added model `CVE`
+  - Added model `CVSS`
+  - Added enum `Categories`
+  - Added model `CefExternalSecuritySolution`
+  - Added model `CefSolutionProperties`
+  - Added model `CloudErrorBody`
+  - Added enum `CloudName`
+  - Added model `CloudOffering`
+  - Added enum `Code`
+  - Added model `Compliance`
+  - Added model `ComplianceList`
+  - Added model `ComplianceResult`
+  - Added model `ComplianceResultList`
+  - Added model `ComplianceSegment`
+  - Added model `Components1Uu4J47SchemasSecurityassessmentpropertiesbasePropertiesRiskPropertiesPathsItemsPropertiesEdgesItems`
+  - Added model `Condition`
+  - Added model `ConnectableResource`
+  - Added model `ConnectedResource`
+  - Added model `ConnectedWorkspace`
+  - Added model `ConnectionFromIpNotAllowed`
+  - Added model `ConnectionToIpNotAllowed`
+  - Added enum `ConnectionType`
+  - Added model `ConnectorSetting`
+  - Added model `ConnectorSettingList`
+  - Added model `ContainerRegistryVulnerabilityProperties`
+  - Added enum `ControlType`
+  - Added model `CspmMonitorAwsOffering`
+  - Added model `CspmMonitorAwsOfferingNativeCloudConnection`
+  - Added model `CspmMonitorAzureDevOpsOffering`
+  - Added model `CspmMonitorDockerHubOffering`
+  - Added model `CspmMonitorGcpOffering`
+  - Added model `CspmMonitorGcpOfferingNativeCloudConnection`
+  - Added model `CspmMonitorGitLabOffering`
+  - Added model `CspmMonitorGithubOffering`
+  - Added model `CspmMonitorJFrogOffering`
+  - Added model `CustomAlertRule`
+  - Added model `CustomAssessmentAutomation`
+  - Added model `CustomAssessmentAutomationRequest`
+  - Added model `CustomAssessmentAutomationsListResult`
+  - Added model `CustomEntityStoreAssignment`
+  - Added model `CustomEntityStoreAssignmentRequest`
+  - Added model `CustomEntityStoreAssignmentsListResult`
+  - Added model `CustomRecommendation`
+  - Added model `CustomRecommendationsList`
+  - Added model `DataExportSettings`
+  - Added enum `DataSource`
+  - Added model `DefenderCspmAwsOffering`
+  - Added model `DefenderCspmAwsOfferingCiem`
+  - Added model `DefenderCspmAwsOfferingCiemDiscovery`
+  - Added model `DefenderCspmAwsOfferingCiemOidc`
+  - Added model `DefenderCspmAwsOfferingDataSensitivityDiscovery`
+  - Added model `DefenderCspmAwsOfferingDatabasesDspm`
+  - Added model `DefenderCspmAwsOfferingMdcContainersAgentlessDiscoveryK8S`
+  - Added model `DefenderCspmAwsOfferingMdcContainersImageAssessment`
+  - Added model `DefenderCspmAwsOfferingVmScanners`
+  - Added model `DefenderCspmDockerHubOffering`
+  - Added model `DefenderCspmGcpOffering`
+  - Added model `DefenderCspmGcpOfferingCiemDiscovery`
+  - Added model `DefenderCspmGcpOfferingDataSensitivityDiscovery`
+  - Added model `DefenderCspmGcpOfferingMdcContainersAgentlessDiscoveryK8S`
+  - Added model `DefenderCspmGcpOfferingMdcContainersImageAssessment`
+  - Added model `DefenderCspmGcpOfferingVmScanners`
+  - Added model `DefenderCspmJFrogOffering`
+  - Added model `DefenderCspmJFrogOfferingMdcContainersImageAssessment`
+  - Added model `DefenderFoDatabasesAwsOffering`
+  - Added model `DefenderFoDatabasesAwsOfferingArcAutoProvisioning`
+  - Added model `DefenderFoDatabasesAwsOfferingDatabasesDspm`
+  - Added model `DefenderFoDatabasesAwsOfferingRds`
+  - Added model `DefenderForContainersAwsOffering`
+  - Added model `DefenderForContainersAwsOfferingCloudWatchToKinesis`
+  - Added model `DefenderForContainersAwsOfferingKinesisToS3`
+  - Added model `DefenderForContainersAwsOfferingKubernetesDataCollection`
+  - Added model `DefenderForContainersAwsOfferingKubernetesService`
+  - Added model `DefenderForContainersAwsOfferingMdcContainersAgentlessDiscoveryK8S`
+  - Added model `DefenderForContainersAwsOfferingMdcContainersImageAssessment`
+  - Added model `DefenderForContainersAwsOfferingVmScanners`
+  - Added model `DefenderForContainersDockerHubOffering`
+  - Added model `DefenderForContainersGcpOffering`
+  - Added model `DefenderForContainersGcpOfferingDataPipelineNativeCloudConnection`
+  - Added model `DefenderForContainersGcpOfferingMdcContainersAgentlessDiscoveryK8S`
+  - Added model `DefenderForContainersGcpOfferingMdcContainersImageAssessment`
+  - Added model `DefenderForContainersGcpOfferingNativeCloudConnection`
+  - Added model `DefenderForContainersGcpOfferingVmScanners`
+  - Added model `DefenderForContainersJFrogOffering`
+  - Added model `DefenderForDatabasesGcpOffering`
+  - Added model `DefenderForDatabasesGcpOfferingArcAutoProvisioning`
+  - Added model `DefenderForDatabasesGcpOfferingDefenderForDatabasesArcAutoProvisioning`
+  - Added model `DefenderForServersAwsOffering`
+  - Added model `DefenderForServersAwsOfferingArcAutoProvisioning`
+  - Added model `DefenderForServersAwsOfferingDefenderForServers`
+  - Added model `DefenderForServersAwsOfferingMdeAutoProvisioning`
+  - Added model `DefenderForServersAwsOfferingSubPlan`
+  - Added model `DefenderForServersAwsOfferingVaAutoProvisioning`
+  - Added model `DefenderForServersAwsOfferingVaAutoProvisioningConfiguration`
+  - Added model `DefenderForServersAwsOfferingVmScanners`
+  - Added model `DefenderForServersGcpOffering`
+  - Added model `DefenderForServersGcpOfferingArcAutoProvisioning`
+  - Added model `DefenderForServersGcpOfferingDefenderForServers`
+  - Added model `DefenderForServersGcpOfferingMdeAutoProvisioning`
+  - Added model `DefenderForServersGcpOfferingSubPlan`
+  - Added model `DefenderForServersGcpOfferingVaAutoProvisioning`
+  - Added model `DefenderForServersGcpOfferingVaAutoProvisioningConfiguration`
+  - Added model `DefenderForServersGcpOfferingVmScanners`
+  - Added model `DefenderForStorageSetting`
+  - Added model `DefenderForStorageSettingProperties`
+  - Added model `DenylistCustomAlertRule`
+  - Added model `DeviceSecurityGroup`
+  - Added model `DeviceSecurityGroupList`
+  - Added model `DirectMethodInvokesNotInAllowedRange`
+  - Added model `DiscoveredSecuritySolution`
+  - Added model `DiscoveredSecuritySolutionList`
+  - Added model `DockerHubEnvironmentData`
+  - Added model `ETag`
+  - Added model `EdgeIdentifiers`
+  - Added enum `Effect`
+  - Added enum `EndOfSupportStatus`
+  - Added enum `Enforce`
+  - Added model `EnvironmentData`
+  - Added model `EnvironmentDetails`
+  - Added enum `EnvironmentType`
+  - Added model `ErrorDetailAutoGenerated`
+  - Added model `ErrorDetailAutoGenerated2`
+  - Added model `ErrorResponseAutoGenerated`
+  - Added model `ErrorResponseAutoGenerated2`
+  - Added enum `EventSource`
+  - Added model `ExecuteGovernanceRuleParams`
+  - Added enum `ExemptionCategory`
+  - Added enum `ExpandControlsEnum`
+  - Added enum `ExpandEnum`
+  - Added enum `ExportData`
+  - Added model `Extension`
+  - Added model `ExternalSecuritySolution`
+  - Added model `ExternalSecuritySolutionKind`
+  - Added enum `ExternalSecuritySolutionKindEnum`
+  - Added model `ExternalSecuritySolutionList`
+  - Added model `ExternalSecuritySolutionProperties`
+  - Added model `FailedLocalLoginsNotInAllowedRange`
+  - Added model `FileUploadsNotInAllowedRange`
+  - Added model `GcpCredentialsDetailsProperties`
+  - Added model `GcpOrganizationalData`
+  - Added model `GcpOrganizationalDataMember`
+  - Added model `GcpOrganizationalDataOrganization`
+  - Added model `GcpProjectDetails`
+  - Added model `GcpProjectEnvironmentData`
+  - Added model `GetSensitivitySettingsListResponse`
+  - Added model `GetSensitivitySettingsResponse`
+  - Added model `GetSensitivitySettingsResponseProperties`
+  - Added model `GetSensitivitySettingsResponsePropertiesMipInformation`
+  - Added model `GithubScopeEnvironmentData`
+  - Added model `GitlabScopeEnvironmentData`
+  - Added model `GovernanceAssignment`
+  - Added model `GovernanceAssignmentAdditionalData`
+  - Added model `GovernanceAssignmentsList`
+  - Added model `GovernanceEmailNotification`
+  - Added model `GovernanceRule`
+  - Added enum `GovernanceRuleConditionOperator`
+  - Added model `GovernanceRuleEmailNotification`
+  - Added model `GovernanceRuleList`
+  - Added model `GovernanceRuleMetadata`
+  - Added model `GovernanceRuleOwnerSource`
+  - Added enum `GovernanceRuleOwnerSourceType`
+  - Added enum `GovernanceRuleSourceResourceType`
+  - Added enum `GovernanceRuleType`
+  - Added model `HealthDataClassification`
+  - Added model `HealthReport`
+  - Added model `HealthReportsList`
+  - Added model `HttpC2DMessagesNotInAllowedRange`
+  - Added model `HttpC2DRejectedMessagesNotInAllowedRange`
+  - Added model `HttpD2CMessagesNotInAllowedRange`
+  - Added enum `HybridComputeProvisioningState`
+  - Added model `HybridComputeSettingsProperties`
+  - Added model `Identity`
+  - Added enum `ImplementationEffort`
+  - Added model `InfoType`
+  - Added model `InformationProtectionKeyword`
+  - Added model `InformationProtectionPolicy`
+  - Added model `InformationProtectionPolicyList`
+  - Added enum `InformationProtectionPolicyName`
+  - Added model `InformationType`
+  - Added enum `Inherited`
+  - Added enum `Intent`
+  - Added enum `InventoryKind`
+  - Added model `InventoryList`
+  - Added enum `InventoryListKind`
+  - Added model `IoTSecurityAggregatedAlert`
+  - Added model `IoTSecurityAggregatedAlertList`
+  - Added model `IoTSecurityAggregatedAlertPropertiesTopDevicesListItem`
+  - Added model `IoTSecurityAggregatedRecommendation`
+  - Added model `IoTSecurityAggregatedRecommendationList`
+  - Added model `IoTSecurityAlertedDevice`
+  - Added model `IoTSecurityDeviceAlert`
+  - Added model `IoTSecurityDeviceRecommendation`
+  - Added model `IoTSecuritySolutionAnalyticsModel`
+  - Added model `IoTSecuritySolutionAnalyticsModelList`
+  - Added model `IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem`
+  - Added model `IoTSecuritySolutionModel`
+  - Added model `IoTSecuritySolutionsList`
+  - Added model `IoTSeverityMetrics`
+  - Added enum `IsEnabled`
+  - Added model `Issue`
+  - Added model `JFrogEnvironmentData`
+  - Added model `JitNetworkAccessPoliciesList`
+  - Added model `JitNetworkAccessPolicy`
+  - Added model `JitNetworkAccessPolicyInitiatePort`
+  - Added model `JitNetworkAccessPolicyInitiateRequest`
+  - Added model `JitNetworkAccessPolicyInitiateVirtualMachine`
+  - Added model `JitNetworkAccessPolicyVirtualMachine`
+  - Added model `JitNetworkAccessPortRule`
+  - Added model `JitNetworkAccessRequest`
+  - Added model `JitNetworkAccessRequestPort`
+  - Added model `JitNetworkAccessRequestVirtualMachine`
+  - Added model `Kind`
+  - Added enum `KindEnum`
+  - Added model `Label`
+  - Added model `ListCustomAlertRule`
+  - Added model `LocalUserNotAllowed`
+  - Added model `Location`
+  - Added model `LogAnalyticsIdentifier`
+  - Added model `MalwareScan`
+  - Added model `MalwareScanProperties`
+  - Added model `MalwareScanningProperties`
+  - Added model `MdeOnboardingData`
+  - Added model `MdeOnboardingDataList`
+  - Added enum `MinimalRiskLevel`
+  - Added enum `MinimalSeverity`
+  - Added enum `MipIntegrationStatus`
+  - Added model `MqttC2DMessagesNotInAllowedRange`
+  - Added model `MqttC2DRejectedMessagesNotInAllowedRange`
+  - Added model `MqttD2CMessagesNotInAllowedRange`
+  - Added model `NodeIdentifier`
+  - Added model `NotificationsSource`
+  - Added model `NotificationsSourceAlert`
+  - Added model `NotificationsSourceAttackPath`
+  - Added enum `OfferingType`
+  - Added model `OnPremiseResourceDetails`
+  - Added model `OnPremiseSqlResourceDetails`
+  - Added model `OnUploadFilters`
+  - Added model `OnUploadProperties`
+  - Added model `Operation`
+  - Added model `OperationDisplay`
+  - Added model `OperationListResult`
+  - Added enum `OperationResult`
+  - Added model `OperationResultAutoGenerated`
+  - Added model `OperationStatus`
+  - Added model `OperationStatusAutoGenerated`
+  - Added enum `Operator`
+  - Added enum `OrganizationMembershipType`
+  - Added enum `Origin`
+  - Added model `PartialAssessmentProperties`
+  - Added model `Path`
+  - Added enum `PermissionProperty`
+  - Added model `Pricing`
+  - Added model `PricingList`
+  - Added enum `PricingTier`
+  - Added model `ProcessNotAllowed`
+  - Added enum `PropertyType`
+  - Added enum `ProtocolEnum`
+  - Added enum `ProvisioningState`
+  - Added model `ProxyServerProperties`
+  - Added model `QueryCheck`
+  - Added model `QueuePurgesNotInAllowedRange`
+  - Added enum `Rank`
+  - Added enum `RecommendationConfigStatus`
+  - Added model `RecommendationConfigurationProperties`
+  - Added enum `RecommendationSupportedClouds`
+  - Added enum `RecommendationType`
+  - Added model `RegulatoryComplianceAssessment`
+  - Added model `RegulatoryComplianceAssessmentList`
+  - Added model `RegulatoryComplianceControl`
+  - Added model `RegulatoryComplianceControlList`
+  - Added model `RegulatoryComplianceStandard`
+  - Added model `RegulatoryComplianceStandardList`
+  - Added model `Remediation`
+  - Added model `RemediationEta`
+  - Added enum `ReportedSeverity`
+  - Added model `ResourceAutoGenerated`
+  - Added model `ResourceAutoGenerated2`
+  - Added model `ResourceDetails`
+  - Added model `ResourceDetailsAutoGenerated`
+  - Added model `ResourceIdentifier`
+  - Added enum `ResourceIdentifierType`
+  - Added enum `ResourceStatus`
+  - Added enum `ResourcesCoverageStatus`
+  - Added enum `RiskLevel`
+  - Added model `RuleResults`
+  - Added model `RuleResultsInput`
+  - Added model `RuleResultsProperties`
+  - Added enum `RuleSeverity`
+  - Added enum `RuleState`
+  - Added enum `RuleStatus`
+  - Added enum `RuleType`
+  - Added model `RulesResults`
+  - Added model `RulesResultsInput`
+  - Added model `Scan`
+  - Added model `ScanProperties`
+  - Added model `ScanResult`
+  - Added model `ScanResultProperties`
+  - Added model `ScanResults`
+  - Added enum `ScanState`
+  - Added model `ScanSummary`
+  - Added enum `ScanTriggerType`
+  - Added enum `ScanningMode`
+  - Added model `Scans`
+  - Added model `ScopeElement`
+  - Added model `SecureScoreControlDefinitionItem`
+  - Added model `SecureScoreControlDefinitionList`
+  - Added model `SecureScoreControlDefinitionSource`
+  - Added model `SecureScoreControlDetails`
+  - Added model `SecureScoreControlList`
+  - Added model `SecureScoreControlScore`
+  - Added model `SecureScoreItem`
+  - Added model `SecureScoresList`
+  - Added model `SecurityAssessment`
+  - Added model `SecurityAssessmentList`
+  - Added model `SecurityAssessmentMetadata`
+  - Added model `SecurityAssessmentMetadataPartnerData`
+  - Added model `SecurityAssessmentMetadataProperties`
+  - Added model `SecurityAssessmentMetadataPropertiesResponse`
+  - Added model `SecurityAssessmentMetadataPropertiesResponsePublishDates`
+  - Added model `SecurityAssessmentMetadataResponse`
+  - Added model `SecurityAssessmentMetadataResponseList`
+  - Added model `SecurityAssessmentPartnerData`
+  - Added model `SecurityAssessmentProperties`
+  - Added model `SecurityAssessmentPropertiesBase`
+  - Added model `SecurityAssessmentPropertiesBaseRisk`
+  - Added model `SecurityAssessmentPropertiesBaseRiskPathsItem`
+  - Added model `SecurityAssessmentPropertiesBaseRiskPathsPropertiesItemsItem`
+  - Added model `SecurityAssessmentPropertiesResponse`
+  - Added model `SecurityAssessmentResponse`
+  - Added model `SecurityConnector`
+  - Added model `SecurityConnectorsList`
+  - Added model `SecurityContact`
+  - Added model `SecurityContactList`
+  - Added enum `SecurityContactName`
+  - Added model `SecurityContactPropertiesNotificationsByRole`
+  - Added enum `SecurityContactRole`
+  - Added enum `SecurityFamily`
+  - Added enum `SecurityIssue`
+  - Added model `SecurityOperator`
+  - Added model `SecurityOperatorList`
+  - Added model `SecuritySolution`
+  - Added model `SecuritySolutionList`
+  - Added enum `SecuritySolutionStatus`
+  - Added model `SecuritySolutionsReferenceData`
+  - Added model `SecuritySolutionsReferenceDataList`
+  - Added model `SecurityStandard`
+  - Added model `SecurityStandardList`
+  - Added model `SecuritySubAssessment`
+  - Added model `SecuritySubAssessmentList`
+  - Added model `SecurityTask`
+  - Added model `SecurityTaskList`
+  - Added model `SecurityTaskParameters`
+  - Added model `SensitiveDataDiscoveryProperties`
+  - Added model `SensitivityLabel`
+  - Added model `ServerVulnerabilityAssessment`
+  - Added enum `ServerVulnerabilityAssessmentPropertiesProvisioningState`
+  - Added enum `ServerVulnerabilityAssessmentsAzureSettingSelectedProvider`
+  - Added model `ServerVulnerabilityAssessmentsList`
+  - Added model `ServerVulnerabilityAssessmentsSetting`
+  - Added enum `ServerVulnerabilityAssessmentsSettingKind`
+  - Added enum `ServerVulnerabilityAssessmentsSettingKindName`
+  - Added model `ServerVulnerabilityAssessmentsSettingsList`
+  - Added model `ServerVulnerabilityProperties`
+  - Added model `ServicePrincipalProperties`
+  - Added model `Setting`
+  - Added enum `SettingKind`
+  - Added enum `SettingName`
+  - Added enum `SettingNameAutoGenerated`
+  - Added model `SettingsList`
+  - Added enum `Severity`
+  - Added enum `SeverityEnum`
+  - Added model `Software`
+  - Added model `SoftwaresList`
+  - Added enum `Source`
+  - Added enum `SourceType`
+  - Added model `SqlServerVulnerabilityProperties`
+  - Added model `StandardAssignment`
+  - Added model `StandardAssignmentMetadata`
+  - Added model `StandardAssignmentPropertiesAttestationData`
+  - Added model `StandardAssignmentPropertiesExemptionData`
+  - Added model `StandardAssignmentsList`
+  - Added model `StandardMetadata`
+  - Added enum `StandardSupportedCloud`
+  - Added enum `StandardType`
+  - Added enum `State`
+  - Added enum `Status`
+  - Added model `StatusAutoGenerated`
+  - Added enum `StatusName`
+  - Added enum `StatusReason`
+  - Added model `SubAssessmentStatus`
+  - Added enum `SubAssessmentStatusCode`
+  - Added enum `SubPlan`
+  - Added enum `SupportedCloudEnum`
+  - Added model `SuppressionAlertsScope`
+  - Added enum `Tactics`
+  - Added model `Tags`
+  - Added model `TagsResource`
+  - Added enum `TaskUpdateActionType`
+  - Added enum `Techniques`
+  - Added enum `Threats`
+  - Added model `ThresholdCustomAlertRule`
+  - Added model `TimeWindowCustomAlertRule`
+  - Added model `TopologyList`
+  - Added model `TopologyResource`
+  - Added model `TopologySingleResource`
+  - Added model `TopologySingleResourceChild`
+  - Added model `TopologySingleResourceParent`
+  - Added model `TrackedResource`
+  - Added model `TwinUpdatesNotInAllowedRange`
+  - Added enum `Type`
+  - Added model `UnauthorizedOperationsNotInAllowedRange`
+  - Added enum `UnmaskedIpLoggingStatus`
+  - Added model `UpdateIotSecuritySolutionData`
+  - Added model `UpdateSensitivitySettingsRequest`
+  - Added model `UserDefinedResourcesProperties`
+  - Added enum `UserImpact`
+  - Added model `VaRule`
+  - Added enum `ValueType`
+  - Added model `VendorReference`
+  - Added model `VmScannersAws`
+  - Added model `VmScannersBase`
+  - Added model `VmScannersBaseConfiguration`
+  - Added model `VmScannersGcp`
+  - Added model `WorkspaceSetting`
+  - Added model `WorkspaceSettingList`
+  - Added model `APICollectionsOperations`
+  - Added model `AdvancedThreatProtectionOperations`
+  - Added model `AlertsOperations`
+  - Added model `AlertsSuppressionRulesOperations`
+  - Added model `AllowedConnectionsOperations`
+  - Added model `ApplicationOperations`
+  - Added model `ApplicationsOperations`
+  - Added model `AssessmentsMetadataOperations`
+  - Added model `AssessmentsOperations`
+  - Added model `AutoProvisioningSettingsOperations`
+  - Added model `AutomationsOperations`
+  - Added model `ComplianceResultsOperations`
+  - Added model `CompliancesOperations`
+  - Added model `ConnectorsOperations`
+  - Added model `CustomAssessmentAutomationsOperations`
+  - Added model `CustomEntityStoreAssignmentsOperations`
+  - Added model `CustomRecommendationsOperations`
+  - Added model `DefenderForStorageOperations`
+  - Added model `DeviceSecurityGroupsOperations`
+  - Added model `DiscoveredSecuritySolutionsOperations`
+  - Added model `ExternalSecuritySolutionsOperations`
+  - Added model `GovernanceAssignmentsOperations`
+  - Added model `GovernanceRulesOperations`
+  - Added model `HealthReportsOperations`
+  - Added model `InformationProtectionPoliciesOperations`
+  - Added model `IotSecuritySolutionAnalyticsOperations`
+  - Added model `IotSecuritySolutionOperations`
+  - Added model `IotSecuritySolutionsAnalyticsAggregatedAlertOperations`
+  - Added model `IotSecuritySolutionsAnalyticsRecommendationOperations`
+  - Added model `JitNetworkAccessPoliciesOperations`
+  - Added model `LocationsOperations`
+  - Added model `MdeOnboardingsOperations`
+  - Added model `Operations`
+  - Added model `PricingsOperations`
+  - Added model `RegulatoryComplianceAssessmentsOperations`
+  - Added model `RegulatoryComplianceControlsOperations`
+  - Added model `RegulatoryComplianceStandardsOperations`
+  - Added model `SecureScoreControlDefinitionsOperations`
+  - Added model `SecureScoreControlsOperations`
+  - Added model `SecureScoresOperations`
+  - Added model `SecurityConnectorApplicationOperations`
+  - Added model `SecurityConnectorApplicationsOperations`
+  - Added model `SecurityConnectorsOperations`
+  - Added model `SecurityContactsOperations`
+  - Added model `SecurityOperatorsOperations`
+  - Added model `SecuritySolutionsOperations`
+  - Added model `SecuritySolutionsReferenceDataOperations`
+  - Added model `SecurityStandardsOperations`
+  - Added model `SensitivitySettingsOperations`
+  - Added model `ServerVulnerabilityAssessmentOperations`
+  - Added model `ServerVulnerabilityAssessmentsSettingsOperations`
+  - Added model `SettingsOperations`
+  - Added model `SoftwareInventoriesOperations`
+  - Added model `SqlVulnerabilityAssessmentBaselineRulesOperations`
+  - Added model `SqlVulnerabilityAssessmentScanResultsOperations`
+  - Added model `SqlVulnerabilityAssessmentScansOperations`
+  - Added model `StandardAssignmentsOperations`
+  - Added model `SubAssessmentsOperations`
+  - Added model `TasksOperations`
+  - Added model `TopologyOperations`
+  - Added model `WorkspaceSettingsOperations`
+
 ## 7.0.0 (2024-05-20)
 
 ### Features Added
