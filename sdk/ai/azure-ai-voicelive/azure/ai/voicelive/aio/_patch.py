@@ -412,10 +412,10 @@ class AsyncVoiceLiveConnection:
         """
         try:
             msg = await self._connection.receive()
-            
+
             if msg.type == aiohttp.WSMsgType.TEXT:
                 log.debug(f"Received websocket text message: %s", msg.data)
-                return msg.data.encode('utf-8')
+                return msg.data.encode("utf-8")
             elif msg.type == aiohttp.WSMsgType.BINARY:
                 log.debug(f"Received websocket binary message: %s", msg.data)
                 return msg.data
@@ -467,7 +467,7 @@ class AsyncVoiceLiveConnection:
             await self._connection.close(code=code, message=reason)
         except Exception as e:
             log.warning(f"Error closing connection: {e}")
-        
+
         try:
             await self._session.close()
         except Exception as e:
@@ -520,7 +520,7 @@ class AsyncVoiceLiveConnectionManager:
         :rtype: Dict[str, Any]
         """
         mapped_options = {}
-        
+
         # Map options with different names
         if "max_size" in options:
             mapped_options["max_msg_size"] = options.pop("max_size")
@@ -528,16 +528,16 @@ class AsyncVoiceLiveConnectionManager:
             mapped_options["timeout"] = options.pop("close_timeout")
         if "ping_interval" in options:
             mapped_options["heartbeat"] = options.pop("ping_interval")
-            
+
         # Add compatible options that can be used directly
         if "compression" in options:
             mapped_options["compress"] = options.pop("compression")
-            
+
         # Add any remaining options that might be directly compatible
         for key, value in options.items():
             if key not in ("ping_timeout", "open_timeout", "max_queue"):  # Skip options that aren't supported
                 mapped_options[key] = value
-                
+
         return mapped_options
 
     async def __aenter__(self) -> AsyncVoiceLiveConnection:
@@ -561,12 +561,10 @@ class AsyncVoiceLiveConnectionManager:
 
             # Create session and connection
             self.__session = aiohttp.ClientSession()
-            
+
             try:
                 self.__connection_obj = await self.__session.ws_connect(
-                    str(url),
-                    headers=headers,
-                    **self.__websocket_connection_options
+                    str(url), headers=headers, **self.__websocket_connection_options
                 )
 
                 self.__connection = AsyncVoiceLiveConnection(self.__session, self.__connection_obj)

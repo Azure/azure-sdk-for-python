@@ -33,7 +33,7 @@ class TestVoiceLiveWebSocket(unittest.TestCase):
         # Mock the asyncio parts
         with patch("asyncio.new_event_loop") as mock_loop:
             mock_loop.return_value.run_until_complete.return_value = (MagicMock(), mock_connection)
-            
+
             # Test creating a connection
             with self.client.connect(model="test-model") as connection:
                 # Verify URL was created correctly
@@ -68,7 +68,7 @@ class TestVoiceLiveWebSocket(unittest.TestCase):
         # Mock the asyncio parts
         with patch("asyncio.new_event_loop") as mock_loop:
             mock_loop.return_value.run_until_complete.return_value = (MagicMock(), mock_connection)
-            
+
             # Use the options
             with self.client.connect(model="test-model", websocket_connection_options=ws_options) as connection:
                 # Verify options were passed to connect

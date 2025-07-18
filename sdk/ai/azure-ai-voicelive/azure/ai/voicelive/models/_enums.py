@@ -122,7 +122,6 @@ class VoiceLiveServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SESSION_AVATAR_CONNECTING = "session.avatar.connecting"
     SESSION_CREATED = "session.created"
     SESSION_UPDATED = "session.updated"
-    CONVERSATION_CREATED = "conversation.created"
     CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_COMPLETED = "conversation.item.input_audio_transcription.completed"
     CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_DELTA = "conversation.item.input_audio_transcription.delta"
     CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_FAILED = "conversation.item.input_audio_transcription.failed"
