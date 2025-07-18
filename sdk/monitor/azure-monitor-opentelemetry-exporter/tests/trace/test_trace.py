@@ -805,7 +805,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.type, "GenAI | az.ai.inference")
     
-    def test_span_to_envelope_client_mutiple_types_with_gen_ai(self):
+    def test_span_to_envelope_client_multiple_types_with_gen_ai(self):
         exporter = self._exporter
         start_time = 1575494316027613500
         end_time = start_time + 1001000000
