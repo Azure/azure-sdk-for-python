@@ -19,6 +19,7 @@ from azure.confidentialledger.aio._operations._operations import (
 )
 from azure.confidentialledger.aio._operations._operations import ClsType, JSON
 from azure.confidentialledger._operations._patch import BaseStatePollingMethod
+import azure.confidentialledger.models as _models
 
 __all__: List[str] = [
     "ConfidentialLedgerClientOperationsMixin"
@@ -74,18 +75,23 @@ class AsyncStatePollingMethod(BaseStatePollingMethod, AsyncPollingMethod):
 class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
     async def begin_get_ledger_entry(
         self, transaction_id: str, *, collection_id: Optional[str] = None, **kwargs: Any
-    ) -> AsyncLROPoller[JSON]:
+    ) -> AsyncLROPoller[_models.LedgerQueryResult]:
         """Returns a poller to fetch the ledger entry at the specified transaction id.
 
         A collection id may optionally be specified to indicate the collection from which to fetch
         the value.
 
+        To return older ledger entries, the relevant sections of the ledger must be
+        read from disk and validated. To prevent blocking within the enclave, the
+        response will indicate whether the entry is ready and part of the response, or
+        if the loading is still ongoing.
+
         :param transaction_id: Identifies a write transaction. Required.
         :type transaction_id: str
         :keyword collection_id: The collection id. Default value is None.
         :paramtype collection_id: str
-        :return: An instance of LROPoller that returns a JSON object for the ledger entry.
-        :rtype: ~azure.core.polling.LROPoller[JSON]
+        :return: An instance of AsyncLROPoller that returns a LedgerQueryResult for the ledger entry.
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.confidentialledger.models.LedgerQueryResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
@@ -106,14 +112,14 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
             polling_method = polling
         return AsyncLROPoller(self._client, initial_response, lambda x: x, polling_method)
 
-    async def begin_get_receipt(self, transaction_id: str, **kwargs: Any) -> AsyncLROPoller[JSON]:
+    async def begin_get_receipt(self, transaction_id: str, **kwargs: Any) -> AsyncLROPoller[_models.TransactionReceipt]:
         """Returns a poller for getting a receipt certifying ledger contents at a particular
         transaction id.
 
         :param transaction_id: Identifies a write transaction. Required.
         :type transaction_id: str
-        :return: An instance of LROPoller that returns a JSON object for the receipt.
-        :rtype: ~azure.core.polling.LROPoller[JSON]
+        :return: An instance of AsyncLROPoller that returns a TransactionReceipt for the receipt.
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.confidentialledger.models.TransactionReceipt]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
@@ -136,23 +142,28 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
 
     async def begin_create_ledger_entry(
         self,
-        entry: Union[JSON, IO],
+        entry: _models.LedgerEntry,
         *,
         collection_id: Optional[str] = None,
-        **kwargs: Any,
-    ) -> AsyncLROPoller[JSON]:
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.LedgerWriteResult]:
         """Writes a ledger entry and returns a poller to wait for it to be durably committed. The
         poller returns the result for the initial call to create the ledger entry.
 
         A collection id may optionally be specified.
 
-        :param entry: Ledger entry.
-        :type entry: Union[JSON, IO]
+        :param entry: Ledger entry. Required.
+        :type entry: ~azure.confidentialledger.models.LedgerEntry
         :keyword collection_id: The collection id. Default value is None.
         :paramtype collection_id: str
-        :return: An instance of LROPoller that returns a JSON object
-        :rtype: ~azure.core.polling.LROPoller[JSON]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :keyword tags: Comma separated tags. Default value is None.
+        :paramtype tags: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AsyncLROPoller[LedgerWriteResult]. The LedgerWriteResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.confidentialledger.models.LedgerWriteResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         # Pop arguments that are unexpected in the pipeline.
@@ -195,19 +206,15 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
             kwargs["_create_ledger_entry_response"] = post_result
         return await self.begin_wait_for_commit(transaction_id, **kwargs)
 
-    async def begin_wait_for_commit(
-        self,
-        transaction_id,  # type: str
-        **kwargs,  # type: Any
-    ) -> AsyncLROPoller[JSON]:
+    async def begin_wait_for_commit(self, transaction_id: str, **kwargs: Any) -> AsyncLROPoller[_models.TransactionStatus]:
         """Creates a poller that queries the state of the specified transaction until it is
         Committed, a state that indicates the transaction is durably stored in the Confidential
         Ledger.
 
         :param transaction_id: Identifies a write transaction. Required.
         :type transaction_id: str
-        :return: An instance of LROPoller returning a JSON object describing the transaction status.
-        :rtype: ~azure.core.polling.LROPoller[JSON]
+        :return: An instance of AsyncLROPoller returning a TransactionStatus object describing the transaction status.
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.confidentialledger.models.TransactionStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
@@ -248,25 +255,25 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
 
     async def create_ledger_entry(
         self,
-        entry: Union[JSON, IO],
+        entry: Union[_models.LedgerEntry, JSON, IO[bytes]],
         *,
         collection_id: Optional[str] = None,
-        **kwargs: Any,
-    ) -> JSON:
+        **kwargs: Any
+    ) -> _models.LedgerWriteResult:
         """Writes a ledger entry.
-
-        The result is the expected JSON response with an additional field
-        'transactionId' which represents the transaction identifier for this write operation.
 
         A collection id may optionally be specified.
 
-        :param entry: Ledger entry.
-        :type entry: Union[JSON, IO]
+        :param entry: Ledger entry. Is one of the following types: LedgerEntry, JSON, IO[bytes]
+         Required.
+        :type entry: ~azure.confidentialledger.models.LedgerEntry or JSON or IO[bytes]
         :keyword collection_id: The collection id. Default value is None.
         :paramtype collection_id: str
-        :return: JSON object
-        :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :keyword tags: Comma separated tags. Default value is None.
+        :paramtype tags: str
+        :return: LedgerWriteResult. The LedgerWriteResult is compatible with MutableMapping
+        :rtype: ~azure.confidentialledger.models.LedgerWriteResult
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
@@ -287,7 +294,7 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
             "cls",
             lambda _, json_response, headers: {
                 **json_response,
-                "transactionId": headers["x-ms-ccf-transaction-id"],
+                "transactionId": headers.get("x-ms-ccf-transaction-id") if headers else None,
             },
         )
         return await super().create_ledger_entry(entry, collection_id=collection_id, **kwargs)
