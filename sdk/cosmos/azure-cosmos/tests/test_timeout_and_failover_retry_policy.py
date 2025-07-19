@@ -11,6 +11,7 @@ import azure.cosmos.exceptions as exceptions
 import test_config
 from azure.cosmos import _retry_utility, PartitionKey
 from azure.cosmos._location_cache import RegionalRoutingContext, EndpointOperationType
+from azure.cosmos._request_object import RequestObject
 
 COLLECTION = "created_collection"
 @pytest.fixture(scope="class")
@@ -150,14 +151,21 @@ class TestTimeoutRetryPolicy:
             self.status_code = status_code
 
         def __call__(self, func, *args, **kwargs):
-            if self.counter != 0 and self.counter >= self.num_exceptions:
-                return self.org_func(func, *args, **kwargs)
-            else:
-                self.counter += 1
-                raise exceptions.CosmosHttpResponseError(
-                    status_code=self.status_code,
-                    message="Some Exception",
-                    response=test_config.FakeResponse({}))
+            if args and isinstance(args[1], RequestObject):
+                request_obj = args[1]
+                if request_obj.resource_type == "docs" and request_obj.operation_type == "Query" or \
+                        request_obj.resource_type == "pkranges" and request_obj.operation_type == "ReadFeed":
+                    # Ignore query or ReadFeed requests
+                    return self.org_func(func, *args, **kwargs)
+                if self.counter != 0 and self.counter >= self.num_exceptions:
+                    return self.org_func(func, *args, **kwargs)
+                else:
+                    self.counter += 1
+                    raise exceptions.CosmosHttpResponseError(
+                        status_code=self.status_code,
+                        message="Some Exception",
+                        response=test_config.FakeResponse({}))
+            return self.org_func(func, *args, **kwargs)
 
     class MockExecuteFunctionCrossRegion(object):
         def __init__(self, org_func, status_code, location_endpoint_to_route):
@@ -167,16 +175,23 @@ class TestTimeoutRetryPolicy:
             self.location_endpoint_to_route = location_endpoint_to_route
 
         def __call__(self, func, *args, **kwargs):
-            if self.counter == 1:
-                assert args[1].location_endpoint_to_route == self.location_endpoint_to_route
-                args[1].location_endpoint_to_route = test_config.TestConfig.host
-                return self.org_func(func, *args, **kwargs)
-            else:
-                self.counter += 1
-                raise exceptions.CosmosHttpResponseError(
-                    status_code=self.status_code,
-                    message="Some Exception",
-                    response=test_config.FakeResponse({}))
+            if args and isinstance(args[1], RequestObject):
+                request_obj = args[1]
+                if request_obj.resource_type == "docs" and request_obj.operation_type == "Query" or \
+                        request_obj.resource_type == "pkranges" and request_obj.operation_type == "ReadFeed":
+                    # Ignore query or ReadFeed requests
+                    return self.org_func(func, *args, **kwargs)
+                if self.counter == 1:
+                    assert args[1].location_endpoint_to_route == self.location_endpoint_to_route
+                    args[1].location_endpoint_to_route = test_config.TestConfig.host
+                    return self.org_func(func, *args, **kwargs)
+                else:
+                    self.counter += 1
+                    raise exceptions.CosmosHttpResponseError(
+                        status_code=self.status_code,
+                        message="Some Exception",
+                        response=test_config.FakeResponse({}))
+            return self.org_func(func, *args, **kwargs)
 
 
 

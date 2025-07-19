@@ -8,13 +8,15 @@
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed session container compound session token logic. The SDK will now only send the relevant partition-local session tokens for each read request, as opposed to the entire compound session token for the container. See [PR 40366](https://github.com/Azure/azure-sdk-for-python/pull/40366).
+* Write requests for single-write region accounts will no longer send session tokens when using session consistency. See [PR 40366](https://github.com/Azure/azure-sdk-for-python/pull/40366).
 
 #### Other Changes
 
 ### 4.14.0b1 (2025-07-14)
 
 #### Features Added
-* Added option to enable automatic retries for write operations. See [PR 41272](https://github.com/Azure/azure-sdk-for-python/pull/41272).
+* Added option to enable automatic retries for write document operations. See [PR 41272](https://github.com/Azure/azure-sdk-for-python/pull/41272).
 
 #### Breaking Changes
 * Adds cross region retries when no preferred locations are set. This is only a breaking change for customers using bounded staleness consistency. See [PR 39714](https://github.com/Azure/azure-sdk-for-python/pull/39714)
