@@ -152,7 +152,6 @@ class TestSamples:
             ("samples\\connections\\sample_connections.py", "", "connection1", ""),
             ("samples\\deployments\\sample_deployments.py", "DeepSeek-V3", "", ""),
             ("samples\\datasets\\sample_datasets.py", "", "balapvbyostoragecanary", "samples\\datasets\\data_folder"),
-            # ("samples\\evaluation\\sample_evaluations.py", "", "", ""),
             ("samples\\indexes\\sample_indexes.py", "", "", ""),
             ("samples\\inference\\sample_chat_completions_with_azure_ai_inference_client.py", "Phi-4", "", ""),
             (
@@ -163,18 +162,6 @@ class TestSamples:
             ),
             (
                 "samples\\inference\\sample_chat_completions_with_azure_ai_inference_client_and_console_tracing.py",
-                "Phi-4",
-                "",
-                "",
-            ),
-            (
-                "samples\\inference\\sample_chat_completions_with_azure_ai_inference_client_and_prompty_file.py",
-                "Phi-4",
-                "",
-                "samples\\inference",
-            ),
-            (
-                "samples\\inference\\sample_chat_completions_with_azure_ai_inference_client_and_prompt_string.py",
                 "Phi-4",
                 "",
                 "",
@@ -242,7 +229,6 @@ class TestSamples:
                 "samples\\datasets\\data_folder",
             ),
             ("samples\\deployments\\sample_deployments_async.py", "DeepSeek-V3", "", ""),
-            # ("samples\\evaluation\\sample_evaluations_async.py", "", "", ""),
             ("samples\\indexes\\sample_indexes_async.py", "", "", ""),
             (
                 "samples\\inference\\async_samples\\sample_chat_completions_with_azure_ai_inference_client_async.py",

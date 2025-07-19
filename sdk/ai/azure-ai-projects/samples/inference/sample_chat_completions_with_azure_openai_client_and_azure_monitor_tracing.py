@@ -5,9 +5,9 @@
 
 """
 DESCRIPTION:
-    Given an AIProjectClient, this sample demonstrates how to get an authenticated 
+    Given an AIProjectClient, this sample demonstrates how to get an authenticated
     AzureOpenAI client from the openai package, and perform one chat completion operation.
-    The client is already instrumented to upload traces to Azure Monitor. View the results 
+    The client is already instrumented to upload traces to Azure Monitor. View the results
     in the "Tracing" tab in your Azure AI Foundry project page.
 
 
@@ -54,7 +54,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
 
         configure_azure_monitor(connection_string=application_insights_connection_string)
 
-        with project_client.inference.get_azure_openai_client(api_version="2024-10-21") as client:
+        with project_client.get_openai_client(api_version="2024-10-21") as client:
 
             response = client.chat.completions.create(
                 model=model_deployment_name,

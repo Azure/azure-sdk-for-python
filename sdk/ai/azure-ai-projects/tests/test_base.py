@@ -51,7 +51,8 @@ class TestBase(AzureRecordedTestCase):
     }
 
     test_inference_params = {
-        "connection_name": "connection1",
+        "connection_name_api_key_auth": "connection1",
+        "connection_name_entra_id_auth": "connection2",
         "model_deployment_name": "gpt-4o",
         "aoai_api_version": "2024-10-21",
     }
