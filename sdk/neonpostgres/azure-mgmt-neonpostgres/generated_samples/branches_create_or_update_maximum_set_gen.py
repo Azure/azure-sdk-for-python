@@ -32,9 +32,9 @@ def main():
 
     response = client.branches.begin_create_or_update(
         resource_group_name="rgneon",
-        organization_name="test-org",
-        project_name="test-entity",
-        branch_name="test-entity",
+        organization_name="contoso-org",
+        project_name="sample-resource",
+        branch_name="sample-resource",
         resource={
             "properties": {
                 "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
