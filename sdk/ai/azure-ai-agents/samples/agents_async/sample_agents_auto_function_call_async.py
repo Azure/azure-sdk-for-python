@@ -25,7 +25,7 @@ USAGE:
 
 import os, sys
 from azure.ai.projects.aio import AIProjectClient
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.ai.agents.models import AsyncFunctionTool, AsyncToolSet
 
 from utils.user_async_functions import user_async_functions

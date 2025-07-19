@@ -111,7 +111,7 @@ async def main():
                 last_text = msg.text_messages[-1].text.value
                 for annotation in msg.text_messages[-1].text.annotations:
                     citation = (
-                        file_name if annotation.file_citation.file_id == file.id else annotation.file_citation.file_id
+                        file_name if annotation["file_citation"]["file_id"] == file.id else annotation["file_citation"]["file_id"]
                     )
                     last_text = last_text.replace(annotation.text, f" [{citation}]")
                 print(f"{msg.role}: {last_text}")
