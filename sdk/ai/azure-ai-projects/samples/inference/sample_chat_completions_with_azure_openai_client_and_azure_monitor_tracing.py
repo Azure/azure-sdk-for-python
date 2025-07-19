@@ -5,9 +5,9 @@
 
 """
 DESCRIPTION:
-    Given an AIProjectClient, this sample demonstrates how to get an authenticated 
+    Given an AIProjectClient, this sample demonstrates how to get an authenticated
     AzureOpenAI client from the openai package, and perform one chat completion operation.
-    The client is already instrumented to upload traces to Azure Monitor. View the results 
+    The client is already instrumented to upload traces to Azure Monitor. View the results
     in the "Tracing" tab in your Azure AI Foundry project page.
 
 

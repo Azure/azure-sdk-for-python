@@ -10,6 +10,7 @@ from test_base import TestBase, servicePreparer
 from devtools_testutils import is_live_and_not_recording
 from devtools_testutils.aio import recorded_by_proxy_async
 
+
 # To run all tests in this class, use the following command in the \sdk\ai\azure-ai-projects folder:
 # cls & pytest tests\test_inference_async.py -s
 class TestInferenceAsync(TestBase):
@@ -100,7 +101,6 @@ class TestInferenceAsync(TestBase):
                 print("Response message: ", response.choices[0].message.content)
                 contains = ["5280", "5,280"]
                 assert any(item in response.choices[0].message.content for item in contains)
-
 
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
     # cls & pytest tests\test_inference_async.py::TestInferenceAsync::test_inference_on_entra_id_auth_connection_async -s

@@ -9,8 +9,8 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import os
 import logging
 from typing import List, Any, Optional, TYPE_CHECKING
-from azure.core.tracing.decorator_async import distributed_trace_async
 from typing_extensions import Self
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.ai.agents.aio import AgentsClient
 from ._client import AIProjectClient as AIProjectClientGenerated
@@ -33,7 +33,6 @@ _console_logging_enabled: bool = os.environ.get("ENABLE_AZURE_AI_PROJECTS_CONSOL
 )
 if _console_logging_enabled:
     import sys
-    import logging
 
     azure_logger = logging.getLogger("azure")
     azure_logger.setLevel(logging.DEBUG)
@@ -142,10 +141,8 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
             ) from e
 
         if connection_name:
-            connection = (
-                await self.connections._get_with_credentials(  # pylint: disable=protected-access
-                    name=connection_name, **kwargs
-                )
+            connection = await self.connections._get_with_credentials(  # pylint: disable=protected-access
+                name=connection_name, **kwargs
             )
             if connection.type != ConnectionType.AZURE_OPEN_AI:
                 raise ValueError(f"Connection `{connection_name}` is not of type Azure OpenAI.")
@@ -155,7 +152,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
             if isinstance(connection.credentials, ApiKeyCredentials):
 
                 logger.debug(
-                    "[get_openai_client] Creating AsyncOpenAI client using API key authentication, on connection `%s`, endpoint `%s`, api_version `%s`",
+                    "[get_openai_client] Creating AsyncOpenAI client using API key authentication, on connection `%s`, endpoint `%s`, api_version `%s`",  # pylint: disable=line-too-long
                     connection_name,
                     azure_endpoint,
                     api_version,
@@ -166,7 +163,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
             elif isinstance(connection.credentials, EntraIDCredentials):
 
                 logger.debug(
-                    "[get_openai_client] Creating AsyncOpenAI using Entra ID authentication, on connection `%s`, endpoint `%s`, api_version `%s`",
+                    "[get_openai_client] Creating AsyncOpenAI using Entra ID authentication, on connection `%s`, endpoint `%s`, api_version `%s`",  # pylint: disable=line-too-long
                     connection_name,
                     azure_endpoint,
                     api_version,
@@ -201,12 +198,10 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
                 "azure.identity package not installed. Please install it using 'pip install azure.identity'"
             ) from e
 
-        azure_endpoint = _get_aoai_inference_url(
-            self._config.endpoint  # pylint: disable=protected-access
-        )
+        azure_endpoint = _get_aoai_inference_url(self._config.endpoint)  # pylint: disable=protected-access
 
         logger.debug(
-            "[get_openai_client] Creating AzureOpenAI client using Entra ID authentication, on parent AI Services resource, endpoint `%s`, api_version `%s`",
+            "[get_openai_client] Creating AzureOpenAI client using Entra ID authentication, on parent AI Services resource, endpoint `%s`, api_version `%s`",  # pylint: disable=line-too-long
             azure_endpoint,
             api_version,
         )

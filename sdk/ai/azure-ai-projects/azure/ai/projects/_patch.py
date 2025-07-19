@@ -8,9 +8,9 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import os
 import logging
+from urllib.parse import urlparse
 from typing import List, Any, Optional, TYPE_CHECKING
 from typing_extensions import Self
-from urllib.parse import urlparse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import TokenCredential
 from azure.ai.agents import AgentsClient
@@ -33,7 +33,6 @@ _console_logging_enabled: bool = os.environ.get("ENABLE_AZURE_AI_PROJECTS_CONSOL
 )
 if _console_logging_enabled:
     import sys
-    import logging
 
     azure_logger = logging.getLogger("azure")
     azure_logger.setLevel(logging.DEBUG)
@@ -189,7 +188,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
             if isinstance(connection.credentials, ApiKeyCredentials):
 
                 logger.debug(
-                    "[get_openai_client] Creating OpenAI client using API key authentication, on connection `%s`, endpoint `%s`, api_version `%s`",
+                    "[get_openai_client] Creating OpenAI client using API key authentication, on connection `%s`, endpoint `%s`, api_version `%s`",  # pylint: disable=line-too-long
                     connection_name,
                     azure_endpoint,
                     api_version,
@@ -200,7 +199,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
             elif isinstance(connection.credentials, EntraIDCredentials):
 
                 logger.debug(
-                    "[get_openai_client] Creating OpenAI using Entra ID authentication, on connection `%s`, endpoint `%s`, api_version `%s`",
+                    "[get_openai_client] Creating OpenAI using Entra ID authentication, on connection `%s`, endpoint `%s`, api_version `%s`",  # pylint: disable=line-too-long
                     connection_name,
                     azure_endpoint,
                     api_version,
@@ -235,12 +234,10 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
                 "azure.identity package not installed. Please install it using 'pip install azure.identity'"
             ) from e
 
-        azure_endpoint = _get_aoai_inference_url(
-            self._config.endpoint  # pylint: disable=protected-access
-        )
+        azure_endpoint = _get_aoai_inference_url(self._config.endpoint)  # pylint: disable=protected-access
 
         logger.debug(
-            "[get_openai_client] Creating OpenAI client using Entra ID authentication, on parent AI Services resource, endpoint `%s`, api_version `%s`",
+            "[get_openai_client] Creating OpenAI client using Entra ID authentication, on parent AI Services resource, endpoint `%s`, api_version `%s`",  # pylint: disable=line-too-long
             azure_endpoint,
             api_version,
         )

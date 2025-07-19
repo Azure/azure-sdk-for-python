@@ -10,6 +10,7 @@ from azure.ai.projects import AIProjectClient
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, is_live_and_not_recording
 
+
 # To run all tests in this class, use the following command in the \sdk\ai\azure-ai-projects folder:
 # cls & pytest tests\test_inference.py -s
 class TestInference(TestBase):
@@ -81,9 +82,7 @@ class TestInference(TestBase):
             print(
                 "[test_inference_on_api_key_auth_connection] Get an authenticated Azure OpenAI client for a connection AOAI service, and perform a chat completion operation."
             )
-            with project_client.get_openai_client(
-                api_version=api_version, connection_name=connection_name
-            ) as client:
+            with project_client.get_openai_client(api_version=api_version, connection_name=connection_name) as client:
 
                 response = client.chat.completions.create(
                     model=model_deployment_name,
@@ -100,7 +99,6 @@ class TestInference(TestBase):
                 print("Response message: ", response.choices[0].message.content)
                 contains = ["5280", "5,280"]
                 assert any(item in response.choices[0].message.content for item in contains)
-
 
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
     # cls & pytest tests\test_inference.py::TestInference::test_inference_on_entra_id_auth_connection -s
@@ -127,9 +125,7 @@ class TestInference(TestBase):
             print(
                 "[test_inference_on_entra_id_auth_connection] Get an authenticated Azure OpenAI client for a connection AOAI service, and perform a chat completion operation."
             )
-            with project_client.get_openai_client(
-                api_version=api_version, connection_name=connection_name
-            ) as client:
+            with project_client.get_openai_client(api_version=api_version, connection_name=connection_name) as client:
 
                 response = client.chat.completions.create(
                     model=model_deployment_name,

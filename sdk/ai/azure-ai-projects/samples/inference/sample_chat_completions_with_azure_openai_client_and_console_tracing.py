@@ -5,7 +5,7 @@
 
 """
 DESCRIPTION:
-    Given an AIProjectClient, this sample demonstrates how to get an authenticated 
+    Given an AIProjectClient, this sample demonstrates how to get an authenticated
     AzureOpenAI client from the openai package, and perform one chat completion operation.
     The client is already instrumented with console OpenTelemetry tracing.
 
