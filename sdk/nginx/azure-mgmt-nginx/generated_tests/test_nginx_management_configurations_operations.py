@@ -20,11 +20,11 @@ class TestNginxManagementConfigurationsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_configurations_list(self, resource_group):
-        response = self.client.configurations.list(
+    def test_configurations_list_by_deployment(self, resource_group):
+        response = self.client.configurations.list_by_deployment(
             resource_group_name=resource_group.name,
-            deployment_name="str",
-            api_version="2024-11-01-preview",
+            nginx_deployment_name="str",
+            api_version="2025-03-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -35,9 +35,9 @@ class TestNginxManagementConfigurationsOperations(AzureMgmtRecordedTestCase):
     def test_configurations_get(self, resource_group):
         response = self.client.configurations.get(
             resource_group_name=resource_group.name,
-            deployment_name="str",
+            nginx_deployment_name="str",
             configuration_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -45,13 +45,54 @@ class TestNginxManagementConfigurationsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_configurations_begin_create_or_update(self, resource_group):
-        response = self.client.configurations.begin_create_or_update(
+    def test_configurations_create_or_update(self, resource_group):
+        response = self.client.configurations.create_or_update(
             resource_group_name=resource_group.name,
-            deployment_name="str",
+            nginx_deployment_name="str",
             configuration_name="str",
-            api_version="2024-11-01-preview",
-        ).result()  # call '.result()' to poll until service return final result
+            resource={
+                "id": "str",
+                "name": "str",
+                "properties": {
+                    "files": [{"content": "str", "virtualPath": "str"}],
+                    "package": {"data": "str", "protectedFiles": ["str"]},
+                    "protectedFiles": [{"content": "str", "contentHash": "str", "virtualPath": "str"}],
+                    "provisioningState": "str",
+                    "rootFile": "str",
+                },
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
+                "type": "str",
+            },
+            api_version="2025-03-01-preview",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_configurations_update(self, resource_group):
+        response = self.client.configurations.update(
+            resource_group_name=resource_group.name,
+            nginx_deployment_name="str",
+            configuration_name="str",
+            properties={
+                "properties": {
+                    "files": [{"content": "str", "virtualPath": "str"}],
+                    "package": {"data": "str", "protectedFiles": ["str"]},
+                    "protectedFiles": [{"content": "str", "contentHash": "str", "virtualPath": "str"}],
+                    "rootFile": "str",
+                }
+            },
+            api_version="2025-03-01-preview",
+        )
 
         # please add some check logic here by yourself
         # ...
@@ -61,9 +102,9 @@ class TestNginxManagementConfigurationsOperations(AzureMgmtRecordedTestCase):
     def test_configurations_begin_delete(self, resource_group):
         response = self.client.configurations.begin_delete(
             resource_group_name=resource_group.name,
-            deployment_name="str",
+            nginx_deployment_name="str",
             configuration_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2025-03-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -71,12 +112,20 @@ class TestNginxManagementConfigurationsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_configurations_analysis(self, resource_group):
-        response = self.client.configurations.analysis(
+    def test_configurations_analyze(self, resource_group):
+        response = self.client.configurations.analyze(
             resource_group_name=resource_group.name,
-            deployment_name="str",
+            nginx_deployment_name="str",
             configuration_name="str",
-            api_version="2024-11-01-preview",
+            body={
+                "config": {
+                    "files": [{"content": "str", "virtualPath": "str"}],
+                    "package": {"data": "str", "protectedFiles": ["str"]},
+                    "protectedFiles": [{"content": "str", "contentHash": "str", "virtualPath": "str"}],
+                    "rootFile": "str",
+                }
+            },
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself

@@ -10,11 +10,19 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs."""
+
+    INTERNAL = "Internal"
+
+
 class ActivationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The activation state of the WAF. Use 'Enabled' to enable the WAF and 'Disabled' to disable it."""
+    """The activation state of the WAF."""
 
     ENABLED = "Enabled"
+    """WAF is enabled."""
     DISABLED = "Disabled"
+    """WAF is disabled."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -26,38 +34,87 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KEY = "Key"
 
 
-class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """IdentityType."""
-
-    SYSTEM_ASSIGNED = "SystemAssigned"
-    USER_ASSIGNED = "UserAssigned"
-    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
-    NONE = "None"
-
-
-class Level(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Warning or Info."""
+class DiagnosticLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Diagnostic level indicating the importance of the diagnostic."""
 
     INFO = "Info"
+    """Information level diagnostic."""
     WARNING = "Warning"
+    """Warning level diagnostic."""
+
+
+class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of managed identity."""
+
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    """System assigned managed identity."""
+    USER_ASSIGNED = "UserAssigned"
+    """User assigned managed identity."""
+    SYSTEM_AND_USER_ASSIGNED = "SystemAssigned, UserAssigned"
+    """Both system and user assigned managed identities."""
+    NONE = "None"
+    """No managed identity."""
+
+
+class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of managed service identity (where both SystemAssigned and UserAssigned types are
+    allowed).
+    """
+
+    NONE = "None"
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
 
 
 class NginxPrivateIPAllocationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """NginxPrivateIPAllocationMethod."""
+    """The allocation method for a private IP address."""
 
     STATIC = "Static"
+    """Static private IP allocation method."""
     DYNAMIC = "Dynamic"
+    """Dynamic private IP allocation method."""
+
+
+class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
+    logs UX. Default value is "user,system".
+    """
+
+    USER = "user"
+    SYSTEM = "system"
+    USER_SYSTEM = "user,system"
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ProvisioningState."""
+    """The provisioning state of a resource."""
 
     ACCEPTED = "Accepted"
+    """The resource has been accepted."""
     CREATING = "Creating"
+    """The resource is being created."""
     UPDATING = "Updating"
+    """The resource is being updated."""
     DELETING = "Deleting"
+    """The resource is being deleted."""
     SUCCEEDED = "Succeeded"
+    """The resource has been successfully provisioned."""
     FAILED = "Failed"
+    """The resource provisioning operation failed."""
     CANCELED = "Canceled"
+    """The resource provisioning was canceled."""
     DELETED = "Deleted"
+    """The resource has been deleted."""
     NOT_SPECIFIED = "NotSpecified"
+    """Provisioning state was not specified."""
+
+
+class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """This field is required to be implemented by the Resource Provider if the service has more than
+    one tier, but is not required on a PUT.
+    """
+
+    FREE = "Free"
+    BASIC = "Basic"
+    STANDARD = "Standard"
+    PREMIUM = "Premium"
