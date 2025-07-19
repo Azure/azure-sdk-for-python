@@ -38,6 +38,12 @@ class TestMongoClusterMgmtMongoClustersOperations(AzureMgmtRecordedTestCase):
             resource={
                 "location": "str",
                 "id": "str",
+                "identity": {
+                    "type": "str",
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
                 "name": "str",
                 "properties": {
                     "administrator": {"password": "str", "userName": "str"},
@@ -48,6 +54,15 @@ class TestMongoClusterMgmtMongoClustersOperations(AzureMgmtRecordedTestCase):
                     "connectionString": "str",
                     "createMode": "str",
                     "dataApi": {"mode": "str"},
+                    "encryption": {
+                        "customerManagedKeyEncryption": {
+                            "keyEncryptionKeyIdentity": {
+                                "identityType": "str",
+                                "userAssignedIdentityResourceId": "str",
+                            },
+                            "keyEncryptionKeyUrl": "str",
+                        }
+                    },
                     "highAvailability": {"targetMode": "str"},
                     "infrastructureVersion": "str",
                     "previewFeatures": ["str"],
@@ -108,6 +123,12 @@ class TestMongoClusterMgmtMongoClustersOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             mongo_cluster_name="str",
             properties={
+                "identity": {
+                    "type": "str",
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
                 "properties": {
                     "administrator": {"password": "str", "userName": "str"},
                     "authConfig": {"allowedModes": ["str"]},

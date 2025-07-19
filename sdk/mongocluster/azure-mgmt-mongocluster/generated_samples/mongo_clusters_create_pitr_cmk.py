@@ -16,7 +16,7 @@ from azure.mgmt.mongocluster import MongoClusterMgmtClient
     pip install azure-identity
     pip install azure-mgmt-mongocluster
 # USAGE
-    python mongo_clusters_create_pitr.py
+    python mongo_clusters_create_pitr_cmk.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -35,9 +35,24 @@ def main():
         resource_group_name="TestResourceGroup",
         mongo_cluster_name="myMongoCluster",
         resource={
+            "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourceGroups/TestResourceGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myidentity": {}
+                },
+            },
             "location": "westus2",
             "properties": {
                 "createMode": "PointInTimeRestore",
+                "encryption": {
+                    "customerManagedKeyEncryption": {
+                        "keyEncryptionKeyIdentity": {
+                            "identityType": "UserAssignedIdentity",
+                            "userAssignedIdentityResourceId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourceGroups/TestResourceGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myidentity",
+                        },
+                        "keyEncryptionKeyUrl": "https://myVault.vault.azure.net/keys/myKey",
+                    }
+                },
                 "restoreParameters": {
                     "pointInTimeUTC": "2023-01-13T20:07:35Z",
                     "sourceResourceId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourceGroups/TestResourceGroup/providers/Microsoft.DocumentDB/mongoClusters/myOtherMongoCluster",
@@ -48,6 +63,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-07-01-preview/MongoClusters_CreatePITR.json
+# x-ms-original-file: 2025-07-01-preview/MongoClusters_CreatePITR_CMK.json
 if __name__ == "__main__":
     main()
