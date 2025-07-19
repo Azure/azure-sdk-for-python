@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -141,11 +142,7 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         return AsyncLROPoller(self._client, initial_response, lambda x: x, polling_method)
 
     async def begin_create_ledger_entry(
-        self,
-        entry: _models.LedgerEntry,
-        *,
-        collection_id: Optional[str] = None,
-        **kwargs: Any
+        self, entry: _models.LedgerEntry, *, collection_id: Optional[str] = None, **kwargs: Any
     ) -> AsyncLROPoller[_models.LedgerWriteResult]:
         """Writes a ledger entry and returns a poller to wait for it to be durably committed. The
         poller returns the result for the initial call to create the ledger entry.
@@ -206,7 +203,9 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
             kwargs["_create_ledger_entry_response"] = post_result
         return await self.begin_wait_for_commit(transaction_id, **kwargs)
 
-    async def begin_wait_for_commit(self, transaction_id: str, **kwargs: Any) -> AsyncLROPoller[_models.TransactionStatus]:
+    async def begin_wait_for_commit(
+        self, transaction_id: str, **kwargs: Any
+    ) -> AsyncLROPoller[_models.TransactionStatus]:
         """Creates a poller that queries the state of the specified transaction until it is
         Committed, a state that indicates the transaction is durably stored in the Confidential
         Ledger.
@@ -254,11 +253,7 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         return AsyncLROPoller(self._client, initial_response, deserialization_callback, polling_method)
 
     async def create_ledger_entry(
-        self,
-        entry: Union[_models.LedgerEntry, JSON, IO[bytes]],
-        *,
-        collection_id: Optional[str] = None,
-        **kwargs: Any
+        self, entry: Union[_models.LedgerEntry, JSON, IO[bytes]], *, collection_id: Optional[str] = None, **kwargs: Any
     ) -> _models.LedgerWriteResult:
         """Writes a ledger entry.
 

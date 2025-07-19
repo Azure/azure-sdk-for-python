@@ -125,21 +125,21 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
     ) -> LROPoller[_models.LedgerQueryResult]:
         """Returns a poller to fetch the ledger entry at the specified transaction id.
 
-        A collection id may optionally be specified to indicate the collection from which to fetch
-        the value.
+         A collection id may optionally be specified to indicate the collection from which to fetch
+         the value.
 
-       To return older ledger entries, the relevant sections of the ledger must be
-        read from disk and validated. To prevent blocking within the enclave, the
-        response will indicate whether the entry is ready and part of the response, or
-        if the loading is still ongoing.
+        To return older ledger entries, the relevant sections of the ledger must be
+         read from disk and validated. To prevent blocking within the enclave, the
+         response will indicate whether the entry is ready and part of the response, or
+         if the loading is still ongoing.
 
-        :param transaction_id: Identifies a write transaction. Required.
-        :type transaction_id: str
-        :keyword collection_id: The collection id. Default value is None.
-        :paramtype collection_id: str
-        :return: An instance of LROPoller that returns a LedgerQueryResult object for the ledger entry.
-        :rtype: ~azure.core.polling.LROPoller[~azure.confidentialledger.models.LedgerQueryResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
+         :param transaction_id: Identifies a write transaction. Required.
+         :type transaction_id: str
+         :keyword collection_id: The collection id. Default value is None.
+         :paramtype collection_id: str
+         :return: An instance of LROPoller that returns a LedgerQueryResult object for the ledger entry.
+         :rtype: ~azure.core.polling.LROPoller[~azure.confidentialledger.models.LedgerQueryResult]
+         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
         lro_delay = kwargs.pop("polling_interval", 0.5)
