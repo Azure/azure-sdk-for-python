@@ -20,27 +20,13 @@ class TestNginxManagementApiKeysOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_api_keys_create_or_update(self, resource_group):
-        response = self.client.api_keys.create_or_update(
+    def test_api_keys_list_by_deployment(self, resource_group):
+        response = self.client.api_keys.list_by_deployment(
             resource_group_name=resource_group.name,
-            deployment_name="str",
-            api_key_name="str",
-            api_version="2024-11-01-preview",
+            nginx_deployment_name="str",
+            api_version="2025-03-01-preview",
         )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_api_keys_delete(self, resource_group):
-        response = self.client.api_keys.delete(
-            resource_group_name=resource_group.name,
-            deployment_name="str",
-            api_key_name="str",
-            api_version="2024-11-01-preview",
-        )
-
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
@@ -49,9 +35,9 @@ class TestNginxManagementApiKeysOperations(AzureMgmtRecordedTestCase):
     def test_api_keys_get(self, resource_group):
         response = self.client.api_keys.get(
             resource_group_name=resource_group.name,
-            deployment_name="str",
+            nginx_deployment_name="str",
             api_key_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2025-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -59,12 +45,40 @@ class TestNginxManagementApiKeysOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_api_keys_list(self, resource_group):
-        response = self.client.api_keys.list(
+    def test_api_keys_create_or_update(self, resource_group):
+        response = self.client.api_keys.create_or_update(
             resource_group_name=resource_group.name,
-            deployment_name="str",
-            api_version="2024-11-01-preview",
+            nginx_deployment_name="str",
+            api_key_name="str",
+            resource={
+                "id": "str",
+                "name": "str",
+                "properties": {"endDateTime": "str", "secretText": "str"},
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
+                "type": "str",
+            },
+            api_version="2025-03-01-preview",
         )
-        result = [r for r in response]
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_api_keys_begin_delete(self, resource_group):
+        response = self.client.api_keys.begin_delete(
+            resource_group_name=resource_group.name,
+            nginx_deployment_name="str",
+            api_key_name="str",
+            api_version="2025-03-01-preview",
+        ).result()  # call '.result()' to poll until service return final result
+
         # please add some check logic here by yourself
         # ...
