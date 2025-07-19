@@ -48,13 +48,13 @@ from ._models import (  # type: ignore
     OperationErrorDetails,
     OperationErrorsResult,
     ProxyResource,
+    RecurringActionsResourceOperationResult,
     Resource,
     ResourceAttachRequest,
     ResourceDetachRequest,
     ResourceOperation,
     ResourceOperationDetails,
     ResourceOperationError,
-    ResourceOperationResponse,
     ResourcePatchRequest,
     ResourceProvisionPayload,
     ResourceResultSummary,
@@ -77,7 +77,6 @@ from ._models import (  # type: ignore
 
 from ._enums import (  # type: ignore
     ActionType,
-    ActionType,
     CreatedByType,
     DeadlineType,
     Language,
@@ -92,6 +91,7 @@ from ._enums import (  # type: ignore
     ResourceOperationType,
     ResourceProvisioningState,
     ResourceType,
+    ScheduledActionType,
     WeekDay,
 )
 from ._patch import __all__ as _patch_all
@@ -133,13 +133,13 @@ __all__ = [
     "OperationErrorDetails",
     "OperationErrorsResult",
     "ProxyResource",
+    "RecurringActionsResourceOperationResult",
     "Resource",
     "ResourceAttachRequest",
     "ResourceDetachRequest",
     "ResourceOperation",
     "ResourceOperationDetails",
     "ResourceOperationError",
-    "ResourceOperationResponse",
     "ResourcePatchRequest",
     "ResourceProvisionPayload",
     "ResourceResultSummary",
@@ -159,7 +159,6 @@ __all__ = [
     "SystemData",
     "TrackedResource",
     "ActionType",
-    "ActionType",
     "CreatedByType",
     "DeadlineType",
     "Language",
@@ -174,6 +173,7 @@ __all__ = [
     "ResourceOperationType",
     "ResourceProvisioningState",
     "ResourceType",
+    "ScheduledActionType",
     "WeekDay",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore

@@ -1383,6 +1383,42 @@ class OperationErrorsResult(_Model):
         super().__init__(*args, **kwargs)
 
 
+class RecurringActionsResourceOperationResult(_Model):
+    """The response from scheduled action resource requests, which contains the status of each
+    resource.
+
+    :ivar total_resources: The total number of resources operated on. Required.
+    :vartype total_resources: int
+    :ivar resources_statuses: The resource status of for each resource. Required.
+    :vartype resources_statuses: list[~azure.mgmt.computeschedule.models.ResourceStatus]
+    """
+
+    total_resources: int = rest_field(name="totalResources", visibility=["read", "create", "update", "delete", "query"])
+    """The total number of resources operated on. Required."""
+    resources_statuses: List["_models.ResourceStatus"] = rest_field(
+        name="resourcesStatuses", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource status of for each resource. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        total_resources: int,
+        resources_statuses: List["_models.ResourceStatus"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ResourceAttachRequest(_Model):
     """Request model to attach a list of scheduled action resources.
 
@@ -1619,42 +1655,6 @@ class ResourceOperationError(_Model):
         *,
         error_code: str,
         error_details: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ResourceOperationResponse(_Model):
-    """The response from scheduled action resource requests, which contains the status of each
-    resource.
-
-    :ivar total_resources: The total number of resources operated on. Required.
-    :vartype total_resources: int
-    :ivar resources_statuses: The resource status of for each resource. Required.
-    :vartype resources_statuses: list[~azure.mgmt.computeschedule.models.ResourceStatus]
-    """
-
-    total_resources: int = rest_field(name="totalResources", visibility=["read", "create", "update", "delete", "query"])
-    """The total number of resources operated on. Required."""
-    resources_statuses: List["_models.ResourceStatus"] = rest_field(
-        name="resourcesStatuses", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource status of for each resource. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        total_resources: int,
-        resources_statuses: List["_models.ResourceStatus"],
     ) -> None: ...
 
     @overload
@@ -2063,7 +2063,7 @@ class ScheduledActionProperties(_Model):
     :vartype resource_type: str or ~azure.mgmt.computeschedule.models.ResourceType
     :ivar action_type: The action the scheduled action should perform in the resources. Required.
      Known values are: "Start", "Deallocate", and "Hibernate".
-    :vartype action_type: str or ~azure.mgmt.computeschedule.models.ActionType
+    :vartype action_type: str or ~azure.mgmt.computeschedule.models.ScheduledActionType
     :ivar start_time: The time which the scheduled action is supposed to start running. Required.
     :vartype start_time: ~datetime.datetime
     :ivar end_time: The time when the scheduled action is supposed to stop scheduling.
@@ -2084,7 +2084,7 @@ class ScheduledActionProperties(_Model):
     )
     """The type of resource the scheduled action is targeting. Required. Known values are:
      \"VirtualMachine\" and \"VirtualMachineScaleSet\"."""
-    action_type: Union[str, "_models.ActionType"] = rest_field(
+    action_type: Union[str, "_models.ScheduledActionType"] = rest_field(
         name="actionType", visibility=["read", "create", "update", "delete", "query"]
     )
     """The action the scheduled action should perform in the resources. Required. Known values are:
@@ -2118,7 +2118,7 @@ class ScheduledActionProperties(_Model):
         self,
         *,
         resource_type: Union[str, "_models.ResourceType"],
-        action_type: Union[str, "_models.ActionType"],
+        action_type: Union[str, "_models.ScheduledActionType"],
         start_time: datetime.datetime,
         schedule: "_models.ScheduledActionsSchedule",
         notification_settings: List["_models.NotificationProperties"],
