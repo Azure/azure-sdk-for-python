@@ -1417,13 +1417,18 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
             error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
             raise HttpResponseError(response=response, model=error)
 
+        response_headers = {}
+        response_headers["x-ms-ccf-transaction-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-ccf-transaction-id")
+        )
+
         if _stream:
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(_models.LedgerWriteResult, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 

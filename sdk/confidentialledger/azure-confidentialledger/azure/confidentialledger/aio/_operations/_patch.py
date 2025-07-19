@@ -179,7 +179,7 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
             pipeline_response,
             {
                 **json_response,
-                "transactionId": headers["x-ms-ccf-transaction-id"],
+                "transactionId": headers.get("x-ms-ccf-transaction-id") if headers else None,
             },
             headers,
         )

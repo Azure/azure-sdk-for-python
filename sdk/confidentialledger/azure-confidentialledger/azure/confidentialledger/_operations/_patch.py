@@ -125,21 +125,21 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
     ) -> LROPoller[_models.LedgerQueryResult]:
         """Returns a poller to fetch the ledger entry at the specified transaction id.
 
-         A collection id may optionally be specified to indicate the collection from which to fetch
-         the value.
+        A collection id may optionally be specified to indicate the collection from which to fetch
+        the value.
 
-        To return older ledger entries, the relevant sections of the ledger must be
-         read from disk and validated. To prevent blocking within the enclave, the
-         response will indicate whether the entry is ready and part of the response, or
-         if the loading is still ongoing.
+       To return older ledger entries, the relevant sections of the ledger must be
+        read from disk and validated. To prevent blocking within the enclave, the
+        response will indicate whether the entry is ready and part of the response, or
+        if the loading is still ongoing.
 
-         :param transaction_id: Identifies a write transaction. Required.
-         :type transaction_id: str
-         :keyword collection_id: The collection id. Default value is None.
-         :paramtype collection_id: str
-         :return: An instance of LROPoller that returns a LedgerQueryResult object for the ledger entry.
-         :rtype: ~azure.core.polling.LROPoller[~azure.confidentialledger.models.LedgerQueryResult]
-         :raises ~azure.core.exceptions.HttpResponseError:
+        :param transaction_id: Identifies a write transaction. Required.
+        :type transaction_id: str
+        :keyword collection_id: The collection id. Default value is None.
+        :paramtype collection_id: str
+        :return: An instance of LROPoller that returns a LedgerQueryResult object for the ledger entry.
+        :rtype: ~azure.core.polling.LROPoller[~azure.confidentialledger.models.LedgerQueryResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
         lro_delay = kwargs.pop("polling_interval", 0.5)
@@ -220,6 +220,14 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         # retrieve the transactionId. Serialize the response later.
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        kwargs["cls"] = lambda pipeline_response, json_response, headers: (
+            pipeline_response,
+            {
+                **json_response,
+                "transactionId": headers.get("x-ms-ccf-transaction-id") if headers else None,
+            },
+            headers,
+        )
 
         post_pipeline_response, post_result, post_headers = self.create_ledger_entry(
             entry, collection_id=collection_id, **kwargs
@@ -290,3 +298,52 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         else:
             polling_method = polling
         return LROPoller(self._client, initial_response, deserialization_callback, polling_method)
+
+    def create_ledger_entry(
+        self,
+        entry: Union[_models.LedgerEntry, JSON, IO[bytes]],
+        *,
+        collection_id: Optional[str] = None,
+        **kwargs: Any,
+    ) -> _models.LedgerWriteResult:
+        """Writes a ledger entry.
+
+        The result is the expected JSON response with an additional field
+        'transactionId' which represents the transaction identifier for this write operation.
+
+        A collection id may optionally be specified.
+
+        :param entry: Ledger entry. Is one of the following types: LedgerEntry, JSON, IO[bytes]
+         Required.
+        :type entry: ~azure.confidentialledger.models.LedgerEntry or JSON or IO[bytes]
+        :keyword collection_id: The collection id. Default value is None.
+        :paramtype collection_id: str
+        :keyword tags: Comma separated tags. Default value is None.
+        :paramtype tags: str
+        :return: LedgerWriteResult. The LedgerWriteResult is compatible with MutableMapping
+        :rtype: ~azure.confidentialledger.models.LedgerWriteResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                entry = {
+                    "collectionId": {
+                        "collectionId": "str"  # Required.
+                    },
+                    "contents": "str",  # Required. Contents of the ledger entry.
+                    "transactionId": "str"  # Optional. A unique identifier for the state of the
+                      ledger. If returned as part of a LedgerEntry, it indicates the state from which
+                      the entry was read.
+                }
+        """
+
+        kwargs["cls"] = kwargs.get(
+            "cls",
+            lambda _, json_response, headers: {
+                **json_response,
+                "transactionId": headers.get("x-ms-ccf-transaction-id") if headers else None,
+            },
+        )
+        return super().create_ledger_entry(entry, collection_id=collection_id, **kwargs)
