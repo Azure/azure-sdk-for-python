@@ -3,6 +3,7 @@
 ## 12.23.0b1 (Unreleased)
 
 ### Features Added
+- Added support for service version 2026-02-06.
 
 ## 12.21.0 (2025-07-16)
 
