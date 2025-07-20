@@ -25,7 +25,10 @@ USAGE:
 import os, time
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.agents.models import ListSortOrder
+from azure.ai.agents.models import ListSortOrder, EvaluationConfiguration, EvaluatorConfiguration, EvaluationSamplingConfiguration
+
+from dotenv import load_dotenv
+load_dotenv()
 
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
@@ -60,7 +63,33 @@ with project_client:
     print(f"Created message, message ID: {message.id}")
 
     # [START create_run]
-    run = agents_client.runs.create(thread_id=thread.id, agent_id=agent.id)
+    # run = agents_client.runs.create(thread_id=thread.id, agent_id=agent.id)
+
+
+
+    sampling_configuration=EvaluationSamplingConfiguration(
+        name="default-sampling",
+        sampling_percent=0.1,
+        max_request_rate=10,
+    )
+    evaluation_config = EvaluationConfiguration(
+        evaluators={
+            "my-evaluator": EvaluatorConfiguration(
+                id="my-evaluator",
+                init_params={},
+                data_mapping={},
+            )
+        },
+        sampling_configuration=sampling_configuration,
+    )
+    # import json
+    # print(f"* * * * * : {sampling_configuration.as_dict()}")
+
+    run = agents_client.runs.create(
+        thread_id=thread.id,
+        agent_id=agent.id,
+        evaluation_config=evaluation_config,
+    )
 
     # Poll the run as long as run status is queued or in progress
     while run.status in ["queued", "in_progress", "requires_action"]:

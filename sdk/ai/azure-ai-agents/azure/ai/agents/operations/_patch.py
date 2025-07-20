@@ -22,6 +22,7 @@ from typing import (
     Dict,
     Iterator,
     List,
+    Mapping,
     Optional,
     Union,
     cast,
@@ -40,6 +41,10 @@ from ._operations import VectorStoresOperations as VectorStoresOperationsGenerat
 from ._operations import VectorStoreFilesOperations as VectorStoreFilesOperationsGenerated
 from ._operations import VectorStoreFileBatchesOperations as VectorStoreFileBatchesOperationsGenerated
 from .._utils.utils import FileType
+
+
+
+
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -294,6 +299,7 @@ class RunsOperations(RunsOperationsGenerated):
         response_format: Optional["_types.AgentsResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
+        evaluation_config: Optional[_models.EvaluationConfiguration] = None,
         **kwargs: Any,
     ) -> _models.ThreadRun:
         """Creates a new run for an agent thread.
@@ -381,6 +387,11 @@ class RunsOperations(RunsOperationsGenerated):
         :rtype: ~azure.ai.agents.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+
+
+        print(f"* * * evaluation_configuration: {evaluation_config}")
+
+
 
         if isinstance(body, dict):  # Handle overload with JSON body.
             content_type = kwargs.get("content_type", "application/json")

@@ -226,6 +226,7 @@ from ._enums import (  # type: ignore
 from ._patch import __all__ as _patch_all
 from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
+from ._patch import EvaluationConfiguration, EvaluatorConfiguration, EvaluationSamplingConfiguration  # Added from _patch.py
 
 __all__ = [
     "AISearchIndexResource",
@@ -433,6 +434,11 @@ __all__ = [
     "VectorStoreFileStatus",
     "VectorStoreFileStatusFilter",
     "VectorStoreStatus",
+
+
+    "EvaluationConfiguration",  # Added for evaluation configuration
+    "EvaluatorConfiguration",  # Added for evaluation configuration
+    "EvaluationSamplingConfiguration", # Added for evaluation sampling configuration
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

@@ -95,6 +95,11 @@ from ._models import MessageAttachment as MessageAttachmentGenerated
 from .. import types as _types
 
 
+from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
+
+
+
+
 logger = logging.getLogger(__name__)
 
 StreamEventData = Union["MessageDeltaChunk", "ThreadMessage", ThreadRun, RunStep, str]
@@ -2067,6 +2072,106 @@ class AgentRunStream(Generic[BaseAgentEventHandlerT]):
         close_method = getattr(self.response_iterator, "close", None)
         if callable(close_method):
             close_method()
+
+
+
+class EvaluatorConfiguration(_Model):
+    """Evaluator Configuration.
+
+    :ivar id: Identifier of the evaluator. Required.
+    :vartype id: str
+    :ivar init_params: Initialization parameters of the evaluator.
+    :vartype init_params: dict[str, any]
+    :ivar data_mapping: Data parameters of the evaluator.
+    :vartype data_mapping: dict[str, str]
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Identifier of the evaluator. Required."""
+    init_params: Optional[Dict[str, Any]] = rest_field(
+        name="initParams", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Initialization parameters of the evaluator."""
+    data_mapping: Optional[Dict[str, str]] = rest_field(
+        name="dataMapping", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Data parameters of the evaluator."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        init_params: Optional[Dict[str, Any]] = None,
+        data_mapping: Optional[Dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EvaluationSamplingConfiguration(_Model):
+    """Definition for sampling strategy.
+
+    :ivar name: Name of the sampling strategy. Required.
+    :vartype name: str
+    :ivar sampling_percent: Percentage of sampling per hour (0-100). Required.
+    :vartype sampling_percent: float
+    :ivar max_request_rate: Maximum request rate per hour (0 to 1000). Required.
+    :vartype max_request_rate: float
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the sampling strategy. Required."""
+    sampling_percent: float = rest_field(
+        name="samplingPercent", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Percentage of sampling per hour (0-100). Required."""
+    max_request_rate: float = rest_field(
+        name="maxRequestRate", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Maximum request rate per hour (0 to 1000). Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        sampling_percent: float,
+        max_request_rate: float,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EvaluationConfiguration(_Model):
+    evaluators: Dict[str, EvaluatorConfiguration] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Evaluators to be used for the evaluation. Required."""
+    sampling_configuration: Optional[EvaluationSamplingConfiguration] = rest_field(
+        name="samplingConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    # """Sampling configuration for the evaluation."""
+    # redaction_configuration: Optional["_models.AgentEvaluationRedactionConfiguration"] = rest_field(
+    #     name="redactionConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    # )
+
 
 
 def _is_valid_connection_id(connection_id: str) -> bool:
