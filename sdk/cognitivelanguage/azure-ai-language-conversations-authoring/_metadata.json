@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2025-05-15-preview",
+  "commit": "df0a8bf7d27c634671572b2adb7835cf54975a56",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/cognitiveservices/Language.AnalyzeConversations-authoring",
+  "emitterVersion": "0.47.0"
+}
