@@ -95,7 +95,7 @@ def build_conversation_analysis_get_analyze_conversation_job_status_request(  # 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_analysis_analyze_conversation_submit_operation_request(  # pylint: disable=name-too-long
+def build_conversation_analysis_analyze_conversation_submit_job_request(  # pylint: disable=name-too-long
     **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -119,7 +119,7 @@ def build_conversation_analysis_analyze_conversation_submit_operation_request(  
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_analysis_cancel_analyze_conversations_request(  # pylint: disable=name-too-long
+def build_conversation_analysis_analyze_conversation_cancel_job_request(  # pylint: disable=name-too-long
     job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -356,7 +356,7 @@ class _ConversationAnalysisClientOperationsMixin(
         params_added_on={"2023-04-01": ["api_version", "content_type", "accept"]},
         api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2024-11-15-preview", "2025-05-15-preview"],
     )
-    def _analyze_conversation_submit_operation_initial(  # pylint: disable=name-too-long
+    def _analyze_conversation_submit_job_initial(
         self, body: Union[_models.AnalyzeConversationOperationInput, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -380,7 +380,7 @@ class _ConversationAnalysisClientOperationsMixin(
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_conversation_analysis_analyze_conversation_submit_operation_request(
+        _request = build_conversation_analysis_analyze_conversation_submit_job_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -419,7 +419,7 @@ class _ConversationAnalysisClientOperationsMixin(
         return deserialized  # type: ignore
 
     @overload
-    def begin_analyze_conversation_submit_operation(  # pylint: disable=name-too-long
+    def begin_analyze_conversation_submit_job(
         self, body: _models.AnalyzeConversationOperationInput, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
         """Analyzes the input conversation utterance.
@@ -435,7 +435,7 @@ class _ConversationAnalysisClientOperationsMixin(
         """
 
     @overload
-    def begin_analyze_conversation_submit_operation(  # pylint: disable=name-too-long
+    def begin_analyze_conversation_submit_job(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
         """Analyzes the input conversation utterance.
@@ -451,7 +451,7 @@ class _ConversationAnalysisClientOperationsMixin(
         """
 
     @overload
-    def begin_analyze_conversation_submit_operation(  # pylint: disable=name-too-long
+    def begin_analyze_conversation_submit_job(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
         """Analyzes the input conversation utterance.
@@ -472,7 +472,7 @@ class _ConversationAnalysisClientOperationsMixin(
         params_added_on={"2023-04-01": ["api_version", "content_type", "accept"]},
         api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2024-11-15-preview", "2025-05-15-preview"],
     )
-    def begin_analyze_conversation_submit_operation(  # pylint: disable=name-too-long
+    def begin_analyze_conversation_submit_job(
         self, body: Union[_models.AnalyzeConversationOperationInput, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[None]:
         """Analyzes the input conversation utterance.
@@ -494,7 +494,7 @@ class _ConversationAnalysisClientOperationsMixin(
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._analyze_conversation_submit_operation_initial(
+            raw_result = self._analyze_conversation_submit_job_initial(
                 body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
             raw_result.http_response.read()  # type: ignore
@@ -530,7 +530,7 @@ class _ConversationAnalysisClientOperationsMixin(
         params_added_on={"2023-04-01": ["api_version", "job_id", "accept"]},
         api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2024-11-15-preview", "2025-05-15-preview"],
     )
-    def _cancel_analyze_conversations_initial(self, job_id: str, **kwargs: Any) -> Iterator[bytes]:
+    def _analyze_conversation_cancel_job_initial(self, job_id: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -544,7 +544,7 @@ class _ConversationAnalysisClientOperationsMixin(
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_conversation_analysis_cancel_analyze_conversations_request(
+        _request = build_conversation_analysis_analyze_conversation_cancel_job_request(
             job_id=job_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -587,7 +587,7 @@ class _ConversationAnalysisClientOperationsMixin(
         params_added_on={"2023-04-01": ["api_version", "job_id", "accept"]},
         api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2024-11-15-preview", "2025-05-15-preview"],
     )
-    def begin_cancel_analyze_conversations(self, job_id: str, **kwargs: Any) -> LROPoller[None]:
+    def begin_analyze_conversation_cancel_job(self, job_id: str, **kwargs: Any) -> LROPoller[None]:
         """Cancel a long-running Text Analysis conversations job.
 
         Cancel a long-running job for text analysis of conversations.
@@ -606,7 +606,7 @@ class _ConversationAnalysisClientOperationsMixin(
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._cancel_analyze_conversations_initial(
+            raw_result = self._analyze_conversation_cancel_job_initial(
                 job_id=job_id, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
             raw_result.http_response.read()  # type: ignore
