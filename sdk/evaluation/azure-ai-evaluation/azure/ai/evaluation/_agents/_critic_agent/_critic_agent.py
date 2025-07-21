@@ -113,12 +113,15 @@ class CriticAgent(PromptyEvaluatorBase[Dict[str, Union[str, List[str]]]]):
             thread_ids = self._fetch_agent_threads(project_client, agent_id)
             results = []
             for thread_id in thread_ids:
-                results.append(self._evaluate_conversation(
+                evaluated_result = self._evaluate_conversation(
                     thread_id=thread_id,
                     azure_ai_project=azure_ai_project,
                     evaluation=evaluation,
+                    agent_id=agent_id,
                     **kwargs
-                ))
+                )
+                if evaluated_result is not None:
+                    results.append(evaluated_result)
 
             return results
 
@@ -136,6 +139,7 @@ class CriticAgent(PromptyEvaluatorBase[Dict[str, Union[str, List[str]]]]):
                                thread_id: str,
                                azure_ai_project: Optional[Dict[str, str]] = None,
                                evaluation: Optional[Union[str, List[str]]] = None,
+                                agent_id: Optional[str] = None,
                                **kwargs) -> Dict[str, Any]:
         """
         Evaluate a specific conversation thread.
@@ -164,6 +168,23 @@ class CriticAgent(PromptyEvaluatorBase[Dict[str, Union[str, List[str]]]]):
 
         converter = AIAgentConverter(project_client)
         conversation = converter.prepare_evaluation_data(thread_ids=thread_id)[-1]
+        # {'query': [
+        #     {'createdAt': '2025-07-17T08:56:22Z', 'role': 'user', 'content': [{'type': 'text', 'text': "hey there'"}]},
+        #     {'createdAt': '2025-07-17T08:56:23Z', 'run_id': 'run_MVHZIe0TNWWKPx0ppvUz3uAh',
+        #      'assistant_id': 'asst_CLx2RNAXhAoFIbkLxZfoM6P4', 'role': 'assistant',
+        #      'content': [{'type': 'text', 'text': 'Hey there! How can I help you today? 😊'}]},
+        #     {'createdAt': '2025-07-17T08:56:29Z', 'role': 'user',
+        #      'content': [{'type': 'text', 'text': 'How are you'}]}], 'response': [
+        #     {'createdAt': '2025-07-17T08:56:31Z', 'run_id': 'run_vZU2pZ4a4QzxYB1tLoei7ycB',
+        #      'assistant_id': 'asst_CLx2RNAXhAoFIbkLxZfoM6P4', 'role': 'assistant', 'content': [{'type': 'text',
+        #                                                                                         'text': 'Thanks for asking! I’m just a bunch of code, but I’m here and ready to help you. How are you doing?'}]}],
+        #  'tool_definitions': []}
+        # Filter conversations if belongs to a specific agent
+        if agent_id and conversation["response"][0]["assistant_id"] != agent_id:
+            logger.info(f"Skipping conversation {thread_id} for agent {agent_id}.")
+            return None
+
+
         evaluators_to_run = asyncio.run(self._select_evaluators(conversation))
         evaluator_instances = {name: self.evaluator_instances[name] for name in evaluators_to_run["evaluators"]}
         conversation_results = self._run_evaluators_on_conversation(
