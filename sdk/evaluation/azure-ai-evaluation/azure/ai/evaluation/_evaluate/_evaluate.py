@@ -104,8 +104,7 @@ def _aggregate_other_metrics(df: pd.DataFrame) -> Tuple[List[str], Dict[str, flo
     for col in df.columns:
         parts = col.split(".")
         if len(parts) >= 2:
-            metric_prefix = parts[0]
-            metric_name = parts[1]
+            metric_prefix, metric_name = parts[0], parts[1]
             if metric_name in METRIC_COLUMN_NAME_REPLACEMENTS:
                 renamed_cols.append(col)
                 new_col_name = metric_prefix + "." + METRIC_COLUMN_NAME_REPLACEMENTS[metric_name]
