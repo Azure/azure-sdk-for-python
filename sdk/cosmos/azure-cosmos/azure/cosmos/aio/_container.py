@@ -47,6 +47,7 @@ from .._cosmos_responses import CosmosDict, CosmosList
 from .._routing.routing_range import Range
 from .._session_token_helpers import get_latest_session_token
 from ..offer import ThroughputProperties
+from .._retry_utility import ConnectionRetryPolicy
 from ..partition_key import (
     NonePartitionKeyValue,
     _return_undefined_or_empty_partition_key,
@@ -54,7 +55,8 @@ from ..partition_key import (
     _Undefined,
     _get_partition_key_from_partition_key_definition
 )
-
+# Add this import at the top of the file
+from .._retry_utility import ConnectionRetryPolicy
 __all__ = ("ContainerProxy",)
 
 # pylint: disable=protected-access, too-many-lines
@@ -431,6 +433,7 @@ class ContainerProxy:
             consistency_level: Optional[str] = None,
             session_token: Optional[str] = None,
             custom_headers: Optional[Dict[str, str]] = None,
+            excludedLocations: Optional[List[str]] = None,
             **kwargs: Any
     ) -> List[Dict[str, Any]]:
         """
@@ -444,7 +447,6 @@ class ContainerProxy:
         :returns: A list of the requested items.
         :rtype: List[Dict[str, Any]]
         """
-        # Implementation to be added
         if session_token is not None:
             kwargs['session_token'] = session_token
         if custom_headers is not None:
@@ -453,17 +455,17 @@ class ContainerProxy:
             kwargs['consistencyLevel'] = consistency_level
         kwargs["containerProperties"] = self._get_properties_with_options
 
-        feed_options = _build_options(kwargs)
-        feed_options["enableCrossPartitionQuery"] = True
-        await self._get_properties_with_options(feed_options)
-        feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        query_options = _build_options(kwargs)
+        await self._get_properties_with_options(query_options)
+        query_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        query_options["enableCrossPartitionQuery"] = True
 
         item_tuples = [(item_id, await self._set_partition_key(pk)) for item_id, pk in items]
 
         return await self.client_connection.ReadManyItems(
             collection_link=self.container_link,
             items=item_tuples,
-            options=feed_options,
+            options= query_options,
             **kwargs)
 
     @distributed_trace

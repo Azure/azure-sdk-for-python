@@ -6,9 +6,12 @@ from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos._cosmos_client_connection import PartitionKeyType
 from azure.cosmos._query_builder import _QueryBuilder
 from azure.cosmos.partition_key import _Undefined, _Empty, NonePartitionKeyValue, _get_partition_key_from_partition_key_definition
+from azure.cosmos import exceptions
+import logging
 
 class ReadManyItemsHelper:
     """Helper class for handling read many items operations."""
+    logger = logging.getLogger("azure.cosmos.ReadManyItemsHelper")
 
     def __init__(self, client: 'CosmosClientConnection'):
         self.client = client
@@ -52,7 +55,7 @@ class ReadManyItemsHelper:
 
             except Exception as e:
                 # Log the error but skip the item
-                # logger.warning(f"Failed to process item {item_id}:{partition_key_value} - {e}")
+                logger.warning(f"Failed to process item {item_id}:{partition_key_value} - {e}")
                 continue  # Skip this item entirely
 
         return items_by_partition
@@ -81,45 +84,49 @@ class ReadManyItemsHelper:
             **kwargs: Any
     ) -> Tuple[List[Any], CaseInsensitiveDict]:
         """Execute query chunks concurrently and return aggregated results."""
+        if not query_chunks:
+            return [], CaseInsensitiveDict()
+
         semaphore = asyncio.Semaphore(max_concurrency)
 
-        async def execute_chunk_query(chunk_items):
-            async with semaphore:  # Acquire slot, auto-released on exit
-                # Get all items from this chunk
-                chunk_partition_items = list(chunk_items.values())[0]
-
-                # Use _can_use_id_in_query to determine which query building approach to use
+        async def execute_chunk_query(partition_id, chunk_partition_items):
+            async with semaphore:
                 if _QueryBuilder._can_optimize_with_id_in_clause(chunk_partition_items, partition_key_definition):
                     query_obj = _QueryBuilder._build_id_in_query(chunk_partition_items)
                 else:
                     query_obj = _QueryBuilder._build_parameterized_query_for_items(
-                        {list(chunk_items.keys())[0]: chunk_partition_items},
+                        {partition_id: chunk_partition_items},
                         partition_key_definition)
 
-                # Execute query using existing QueryItems method
                 query_results = self.client.QueryItems(collection_link, query_obj, options, **kwargs)
+                individual_chunk_results = [item async for item in query_results]
 
-                individual_chunk_results = []
                 last_headers = CaseInsensitiveDict()
-
-                async for item in query_results:
-                    individual_chunk_results.append(item)
-                    # Get headers from the last response if available
-                    if hasattr(self.client, 'last_response_headers'):
-                        last_headers.update(self.client.last_response_headers)
+                if hasattr(self.client, 'last_response_headers'):
+                    last_headers.update(self.client.last_response_headers)
 
                 return individual_chunk_results, last_headers
 
-        # Execute all chunks concurrently
-        chunk_tasks = [execute_chunk_query(chunk) for chunk in query_chunks]
-        chunk_results = await asyncio.gather(*chunk_tasks)
+        chunk_tasks = [
+            asyncio.create_task(execute_chunk_query(partition_id, items))
+            for chunk in query_chunks
+            for partition_id, items in chunk.items()
+        ]
 
-        # Aggregate results
-        all_results = []
-        combined_headers = CaseInsensitiveDict()
-
-        for chunk_result, chunk_headers in chunk_results:
-            all_results.extend(chunk_result)
-            combined_headers.update(chunk_headers)
-
-        return all_results, combined_headers
+        try:
+            chunk_results = await asyncio.gather(*chunk_tasks)
+        except Exception:
+            # Cancel remaining tasks on failure
+            for task in chunk_tasks:
+                if not task.done():
+                    task.cancel()
+            # Wait for tasks to cancel and then re-raise the original exception
+            await asyncio.gather(*chunk_tasks, return_exceptions=True)
+            raise
+        else:
+            # This block executes only on successful completion of the try block.
+            all_results = [item for res, _ in chunk_results for item in res]
+            combined_headers = CaseInsensitiveDict()
+            for _, headers in chunk_results:
+                combined_headers.update(headers)
+            return all_results, combined_headers
