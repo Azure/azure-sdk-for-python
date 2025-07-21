@@ -1,17 +1,11 @@
 # Release History
 
-## 1.6.12 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.6.12 (2025-07-21)
 
 ### Bugs Fixed
 
 - Fix logging formatter breaking change
     ([#42122](https://github.com/Azure/azure-sdk-for-python/pull/42122))
-
-### Other Changes
 
 ## 1.6.11 (2025-07-17)
 
