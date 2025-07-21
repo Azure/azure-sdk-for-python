@@ -667,6 +667,82 @@ class AzureAISearchTool(Tool[AzureAISearchToolDefinition]):
         """
         return ToolResources(azure_ai_search=AzureAISearchToolResource(index_list=self.index_list))
 
+    def add_definition(
+        self,
+        index_connection_id: str,
+        index_name: str,
+        query_type: AzureAISearchQueryType = AzureAISearchQueryType.SIMPLE,
+        filter: str = "",
+        top_k: int = 5,
+        index_asset_id: Optional[str] = None,
+    ) -> None:
+        """
+        Adds a new search index configuration dynamically.
+        Raises a ValueError if an index with the same connection_id and index_name already exists.
+
+        :param index_connection_id: Index Connection ID used by tool. Allows only one connection.
+        :type index_connection_id: str
+        :param index_name: Name of Index in search resource to be used by tool.
+        :type index_name: str
+        :param query_type: Type of query in an AIIndexResource attached to this agent.
+            Default value is AzureAISearchQueryType.SIMPLE.
+        :type query_type: AzureAISearchQueryType
+        :param filter: Odata filter string for search resource.
+        :type filter: str
+        :param top_k: Number of documents to retrieve from search and present to the model.
+        :type top_k: int
+        :param index_asset_id: Index asset ID to be used by tool.
+        :type index_asset_id: Optional[str]
+        :raises ValueError: If an index with the same connection_id and index_name exists.
+        """
+        # Check if an index with the same connection_id and index_name exists
+        if any(
+            idx.index_connection_id == index_connection_id and idx.index_name == index_name for idx in self.index_list
+        ):
+            raise ValueError(
+                f"Index with connection_id '{index_connection_id}' and index_name '{index_name}' already exists and cannot be added again."
+            )
+
+        new_index = AISearchIndexResource(
+            index_connection_id=index_connection_id,
+            index_name=index_name,
+            query_type=query_type,
+            filter=filter,
+            top_k=top_k,
+            index_asset_id=index_asset_id,
+        )
+        self.index_list.append(new_index)
+        logger.info(
+            "Index with connection_id '%s' and index_name '%s' added. Total indexes: %d.",
+            index_connection_id,
+            index_name,
+            len(self.index_list),
+        )
+
+    def remove_definition(self, index_connection_id: str, index_name: str) -> None:
+        """
+        Removes a search index configuration based on its connection_id and index_name.
+
+        :param index_connection_id: The connection ID of the index to remove.
+        :type index_connection_id: str
+        :param index_name: The name of the index to remove.
+        :type index_name: str
+        :raises ValueError: If the index with the specified connection_id and index_name does not exist.
+        """
+        for idx in self.index_list:
+            if idx.index_connection_id == index_connection_id and idx.index_name == index_name:
+                self.index_list.remove(idx)
+                logger.info(
+                    "Index with connection_id '%s' and index_name '%s' removed. Total indexes: %d.",
+                    index_connection_id,
+                    index_name,
+                    len(self.index_list),
+                )
+                return
+        raise ValueError(
+            f"Index with connection_id '{index_connection_id}' and index_name '{index_name}' does not exist."
+        )
+
     def execute(self, tool_call: Any):
         """
         AI Search tool does not execute client-side.

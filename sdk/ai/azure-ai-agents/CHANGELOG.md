@@ -7,6 +7,7 @@
 ### Features Added
 
 - Support `tool_resources` for run async operations.
+- Support multiple Azure AI Search by providing `add_definition` and `remove_definition` in `AzureAISearchTool`.
 
 ### Bugs Fixed
 
