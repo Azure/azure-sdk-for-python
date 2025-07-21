@@ -204,12 +204,15 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
             for each_turn in messages:
                 if "role" in each_turn and "content" in each_turn:
                     content = each_turn["content"]
-                    if not isinstance(content, str) or not content.strip():
-                        continue  # Skip invalid content
+                    if not isinstance(content, str):
+                        continue  # Skip non-string content
+                    # Allow empty content for user messages (needed for GroundednessProEvaluator compatibility)
+                    # but skip empty assistant responses as they provide no evaluable content
                     if each_turn["role"] == "user":
                         queries.append(each_turn)
                     elif each_turn["role"] == "assistant":
-                        responses.append(each_turn)
+                        if content.strip():  # Only skip empty assistant responses
+                            responses.append(each_turn)
 
             # Handle mismatched queries and responses gracefully
             eval_inputs = []
