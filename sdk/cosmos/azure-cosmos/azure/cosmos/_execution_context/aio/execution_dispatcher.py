@@ -115,8 +115,6 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                                   and self._options["enableCrossPartitionQuery"]):
                 raise CosmosHttpResponseError(StatusCodes.BAD_REQUEST,
                                   "Cross partition query only supports 'VALUE <AggregateFunc>' for aggregates")
-        if self._fetched_query_plan:
-            self._options.pop("enableCrossPartitionQuery", None)
 
         # throw exception here for vector search query without limit filter or limit > max_limit
         if query_execution_info.get_non_streaming_order_by():
