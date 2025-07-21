@@ -129,6 +129,7 @@ def _default_logging_formatter(configurations):
             )
             configurations[LOGGING_FORMATTER_ARG] = None
 
+
 def _default_resource(configurations):
     environ.setdefault(OTEL_EXPERIMENTAL_RESOURCE_DETECTORS, ",".join(_SUPPORTED_RESOURCE_DETECTORS))
     if RESOURCE_ARG not in configurations:
