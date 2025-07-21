@@ -152,7 +152,7 @@ def main():
                     break
 
     except ImportError:
-        print("You need to install the websockets and httpx packages to run this sample:")
+        print("You need to install the websockets package to run this sample:")
         print("pip install azure-ai-voicelive[websockets]")
     except FileNotFoundError:
         print(f"Audio file not found: {audio_file}")

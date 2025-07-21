@@ -201,6 +201,26 @@ async def main():
     # Initialize the audio processor
     audio_processor = AudioProcessor()
 
+    def setup_output_stream():
+        """Set up the audio output stream"""
+        if not audio_processor.output_stream:
+            # List available devices first
+            print("Available audio devices:")
+            for i in range(audio_processor.p.get_device_count()):
+                info = audio_processor.p.get_device_info_by_index(i)
+                print(f"Device {i}: {info['name']} - Max Output Channels: {info['maxOutputChannels']}")
+
+            audio_processor.output_stream = audio_processor.p.open(
+                format=audio_processor.audio_format,
+                channels=audio_processor.channels,
+                rate=audio_processor.rate,
+                output=True,
+                frames_per_buffer=audio_processor.chunk,
+                output_device_index=4,  # Try specifying your headphone device index here
+            )
+    
+    setup_output_stream()    
+    
     try:
         # Initialize the client
         client = AsyncVoiceLiveClient(

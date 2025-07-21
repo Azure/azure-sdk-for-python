@@ -13,7 +13,8 @@ from typing import Any, Dict, List, Optional, Union, AsyncIterator
 from typing_extensions import TypedDict
 
 import aiohttp
-import httpx
+from urllib.parse import urlparse, urlunparse, urlencode, parse_qs
+
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 
@@ -575,23 +576,41 @@ class AsyncVoiceLiveConnectionManager:
         except Exception as e:
             raise VoiceLiveConnectionError(f"Failed to establish WebSocket connection: {e}") from e
 
-    def _prepare_url(self) -> httpx.URL:
-        """Prepare the WebSocket URL.
-
-        :return: The prepared URL.
-        :rtype: httpx.URL
-        """
-        base_url = httpx.URL(self.__client._config.endpoint)
+    def _prepare_url(self) -> str:
+        """Prepare the WebSocket URL."""
+        # Parse the base URL
+        parsed = urlparse(self.__client._config.endpoint)
+        
         # Ensure WebSocket scheme
-        if base_url.scheme.startswith("http"):
-            base_url = base_url.copy_with(scheme="wss" if base_url.scheme == "https" else "ws")
-
-        # Add query parameters
+        if parsed.scheme.startswith("http"):
+            scheme = "wss" if parsed.scheme == "https" else "ws"
+        else:
+            scheme = parsed.scheme
+            
+        # Prepare query parameters
         params = {"model": self.__model, "api-version": self.__api_version}
         params.update(self.__extra_query)
-
-        url = base_url.copy_with(params=params)
-        url = url.copy_with(path=f"{base_url.path.rstrip('/')}/voice-agent/realtime")
+        
+        # Parse existing query parameters and merge with new ones
+        existing_params = parse_qs(parsed.query)
+        # Flatten existing params (parse_qs returns lists)
+        for key, value_list in existing_params.items():
+            if key not in params:  # Don't override new params
+                params[key] = value_list[0] if value_list else ""
+        
+        # Build the path
+        path = parsed.path.rstrip('/') + '/voice-agent/realtime'
+        
+        # Reconstruct the URL
+        url = urlunparse((
+            scheme,
+            parsed.netloc,
+            path,
+            parsed.params,
+            urlencode(params),
+            parsed.fragment
+        ))
+        
         return url
 
     async def __aexit__(self, exc_type, exc, exc_tb) -> None:

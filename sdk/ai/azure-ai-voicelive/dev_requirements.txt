@@ -3,7 +3,6 @@
 aiohttp
 python-dotenv
 isodate
-httpx
 websockets
 pyaudio
 azure.identity

@@ -17,7 +17,6 @@ class TestVoiceLiveWebSocket(unittest.TestCase):
     def setUp(self):
         self.client = VoiceLiveClient(credential=AzureKeyCredential("test-key"), endpoint="wss://test-endpoint.com/v1")
 
-    @patch("azure.ai.voicelive._patch.httpx.URL")
     @patch("aiohttp.ClientSession.ws_connect")
     def test_websocket_connection_creation(self, mock_ws_connect, mock_url):
         # Setup mocks
