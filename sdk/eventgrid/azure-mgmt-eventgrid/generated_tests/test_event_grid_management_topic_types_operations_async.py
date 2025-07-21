@@ -23,7 +23,7 @@ class TestEventGridManagementTopicTypesOperationsAsync(AzureMgmtRecordedTestCase
     @recorded_by_proxy_async
     async def test_topic_types_list(self, resource_group):
         response = self.client.topic_types.list(
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestEventGridManagementTopicTypesOperationsAsync(AzureMgmtRecordedTestCase
     async def test_topic_types_get(self, resource_group):
         response = await self.client.topic_types.get(
             topic_type_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestEventGridManagementTopicTypesOperationsAsync(AzureMgmtRecordedTestCase
     async def test_topic_types_list_event_types(self, resource_group):
         response = self.client.topic_types.list_event_types(
             topic_type_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
