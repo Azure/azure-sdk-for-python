@@ -1,6 +1,6 @@
 # Release History
 
-## 39.0.0 (2025-07-20)
+## 39.0.0 (2025-07-21)
 
 ### Features Added
 
@@ -8,6 +8,7 @@
 
 ### Breaking Changes
 
+  - This package now only targets the latest Api-Version available on Azure and removes APIs of other Api-Version. After this change, the package can have much smaller size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ignore this change.
   - Deleted or renamed client operation group `ContainerServiceClient.container_service`
   - Deleted or renamed client operation group `ContainerServiceClient.managed_namespaces`
   - Deleted or renamed client operation group `ContainerServiceClient.operation_status_result`
@@ -161,11 +162,11 @@
   - Deleted or renamed method `ManagedClustersOperations.get_safeguards_versions`
   - Deleted or renamed method `ManagedClustersOperations.list_guardrails_versions`
   - Deleted or renamed method `ManagedClustersOperations.list_safeguards_versions`
-  - Deleted or renamed model `ContainerServiceOperations`
-  - Deleted or renamed model `LoadBalancersOperations`
-  - Deleted or renamed model `ManagedClusterSnapshotsOperations`
-  - Deleted or renamed model `ManagedNamespacesOperations`
-  - Deleted or renamed model `OperationStatusResultOperations`
+  - Deleted or renamed operation group `ContainerServiceOperations`
+  - Deleted or renamed operation group `LoadBalancersOperations`
+  - Deleted or renamed operation group `ManagedClusterSnapshotsOperations`
+  - Deleted or renamed operation group `ManagedNamespacesOperations`
+  - Deleted or renamed operation group `OperationStatusResultOperations`
 
 ## 38.0.0 (2025-07-15)
 
