@@ -31,10 +31,10 @@ from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._operations._operations import (
-    build_text_analysis_analyze_text_cancel_job_request,
-    build_text_analysis_analyze_text_job_status_request,
+    build_text_analysis_analyze_text_job_request,
     build_text_analysis_analyze_text_request,
-    build_text_analysis_analyze_text_submit_job_request,
+    build_text_analysis_cancel_job_request,
+    build_text_analysis_get_job_status_request,
 )
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.utils import ClientMixinABC
@@ -199,7 +199,7 @@ class _TextAnalysisClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def analyze_text_job_status(
+    async def get_job_status(
         self,
         job_id: str,
         *,
@@ -241,7 +241,7 @@ class _TextAnalysisClientOperationsMixin(
 
         cls: ClsType[_models.AnalyzeTextJobState] = kwargs.pop("cls", None)
 
-        _request = build_text_analysis_analyze_text_job_status_request(
+        _request = build_text_analysis_get_job_status_request(
             job_id=job_id,
             show_stats=show_stats,
             top=top,
@@ -282,7 +282,7 @@ class _TextAnalysisClientOperationsMixin(
 
         return deserialized  # type: ignore
 
-    async def _analyze_text_submit_job_initial(
+    async def _analyze_text_job_initial(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -327,7 +327,7 @@ class _TextAnalysisClientOperationsMixin(
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_text_analysis_analyze_text_submit_job_request(
+        _request = build_text_analysis_analyze_text_job_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -366,7 +366,7 @@ class _TextAnalysisClientOperationsMixin(
         return deserialized  # type: ignore
 
     @overload
-    async def begin_analyze_text_submit_job(
+    async def begin_analyze_text_job(
         self,
         *,
         text_input: _models.MultiLanguageTextInput,
@@ -401,7 +401,7 @@ class _TextAnalysisClientOperationsMixin(
         """
 
     @overload
-    async def begin_analyze_text_submit_job(
+    async def begin_analyze_text_job(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Submit a collection of text documents for analysis. Specify one or more unique tasks to be
@@ -418,7 +418,7 @@ class _TextAnalysisClientOperationsMixin(
         """
 
     @overload
-    async def begin_analyze_text_submit_job(
+    async def begin_analyze_text_job(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Submit a collection of text documents for analysis. Specify one or more unique tasks to be
@@ -435,7 +435,7 @@ class _TextAnalysisClientOperationsMixin(
         """
 
     @distributed_trace_async
-    async def begin_analyze_text_submit_job(
+    async def begin_analyze_text_job(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -476,7 +476,7 @@ class _TextAnalysisClientOperationsMixin(
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._analyze_text_submit_job_initial(
+            raw_result = await self._analyze_text_job_initial(
                 body=body,
                 text_input=text_input,
                 actions=actions,
@@ -518,7 +518,7 @@ class _TextAnalysisClientOperationsMixin(
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    async def _analyze_text_cancel_job_initial(self, job_id: str, **kwargs: Any) -> AsyncIterator[bytes]:
+    async def _cancel_job_initial(self, job_id: str, **kwargs: Any) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -532,7 +532,7 @@ class _TextAnalysisClientOperationsMixin(
 
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_text_analysis_analyze_text_cancel_job_request(
+        _request = build_text_analysis_cancel_job_request(
             job_id=job_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -570,7 +570,7 @@ class _TextAnalysisClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def begin_analyze_text_cancel_job(self, job_id: str, **kwargs: Any) -> AsyncLROPoller[None]:
+    async def begin_cancel_job(self, job_id: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Cancel a long-running Text Analysis job.
 
         Cancel a long-running Text Analysis job.
@@ -589,7 +589,7 @@ class _TextAnalysisClientOperationsMixin(
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._analyze_text_cancel_job_initial(
+            raw_result = await self._cancel_job_initial(
                 job_id=job_id, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
             await raw_result.http_response.read()  # type: ignore

@@ -30,9 +30,9 @@ class TestTextAnalysisAsync(TextAnalysisClientTestBaseAsync):
 
     @TextAnalysisPreparer()
     @recorded_by_proxy_async
-    async def test_analyze_text_job_status(self, textanalysis_endpoint):
+    async def test_get_job_status(self, textanalysis_endpoint):
         client = self.create_async_client(endpoint=textanalysis_endpoint)
-        response = await client.analyze_text_job_status(
+        response = await client.get_job_status(
             job_id="str",
         )
 
@@ -41,10 +41,10 @@ class TestTextAnalysisAsync(TextAnalysisClientTestBaseAsync):
 
     @TextAnalysisPreparer()
     @recorded_by_proxy_async
-    async def test_begin_analyze_text_submit_job(self, textanalysis_endpoint):
+    async def test_begin_analyze_text_job(self, textanalysis_endpoint):
         client = self.create_async_client(endpoint=textanalysis_endpoint)
         response = await (
-            await client.begin_analyze_text_submit_job(
+            await client.begin_analyze_text_job(
                 body={
                     "analysisInput": {"documents": [{"id": "str", "text": "str", "language": "str"}]},
                     "tasks": ["analyze_text_operation_action"],
@@ -62,10 +62,10 @@ class TestTextAnalysisAsync(TextAnalysisClientTestBaseAsync):
 
     @TextAnalysisPreparer()
     @recorded_by_proxy_async
-    async def test_begin_analyze_text_cancel_job(self, textanalysis_endpoint):
+    async def test_begin_cancel_job(self, textanalysis_endpoint):
         client = self.create_async_client(endpoint=textanalysis_endpoint)
         response = await (
-            await client.begin_analyze_text_cancel_job(
+            await client.begin_cancel_job(
                 job_id="str",
             )
         ).result()  # call '.result()' to poll until service return final result

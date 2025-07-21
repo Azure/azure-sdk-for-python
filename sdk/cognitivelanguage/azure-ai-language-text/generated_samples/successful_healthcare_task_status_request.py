@@ -22,7 +22,7 @@ def main():
         credential="CREDENTIAL",
     )
 
-    response = client.analyze_text_job_status(
+    response = client.get_job_status(
         job_id="1780194a-e9c1-4298-b0d4-fdc59ba818a0",
     )
     print(response)

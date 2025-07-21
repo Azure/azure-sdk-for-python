@@ -22,7 +22,7 @@ def main():
         credential="CREDENTIAL",
     )
 
-    client.begin_analyze_text_cancel_job(
+    client.begin_cancel_job(
         job_id="c0f2a446-05d9-48fc-ba8f-3ef4af8d0b18",
     ).result()
 

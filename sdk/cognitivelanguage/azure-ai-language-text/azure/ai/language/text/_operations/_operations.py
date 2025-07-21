@@ -67,7 +67,7 @@ def build_text_analysis_analyze_text_request(*, show_stats: Optional[bool] = Non
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_text_analysis_analyze_text_job_status_request(  # pylint: disable=name-too-long
+def build_text_analysis_get_job_status_request(  # pylint: disable=name-too-long
     job_id: str,
     *,
     show_stats: Optional[bool] = None,
@@ -104,7 +104,7 @@ def build_text_analysis_analyze_text_job_status_request(  # pylint: disable=name
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_text_analysis_analyze_text_submit_job_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_text_analysis_analyze_text_job_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -126,9 +126,7 @@ def build_text_analysis_analyze_text_submit_job_request(**kwargs: Any) -> HttpRe
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_text_analysis_analyze_text_cancel_job_request(  # pylint: disable=name-too-long
-    job_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_text_analysis_cancel_job_request(job_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -305,7 +303,7 @@ class _TextAnalysisClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace
-    def analyze_text_job_status(
+    def get_job_status(
         self,
         job_id: str,
         *,
@@ -347,7 +345,7 @@ class _TextAnalysisClientOperationsMixin(
 
         cls: ClsType[_models.AnalyzeTextJobState] = kwargs.pop("cls", None)
 
-        _request = build_text_analysis_analyze_text_job_status_request(
+        _request = build_text_analysis_get_job_status_request(
             job_id=job_id,
             show_stats=show_stats,
             top=top,
@@ -388,7 +386,7 @@ class _TextAnalysisClientOperationsMixin(
 
         return deserialized  # type: ignore
 
-    def _analyze_text_submit_job_initial(
+    def _analyze_text_job_initial(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -433,7 +431,7 @@ class _TextAnalysisClientOperationsMixin(
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_text_analysis_analyze_text_submit_job_request(
+        _request = build_text_analysis_analyze_text_job_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -472,7 +470,7 @@ class _TextAnalysisClientOperationsMixin(
         return deserialized  # type: ignore
 
     @overload
-    def begin_analyze_text_submit_job(
+    def begin_analyze_text_job(
         self,
         *,
         text_input: _models.MultiLanguageTextInput,
@@ -507,7 +505,7 @@ class _TextAnalysisClientOperationsMixin(
         """
 
     @overload
-    def begin_analyze_text_submit_job(
+    def begin_analyze_text_job(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
         """Submit a collection of text documents for analysis. Specify one or more unique tasks to be
@@ -524,7 +522,7 @@ class _TextAnalysisClientOperationsMixin(
         """
 
     @overload
-    def begin_analyze_text_submit_job(
+    def begin_analyze_text_job(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
         """Submit a collection of text documents for analysis. Specify one or more unique tasks to be
@@ -541,7 +539,7 @@ class _TextAnalysisClientOperationsMixin(
         """
 
     @distributed_trace
-    def begin_analyze_text_submit_job(
+    def begin_analyze_text_job(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -582,7 +580,7 @@ class _TextAnalysisClientOperationsMixin(
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._analyze_text_submit_job_initial(
+            raw_result = self._analyze_text_job_initial(
                 body=body,
                 text_input=text_input,
                 actions=actions,
@@ -623,7 +621,7 @@ class _TextAnalysisClientOperationsMixin(
             )
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    def _analyze_text_cancel_job_initial(self, job_id: str, **kwargs: Any) -> Iterator[bytes]:
+    def _cancel_job_initial(self, job_id: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -637,7 +635,7 @@ class _TextAnalysisClientOperationsMixin(
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_text_analysis_analyze_text_cancel_job_request(
+        _request = build_text_analysis_cancel_job_request(
             job_id=job_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -675,7 +673,7 @@ class _TextAnalysisClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace
-    def begin_analyze_text_cancel_job(self, job_id: str, **kwargs: Any) -> LROPoller[None]:
+    def begin_cancel_job(self, job_id: str, **kwargs: Any) -> LROPoller[None]:
         """Cancel a long-running Text Analysis job.
 
         Cancel a long-running Text Analysis job.
@@ -694,7 +692,7 @@ class _TextAnalysisClientOperationsMixin(
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._analyze_text_cancel_job_initial(
+            raw_result = self._cancel_job_initial(
                 job_id=job_id, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
             raw_result.http_response.read()  # type: ignore
