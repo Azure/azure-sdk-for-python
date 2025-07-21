@@ -287,7 +287,6 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
 
-
     @pytest.mark.usefixtures("instrument_without_content")
     @agentClientPreparer()
     @recorded_by_proxy_async
@@ -920,6 +919,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         ]
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
+
 
 class MyEventHandler(AsyncAgentEventHandler):
 
