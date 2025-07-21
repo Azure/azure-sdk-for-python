@@ -47,7 +47,7 @@ data_folder = os.environ.get("DATA_FOLDER", os.path.join(script_dir, "data_folde
 with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 
     with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
-        
+
         print(
             f"Upload files in a folder (including sub-folders) and create a dataset named `{dataset_name}` version `{dataset_version}`, to reference the files."
         )
@@ -59,7 +59,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
             file_pattern=re.compile(r"\.(txt|csv|md)$", re.IGNORECASE),
         )
         print(dataset)
-        
+
         print(f"Get credentials of an existing Dataset version `{dataset_version}`:")
         asset_credential = project_client.datasets.get_credentials(name=dataset_name, version=dataset_version)
         print(asset_credential)
@@ -67,7 +67,9 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
         print(f"Creating a folder `{download_folder}` for the downloaded blobs:")
         os.makedirs(download_folder, exist_ok=True)
 
-        container_client = ContainerClient.from_container_url(container_url=asset_credential.blob_reference.credential.sas_uri)
+        container_client = ContainerClient.from_container_url(
+            container_url=asset_credential.blob_reference.credential.sas_uri
+        )
 
         print("Looping over all blobs in the container:")
         for blob in container_client.list_blobs():

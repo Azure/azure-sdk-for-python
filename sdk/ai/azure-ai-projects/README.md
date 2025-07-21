@@ -128,7 +128,7 @@ Update the `api_version` value with one found in the "Data plane - inference" ro
 print(
     "Get an authenticated Azure OpenAI client for the parent AI Services resource, and perform a chat completion operation:"
 )
-with project_client.inference.get_azure_openai_client(api_version="2024-10-21") as client:
+with project_client.get_openai_client(api_version="2024-10-21") as client:
 
     response = client.chat.completions.create(
         model=model_deployment_name,
@@ -145,9 +145,7 @@ with project_client.inference.get_azure_openai_client(api_version="2024-10-21") 
 print(
     "Get an authenticated Azure OpenAI client for a connected Azure OpenAI service, and perform a chat completion operation:"
 )
-with project_client.inference.get_azure_openai_client(
-    api_version="2024-10-21", connection_name=connection_name
-) as client:
+with project_client.get_openai_client(api_version="2024-10-21", connection_name=connection_name) as client:
 
     response = client.chat.completions.create(
         model=model_deployment_name,
