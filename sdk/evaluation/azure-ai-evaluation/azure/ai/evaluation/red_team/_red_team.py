@@ -30,6 +30,7 @@ from azure.ai.evaluation._constants import (
     EVALUATION_PASS_FAIL_MAPPING,
     TokenScope,
 )
+from azure.ai.evaluation.simulator._constants import SupportedLanguages
 from azure.ai.evaluation._evaluate._utils import _get_ai_studio_url
 from azure.ai.evaluation._evaluate._utils import extract_workspace_triad_from_trace_provider
 from azure.ai.evaluation._version import VERSION
@@ -138,6 +139,8 @@ class RedTeam:
     :type application_scenario: Optional[str]
     :param custom_attack_seed_prompts: Path to a JSON file containing custom attack seed prompts (can be absolute or relative path)
     :type custom_attack_seed_prompts: Optional[str]
+    :param language: Language to use for attack objectives generation. Defaults to English.
+    :type language: SupportedLanguages
     :param output_dir: Directory to save output files (optional)
     :type output_dir: Optional[str]
     """
@@ -239,6 +242,7 @@ class RedTeam:
         num_objectives: int = 10,
         application_scenario: Optional[str] = None,
         custom_attack_seed_prompts: Optional[str] = None,
+        language: SupportedLanguages = SupportedLanguages.English,
         output_dir=".",
     ):
         """Initialize a new Red Team agent for AI model evaluation.
@@ -260,6 +264,8 @@ class RedTeam:
         :type application_scenario: Optional[str]
         :param custom_attack_seed_prompts: Path to a JSON file with custom attack prompts
         :type custom_attack_seed_prompts: Optional[str]
+        :param language: Language to use for attack objectives generation. Defaults to English.
+        :type language: SupportedLanguages
         :param output_dir: Directory to save evaluation outputs and logs. Defaults to current working directory.
         :type output_dir: str
         """
@@ -267,6 +273,7 @@ class RedTeam:
         self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self.credential = credential
         self.output_dir = output_dir
+        self.language = language
         self._one_dp_project = is_onedp_project(azure_ai_project)
 
         # Initialize logger without output directory (will be updated during scan)
@@ -743,7 +750,7 @@ class RedTeam:
             # Use the RAI service to get attack objectives
             try:
                 self.logger.debug(
-                    f"API call: get_attack_objectives({risk_cat_value}, app: {application_scenario}, strategy: {strategy})"
+                    f"API call: get_attack_objectives({risk_cat_value}, app: {application_scenario}, strategy: {strategy}, language: {self.language.value})"
                 )
                 # strategy param specifies whether to get a strategy-specific dataset from the RAI service
                 # right now, only tense requires strategy-specific dataset
@@ -753,6 +760,7 @@ class RedTeam:
                         risk_category=other_risk,
                         application_scenario=application_scenario or "",
                         strategy="tense",
+                        language=self.language.value,
                         scan_session_id=self.scan_session_id,
                     )
                 else:
@@ -761,6 +769,7 @@ class RedTeam:
                         risk_category=other_risk,
                         application_scenario=application_scenario or "",
                         strategy=None,
+                        language=self.language.value,
                         scan_session_id=self.scan_session_id,
                     )
                 if isinstance(objectives_response, list):
