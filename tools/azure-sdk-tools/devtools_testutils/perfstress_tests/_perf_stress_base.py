@@ -9,7 +9,10 @@ import multiprocessing
 import argparse
 import pstats
 import cProfile
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
 
 
 PSTATS_PRINT_DEFAULT_SORT_KEY = pstats.SortKey.TIME
@@ -218,6 +221,43 @@ class _PerfTestBase(_PerfTestABC):
         if not value:
             raise ValueError("Undefined environment variable {}".format(variable))
         return value
+    
+    @staticmethod
+    def get_credential(is_async: bool = False) -> "TokenCredential":
+        # If AzurePipelinesCredential is detected, use it.
+        service_connection_id = os.environ.get("AZURESUBSCRIPTION_SERVICE_CONNECTION_ID")
+        client_id = os.environ.get("AZURESUBSCRIPTION_CLIENT_ID")
+        tenant_id = os.environ.get("AZURESUBSCRIPTION_TENANT_ID")
+        system_access_token = os.environ.get("SYSTEM_ACCESSTOKEN")
+        if service_connection_id and client_id and tenant_id and system_access_token:
+            from azure.identity import AzurePipelinesCredential
+
+            if is_async:
+                from azure.identity.aio import AzurePipelinesCredential
+            return AzurePipelinesCredential(
+                tenant_id=tenant_id,
+                client_id=client_id,
+                service_connection_id=service_connection_id,
+                system_access_token=system_access_token,
+            )
+        # This is for testing purposes only, to ensure that the AzurePipelinesCredential is used when available
+        else:
+            force_fallback_dac = os.environ.get("AZURE_TEST_FORCE_FALLBACK_DAC", "false")
+            if service_connection_id and not (force_fallback_dac):
+                # if service_connection_id is set, we believe it is running in CI
+                system_access_token = "Sanitized" if system_access_token else None
+                raise ValueError(
+                    "Running in Azure Pipelines. Environment variables not set for service principal authentication. "
+                    f"service_connection_id: {service_connection_id}, client_id: {client_id}, tenant_id: {tenant_id}, system_access_token: {system_access_token}"
+                )
+
+        # Fall back to DefaultAzureCredential
+        from azure.identity import DefaultAzureCredential
+
+        if is_async:
+            from azure.identity.aio import DefaultAzureCredential
+        return DefaultAzureCredential(exclude_managed_identity_credential=True)
+
 
     def _save_profile(self, sync: str, output_path: Optional[str] = None) -> None:
         """
