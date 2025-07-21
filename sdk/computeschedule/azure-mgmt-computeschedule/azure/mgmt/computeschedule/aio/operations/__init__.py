@@ -14,9 +14,6 @@ if TYPE_CHECKING:
 
 from ._operations import Operations  # type: ignore
 from ._operations import ScheduledActionsOperations  # type: ignore
-from ._operations import ScheduledActionExtensionOperations  # type: ignore
-from ._operations import OccurrencesOperations  # type: ignore
-from ._operations import OccurrenceExtensionOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -25,9 +22,6 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "Operations",
     "ScheduledActionsOperations",
-    "ScheduledActionExtensionOperations",
-    "OccurrencesOperations",
-    "OccurrenceExtensionOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

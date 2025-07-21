@@ -32,25 +32,21 @@ def main():
     )
 
     response = client.scheduled_actions.virtual_machines_submit_deallocate(
-        locationparameter="zrcmkxsbuxsxxulky",
+        locationparameter="ccrsyfkiakaxblrddurmxbju",
         request_body={
-            "correlationid": "b211f086-4b91-4686-a453-2f5c012e4d80",
+            "correlationid": "evmwonebfzxenjdpucgcwdjdya",
             "executionParameters": {},
             "resources": {
                 "ids": [
-                    "/subscriptions/YourSubscriptionId/resourceGroups/YourResourceGroupName/providers/Microsoft.Compute/virtualMachines/testResource4"
+                    "/subscriptions/YourSubscriptionId/resourceGroups/YourResourceGroupName/providers/Microsoft.Compute/virtualMachines/testResource3"
                 ]
             },
-            "schedule": {
-                "deadLine": "2025-04-17T00:23:56.803Z",
-                "deadlineType": "Unknown",
-                "timeZone": "aigbjdnldtzkteqi",
-            },
+            "schedule": {"deadlineType": "Unknown"},
         },
     )
     print(response)
 
 
-# x-ms-original-file: 2025-04-15-preview/ScheduledActions_VirtualMachinesSubmitDeallocate_MinimumSet_Gen.json
+# x-ms-original-file: 2025-05-01/ScheduledActions_VirtualMachinesSubmitDeallocate_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()
