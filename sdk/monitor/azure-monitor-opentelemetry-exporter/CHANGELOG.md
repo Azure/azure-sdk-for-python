@@ -12,7 +12,7 @@
   ([#41950](https://github.com/Azure/azure-sdk-for-python/pull/41950))
 - Customer Facing Statsbeat: Added logic for retry item count
   ([#41971](https://github.com/Azure/azure-sdk-for-python/pull/41971))
-- Customer Facing Statsbeat: Added logic to include the metrices in exporter and base classes
+- Customer Facing Statsbeat: Added logic to include the metrics in exporter and base classes
 
 
 ## 1.0.0b39 (2025-06-25)
