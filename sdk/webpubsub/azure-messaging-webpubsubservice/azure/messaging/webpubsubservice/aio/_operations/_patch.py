@@ -1,16 +1,34 @@
-# pylint: disable=line-too-long,useless-suppression
-# ------------------------------------
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-# ------------------------------------
+# coding=utf-8
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------
+"""Customize generated code here.
+
+Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
+"""
+from typing import List
+
+__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
 
 
+def patch_sdk():
+    """Do not remove from this file.
+
+    `patch_sdk` is a last resort escape hatch that allows you to do customizations
+    you can't accomplish using the techniques described in
+    https://aka.ms/azsdk/python/dpcodegen/python/customize
+    """
+# coding=utf-8
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import Any, Union, Optional, Dict, List, IO, overload
-
 from azure.core.credentials import AzureKeyCredential
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import (
@@ -25,19 +43,20 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-
 from ._operations import (
-    WebPubSubServiceClientOperationsMixin as WebPubSubServiceClientOperationsMixinGenerated,
-    JSON,
+    _WebPubSubServiceClientOperationsMixin as WebPubSubServiceClientOperationsMixinGenerated,
+    JSON
+)
+from ..._operations._patch import (
+    get_token_by_key,
     build_web_pub_sub_service_send_to_all_request,
     build_web_pub_sub_service_send_to_connection_request,
     build_web_pub_sub_service_send_to_user_request,
     build_web_pub_sub_service_send_to_group_request,
 )
-from ..._operations._patch import get_token_by_key
-from ..._models import GroupMember
+from ...models import GroupMember
 
-class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixinGenerated):
+class _WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixinGenerated):
     @distributed_trace_async
     async def get_client_access_token(  # pylint: disable=arguments-differ
         self,
@@ -856,9 +875,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
             return cls(pipeline_response, None, {})
 
 
-__all__: List[str] = [
-    "WebPubSubServiceClientOperationsMixin"
-]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = ["_WebPubSubServiceClientOperationsMixin"]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
