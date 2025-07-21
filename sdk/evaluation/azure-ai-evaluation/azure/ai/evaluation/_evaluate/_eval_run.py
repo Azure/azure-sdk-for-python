@@ -177,15 +177,15 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
                 )
             else:
                 url = f"https://{self._url_base}/mlflow/v2.0" f"{self._get_scope()}/api/2.0/mlflow/runs/create"
-                
+
                 # Prepare tags: start with user tags, ensure mlflow.user is set
                 run_tags = self._tags.copy()
                 if "mlflow.user" not in run_tags:
                     run_tags["mlflow.user"] = "azure-ai-evaluation"
-                
+
                 # Convert tags to MLflow format
                 tags_list = [{"key": key, "value": value} for key, value in run_tags.items()]
-                
+
                 body = {
                     "experiment_id": "0",
                     "user_id": "azure-ai-evaluation",

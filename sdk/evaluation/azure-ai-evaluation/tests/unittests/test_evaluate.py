@@ -989,7 +989,7 @@ class TestTagsInLoggingFunctions:
 
         # Mock the management client and workspace info
         mock_client_instance = mock_lite_ml_client.return_value
-        mock_workspace_info = type('MockWorkspaceInfo', (), {'ml_flow_tracking_uri': 'https://test-tracking-uri'})()
+        mock_workspace_info = type("MockWorkspaceInfo", (), {"ml_flow_tracking_uri": "https://test-tracking-uri"})()
         mock_client_instance.workspace_get_info.return_value = mock_workspace_info
 
         # Mock EvalRun class attribute
@@ -1000,22 +1000,25 @@ class TestTagsInLoggingFunctions:
         mock_eval_run_instance.log_artifact = lambda *args, **kwargs: None
         mock_eval_run_instance.write_properties_to_run_history = lambda *args, **kwargs: None
         mock_eval_run_instance.log_metric = lambda *args, **kwargs: None
-        mock_eval_run_instance.info = type('MockInfo', (), {'run_id': 'test-run-id'})()
-        
+        mock_eval_run_instance.info = type("MockInfo", (), {"run_id": "test-run-id"})()
+
         # Mock the file operations
         import builtins
+
         original_open = builtins.open
+
         def mock_open(*args, **kwargs):
             if args[0].startswith("/tmp/mock_tempdir"):
                 # Return a mock file object that does nothing
                 from unittest.mock import MagicMock
+
                 mock_file = MagicMock()
                 mock_file.write = lambda x: None
                 mock_file.__enter__ = lambda self: mock_file
                 mock_file.__exit__ = lambda self, *args: None
                 return mock_file
             return original_open(*args, **kwargs)
-        
+
         with patch("builtins.open", side_effect=mock_open):
             # Test data
             metrics = {"accuracy": 0.8, "f1_score": 0.7}
@@ -1031,7 +1034,7 @@ class TestTagsInLoggingFunctions:
                 run=None,
                 evaluation_name="test-evaluation",
                 name_map={},
-                tags=tags
+                tags=tags,
             )
 
             # Verify that EvalRun was called with the correct tags
@@ -1053,7 +1056,7 @@ class TestTagsInLoggingFunctions:
 
         # Mock the management client and workspace info
         mock_client_instance = mock_lite_ml_client.return_value
-        mock_workspace_info = type('MockWorkspaceInfo', (), {'ml_flow_tracking_uri': 'https://test-tracking-uri'})()
+        mock_workspace_info = type("MockWorkspaceInfo", (), {"ml_flow_tracking_uri": "https://test-tracking-uri"})()
         mock_client_instance.workspace_get_info.return_value = mock_workspace_info
 
         # Mock EvalRun class attribute
@@ -1064,15 +1067,18 @@ class TestTagsInLoggingFunctions:
         mock_eval_run_instance.log_artifact = lambda *args, **kwargs: None
         mock_eval_run_instance.write_properties_to_run_history = lambda *args, **kwargs: None
         mock_eval_run_instance.log_metric = lambda *args, **kwargs: None
-        mock_eval_run_instance.info = type('MockInfo', (), {'run_id': 'test-run-id'})()
+        mock_eval_run_instance.info = type("MockInfo", (), {"run_id": "test-run-id"})()
 
         # Mock the file operations
         import builtins
+
         original_open = builtins.open
+
         def mock_open(*args, **kwargs):
             if args[0].startswith("/tmp/mock_tempdir"):
                 # Return a mock file object that does nothing
                 from unittest.mock import MagicMock
+
                 mock_file = MagicMock()
                 mock_file.write = lambda x: None
                 mock_file.__enter__ = lambda self: mock_file
@@ -1094,7 +1100,7 @@ class TestTagsInLoggingFunctions:
                 run=None,
                 evaluation_name="test-evaluation",
                 name_map={},
-                tags=None
+                tags=None,
             )
 
             # Verify that EvalRun was called with None tags
@@ -1119,7 +1125,7 @@ class TestTagsInLoggingFunctions:
             run=None,
             evaluation_name="test-evaluation",
             name_map={},
-            tags=tags
+            tags=tags,
         )
 
         # Should return None and not raise any exceptions
@@ -1133,11 +1139,11 @@ class TestTagsInLoggingFunctions:
 
         # Mock the client and its methods
         mock_client = mock_client_class.return_value
-        mock_client.create_evaluation_result.return_value = type('MockResponse', (), {'id': 'eval-result-123'})()
-        mock_client.start_evaluation_run.return_value = type('MockResponse', (), {'id': 'run-123'})()
-        mock_client.update_evaluation_run.return_value = type('MockResponse', (), {
-            'properties': {'AiStudioEvaluationUri': 'https://test-uri'}
-        })()
+        mock_client.create_evaluation_result.return_value = type("MockResponse", (), {"id": "eval-result-123"})()
+        mock_client.start_evaluation_run.return_value = type("MockResponse", (), {"id": "run-123"})()
+        mock_client.update_evaluation_run.return_value = type(
+            "MockResponse", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
+        )()
 
         # Test data
         metrics = {"accuracy": 0.8, "f1_score": 0.7}
@@ -1152,23 +1158,23 @@ class TestTagsInLoggingFunctions:
             project_url=project_url,
             evaluation_name="test-evaluation",
             name_map={},
-            tags=tags
+            tags=tags,
         )
 
         # Verify that start_evaluation_run was called with tags
         mock_client.start_evaluation_run.assert_called_once()
-        start_call_args = mock_client.start_evaluation_run.call_args[1]['evaluation']
+        start_call_args = mock_client.start_evaluation_run.call_args[1]["evaluation"]
         assert start_call_args.tags == tags
         assert start_call_args.display_name == "test-evaluation"
 
         # Verify that update_evaluation_run was called WITHOUT tags (not redundant)
         mock_client.update_evaluation_run.assert_called_once()
-        update_call_args = mock_client.update_evaluation_run.call_args[1]['evaluation']
-        assert not hasattr(update_call_args, 'tags') or update_call_args.tags is None
+        update_call_args = mock_client.update_evaluation_run.call_args[1]["evaluation"]
+        assert not hasattr(update_call_args, "tags") or update_call_args.tags is None
         assert update_call_args.status == "Completed"
 
         # Verify return value
-        assert result == 'https://test-uri'
+        assert result == "https://test-uri"
 
     @patch("azure.ai.evaluation._azure._token_manager.AzureMLTokenManager")
     @patch("azure.ai.evaluation._common.EvaluationServiceOneDPClient")
@@ -1178,11 +1184,11 @@ class TestTagsInLoggingFunctions:
 
         # Mock the client and its methods
         mock_client = mock_client_class.return_value
-        mock_client.create_evaluation_result.return_value = type('MockResponse', (), {'id': 'eval-result-123'})()
-        mock_client.start_evaluation_run.return_value = type('MockResponse', (), {'id': 'run-123'})()
-        mock_client.update_evaluation_run.return_value = type('MockResponse', (), {
-            'properties': {'AiStudioEvaluationUri': 'https://test-uri'}
-        })()
+        mock_client.create_evaluation_result.return_value = type("MockResponse", (), {"id": "eval-result-123"})()
+        mock_client.start_evaluation_run.return_value = type("MockResponse", (), {"id": "run-123"})()
+        mock_client.update_evaluation_run.return_value = type(
+            "MockResponse", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
+        )()
 
         # Test data
         metrics = {"accuracy": 0.8}
@@ -1196,18 +1202,18 @@ class TestTagsInLoggingFunctions:
             project_url=project_url,
             evaluation_name="test-evaluation",
             name_map={},
-            tags=None
+            tags=None,
         )
 
         # Verify that start_evaluation_run was called with None tags
         mock_client.start_evaluation_run.assert_called_once()
-        start_call_args = mock_client.start_evaluation_run.call_args[1]['evaluation']
+        start_call_args = mock_client.start_evaluation_run.call_args[1]["evaluation"]
         assert start_call_args.tags is None
 
         # Verify that update_evaluation_run was called without tags
         mock_client.update_evaluation_run.assert_called_once()
-        update_call_args = mock_client.update_evaluation_run.call_args[1]['evaluation']
-        assert not hasattr(update_call_args, 'tags') or update_call_args.tags is None
+        update_call_args = mock_client.update_evaluation_run.call_args[1]["evaluation"]
+        assert not hasattr(update_call_args, "tags") or update_call_args.tags is None
 
     @patch("azure.ai.evaluation._azure._token_manager.AzureMLTokenManager")
     @patch("azure.ai.evaluation._common.EvaluationServiceOneDPClient")
@@ -1217,11 +1223,11 @@ class TestTagsInLoggingFunctions:
 
         # Mock the client and its methods
         mock_client = mock_client_class.return_value
-        mock_client.create_evaluation_result.return_value = type('MockResponse', (), {'id': 'eval-result-123'})()
-        mock_client.start_evaluation_run.return_value = type('MockResponse', (), {'id': 'run-123'})()
-        mock_client.update_evaluation_run.return_value = type('MockResponse', (), {
-            'properties': {'AiStudioEvaluationUri': 'https://test-uri'}
-        })()
+        mock_client.create_evaluation_result.return_value = type("MockResponse", (), {"id": "eval-result-123"})()
+        mock_client.start_evaluation_run.return_value = type("MockResponse", (), {"id": "run-123"})()
+        mock_client.update_evaluation_run.return_value = type(
+            "MockResponse", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
+        )()
 
         # Test data
         metrics = {"accuracy": 0.8}
@@ -1236,12 +1242,12 @@ class TestTagsInLoggingFunctions:
             project_url=project_url,
             evaluation_name="test-evaluation",
             name_map={},
-            tags=empty_tags
+            tags=empty_tags,
         )
 
         # Verify that start_evaluation_run was called with empty tags
         mock_client.start_evaluation_run.assert_called_once()
-        start_call_args = mock_client.start_evaluation_run.call_args[1]['evaluation']
+        start_call_args = mock_client.start_evaluation_run.call_args[1]["evaluation"]
         assert start_call_args.tags == {}
 
     def test_log_metrics_and_instance_results_onedp_no_redundant_tags(self):
@@ -1253,34 +1259,34 @@ class TestTagsInLoggingFunctions:
         source = inspect.getsource(_log_metrics_and_instance_results_onedp)
 
         # Count occurrences of "tags=tags" in update_evaluation_run call
-        lines = source.split('\n')
+        lines = source.split("\n")
         update_section = []
         in_update_section = False
 
         for line in lines:
-            if 'update_evaluation_run(' in line:
+            if "update_evaluation_run(" in line:
                 in_update_section = True
             if in_update_section:
                 update_section.append(line)
-                if line.strip().endswith(')') and 'update_evaluation_run' in ''.join(update_section):
+                if line.strip().endswith(")") and "update_evaluation_run" in "".join(update_section):
                     break
 
-        update_code = '\n'.join(update_section)
+        update_code = "\n".join(update_section)
 
         # Verify that tags=tags is NOT in the update_evaluation_run call
-        assert 'tags=tags' not in update_code, "Tags should not be redundantly set in update_evaluation_run"
+        assert "tags=tags" not in update_code, "Tags should not be redundantly set in update_evaluation_run"
 
         # Verify that tags=tags IS in the start_evaluation_run call
         start_section = []
         in_start_section = False
 
         for line in lines:
-            if 'start_evaluation_run(' in line:
+            if "start_evaluation_run(" in line:
                 in_start_section = True
             if in_start_section:
                 start_section.append(line)
-                if line.strip().endswith(')') and 'start_evaluation_run' in ''.join(start_section):
+                if line.strip().endswith(")") and "start_evaluation_run" in "".join(start_section):
                     break
 
-        start_code = '\n'.join(start_section)
-        assert 'tags=tags' in start_code, "Tags should be set in start_evaluation_run"
+        start_code = "\n".join(start_section)
+        assert "tags=tags" in start_code, "Tags should be set in start_evaluation_run"

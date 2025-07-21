@@ -510,11 +510,11 @@ class TestEvalRun:
         # Test with None tags
         run = EvalRun(run_name="test", **TestEvalRun._MOCK_CREDS, tags=None)
         assert run._tags == {}
-        
+
         # Test with empty tags
         run = EvalRun(run_name="test", **TestEvalRun._MOCK_CREDS, tags={})
         assert run._tags == {}
-        
+
         # Test with custom tags
         custom_tags = {"environment": "test", "version": "1.0"}
         run = EvalRun(run_name="test", **TestEvalRun._MOCK_CREDS, tags=custom_tags)
@@ -524,11 +524,11 @@ class TestEvalRun:
         """Test that default mlflow.user tag is added when not provided."""
         with patch("azure.ai.evaluation._http_utils.HttpPipeline.request") as mock_request:
             mock_request.return_value = self._get_mock_create_response()
-            
+
             # Test with no tags - should add default mlflow.user
             run = EvalRun(run_name="test", **TestEvalRun._MOCK_CREDS, tags=None)
             run._start_run()
-            
+
             # Verify the request was called with default mlflow.user tag
             mock_request.assert_called_once()
             call_args = mock_request.call_args
@@ -542,18 +542,18 @@ class TestEvalRun:
         """Test that user can override the default mlflow.user tag."""
         custom_user = "custom-user"
         custom_tags = {"mlflow.user": custom_user, "environment": "prod"}
-        
+
         with patch("azure.ai.evaluation._http_utils.HttpPipeline.request") as mock_request:
             mock_request.return_value = self._get_mock_create_response()
-            
+
             run = EvalRun(run_name="test", **TestEvalRun._MOCK_CREDS, tags=custom_tags)
             run._start_run()
-            
+
             # Verify the request was called with custom mlflow.user tag
             mock_request.assert_called_once()
             call_args = mock_request.call_args
             request_body = call_args.kwargs["json"]
-            
+
             # Check that tags include the custom mlflow.user
             tags_dict = {tag["key"]: tag["value"] for tag in request_body["tags"]}
             assert "mlflow.user" in tags_dict
@@ -563,37 +563,33 @@ class TestEvalRun:
 
     def test_tags_mlflow_format_conversion(self, token_mock):
         """Test that tags are correctly converted to MLflow format."""
-        custom_tags = {
-            "project": "ai-evaluation",
-            "team": "sdk-team",
-            "version": "2.1.0"
-        }
-        
+        custom_tags = {"project": "ai-evaluation", "team": "sdk-team", "version": "2.1.0"}
+
         with patch("azure.ai.evaluation._http_utils.HttpPipeline.request") as mock_request:
             mock_request.return_value = self._get_mock_create_response()
-            
+
             run = EvalRun(run_name="test", **TestEvalRun._MOCK_CREDS, tags=custom_tags)
             run._start_run()
-            
+
             # Verify the request was called with correctly formatted tags
             mock_request.assert_called_once()
             call_args = mock_request.call_args
             request_body = call_args.kwargs["json"]
-            
+
             # Check that tags are in the correct MLflow format
             assert "tags" in request_body
             tags_list = request_body["tags"]
             assert isinstance(tags_list, list)
-            
+
             # Convert back to dict for easy verification
             tags_dict = {tag["key"]: tag["value"] for tag in tags_list}
-            
+
             # Verify all custom tags are present
             assert tags_dict["project"] == "ai-evaluation"
-            assert tags_dict["team"] == "sdk-team" 
+            assert tags_dict["team"] == "sdk-team"
             assert tags_dict["version"] == "2.1.0"
             assert tags_dict["mlflow.user"] == "azure-ai-evaluation"  # default added
-            
+
             # Verify each tag has the correct structure
             for tag in tags_list:
                 assert "key" in tag
@@ -605,16 +601,16 @@ class TestEvalRun:
         """Test that empty tags are handled correctly without errors."""
         with patch("azure.ai.evaluation._http_utils.HttpPipeline.request") as mock_request:
             mock_request.return_value = self._get_mock_create_response()
-            
+
             # Test with empty dict
             run = EvalRun(run_name="test", **TestEvalRun._MOCK_CREDS, tags={})
             run._start_run()
-            
+
             # Verify the request was called and only default tag is added
             mock_request.assert_called_once()
             call_args = mock_request.call_args
             request_body = call_args.kwargs["json"]
-            
+
             tags_dict = {tag["key"]: tag["value"] for tag in request_body["tags"]}
             assert len(tags_dict) == 1  # Only default mlflow.user tag
             assert tags_dict["mlflow.user"] == "azure-ai-evaluation"
@@ -625,36 +621,28 @@ class TestEvalRun:
         pf_run_mock = MagicMock()
         pf_run_mock.name = "mock_pf_run"
         pf_run_mock._experiment_name = "mock_pf_experiment"
-        
+
         with patch("azure.ai.evaluation._http_utils.HttpPipeline.request") as mock_request:
-            run = EvalRun(
-                run_name="test", 
-                **TestEvalRun._MOCK_CREDS, 
-                tags=custom_tags,
-                promptflow_run=pf_run_mock
-            )
+            run = EvalRun(run_name="test", **TestEvalRun._MOCK_CREDS, tags=custom_tags, promptflow_run=pf_run_mock)
             run._start_run()
-            
+
             # Verify no MLflow API call was made (since using promptflow run)
             mock_request.assert_not_called()
-            
+
             # Verify tags are still stored
             assert run._tags == custom_tags
 
     def test_tags_preserved_during_run_lifecycle(self, token_mock):
         """Test that tags are preserved throughout the run lifecycle."""
         custom_tags = {"environment": "test", "team": "ai-team"}
-        
+
         with patch("azure.ai.evaluation._http_utils.HttpPipeline.request") as mock_request:
-            mock_request.side_effect = [
-                self._get_mock_create_response(),
-                self._get_mock_end_response()
-            ]
-            
+            mock_request.side_effect = [self._get_mock_create_response(), self._get_mock_end_response()]
+
             with EvalRun(run_name="test", **TestEvalRun._MOCK_CREDS, tags=custom_tags) as run:
                 # Verify tags are preserved during run
                 assert run._tags == custom_tags
-                
+
             # Verify tags are still there after run ends
             assert run._tags == custom_tags
 
@@ -662,13 +650,13 @@ class TestEvalRun:
         """Test that original tags dictionary is not modified by EvalRun."""
         original_tags = {"environment": "test"}
         tags_copy = original_tags.copy()
-        
+
         with patch("azure.ai.evaluation._http_utils.HttpPipeline.request") as mock_request:
             mock_request.return_value = self._get_mock_create_response()
-            
+
             run = EvalRun(run_name="test", **TestEvalRun._MOCK_CREDS, tags=original_tags)
             run._start_run()
-            
+
             # Verify original dictionary wasn't modified
             assert original_tags == tags_copy
             assert "mlflow.user" not in original_tags  # shouldn't be added to original
@@ -678,85 +666,85 @@ class TestEvalRun:
         """Test that tags are properly formatted and included in MLflow request body."""
         custom_tags = {"experiment": "test-exp", "version": "1.0"}
         mock_request.return_value = self._get_mock_create_response()
-        
+
         run = EvalRun(run_name="test", **TestEvalRun._MOCK_CREDS, tags=custom_tags)
         run._start_run()
-        
+
         # Verify MLflow create request was called
         assert mock_request.call_count == 1
-        
+
         # Get the request body
         call_args = mock_request.call_args
         request_body = call_args.kwargs["json"]
-        
+
         # Verify tags are in the request body with correct format
-        assert 'tags' in request_body
-        tags_list = request_body['tags']
-        
+        assert "tags" in request_body
+        tags_list = request_body["tags"]
+
         # Convert back to dict for easier verification
-        tags_dict = {tag['key']: tag['value'] for tag in tags_list}
-        
+        tags_dict = {tag["key"]: tag["value"] for tag in tags_list}
+
         # Verify our custom tags are there
-        assert tags_dict['experiment'] == 'test-exp'
-        assert tags_dict['version'] == '1.0'
-        
+        assert tags_dict["experiment"] == "test-exp"
+        assert tags_dict["version"] == "1.0"
+
         # Verify default mlflow.user tag is there
-        assert tags_dict['mlflow.user'] == 'azure-ai-evaluation'
+        assert tags_dict["mlflow.user"] == "azure-ai-evaluation"
 
     @patch("azure.ai.evaluation._http_utils.HttpPipeline.request")
     def test_user_override_mlflow_user_tag(self, mock_request, token_mock):
         """Test that user can override the default mlflow.user tag."""
         custom_tags = {"mlflow.user": "custom-user", "experiment": "test"}
         mock_request.return_value = self._get_mock_create_response()
-        
+
         run = EvalRun(run_name="test", **TestEvalRun._MOCK_CREDS, tags=custom_tags)
         run._start_run()
-        
+
         # Get the request body
         call_args = mock_request.call_args
         request_body = call_args.kwargs["json"]
-        tags_list = request_body['tags']
-        tags_dict = {tag['key']: tag['value'] for tag in tags_list}
-        
+        tags_list = request_body["tags"]
+        tags_dict = {tag["key"]: tag["value"] for tag in tags_list}
+
         # Verify user's mlflow.user value is preserved
-        assert tags_dict['mlflow.user'] == 'custom-user'
-        assert tags_dict['experiment'] == 'test'
+        assert tags_dict["mlflow.user"] == "custom-user"
+        assert tags_dict["experiment"] == "test"
 
     @patch("azure.ai.evaluation._http_utils.HttpPipeline.request")
     def test_empty_tags_gets_default_mlflow_user(self, mock_request, token_mock):
         """Test that empty tags still gets the default mlflow.user tag."""
         mock_request.return_value = self._get_mock_create_response()
-        
+
         run = EvalRun(run_name="test", **TestEvalRun._MOCK_CREDS, tags={})
         run._start_run()
-        
+
         # Get the request body
         call_args = mock_request.call_args
         request_body = call_args.kwargs["json"]
-        tags_list = request_body['tags']
-        tags_dict = {tag['key']: tag['value'] for tag in tags_list}
-        
+        tags_list = request_body["tags"]
+        tags_dict = {tag["key"]: tag["value"] for tag in tags_list}
+
         # Should only have the default mlflow.user tag
         assert len(tags_dict) == 1
-        assert tags_dict['mlflow.user'] == 'azure-ai-evaluation'
+        assert tags_dict["mlflow.user"] == "azure-ai-evaluation"
 
     @patch("azure.ai.evaluation._http_utils.HttpPipeline.request")
     def test_none_tags_gets_default_mlflow_user(self, mock_request, token_mock):
         """Test that None tags still gets the default mlflow.user tag."""
         mock_request.return_value = self._get_mock_create_response()
-        
+
         run = EvalRun(run_name="test", **TestEvalRun._MOCK_CREDS, tags=None)
         run._start_run()
-        
+
         # Get the request body
         call_args = mock_request.call_args
         request_body = call_args.kwargs["json"]
-        tags_list = request_body['tags']
-        tags_dict = {tag['key']: tag['value'] for tag in tags_list}
-        
+        tags_list = request_body["tags"]
+        tags_dict = {tag["key"]: tag["value"] for tag in tags_list}
+
         # Should only have the default mlflow.user tag
         assert len(tags_dict) == 1
-        assert tags_dict['mlflow.user'] == 'azure-ai-evaluation'
+        assert tags_dict["mlflow.user"] == "azure-ai-evaluation"
 
     def test_tags_preserved_in_promptflow_run_mode(self, token_mock):
         """Test that tags are preserved when using promptflow run mode."""
@@ -764,46 +752,41 @@ class TestEvalRun:
         pf_run_mock = MagicMock()
         pf_run_mock.name = "pf-run-123"
         pf_run_mock._experiment_name = "test-experiment"
-        
+
         custom_tags = {"model": "gpt-4", "dataset": "test-data"}
-        
+
         run = EvalRun(run_name="test", **TestEvalRun._MOCK_CREDS, promptflow_run=pf_run_mock, tags=custom_tags)
-        
+
         # Verify tags are stored
         assert run._tags == custom_tags
-        
+
         # Verify run is in promptflow mode (no MLflow requests should be made)
         assert run._is_promptflow_run is True
 
     def test_tags_format_conversion_to_mlflow(self, token_mock):
         """Test the conversion of tags dict to MLflow tags list format."""
-        custom_tags = {
-            "experiment": "test-exp",
-            "version": "1.0",
-            "model": "gpt-4",
-            "special-chars": "test@value#123"
-        }
-        
+        custom_tags = {"experiment": "test-exp", "version": "1.0", "model": "gpt-4", "special-chars": "test@value#123"}
+
         run = EvalRun(run_name="test", **TestEvalRun._MOCK_CREDS, tags=custom_tags)
-        
+
         # Test the internal tag processing (this would normally happen in _start_run)
         run_tags = run._tags.copy()
         if "mlflow.user" not in run_tags:
             run_tags["mlflow.user"] = "azure-ai-evaluation"
-        
+
         # Convert to MLflow format
         tags_list = [{"key": key, "value": value} for key, value in run_tags.items()]
-        
+
         # Verify format
         assert len(tags_list) == 5  # 4 custom + 1 default
-        
+
         # Verify all tags are in correct format
         for tag in tags_list:
             assert "key" in tag
             assert "value" in tag
             assert isinstance(tag["key"], str)
             assert isinstance(tag["value"], str)
-        
+
         # Verify specific tags
         tags_dict = {tag["key"]: tag["value"] for tag in tags_list}
         assert tags_dict["experiment"] == "test-exp"
