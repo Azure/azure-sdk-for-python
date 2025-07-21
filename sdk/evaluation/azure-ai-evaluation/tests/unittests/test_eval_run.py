@@ -532,8 +532,7 @@ class TestEvalRun:
             # Verify the request was called with default mlflow.user tag
             mock_request.assert_called_once()
             call_args = mock_request.call_args
-            request_body = call_args[1]["json_dict"]
-            
+            request_body = call_args.kwargs["json"]
             # Check that tags include the default mlflow.user
             tags_dict = {tag["key"]: tag["value"] for tag in request_body["tags"]}
             assert "mlflow.user" in tags_dict
@@ -553,7 +552,7 @@ class TestEvalRun:
             # Verify the request was called with custom mlflow.user tag
             mock_request.assert_called_once()
             call_args = mock_request.call_args
-            request_body = call_args[1]["json_dict"]
+            request_body = call_args.kwargs["json"]
             
             # Check that tags include the custom mlflow.user
             tags_dict = {tag["key"]: tag["value"] for tag in request_body["tags"]}
@@ -579,7 +578,7 @@ class TestEvalRun:
             # Verify the request was called with correctly formatted tags
             mock_request.assert_called_once()
             call_args = mock_request.call_args
-            request_body = call_args[1]["json_dict"]
+            request_body = call_args.kwargs["json"]
             
             # Check that tags are in the correct MLflow format
             assert "tags" in request_body
@@ -614,7 +613,7 @@ class TestEvalRun:
             # Verify the request was called and only default tag is added
             mock_request.assert_called_once()
             call_args = mock_request.call_args
-            request_body = call_args[1]["json_dict"]
+            request_body = call_args.kwargs["json"]
             
             tags_dict = {tag["key"]: tag["value"] for tag in request_body["tags"]}
             assert len(tags_dict) == 1  # Only default mlflow.user tag
@@ -688,7 +687,7 @@ class TestEvalRun:
         
         # Get the request body
         call_args = mock_request.call_args
-        request_body = call_args[1]['json_dict']
+        request_body = call_args.kwargs["json"]
         
         # Verify tags are in the request body with correct format
         assert 'tags' in request_body
@@ -715,7 +714,7 @@ class TestEvalRun:
         
         # Get the request body
         call_args = mock_request.call_args
-        request_body = call_args[1]['json_dict']
+        request_body = call_args.kwargs["json"]
         tags_list = request_body['tags']
         tags_dict = {tag['key']: tag['value'] for tag in tags_list}
         
@@ -733,7 +732,7 @@ class TestEvalRun:
         
         # Get the request body
         call_args = mock_request.call_args
-        request_body = call_args[1]['json_dict']
+        request_body = call_args.kwargs["json"]
         tags_list = request_body['tags']
         tags_dict = {tag['key']: tag['value'] for tag in tags_list}
         
@@ -751,7 +750,7 @@ class TestEvalRun:
         
         # Get the request body
         call_args = mock_request.call_args
-        request_body = call_args[1]['json_dict']
+        request_body = call_args.kwargs["json"]
         tags_list = request_body['tags']
         tags_dict = {tag['key']: tag['value'] for tag in tags_list}
         
