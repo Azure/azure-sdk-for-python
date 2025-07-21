@@ -6,6 +6,7 @@
 # pylint: skip-file
 
 from datetime import datetime
+from types import TracebackType
 from typing import Any, Dict, Optional, Union
 from typing_extensions import Self
 
@@ -47,7 +48,9 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
         **kwargs: Any
     ) -> None: ...
     async def __aenter__(self) -> Self: ...
-    async def __aexit__(self, *args: Any) -> None: ...
+    async def __aexit__(
+        self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
+    ) -> None: ...
     async def close(self) -> None: ...
     @classmethod
     def from_connection_string(
