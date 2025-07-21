@@ -8,10 +8,11 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
-from azure.core import PipelineClient
+from azure.core import AsyncPipelineClient
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -20,264 +21,64 @@ from azure.core.exceptions import (
     ResourceNotModifiedError,
     map_error,
 )
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models as _models
+from ... import models as _models
+from ..._utils.serialization import Deserializer, Serializer
+from ...operations._project_connections_operations import (
+    build_create_request,
+    build_delete_request,
+    build_get_request,
+    build_list_request,
+    build_update_request,
+)
 from .._configuration import CognitiveServicesManagementClientConfiguration
-from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
-
-_SERIALIZER = Serializer()
-_SERIALIZER.client_side_validation = False
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-def build_delete_request(
-    resource_group_name: str, account_name: str, connection_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/connections/{connectionName}",
-    )
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
-        "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", max_length=64, min_length=2, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
-        ),
-        "connectionName": _SERIALIZER.url(
-            "connection_name", connection_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9_-]{2,32}$"
-        ),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_get_request(
-    resource_group_name: str, account_name: str, connection_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/connections/{connectionName}",
-    )
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
-        "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", max_length=64, min_length=2, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
-        ),
-        "connectionName": _SERIALIZER.url(
-            "connection_name", connection_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9_-]{2,32}$"
-        ),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_update_request(
-    resource_group_name: str, account_name: str, connection_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01-preview"))
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/connections/{connectionName}",
-    )
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
-        "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", max_length=64, min_length=2, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
-        ),
-        "connectionName": _SERIALIZER.url(
-            "connection_name", connection_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9_-]{2,32}$"
-        ),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_create_request(
-    resource_group_name: str, account_name: str, connection_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01-preview"))
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/connections/{connectionName}",
-    )
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
-        "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", max_length=64, min_length=2, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
-        ),
-        "connectionName": _SERIALIZER.url(
-            "connection_name", connection_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9_-]{2,32}$"
-        ),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_list_request(
-    resource_group_name: str,
-    account_name: str,
-    subscription_id: str,
-    *,
-    target: Optional[str] = None,
-    category: Optional[str] = None,
-    include_all: bool = False,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/connections",
-    )
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
-        "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", max_length=64, min_length=2, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9_.-]*$"
-        ),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    if target is not None:
-        _params["target"] = _SERIALIZER.query("target", target, "str")
-    if category is not None:
-        _params["category"] = _SERIALIZER.query("category", category, "str")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if include_all is not None:
-        _params["includeAll"] = _SERIALIZER.query("include_all", include_all, "bool")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-class AccountConnectionOperations:
+class ProjectConnectionsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.cognitiveservices.CognitiveServicesManagementClient`'s
-        :attr:`account_connection` attribute.
+        :class:`~azure.mgmt.cognitiveservices.aio.CognitiveServicesManagementClient`'s
+        :attr:`project_connections` attribute.
     """
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: CognitiveServicesManagementClientConfiguration = (
             input_args.pop(0) if input_args else kwargs.pop("config")
         )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @distributed_trace
-    def delete(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, account_name: str, connection_name: str, **kwargs: Any
+    @distributed_trace_async
+    async def delete(
+        self, resource_group_name: str, account_name: str, project_name: str, connection_name: str, **kwargs: Any
     ) -> None:
-        """Delete Cognitive Services account connection by name.
+        """Delete Cognitive Services project connection by name.
 
-        Delete Cognitive Services account connection by name.
+        Delete Cognitive Services project connection by name.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
+        :param project_name: The name of Cognitive Services account's project. Required.
+        :type project_name: str
         :param connection_name: Friendly name of the connection. Required.
         :type connection_name: str
         :return: None or the result of cls(response)
@@ -301,6 +102,7 @@ class AccountConnectionOperations:
         _request = build_delete_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
+            project_name=project_name,
             connection_name=connection_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
@@ -310,7 +112,7 @@ class AccountConnectionOperations:
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -324,19 +126,21 @@ class AccountConnectionOperations:
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-    @distributed_trace
-    def get(
-        self, resource_group_name: str, account_name: str, connection_name: str, **kwargs: Any
+    @distributed_trace_async
+    async def get(
+        self, resource_group_name: str, account_name: str, project_name: str, connection_name: str, **kwargs: Any
     ) -> _models.ConnectionPropertiesV2BasicResource:
-        """Lists Cognitive Services account connection by name.
+        """Lists Cognitive Services project connection by name.
 
-        Lists Cognitive Services account connection by name.
+        Lists Cognitive Services project connection by name.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
+        :param project_name: The name of Cognitive Services account's project. Required.
+        :type project_name: str
         :param connection_name: Friendly name of the connection. Required.
         :type connection_name: str
         :return: ConnectionPropertiesV2BasicResource or the result of cls(response)
@@ -360,6 +164,7 @@ class AccountConnectionOperations:
         _request = build_get_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
+            project_name=project_name,
             connection_name=connection_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
@@ -369,7 +174,7 @@ class AccountConnectionOperations:
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -388,29 +193,32 @@ class AccountConnectionOperations:
         return deserialized  # type: ignore
 
     @overload
-    def update(
+    async def update(
         self,
         resource_group_name: str,
         account_name: str,
+        project_name: str,
         connection_name: str,
-        body: Optional[_models.ConnectionUpdateContent] = None,
+        connection: Optional[_models.ConnectionUpdateContent] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ConnectionPropertiesV2BasicResource:
-        """Update Cognitive Services account connection under the specified account.
+        """Update Cognitive Services project connection under the specified project.
 
-        Update Cognitive Services account connection under the specified account.
+        Update Cognitive Services project connection under the specified project.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
+        :param project_name: The name of Cognitive Services account's project. Required.
+        :type project_name: str
         :param connection_name: Friendly name of the connection. Required.
         :type connection_name: str
-        :param body: Parameters for account connection update. Default value is None.
-        :type body: ~azure.mgmt.cognitiveservices.models.ConnectionUpdateContent
+        :param connection: Parameters for account connection update. Default value is None.
+        :type connection: ~azure.mgmt.cognitiveservices.models.ConnectionUpdateContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -420,29 +228,32 @@ class AccountConnectionOperations:
         """
 
     @overload
-    def update(
+    async def update(
         self,
         resource_group_name: str,
         account_name: str,
+        project_name: str,
         connection_name: str,
-        body: Optional[IO[bytes]] = None,
+        connection: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ConnectionPropertiesV2BasicResource:
-        """Update Cognitive Services account connection under the specified account.
+        """Update Cognitive Services project connection under the specified project.
 
-        Update Cognitive Services account connection under the specified account.
+        Update Cognitive Services project connection under the specified project.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
+        :param project_name: The name of Cognitive Services account's project. Required.
+        :type project_name: str
         :param connection_name: Friendly name of the connection. Required.
         :type connection_name: str
-        :param body: Parameters for account connection update. Default value is None.
-        :type body: IO[bytes]
+        :param connection: Parameters for account connection update. Default value is None.
+        :type connection: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -451,29 +262,32 @@ class AccountConnectionOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace
-    def update(
+    @distributed_trace_async
+    async def update(
         self,
         resource_group_name: str,
         account_name: str,
+        project_name: str,
         connection_name: str,
-        body: Optional[Union[_models.ConnectionUpdateContent, IO[bytes]]] = None,
+        connection: Optional[Union[_models.ConnectionUpdateContent, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.ConnectionPropertiesV2BasicResource:
-        """Update Cognitive Services account connection under the specified account.
+        """Update Cognitive Services project connection under the specified project.
 
-        Update Cognitive Services account connection under the specified account.
+        Update Cognitive Services project connection under the specified project.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
+        :param project_name: The name of Cognitive Services account's project. Required.
+        :type project_name: str
         :param connection_name: Friendly name of the connection. Required.
         :type connection_name: str
-        :param body: Parameters for account connection update. Is either a ConnectionUpdateContent type
-         or a IO[bytes] type. Default value is None.
-        :type body: ~azure.mgmt.cognitiveservices.models.ConnectionUpdateContent or IO[bytes]
+        :param connection: Parameters for account connection update. Is either a
+         ConnectionUpdateContent type or a IO[bytes] type. Default value is None.
+        :type connection: ~azure.mgmt.cognitiveservices.models.ConnectionUpdateContent or IO[bytes]
         :return: ConnectionPropertiesV2BasicResource or the result of cls(response)
         :rtype: ~azure.mgmt.cognitiveservices.models.ConnectionPropertiesV2BasicResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -496,17 +310,18 @@ class AccountConnectionOperations:
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(connection, (IOBase, bytes)):
+            _content = connection
         else:
-            if body is not None:
-                _json = self._serialize.body(body, "ConnectionUpdateContent")
+            if connection is not None:
+                _json = self._serialize.body(connection, "ConnectionUpdateContent")
             else:
                 _json = None
 
         _request = build_update_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
+            project_name=project_name,
             connection_name=connection_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
@@ -519,7 +334,7 @@ class AccountConnectionOperations:
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -538,30 +353,33 @@ class AccountConnectionOperations:
         return deserialized  # type: ignore
 
     @overload
-    def create(
+    async def create(
         self,
         resource_group_name: str,
         account_name: str,
+        project_name: str,
         connection_name: str,
-        body: Optional[_models.ConnectionPropertiesV2BasicResource] = None,
+        connection: Optional[_models.ConnectionPropertiesV2BasicResource] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ConnectionPropertiesV2BasicResource:
-        """Create or update Cognitive Services account connection under the specified account.
+        """Create or update Cognitive Services project connection under the specified project.
 
-        Create or update Cognitive Services account connection under the specified account.
+        Create or update Cognitive Services project connection under the specified project.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
+        :param project_name: The name of Cognitive Services account's project. Required.
+        :type project_name: str
         :param connection_name: Friendly name of the connection. Required.
         :type connection_name: str
-        :param body: The object for creating or updating a new account connection. Default value is
-         None.
-        :type body: ~azure.mgmt.cognitiveservices.models.ConnectionPropertiesV2BasicResource
+        :param connection: The object for creating or updating a new account connection. Default value
+         is None.
+        :type connection: ~azure.mgmt.cognitiveservices.models.ConnectionPropertiesV2BasicResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -571,30 +389,33 @@ class AccountConnectionOperations:
         """
 
     @overload
-    def create(
+    async def create(
         self,
         resource_group_name: str,
         account_name: str,
+        project_name: str,
         connection_name: str,
-        body: Optional[IO[bytes]] = None,
+        connection: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ConnectionPropertiesV2BasicResource:
-        """Create or update Cognitive Services account connection under the specified account.
+        """Create or update Cognitive Services project connection under the specified project.
 
-        Create or update Cognitive Services account connection under the specified account.
+        Create or update Cognitive Services project connection under the specified project.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
+        :param project_name: The name of Cognitive Services account's project. Required.
+        :type project_name: str
         :param connection_name: Friendly name of the connection. Required.
         :type connection_name: str
-        :param body: The object for creating or updating a new account connection. Default value is
-         None.
-        :type body: IO[bytes]
+        :param connection: The object for creating or updating a new account connection. Default value
+         is None.
+        :type connection: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -603,29 +424,32 @@ class AccountConnectionOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace
-    def create(
+    @distributed_trace_async
+    async def create(
         self,
         resource_group_name: str,
         account_name: str,
+        project_name: str,
         connection_name: str,
-        body: Optional[Union[_models.ConnectionPropertiesV2BasicResource, IO[bytes]]] = None,
+        connection: Optional[Union[_models.ConnectionPropertiesV2BasicResource, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.ConnectionPropertiesV2BasicResource:
-        """Create or update Cognitive Services account connection under the specified account.
+        """Create or update Cognitive Services project connection under the specified project.
 
-        Create or update Cognitive Services account connection under the specified account.
+        Create or update Cognitive Services project connection under the specified project.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
+        :param project_name: The name of Cognitive Services account's project. Required.
+        :type project_name: str
         :param connection_name: Friendly name of the connection. Required.
         :type connection_name: str
-        :param body: The object for creating or updating a new account connection. Is either a
+        :param connection: The object for creating or updating a new account connection. Is either a
          ConnectionPropertiesV2BasicResource type or a IO[bytes] type. Default value is None.
-        :type body: ~azure.mgmt.cognitiveservices.models.ConnectionPropertiesV2BasicResource or
+        :type connection: ~azure.mgmt.cognitiveservices.models.ConnectionPropertiesV2BasicResource or
          IO[bytes]
         :return: ConnectionPropertiesV2BasicResource or the result of cls(response)
         :rtype: ~azure.mgmt.cognitiveservices.models.ConnectionPropertiesV2BasicResource
@@ -649,17 +473,18 @@ class AccountConnectionOperations:
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(connection, (IOBase, bytes)):
+            _content = connection
         else:
-            if body is not None:
-                _json = self._serialize.body(body, "ConnectionPropertiesV2BasicResource")
+            if connection is not None:
+                _json = self._serialize.body(connection, "ConnectionPropertiesV2BasicResource")
             else:
                 _json = None
 
         _request = build_create_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
+            project_name=project_name,
             connection_name=connection_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
@@ -672,7 +497,7 @@ class AccountConnectionOperations:
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -695,20 +520,23 @@ class AccountConnectionOperations:
         self,
         resource_group_name: str,
         account_name: str,
+        project_name: str,
         target: Optional[str] = None,
         category: Optional[str] = None,
         include_all: bool = False,
         **kwargs: Any
-    ) -> Iterable["_models.ConnectionPropertiesV2BasicResource"]:
-        """Lists all the available  Cognitive Services account connections under the specified account.
+    ) -> AsyncItemPaged["_models.ConnectionPropertiesV2BasicResource"]:
+        """Lists all the available Cognitive Services project connections under the specified project.
 
-        Lists all the available  Cognitive Services account connections under the specified account.
+        Lists all the available Cognitive Services project connections under the specified project.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
+        :param project_name: The name of Cognitive Services account's project. Required.
+        :type project_name: str
         :param target: Target of the connection. Default value is None.
         :type target: str
         :param category: Category of the connection. Default value is None.
@@ -719,7 +547,7 @@ class AccountConnectionOperations:
         :return: An iterator like instance of either ConnectionPropertiesV2BasicResource or the result
          of cls(response)
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.cognitiveservices.models.ConnectionPropertiesV2BasicResource]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cognitiveservices.models.ConnectionPropertiesV2BasicResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -742,6 +570,7 @@ class AccountConnectionOperations:
                 _request = build_list_request(
                     resource_group_name=resource_group_name,
                     account_name=account_name,
+                    project_name=project_name,
                     subscription_id=self._config.subscription_id,
                     target=target,
                     category=category,
@@ -769,18 +598,18 @@ class AccountConnectionOperations:
                 _request.method = "GET"
             return _request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = self._deserialize("ConnectionPropertiesV2BasicResourceArmPaginatedResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, iter(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
@@ -792,4 +621,4 @@ class AccountConnectionOperations:
 
             return pipeline_response
 
-        return ItemPaged(get_next, extract_data)
+        return AsyncItemPaged(get_next, extract_data)
