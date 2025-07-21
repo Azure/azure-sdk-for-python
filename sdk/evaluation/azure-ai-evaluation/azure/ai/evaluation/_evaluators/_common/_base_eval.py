@@ -222,11 +222,16 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                 return []
 
             # Pair queries with responses - handle different scenarios
+            # Note: This uses simple sequential pairing for edge cases. In mismatched scenarios,
+            # this may not represent perfect conversational flow (e.g., multiple assistant responses
+            # might form a single complete answer), but provides predictable graceful degradation.
             if len(queries) == len(responses):
                 pairs = list(zip(queries, responses))
             elif len(queries) < len(responses):
+                # More responses than queries: pair each query with corresponding response by index
                 pairs = list(zip(queries, responses[: len(queries)]))
             else:
+                # More queries than responses: pair available responses with corresponding queries by index  
                 pairs = list(zip(queries[: len(responses)], responses))
 
             for query, response in pairs:
