@@ -11,14 +11,27 @@ from opentelemetry.semconv.attributes import (
     url_attributes,
     user_agent_attributes,
 )
+from opentelemetry.context import Context
+from opentelemetry.trace import get_current_span
+from opentelemetry.sdk.trace.sampling import (
+    Decision,
+    SamplingResult,
+    _get_parent_trace_state,
+)
 from opentelemetry.semconv.trace import DbSystemValues, SpanAttributes
 from opentelemetry.util.types import Attributes
 
+# pylint:disable=no-name-in-module
+from fixedint import Int32
+
+from azure.monitor.opentelemetry.exporter._constants import _SAMPLE_RATE_KEY
+
 from azure.monitor.opentelemetry.exporter._constants import (
-    _HASH,
+    _SAMPLING_HASH,
     _INTEGER_MAX,
-    _INTEGER_MIN
+    _INTEGER_MIN,
 )
+
 
 # pylint:disable=too-many-return-statements
 def _get_default_port_db(db_system: str) -> int:
@@ -327,22 +340,18 @@ def _get_url_for_http_request(attributes: Attributes) -> Optional[str]:
                 )
     return url
 
-def _get_djb2_sample_score(trace_id_hex: str) -> float:
+def _get_DJB2_sample_score(trace_id_hex: str) -> float:
     # This algorithm uses 32bit integers
-    hash_value = _HASH
+    hash_value = Int32(_SAMPLING_HASH)
     for char in trace_id_hex:
         hash_value = ((hash_value << 5) + hash_value) + ord(char)
-        hash_value &= 0xFFFFFFFF  # simulate 32-bit integer overflow
-
-    # Convert to signed 32-bit int
-    if hash_value & 0x80000000:
-        hash_value = -((~hash_value & 0xFFFFFFFF) + 1)
 
     if hash_value == _INTEGER_MIN:
         hash_value = int(_INTEGER_MAX)
     else:
         hash_value = abs(hash_value)
 
+    # divide by _INTEGER_MAX for value between 0 and 1, then multiply by 100 for percentage
     return 100.0 * (float(hash_value) / _INTEGER_MAX)
 
 def _round_down_to_nearest(sampling_percentage: float) -> float:
@@ -356,3 +365,37 @@ def _round_down_to_nearest(sampling_percentage: float) -> float:
     if not math.isfinite(item_count) or item_count >= _INTEGER_MAX:
         return 0.0
     return 100.0 / math.ceil(item_count)
+
+def parent_context_sampling(
+    parent_context: Optional[Context],
+    attributes: Attributes = None
+) -> Optional["SamplingResult"]:
+    parent_span = get_current_span(parent_context)
+    parent_span_context = parent_span.get_span_context()
+
+    if parent_span_context.is_valid and not parent_span_context.is_remote:
+        if not parent_span.is_recording():
+            # Parent was dropped, drop this child too
+            new_attributes = {} if attributes is None else dict(attributes)
+            new_attributes[_SAMPLE_RATE_KEY] = 0.0
+
+            return SamplingResult(
+                Decision.DROP,
+                new_attributes,
+                _get_parent_trace_state(parent_context),
+            )
+
+        parent_attributes = getattr(parent_span, 'attributes', {})
+        parent_sample_rate = parent_attributes.get(_SAMPLE_RATE_KEY)
+
+        if parent_sample_rate is not None:
+            # Honor parent's sampling rate
+            new_attributes = {} if attributes is None else dict(attributes)
+            new_attributes[_SAMPLE_RATE_KEY] = parent_sample_rate
+
+            return SamplingResult(
+                Decision.RECORD_AND_SAMPLE,
+                new_attributes,
+                _get_parent_trace_state(parent_context),
+            )
+    return None
