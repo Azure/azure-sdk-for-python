@@ -2751,3 +2751,24 @@ class TestStorageContainer(StorageRecordedTestCase):
         # Act / Assert
         cc_info = container.get_account_information()
         assert cc_info is not None
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_list_blobs_start_from(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
+        data = b'hello world'
+        container.get_blob_client('blob1').upload_blob(data)
+        container.get_blob_client('path/blob2').upload_blob(data)
+
+        # Act
+        blobs = list(container.list_blobs(start_from="path/"))
+
+        # Assert
+        assert blobs is not None
+        assert len(blobs) == 1
+        assert blobs[0] is not None
+        self.assertNamedItemInContainer(blobs, 'path/blob2')
