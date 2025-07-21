@@ -9,7 +9,7 @@
 ### Bugs Fixed
 
 - Fix logging formatter breaking change
-    ([#42035](https://github.com/Azure/azure-sdk-for-python/pull/42035))
+    ([#42122](https://github.com/Azure/azure-sdk-for-python/pull/42122))
 
 ### Other Changes
 

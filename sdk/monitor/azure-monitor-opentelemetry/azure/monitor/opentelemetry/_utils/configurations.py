@@ -116,6 +116,7 @@ def _default_logging_formatter(configurations):
     formatter = configurations.get(LOGGING_FORMATTER_ARG)
     if formatter:
         if not isinstance(formatter, Formatter):
+            configurations[LOGGING_FORMATTER_ARG] = None
             return
     elif LOGGING_FORMAT_ENV_ARG in environ:
         try:
@@ -126,6 +127,7 @@ def _default_logging_formatter(configurations):
                 environ[LOGGING_FORMAT_ENV_ARG],
                 ex,
             )
+            configurations[LOGGING_FORMATTER_ARG] = None
 
 def _default_resource(configurations):
     environ.setdefault(OTEL_EXPERIMENTAL_RESOURCE_DETECTORS, ",".join(_SUPPORTED_RESOURCE_DETECTORS))
