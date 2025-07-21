@@ -5,5 +5,5 @@
 # license information.
 # --------------------------------------------------------------------------
 
-VERSION = "1.4.2"
+VERSION = "2.0.0"
 SDK_MONIKER = f"monitor-query/{VERSION}"

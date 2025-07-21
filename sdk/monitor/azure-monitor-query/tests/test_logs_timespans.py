@@ -3,14 +3,13 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import json
 
-from msrest.serialization import UTC
 import pytest
 
 from azure.monitor.query import LogsQueryClient
-from azure.monitor.query._helpers import construct_iso8601
+from azure.monitor.query._utils import construct_iso8601
 
 from base_testcase import AzureMonitorQueryLogsTestCase
 
@@ -91,4 +90,13 @@ class TestLogsTimespans(AzureMonitorQueryLogsTestCase):
         assert construct_iso8601(timespan=d7) == "PT172800.0S"
 
         with pytest.raises(ValueError, match="timespan must be a timedelta or a tuple."):
-            construct_iso8601(timespan=(datetime.now(UTC())))
+            construct_iso8601(timespan=(datetime.now(timezone.utc)))
+
+    def test_iso8601_start_end(self):
+        start = datetime(2022, 11, 7, 1, 3, 7, 584426, tzinfo=timezone.utc)
+        end = datetime(2022, 11, 8, 1, 3, 7, 584426, tzinfo=timezone.utc)
+        duration = timedelta(days=1)
+
+        assert construct_iso8601(timespan=(start, end)) == "2022-11-07T01:03:07.584426Z/2022-11-08T01:03:07.584426Z"
+        assert construct_iso8601(timespan=(start, duration)) == "2022-11-07T01:03:07.584426Z/PT86400.0S"
+        assert construct_iso8601(timespan=duration) == "PT86400.0S"

@@ -1,0 +1,25 @@
+{
+    "CrossLanguagePackageId": "MonitorQueryLogs",
+    "CrossLanguageDefinitionId": {
+        "azure.monitor.query._generated.models.BatchQueryRequest": "MonitorQueryLogs.BatchQueryRequest",
+        "azure.monitor.query._generated.models.BatchQueryResponse": "MonitorQueryLogs.BatchQueryResponse",
+        "azure.monitor.query._generated.models.BatchQueryResults": "MonitorQueryLogs.BatchQueryResults",
+        "azure.monitor.query._generated.models.BatchRequest": "MonitorQueryLogs.BatchRequest",
+        "azure.monitor.query._generated.models.BatchResponse": "MonitorQueryLogs.BatchResponse",
+        "azure.monitor.query._generated.models.Column": "MonitorQueryLogs.Column",
+        "azure.monitor.query._generated.models.ErrorDetail": "MonitorQueryLogs.ErrorDetail",
+        "azure.monitor.query._generated.models.ErrorInfo": "MonitorQueryLogs.ErrorInfo",
+        "azure.monitor.query._generated.models.ErrorResponse": "MonitorQueryLogs.ErrorResponse",
+        "azure.monitor.query._generated.models.QueryBody": "MonitorQueryLogs.QueryBody",
+        "azure.monitor.query._generated.models.QueryResults": "MonitorQueryLogs.QueryResults",
+        "azure.monitor.query._generated.models.Table": "MonitorQueryLogs.Table",
+        "azure.monitor.query._generated.models.Versions": "MonitorQueryLogs.Versions",
+        "azure.monitor.query._generated.models.ColumnDataType": "MonitorQueryLogs.ColumnDataType",
+        "azure.monitor.query._generated.MonitorQueryLogsClient.execute": "ClientCustomizations.MonitorQueryLogsClient.execute",
+        "azure.monitor.query._generated.aio.MonitorQueryLogsClient.execute": "ClientCustomizations.MonitorQueryLogsClient.execute",
+        "azure.monitor.query._generated.MonitorQueryLogsClient.execute_with_resource_id": "ClientCustomizations.MonitorQueryLogsClient.executeWithResourceId",
+        "azure.monitor.query._generated.aio.MonitorQueryLogsClient.execute_with_resource_id": "ClientCustomizations.MonitorQueryLogsClient.executeWithResourceId",
+        "azure.monitor.query._generated.MonitorQueryLogsClient.batch": "ClientCustomizations.MonitorQueryLogsClient.batch",
+        "azure.monitor.query._generated.aio.MonitorQueryLogsClient.batch": "ClientCustomizations.MonitorQueryLogsClient.batch"
+    }
+}

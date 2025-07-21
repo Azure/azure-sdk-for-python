@@ -4,17 +4,9 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 
-from ._logs_query_client import LogsQueryClient
-from ._metrics_query_client import MetricsQueryClient
-from ._metrics_client import MetricsClient
+from ._client import LogsQueryClient
 
-from ._enums import (
-    LogsQueryStatus,
-    MetricAggregationType,
-    MetricClass,
-    MetricNamespaceClassification,
-    MetricUnit,
-)
+from ._enums import LogsQueryStatus
 
 from ._exceptions import LogsQueryError
 
@@ -23,20 +15,12 @@ from ._models import (
     LogsTable,
     LogsQueryPartialResult,
     LogsTableRow,
-    MetricsQueryResult,
     LogsBatchQuery,
-    MetricNamespace,
-    MetricDefinition,
-    TimeSeriesElement,
-    Metric,
-    MetricValue,
-    MetricAvailability,
 )
 
 from ._version import VERSION
 
 __all__ = [
-    "MetricAggregationType",
     "LogsQueryClient",
     "LogsQueryResult",
     "LogsQueryPartialResult",
@@ -45,18 +29,6 @@ __all__ = [
     "LogsTable",
     "LogsTableRow",
     "LogsBatchQuery",
-    "MetricsQueryClient",
-    "MetricsClient",
-    "MetricNamespace",
-    "MetricNamespaceClassification",
-    "MetricDefinition",
-    "MetricUnit",
-    "MetricsQueryResult",
-    "TimeSeriesElement",
-    "Metric",
-    "MetricValue",
-    "MetricClass",
-    "MetricAvailability",
 ]
 
 __version__ = VERSION

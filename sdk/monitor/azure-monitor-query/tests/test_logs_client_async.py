@@ -74,7 +74,7 @@ class TestLogsClientAsync(AzureMonitorQueryLogsTestCase):
     @pytest.mark.asyncio
     async def test_logs_query_batch_raises_on_no_timespan(self, monitor_info):
         with pytest.raises(TypeError):
-            LogsBatchQuery(
+            LogsBatchQuery(  # type: ignore
                 workspace_id=monitor_info["workspace_id"],
                 query="AzureActivity | summarize count()",
             )
@@ -128,7 +128,6 @@ class TestLogsClientAsync(AzureMonitorQueryLogsTestCase):
             assert response
             assert len(response.tables[0].rows) == 2
 
-    @pytest.mark.skip("Flaky deserialization issues with msrest. Re-enable after removing msrest dependency.")
     @pytest.mark.live_test_only("Issues recording dynamic 'id' values in requests/responses")
     @pytest.mark.asyncio
     async def test_logs_query_batch_additional_workspaces(self, monitor_info):
@@ -240,7 +239,8 @@ class TestLogsClientAsync(AzureMonitorQueryLogsTestCase):
 
     @pytest.mark.asyncio
     async def test_logs_resource_query_additional_options(self, recorded_test, monitor_info):
-        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
+        credential = self.get_credential(LogsQueryClient, is_async=True)
+        client = self.get_client(LogsQueryClient, credential=credential)
         async with client:
             query = "requests | summarize count()"
 
@@ -258,10 +258,11 @@ class TestLogsClientAsync(AzureMonitorQueryLogsTestCase):
     @pytest.mark.asyncio
     async def test_client_different_endpoint(self):
         credential = self.get_credential(LogsQueryClient, is_async=True)
-        endpoint = "https://api.loganalytics.azure.cn/v1"
+        endpoint = "https://api.loganalytics.azure.cn"
         client = LogsQueryClient(credential, endpoint=endpoint)
 
         assert client._endpoint == endpoint
+        assert client._client._config.authentication_policy
         assert "https://api.loganalytics.azure.cn/.default" in client._client._config.authentication_policy._scopes
 
     @pytest.mark.asyncio

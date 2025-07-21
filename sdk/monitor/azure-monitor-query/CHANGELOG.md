@@ -1,10 +1,14 @@
 # Release History
 
-## 1.4.2 (Unreleased)
+## 2.0.0 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
+
+- `MetricsClient` and `MetricsQueryClient` have been removed from the `azure-monitor-query` package. This is part of the migration to split logs and metrics functionality into separate packages.
+- The `MetricsClient` has been moved to the new `azure-monitor-querymetrics`
+- Functionality provided by `MetricsQueryClient` can be access through the `azure-mgmt-monitor` package.
 
 ### Bugs Fixed
 

@@ -8,7 +8,6 @@ Start by creating a new virtual environment for your perf tests. This will need 
 These tests will run against a pre-configured Log Analytics workspace. The following environment variable will need to be set for the tests to access the live resources:
 ```
 LOG_WORKSPACE_ID=<workspace id of the log workspace>
-METRICS_RESOURCE_URI=<uri of the resource for which the metrics are being queried>
 ```
 
 ### Setup for perf test runs
@@ -38,11 +37,9 @@ These options are available for all perf tests:
 The tests currently written for the T2 SDK:
 - `LogsPerfTest` queries a single query.
 - `LogsBatchPerfTest` queries multiple queries using the batch operation.
-- `MetricsPerfTest` to test a metrics query on eventgrid resource
 
 ## Example command
 ```cmd
 (env) ~/azure-monitor-query/tests> perfstress LogsPerfTest
 (env) ~/azure-monitor-query/tests> perfstress LogsBatchPerfTest
-(env) ~/azure-monitor-query/tests> perfstress MetricsPerfTest
 ```
