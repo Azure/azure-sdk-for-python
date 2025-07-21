@@ -4,7 +4,6 @@
 
 ### Features Added
 
-  - Client `DashboardManagementClient` added method `send_request`
   - Client `DashboardManagementClient` added operation group `integration_fabrics`
   - Client `DashboardManagementClient` added operation group `managed_dashboards`
   - Model `GrafanaConfigurations` added property `snapshots`
@@ -24,8 +23,8 @@
   - Added model `UnifiedAlertingScreenshots`
   - Added model `Users`
   - Model `GrafanaOperations` added method `begin_update`
-  - Added model `IntegrationFabricsOperations`
-  - Added model `ManagedDashboardsOperations`
+  - Added operation group `IntegrationFabricsOperations`
+  - Added operation group `ManagedDashboardsOperations`
 
 ### Breaking Changes
 
