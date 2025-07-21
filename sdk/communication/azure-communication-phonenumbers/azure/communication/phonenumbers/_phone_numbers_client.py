@@ -294,6 +294,7 @@ class PhoneNumbersClient:
     def list_available_localities(
         self,
         country_code: str,
+        phone_number_type: Optional[PhoneNumberType] = None,
         **kwargs: Any
     ) -> ItemPaged[PhoneNumberLocality]:
         """Gets the list of cities or towns with available phone numbers.
@@ -302,9 +303,9 @@ class PhoneNumbersClient:
 
         :param country_code: The ISO 3166-2 country/region two letter code, e.g. US. Required.
         :type country_code: str
-        :keyword phone_number_type: An optional parameter for the type of phone numbers, 
+        :param phone_number_type: An optional parameter for the type of phone numbers, 
          e.g. geographic, tollFree, mobile. Default value is None.
-        :paramtype phone_number_type: ~azure.communication.phonenumbers.PhoneNumberType
+        :type phone_number_type: ~azure.communication.phonenumbers.PhoneNumberType
         :keyword administrative_division: An optional parameter for the name of the state or province
          in which to search for the area code. e.g. California. Default value is None.
         :paramtype administrative_division: str
@@ -319,7 +320,7 @@ class PhoneNumbersClient:
             country_code,
             administrative_division=kwargs.pop("administrative_division", None),
             accept_language=self._accepted_language,
-            phone_number_type=kwargs.pop("phone_number_type", None),
+            phone_number_type=phone_number_type,
             **kwargs
         )
 
