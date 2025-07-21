@@ -1,6 +1,5 @@
 #!/bin/bash
 
-TEMP_FILE="$TMPDIR/auto_temp.json"
 # generate code and package in one step
 python -m packaging_tools.sdk_generator "$1" "$2" --debug 2>&1
 echo "[Generate] generation and packaging done!!!"

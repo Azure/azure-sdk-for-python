@@ -1,5 +1,21 @@
 # Release History
 
+## 1.0.0b40 (2025-07-17)
+
+### Features Added
+
+- Detect synthetically created telemetry based on the user-agent header
+  ([#41733](https://github.com/Azure/azure-sdk-for-python/pull/41733))
+- Added customer-facing statsbeat preview.
+  ([#41669](https://github.com/Azure/azure-sdk-for-python/pull/41669))
+- Customer Facing Statsbeat: Added logic for dropped item count
+  ([#41950](https://github.com/Azure/azure-sdk-for-python/pull/41950))
+- Customer Facing Statsbeat: Added logic for retry item count
+  ([#41971](https://github.com/Azure/azure-sdk-for-python/pull/41971))
+
+
+- Support AI Foundry by Handling GEN_AI_SYSTEM Attributes with [Spec](https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/blob/main/ApplicationInsights/genai_semconv_mapping.md) ([#41705](https://github.com/Azure/azure-sdk-for-python/pull/41705))
+
 ## 1.0.0b39 (2025-06-25)
 
 ### Bugs Fixed

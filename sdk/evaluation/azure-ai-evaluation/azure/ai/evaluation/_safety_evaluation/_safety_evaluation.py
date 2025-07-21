@@ -290,6 +290,7 @@ class _SafetyEvaluation:
                 target=callback,
                 text=source_text if source_text else "",
                 concurrent_async_tasks=concurrent_async_tasks,
+                randomization_seed=randomization_seed,
             )
 
         ## Run AdversarialSimulator

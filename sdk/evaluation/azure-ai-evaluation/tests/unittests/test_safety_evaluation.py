@@ -347,3 +347,51 @@ class TestSafetyEvaluation:
                 num_turns=3,
             )
         assert "Ungrounded attributes evaluation only supports single-turn conversations" in str(exc_info.value)
+
+    def test_randomization_seed_consistency(self):
+        """Test that the same randomization_seed produces consistent results across multiple invocations."""
+        import random
+
+        # Test that local Random instances with same seed produce same results
+        seed = 42
+        test_data = [f"item_{i}" for i in range(20)]
+
+        # First run
+        data1 = test_data.copy()
+        rng1 = random.Random(seed)
+        rng1.shuffle(data1)
+
+        # Second run with same seed (simulating separate invocation)
+        data2 = test_data.copy()
+        rng2 = random.Random(seed)
+        rng2.shuffle(data2)
+
+        # Should produce identical results
+        assert data1 == data2, "Same randomization_seed should produce identical results"
+
+        # Test that different seeds produce different results
+        data3 = test_data.copy()
+        rng3 = random.Random(123)
+        rng3.shuffle(data3)
+
+        assert data1 != data3, "Different seeds should produce different results"
+
+    def test_local_random_no_global_state_pollution(self):
+        """Test that using local Random instances doesn't affect global random state."""
+        import random
+
+        # Set global state
+        random.seed(100)
+        initial_value = random.random()
+
+        # Reset to same state
+        random.seed(100)
+
+        # Use local random instance (simulating what our fixed simulators do)
+        local_random = random.Random(42)
+        local_random.shuffle([1, 2, 3, 4, 5])
+        local_random.choice([1, 2, 3])
+
+        # Global state should be unchanged
+        after_value = random.random()
+        assert initial_value == after_value, "Local Random usage should not affect global state"

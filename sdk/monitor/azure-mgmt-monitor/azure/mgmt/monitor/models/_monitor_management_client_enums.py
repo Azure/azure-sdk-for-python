@@ -159,6 +159,235 @@ class GuestDiagnosticSettingsOsType(str, Enum, metaclass=CaseInsensitiveEnumMeta
     LINUX = "Linux"
 
 
+class KnownAgentSettingName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The name of the setting.
+    Must be part of the list of supported settings.
+    """
+
+    MAX_DISK_QUOTA_IN_MB = "MaxDiskQuotaInMB"
+    USE_TIME_RECEIVED_FOR_FORWARDED_EVENTS = "UseTimeReceivedForForwardedEvents"
+
+
+class KnownColumnDefinitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the column data."""
+
+    STRING = "string"
+    INT = "int"
+    LONG = "long"
+    REAL = "real"
+    BOOLEAN = "boolean"
+    DATETIME = "datetime"
+    DYNAMIC = "dynamic"
+    INT_ENUM = "int"
+
+
+class KnownDataCollectionEndpointProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The resource provisioning state. This property is READ-ONLY."""
+
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+
+
+class KnownDataCollectionEndpointResourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of the resource."""
+
+    LINUX = "Linux"
+    WINDOWS = "Windows"
+
+
+class KnownDataCollectionRuleAssociationProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The resource provisioning state."""
+
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+
+
+class KnownDataCollectionRuleProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The resource provisioning state."""
+
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+
+
+class KnownDataCollectionRuleResourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of the resource."""
+
+    LINUX = "Linux"
+    WINDOWS = "Windows"
+
+
+class KnownDataFlowStreams(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KnownDataFlowStreams."""
+
+    MICROSOFT_EVENT = "Microsoft-Event"
+    MICROSOFT_INSIGHTS_METRICS = "Microsoft-InsightsMetrics"
+    MICROSOFT_PERF = "Microsoft-Perf"
+    MICROSOFT_SYSLOG = "Microsoft-Syslog"
+    MICROSOFT_WINDOWS_EVENT = "Microsoft-WindowsEvent"
+
+
+class KnownExtensionDataSourceStreams(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KnownExtensionDataSourceStreams."""
+
+    MICROSOFT_EVENT = "Microsoft-Event"
+    MICROSOFT_INSIGHTS_METRICS = "Microsoft-InsightsMetrics"
+    MICROSOFT_PERF = "Microsoft-Perf"
+    MICROSOFT_SYSLOG = "Microsoft-Syslog"
+    MICROSOFT_WINDOWS_EVENT = "Microsoft-WindowsEvent"
+
+
+class KnownLocationSpecProvisioningStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The resource provisioning state in this location."""
+
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+
+
+class KnownLogFilesDataSourceFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The data format of the log files."""
+
+    JSON = "json"
+    TEXT = "text"
+
+
+class KnownLogFileTextSettingsRecordStartTimestampFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """One of the supported timestamp formats."""
+
+    ISO8601 = "ISO 8601"
+    YYYY_MM_DD_HH_MM_SS = "YYYY-MM-DD HH:MM:SS"
+    M_D_YYYY_HH_MM_SS_AM_PM = "M/D/YYYY HH:MM:SS AM/PM"
+    MON_DD_YYYY_HH_MM_SS = "Mon DD, YYYY HH:MM:SS"
+    YY_M_MDD_HH_MM_SS = "yyMMdd HH:mm:ss"
+    DD_M_MYY_HH_MM_SS = "ddMMyy HH:mm:ss"
+    MMM_D_HH_MM_SS = "MMM d hh:mm:ss"
+    DD_MMM_YYYY_HH_MM_SS_ZZZ = "dd/MMM/yyyy:HH:mm:ss zzz"
+    YYYY_MM_DD_THH_MM_SS_K = "yyyy-MM-ddTHH:mm:ssK"
+
+
+class KnownPerfCounterDataSourceStreams(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KnownPerfCounterDataSourceStreams."""
+
+    MICROSOFT_PERF = "Microsoft-Perf"
+    MICROSOFT_INSIGHTS_METRICS = "Microsoft-InsightsMetrics"
+
+
+class KnownPrometheusForwarderDataSourceStreams(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KnownPrometheusForwarderDataSourceStreams."""
+
+    MICROSOFT_PROMETHEUS_METRICS = "Microsoft-PrometheusMetrics"
+
+
+class KnownPublicNetworkAccessOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The configuration to set whether network access from public internet to the endpoints are
+    allowed.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+    SECURED_BY_PERIMETER = "SecuredByPerimeter"
+
+
+class KnownStorageBlobLookupType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of lookup to perform on the blob."""
+
+    STRING = "String"
+    CIDR = "Cidr"
+
+
+class KnownSyslogDataSourceFacilityNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KnownSyslogDataSourceFacilityNames."""
+
+    ASTERISK = "*"
+    ALERT = "alert"
+    AUDIT = "audit"
+    AUTH = "auth"
+    AUTHPRIV = "authpriv"
+    CLOCK = "clock"
+    CRON = "cron"
+    DAEMON = "daemon"
+    FTP = "ftp"
+    KERN = "kern"
+    LOCAL0 = "local0"
+    LOCAL1 = "local1"
+    LOCAL2 = "local2"
+    LOCAL3 = "local3"
+    LOCAL4 = "local4"
+    LOCAL5 = "local5"
+    LOCAL6 = "local6"
+    LOCAL7 = "local7"
+    LPR = "lpr"
+    MAIL = "mail"
+    MARK = "mark"
+    NEWS = "news"
+    NOPRI = "nopri"
+    NTP = "ntp"
+    SYSLOG = "syslog"
+    USER = "user"
+    UUCP = "uucp"
+
+
+class KnownSyslogDataSourceLogLevels(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KnownSyslogDataSourceLogLevels."""
+
+    DEBUG = "Debug"
+    INFO = "Info"
+    NOTICE = "Notice"
+    WARNING = "Warning"
+    ERROR = "Error"
+    CRITICAL = "Critical"
+    ALERT = "Alert"
+    EMERGENCY = "Emergency"
+    ASTERISK = "*"
+
+
+class KnownSyslogDataSourceStreams(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KnownSyslogDataSourceStreams."""
+
+    MICROSOFT_SYSLOG = "Microsoft-Syslog"
+
+
+class KnownWindowsEventLogDataSourceStreams(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KnownWindowsEventLogDataSourceStreams."""
+
+    MICROSOFT_WINDOWS_EVENT = "Microsoft-WindowsEvent"
+    MICROSOFT_EVENT = "Microsoft-Event"
+
+
+class KnownWindowsFirewallLogsDataSourceProfileFilter(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KnownWindowsFirewallLogsDataSourceProfileFilter."""
+
+    DOMAIN = "Domain"
+    PRIVATE = "Private"
+    PUBLIC = "Public"
+
+
+class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of managed service identity (where both SystemAssigned and UserAssigned types are
+    allowed).
+    """
+
+    NONE = "None"
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
+
+
 class MetricClass(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The class of the metric."""
 
