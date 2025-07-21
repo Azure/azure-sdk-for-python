@@ -151,11 +151,11 @@
         "azure.ai.language.conversations.models.SummaryAspect": "Language.Conversations.SummaryAspect",
         "azure.ai.language.conversations.ConversationAnalysisClient.analyze_conversation": "Language.Conversations.analyzeConversations",
         "azure.ai.language.conversations.aio.ConversationAnalysisClient.analyze_conversation": "Language.Conversations.analyzeConversations",
-        "azure.ai.language.conversations.ConversationAnalysisClient.get_analyze_conversation_job_status": "Language.Conversations.analyzeConversationsJobStatus",
-        "azure.ai.language.conversations.aio.ConversationAnalysisClient.get_analyze_conversation_job_status": "Language.Conversations.analyzeConversationsJobStatus",
-        "azure.ai.language.conversations.ConversationAnalysisClient.begin_analyze_conversation_submit_job": "Language.Conversations.analyzeConversationsSubmitJob",
-        "azure.ai.language.conversations.aio.ConversationAnalysisClient.begin_analyze_conversation_submit_job": "Language.Conversations.analyzeConversationsSubmitJob",
-        "azure.ai.language.conversations.ConversationAnalysisClient.begin_analyze_conversation_cancel_job": "Language.Conversations.analyzeConversationsCancelJob",
-        "azure.ai.language.conversations.aio.ConversationAnalysisClient.begin_analyze_conversation_cancel_job": "Language.Conversations.analyzeConversationsCancelJob"
+        "azure.ai.language.conversations.ConversationAnalysisClient.get_job_status": "Language.Conversations.analyzeConversationsJobStatus",
+        "azure.ai.language.conversations.aio.ConversationAnalysisClient.get_job_status": "Language.Conversations.analyzeConversationsJobStatus",
+        "azure.ai.language.conversations.ConversationAnalysisClient.begin_analyze_conversation_job": "Language.Conversations.analyzeConversationsSubmitJob",
+        "azure.ai.language.conversations.aio.ConversationAnalysisClient.begin_analyze_conversation_job": "Language.Conversations.analyzeConversationsSubmitJob",
+        "azure.ai.language.conversations.ConversationAnalysisClient.begin_cancel_job": "Language.Conversations.analyzeConversationsCancelJob",
+        "azure.ai.language.conversations.aio.ConversationAnalysisClient.begin_cancel_job": "Language.Conversations.analyzeConversationsCancelJob"
     }
 }

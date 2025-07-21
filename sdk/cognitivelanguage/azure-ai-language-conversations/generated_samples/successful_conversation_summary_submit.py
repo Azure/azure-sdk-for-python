@@ -22,7 +22,7 @@ def main():
         credential="CREDENTIAL",
     )
 
-    client.begin_analyze_conversation_submit_job(
+    client.begin_analyze_conversation_job(
         body={
             "analysisInput": {
                 "conversations": [
