@@ -195,3 +195,17 @@ def process_credential_exclusions(credential_config: dict, exclude_flags: dict, 
             exclude_flags[cred_key] = user_value
 
     return exclude_flags
+
+
+def get_broker_credential() -> Optional[type]:
+    """Return the InteractiveBrowserBrokerCredential class if available, otherwise None.
+
+    :return: InteractiveBrowserBrokerCredential class or None
+    :rtype: Optional[type]
+    """
+    try:
+        from azure.identity.broker import InteractiveBrowserBrokerCredential
+
+        return InteractiveBrowserBrokerCredential
+    except ImportError:
+        return None

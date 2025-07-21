@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.servicebus.v2021_11_01 import ServiceBusManagementClient
+from azure.mgmt.servicebus import ServiceBusManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -24,7 +24,7 @@ class TestServiceBusManagementPrivateEndpointConnectionsOperations(AzureMgmtReco
         response = self.client.private_endpoint_connections.list(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -54,7 +54,7 @@ class TestServiceBusManagementPrivateEndpointConnectionsOperations(AzureMgmtReco
                 },
                 "type": "str",
             },
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -67,7 +67,7 @@ class TestServiceBusManagementPrivateEndpointConnectionsOperations(AzureMgmtReco
             resource_group_name=resource_group.name,
             namespace_name="str",
             private_endpoint_connection_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -80,7 +80,7 @@ class TestServiceBusManagementPrivateEndpointConnectionsOperations(AzureMgmtReco
             resource_group_name=resource_group.name,
             namespace_name="str",
             private_endpoint_connection_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself

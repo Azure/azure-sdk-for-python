@@ -26,7 +26,7 @@ class TestEventHubManagementEventHubsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             namespace_name="str",
             event_hub_name="str",
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -55,7 +55,7 @@ class TestEventHubManagementEventHubsOperationsAsync(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -69,7 +69,7 @@ class TestEventHubManagementEventHubsOperationsAsync(AzureMgmtRecordedTestCase):
             namespace_name="str",
             event_hub_name="str",
             authorization_rule_name="str",
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -83,7 +83,7 @@ class TestEventHubManagementEventHubsOperationsAsync(AzureMgmtRecordedTestCase):
             namespace_name="str",
             event_hub_name="str",
             authorization_rule_name="str",
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -97,7 +97,7 @@ class TestEventHubManagementEventHubsOperationsAsync(AzureMgmtRecordedTestCase):
             namespace_name="str",
             event_hub_name="str",
             authorization_rule_name="str",
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -112,7 +112,7 @@ class TestEventHubManagementEventHubsOperationsAsync(AzureMgmtRecordedTestCase):
             event_hub_name="str",
             authorization_rule_name="str",
             parameters={"keyType": "str", "key": "str"},
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -124,7 +124,7 @@ class TestEventHubManagementEventHubsOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.event_hubs.list_by_namespace(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -145,7 +145,6 @@ class TestEventHubManagementEventHubsOperationsAsync(AzureMgmtRecordedTestCase):
                         "dataLakeAccountName": "str",
                         "dataLakeFolderPath": "str",
                         "dataLakeSubscriptionId": "str",
-                        "identity": {"type": "str", "userAssignedIdentity": "str"},
                         "name": "str",
                         "storageAccountResourceId": "str",
                     },
@@ -162,11 +161,6 @@ class TestEventHubManagementEventHubsOperationsAsync(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "partitionCount": 0,
                 "partitionIds": ["str"],
-                "retentionDescription": {
-                    "cleanupPolicy": "str",
-                    "retentionTimeInHours": 0,
-                    "tombstoneRetentionTimeInHours": 0,
-                },
                 "status": "str",
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -178,9 +172,8 @@ class TestEventHubManagementEventHubsOperationsAsync(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
                 "updatedAt": "2020-02-20 00:00:00",
-                "userMetadata": "str",
             },
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -193,7 +186,7 @@ class TestEventHubManagementEventHubsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             namespace_name="str",
             event_hub_name="str",
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -206,7 +199,7 @@ class TestEventHubManagementEventHubsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             namespace_name="str",
             event_hub_name="str",
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself

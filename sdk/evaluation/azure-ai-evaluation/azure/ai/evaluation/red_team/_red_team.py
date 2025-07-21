@@ -2642,7 +2642,7 @@ class RedTeam:
                     strategy=strategy,
                     _skip_evals=_skip_evals,
                     data_path=data_path,
-                    output_path=output_path,
+                    output_path=None,  # Fix: Do not pass output_path to individual evaluations
                 )
             except Exception as e:
                 log_error(self.logger, f"Error during evaluation for {strategy_name}/{risk_category.value}", e)
