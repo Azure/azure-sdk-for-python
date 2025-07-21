@@ -60,6 +60,12 @@ from ._evaluate_aoai import (
 
 LOGGER = logging.getLogger(__name__)
 
+# Tag validation constants
+MAX_TAG_COUNT = 50
+MAX_TAG_COUNT_WITHOUT_DEFAULT = 49
+MAX_TAG_KEY_LENGTH = 100
+MAX_TAG_VALUE_LENGTH = 1000
+
 # For metrics (aggregates) whose metric names intentionally differ from their
 # originating column name, usually because the aggregation of the original value
 # means something sufficiently different.
@@ -1295,9 +1301,9 @@ def _validate_tags(tags: Optional[Dict[str, str]]) -> None:
             blame=ErrorBlame.USER_ERROR,
         )
     
-    # Check maximum number of tags (50 total, including default mlflow.user tag)
-    if len(tags) > 50:
-        msg = "Maximum of 50 tags allowed. Current count: {}.".format(len(tags))
+    # Check maximum number of tags (MAX_TAG_COUNT total, including default mlflow.user tag)
+    if len(tags) > MAX_TAG_COUNT:
+        msg = "Maximum of {} tags allowed. Current count: {}.".format(MAX_TAG_COUNT, len(tags))
         raise EvaluationException(
             message=msg,
             target=ErrorTarget.EVALUATE,
@@ -1305,11 +1311,12 @@ def _validate_tags(tags: Optional[Dict[str, str]]) -> None:
             blame=ErrorBlame.USER_ERROR,
         )
     
-    # If user doesn't provide mlflow.user tag, we'll add it, so check for 49 max user tags
-    if "mlflow.user" not in tags and len(tags) > 49:
+    # If user doesn't provide mlflow.user tag, we'll add it, so check for MAX_TAG_COUNT_WITHOUT_DEFAULT max user tags
+    if "mlflow.user" not in tags and len(tags) > MAX_TAG_COUNT_WITHOUT_DEFAULT:
         msg = (
-            "Maximum of 49 user tags allowed when not overriding the default 'mlflow.user' tag. "
-            "Current count: {}. You can provide up to 50 tags total if you include 'mlflow.user'.".format(len(tags))
+            "Maximum of {} user tags allowed when not overriding the default 'mlflow.user' tag. "
+            "Current count: {}. You can provide up to {} tags total if you include 'mlflow.user'.".format(
+                MAX_TAG_COUNT_WITHOUT_DEFAULT, len(tags), MAX_TAG_COUNT)
         )
         raise EvaluationException(
             message=msg,
@@ -1338,9 +1345,9 @@ def _validate_tags(tags: Optional[Dict[str, str]]) -> None:
                 blame=ErrorBlame.USER_ERROR,
             )
         
-        # Check key length (max 100 characters)
-        if len(key) > 100:
-            msg = f"Tag key '{key}' exceeds maximum length of 100 characters. Current length: {len(key)}"
+        # Check key length (max MAX_TAG_KEY_LENGTH characters)
+        if len(key) > MAX_TAG_KEY_LENGTH:
+            msg = f"Tag key '{key}' exceeds maximum length of {MAX_TAG_KEY_LENGTH} characters. Current length: {len(key)}"
             raise EvaluationException(
                 message=msg,
                 target=ErrorTarget.EVALUATE,
@@ -1348,9 +1355,9 @@ def _validate_tags(tags: Optional[Dict[str, str]]) -> None:
                 blame=ErrorBlame.USER_ERROR,
             )
         
-        # Check value length (max 1000 characters)
-        if len(value) > 1000:
-            msg = f"Tag value for key '{key}' exceeds maximum length of 1000 characters. Current length: {len(value)}"
+        # Check value length (max MAX_TAG_VALUE_LENGTH characters)
+        if len(value) > MAX_TAG_VALUE_LENGTH:
+            msg = f"Tag value for key '{key}' exceeds maximum length of {MAX_TAG_VALUE_LENGTH} characters. Current length: {len(value)}"
             raise EvaluationException(
                 message=msg,
                 target=ErrorTarget.EVALUATE,

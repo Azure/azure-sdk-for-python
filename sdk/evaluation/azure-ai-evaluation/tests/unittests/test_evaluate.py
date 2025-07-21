@@ -1248,7 +1248,6 @@ class TestTagsInLoggingFunctions:
         """Test that tags are not redundantly set in update_evaluation_run."""
         from azure.ai.evaluation._evaluate._utils import _log_metrics_and_instance_results_onedp
         import inspect
-        import inspect
 
         # Get the source code of the function
         source = inspect.getsource(_log_metrics_and_instance_results_onedp)
