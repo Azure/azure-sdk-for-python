@@ -187,7 +187,7 @@ def _aggregate_content_safety_metrics(
         else:
             # Direct format without evaluator name prefix
             defect_rate_name = col.replace("_score", "_defect_rate")
-        
+
         col_with_numeric_values = cast(List[float], pd.to_numeric(content_safety_df[col], errors="coerce"))
         try:
             col_with_boolean_values = apply_transform_nan_safe(
@@ -251,7 +251,7 @@ def _aggregate_label_defect_metrics(df: pd.DataFrame) -> Tuple[List[str], Dict[s
         else:
             # Direct format without evaluator name prefix
             defect_rate_name = col.replace("_label", "_defect_rate")
-            
+
         col_with_boolean_values = cast(List[float], pd.to_numeric(label_df[col], errors="coerce"))
         try:
             defect_rates[defect_rate_name] = round(list_mean_nan_safe(col_with_boolean_values), 2)
@@ -302,13 +302,15 @@ def _aggregation_binary_output(df: pd.DataFrame) -> Dict[str, float]:
 
     # Find all columns that end with "_result"
     # This now checks for both "outputs.<evaluator>.<metric>_result" and direct "<metric>_result" formats
-    result_columns = [col for col in df.columns if (col.startswith("outputs.") or not "." in col) and col.endswith("_result")]
+    result_columns = [
+        col for col in df.columns if (col.startswith("outputs.") or not "." in col) and col.endswith("_result")
+    ]
 
     for col in result_columns:
         # Extract the evaluator name from the column name
         parts = col.split(".")
         evaluator_name = None
-        
+
         if len(parts) >= 3:
             # Format: outputs.<evaluator>.<metric>_result
             evaluator_name = parts[1]
@@ -319,7 +321,7 @@ def _aggregation_binary_output(df: pd.DataFrame) -> Dict[str, float]:
             # Format: <metric>_result - use the metric name without _result as evaluator name
             metric_name = col.replace("_result", "")
             evaluator_name = metric_name
-            
+
         if evaluator_name:
             # Count the occurrences of each unique value (pass/fail)
             value_counts = df[col].value_counts().to_dict()
