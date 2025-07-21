@@ -340,7 +340,7 @@ def _get_url_for_http_request(attributes: Attributes) -> Optional[str]:
                 )
     return url
 
-def _get_DJB2_sample_score(trace_id_hex: str) -> float:
+def _get_DJB2_sample_score(trace_id_hex: str, sampler_type) -> float:
     # This algorithm uses 32bit integers
     hash_value = Int32(_SAMPLING_HASH)
     for char in trace_id_hex:
@@ -351,8 +351,12 @@ def _get_DJB2_sample_score(trace_id_hex: str) -> float:
     else:
         hash_value = abs(hash_value)
 
-    # divide by _INTEGER_MAX for value between 0 and 1, then multiply by 100 for percentage
-    return 100.0 * (float(hash_value) / _INTEGER_MAX)
+    if sampler_type == "rate_limited":
+        # divide by _INTEGER_MAX for value between 0 and 1, then multiply by 100 for percentage
+        return 100.0 * (float(hash_value) / _INTEGER_MAX)
+    else:
+        # divide by _INTEGER_MAX for value between 0 and 1 for sampling score
+        return float(hash_value) / _INTEGER_MAX 
 
 def _round_down_to_nearest(sampling_percentage: float) -> float:
     if sampling_percentage == 0:

@@ -469,7 +469,7 @@ class TestUtilityFunctions(unittest.TestCase):
         
         trace_id = "test-trace-id-12345"
 
-        scores = [_get_DJB2_sample_score(trace_id) for _ in range(10)]
+        scores = [_get_DJB2_sample_score(trace_id, "rate_limited") for _ in range(10)]
 
         self.assertTrue(all(score == scores[0] for score in scores))
     
@@ -485,7 +485,7 @@ class TestUtilityFunctions(unittest.TestCase):
         
         for trace_id in edge_cases:
             with self.subTest(trace_id=trace_id):
-                score = _get_DJB2_sample_score(trace_id)
+                score = _get_DJB2_sample_score(trace_id, "rate_limited")
                 self.assertIsInstance(score, float)
                 self.assertGreaterEqual(score, 0)
                 self.assertLess(score, 100)
