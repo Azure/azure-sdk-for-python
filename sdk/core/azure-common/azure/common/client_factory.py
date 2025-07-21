@@ -159,10 +159,10 @@ def get_client_from_json_dict(client_class, config_dict, **kwargs):
         from azure.common.client_factory import get_client_from_auth_file
         from azure.mgmt.compute import ComputeManagementClient
         config_dict = {
-            "clientId": "ad735158-65ca-11e7-ba4d-ecb1d756380e",
-            "clientSecret": "b70bb224-65ca-11e7-810c-ecb1d756380e",
-            "subscriptionId": "bfc42d3a-65ca-11e7-95cf-ecb1d756380e",
-            "tenantId": "c81da1d8-65ca-11e7-b1d1-ecb1d756380e",
+            "clientId": "ffffffff-ffff-ffff-ffff-ffffffffffff",
+            "clientSecret": "ffffffff-ffff-ffff-ffff-ffffffffffff",
+            "subscriptionId": "ffffffff-ffff-ffff-ffff-ffffffffffff",
+            "tenantId": "ffffffff-ffff-ffff-ffff-ffffffffffff",
             "activeDirectoryEndpointUrl": "https://login.microsoftonline.com",
             "resourceManagerEndpointUrl": "https://management.azure.com/",
             "activeDirectoryGraphResourceId": "https://graph.windows.net/",
@@ -262,10 +262,10 @@ def get_client_from_auth_file(client_class, auth_path=None, **kwargs):
     .. code:: json
 
         {
-            "clientId": "ad735158-65ca-11e7-ba4d-ecb1d756380e",
-            "clientSecret": "b70bb224-65ca-11e7-810c-ecb1d756380e",
-            "subscriptionId": "bfc42d3a-65ca-11e7-95cf-ecb1d756380e",
-            "tenantId": "c81da1d8-65ca-11e7-b1d1-ecb1d756380e",
+            "clientId": "ffffffff-ffff-ffff-ffff-ffffffffffff",
+            "clientSecret": "ffffffff-ffff-ffff-ffff-ffffffffffff",
+            "subscriptionId": "ffffffff-ffff-ffff-ffff-ffffffffffff",
+            "tenantId": "ffffffff-ffff-ffff-ffff-ffffffffffff",
             "activeDirectoryEndpointUrl": "https://login.microsoftonline.com",
             "resourceManagerEndpointUrl": "https://management.azure.com/",
             "activeDirectoryGraphResourceId": "https://graph.windows.net/",

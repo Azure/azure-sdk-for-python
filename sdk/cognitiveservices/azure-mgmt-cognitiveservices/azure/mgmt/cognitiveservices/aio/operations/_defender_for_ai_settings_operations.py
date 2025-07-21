@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -65,7 +65,7 @@ class DefenderForAISettingsOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, account_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.DefenderForAISetting"]:
+    ) -> AsyncItemPaged["_models.DefenderForAISetting"]:
         """Lists the Defender for AI settings.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
