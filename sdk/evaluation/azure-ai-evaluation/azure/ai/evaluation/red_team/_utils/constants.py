@@ -56,4 +56,4 @@ TASK_STATUS = {
     "INCOMPLETE": "incomplete",
 }
 
-USER_AGENT = "azure-ai-evaluation-redteam"
+
