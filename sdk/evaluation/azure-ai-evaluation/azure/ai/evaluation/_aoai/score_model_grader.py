@@ -84,7 +84,7 @@ class AzureOpenAIScoreModelGrader(AzureOpenAIGrader):
             grader_kwargs["range"] = range
         if sampling_params is not None:
             grader_kwargs["sampling_params"] = sampling_params
-        grader_kwargs["pass_threshold"] = pass_threshold
+        grader_kwargs["pass_threshold"] = self.pass_threshold
 
         grader = ScoreModelGrader(**grader_kwargs)
 
