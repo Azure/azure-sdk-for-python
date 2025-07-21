@@ -200,7 +200,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         azure_endpoint = _get_aoai_inference_url(self._config.endpoint)  # pylint: disable=protected-access
 
-        logger.debug(
+        logger.debug(  # pylint: disable=specify-parameter-names-in-call
             "[get_openai_client] Creating AzureOpenAI client using Entra ID authentication, on parent AI Services resource, endpoint `%s`, api_version `%s`",  # pylint: disable=line-too-long
             azure_endpoint,
             api_version,
