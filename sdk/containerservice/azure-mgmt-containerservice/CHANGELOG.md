@@ -1,5 +1,172 @@
 # Release History
 
+## 39.0.0 (2025-07-20)
+
+### Features Added
+
+  - Added enum `IpFamily`
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `ContainerServiceClient.container_service`
+  - Deleted or renamed client operation group `ContainerServiceClient.managed_namespaces`
+  - Deleted or renamed client operation group `ContainerServiceClient.operation_status_result`
+  - Deleted or renamed client operation group `ContainerServiceClient.managed_cluster_snapshots`
+  - Deleted or renamed client operation group `ContainerServiceClient.load_balancers`
+  - Model `AdvancedNetworkingSecurity` deleted or renamed its instance variable `advanced_network_policies`
+  - Model `AdvancedNetworkingSecurity` deleted or renamed its instance variable `transit_encryption`
+  - Model `AgentPool` deleted or renamed its instance variable `enable_custom_ca_trust`
+  - Model `AgentPool` deleted or renamed its instance variable `node_initialization_taints`
+  - Model `AgentPool` deleted or renamed its instance variable `artifact_streaming_profile`
+  - Model `AgentPool` deleted or renamed its instance variable `local_dns_profile`
+  - Deleted or renamed enum value `AgentPoolMode.MACHINES`
+  - Deleted or renamed enum value `AgentPoolMode.MANAGED_SYSTEM`
+  - Model `AgentPoolSecurityProfile` deleted or renamed its instance variable `ssh_access`
+  - Model `AgentPoolUpgradeProfile` deleted or renamed its instance variable `components_by_releases`
+  - Model `AgentPoolUpgradeProfilePropertiesUpgradesItem` deleted or renamed its instance variable `is_out_of_support`
+  - Model `AgentPoolUpgradeSettings` deleted or renamed its instance variable `max_blocked_nodes`
+  - Model `ContainerServiceNetworkProfile` deleted or renamed its instance variable `pod_link_local_access`
+  - Model `ContainerServiceNetworkProfile` deleted or renamed its instance variable `kube_proxy_config`
+  - Model `GPUProfile` deleted or renamed its instance variable `driver_type`
+  - Model `IstioEgressGateway` deleted or renamed its instance variable `name`
+  - Model `IstioEgressGateway` deleted or renamed its instance variable `namespace`
+  - Model `IstioEgressGateway` deleted or renamed its instance variable `gateway_configuration_name`
+  - Model `KubeletConfig` deleted or renamed its instance variable `seccomp_default`
+  - Model `MachineNetworkProperties` deleted or renamed its instance variable `vnet_subnet_id`
+  - Model `MachineNetworkProperties` deleted or renamed its instance variable `pod_subnet_id`
+  - Model `MachineNetworkProperties` deleted or renamed its instance variable `enable_node_public_ip`
+  - Model `MachineNetworkProperties` deleted or renamed its instance variable `node_public_ip_prefix_id`
+  - Model `MachineNetworkProperties` deleted or renamed its instance variable `node_public_ip_tags`
+  - Model `MachineProperties` deleted or renamed its instance variable `hardware`
+  - Model `MachineProperties` deleted or renamed its instance variable `operating_system`
+  - Model `MachineProperties` deleted or renamed its instance variable `kubernetes`
+  - Model `MachineProperties` deleted or renamed its instance variable `mode`
+  - Model `MachineProperties` deleted or renamed its instance variable `security`
+  - Model `MachineProperties` deleted or renamed its instance variable `priority`
+  - Model `MachineProperties` deleted or renamed its instance variable `node_image_version`
+  - Model `MachineProperties` deleted or renamed its instance variable `provisioning_state`
+  - Model `MachineProperties` deleted or renamed its instance variable `tags`
+  - Model `MachineProperties` deleted or renamed its instance variable `e_tag`
+  - Model `MachineProperties` deleted or renamed its instance variable `status`
+  - Model `ManagedCluster` deleted or renamed its instance variable `kind`
+  - Model `ManagedCluster` deleted or renamed its instance variable `creation_data`
+  - Model `ManagedCluster` deleted or renamed its instance variable `enable_namespace_resources`
+  - Model `ManagedCluster` deleted or renamed its instance variable `scheduler_profile`
+  - Model `ManagedClusterAgentPoolProfile` deleted or renamed its instance variable `enable_custom_ca_trust`
+  - Model `ManagedClusterAgentPoolProfile` deleted or renamed its instance variable `node_initialization_taints`
+  - Model `ManagedClusterAgentPoolProfile` deleted or renamed its instance variable `artifact_streaming_profile`
+  - Model `ManagedClusterAgentPoolProfile` deleted or renamed its instance variable `local_dns_profile`
+  - Model `ManagedClusterAgentPoolProfileProperties` deleted or renamed its instance variable `enable_custom_ca_trust`
+  - Model `ManagedClusterAgentPoolProfileProperties` deleted or renamed its instance variable `node_initialization_taints`
+  - Model `ManagedClusterAgentPoolProfileProperties` deleted or renamed its instance variable `artifact_streaming_profile`
+  - Model `ManagedClusterAgentPoolProfileProperties` deleted or renamed its instance variable `local_dns_profile`
+  - Model `ManagedClusterAzureMonitorProfile` deleted or renamed its instance variable `container_insights`
+  - Model `ManagedClusterAzureMonitorProfile` deleted or renamed its instance variable `app_monitoring`
+  - Model `ManagedClusterHTTPProxyConfig` deleted or renamed its instance variable `effective_no_proxy`
+  - Model `ManagedClusterHTTPProxyConfig` deleted or renamed its instance variable `enabled`
+  - Model `ManagedClusterLoadBalancerProfile` deleted or renamed its instance variable `cluster_service_load_balancer_health_probe_mode`
+  - Model `ManagedClusterPoolUpgradeProfile` deleted or renamed its instance variable `components_by_releases`
+  - Model `ManagedClusterPoolUpgradeProfileUpgradesItem` deleted or renamed its instance variable `is_out_of_support`
+  - Deleted or renamed enum value `ManagedClusterSKUName.AUTOMATIC`
+  - Model `ManagedClusterSecurityProfile` deleted or renamed its instance variable `image_integrity`
+  - Model `ManagedClusterSecurityProfile` deleted or renamed its instance variable `node_restriction`
+  - Model `ManagedClusterSecurityProfileDefender` deleted or renamed its instance variable `security_gating`
+  - Model `ManagedClusterStorageProfileDiskCSIDriver` deleted or renamed its instance variable `version`
+  - Model `ManagedClusterWorkloadAutoScalerProfileVerticalPodAutoscaler` deleted or renamed its instance variable `addon_autoscaling`
+  - Deleted or renamed enum value `OSSKU.MARINER`
+  - Deleted or renamed enum value `OSSKU.UBUNTU2404`
+  - Deleted or renamed enum value `OSSKU.WINDOWS_ANNUAL`
+  - Deleted or renamed enum value `PublicNetworkAccess.SECURED_BY_PERIMETER`
+  - Model `ScaleProfile` deleted or renamed its instance variable `autoscale`
+  - Deleted or renamed enum value `SnapshotType.MANAGED_CLUSTER`
+  - Deleted or renamed enum value `WorkloadRuntime.KATA_MSHV_VM_ISOLATION`
+  - Deleted or renamed model `AddonAutoscaling`
+  - Deleted or renamed model `AdoptionPolicy`
+  - Deleted or renamed model `AdvancedNetworkPolicies`
+  - Deleted or renamed model `AdvancedNetworkingSecurityTransitEncryption`
+  - Deleted or renamed model `AgentPoolArtifactStreamingProfile`
+  - Deleted or renamed model `AgentPoolSSHAccess`
+  - Deleted or renamed model `AutoScaleProfile`
+  - Deleted or renamed model `ClusterServiceLoadBalancerHealthProbeMode`
+  - Deleted or renamed model `Component`
+  - Deleted or renamed model `ComponentsByRelease`
+  - Deleted or renamed model `ContainerServiceNetworkProfileKubeProxyConfig`
+  - Deleted or renamed model `ContainerServiceNetworkProfileKubeProxyConfigIpvsConfig`
+  - Deleted or renamed model `DeletePolicy`
+  - Deleted or renamed model `DriftAction`
+  - Deleted or renamed model `DriverType`
+  - Deleted or renamed model `GuardrailsAvailableVersion`
+  - Deleted or renamed model `GuardrailsAvailableVersionsList`
+  - Deleted or renamed model `GuardrailsAvailableVersionsProperties`
+  - Deleted or renamed model `GuardrailsSupport`
+  - Deleted or renamed model `IPFamily`
+  - Deleted or renamed model `IpvsScheduler`
+  - Deleted or renamed model `LabelSelector`
+  - Deleted or renamed model `LabelSelectorRequirement`
+  - Deleted or renamed model `LoadBalancer`
+  - Deleted or renamed model `LocalDNSForwardDestination`
+  - Deleted or renamed model `LocalDNSForwardPolicy`
+  - Deleted or renamed model `LocalDNSMode`
+  - Deleted or renamed model `LocalDNSOverride`
+  - Deleted or renamed model `LocalDNSProfile`
+  - Deleted or renamed model `LocalDNSProtocol`
+  - Deleted or renamed model `LocalDNSQueryLogging`
+  - Deleted or renamed model `LocalDNSServeStale`
+  - Deleted or renamed model `LocalDNSState`
+  - Deleted or renamed model `MachineHardwareProfile`
+  - Deleted or renamed model `MachineKubernetesProfile`
+  - Deleted or renamed model `MachineOSProfile`
+  - Deleted or renamed model `MachineOSProfileLinuxProfile`
+  - Deleted or renamed model `MachineStatus`
+  - Deleted or renamed model `ManagedClusterAzureMonitorProfileAppMonitoring`
+  - Deleted or renamed model `ManagedClusterAzureMonitorProfileAppMonitoringAutoInstrumentation`
+  - Deleted or renamed model `ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryLogs`
+  - Deleted or renamed model `ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryMetrics`
+  - Deleted or renamed model `ManagedClusterAzureMonitorProfileContainerInsights`
+  - Deleted or renamed model `ManagedClusterPropertiesForSnapshot`
+  - Deleted or renamed model `ManagedClusterSecurityProfileDefenderSecurityGating`
+  - Deleted or renamed model `ManagedClusterSecurityProfileDefenderSecurityGatingIdentitiesItem`
+  - Deleted or renamed model `ManagedClusterSecurityProfileImageIntegrity`
+  - Deleted or renamed model `ManagedClusterSecurityProfileNodeRestriction`
+  - Deleted or renamed model `ManagedClusterSnapshot`
+  - Deleted or renamed model `ManagedNamespace`
+  - Deleted or renamed model `Mode`
+  - Deleted or renamed model `NamespaceProperties`
+  - Deleted or renamed model `NamespaceProvisioningState`
+  - Deleted or renamed model `NetworkPolicies`
+  - Deleted or renamed model `NetworkProfileForSnapshot`
+  - Deleted or renamed model `NodeImageVersion`
+  - Deleted or renamed model `OperationStatusResult`
+  - Deleted or renamed model `OperationStatusResultList`
+  - Deleted or renamed model `Operator`
+  - Deleted or renamed model `PodLinkLocalAccess`
+  - Deleted or renamed model `PolicyRule`
+  - Deleted or renamed model `RebalanceLoadBalancersRequestBody`
+  - Deleted or renamed model `ResourceQuota`
+  - Deleted or renamed model `SafeguardsAvailableVersion`
+  - Deleted or renamed model `SafeguardsAvailableVersionsList`
+  - Deleted or renamed model `SafeguardsAvailableVersionsProperties`
+  - Deleted or renamed model `SafeguardsSupport`
+  - Deleted or renamed model `SchedulerConfigMode`
+  - Deleted or renamed model `SchedulerInstanceProfile`
+  - Deleted or renamed model `SchedulerProfile`
+  - Deleted or renamed model `SchedulerProfileSchedulerInstanceProfiles`
+  - Deleted or renamed model `SeccompDefault`
+  - Deleted or renamed model `TransitEncryptionType`
+  - Deleted or renamed model `VmState`
+  - Deleted or renamed method `MachinesOperations.begin_create_or_update`
+  - Method `ManagedClustersOperations.begin_delete` deleted or renamed its parameter `ignore_pod_disruption_budget` of kind `positional_or_keyword`
+  - Deleted or renamed method `ManagedClustersOperations.begin_rebalance_load_balancers`
+  - Deleted or renamed method `ManagedClustersOperations.get_guardrails_versions`
+  - Deleted or renamed method `ManagedClustersOperations.get_safeguards_versions`
+  - Deleted or renamed method `ManagedClustersOperations.list_guardrails_versions`
+  - Deleted or renamed method `ManagedClustersOperations.list_safeguards_versions`
+  - Deleted or renamed model `ContainerServiceOperations`
+  - Deleted or renamed model `LoadBalancersOperations`
+  - Deleted or renamed model `ManagedClusterSnapshotsOperations`
+  - Deleted or renamed model `ManagedNamespacesOperations`
+  - Deleted or renamed model `OperationStatusResultOperations`
+
 ## 38.0.0 (2025-07-15)
 
 ### Features Added
