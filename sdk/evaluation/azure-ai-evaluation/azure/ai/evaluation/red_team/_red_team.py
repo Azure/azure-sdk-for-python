@@ -640,245 +640,365 @@ class RedTeam:
 
         # Check if custom attack seed prompts are provided in the generator
         if attack_objective_generator.custom_attack_seed_prompts and attack_objective_generator.validated_prompts:
-            self.logger.info(
-                f"Using custom attack seed prompts from {attack_objective_generator.custom_attack_seed_prompts}"
+            return await self._get_custom_attack_objectives(
+                attack_objective_generator, risk_cat_value, num_objectives, strategy, current_key
+            )
+        else:
+            return await self._get_rai_service_objectives(
+                risk_cat_value, application_scenario, strategy, num_objectives, baseline_objectives_exist, 
+                baseline_key, current_key
             )
 
-            # Get the prompts for this risk category
-            custom_objectives = attack_objective_generator.valid_prompts_by_category.get(risk_cat_value, [])
+    async def _get_custom_attack_objectives(
+        self, 
+        attack_objective_generator,
+        risk_cat_value: str,
+        num_objectives: int,
+        strategy: Optional[str],
+        current_key: tuple
+    ) -> List[str]:
+        """Get attack objectives from custom attack seed prompts.
+        
+        :param attack_objective_generator: The attack objective generator instance
+        :param risk_cat_value: The risk category value
+        :type risk_cat_value: str
+        :param num_objectives: Number of objectives needed
+        :type num_objectives: int
+        :param strategy: Attack strategy name
+        :type strategy: Optional[str]
+        :param current_key: Cache key for storing objectives
+        :type current_key: tuple
+        :return: List of selected prompt content
+        :rtype: List[str]
+        """
+        self.logger.info(
+            f"Using custom attack seed prompts from {attack_objective_generator.custom_attack_seed_prompts}"
+        )
 
-            if not custom_objectives:
-                self.logger.warning(f"No custom objectives found for risk category {risk_cat_value}")
-                return []
+        # Get the prompts for this risk category
+        custom_objectives = attack_objective_generator.valid_prompts_by_category.get(risk_cat_value, [])
 
-            self.logger.info(f"Found {len(custom_objectives)} custom objectives for {risk_cat_value}")
+        if not custom_objectives:
+            self.logger.warning(f"No custom objectives found for risk category {risk_cat_value}")
+            return []
 
-            # Sample if we have more than needed
-            if len(custom_objectives) > num_objectives:
-                selected_cat_objectives = random.sample(custom_objectives, num_objectives)
-                self.logger.info(
-                    f"Sampled {num_objectives} objectives from {len(custom_objectives)} available for {risk_cat_value}"
-                )
-                # Log ids of selected objectives for traceability
-                selected_ids = [obj.get("id", "unknown-id") for obj in selected_cat_objectives]
-                self.logger.debug(f"Selected objective IDs for {risk_cat_value}: {selected_ids}")
-            else:
-                selected_cat_objectives = custom_objectives
-                self.logger.info(f"Using all {len(custom_objectives)} available objectives for {risk_cat_value}")
+        self.logger.info(f"Found {len(custom_objectives)} custom objectives for {risk_cat_value}")
 
-            # Handle jailbreak strategy - need to apply jailbreak prefixes to messages
-            if strategy == "jailbreak":
-                self.logger.debug("Applying jailbreak prefixes to custom objectives")
+        # Sample if we have more than needed
+        selected_cat_objectives = self._sample_objectives(custom_objectives, num_objectives, risk_cat_value)
+
+        # Handle jailbreak strategy - need to apply jailbreak prefixes to messages
+        if strategy == "jailbreak":
+            await self._apply_jailbreak_prefixes(selected_cat_objectives)
+
+        # Extract content from selected objectives
+        selected_prompts = self._extract_prompts_from_objectives(selected_cat_objectives)
+
+        # Process the selected objectives for caching
+        objectives_by_category = self._create_objectives_by_category(selected_cat_objectives, risk_cat_value)
+
+        # Store in cache
+        self._cache_objectives(current_key, objectives_by_category, strategy, risk_cat_value, selected_prompts, selected_cat_objectives)
+
+        self.logger.info(f"Using {len(selected_prompts)} custom objectives for {risk_cat_value}")
+        return selected_prompts
+
+    def _sample_objectives(self, custom_objectives: List[dict], num_objectives: int, risk_cat_value: str) -> List[dict]:
+        """Sample objectives if we have more than needed.
+        
+        :param custom_objectives: List of available objectives
+        :type custom_objectives: List[dict]
+        :param num_objectives: Number of objectives needed
+        :type num_objectives: int
+        :param risk_cat_value: Risk category value for logging
+        :type risk_cat_value: str
+        :return: Selected objectives
+        :rtype: List[dict]
+        """
+        if len(custom_objectives) > num_objectives:
+            selected_cat_objectives = random.sample(custom_objectives, num_objectives)
+            self.logger.info(
+                f"Sampled {num_objectives} objectives from {len(custom_objectives)} available for {risk_cat_value}"
+            )
+            # Log ids of selected objectives for traceability
+            selected_ids = [obj.get("id", "unknown-id") for obj in selected_cat_objectives]
+            self.logger.debug(f"Selected objective IDs for {risk_cat_value}: {selected_ids}")
+        else:
+            selected_cat_objectives = custom_objectives
+            self.logger.info(f"Using all {len(custom_objectives)} available objectives for {risk_cat_value}")
+        
+        return selected_cat_objectives
+
+    async def _apply_jailbreak_prefixes(self, selected_cat_objectives: List[dict]) -> None:
+        """Apply jailbreak prefixes to objectives for jailbreak strategy.
+        
+        :param selected_cat_objectives: List of selected objectives to modify
+        :type selected_cat_objectives: List[dict]
+        """
+        self.logger.debug("Applying jailbreak prefixes to custom objectives")
+        try:
+            @retry(**self._create_retry_config()["network_retry"])
+            async def get_jailbreak_prefixes_with_retry():
                 try:
+                    return await self.generated_rai_client.get_jailbreak_prefixes()
+                except (
+                    httpx.ConnectTimeout,
+                    httpx.ReadTimeout,
+                    httpx.ConnectError,
+                    httpx.HTTPError,
+                    ConnectionError,
+                ) as e:
+                    self.logger.warning(
+                        f"Network error when fetching jailbreak prefixes: {type(e).__name__}: {str(e)}"
+                    )
+                    raise
 
-                    @retry(**self._create_retry_config()["network_retry"])
-                    async def get_jailbreak_prefixes_with_retry():
-                        try:
-                            return await self.generated_rai_client.get_jailbreak_prefixes()
-                        except (
-                            httpx.ConnectTimeout,
-                            httpx.ReadTimeout,
-                            httpx.ConnectError,
-                            httpx.HTTPError,
-                            ConnectionError,
-                        ) as e:
-                            self.logger.warning(
-                                f"Network error when fetching jailbreak prefixes: {type(e).__name__}: {str(e)}"
-                            )
-                            raise
-
-                    jailbreak_prefixes = await get_jailbreak_prefixes_with_retry()
-                    for objective in selected_cat_objectives:
-                        if "messages" in objective and len(objective["messages"]) > 0:
-                            message = objective["messages"][0]
-                            if isinstance(message, dict) and "content" in message:
-                                message["content"] = f"{random.choice(jailbreak_prefixes)} {message['content']}"
-                except Exception as e:
-                    log_error(self.logger, "Error applying jailbreak prefixes to custom objectives", e)
-                    # Continue with unmodified prompts instead of failing completely
-
-            # Extract content from selected objectives
-            selected_prompts = []
-            for obj in selected_cat_objectives:
-                if "messages" in obj and len(obj["messages"]) > 0:
-                    message = obj["messages"][0]
+            jailbreak_prefixes = await get_jailbreak_prefixes_with_retry()
+            for objective in selected_cat_objectives:
+                if "messages" in objective and len(objective["messages"]) > 0:
+                    message = objective["messages"][0]
                     if isinstance(message, dict) and "content" in message:
-                        selected_prompts.append(message["content"])
+                        message["content"] = f"{random.choice(jailbreak_prefixes)} {message['content']}"
+        except Exception as e:
+            log_error(self.logger, "Error applying jailbreak prefixes to custom objectives", e)
+            # Continue with unmodified prompts instead of failing completely
 
-            # Process the selected objectives for caching
-            objectives_by_category = {risk_cat_value: []}
+    def _extract_prompts_from_objectives(self, selected_cat_objectives: List[dict]) -> List[str]:
+        """Extract prompt content from objective objects.
+        
+        :param selected_cat_objectives: List of objective dictionaries
+        :type selected_cat_objectives: List[dict]
+        :return: List of prompt content strings
+        :rtype: List[str]
+        """
+        selected_prompts = []
+        for obj in selected_cat_objectives:
+            if "messages" in obj and len(obj["messages"]) > 0:
+                message = obj["messages"][0]
+                if isinstance(message, dict) and "content" in message:
+                    selected_prompts.append(message["content"])
+        return selected_prompts
 
-            for obj in selected_cat_objectives:
-                obj_id = obj.get("id", f"obj-{uuid.uuid4()}")
-                target_harms = obj.get("metadata", {}).get("target_harms", [])
-                content = ""
-                if "messages" in obj and len(obj["messages"]) > 0:
-                    content = obj["messages"][0].get("content", "")
+    def _create_objectives_by_category(self, selected_cat_objectives: List[dict], risk_cat_value: str) -> dict:
+        """Create objectives organized by category for caching.
+        
+        :param selected_cat_objectives: List of selected objectives
+        :type selected_cat_objectives: List[dict]
+        :param risk_cat_value: Risk category value
+        :type risk_cat_value: str
+        :return: Objectives organized by category
+        :rtype: dict
+        """
+        objectives_by_category = {risk_cat_value: []}
 
-                if not content:
-                    continue
+        for obj in selected_cat_objectives:
+            obj_id = obj.get("id", f"obj-{uuid.uuid4()}")
+            content = ""
+            if "messages" in obj and len(obj["messages"]) > 0:
+                content = obj["messages"][0].get("content", "")
 
+            if content:
                 obj_data = {"id": obj_id, "content": content}
                 objectives_by_category[risk_cat_value].append(obj_data)
 
-            # Store in cache
-            self.attack_objectives[current_key] = {
-                "objectives_by_category": objectives_by_category,
-                "strategy": strategy,
-                "risk_category": risk_cat_value,
-                "selected_prompts": selected_prompts,
-                "selected_objectives": selected_cat_objectives,
-            }
+        return objectives_by_category
 
-            self.logger.info(f"Using {len(selected_prompts)} custom objectives for {risk_cat_value}")
-            return selected_prompts
-
-        else:
-            content_harm_risk = None
-            other_risk = ""
-            if risk_cat_value in ["hate_unfairness", "violence", "self_harm", "sexual"]:
-                content_harm_risk = risk_cat_value
-            else:
-                other_risk = risk_cat_value
-            # Use the RAI service to get attack objectives
-            try:
-                self.logger.debug(
-                    f"API call: get_attack_objectives({risk_cat_value}, app: {application_scenario}, strategy: {strategy})"
-                )
-                # strategy param specifies whether to get a strategy-specific dataset from the RAI service
-                # right now, only tense requires strategy-specific dataset
-                if "tense" in strategy:
-                    objectives_response = await self.generated_rai_client.get_attack_objectives(
-                        risk_type=content_harm_risk,
-                        risk_category=other_risk,
-                        application_scenario=application_scenario or "",
-                        strategy="tense",
-                        scan_session_id=self.scan_session_id,
-                    )
-                else:
-                    objectives_response = await self.generated_rai_client.get_attack_objectives(
-                        risk_type=content_harm_risk,
-                        risk_category=other_risk,
-                        application_scenario=application_scenario or "",
-                        strategy=None,
-                        scan_session_id=self.scan_session_id,
-                    )
-                if isinstance(objectives_response, list):
-                    self.logger.debug(f"API returned {len(objectives_response)} objectives")
-                else:
-                    self.logger.debug(f"API returned response of type: {type(objectives_response)}")
-
-                # Handle jailbreak strategy - need to apply jailbreak prefixes to messages
-                if strategy == "jailbreak":
-                    self.logger.debug("Applying jailbreak prefixes to objectives")
-                    jailbreak_prefixes = await self.generated_rai_client.get_jailbreak_prefixes(
-                        scan_session_id=self.scan_session_id
-                    )
-                    for objective in objectives_response:
-                        if "messages" in objective and len(objective["messages"]) > 0:
-                            message = objective["messages"][0]
-                            if isinstance(message, dict) and "content" in message:
-                                message["content"] = f"{random.choice(jailbreak_prefixes)} {message['content']}"
-            except Exception as e:
-                log_error(self.logger, "Error calling get_attack_objectives", e)
-                self.logger.warning("API call failed, returning empty objectives list")
-                return []
-
-            # Check if the response is valid
-            if not objectives_response or (
-                isinstance(objectives_response, dict) and not objectives_response.get("objectives")
-            ):
-                self.logger.warning("Empty or invalid response, returning empty list")
-                return []
-
-            # For non-baseline strategies, filter by baseline IDs if they exist
-            if strategy != "baseline" and baseline_objectives_exist:
-                self.logger.debug(
-                    f"Found existing baseline objectives for {risk_cat_value}, will filter {strategy} by baseline IDs"
-                )
-                baseline_selected_objectives = self.attack_objectives[baseline_key].get("selected_objectives", [])
-                baseline_objective_ids = []
-
-                # Extract IDs from baseline objectives
-                for obj in baseline_selected_objectives:
-                    if "id" in obj:
-                        baseline_objective_ids.append(obj["id"])
-
-                if baseline_objective_ids:
-                    self.logger.debug(
-                        f"Filtering by {len(baseline_objective_ids)} baseline objective IDs for {strategy}"
-                    )
-
-                    # Filter objectives by baseline IDs
-                    selected_cat_objectives = []
-                    for obj in objectives_response:
-                        if obj.get("id") in baseline_objective_ids:
-                            selected_cat_objectives.append(obj)
-
-                    self.logger.debug(f"Found {len(selected_cat_objectives)} matching objectives with baseline IDs")
-                    # If we couldn't find all the baseline IDs, log a warning
-                    if len(selected_cat_objectives) < len(baseline_objective_ids):
-                        self.logger.warning(
-                            f"Only found {len(selected_cat_objectives)} objectives matching baseline IDs, expected {len(baseline_objective_ids)}"
-                        )
-                else:
-                    self.logger.warning("No baseline objective IDs found, using random selection")
-                    # If we don't have baseline IDs for some reason, default to random selection
-                    if len(objectives_response) > num_objectives:
-                        selected_cat_objectives = random.sample(objectives_response, num_objectives)
-                    else:
-                        selected_cat_objectives = objectives_response
-            else:
-                # This is the baseline strategy or we don't have baseline objectives yet
-                self.logger.debug(f"Using random selection for {strategy} strategy")
-                if len(objectives_response) > num_objectives:
-                    self.logger.debug(
-                        f"Selecting {num_objectives} objectives from {len(objectives_response)} available"
-                    )
-                    selected_cat_objectives = random.sample(objectives_response, num_objectives)
-                else:
-                    selected_cat_objectives = objectives_response
-
-            if len(selected_cat_objectives) < num_objectives:
-                self.logger.warning(
-                    f"Only found {len(selected_cat_objectives)} objectives for {risk_cat_value}, fewer than requested {num_objectives}"
-                )
-
-            # Extract content from selected objectives
-            selected_prompts = []
-            for obj in selected_cat_objectives:
-                if "messages" in obj and len(obj["messages"]) > 0:
-                    message = obj["messages"][0]
-                    if isinstance(message, dict) and "content" in message:
-                        selected_prompts.append(message["content"])
-
-            # Process the response - organize by category and extract content/IDs
-            objectives_by_category = {risk_cat_value: []}
-
-            # Process list format and organize by category for caching
-            for obj in selected_cat_objectives:
-                obj_id = obj.get("id", f"obj-{uuid.uuid4()}")
-                target_harms = obj.get("metadata", {}).get("target_harms", [])
-                content = ""
-                if "messages" in obj and len(obj["messages"]) > 0:
-                    content = obj["messages"][0].get("content", "")
-
-                if not content:
-                    continue
-                if target_harms:
-                    for harm in target_harms:
-                        obj_data = {"id": obj_id, "content": content}
-                        objectives_by_category[risk_cat_value].append(obj_data)
-                        break  # Just use the first harm for categorization
-
-        # Store in cache - now including the full selected objectives with IDs
+    def _cache_objectives(
+        self, 
+        current_key: tuple, 
+        objectives_by_category: dict, 
+        strategy: Optional[str], 
+        risk_cat_value: str, 
+        selected_prompts: List[str], 
+        selected_cat_objectives: List[dict]
+    ) -> None:
+        """Cache the objectives for future use.
+        
+        :param current_key: Cache key
+        :type current_key: tuple
+        :param objectives_by_category: Objectives organized by category
+        :type objectives_by_category: dict
+        :param strategy: Strategy name
+        :type strategy: Optional[str]
+        :param risk_cat_value: Risk category value
+        :type risk_cat_value: str
+        :param selected_prompts: Selected prompt content
+        :type selected_prompts: List[str]
+        :param selected_cat_objectives: Full objective objects
+        :type selected_cat_objectives: List[dict]
+        """
         self.attack_objectives[current_key] = {
             "objectives_by_category": objectives_by_category,
             "strategy": strategy,
             "risk_category": risk_cat_value,
             "selected_prompts": selected_prompts,
-            "selected_objectives": selected_cat_objectives,  # Store full objects with IDs
+            "selected_objectives": selected_cat_objectives,
         }
+
+    async def _get_rai_service_objectives(
+        self,
+        risk_cat_value: str,
+        application_scenario: Optional[str],
+        strategy: Optional[str],
+        num_objectives: int,
+        baseline_objectives_exist: bool,
+        baseline_key: tuple,
+        current_key: tuple
+    ) -> List[str]:
+        """Get attack objectives from RAI service.
+        
+        :param risk_cat_value: Risk category value
+        :type risk_cat_value: str
+        :param application_scenario: Application scenario description
+        :type application_scenario: Optional[str]
+        :param strategy: Attack strategy name
+        :type strategy: Optional[str]
+        :param num_objectives: Number of objectives needed
+        :type num_objectives: int
+        :param baseline_objectives_exist: Whether baseline objectives exist
+        :type baseline_objectives_exist: bool
+        :param baseline_key: Cache key for baseline objectives
+        :type baseline_key: tuple
+        :param current_key: Cache key for current objectives
+        :type current_key: tuple
+        :return: List of selected prompt content
+        :rtype: List[str]
+        """
+        content_harm_risk = None
+        other_risk = ""
+        if risk_cat_value in ["hate_unfairness", "violence", "self_harm", "sexual"]:
+            content_harm_risk = risk_cat_value
+        else:
+            other_risk = risk_cat_value
+            
+        # Use the RAI service to get attack objectives
+        try:
+            self.logger.debug(
+                f"API call: get_attack_objectives({risk_cat_value}, app: {application_scenario}, strategy: {strategy})"
+            )
+            # strategy param specifies whether to get a strategy-specific dataset from the RAI service
+            # right now, only tense requires strategy-specific dataset
+            if strategy and "tense" in strategy:
+                objectives_response = await self.generated_rai_client.get_attack_objectives(
+                    risk_type=content_harm_risk,
+                    risk_category=other_risk,
+                    application_scenario=application_scenario or "",
+                    strategy="tense",
+                    scan_session_id=self.scan_session_id,
+                )
+            else:
+                objectives_response = await self.generated_rai_client.get_attack_objectives(
+                    risk_type=content_harm_risk,
+                    risk_category=other_risk,
+                    application_scenario=application_scenario or "",
+                    strategy=None,
+                    scan_session_id=self.scan_session_id,
+                )
+            if isinstance(objectives_response, list):
+                self.logger.debug(f"API returned {len(objectives_response)} objectives")
+            else:
+                self.logger.debug(f"API returned response of type: {type(objectives_response)}")
+
+            # Handle jailbreak strategy - need to apply jailbreak prefixes to messages
+            if strategy == "jailbreak":
+                self.logger.debug("Applying jailbreak prefixes to objectives")
+                jailbreak_prefixes = await self.generated_rai_client.get_jailbreak_prefixes(
+                    scan_session_id=self.scan_session_id
+                )
+                for objective in objectives_response:
+                    if "messages" in objective and len(objective["messages"]) > 0:
+                        message = objective["messages"][0]
+                        if isinstance(message, dict) and "content" in message:
+                            message["content"] = f"{random.choice(jailbreak_prefixes)} {message['content']}"
+        except Exception as e:
+            log_error(self.logger, "Error calling get_attack_objectives", e)
+            self.logger.warning("API call failed, returning empty objectives list")
+            return []
+
+        # Check if the response is valid
+        if not objectives_response or (
+            isinstance(objectives_response, dict) and not objectives_response.get("objectives")
+        ):
+            self.logger.warning("Empty or invalid response, returning empty list")
+            return []
+
+        # For non-baseline strategies, filter by baseline IDs if they exist
+        if strategy != "baseline" and baseline_objectives_exist:
+            self.logger.debug(
+                f"Found existing baseline objectives for {risk_cat_value}, will filter {strategy} by baseline IDs"
+            )
+            baseline_selected_objectives = self.attack_objectives[baseline_key].get("selected_objectives", [])
+            baseline_objective_ids = []
+
+            # Extract IDs from baseline objectives
+            for obj in baseline_selected_objectives:
+                if "id" in obj:
+                    baseline_objective_ids.append(obj["id"])
+
+            if baseline_objective_ids:
+                self.logger.debug(
+                    f"Filtering by {len(baseline_objective_ids)} baseline objective IDs for {strategy}"
+                )
+
+                # Filter objectives by baseline IDs
+                selected_cat_objectives = []
+                for obj in objectives_response:
+                    if obj.get("id") in baseline_objective_ids:
+                        selected_cat_objectives.append(obj)
+
+                self.logger.debug(f"Found {len(selected_cat_objectives)} matching objectives with baseline IDs")
+                # If we couldn't find all the baseline IDs, log a warning
+                if len(selected_cat_objectives) < len(baseline_objective_ids):
+                    self.logger.warning(
+                        f"Only found {len(selected_cat_objectives)} objectives matching baseline IDs, expected {len(baseline_objective_ids)}"
+                    )
+            else:
+                self.logger.warning("No baseline objective IDs found, using random selection")
+                # If we don't have baseline IDs for some reason, default to random selection
+                if len(objectives_response) > num_objectives:
+                    selected_cat_objectives = random.sample(objectives_response, num_objectives)
+                else:
+                    selected_cat_objectives = objectives_response
+        else:
+            # This is the baseline strategy or we don't have baseline objectives yet
+            self.logger.debug(f"Using random selection for {strategy} strategy")
+            if len(objectives_response) > num_objectives:
+                self.logger.debug(
+                    f"Selecting {num_objectives} objectives from {len(objectives_response)} available"
+                )
+                selected_cat_objectives = random.sample(objectives_response, num_objectives)
+            else:
+                selected_cat_objectives = objectives_response
+
+        if len(selected_cat_objectives) < num_objectives:
+            self.logger.warning(
+                f"Only found {len(selected_cat_objectives)} objectives for {risk_cat_value}, fewer than requested {num_objectives}"
+            )
+
+        # Extract content from selected objectives
+        selected_prompts = self._extract_prompts_from_objectives(selected_cat_objectives)
+
+        # Process the response - organize by category and extract content/IDs
+        objectives_by_category = {risk_cat_value: []}
+
+        # Process list format and organize by category for caching
+        for obj in selected_cat_objectives:
+            obj_id = obj.get("id", f"obj-{uuid.uuid4()}")
+            target_harms = obj.get("metadata", {}).get("target_harms", [])
+            content = ""
+            if "messages" in obj and len(obj["messages"]) > 0:
+                content = obj["messages"][0].get("content", "")
+
+            if not content:
+                continue
+            if target_harms:
+                for harm in target_harms:
+                    obj_data = {"id": obj_id, "content": content}
+                    objectives_by_category[risk_cat_value].append(obj_data)
+                    break  # Just use the first harm for categorization
+
+        # Store in cache - now including the full selected objectives with IDs
+        self._cache_objectives(current_key, objectives_by_category, strategy, risk_cat_value, selected_prompts, selected_cat_objectives)
         self.logger.info(f"Selected {len(selected_prompts)} objectives for {risk_cat_value}")
 
         return selected_prompts
@@ -1215,36 +1335,14 @@ class RedTeam:
         self.task_statuses[task_key] = TASK_STATUS["RUNNING"]
 
         log_strategy_start(self.logger, strategy_name, risk_category_name)
-        converter_list = []
-        # Create converter list from single converter or list of converters
-        if converter and isinstance(converter, PromptConverter):
-            converter_list = [converter]
-        elif converter and isinstance(converter, list):
-            # Filter out None values from the converter list
-            converter_list = [c for c in converter if c is not None]
-
-        # Log which converter is being used
-        if converter_list:
-            if isinstance(converter_list, list) and len(converter_list) > 0:
-                converter_names = [c.__class__.__name__ for c in converter_list if c is not None]
-                self.logger.debug(f"Using converters: {', '.join(converter_names)}")
-            elif converter is not None:
-                self.logger.debug(f"Using converter: {converter.__class__.__name__}")
-        else:
-            self.logger.debug("No converters specified")
-
-        # Initialize output path for memory labelling
-        base_path = str(uuid.uuid4())
-
-        # If scan output directory exists, place the file there
+        
+        converter_list = self._normalize_converters(converter)
+        self._log_converter_info(converter)
+        output_path = self._initialize_output_path(strategy_name, risk_category_name)
+        
+        # Ensure the directory exists for multi-turn orchestrator
         if hasattr(self, "scan_output_dir") and self.scan_output_dir:
-            # Ensure the directory exists
             os.makedirs(self.scan_output_dir, exist_ok=True)
-            output_path = os.path.join(self.scan_output_dir, f"{base_path}{DATA_EXT}")
-        else:
-            output_path = f"{base_path}{DATA_EXT}"
-
-        self.red_team_info[strategy_name][risk_category_name]["data_file"] = output_path
 
         for prompt_idx, prompt in enumerate(all_prompts):
             prompt_start_time = datetime.now()
@@ -1423,17 +1521,7 @@ class RedTeam:
         self.task_statuses[task_key] = TASK_STATUS["RUNNING"]
 
         log_strategy_start(self.logger, strategy_name, risk_category_name)
-
-        # Initialize output path for memory labelling
-        base_path = str(uuid.uuid4())
-
-        # If scan output directory exists, place the file there
-        if hasattr(self, "scan_output_dir") and self.scan_output_dir:
-            output_path = os.path.join(self.scan_output_dir, f"{base_path}{DATA_EXT}")
-        else:
-            output_path = f"{base_path}{DATA_EXT}"
-
-        self.red_team_info[strategy_name][risk_category_name]["data_file"] = output_path
+        output_path = self._initialize_output_path(strategy_name, risk_category_name)
 
         for prompt_idx, prompt in enumerate(all_prompts):
             prompt_start_time = datetime.now()
