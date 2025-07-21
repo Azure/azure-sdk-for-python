@@ -5,7 +5,7 @@ import os
 import tempfile
 import time
 from enum import Enum
-from typing import List, Optional, Any
+from typing import List, Optional, Any, Tuple
 from urllib.parse import urlparse
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
@@ -42,10 +42,13 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _REQ_THROTTLE_NAME,
     _RETRYABLE_STATUS_CODES,
     _THROTTLE_STATUS_CODES,
+    RetryCodeType,
+    RetryCode,
+    _UNKNOWN,
 )
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage
-from azure.monitor.opentelemetry.exporter._utils import _get_auth_policy
+from azure.monitor.opentelemetry.exporter._utils import _get_auth_policy, _get_telemetry_type
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     get_statsbeat_initial_success,
     get_statsbeat_shutdown,
@@ -162,6 +165,14 @@ class BaseExporter:
 
             collect_statsbeat_metrics(self)
 
+        # Initialize customer statsbeat if enabled
+        self._customer_statsbeat_metrics = None
+        if self._should_collect_customer_statsbeat():
+
+            from azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat import collect_customer_statsbeat
+            # Collect customer statsbeat metrics
+            collect_customer_statsbeat(self)
+
     def _transmit_from_storage(self) -> None:
         if not self.storage:
             return
@@ -219,14 +230,33 @@ class BaseExporter:
                         _update_requests_map(_REQ_SUCCESS_NAME[1], 1)
                     reach_ingestion = True
                     result = ExportResult.SUCCESS
+
+                    # Track successful items in customer statsbeat
+                    if self._customer_statsbeat_metrics and self._should_collect_customer_statsbeat():
+                        for envelope in envelopes:
+                            telemetry_type = _get_telemetry_type(envelope)
+                            self._customer_statsbeat_metrics.count_successful_items(
+                                1,
+                                telemetry_type
+                            )
                 else:  # 206
                     reach_ingestion = True
                     resend_envelopes = []
                     for error in track_response.errors:
                         if _is_retryable_code(error.status_code):
                             resend_envelopes.append(envelopes[error.index])  # type: ignore
+                            # Track retried items in customer statsbeat
+                            self._track_retry_items(resend_envelopes, error)
                         else:
                             if not self._is_stats_exporter():
+                                # Track dropped items in customer statsbeat
+                                if self._customer_statsbeat_metrics and error.index is not None and self._should_collect_customer_statsbeat():
+                                    telemetry_type = _get_telemetry_type(envelopes[error.index])
+                                    self._customer_statsbeat_metrics.count_dropped_items(
+                                        1,
+                                        telemetry_type,
+                                        error.status_code,
+                                    )
                                 logger.error(
                                     "Data drop %s: %s %s.",
                                     error.status_code,
@@ -325,6 +355,10 @@ class BaseExporter:
                 # request, so it should be safe to retry.
                 # ServiceRequestError is raised by azure.core for these cases
                 logger.warning("Retrying due to server request error: %s.", request_error.message)
+
+                # Track retry items in customer statsbeat for client-side exceptions
+                self._track_retry_items(envelopes, request_error)
+
                 if self._should_collect_stats():
                     exc_type = request_error.exc_type
                     if exc_type is None or exc_type is type(None):
@@ -333,6 +367,10 @@ class BaseExporter:
                 result = ExportResult.FAILED_RETRYABLE
             except Exception as ex:
                 logger.exception("Envelopes could not be exported and are not retryable: %s.", ex)  # pylint: disable=C4769
+
+                # Track retry items in customer statsbeat for general exceptions
+                self._track_retry_items(envelopes, ex)
+
                 if self._should_collect_stats():
                     _update_requests_map(_REQ_EXCEPTION_NAME[1], value=ex.__class__.__name__)
                 result = ExportResult.FAILED_NOT_RETRYABLE
@@ -373,12 +411,60 @@ class BaseExporter:
             and not self._instrumentation_collection
         )
 
+
+    # check to see whether its the case of customer stats collection
+    def _should_collect_customer_statsbeat(self):
+        env_value = os.environ.get("APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW", "")
+        is_customer_statsbeat_enabled = env_value.lower() == "true"
+        # Don't collect customer statsbeat for instrumentation collection or customer statsbeat exporters
+        return (
+            is_customer_statsbeat_enabled
+            and not self._instrumentation_collection
+            and not self._is_customer_stats_exporter()
+        )
+
     # check to see if statsbeat is in "attempting to be initialized" state
     def _is_statsbeat_initializing_state(self):
         return self._is_stats_exporter() and not get_statsbeat_shutdown() and not get_statsbeat_initial_success()
 
     def _is_stats_exporter(self):
         return self.__class__.__name__ == "_StatsBeatExporter"
+
+    def _is_customer_stats_exporter(self):
+        return self.__class__.__name__ == "_CustomerStatsBeatExporter"
+
+    def _determine_client_retry_code(self, error) -> Tuple[RetryCodeType, Optional[str]]:
+        if hasattr(error, 'status_code') and error.status_code in [401, 403, 408, 429, 500, 502, 503, 504]:
+            return (error.status_code, _UNKNOWN)
+
+        if isinstance(error, ServiceRequestError):
+            error_message = str(error.message) if error.message else ""
+        else:
+            error_message = str(error)
+
+        error_message_lower = error_message.lower()
+        if 'timeout' in error_message_lower or 'timed out' in error_message_lower:
+            return (RetryCode.CLIENT_TIMEOUT, error_message)
+        return (RetryCode.CLIENT_EXCEPTION, error_message)
+
+    def _track_retry_items(self, envelopes: List[TelemetryItem], error) -> None:
+        if self._customer_statsbeat_metrics and self._should_collect_customer_statsbeat():
+            retry_code, message = self._determine_client_retry_code(error)
+            for envelope in envelopes:
+                telemetry_type = _get_telemetry_type(envelope)
+                if isinstance(retry_code, int):
+                    self._customer_statsbeat_metrics.count_retry_items(
+                        1,
+                        telemetry_type,
+                        retry_code
+                    )
+                else:
+                    self._customer_statsbeat_metrics.count_retry_items(
+                        1,
+                        telemetry_type,
+                        retry_code,
+                        str(message)
+                    )
 
 
 def _is_invalid_code(response_code: Optional[int]) -> bool:

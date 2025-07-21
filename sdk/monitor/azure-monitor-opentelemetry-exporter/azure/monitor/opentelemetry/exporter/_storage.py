@@ -7,8 +7,13 @@ import logging
 import os
 import random
 import subprocess
+from typing import Optional
 
-from azure.monitor.opentelemetry.exporter._utils import PeriodicTask
+from azure.monitor.opentelemetry.exporter._utils import PeriodicTask, _get_telemetry_type
+
+from azure.monitor.opentelemetry.exporter._constants import (
+    DropCode,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +52,7 @@ class LocalFileBlob:
             pass  # keep silent
         return None
 
-    def put(self, data, lease_period=0):
+    def put(self, data, lease_period=0, return_exception: Optional[bool] = False):
         try:
             fullpath = self.fullpath + ".tmp"
             with open(fullpath, "w", encoding="utf-8") as file:
@@ -62,8 +67,10 @@ class LocalFileBlob:
                 self.fullpath += "@{}.lock".format(_fmt(timestamp))
             os.rename(fullpath, self.fullpath)
             return self
-        except Exception:
-            pass  # keep silent
+        except Exception as ex:
+            if return_exception:
+                return (None, str(ex))
+            # keep silent
         return None
 
     def lease(self, period):
@@ -110,6 +117,9 @@ class LocalFileStorage:
             self._maintenance_task.start()
         else:
             logger.error("Could not set secure permissions on storage folder, local storage is disabled.")
+
+        self._customer_statsbeat_metrics = None
+        self.filesystem_is_readonly = False
 
     def close(self):
         if self._enabled:
@@ -183,8 +193,36 @@ class LocalFileStorage:
 
     def put(self, data, lease_period=None):
         if not self._enabled:
+            # Track items that would have been retried but are dropped since client has local storage disabled
+            if self._customer_statsbeat_metrics:
+                for item in data:
+                    telemetry_type = _get_telemetry_type(item)
+                    self._customer_statsbeat_metrics.count_dropped_items(
+                        1,
+                        telemetry_type,
+                        DropCode.CLIENT_STORAGE_DISABLED,
+                    )
+                # If filesystem is readonly, track dropped items in customer statsbeat
+                if self.filesystem_is_readonly:
+                    for item in data:
+                        telemetry_type = _get_telemetry_type(item)
+                        self._customer_statsbeat_metrics.count_dropped_items(
+                            1,
+                            telemetry_type,
+                            DropCode.CLIENT_READONLY,
+                        )
             return None
         if not self._check_storage_size():
+            # If storage is full and metrics are available, track dropped items
+            if self._customer_statsbeat_metrics:
+                for item in data:
+                    telemetry_type = _get_telemetry_type(item)
+                    self._customer_statsbeat_metrics.count_dropped_items(
+                        1,
+                        telemetry_type,
+                        DropCode.CLIENT_PERSISTENCE_CAPACITY,
+                    )
+
             return None
         blob = LocalFileBlob(
             os.path.join(
@@ -197,7 +235,24 @@ class LocalFileStorage:
         )
         if lease_period is None:
             lease_period = self._lease_period
-        return blob.put(data, lease_period=lease_period)
+
+        # blob.put should an exception_message if an expection occurs else should return None
+        if self._customer_statsbeat_metrics:
+            result, exception_message = blob.put(data, lease_period=lease_period, return_exception=True)
+
+            # Track storage failures if put failed
+            if result is None:
+                for item in data:
+                    telemetry_type = _get_telemetry_type(item)
+                    self._customer_statsbeat_metrics.count_dropped_items(
+                        1,
+                        telemetry_type,
+                        DropCode.CLIENT_EXCEPTION,
+                        exception_message
+                    )
+        else:
+            result = blob.put(data, lease_period=lease_period)
+        return result
 
     def _check_and_set_folder_permissions(self):
         """
@@ -235,8 +290,13 @@ class LocalFileStorage:
             else:
                 os.chmod(self._path, 0o700)
                 return True
-        except Exception:
-            pass  # keep silent
+        except (PermissionError, OSError, Exception) as error:
+            # Check if error is due to permission/readonly issues
+            if (isinstance(error, (PermissionError, OSError)) and
+                hasattr(error, 'errno') and error.errno in (13, 1)):  # EACCES=13, EPERM=1
+                self.filesystem_is_readonly = True
+            else:
+                pass
         return False
 
     def _check_storage_size(self):

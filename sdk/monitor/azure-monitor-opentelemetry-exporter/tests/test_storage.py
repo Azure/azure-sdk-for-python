@@ -12,6 +12,8 @@ from azure.monitor.opentelemetry.exporter._storage import (
     _now,
     _seconds,
 )
+from azure.monitor.opentelemetry.exporter._constants import DropCode
+from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
 
 TEST_FOLDER = os.path.abspath(".test.storage")
 
@@ -174,3 +176,157 @@ class TestLocalFileStorage(unittest.TestCase):
                 stor._maintenance_routine()
             with mock.patch("os.path.isdir", side_effect=throw(Exception)):
                 stor._maintenance_routine()
+
+    def test_dropped_items_storage_disabled(self):
+        mock_statsbeat = mock.Mock()
+
+        test_items = [
+            {"name": "test_item1", "data": {"base_type": "RequestData"}},
+            {"name": "test_item2", "data": {"base_type": "ExceptionData"}},
+        ]
+
+        with mock.patch.object(
+            LocalFileStorage, "_check_and_set_folder_permissions", return_value=False
+        ):
+            with LocalFileStorage(os.path.join(TEST_FOLDER, "disabled_storage")) as stor:
+                setattr(stor, '_customer_statsbeat_metrics', mock_statsbeat)
+
+                result = stor.put(test_items)
+
+                self.assertIsNone(result)
+
+                self.assertEqual(mock_statsbeat.count_dropped_items.call_count, 2)
+
+                expected_calls = [
+                    mock.call(1, mock.ANY, DropCode.CLIENT_STORAGE_DISABLED),
+                    mock.call(1, mock.ANY, DropCode.CLIENT_STORAGE_DISABLED),
+                ]
+                mock_statsbeat.count_dropped_items.assert_has_calls(expected_calls)
+
+    def test_dropped_items_filesystem_readonly(self):
+        mock_statsbeat = mock.Mock()
+
+        test_items = [
+            {"name": "test_item1", "data": {"base_type": "RequestData"}},
+        ]
+
+        with mock.patch.object(
+            LocalFileStorage, "_check_and_set_folder_permissions", return_value=False
+        ):
+            with LocalFileStorage(os.path.join(TEST_FOLDER, "readonly_storage")) as stor:
+                setattr(stor, '_customer_statsbeat_metrics', mock_statsbeat)
+                stor.filesystem_is_readonly = True
+
+                result = stor.put(test_items)
+
+                self.assertIsNone(result)
+
+                self.assertEqual(mock_statsbeat.count_dropped_items.call_count, 2)
+
+                calls = mock_statsbeat.count_dropped_items.call_args_list
+                drop_codes = [call[0][2] for call in calls]
+                self.assertIn(DropCode.CLIENT_STORAGE_DISABLED, drop_codes)
+                self.assertIn(DropCode.CLIENT_READONLY, drop_codes)
+
+    def test_dropped_items_storage_full(self):
+        mock_statsbeat = mock.Mock()
+
+        test_items = [
+            {"name": "test_item1", "data": {"base_type": "RequestData"}},
+            {"name": "test_item2", "data": {"base_type": "ExceptionData"}},
+        ]
+
+        with LocalFileStorage(os.path.join(TEST_FOLDER, "full_storage")) as stor:
+            setattr(stor, '_customer_statsbeat_metrics', mock_statsbeat)
+
+            with mock.patch.object(stor, "_check_storage_size", return_value=False):
+                result = stor.put(test_items)
+
+                self.assertIsNone(result)
+
+                self.assertEqual(mock_statsbeat.count_dropped_items.call_count, 2)
+
+                expected_calls = [
+                    mock.call(1, mock.ANY, DropCode.CLIENT_PERSISTENCE_CAPACITY),
+                    mock.call(1, mock.ANY, DropCode.CLIENT_PERSISTENCE_CAPACITY),
+                ]
+                mock_statsbeat.count_dropped_items.assert_has_calls(expected_calls)
+
+    def test_dropped_items_storage_write_failure(self):
+        mock_statsbeat = mock.Mock()
+
+        test_items = [
+            {"name": "test_item1", "data": {"base_type": "RequestData"}},
+        ]
+
+        with LocalFileStorage(os.path.join(TEST_FOLDER, "write_failure_storage")) as stor:
+            setattr(stor, '_customer_statsbeat_metrics', mock_statsbeat)
+
+            with mock.patch.object(LocalFileBlob, "put", return_value=(None, "Storage put failed")):
+                result = stor.put(test_items)
+
+                self.assertIsNone(result)
+
+                mock_statsbeat.count_dropped_items.assert_called_once_with(
+                    1, mock.ANY, DropCode.CLIENT_EXCEPTION, "Storage put failed"
+                )
+
+    def test_dropped_items_no_statsbeat_metrics(self):
+        test_items = [
+            {"name": "test_item1", "data": {"base_type": "RequestData"}},
+        ]
+
+        with mock.patch.object(
+            LocalFileStorage, "_check_and_set_folder_permissions", return_value=False
+        ):
+            with LocalFileStorage(os.path.join(TEST_FOLDER, "no_statsbeat_storage")) as stor:
+                self.assertIsNone(stor._customer_statsbeat_metrics)
+
+                result = stor.put(test_items)
+
+                self.assertIsNone(result)
+
+    def test_dropped_items_telemetry_type_extraction(self):
+        mock_statsbeat = mock.Mock()
+
+        test_items = [
+            {"name": "request_item", "data": {"base_type": "RequestData"}},
+            {"name": "exception_item", "data": {"base_type": "ExceptionData"}},
+            {"name": "dependency_item", "data": {"base_type": "RemoteDependencyData"}},
+            {"name": "unknown_item", "data": {"base_type": "UnknownType"}},
+        ]
+
+        with LocalFileStorage(os.path.join(TEST_FOLDER, "telemetry_type_storage")) as stor:
+            setattr(stor, '_customer_statsbeat_metrics', mock_statsbeat)
+
+            with mock.patch.object(stor, "_check_storage_size", return_value=False):
+                result = stor.put(test_items)
+
+                self.assertIsNone(result)
+
+                self.assertEqual(mock_statsbeat.count_dropped_items.call_count, 4)
+
+                calls = mock_statsbeat.count_dropped_items.call_args_list
+                for call in calls:
+                    self.assertEqual(call[0][0], 1)
+                    self.assertEqual(call[0][2], DropCode.CLIENT_PERSISTENCE_CAPACITY)
+                    telemetry_type = call[0][1]
+                    self.assertIsNotNone(telemetry_type)
+
+    def test_successful_put_no_dropped_items(self):
+        mock_statsbeat = mock.Mock()
+
+        test_items = [
+            {"name": "test_item1", "data": {"base_type": "RequestData"}},
+        ]
+
+        with LocalFileStorage(os.path.join(TEST_FOLDER, "successful_storage")) as stor:
+            setattr(stor, '_customer_statsbeat_metrics', mock_statsbeat)
+
+            mock_blob = mock.Mock()
+            with mock.patch.object(LocalFileBlob, "put", return_value=(mock_blob, None)):
+                result = stor.put(test_items)
+
+                self.assertEqual(result, mock_blob)
+
+                mock_statsbeat.count_dropped_items.assert_not_called()
