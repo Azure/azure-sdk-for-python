@@ -253,9 +253,7 @@ def collect_customer_statsbeat(exporter):
                     def __init__(self, connection_string):
                         self.connection_string = connection_string
 
-                connection_string = f"""
-                InstrumentationKey={exporter._instrumentation_key};IngestionEndpoint={exporter._endpoint}
-                """
+                connection_string = f"InstrumentationKey={exporter._instrumentation_key};IngestionEndpoint={exporter._endpoint}"
                 statsbeat_options = StatsbeatOptions(connection_string)
                 _CUSTOMER_STATSBEAT_METRICS = CustomerStatsbeatMetrics(statsbeat_options)
 
