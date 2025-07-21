@@ -4,14 +4,34 @@
 
 import inspect
 from abc import ABC, abstractmethod
-from typing import Any, Callable, Dict, Generic, List, TypedDict, TypeVar, Union, cast, final, Optional
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Generic,
+    List,
+    TypedDict,
+    TypeVar,
+    Union,
+    cast,
+    final,
+    Optional,
+)
 
 from azure.ai.evaluation._legacy._adapters.utils import async_run_allowing_running_loop
 from typing_extensions import ParamSpec, TypeAlias, get_overloads
 
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._exceptions import (
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+    EvaluationException,
+)
 from azure.ai.evaluation._common.utils import remove_optional_singletons
-from azure.ai.evaluation._constants import _AggregationType, EVALUATION_PASS_FAIL_MAPPING
+from azure.ai.evaluation._constants import (
+    _AggregationType,
+    EVALUATION_PASS_FAIL_MAPPING,
+)
 from azure.ai.evaluation._model_configurations import Conversation
 from azure.ai.evaluation._common._experimental import experimental
 
@@ -176,7 +196,9 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
             singletons.extend([p for p in params if p != "self"])
         return singletons
 
-    def _derive_conversation_converter(self) -> Callable[[Dict], List[DerivedEvalInput]]:
+    def _derive_conversation_converter(
+        self,
+    ) -> Callable[[Dict], List[DerivedEvalInput]]:
         """Produce the function that will be used to convert conversations to a list of evaluable inputs.
         This uses the inputs derived from the _derive_singleton_inputs function to determine which
         aspects of a conversation ought to be extracted.
@@ -235,7 +257,9 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
 
         return converter
 
-    def _derive_multi_modal_conversation_converter(self) -> Callable[[Dict], List[Dict[str, Any]]]:
+    def _derive_multi_modal_conversation_converter(
+        self,
+    ) -> Callable[[Dict], List[Dict[str, Any]]]:
         """Produce the function that will be used to convert multi-modal conversations to a list of evaluable inputs.
         This uses the inputs derived from the _derive_singleton_inputs function to determine which
         aspects of a conversation ought to be extracted.
@@ -288,7 +312,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
 
         return multi_modal_converter
 
-    def _convert_kwargs_to_eval_input(self, **kwargs) -> Union[List[Dict], List[DerivedEvalInput]]:
+    def _convert_kwargs_to_eval_input(self, **kwargs) -> Union[List[Dict], List[DerivedEvalInput], Dict[str, Any]]:
         """Convert an arbitrary input into a list of inputs for evaluators.
         It is assumed that evaluators generally make use of their inputs in one of two ways.
         Either they receive a collection of keyname inputs that are all single values
@@ -498,9 +522,19 @@ class AsyncEvaluatorBase:
     # Since we want this to be relatively call-agnostic, we just account for every input that any children
     # are known to throw at this, mash them into kwargs, and then pass them into the real call.
     async def __call__(
-        self, *, query=None, response=None, context=None, conversation=None, ground_truth=None,
-            tool_calls=None, tool_definitions=None, messages=None, retrieval_ground_truth=None,
-            retrieved_documents=None,**kwargs
+        self,
+        *,
+        query=None,
+        response=None,
+        context=None,
+        conversation=None,
+        ground_truth=None,
+        tool_calls=None,
+        tool_definitions=None,
+        messages=None,
+        retrieval_ground_truth=None,
+        retrieved_documents=None,
+        **kwargs,
     ):
         if conversation is not None:
             kwargs["conversation"] = conversation

@@ -40,7 +40,7 @@ from azure.ai.evaluation._legacy.prompty._utils import (
 from azure.ai.evaluation._constants import DEFAULT_MAX_COMPLETION_TOKENS_REASONING_MODELS
 from azure.ai.evaluation._legacy._common._logging import get_logger
 from azure.ai.evaluation._legacy._common._async_token_provider import AsyncAzureTokenProvider
-
+from azure.ai.evaluation._user_agent import UserAgentSingleton
 
 PROMPTY_EXTENSION: Final[str] = ".prompty"
 
@@ -168,8 +168,9 @@ class AsyncPrompty:
         self._outputs: Dict[str, Any] = configs.get("outputs", {})
         self._name: str = configs.get("name", path.stem)
         self._logger = logger or get_logger(__name__)
-        self._token_credential: Union[TokenCredential, AsyncTokenCredential] = \
+        self._token_credential: Union[TokenCredential, AsyncTokenCredential] = (
             token_credential or AsyncAzureTokenProvider()
+        )
 
     @property
     def path(self) -> Path:
@@ -290,6 +291,8 @@ class AsyncPrompty:
         # for better debugging and real-time status updates.
         max_retries = 0
 
+        default_headers = {"User-Agent": UserAgentSingleton().value}
+
         api_client: Union[AsyncAzureOpenAI, AsyncOpenAI]
         if isinstance(connection, AzureOpenAIConnection):
             api_client = AsyncAzureOpenAI(
@@ -298,9 +301,10 @@ class AsyncPrompty:
                 azure_deployment=connection.azure_deployment,
                 api_version=connection.api_version,
                 max_retries=max_retries,
-                azure_ad_token_provider=(self.get_token_provider(self._token_credential)
-                    if not connection.api_key
-                    else None),
+                azure_ad_token_provider=(
+                    self.get_token_provider(self._token_credential) if not connection.api_key else None
+                ),
+                default_headers=default_headers,
             )
         elif isinstance(connection, OpenAIConnection):
             api_client = AsyncOpenAI(
@@ -308,6 +312,7 @@ class AsyncPrompty:
                 api_key=connection.api_key,
                 organization=connection.organization,
                 max_retries=max_retries,
+                default_headers=default_headers,
             )
         else:
             raise NotSupportedError(
@@ -414,6 +419,7 @@ class AsyncPrompty:
         :return: The token provider if a credential is provided, otherwise None.
         :rtype: Optional[AsyncAzureADTokenProvider]
         """
+
         async def _wrapper() -> str:
             token = cred.get_token(TokenScope.COGNITIVE_SERVICES_MANAGEMENT)
             if isinstance(token, Awaitable):
