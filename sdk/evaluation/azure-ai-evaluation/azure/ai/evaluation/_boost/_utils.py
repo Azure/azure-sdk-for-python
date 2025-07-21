@@ -87,7 +87,7 @@ You are an expert prompt engineer. I have {len(critiques)} individual critiques 
 Please synthesize them into a single, comprehensive meta-critique that identifies the most important issues and improvements.
 
 Individual Critiques:
-{chr(10).join(f"{i+1}. {critique}" for i, critique in enumerate(critiques))}
+{'\n'.join(f"{i+1}. {critique}" for i, critique in enumerate(critiques))}
 
 Provide a synthesized meta-critique that captures the key insights:
 """
