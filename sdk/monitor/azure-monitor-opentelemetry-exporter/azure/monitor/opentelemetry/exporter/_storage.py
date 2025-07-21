@@ -202,15 +202,17 @@ class LocalFileStorage:
                         telemetry_type,
                         DropCode.CLIENT_STORAGE_DISABLED,
                     )
-                # If filesystem is readonly, track dropped items in customer statsbeat
-                if self.filesystem_is_readonly:
-                    for item in data:
-                        telemetry_type = _get_telemetry_type(item)
-                        self._customer_statsbeat_metrics.count_dropped_items(
-                            1,
-                            telemetry_type,
-                            DropCode.CLIENT_READONLY,
-                        )
+            return None
+        # If filesystem is readonly, track dropped items in customer statsbeat
+        if self.filesystem_is_readonly:
+            if self._customer_statsbeat_metrics:
+                for item in data:
+                    telemetry_type = _get_telemetry_type(item)
+                    self._customer_statsbeat_metrics.count_dropped_items(
+                        1,
+                        telemetry_type,
+                        DropCode.CLIENT_READONLY,
+                    )
             return None
         if not self._check_storage_size():
             # If storage is full and metrics are available, track dropped items

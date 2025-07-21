@@ -211,7 +211,7 @@ class TestLocalFileStorage(unittest.TestCase):
         ]
 
         with mock.patch.object(
-            LocalFileStorage, "_check_and_set_folder_permissions", return_value=False
+            LocalFileStorage, "_check_and_set_folder_permissions", return_value=True
         ):
             with LocalFileStorage(os.path.join(TEST_FOLDER, "readonly_storage")) as stor:
                 setattr(stor, '_customer_statsbeat_metrics', mock_statsbeat)
@@ -221,11 +221,10 @@ class TestLocalFileStorage(unittest.TestCase):
 
                 self.assertIsNone(result)
 
-                self.assertEqual(mock_statsbeat.count_dropped_items.call_count, 2)
+                self.assertEqual(mock_statsbeat.count_dropped_items.call_count, 1)
 
                 calls = mock_statsbeat.count_dropped_items.call_args_list
                 drop_codes = [call[0][2] for call in calls]
-                self.assertIn(DropCode.CLIENT_STORAGE_DISABLED, drop_codes)
                 self.assertIn(DropCode.CLIENT_READONLY, drop_codes)
 
     def test_dropped_items_storage_full(self):
