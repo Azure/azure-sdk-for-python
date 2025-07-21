@@ -398,6 +398,7 @@ class CallAutomationClient:
         operation_context: Optional[str] = None,
         cognitive_services_endpoint: Optional[str] = None,
         teams_app_source: Optional["MicrosoftTeamsAppIdentifier"] = None,
+        enable_loopback_audio: Optional[bool] = None,
         **kwargs,
     ) -> CallConnectionProperties:
         """Create a call connection request to a list of multiple target identities.
@@ -420,6 +421,8 @@ class CallAutomationClient:
         :paramtype cognitive_services_endpoint: str
         :keyword teams_app_source: The Microsoft Teams App Identifier.
         :paramtype teams_app_source: ~azure.communication.callautomation.MicrosoftTeamsAppIdentifier
+        :keyword enable_loopback_audio: Enables loopback audio functionality for the call.
+        :paramtype enable_loopback_audio: bool or None
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -436,6 +439,7 @@ class CallAutomationClient:
             operation_context=operation_context,
             cognitive_services_endpoint=cognitive_services_endpoint,
             teams_app_source=teams_app_source,
+            enable_loopback_audio=enable_loopback_audio,
             **kwargs,
         )
 
