@@ -3433,7 +3433,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             if documents.ConsistencyLevel.Session == request_headers[http_constants.HttpHeaders.ConsistencyLevel]:
                 is_session_consistency = True
 
-        if (is_session_consistency and self.session and
+        if (is_session_consistency and self.session and http_constants.HttpHeaders.SessionToken in response_headers and
                 not base.IsMasterResource(request_headers[http_constants.HttpHeaders.ThinClientProxyResourceType])):
             # update session
             self.session.update_session(self, response_result, response_headers)
