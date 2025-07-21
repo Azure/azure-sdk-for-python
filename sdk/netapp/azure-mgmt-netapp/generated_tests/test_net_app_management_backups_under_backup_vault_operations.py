@@ -27,7 +27,7 @@ class TestNetAppManagementBackupsUnderBackupVaultOperations(AzureMgmtRecordedTes
             backup_vault_name="str",
             backup_name="str",
             body={"destinationVolumeId": "str", "fileList": ["str"], "restoreFilePath": "str"},
-            api_version="2025-01-01-preview",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
