@@ -303,6 +303,9 @@ class RedTeam:
         # keep track of data and eval result file names
         self.red_team_info = {}
 
+        # keep track of prompt content to context mapping for evaluation
+        self.prompt_to_context = {}
+
         initialize_pyrit(memory_db_type=DUCK_DB)
 
         self.attack_objective_generator = _AttackObjectiveGenerator(
@@ -703,7 +706,11 @@ class RedTeam:
                 if "messages" in obj and len(obj["messages"]) > 0:
                     message = obj["messages"][0]
                     if isinstance(message, dict) and "content" in message:
-                        selected_prompts.append(message["content"])
+                        content = message["content"]
+                        context = message.get("context", "")
+                        selected_prompts.append(content)
+                        # Store mapping of content to context for later evaluation
+                        self.prompt_to_context[content] = context
 
             # Process the selected objectives for caching
             objectives_by_category = {risk_cat_value: []}
@@ -712,13 +719,16 @@ class RedTeam:
                 obj_id = obj.get("id", f"obj-{uuid.uuid4()}")
                 target_harms = obj.get("metadata", {}).get("target_harms", [])
                 content = ""
+                context = ""
                 if "messages" in obj and len(obj["messages"]) > 0:
-                    content = obj["messages"][0].get("content", "")
+                    message = obj["messages"][0]
+                    content = message.get("content", "")
+                    context = message.get("context", "")
 
                 if not content:
                     continue
 
-                obj_data = {"id": obj_id, "content": content}
+                obj_data = {"id": obj_id, "content": content, "context": context}
                 objectives_by_category[risk_cat_value].append(obj_data)
 
             # Store in cache
@@ -850,7 +860,11 @@ class RedTeam:
                 if "messages" in obj and len(obj["messages"]) > 0:
                     message = obj["messages"][0]
                     if isinstance(message, dict) and "content" in message:
-                        selected_prompts.append(message["content"])
+                        content = message["content"]
+                        context = message.get("context", "")
+                        selected_prompts.append(content)
+                        # Store mapping of content to context for later evaluation
+                        self.prompt_to_context[content] = context
 
             # Process the response - organize by category and extract content/IDs
             objectives_by_category = {risk_cat_value: []}
@@ -860,14 +874,17 @@ class RedTeam:
                 obj_id = obj.get("id", f"obj-{uuid.uuid4()}")
                 target_harms = obj.get("metadata", {}).get("target_harms", [])
                 content = ""
+                context = ""
                 if "messages" in obj and len(obj["messages"]) > 0:
-                    content = obj["messages"][0].get("content", "")
+                    message = obj["messages"][0]
+                    content = message.get("content", "")
+                    context = message.get("context", "")
 
                 if not content:
                     continue
                 if target_harms:
                     for harm in target_harms:
-                        obj_data = {"id": obj_id, "content": content}
+                        obj_data = {"id": obj_id, "content": content, "context": context}
                         objectives_by_category[risk_cat_value].append(obj_data)
                         break  # Just use the first harm for categorization
 
@@ -2335,6 +2352,9 @@ class RedTeam:
 
         # Extract all assistant messages for evaluation
         assistant_messages = [msg["content"] for msg in messages if msg.get("role") == "assistant"]
+        
+        # Extract user messages to find the original prompt for context lookup
+        user_messages = [msg["content"] for msg in messages if msg.get("role") == "user"]
 
         if assistant_messages:
             # Create query-response pair with empty query and all assistant messages
@@ -2342,6 +2362,18 @@ class RedTeam:
                 "query": "query",  # Empty query as required
                 "response": " ".join(assistant_messages),  # Join all assistant messages
             }
+            
+            # Try to find context from the original prompt
+            # Look for the first user message that matches a stored prompt
+            context = ""
+            for user_msg in user_messages:
+                if user_msg in self.prompt_to_context:
+                    context = self.prompt_to_context[user_msg]
+                    break
+            
+            # Add context to query_response if found
+            if context:
+                query_response["context"] = context
             try:
                 self.logger.debug(
                     f"Evaluating conversation {idx+1} for {risk_category.value}/{strategy_name}"
