@@ -275,7 +275,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                 messages = messages[-2:]
 
             for each_turn in messages:
-                if "role" in each_turn:
+                if "role" in each_turn and "content" in each_turn:
                     if each_turn["role"] == "user":
                         user_messages.append(each_turn)
                     elif each_turn["role"] == "assistant":
