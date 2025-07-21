@@ -1,4 +1,4 @@
-from random import sample
+import random
 from typing import Callable, List, Dict, Any, Optional, Union
 import json
 import os
@@ -162,7 +162,7 @@ class _AgentBooster:
         # Run iterations
         for iteration in range(max_iterations):
             # Sample queries
-            sampled_queries = sample(
+            sampled_queries = random.sample(
                 queries, min(len(queries), self._config["sample_size"])
             )
 
@@ -224,13 +224,13 @@ class _AgentBooster:
 
         return new_prompt_config
 
-    def _load_queries(self, data_file: str) -> list[str]:
+    def _load_queries(self, data_file: str) -> List[str]:
         """Load queries from the provided data file as a jsonl file.
 
         :param data_file: Path to the JSONL file containing queries.
         :type data_file: str
         :return: List of queries loaded from the file.
-        :rtype: list[str]
+        :rtype: List[str]
         :raises FileNotFoundError: If the data file does not exist.
         """
         if not os.path.exists(data_file):
@@ -249,12 +249,12 @@ class _AgentBooster:
         return queries
 
     def _generate_responses(
-        self, queries: list[str], prompt_config: _PromptConfiguration
+        self, queries: List[str], prompt_config: _PromptConfiguration
     ) -> str:
         """Generate responses for the given queries using the current prompt configuration.
 
         :param queries: List of queries to generate responses for.
-        :type queries: list[str]
+        :type queries: List[str]
         :param prompt_config: Current prompt configuration to use for generation.
         :type prompt_config: _PromptConfiguration
         :return: Path to the temporary file containing generated responses.
@@ -582,14 +582,14 @@ class _AgentBooster:
         print(improved_prompt)
 
     def _run_single_iteration(
-        self, prompt_config: _PromptConfiguration, queries: list[str]
+        self, prompt_config: _PromptConfiguration, queries: List[str]
     ):
         """Run a single iteration of evaluation and improvement.
 
         :param prompt_config: Current prompt configuration to use.
         :type prompt_config: _PromptConfiguration
         :param queries: List of queries to process.
-        :type queries: list[str]
+        :type queries: List[str]
         :return: Evaluation results from this iteration.
         :rtype: EvaluationResult
         """
