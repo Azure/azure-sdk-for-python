@@ -287,8 +287,8 @@ class _AgentBooster:
             thread_ids.append(thread.id)
 
         converter = AIAgentConverter(self._project_client)
-        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".jsonl")
-        converter.prepare_evaluation_data(thread_ids=thread_ids, filename=temp_file.name)  # type: ignore
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".jsonl") as temp_file:
+            converter.prepare_evaluation_data(thread_ids=thread_ids, filename=temp_file.name)  # type: ignore
 
         return temp_file.name
 
