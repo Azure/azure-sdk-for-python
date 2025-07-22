@@ -123,10 +123,10 @@ def build_web_pub_sub_service_get_client_access_token_request(  # pylint: disabl
     hub: str,
     *,
     user_id: Optional[str] = None,
-    role: Optional[List[str]] = None,
+    roles: Optional[List[str]] = None,
     minutes_to_expire: Optional[int] = None,
-    group: Optional[List[str]] = None,
-    client_type: Optional[Union[str, _models.WebPubSubClientType]] = None,
+    groups: Optional[List[str]] = None,
+    client_protocol: Optional[Union[str, _models.WebPubSubClientType]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -147,14 +147,14 @@ def build_web_pub_sub_service_get_client_access_token_request(  # pylint: disabl
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if user_id is not None:
         _params["userId"] = _SERIALIZER.query("user_id", user_id, "str")
-    if role is not None:
-        _params["role"] = _SERIALIZER.query("role", role, "[str]", div=",")
+    if roles is not None:
+        _params["role"] = _SERIALIZER.query("roles", roles, "[str]", div=",")
     if minutes_to_expire is not None:
         _params["minutesToExpire"] = _SERIALIZER.query("minutes_to_expire", minutes_to_expire, "int")
-    if group is not None:
-        _params["group"] = _SERIALIZER.query("group", group, "[str]", div=",")
-    if client_type is not None:
-        _params["clientType"] = _SERIALIZER.query("client_type", client_type, "str")
+    if groups is not None:
+        _params["group"] = _SERIALIZER.query("groups", groups, "[str]", div=",")
+    if client_protocol is not None:
+        _params["clientType"] = _SERIALIZER.query("client_protocol", client_protocol, "str")
 
     # Construct headers
     if accept is not None:
@@ -919,10 +919,10 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
         self,
         *,
         user_id: Optional[str] = None,
-        role: Optional[List[str]] = None,
+        roles: Optional[List[str]] = None,
         minutes_to_expire: Optional[int] = None,
-        group: Optional[List[str]] = None,
-        client_type: Optional[Union[str, _models.WebPubSubClientType]] = None,
+        groups: Optional[List[str]] = None,
+        client_protocol: Optional[Union[str, _models.WebPubSubClientType]] = None,
         **kwargs: Any
     ) -> _models.ClientTokenResponse:
         """Generate token for the client to connect Azure Web PubSub service.
@@ -931,18 +931,19 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         :keyword user_id: User Id. Default value is None.
         :paramtype user_id: str
-        :keyword role: Roles that the connection with the generated token will have. Default value is
+        :keyword roles: Roles that the connection with the generated token will have. Default value is
          None.
-        :paramtype role: list[str]
+        :paramtype roles: list[str]
         :keyword minutes_to_expire: The expire time of the generated token. Default value is None.
         :paramtype minutes_to_expire: int
-        :keyword group: Groups that the connection will join when it connects. Default value is None.
-        :paramtype group: list[str]
-        :keyword client_type: The type of client. Case-insensitive. If not set, it's "Default". For Web
+        :keyword groups: Groups that the connection will join when it connects. Default value is None.
+        :paramtype groups: list[str]
+        :keyword client_protocol: The type of client. Case-insensitive. If not set, it's "Default". For
+         Web
          PubSub for Socket.IO, only the default value is supported. For Web PubSub, the
          valid values are 'Default' and 'MQTT'. Known values are: "Default" and "mqtt". Default value
          is None.
-        :paramtype client_type: str or ~azure.messaging.webpubsubservice.models.WebPubSubClientType
+        :paramtype client_protocol: str or ~azure.messaging.webpubsubservice.models.WebPubSubClientType
         :return: ClientTokenResponse. The ClientTokenResponse is compatible with MutableMapping
         :rtype: ~azure.messaging.webpubsubservice.models.ClientTokenResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -963,10 +964,10 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
         _request = build_web_pub_sub_service_get_client_access_token_request(
             hub=self._config.hub,
             user_id=user_id,
-            role=role,
+            roles=roles,
             minutes_to_expire=minutes_to_expire,
-            group=group,
-            client_type=client_type,
+            groups=groups,
+            client_protocol=client_protocol,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
