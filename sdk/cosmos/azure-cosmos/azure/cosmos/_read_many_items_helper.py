@@ -6,17 +6,52 @@ from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos._cosmos_client_connection import PartitionKeyType
 from azure.cosmos._query_builder import _QueryBuilder
 from azure.cosmos.partition_key import _Undefined, _Empty, NonePartitionKeyValue, _get_partition_key_from_partition_key_definition
-from azure.cosmos import exceptions
+from azure.cosmos import CosmosList
 import logging
 
 class ReadManyItemsHelper:
     """Helper class for handling read many items operations."""
     logger = logging.getLogger("azure.cosmos.ReadManyItemsHelper")
 
-    def __init__(self, client: 'CosmosClientConnection'):
+    def __init__(
+            self,
+            client: 'CosmosClientConnection',
+            collection_link: str,
+            items: List[Tuple[str, PartitionKeyType]],
+            options: Optional[Mapping[str, Any]],
+            partition_key_definition: Dict[str, Any],
+            **kwargs: Any
+    ):
         self.client = client
+        self.collection_link = collection_link
+        self.items = items
+        self.options = options if options is not None else {}
+        self.partition_key_definition = partition_key_definition
+        self.kwargs = kwargs
         self.max_concurrency = 10
         self.max_items_per_query = 1000
+
+    async def read_many_items(self) -> 'CosmosList':
+        """Executes the read-many operation."""
+        # Group items by partition key range
+        items_by_partition = await self.partition_items_by_range(
+            self.items, self.collection_link, self.partition_key_definition
+        )
+
+        # Create query chunks from the grouped items
+        query_chunks = self.create_query_chunks(items_by_partition)
+
+        # Execute queries concurrently
+        all_results, combined_headers = await self.execute_queries_concurrently(
+            query_chunks,
+            self.collection_link,
+            self.partition_key_definition,
+            self.options,
+            self.max_concurrency,
+            **self.kwargs
+        )
+
+        return CosmosList(all_results, response_headers=combined_headers)
 
     async def partition_items_by_range(
             self,
@@ -60,17 +95,16 @@ class ReadManyItemsHelper:
 
         return items_by_partition
 
-    @staticmethod
     def create_query_chunks(
-            items_by_partition: Dict[str, List[Tuple[str, PartitionKeyType]]],
-            max_items_per_query: int
+            self,
+            items_by_partition: Dict[str, List[Tuple[str, PartitionKeyType]]]
     ) -> List[Dict[str, List[Tuple[str, PartitionKeyType]]]]:
         """Create query chunks for concurrency control."""
         query_chunks = []
         for partition_id, partition_items in items_by_partition.items():
-            # Split large partitions into chunks of max_items_per_query
-            for i in range(0, len(partition_items), max_items_per_query):
-                chunk = partition_items[i:i + max_items_per_query]
+            # Split large partitions into chunks of self.max_items_per_query
+            for i in range(0, len(partition_items), self.max_items_per_query):
+                chunk = partition_items[i:i + self.max_items_per_query]
                 query_chunks.append({partition_id: chunk})
         return query_chunks
 
@@ -92,9 +126,13 @@ class ReadManyItemsHelper:
 
         async def execute_chunk_query(partition_id, chunk_partition_items):
             async with semaphore:
+                # Optimization for when the partition key is the item's ID.
+                # This allows for a highly efficient query using an IN clause on the ID field.
                 if _QueryBuilder.is_id_partition_key_query(chunk_partition_items, partition_key_definition):
                     query_obj = _QueryBuilder.build_id_in_query(chunk_partition_items)
-                # Optimization for single logical partition key
+                # Optimization for when all items in a chunk belong to the same logical partition.
+                # This allows for a more efficient query by targeting a single partition
+                # and using an IN clause for the item IDs.
                 elif _QueryBuilder.is_single_logical_partition_query(chunk_partition_items):
                     query_obj = _QueryBuilder.build_pk_and_id_in_query(chunk_partition_items, partition_key_definition)
                 else:

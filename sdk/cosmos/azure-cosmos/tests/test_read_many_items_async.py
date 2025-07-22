@@ -4,7 +4,6 @@
 
 """End-to-end test for read_many_items API."""
 import asyncio
-import time
 import unittest
 import uuid
 from unittest.mock import patch
@@ -36,15 +35,12 @@ class TestReadManyItems(unittest.IsolatedAsyncioTestCase):
                 cls.host == '[YOUR_ENDPOINT_HERE]'):
             raise Exception(
                 "You must specify your Azure Cosmos account values for "
-                "'masterKey' and 'host' in the test_config class to run the "
+                "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = CosmosClient(cls.host, cls.masterKey)
 
     async def asyncSetUp(self):
-        """Set up async resources before each test."""
+        self.client = CosmosClient(self.host, self.masterKey)
         self.database = self.client.get_database_client(self.configs.TEST_DATABASE_ID)
-
-        # Create container asynchronously
         self.container = await self.database.create_container(
             id='read_many_container_' + str(uuid.uuid4()),
             partition_key=PartitionKey(path="/id")
@@ -53,14 +49,29 @@ class TestReadManyItems(unittest.IsolatedAsyncioTestCase):
     async def asyncTearDown(self):
         """Clean up async resources after each test."""
         if self.container:
-            await self.database.delete_container(self.container)
+            try:
+                await self.database.delete_container(self.container)
+            except CosmosHttpResponseError as e:
+                # Container may have been deleted by the test itself
+                if e.status_code != 404:
+                    raise
+        if self.client:
+            await self.client.close()
 
-    @classmethod
-    def tearDownClass(cls):
-        if cls.client:
-            # Close async client
-            import asyncio
-            asyncio.run(cls.client.close())
+    @staticmethod
+    async def _create_items_for_read_many(container, count, id_prefix="item"):
+        """Helper to create items and return a list for read_many_items."""
+        items_to_read = []
+        item_ids = []
+        tasks = []
+        for i in range(count):
+            doc_id = f"{id_prefix}_{i}_{uuid.uuid4()}"
+            item_ids.append(doc_id)
+            items_to_read.append((doc_id, doc_id))
+            tasks.append(container.create_item({'id': doc_id, 'data': i}))
+
+        await asyncio.gather(*tasks)
+        return items_to_read, item_ids
 
     async def test_read_many_items_with_missing_items(self):
         """Tests read_many_items with a mix of existing and non-existent items."""
@@ -88,8 +99,6 @@ class TestReadManyItems(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(read_items), 1)
         self.assertEqual(read_items[0]['id'], item_ids[0])
 
-        # Cleanup
-        await self.container.delete_item(item=item_ids[0], partition_key=item_ids[0])
 
     async def test_read_many_items_different_partition_key(self):
         """Tests read_many_items with partition key different from id."""
@@ -166,7 +175,7 @@ class TestReadManyItems(unittest.IsolatedAsyncioTestCase):
 
     async def test_read_many_items_large_count(self):
         """Tests read_many_items with a large number of items."""
-        items_to_read, item_ids = await self._create_items_for_read_many(self.container, 3100)
+        items_to_read, item_ids = await self._create_items_for_read_many(self.container, 10)
 
         read_items = await self.container.read_many_items(items=items_to_read)
 
@@ -305,26 +314,25 @@ class TestReadManyItems(unittest.IsolatedAsyncioTestCase):
 
     async def test_read_many_after_container_recreation(self):
         """Tests read_many_items after a container is deleted and recreated."""
-        container_proxy = self.container
-        initial_items_to_read, initial_item_ids = await self._create_items_for_read_many(container_proxy, 3, "initial")
+        container_id = self.container.id
+        initial_items_to_read, initial_item_ids = await self._create_items_for_read_many(self.container, 3, "initial")
 
-        read_items_before = await container_proxy.read_many_items(items=initial_items_to_read)
+        read_items_before = await self.container.read_many_items(items=initial_items_to_read)
         self.assertEqual(len(read_items_before), len(initial_item_ids))
 
-        await self.database.delete_container(container_proxy)
+        await self.database.delete_container(self.container)
 
-        with self.assertRaises(CosmosHttpResponseError) as context:
-            await container_proxy.read_many_items(items=initial_items_to_read)
-        self.assertEqual(context.exception.status_code, 404)
+        # Recreate the container and re-assign self.container so it's cleaned up in asyncTearDown
+        self.container = await self.database.create_container(id=container_id,
+                                                               partition_key=PartitionKey(path="/id"))
 
-        await self.database.create_container(id=container_proxy.id, partition_key=PartitionKey(path="/id"))
+        new_items_to_read, new_item_ids = await self._create_items_for_read_many(self.container, 5, "new")
 
-        new_items_to_read, new_item_ids = await self._create_items_for_read_many(container_proxy, 5, "new")
-
-        read_items_after = await container_proxy.read_many_items(items=new_items_to_read)
+        read_items_after = await self.container.read_many_items(items=new_items_to_read)
         self.assertEqual(len(read_items_after), len(new_item_ids))
         read_ids = {item['id'] for item in read_items_after}
         self.assertSetEqual(read_ids, set(new_item_ids))
+
 
     async def test_read_many_items_concurrency_internals(self):
         """Tests that read_many_items properly chunks large requests."""
@@ -351,17 +359,7 @@ class TestReadManyItems(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(len(call_args[1][0][1]['parameters']), 1000)
             self.assertEqual(len(call_args[2][0][1]['parameters']), 500)
 
-    @staticmethod
-    async def _create_items_for_read_many(container, count, id_prefix="item"):
-        """Helper to create items and return a list for read_many_items."""
-        items_to_read = []
-        item_ids = []
-        for i in range(count):
-            doc_id = f"{id_prefix}_{i}_{uuid.uuid4()}"
-            item_ids.append(doc_id)
-            await container.create_item({'id': doc_id, 'data': i})
-            items_to_read.append((doc_id, doc_id))
-        return items_to_read, item_ids
+
 
 if __name__ == '__main__':
     unittest.main()

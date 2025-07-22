@@ -433,28 +433,35 @@ class ContainerProxy:
             *,
             consistency_level: Optional[str] = None,
             session_token: Optional[str] = None,
-            custom_headers: Optional[Dict[str, str]] = None,
-            excludedLocations: Optional[List[str]] = None,
+            initial_headers: Optional[Dict[str, str]] = None,
+            excluded_locations: Optional[List[str]] = None,
             **kwargs: Any
-    ) -> List[Dict[str, Any]]:
-        """
-        Reads multiple items from the container.
+    ) -> CosmosList[Dict[str, Any]]:
+        """Reads multiple items from the container.
 
-        :param items: A list of tuples, where each tuple contains the item id and partition key.
+        This method is a batched point-read operation. It is more efficient than
+        issuing multiple individual point reads.
+
+        :param items: A list of tuples, where each tuple contains an item's ID and partition key.
         :type items: List[Tuple[str, PartitionKeyType]]
         :keyword str consistency_level: The consistency level to use for the request.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword Dict[str, str] custom_headers: Custom headers to be sent as part of the request.
-        :returns: A list of the requested items.
-        :rtype: List[Dict[str, Any]]
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The read-many operation failed.
+        :returns: A CosmosList containing the retrieved items. Items that were not found are omitted from the list.
+        :rtype: ~azure.cosmos.CosmosList[Dict[str, Any]]
         """
+
+
         if session_token is not None:
             kwargs['session_token'] = session_token
-        if custom_headers is not None:
-            kwargs['initial_headers'] = custom_headers
+        if initial_headers is not None:
+            kwargs['initial_headers'] = initial_headers
         if consistency_level is not None:
             kwargs['consistencyLevel'] = consistency_level
-
+        if excluded_locations is not None:
+            kwargs['excludedLocations'] = excluded_locations
 
         # Optimization: If only one item, use point read
         if len(items) == 1:

@@ -2233,7 +2233,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         """Reads many items.
 
         :param str collection_link: The link to the document collection.
-        :param list items: The list of items to read. Each item is a dict containing the item id and partition key.
+        :param items: A list of tuples, where each tuple contains an item's ID and partition key.
+        :type items: List[Tuple[str, PartitionKeyType]]
         :param dict options: The request options for the request.
         :return: The list of read items.
         :rtype: CosmosList
@@ -2243,36 +2244,18 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if not items:
             return CosmosList([], response_headers=CaseInsensitiveDict())
 
-        # Internal concurrency parameters (not exposed in public API)
-        max_concurrency = 10  # Optimized for async I/O operations
-        max_items_per_query = 1000  # Maximum items per query chunk
-
         partition_key_definition = await self._get_partition_key_definition(collection_link, options)
         if not partition_key_definition:
             raise ValueError("Could not find partition key definition for collection.")
 
-        # Use helper to group items by partition range
-        helper = ReadManyItemsHelper(self)
-        items_by_partition = await helper.partition_items_by_range(
-            items,
-            collection_link,
-            partition_key_definition
-        )
-
-        # Create query chunks for concurrency control
-        query_chunks = helper.create_query_chunks(items_by_partition, max_items_per_query)
-
-        # Execute queries concurrently and aggregate results
-        all_results, combined_headers = await helper.execute_queries_concurrently(
-            query_chunks,
-            collection_link,
-            partition_key_definition,
-            options,
-            max_concurrency,
-            **kwargs
-        )
-
-        return CosmosList(all_results, response_headers=combined_headers)
+        helper = ReadManyItemsHelper(
+            client=self,
+            collection_link=collection_link,
+            items=items,
+            options=options,
+            partition_key_definition=partition_key_definition,
+            **kwargs)
+        return await helper.read_many_items()
 
 
 
