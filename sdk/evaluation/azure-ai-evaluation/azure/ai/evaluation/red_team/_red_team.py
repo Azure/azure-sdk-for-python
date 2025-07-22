@@ -117,6 +117,24 @@ from ._utils.logging_utils import (
     log_strategy_completion,
     log_error,
 )
+from ._utils import (
+    create_orchestrator,
+    normalize_converters,
+    log_converter_info,
+    initialize_output_path,
+    send_prompts_with_retry,
+    sample_objectives,
+    apply_jailbreak_prefixes,
+    extract_prompts_from_objectives,
+    create_objectives_by_category,
+    cache_objectives,
+    create_retry_config,
+    log_retry_attempt,
+    log_retry_error,
+    MAX_RETRY_ATTEMPTS,
+    MIN_RETRY_WAIT_SECONDS,
+    MAX_RETRY_WAIT_SECONDS,
+)
 
 
 @experimental
@@ -142,11 +160,6 @@ class RedTeam:
     :type output_dir: Optional[str]
     """
 
-    # Retry configuration constants
-    MAX_RETRY_ATTEMPTS = 5  # Increased from 3
-    MIN_RETRY_WAIT_SECONDS = 2  # Increased from 1
-    MAX_RETRY_WAIT_SECONDS = 30  # Increased from 10
-
     def _create_retry_config(self):
         """Create a standard retry configuration for connection-related issues.
 
@@ -157,78 +170,21 @@ class RedTeam:
         :return: Dictionary with retry configuration for different exception types
         :rtype: dict
         """
-        return {  # For connection timeouts and network-related errors
-            "network_retry": {
-                "retry": retry_if_exception(
-                    lambda e: isinstance(
-                        e,
-                        (
-                            httpx.ConnectTimeout,
-                            httpx.ReadTimeout,
-                            httpx.ConnectError,
-                            httpx.HTTPError,
-                            httpx.TimeoutException,
-                            httpx.HTTPStatusError,
-                            httpcore.ReadTimeout,
-                            ConnectionError,
-                            ConnectionRefusedError,
-                            ConnectionResetError,
-                            TimeoutError,
-                            OSError,
-                            IOError,
-                            asyncio.TimeoutError,
-                            ServiceRequestError,
-                            ServiceResponseError,
-                        ),
-                    )
-                    or (
-                        isinstance(e, httpx.HTTPStatusError)
-                        and (e.response.status_code == 500 or "model_error" in str(e))
-                    )
-                ),
-                "stop": stop_after_attempt(self.MAX_RETRY_ATTEMPTS),
-                "wait": wait_exponential(
-                    multiplier=1.5, min=self.MIN_RETRY_WAIT_SECONDS, max=self.MAX_RETRY_WAIT_SECONDS
-                ),
-                "retry_error_callback": self._log_retry_error,
-                "before_sleep": self._log_retry_attempt,
-            }
-        }
+        return create_retry_config(
+            max_retry_attempts=5,  # Increased from default 3
+            min_retry_wait_seconds=2,  # Increased from default 2  
+            max_retry_wait_seconds=30,  # Decreased from default 60
+            log_retry_attempt_func=self._log_retry_attempt,
+            log_retry_error_func=self._log_retry_error,
+        )
 
     def _log_retry_attempt(self, retry_state):
-        """Log retry attempts for better visibility.
-
-        Logs information about connection issues that trigger retry attempts, including the
-        exception type, retry count, and wait time before the next attempt.
-
-        :param retry_state: Current state of the retry
-        :type retry_state: tenacity.RetryCallState
-        """
-        exception = retry_state.outcome.exception()
-        if exception:
-            self.logger.warning(
-                f"Connection issue: {exception.__class__.__name__}. "
-                f"Retrying in {retry_state.next_action.sleep} seconds... "
-                f"(Attempt {retry_state.attempt_number}/{self.MAX_RETRY_ATTEMPTS})"
-            )
+        """Log retry attempts for better visibility."""
+        return log_retry_attempt(self.logger, max_retry_attempts=5)(retry_state)
 
     def _log_retry_error(self, retry_state):
-        """Log the final error after all retries have been exhausted.
-
-        Logs detailed information about the error that persisted after all retry attempts have been exhausted.
-        This provides visibility into what ultimately failed and why.
-
-        :param retry_state: Final state of the retry
-        :type retry_state: tenacity.RetryCallState
-        :return: The exception that caused retries to be exhausted
-        :rtype: Exception
-        """
-        exception = retry_state.outcome.exception()
-        self.logger.error(
-            f"All retries failed after {retry_state.attempt_number} attempts. "
-            f"Last error: {exception.__class__.__name__}: {str(exception)}"
-        )
-        return exception
+        """Log the final error after all retries have been exhausted."""
+        return log_retry_error(self.logger)(retry_state)
 
     def __init__(
         self,
@@ -685,155 +641,32 @@ class RedTeam:
         self.logger.info(f"Found {len(custom_objectives)} custom objectives for {risk_cat_value}")
 
         # Sample if we have more than needed
-        selected_cat_objectives = self._sample_objectives(custom_objectives, num_objectives, risk_cat_value)
+        selected_cat_objectives = sample_objectives(custom_objectives, num_objectives, risk_cat_value, self.logger)
 
         # Handle jailbreak strategy - need to apply jailbreak prefixes to messages
         if strategy == "jailbreak":
             await self._apply_jailbreak_prefixes(selected_cat_objectives)
 
         # Extract content from selected objectives
-        selected_prompts = self._extract_prompts_from_objectives(selected_cat_objectives)
+        selected_prompts = extract_prompts_from_objectives(selected_cat_objectives)
 
         # Process the selected objectives for caching
-        objectives_by_category = self._create_objectives_by_category(selected_cat_objectives, risk_cat_value)
+        objectives_by_category = create_objectives_by_category(selected_cat_objectives, risk_cat_value)
 
         # Store in cache
-        self._cache_objectives(current_key, objectives_by_category, strategy, risk_cat_value, selected_prompts, selected_cat_objectives)
+        cache_objectives(self.attack_objectives, current_key, objectives_by_category, strategy, risk_cat_value, selected_prompts, selected_cat_objectives)
 
         self.logger.info(f"Using {len(selected_prompts)} custom objectives for {risk_cat_value}")
         return selected_prompts
 
-    def _sample_objectives(self, custom_objectives: List[dict], num_objectives: int, risk_cat_value: str) -> List[dict]:
-        """Sample objectives if we have more than needed.
-        
-        :param custom_objectives: List of available objectives
-        :type custom_objectives: List[dict]
-        :param num_objectives: Number of objectives needed
-        :type num_objectives: int
-        :param risk_cat_value: Risk category value for logging
-        :type risk_cat_value: str
-        :return: Selected objectives
-        :rtype: List[dict]
-        """
-        if len(custom_objectives) > num_objectives:
-            selected_cat_objectives = random.sample(custom_objectives, num_objectives)
-            self.logger.info(
-                f"Sampled {num_objectives} objectives from {len(custom_objectives)} available for {risk_cat_value}"
-            )
-            # Log ids of selected objectives for traceability
-            selected_ids = [obj.get("id", "unknown-id") for obj in selected_cat_objectives]
-            self.logger.debug(f"Selected objective IDs for {risk_cat_value}: {selected_ids}")
-        else:
-            selected_cat_objectives = custom_objectives
-            self.logger.info(f"Using all {len(custom_objectives)} available objectives for {risk_cat_value}")
-        
-        return selected_cat_objectives
-
     async def _apply_jailbreak_prefixes(self, selected_cat_objectives: List[dict]) -> None:
-        """Apply jailbreak prefixes to objectives for jailbreak strategy.
-        
-        :param selected_cat_objectives: List of selected objectives to modify
-        :type selected_cat_objectives: List[dict]
-        """
-        self.logger.debug("Applying jailbreak prefixes to custom objectives")
-        try:
-            @retry(**self._create_retry_config()["network_retry"])
-            async def get_jailbreak_prefixes_with_retry():
-                try:
-                    return await self.generated_rai_client.get_jailbreak_prefixes()
-                except (
-                    httpx.ConnectTimeout,
-                    httpx.ReadTimeout,
-                    httpx.ConnectError,
-                    httpx.HTTPError,
-                    ConnectionError,
-                ) as e:
-                    self.logger.warning(
-                        f"Network error when fetching jailbreak prefixes: {type(e).__name__}: {str(e)}"
-                    )
-                    raise
-
-            jailbreak_prefixes = await get_jailbreak_prefixes_with_retry()
-            for objective in selected_cat_objectives:
-                if "messages" in objective and len(objective["messages"]) > 0:
-                    message = objective["messages"][0]
-                    if isinstance(message, dict) and "content" in message:
-                        message["content"] = f"{random.choice(jailbreak_prefixes)} {message['content']}"
-        except Exception as e:
-            log_error(self.logger, "Error applying jailbreak prefixes to custom objectives", e)
-            # Continue with unmodified prompts instead of failing completely
-
-    def _extract_prompts_from_objectives(self, selected_cat_objectives: List[dict]) -> List[str]:
-        """Extract prompt content from objective objects.
-        
-        :param selected_cat_objectives: List of objective dictionaries
-        :type selected_cat_objectives: List[dict]
-        :return: List of prompt content strings
-        :rtype: List[str]
-        """
-        selected_prompts = []
-        for obj in selected_cat_objectives:
-            if "messages" in obj and len(obj["messages"]) > 0:
-                message = obj["messages"][0]
-                if isinstance(message, dict) and "content" in message:
-                    selected_prompts.append(message["content"])
-        return selected_prompts
-
-    def _create_objectives_by_category(self, selected_cat_objectives: List[dict], risk_cat_value: str) -> dict:
-        """Create objectives organized by category for caching.
-        
-        :param selected_cat_objectives: List of selected objectives
-        :type selected_cat_objectives: List[dict]
-        :param risk_cat_value: Risk category value
-        :type risk_cat_value: str
-        :return: Objectives organized by category
-        :rtype: dict
-        """
-        objectives_by_category = {risk_cat_value: []}
-
-        for obj in selected_cat_objectives:
-            obj_id = obj.get("id", f"obj-{uuid.uuid4()}")
-            content = ""
-            if "messages" in obj and len(obj["messages"]) > 0:
-                content = obj["messages"][0].get("content", "")
-
-            if content:
-                obj_data = {"id": obj_id, "content": content}
-                objectives_by_category[risk_cat_value].append(obj_data)
-
-        return objectives_by_category
-
-    def _cache_objectives(
-        self, 
-        current_key: tuple, 
-        objectives_by_category: dict, 
-        strategy: Optional[str], 
-        risk_cat_value: str, 
-        selected_prompts: List[str], 
-        selected_cat_objectives: List[dict]
-    ) -> None:
-        """Cache the objectives for future use.
-        
-        :param current_key: Cache key
-        :type current_key: tuple
-        :param objectives_by_category: Objectives organized by category
-        :type objectives_by_category: dict
-        :param strategy: Strategy name
-        :type strategy: Optional[str]
-        :param risk_cat_value: Risk category value
-        :type risk_cat_value: str
-        :param selected_prompts: Selected prompt content
-        :type selected_prompts: List[str]
-        :param selected_cat_objectives: Full objective objects
-        :type selected_cat_objectives: List[dict]
-        """
-        self.attack_objectives[current_key] = {
-            "objectives_by_category": objectives_by_category,
-            "strategy": strategy,
-            "risk_category": risk_cat_value,
-            "selected_prompts": selected_prompts,
-            "selected_objectives": selected_cat_objectives,
-        }
+        """Apply jailbreak prefixes to objectives for jailbreak strategy."""
+        await apply_jailbreak_prefixes(
+            selected_cat_objectives, 
+            self.generated_rai_client,
+            self._create_retry_config(),
+            self.logger
+        )
 
     async def _get_rai_service_objectives(
         self,
@@ -976,7 +809,7 @@ class RedTeam:
             )
 
         # Extract content from selected objectives
-        selected_prompts = self._extract_prompts_from_objectives(selected_cat_objectives)
+        selected_prompts = extract_prompts_from_objectives(selected_cat_objectives)
 
         # Process the response - organize by category and extract content/IDs
         objectives_by_category = {risk_cat_value: []}
@@ -998,7 +831,7 @@ class RedTeam:
                     break  # Just use the first harm for categorization
 
         # Store in cache - now including the full selected objectives with IDs
-        self._cache_objectives(current_key, objectives_by_category, strategy, risk_cat_value, selected_prompts, selected_cat_objectives)
+        cache_objectives(self.attack_objectives, current_key, objectives_by_category, strategy, risk_cat_value, selected_prompts, selected_cat_objectives)
         self.logger.info(f"Selected {len(selected_prompts)} objectives for {risk_cat_value}")
 
         return selected_prompts
@@ -1117,21 +950,39 @@ class RedTeam:
         log_strategy_start(self.logger, strategy_name, risk_category_name)
 
         try:
-            orchestrator = self._create_orchestrator(chat_target, converter)
+            orchestrator = create_orchestrator(chat_target, converter)
             
             if not all_prompts:
                 self.logger.warning(f"No prompts provided to orchestrator for {strategy_name}/{risk_category_name}")
                 self.task_statuses[task_key] = TASK_STATUS["COMPLETED"]
                 return orchestrator
 
-            self._log_converter_info(converter)
+            log_converter_info(self.logger, converter)
             self.logger.debug(f"First prompt (truncated): {all_prompts[0][:50]}...")
 
-            output_path = self._initialize_output_path(strategy_name, risk_category_name)
-            
-            await self._send_prompts_with_retry(
-                orchestrator, all_prompts, output_path, strategy_name, risk_category_name, timeout
+            output_path = initialize_output_path(
+                strategy_name, 
+                risk_category_name, 
+                self.scan_output_dir,
+                self.red_team_info,
+                DATA_EXT
             )
+            
+            await send_prompts_with_retry(
+                orchestrator, 
+                all_prompts, 
+                output_path, 
+                strategy_name, 
+                risk_category_name, 
+                timeout,
+                self._create_retry_config(),
+                self.logger,
+                self.task_statuses,
+                TASK_STATUS,
+            )
+
+            self.task_statuses[task_key] = TASK_STATUS["COMPLETED"]
+            return orchestrator
 
             self.task_statuses[task_key] = TASK_STATUS["COMPLETED"]
             return orchestrator
@@ -1143,158 +994,6 @@ class RedTeam:
             )
             self.task_statuses[task_key] = TASK_STATUS["FAILED"]
             raise
-
-    def _create_orchestrator(
-        self, chat_target: PromptChatTarget, converter: Union[PromptConverter, List[PromptConverter]]
-    ) -> PromptSendingOrchestrator:
-        """Create and configure a PromptSendingOrchestrator.
-        
-        :param chat_target: The target to send prompts to
-        :type chat_target: PromptChatTarget
-        :param converter: Prompt converter or list of converters to transform prompts
-        :type converter: Union[PromptConverter, List[PromptConverter]]
-        :return: Configured orchestrator
-        :rtype: PromptSendingOrchestrator
-        """
-        converter_list = self._normalize_converters(converter)
-        return PromptSendingOrchestrator(objective_target=chat_target, prompt_converters=converter_list)
-
-    def _normalize_converters(
-        self, converter: Union[PromptConverter, List[PromptConverter]]
-    ) -> List[PromptConverter]:
-        """Normalize converter input to a list of converters.
-        
-        :param converter: Prompt converter or list of converters
-        :type converter: Union[PromptConverter, List[PromptConverter]]
-        :return: List of prompt converters
-        :rtype: List[PromptConverter]
-        """
-        if not converter:
-            return []
-        if isinstance(converter, PromptConverter):
-            return [converter]
-        return converter if isinstance(converter, list) else []
-
-    def _log_converter_info(self, converter: Union[PromptConverter, List[PromptConverter]]) -> None:
-        """Log information about the converters being used.
-        
-        :param converter: Prompt converter or list of converters
-        :type converter: Union[PromptConverter, List[PromptConverter]]
-        """
-        converter_list = self._normalize_converters(converter)
-        
-        if converter_list:
-            converter_names = [c.__class__.__name__ for c in converter_list if c is not None]
-            self.logger.debug(f"Using converters: {', '.join(converter_names)}")
-        else:
-            self.logger.debug("No converters specified")
-
-    def _initialize_output_path(self, strategy_name: str, risk_category_name: str) -> str:
-        """Initialize output path for memory labelling.
-        
-        :param strategy_name: Name of the attack strategy
-        :type strategy_name: str
-        :param risk_category_name: Name of the risk category
-        :type risk_category_name: str
-        :return: Output path for the data file
-        :rtype: str
-        """
-        base_path = str(uuid.uuid4())
-        
-        if hasattr(self, "scan_output_dir") and self.scan_output_dir:
-            output_path = os.path.join(self.scan_output_dir, f"{base_path}{DATA_EXT}")
-        else:
-            output_path = f"{base_path}{DATA_EXT}"
-
-        self.red_team_info[strategy_name][risk_category_name]["data_file"] = output_path
-        return output_path
-
-    async def _send_prompts_with_retry(
-        self,
-        orchestrator: PromptSendingOrchestrator,
-        all_prompts: List[str],
-        output_path: str,
-        strategy_name: str,
-        risk_category_name: str,
-        timeout: int,
-    ) -> None:
-        """Send all prompts at once with retry logic and error handling.
-        
-        :param orchestrator: The orchestrator to use for sending prompts
-        :type orchestrator: PromptSendingOrchestrator
-        :param all_prompts: List of prompts to send
-        :type all_prompts: List[str]
-        :param output_path: Path for memory labelling
-        :type output_path: str
-        :param strategy_name: Name of the attack strategy
-        :type strategy_name: str
-        :param risk_category_name: Name of the risk category
-        :type risk_category_name: str
-        :param timeout: Timeout in seconds for the operation
-        :type timeout: int
-        """
-        self.logger.debug(
-            f"Processing {len(all_prompts)} prompts for {strategy_name}/{risk_category_name}"
-        )
-        start_time = datetime.now()
-        
-        try:
-            @retry(**self._create_retry_config()["network_retry"])
-            async def send_prompts_with_retry():
-                try:
-                    return await asyncio.wait_for(
-                        orchestrator.send_prompts_async(
-                            prompt_list=all_prompts,
-                            memory_labels={"risk_strategy_path": output_path},
-                        ),
-                        timeout=timeout,
-                    )
-                except (
-                    httpx.ConnectTimeout,
-                    httpx.ReadTimeout,
-                    httpx.ConnectError,
-                    httpx.HTTPError,
-                    ConnectionError,
-                    TimeoutError,
-                    OSError,
-                    asyncio.TimeoutError,
-                    httpcore.ReadTimeout,
-                    httpx.HTTPStatusError,
-                ) as e:
-                    self.logger.warning(
-                        f"Network error for {strategy_name}/{risk_category_name}: {type(e).__name__}: {str(e)}"
-                    )
-                    await asyncio.sleep(2)  # Allow network recovery
-                    raise
-
-            await send_prompts_with_retry()
-            duration = (datetime.now() - start_time).total_seconds()
-            self.logger.debug(
-                f"Successfully processed prompts for {strategy_name}/{risk_category_name} in {duration:.2f} seconds"
-            )
-
-        except (asyncio.TimeoutError, tenacity.RetryError):
-            self.logger.warning(
-                f"Prompt processing for {strategy_name}/{risk_category_name} timed out after {timeout} seconds, continuing with partial results"
-            )
-            tqdm.write(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category_name}")
-            self.task_statuses[f"{strategy_name}_{risk_category_name}_prompts"] = TASK_STATUS["TIMEOUT"]
-            self.red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
-            self._write_pyrit_outputs_to_file(
-                orchestrator=orchestrator,
-                strategy_name=strategy_name,
-                risk_category=risk_category_name,
-            )
-            
-        except Exception as e:
-            log_error(self.logger, "Error processing prompts", e, f"{strategy_name}/{risk_category_name}")
-            self.logger.debug(f"ERROR: Strategy {strategy_name}, Risk {risk_category_name}: {str(e)}")
-            self.red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
-            self._write_pyrit_outputs_to_file(
-                orchestrator=orchestrator,
-                strategy_name=strategy_name,
-                risk_category=risk_category_name,
-            )
 
     async def _multi_turn_orchestrator(
         self,
@@ -1336,9 +1035,15 @@ class RedTeam:
 
         log_strategy_start(self.logger, strategy_name, risk_category_name)
         
-        converter_list = self._normalize_converters(converter)
-        self._log_converter_info(converter)
-        output_path = self._initialize_output_path(strategy_name, risk_category_name)
+        converter_list = normalize_converters(converter)
+        log_converter_info(self.logger, converter)
+        output_path = initialize_output_path(
+            strategy_name, 
+            risk_category_name, 
+            self.scan_output_dir,
+            self.red_team_info,
+            DATA_EXT
+        )
         
         # Ensure the directory exists for multi-turn orchestrator
         if hasattr(self, "scan_output_dir") and self.scan_output_dir:
@@ -1521,7 +1226,13 @@ class RedTeam:
         self.task_statuses[task_key] = TASK_STATUS["RUNNING"]
 
         log_strategy_start(self.logger, strategy_name, risk_category_name)
-        output_path = self._initialize_output_path(strategy_name, risk_category_name)
+        output_path = initialize_output_path(
+            strategy_name, 
+            risk_category_name, 
+            self.scan_output_dir,
+            self.red_team_info,
+            DATA_EXT
+        )
 
         for prompt_idx, prompt in enumerate(all_prompts):
             prompt_start_time = datetime.now()
