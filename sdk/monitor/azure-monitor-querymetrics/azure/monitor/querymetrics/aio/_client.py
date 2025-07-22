@@ -31,9 +31,8 @@ class MetricsClient:  # pylint: disable=client-accepts-api-version-keyword
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword str audience: The audience to use when requesting tokens for Microsoft Entra ID. Defaults to the public
         cloud audience (https://metrics.monitor.azure.com).
-    :keyword api_version: The API version to use for this operation. Default value is "2024-02-01".
+    :keyword str api_version: The API version to use for this operation. Default value is "2024-02-01".
      Note that overriding this default value may result in unsupported behavior.
-    :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, credential: AsyncTokenCredential, **kwargs: Any) -> None:
