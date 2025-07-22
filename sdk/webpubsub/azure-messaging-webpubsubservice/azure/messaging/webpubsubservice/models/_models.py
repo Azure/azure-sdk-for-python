@@ -7,12 +7,9 @@
 # --------------------------------------------------------------------------
 # pylint: disable=useless-super-delegation
 
-from typing import Any, List, Mapping, Optional, TYPE_CHECKING, overload
+from typing import Any, List, Mapping, Optional, overload
 
 from .._utils.model_base import Model as _Model, rest_field
-
-if TYPE_CHECKING:
-    from .. import models as _models
 
 
 class AddToGroupsRequest(_Model):
@@ -92,41 +89,6 @@ class GroupMember(_Model):
         self,
         *,
         user_id: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class GroupMemberPagedValues(_Model):
-    """Paged response for group members.
-
-    :ivar value: The group members.
-    :vartype value: list[~azure.messaging.webpubsubservice.models.GroupMember]
-    :ivar next_link: The link to the next page of results.
-    :vartype next_link: str
-    """
-
-    value: Optional[List["_models.GroupMember"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The group members."""
-    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
-    """The link to the next page of results."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.GroupMember"]] = None,
-        next_link: Optional[str] = None,
     ) -> None: ...
 
     @overload
