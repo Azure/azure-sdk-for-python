@@ -498,7 +498,7 @@ class AsyncVoiceLiveConnectionManager:
         *,
         client: "AsyncVoiceLiveClient",
         model: str,
-        api_version: str,
+        api_version: str = "2025-05-01-preview",
         extra_query: Dict[str, Any],
         extra_headers: Dict[str, Any],
         websocket_connection_options: Dict[str, Any],
@@ -553,6 +553,24 @@ class AsyncVoiceLiveConnectionManager:
             url = self._prepare_url()
             log.debug("Connecting to %s", url)
 
+            self.__websocket_connection_options.setdefault("max_msg_size", 10 * 1024 * 1024)  # Default to 10MB
+            self.__websocket_connection_options.setdefault("heartbeat", 30)  # Default heartbeat interval
+
+            # Set proxy
+            if self.__client._config.proxy_policy:
+                self.__client._config.proxy_policy.proxies = {"http": "http://localhost:8888", "https": "http://localhost:8888"}
+                log.debug("Using proxy: %s", self.__client._config.proxy_policy.proxies)
+            else:
+                log.debug("No proxy configured")    
+
+            #set proxy in websocket options
+            self.__websocket_connection_options.setdefault("proxy", "http://localhost:8888")
+            
+            if "proxy" in self.__websocket_connection_options:
+                log.debug("Using proxy in websocket options: %s", self.__websocket_connection_options["proxy"])
+            else:
+                log.debug("No proxy configured in websocket options")
+                            
             if self.__websocket_connection_options:
                 log.debug("Connection options: %s", self.__websocket_connection_options)
 
@@ -669,7 +687,7 @@ class AsyncVoiceLiveClient(VoiceLiveClientGenerated):
         self,
         *,
         model: str,
-        api_version: str,
+        api_version: str = "2025-05-01-preview",
         extra_query: Dict[str, Any] = {},
         extra_headers: Dict[str, Any] = {},
         websocket_connection_options: Dict[str, Any] = {},

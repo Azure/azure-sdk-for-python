@@ -34,6 +34,22 @@ This directory contains sample applications demonstrating various capabilities o
 
 ## Running the samples
 
+### Quick Start: Basic Voice Assistant 🎤
+
+For a complete voice conversation experience, start with the featured sample:
+
+```bash
+python basic_voice_assistant.py
+```
+
+This sample demonstrates:
+- Real-time voice conversation with AI
+- Automatic turn detection and interruption handling  
+- Full duplex audio streaming
+- Robust error handling and reconnection
+
+See [BASIC_VOICE_ASSISTANT.md](BASIC_VOICE_ASSISTANT.md) for complete documentation.
+
 ### Using Visual Studio Code
 
 1. Open the `azure-ai-voicelive` directory in VS Code
@@ -64,6 +80,7 @@ python sample_voicelive_async.py --help
 
 ## Sample descriptions
 
+- **basic_voice_assistant.py**: 🌟 **[Featured Sample]** Complete voice assistant demonstrating real-time conversation, interruption handling, and server VAD. Perfect starting point for voice applications. See [BASIC_VOICE_ASSISTANT.md](BASIC_VOICE_ASSISTANT.md) for detailed documentation.
 - **sample_voicelive_async.py**: Demonstrates how to use the Azure VoiceLive async client to interact with the VoiceLive API.
 - **audio_streaming_sample.py**: Shows how to use WebSocket connections for audio streaming with the Azure VoiceLive SDK.
 - **sample_voicelive_audio_async.py**: Demonstrates asynchronous audio processing with the VoiceLive SDK.
