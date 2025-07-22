@@ -1,5 +1,6 @@
 from typing import Optional
 
+
 class GroupMember:
     """Represents a member in a group.
 
