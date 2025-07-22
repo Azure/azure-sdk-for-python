@@ -30,7 +30,11 @@ class GeneratedRAIClient:
     :type token_manager: ~azure.ai.evaluation.simulator._model_tools._identity_manager.APITokenManager
     """
 
-    def __init__(self, azure_ai_project: Union[AzureAIProject, str], token_manager: ManagedIdentityAPITokenManager):
+    def __init__(
+        self,
+        azure_ai_project: Union[AzureAIProject, str],
+        token_manager: ManagedIdentityAPITokenManager,
+    ):
         self.azure_ai_project = azure_ai_project
         self.token_manager = token_manager
 
@@ -53,10 +57,14 @@ class GeneratedRAIClient:
             ).rai_svc
         else:
             self._client = AIProjectClient(
-                endpoint=azure_ai_project, credential=token_manager, user_agent_policy=user_agent_policy
+                endpoint=azure_ai_project,
+                credential=token_manager,
+                user_agent_policy=user_agent_policy,
             ).red_teams
             self._evaluation_onedp_client = EvaluationServiceOneDPClient(
-                endpoint=azure_ai_project, credential=token_manager, user_agent_policy=user_agent_policy
+                endpoint=azure_ai_project,
+                credential=token_manager,
+                user_agent_policy=user_agent_policy,
             )
 
     def _get_service_discovery_url(self):
@@ -68,7 +76,10 @@ class GeneratedRAIClient:
         import requests
 
         bearer_token = self._fetch_or_reuse_token(self.token_manager)
-        headers = {"Authorization": f"Bearer {bearer_token}", "Content-Type": "application/json"}
+        headers = {
+            "Authorization": f"Bearer {bearer_token}",
+            "Content-Type": "application/json",
+        }
 
         response = requests.get(
             f"https://management.azure.com/subscriptions/{self.azure_ai_project['subscription_id']}/"
@@ -138,7 +149,9 @@ class GeneratedRAIClient:
             logging.error(f"Error in get_attack_objectives: {str(e)}")
             raise
 
-    async def get_jailbreak_prefixes(self, scan_session_id: Optional[str] = None) -> List[str]:
+    async def get_jailbreak_prefixes(
+        self, scan_session_id: Optional[str] = None
+    ) -> List[str]:
         """Get jailbreak prefixes using the auto-generated operations.
 
         :param scan_session_id: Optional unique session ID for the scan
@@ -154,13 +167,19 @@ class GeneratedRAIClient:
             if isinstance(response, list):
                 return response
             else:
-                self.logger.error("Unexpected response format from get_jail_break_dataset_with_type")
-                raise ValueError("Unexpected response format from get_jail_break_dataset_with_type")
+                self.logger.error(
+                    "Unexpected response format from get_jail_break_dataset_with_type"
+                )
+                raise ValueError(
+                    "Unexpected response format from get_jail_break_dataset_with_type"
+                )
 
         except Exception as e:
             return [""]
 
-    def _fetch_or_reuse_token(self, credential: TokenCredential, token: Optional[str] = None) -> str:
+    def _fetch_or_reuse_token(
+        self, credential: TokenCredential, token: Optional[str] = None
+    ) -> str:
         """Get token. Fetch a new token if the current token is near expiry
 
         :param credential: The Azure authentication credential.
