@@ -526,7 +526,7 @@ class RedTeamSamples(object):
         custom_objectives_path = "samples/data/custom_objectives_with_context_example.json"
 
         agent = RedTeam(
-            azure_ai_project=self.azure_ai_project,
+            azure_ai_project=azure_ai_project,
             credential=credential,
             risk_categories=[RiskCategory.Violence, RiskCategory.HateUnfairness],
             num_objectives=2,
