@@ -801,7 +801,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         :keyword int results_per_page:
             Controls the maximum number of Blobs that will be included in each page of results if using
             `AsyncItemPaged.by_page()`.
-        :keyword str start_from: Specifies the relative path (inclusive) to list paths from.
+        :keyword str start_from: Specifies the full path (inclusive) to list paths from.
             For non-recursive list, only one entity level is supported.
             For recursive list, multiple entity levels are supported.
         :keyword int timeout:
@@ -918,7 +918,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             element in the response body that acts as a placeholder for all blobs whose
             names begin with the same substring up to the appearance of the delimiter
             character. The delimiter may be a single character or a string.
-        :keyword str start_from: Specifies the relative path (inclusive) to list paths from.
+        :keyword str start_from: Specifies the full path (inclusive) to list paths from.
             For non-recursive list, only one entity level is supported.
             For recursive list, multiple entity levels are supported.
         :keyword int timeout:
