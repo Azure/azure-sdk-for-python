@@ -118,6 +118,15 @@ class SessionContainer(object):
                             vector_session_token = self._resolve_partition_local_session_token(pk_range, token_dict)
                             if vector_session_token is not None:
                                 session_token = "{0}:{1}".format(partition_key_range_id, vector_session_token)
+                    else:
+                        # we're executing a cross partition streamable query that can be resolved by the gateway
+                        # send the entire compound session token for the container to target all partitions
+                        # TODO: this logic breaks large containers, needs to be addressed along with requesting
+                        #  a query plan for every query
+                        session_token_list = []
+                        for key in token_dict.keys():
+                            session_token_list.append("{0}:{1}".format(key, token_dict[key].convert_to_string()))
+                        session_token = ",".join(session_token_list)
                     return session_token
                 return ""
             except (KeyError, AttributeError) as e:  # pylint: disable=broad-except
@@ -197,6 +206,15 @@ class SessionContainer(object):
                             vector_session_token = self._resolve_partition_local_session_token(pk_range, token_dict)
                             if vector_session_token is not None:
                                 session_token = "{0}:{1}".format(partition_key_range_id, vector_session_token)
+                    else:
+                        # we're executing a cross partition streamable query that can be resolved by the gateway
+                        # send the entire compound session token for the container to target all partitions
+                        # TODO: this logic breaks large containers, needs to be addressed along with requesting
+                        #  a query plan for every query
+                        session_token_list = []
+                        for key in token_dict.keys():
+                            session_token_list.append("{0}:{1}".format(key, token_dict[key].convert_to_string()))
+                        session_token = ",".join(session_token_list)
                     return session_token
                 return ""
             except Exception:  # pylint: disable=broad-except
