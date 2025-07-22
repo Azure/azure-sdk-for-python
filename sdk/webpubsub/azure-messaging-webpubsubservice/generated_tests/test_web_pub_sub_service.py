@@ -203,9 +203,9 @@ class TestWebPubSubService(WebPubSubServiceClientTestBase):
 
     @WebPubSubServicePreparer()
     @recorded_by_proxy
-    def test_check_permission(self, webpubsubservice_endpoint):
+    def test_has_permission(self, webpubsubservice_endpoint):
         client = self.create_client(endpoint=webpubsubservice_endpoint)
-        response = client.check_permission(
+        response = client.has_permission(
             permission="str",
             connection_id="str",
         )

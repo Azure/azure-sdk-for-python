@@ -465,7 +465,7 @@ def build_web_pub_sub_service_revoke_permission_request(  # pylint: disable=name
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_web_pub_sub_service_check_permission_request(  # pylint: disable=name-too-long
+def build_web_pub_sub_service_has_permission_request(  # pylint: disable=name-too-long
     permission: Union[str, _models.WebPubSubPermission],
     connection_id: str,
     hub: str,
@@ -1671,7 +1671,7 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def check_permission(
+    def has_permission(
         self,
         permission: Union[str, _models.WebPubSubPermission],
         connection_id: str,
@@ -1709,7 +1709,7 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_web_pub_sub_service_check_permission_request(
+        _request = build_web_pub_sub_service_has_permission_request(
             permission=permission,
             connection_id=connection_id,
             hub=self._config.hub,

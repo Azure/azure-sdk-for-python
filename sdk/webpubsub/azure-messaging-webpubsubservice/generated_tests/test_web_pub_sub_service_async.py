@@ -204,9 +204,9 @@ class TestWebPubSubServiceAsync(WebPubSubServiceClientTestBaseAsync):
 
     @WebPubSubServicePreparer()
     @recorded_by_proxy_async
-    async def test_check_permission(self, webpubsubservice_endpoint):
+    async def test_has_permission(self, webpubsubservice_endpoint):
         client = self.create_async_client(endpoint=webpubsubservice_endpoint)
-        response = await client.check_permission(
+        response = await client.has_permission(
             permission="str",
             connection_id="str",
         )
