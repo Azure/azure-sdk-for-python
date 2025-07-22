@@ -61,14 +61,14 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
         print(dataset)
 
         print(f"Get credentials of an existing Dataset version `{dataset_version}`:")
-        asset_credential = project_client.datasets.get_credentials(name=dataset_name, version=dataset_version)
-        print(asset_credential)
+        dataset_credential = project_client.datasets.get_credentials(name=dataset_name, version=dataset_version)
+        print(dataset_credential)
 
         print(f"Creating a folder `{download_folder}` for the downloaded blobs:")
         os.makedirs(download_folder, exist_ok=True)
 
         container_client = ContainerClient.from_container_url(
-            container_url=asset_credential.blob_reference.credential.sas_uri
+            container_url=dataset_credential.blob_reference.credential.sas_uri
         )
 
         print("Looping over all blobs in the container:")

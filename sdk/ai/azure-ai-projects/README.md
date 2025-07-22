@@ -264,8 +264,8 @@ dataset = project_client.datasets.get(name=dataset_name, version=dataset_version
 print(dataset)
 
 print(f"Get credentials of an existing Dataset version `{dataset_version_1}`:")
-asset_credential = project_client.datasets.get_credentials(name=dataset_name, version=dataset_version_1)
-print(asset_credential)
+dataset_credential = project_client.datasets.get_credentials(name=dataset_name, version=dataset_version_1)
+print(dataset_credential)
 
 print("List latest versions of all Datasets:")
 for dataset in project_client.datasets.list():

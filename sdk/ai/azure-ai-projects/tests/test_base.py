@@ -20,7 +20,7 @@ from azure.ai.projects.models import (
     AzureAISearchIndex,
     DatasetVersion,
     DatasetType,
-    AssetCredentialResponse,
+    DatasetCredential,
 )
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, is_live_and_not_recording
 
@@ -180,14 +180,14 @@ class TestBase(AzureRecordedTestCase):
             assert dataset.connection_name == expected_connection_name
 
     @classmethod
-    def validate_asset_credential(cls, asset_credential: AssetCredentialResponse):
+    def validate_dataset_credential(cls, dataset_credential: DatasetCredential):
 
-        assert asset_credential.blob_reference is not None
-        assert asset_credential.blob_reference.blob_uri
-        assert asset_credential.blob_reference.storage_account_arm_id
+        assert dataset_credential.blob_reference is not None
+        assert dataset_credential.blob_reference.blob_uri
+        assert dataset_credential.blob_reference.storage_account_arm_id
 
-        assert asset_credential.blob_reference.credential is not None
+        assert dataset_credential.blob_reference.credential is not None
         assert (
-            asset_credential.blob_reference.credential.type == "SAS"
+            dataset_credential.blob_reference.credential.type == "SAS"
         )  # Why is this not of type CredentialType.SAS as defined for Connections?
-        assert asset_credential.blob_reference.credential.sas_uri
+        assert dataset_credential.blob_reference.credential.sas_uri

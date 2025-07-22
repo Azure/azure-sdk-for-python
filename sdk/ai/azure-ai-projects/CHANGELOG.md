@@ -11,8 +11,13 @@ AI Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects/ga-rest
   * Class `PromptTemplate`.
   * Evaluation operations (`.evaluations`)
   * Red-Team operations (`.red_teams`)
-* Class `SasCredential` was renamed to `BlobReferenceSasCredential`
-* Class `Sku` was renamed to `ModelDeploymentSku`
+* Classes were renamed:
+  * Class `Sku` was renamed `ModelDeploymentSku`
+  * Class `SasCredential` was renamed `BlobReferenceSasCredential`
+  * Class `AssetCredentialResponse` was renamed `DatasetCredential`
+  * Class `PendingUploadRequest` was renamed `PendingUploadConfiguration`
+  * Class `PendingUploadResponse` was renamed `PendingUploadResult`
+* In method `.datasets.pending_upload()`, input argument `pending_upload_request` was renamed `configuration`.
 
 ## 1.0.0b12 (2025-06-23)
 

@@ -20,9 +20,9 @@ from ..models._models import (
     DatasetVersion,
     FileDatasetVersion,
     FolderDatasetVersion,
-    PendingUploadRequest,
+    PendingUploadConfiguration,
     PendingUploadType,
-    PendingUploadResponse,
+    PendingUploadResult,
 )
 
 logger = logging.getLogger(__name__)
@@ -47,21 +47,21 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         connection_name: Optional[str] = None,
     ) -> Tuple[ContainerClient, str]:
 
-        pending_upload_response: PendingUploadResponse = self.pending_upload(
+        pending_upload_result: PendingUploadResult = self.pending_upload(
             name=name,
             version=input_version,
-            pending_upload_request=PendingUploadRequest(
+            configuration=PendingUploadConfiguration(
                 pending_upload_type=PendingUploadType.BLOB_REFERENCE,
                 connection_name=connection_name,
             ),
         )
         output_version: str = input_version
 
-        if not pending_upload_response.blob_reference:
+        if not pending_upload_result.blob_reference:
             raise ValueError("Blob reference is not present")
-        if not pending_upload_response.blob_reference.credential:
+        if not pending_upload_result.blob_reference.credential:
             raise ValueError("SAS credential are not present")
-        if not pending_upload_response.blob_reference.credential.sas_uri:
+        if not pending_upload_result.blob_reference.credential.sas_uri:
             raise ValueError("SAS URI is missing or empty")
 
         # For overview on Blob storage SDK in Python see:
@@ -71,7 +71,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#azure-storage-blob-containerclient-from-container-url
         return (
             ContainerClient.from_container_url(
-                container_url=pending_upload_response.blob_reference.credential.sas_uri  # Of the form: "https://<account>.blob.core.windows.net/<container>?<sasToken>"
+                container_url=pending_upload_result.blob_reference.credential.sas_uri  # Of the form: "https://<account>.blob.core.windows.net/<container>?<sasToken>"
             ),
             output_version,
         )
