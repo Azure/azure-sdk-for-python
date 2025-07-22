@@ -21,7 +21,7 @@
 
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
-import asyncio
+import asyncio # pylint: disable=do-not-import-asyncio
 from datetime import datetime
 from typing import (Any, Dict, Mapping, Optional, Sequence, Type, Union, List, Tuple, cast, overload, AsyncIterable,
                     Callable)

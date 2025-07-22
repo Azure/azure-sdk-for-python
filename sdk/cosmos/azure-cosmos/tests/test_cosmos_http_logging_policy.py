@@ -39,7 +39,7 @@ URL_TO_LOCATIONS = {
     L2_URL: L2}
 
 
-def create_logger(name: str, mock_handler: MockHandler, level: int = logging.INFO) -> logging.Logger:
+def create_logger(name: str, mock_handler: test_config.MockHandler, level: int = logging.INFO) -> logging.Logger:
     logger = logging.getLogger(name)
     logger.addHandler(mock_handler)
     logger.setLevel(level)
@@ -276,7 +276,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
 
     def test_activity_id_logging_policy(self):
         # Create a mock handler and logger for the new client
-        self.mock_handler_activity_id = MockHandler()
+        self.mock_handler_activity_id = test_config.MockHandler()
         self.logger_activity_id = create_logger("test_logger_activity_id", self.mock_handler_activity_id)
 
         # Create a new client with the logger and enable diagnostics logging
