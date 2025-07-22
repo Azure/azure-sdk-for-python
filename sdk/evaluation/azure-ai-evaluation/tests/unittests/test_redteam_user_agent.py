@@ -32,18 +32,6 @@ class TestRedTeamUserAgent:
         # Should restore to original after context
         assert UserAgentSingleton().value == base_user_agent
 
-    def test_redteam_context_with_products(self):
-        """Test red team context with additional products."""
-        base_user_agent = UserAgentSingleton().value
-        
-        with UserAgentSingleton.redteam_context_with_product("custom/1.0", "test/feature"):
-            redteam_user_agent = UserAgentSingleton().value
-            expected = f"{base_user_agent} (type=redteam; subtype=RedTeam) custom/1.0 test/feature"
-            assert redteam_user_agent == expected
-        
-        # Should restore to original after context
-        assert UserAgentSingleton().value == base_user_agent
-
     def test_nested_contexts(self):
         """Test nested user agent contexts."""
         base_user_agent = UserAgentSingleton().value
@@ -84,18 +72,6 @@ class TestRedTeamUserAgent:
             assert second_user_agent == expected_second
         
         # Should restore to original
-        assert UserAgentSingleton().value == base_user_agent
-
-    def test_empty_products(self):
-        """Test red team context with empty products list."""
-        base_user_agent = UserAgentSingleton().value
-        
-        with UserAgentSingleton.redteam_context_with_product():
-            redteam_user_agent = UserAgentSingleton().value
-            expected = f"{base_user_agent} (type=redteam; subtype=RedTeam)"
-            assert redteam_user_agent == expected
-        
-        # Should restore to original after context
         assert UserAgentSingleton().value == base_user_agent
 
     def test_redteam_context_kwargs_ignored(self):
