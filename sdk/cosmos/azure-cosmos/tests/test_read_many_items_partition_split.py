@@ -13,7 +13,7 @@ from azure.cosmos import DatabaseProxy, PartitionKey
 
 @pytest.mark.cosmosSplit
 class TestReadManyItemsPartitionSplitScenarios(unittest.TestCase):
-    """Test for session token helpers"""
+    """Tests the behavior of read_many_items in scenarios involving partition splits."""
 
     created_db: DatabaseProxy = None
     client: cosmos_client.CosmosClient = None
