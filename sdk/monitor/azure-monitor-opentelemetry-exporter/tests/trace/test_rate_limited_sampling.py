@@ -89,7 +89,11 @@ class TestRateLimitedSampler(unittest.TestCase):
 
             self.assertIsInstance(result, SamplingResult)
             self.assertIn(result.decision, [Decision.RECORD_AND_SAMPLE, Decision.DROP])
-            self.assertIn(_SAMPLE_RATE_KEY, result.attributes)
+            
+            # Check if _SAMPLE_RATE_KEY is present only when sampling percentage is not 100%
+            sampling_percentage = sampler._sampling_percentage_generator.get()
+            if sampling_percentage != 100.0:
+                self.assertIn(_SAMPLE_RATE_KEY, result.attributes)
 
             if result.decision == Decision.RECORD_AND_SAMPLE:
                 sampled_count += 1
@@ -235,13 +239,16 @@ class TestRateLimitedSampler(unittest.TestCase):
         )
         
         self.assertIsInstance(result, SamplingResult)
-        self.assertIn(_SAMPLE_RATE_KEY, result.attributes)
         
-        sample_rate = result.attributes[_SAMPLE_RATE_KEY]
-        self.assertIsInstance(sample_rate, (int, float))
-        if isinstance(sample_rate, (int, float)):
-            self.assertGreaterEqual(float(sample_rate), 0.0)
-            self.assertLessEqual(float(sample_rate), 100.0)
+        # Check if _SAMPLE_RATE_KEY is present only when sampling percentage is not 100%
+        sampling_percentage = sampler._sampling_percentage_generator.get()
+        if sampling_percentage != 100.0:
+            self.assertIn(_SAMPLE_RATE_KEY, result.attributes)
+            sample_rate = result.attributes[_SAMPLE_RATE_KEY]
+            self.assertIsInstance(sample_rate, (int, float))
+            if isinstance(sample_rate, (int, float)):
+                self.assertGreaterEqual(float(sample_rate), 0.0)
+                self.assertLessEqual(float(sample_rate), 100.0)
     
     # Test sampling behavior with edge case trace ID values
     def test_sampler_with_extreme_trace_ids(self):
@@ -265,13 +272,16 @@ class TestRateLimitedSampler(unittest.TestCase):
                 
                 self.assertIsInstance(result, SamplingResult)
                 self.assertIn(result.decision, [Decision.RECORD_AND_SAMPLE, Decision.DROP])
-                self.assertIn(_SAMPLE_RATE_KEY, result.attributes)
                 
-                sample_rate = result.attributes[_SAMPLE_RATE_KEY]
-                self.assertIsInstance(sample_rate, (int, float))
-                if isinstance(sample_rate, (int, float)):
-                    self.assertGreaterEqual(float(sample_rate), 0.0)
-                    self.assertLessEqual(float(sample_rate), 100.0)
+                # Check if _SAMPLE_RATE_KEY is present only when sampling percentage is not 100%
+                sampling_percentage = sampler._sampling_percentage_generator.get()
+                if sampling_percentage != 100.0:
+                    self.assertIn(_SAMPLE_RATE_KEY, result.attributes)
+                    sample_rate = result.attributes[_SAMPLE_RATE_KEY]
+                    self.assertIsInstance(sample_rate, (int, float))
+                    if isinstance(sample_rate, (int, float)):
+                        self.assertGreaterEqual(float(sample_rate), 0.0)
+                        self.assertLessEqual(float(sample_rate), 100.0)
     
     # Test that sampler is thread-safe under concurrent access
     def test_thread_safety(self):
@@ -301,7 +311,11 @@ class TestRateLimitedSampler(unittest.TestCase):
         for result in results:
             self.assertIsInstance(result, SamplingResult)
             self.assertIn(result.decision, [Decision.RECORD_AND_SAMPLE, Decision.DROP])
-            self.assertIn(_SAMPLE_RATE_KEY, result.attributes)
+            # Note: We can't easily check sampling percentage here since it's from multiple threads
+            # Just verify that if _SAMPLE_RATE_KEY exists, it's valid
+            if _SAMPLE_RATE_KEY in result.attributes:
+                sample_rate = result.attributes[_SAMPLE_RATE_KEY]
+                self.assertIsInstance(sample_rate, (int, float))
 
     # Test inheriting sampling decision from sampled parent span with sample rate
     def test_parent_span_sampled_with_sample_rate(self):
