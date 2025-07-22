@@ -38,16 +38,16 @@ from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import ClientMixinABC
 from ..._validation import api_version_validation
 from ...operations._operations import (
-    build_authoring_conversation_authoring_list_assigned_resource_deployments_request,
-    build_authoring_conversation_authoring_list_deployment_resources_request,
-    build_authoring_conversation_authoring_list_deployments_request,
-    build_authoring_conversation_authoring_list_exported_models_request,
-    build_authoring_conversation_authoring_list_projects_request,
-    build_authoring_conversation_authoring_list_supported_languages_request,
-    build_authoring_conversation_authoring_list_supported_prebuilt_entities_request,
-    build_authoring_conversation_authoring_list_trained_models_request,
-    build_authoring_conversation_authoring_list_training_config_versions_request,
-    build_authoring_conversation_authoring_list_training_jobs_request,
+    build_authoring_list_assigned_resource_deployments_request,
+    build_authoring_list_deployment_resources_request,
+    build_authoring_list_deployments_request,
+    build_authoring_list_exported_models_request,
+    build_authoring_list_projects_request,
+    build_authoring_list_supported_languages_request,
+    build_authoring_list_supported_prebuilt_entities_request,
+    build_authoring_list_trained_models_request,
+    build_authoring_list_training_config_versions_request,
+    build_authoring_list_training_jobs_request,
     build_conversation_authoring_deployment_delete_deployment_from_resources_request,
     build_conversation_authoring_deployment_delete_deployment_request,
     build_conversation_authoring_deployment_deploy_project_request,
@@ -59,8 +59,8 @@ from ...operations._operations import (
     build_conversation_authoring_exported_model_get_exported_model_job_status_request,
     build_conversation_authoring_exported_model_get_exported_model_request,
     build_conversation_authoring_project_assign_deployment_resources_request,
+    build_conversation_authoring_project_authorize_project_copy_request,
     build_conversation_authoring_project_cancel_training_job_request,
-    build_conversation_authoring_project_copy_project_authorization_request,
     build_conversation_authoring_project_copy_project_request,
     build_conversation_authoring_project_create_project_request,
     build_conversation_authoring_project_delete_project_request,
@@ -115,17 +115,17 @@ class ConversationAuthoringDeploymentOperations:  # pylint: disable=name-too-lon
     @distributed_trace_async
     async def get_deployment(
         self, project_name: str, deployment_name: str, **kwargs: Any
-    ) -> _models.AnalyzeConversationAuthoringProjectDeployment:
+    ) -> _models.ConversationAuthoringProjectDeployment:
         """Gets the details of a deployment.
 
         :param project_name: The new project name. Required.
         :type project_name: str
         :param deployment_name: Represents deployment name. Required.
         :type deployment_name: str
-        :return: AnalyzeConversationAuthoringProjectDeployment. The
-         AnalyzeConversationAuthoringProjectDeployment is compatible with MutableMapping
+        :return: ConversationAuthoringProjectDeployment. The ConversationAuthoringProjectDeployment is
+         compatible with MutableMapping
         :rtype:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringProjectDeployment
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringProjectDeployment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -139,7 +139,7 @@ class ConversationAuthoringDeploymentOperations:  # pylint: disable=name-too-lon
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AnalyzeConversationAuthoringProjectDeployment] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ConversationAuthoringProjectDeployment] = kwargs.pop("cls", None)
 
         _request = build_conversation_authoring_deployment_get_deployment_request(
             project_name=project_name,
@@ -172,7 +172,7 @@ class ConversationAuthoringDeploymentOperations:  # pylint: disable=name-too-lon
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AnalyzeConversationAuthoringProjectDeployment, response.json())
+            deserialized = _deserialize(_models.ConversationAuthoringProjectDeployment, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -183,7 +183,7 @@ class ConversationAuthoringDeploymentOperations:  # pylint: disable=name-too-lon
         self,
         project_name: str,
         deployment_name: str,
-        body: Union[_models.AnalyzeConversationAuthoringCreateDeploymentOptions, JSON, IO[bytes]],
+        body: Union[_models.ConversationAuthoringCreateDeploymentDetails, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -251,7 +251,7 @@ class ConversationAuthoringDeploymentOperations:  # pylint: disable=name-too-lon
         self,
         project_name: str,
         deployment_name: str,
-        body: _models.AnalyzeConversationAuthoringCreateDeploymentOptions,
+        body: _models.ConversationAuthoringCreateDeploymentDetails,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -264,7 +264,7 @@ class ConversationAuthoringDeploymentOperations:  # pylint: disable=name-too-lon
         :type deployment_name: str
         :param body: The new deployment info. Required.
         :type body:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringCreateDeploymentOptions
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringCreateDeploymentDetails
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -330,7 +330,7 @@ class ConversationAuthoringDeploymentOperations:  # pylint: disable=name-too-lon
         self,
         project_name: str,
         deployment_name: str,
-        body: Union[_models.AnalyzeConversationAuthoringCreateDeploymentOptions, JSON, IO[bytes]],
+        body: Union[_models.ConversationAuthoringCreateDeploymentDetails, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Creates a new deployment or replaces an existing one.
@@ -340,9 +340,9 @@ class ConversationAuthoringDeploymentOperations:  # pylint: disable=name-too-lon
         :param deployment_name: The name of the specific deployment of the project to use. Required.
         :type deployment_name: str
         :param body: The new deployment info. Is one of the following types:
-         AnalyzeConversationAuthoringCreateDeploymentOptions, JSON, IO[bytes] Required.
+         ConversationAuthoringCreateDeploymentDetails, JSON, IO[bytes] Required.
         :type body:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringCreateDeploymentOptions
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringCreateDeploymentDetails
          or JSON or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
@@ -519,7 +519,7 @@ class ConversationAuthoringDeploymentOperations:  # pylint: disable=name-too-lon
         self,
         project_name: str,
         deployment_name: str,
-        body: Union[_models.AnalyzeConversationAuthoringDeleteDeploymentOptions, JSON, IO[bytes]],
+        body: Union[_models.ConversationAuthoringDeleteDeploymentDetails, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -587,7 +587,7 @@ class ConversationAuthoringDeploymentOperations:  # pylint: disable=name-too-lon
         self,
         project_name: str,
         deployment_name: str,
-        body: _models.AnalyzeConversationAuthoringDeleteDeploymentOptions,
+        body: _models.ConversationAuthoringDeleteDeploymentDetails,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -600,7 +600,7 @@ class ConversationAuthoringDeploymentOperations:  # pylint: disable=name-too-lon
         :type deployment_name: str
         :param body: The options for deleting the deployment. Required.
         :type body:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringDeleteDeploymentOptions
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringDeleteDeploymentDetails
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -673,7 +673,7 @@ class ConversationAuthoringDeploymentOperations:  # pylint: disable=name-too-lon
         self,
         project_name: str,
         deployment_name: str,
-        body: Union[_models.AnalyzeConversationAuthoringDeleteDeploymentOptions, JSON, IO[bytes]],
+        body: Union[_models.ConversationAuthoringDeleteDeploymentDetails, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a project deployment from the specified assigned resources.
@@ -683,9 +683,9 @@ class ConversationAuthoringDeploymentOperations:  # pylint: disable=name-too-lon
         :param deployment_name: The name of the specific deployment of the project to use. Required.
         :type deployment_name: str
         :param body: The options for deleting the deployment. Is one of the following types:
-         AnalyzeConversationAuthoringDeleteDeploymentOptions, JSON, IO[bytes] Required.
+         ConversationAuthoringDeleteDeploymentDetails, JSON, IO[bytes] Required.
         :type body:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringDeleteDeploymentOptions
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringDeleteDeploymentDetails
          or JSON or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
@@ -747,7 +747,7 @@ class ConversationAuthoringDeploymentOperations:  # pylint: disable=name-too-lon
     )
     async def get_deployment_delete_from_resources_status(  # pylint: disable=name-too-long
         self, project_name: str, deployment_name: str, job_id: str, **kwargs: Any
-    ) -> _models.AnalyzeConversationAuthoringDeploymentDeleteFromResourcesJobState:
+    ) -> _models.ConversationAuthoringDeploymentDeleteFromResourcesState:
         """Gets the status of an existing delete deployment from specific resources job.
 
         :param project_name: The new project name. Required.
@@ -756,11 +756,10 @@ class ConversationAuthoringDeploymentOperations:  # pylint: disable=name-too-lon
         :type deployment_name: str
         :param job_id: The job ID. Required.
         :type job_id: str
-        :return: AnalyzeConversationAuthoringDeploymentDeleteFromResourcesJobState. The
-         AnalyzeConversationAuthoringDeploymentDeleteFromResourcesJobState is compatible with
-         MutableMapping
+        :return: ConversationAuthoringDeploymentDeleteFromResourcesState. The
+         ConversationAuthoringDeploymentDeleteFromResourcesState is compatible with MutableMapping
         :rtype:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringDeploymentDeleteFromResourcesJobState
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringDeploymentDeleteFromResourcesState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -774,9 +773,7 @@ class ConversationAuthoringDeploymentOperations:  # pylint: disable=name-too-lon
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AnalyzeConversationAuthoringDeploymentDeleteFromResourcesJobState] = kwargs.pop(
-            "cls", None
-        )
+        cls: ClsType[_models.ConversationAuthoringDeploymentDeleteFromResourcesState] = kwargs.pop("cls", None)
 
         _request = build_conversation_authoring_deployment_get_deployment_delete_from_resources_status_request(
             project_name=project_name,
@@ -811,7 +808,7 @@ class ConversationAuthoringDeploymentOperations:  # pylint: disable=name-too-lon
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(
-                _models.AnalyzeConversationAuthoringDeploymentDeleteFromResourcesJobState, response.json()
+                _models.ConversationAuthoringDeploymentDeleteFromResourcesState, response.json()
             )
 
         if cls:
@@ -822,7 +819,7 @@ class ConversationAuthoringDeploymentOperations:  # pylint: disable=name-too-lon
     @distributed_trace_async
     async def get_deployment_status(
         self, project_name: str, deployment_name: str, job_id: str, **kwargs: Any
-    ) -> _models.AnalyzeConversationAuthoringDeploymentJobState:
+    ) -> _models.ConversationAuthoringDeploymentState:
         """Gets the status of an existing deployment job.
 
         :param project_name: The new project name. Required.
@@ -831,10 +828,9 @@ class ConversationAuthoringDeploymentOperations:  # pylint: disable=name-too-lon
         :type deployment_name: str
         :param job_id: The job ID. Required.
         :type job_id: str
-        :return: AnalyzeConversationAuthoringDeploymentJobState. The
-         AnalyzeConversationAuthoringDeploymentJobState is compatible with MutableMapping
-        :rtype:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringDeploymentJobState
+        :return: ConversationAuthoringDeploymentState. The ConversationAuthoringDeploymentState is
+         compatible with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models.ConversationAuthoringDeploymentState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -848,7 +844,7 @@ class ConversationAuthoringDeploymentOperations:  # pylint: disable=name-too-lon
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AnalyzeConversationAuthoringDeploymentJobState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ConversationAuthoringDeploymentState] = kwargs.pop("cls", None)
 
         _request = build_conversation_authoring_deployment_get_deployment_status_request(
             project_name=project_name,
@@ -882,7 +878,7 @@ class ConversationAuthoringDeploymentOperations:  # pylint: disable=name-too-lon
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AnalyzeConversationAuthoringDeploymentJobState, response.json())
+            deserialized = _deserialize(_models.ConversationAuthoringDeploymentState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -915,7 +911,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
     async def _assign_deployment_resources_initial(
         self,
         project_name: str,
-        body: Union[_models.AnalyzeConversationAuthoringAssignDeploymentResourcesOptions, JSON, IO[bytes]],
+        body: Union[_models.ConversationAuthoringAssignDeploymentResourcesDetails, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -981,7 +977,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
     async def begin_assign_deployment_resources(
         self,
         project_name: str,
-        body: _models.AnalyzeConversationAuthoringAssignDeploymentResourcesOptions,
+        body: _models.ConversationAuthoringAssignDeploymentResourcesDetails,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -996,7 +992,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         :type project_name: str
         :param body: The new project resources info. Required.
         :type body:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringAssignDeploymentResourcesOptions
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringAssignDeploymentResourcesDetails
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1058,7 +1054,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
     async def begin_assign_deployment_resources(
         self,
         project_name: str,
-        body: Union[_models.AnalyzeConversationAuthoringAssignDeploymentResourcesOptions, JSON, IO[bytes]],
+        body: Union[_models.ConversationAuthoringAssignDeploymentResourcesDetails, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Assign new Azure resources to a project to allow deploying new deployments to them. This API is
@@ -1070,9 +1066,9 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param body: The new project resources info. Is one of the following types:
-         AnalyzeConversationAuthoringAssignDeploymentResourcesOptions, JSON, IO[bytes] Required.
+         ConversationAuthoringAssignDeploymentResourcesDetails, JSON, IO[bytes] Required.
         :type body:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringAssignDeploymentResourcesOptions
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringAssignDeploymentResourcesDetails
          or JSON or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
@@ -1133,7 +1129,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
     async def _unassign_deployment_resources_initial(
         self,
         project_name: str,
-        body: Union[_models.AnalyzeConversationAuthoringUnassignDeploymentResourcesOptions, JSON, IO[bytes]],
+        body: Union[_models.ConversationAuthoringUnassignDeploymentResourcesDetails, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1199,7 +1195,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
     async def begin_unassign_deployment_resources(
         self,
         project_name: str,
-        body: _models.AnalyzeConversationAuthoringUnassignDeploymentResourcesOptions,
+        body: _models.ConversationAuthoringUnassignDeploymentResourcesDetails,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1211,7 +1207,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         :type project_name: str
         :param body: The info for the deployment resources to be deleted. Required.
         :type body:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringUnassignDeploymentResourcesOptions
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringUnassignDeploymentResourcesDetails
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1267,7 +1263,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
     async def begin_unassign_deployment_resources(
         self,
         project_name: str,
-        body: Union[_models.AnalyzeConversationAuthoringUnassignDeploymentResourcesOptions, JSON, IO[bytes]],
+        body: Union[_models.ConversationAuthoringUnassignDeploymentResourcesDetails, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Unassign resources from a project. This disallows deploying new deployments to these resources,
@@ -1276,10 +1272,9 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param body: The info for the deployment resources to be deleted. Is one of the following
-         types: AnalyzeConversationAuthoringUnassignDeploymentResourcesOptions, JSON, IO[bytes]
-         Required.
+         types: ConversationAuthoringUnassignDeploymentResourcesDetails, JSON, IO[bytes] Required.
         :type body:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringUnassignDeploymentResourcesOptions
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringUnassignDeploymentResourcesDetails
          or JSON or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
@@ -1340,17 +1335,17 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
     )
     async def get_assign_deployment_resources_status(
         self, project_name: str, job_id: str, **kwargs: Any
-    ) -> _models.AnalyzeConversationAuthoringDeploymentResourcesJobState:
+    ) -> _models.ConversationAuthoringDeploymentResourcesState:
         """Gets the status of an existing assign deployment resources job.
 
         :param project_name: The new project name. Required.
         :type project_name: str
         :param job_id: The job ID. Required.
         :type job_id: str
-        :return: AnalyzeConversationAuthoringDeploymentResourcesJobState. The
-         AnalyzeConversationAuthoringDeploymentResourcesJobState is compatible with MutableMapping
+        :return: ConversationAuthoringDeploymentResourcesState. The
+         ConversationAuthoringDeploymentResourcesState is compatible with MutableMapping
         :rtype:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringDeploymentResourcesJobState
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringDeploymentResourcesState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1364,7 +1359,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AnalyzeConversationAuthoringDeploymentResourcesJobState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ConversationAuthoringDeploymentResourcesState] = kwargs.pop("cls", None)
 
         _request = build_conversation_authoring_project_get_assign_deployment_resources_status_request(
             project_name=project_name,
@@ -1397,9 +1392,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AnalyzeConversationAuthoringDeploymentResourcesJobState, response.json()
-            )
+            deserialized = _deserialize(_models.ConversationAuthoringDeploymentResourcesState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1414,17 +1407,17 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
     )
     async def get_unassign_deployment_resources_status(
         self, project_name: str, job_id: str, **kwargs: Any
-    ) -> _models.AnalyzeConversationAuthoringDeploymentResourcesJobState:
+    ) -> _models.ConversationAuthoringDeploymentResourcesState:
         """Gets the status of an existing unassign deployment resources job.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param job_id: The job ID. Required.
         :type job_id: str
-        :return: AnalyzeConversationAuthoringDeploymentResourcesJobState. The
-         AnalyzeConversationAuthoringDeploymentResourcesJobState is compatible with MutableMapping
+        :return: ConversationAuthoringDeploymentResourcesState. The
+         ConversationAuthoringDeploymentResourcesState is compatible with MutableMapping
         :rtype:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringDeploymentResourcesJobState
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringDeploymentResourcesState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1438,7 +1431,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AnalyzeConversationAuthoringDeploymentResourcesJobState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ConversationAuthoringDeploymentResourcesState] = kwargs.pop("cls", None)
 
         _request = build_conversation_authoring_project_get_unassign_deployment_resources_status_request(
             project_name=project_name,
@@ -1471,9 +1464,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.AnalyzeConversationAuthoringDeploymentResourcesJobState, response.json()
-            )
+            deserialized = _deserialize(_models.ConversationAuthoringDeploymentResourcesState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1483,7 +1474,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
     async def _swap_deployments_initial(
         self,
         project_name: str,
-        body: Union[_models.AnalyzeConversationAuthoringSwapDeploymentsOptions, JSON, IO[bytes]],
+        body: Union[_models.ConversationAuthoringSwapDeploymentsDetails, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1549,7 +1540,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
     async def begin_swap_deployments(
         self,
         project_name: str,
-        body: _models.AnalyzeConversationAuthoringSwapDeploymentsOptions,
+        body: _models.ConversationAuthoringSwapDeploymentsDetails,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1560,7 +1551,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         :type project_name: str
         :param body: The job object to swap two deployments. Required.
         :type body:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringSwapDeploymentsOptions
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringSwapDeploymentsDetails
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1609,7 +1600,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
     async def begin_swap_deployments(
         self,
         project_name: str,
-        body: Union[_models.AnalyzeConversationAuthoringSwapDeploymentsOptions, JSON, IO[bytes]],
+        body: Union[_models.ConversationAuthoringSwapDeploymentsDetails, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Swaps two existing deployments with each other.
@@ -1617,9 +1608,9 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param body: The job object to swap two deployments. Is one of the following types:
-         AnalyzeConversationAuthoringSwapDeploymentsOptions, JSON, IO[bytes] Required.
+         ConversationAuthoringSwapDeploymentsDetails, JSON, IO[bytes] Required.
         :type body:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringSwapDeploymentsOptions
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringSwapDeploymentsDetails
          or JSON or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
@@ -1675,17 +1666,17 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
     @distributed_trace_async
     async def get_swap_deployments_status(
         self, project_name: str, job_id: str, **kwargs: Any
-    ) -> _models.AnalyzeConversationAuthoringSwapDeploymentsJobState:
+    ) -> _models.ConversationAuthoringSwapDeploymentsState:
         """Gets the status of an existing swap deployment job.
 
         :param project_name: The new project name. Required.
         :type project_name: str
         :param job_id: The job ID. Required.
         :type job_id: str
-        :return: AnalyzeConversationAuthoringSwapDeploymentsJobState. The
-         AnalyzeConversationAuthoringSwapDeploymentsJobState is compatible with MutableMapping
+        :return: ConversationAuthoringSwapDeploymentsState. The
+         ConversationAuthoringSwapDeploymentsState is compatible with MutableMapping
         :rtype:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringSwapDeploymentsJobState
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringSwapDeploymentsState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1699,7 +1690,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AnalyzeConversationAuthoringSwapDeploymentsJobState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ConversationAuthoringSwapDeploymentsState] = kwargs.pop("cls", None)
 
         _request = build_conversation_authoring_project_get_swap_deployments_status_request(
             project_name=project_name,
@@ -1732,7 +1723,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AnalyzeConversationAuthoringSwapDeploymentsJobState, response.json())
+            deserialized = _deserialize(_models.ConversationAuthoringSwapDeploymentsState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1740,17 +1731,14 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_project(
-        self, project_name: str, **kwargs: Any
-    ) -> _models.AnalyzeConversationAuthoringProjectMetadata:
+    async def get_project(self, project_name: str, **kwargs: Any) -> _models.ConversationAuthoringProjectMetadata:
         """Gets the details of a project.
 
         :param project_name: The new project name. Required.
         :type project_name: str
-        :return: AnalyzeConversationAuthoringProjectMetadata. The
-         AnalyzeConversationAuthoringProjectMetadata is compatible with MutableMapping
-        :rtype:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringProjectMetadata
+        :return: ConversationAuthoringProjectMetadata. The ConversationAuthoringProjectMetadata is
+         compatible with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models.ConversationAuthoringProjectMetadata
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1764,7 +1752,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AnalyzeConversationAuthoringProjectMetadata] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ConversationAuthoringProjectMetadata] = kwargs.pop("cls", None)
 
         _request = build_conversation_authoring_project_get_project_request(
             project_name=project_name,
@@ -1796,7 +1784,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AnalyzeConversationAuthoringProjectMetadata, response.json())
+            deserialized = _deserialize(_models.ConversationAuthoringProjectMetadata, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1807,32 +1795,31 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
     async def create_project(
         self,
         project_name: str,
-        body: _models.AnalyzeConversationAuthoringCreateProjectOptions,
+        body: _models.ConversationAuthoringCreateProjectDetails,
         *,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
-    ) -> _models.AnalyzeConversationAuthoringProjectMetadata:
+    ) -> _models.ConversationAuthoringProjectMetadata:
         """Creates a new project or updates an existing one.
 
         :param project_name: The new project name. Required.
         :type project_name: str
         :param body: The request body. Required.
         :type body:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringCreateProjectOptions
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringCreateProjectDetails
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: AnalyzeConversationAuthoringProjectMetadata. The
-         AnalyzeConversationAuthoringProjectMetadata is compatible with MutableMapping
-        :rtype:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringProjectMetadata
+        :return: ConversationAuthoringProjectMetadata. The ConversationAuthoringProjectMetadata is
+         compatible with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models.ConversationAuthoringProjectMetadata
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def create_project(
         self, project_name: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.AnalyzeConversationAuthoringProjectMetadata:
+    ) -> _models.ConversationAuthoringProjectMetadata:
         """Creates a new project or updates an existing one.
 
         :param project_name: The new project name. Required.
@@ -1842,17 +1829,16 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: AnalyzeConversationAuthoringProjectMetadata. The
-         AnalyzeConversationAuthoringProjectMetadata is compatible with MutableMapping
-        :rtype:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringProjectMetadata
+        :return: ConversationAuthoringProjectMetadata. The ConversationAuthoringProjectMetadata is
+         compatible with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models.ConversationAuthoringProjectMetadata
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def create_project(
         self, project_name: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.AnalyzeConversationAuthoringProjectMetadata:
+    ) -> _models.ConversationAuthoringProjectMetadata:
         """Creates a new project or updates an existing one.
 
         :param project_name: The new project name. Required.
@@ -1862,10 +1848,9 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: AnalyzeConversationAuthoringProjectMetadata. The
-         AnalyzeConversationAuthoringProjectMetadata is compatible with MutableMapping
-        :rtype:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringProjectMetadata
+        :return: ConversationAuthoringProjectMetadata. The ConversationAuthoringProjectMetadata is
+         compatible with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models.ConversationAuthoringProjectMetadata
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1873,22 +1858,21 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
     async def create_project(
         self,
         project_name: str,
-        body: Union[_models.AnalyzeConversationAuthoringCreateProjectOptions, JSON, IO[bytes]],
+        body: Union[_models.ConversationAuthoringCreateProjectDetails, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> _models.AnalyzeConversationAuthoringProjectMetadata:
+    ) -> _models.ConversationAuthoringProjectMetadata:
         """Creates a new project or updates an existing one.
 
         :param project_name: The new project name. Required.
         :type project_name: str
         :param body: The request body. Is one of the following types:
-         AnalyzeConversationAuthoringCreateProjectOptions, JSON, IO[bytes] Required.
+         ConversationAuthoringCreateProjectDetails, JSON, IO[bytes] Required.
         :type body:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringCreateProjectOptions
-         or JSON or IO[bytes]
-        :return: AnalyzeConversationAuthoringProjectMetadata. The
-         AnalyzeConversationAuthoringProjectMetadata is compatible with MutableMapping
-        :rtype:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringProjectMetadata
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringCreateProjectDetails or
+         JSON or IO[bytes]
+        :return: ConversationAuthoringProjectMetadata. The ConversationAuthoringProjectMetadata is
+         compatible with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models.ConversationAuthoringProjectMetadata
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1903,7 +1887,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AnalyzeConversationAuthoringProjectMetadata] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ConversationAuthoringProjectMetadata] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
         _content = None
@@ -1944,7 +1928,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AnalyzeConversationAuthoringProjectMetadata, response.json())
+            deserialized = _deserialize(_models.ConversationAuthoringProjectMetadata, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2054,15 +2038,15 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
     @distributed_trace_async
     async def get_project_deletion_status(
         self, job_id: str, **kwargs: Any
-    ) -> _models.AnalyzeConversationAuthoringProjectDeletionJobState:
+    ) -> _models.ConversationAuthoringProjectDeletionState:
         """Gets the status for a project deletion job.
 
         :param job_id: The job ID. Required.
         :type job_id: str
-        :return: AnalyzeConversationAuthoringProjectDeletionJobState. The
-         AnalyzeConversationAuthoringProjectDeletionJobState is compatible with MutableMapping
+        :return: ConversationAuthoringProjectDeletionState. The
+         ConversationAuthoringProjectDeletionState is compatible with MutableMapping
         :rtype:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringProjectDeletionJobState
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringProjectDeletionState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2076,7 +2060,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AnalyzeConversationAuthoringProjectDeletionJobState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ConversationAuthoringProjectDeletionState] = kwargs.pop("cls", None)
 
         _request = build_conversation_authoring_project_get_project_deletion_status_request(
             job_id=job_id,
@@ -2108,7 +2092,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AnalyzeConversationAuthoringProjectDeletionJobState, response.json())
+            deserialized = _deserialize(_models.ConversationAuthoringProjectDeletionState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2120,7 +2104,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         project_name: str,
         *,
         string_index_type: Union[str, _models.StringIndexType],
-        exported_project_format: Optional[Union[str, _models.ExportedProjectFormat]] = None,
+        exported_project_format: Optional[Union[str, _models.ConversationAuthoringExportedProjectFormat]] = None,
         asset_kind: Optional[str] = None,
         trained_model_label: Optional[str] = None,
         **kwargs: Any
@@ -2184,7 +2168,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         project_name: str,
         *,
         string_index_type: Union[str, _models.StringIndexType],
-        exported_project_format: Optional[Union[str, _models.ExportedProjectFormat]] = None,
+        exported_project_format: Optional[Union[str, _models.ConversationAuthoringExportedProjectFormat]] = None,
         asset_kind: Optional[str] = None,
         trained_model_label: Optional[str] = None,
         **kwargs: Any
@@ -2202,7 +2186,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         :keyword exported_project_format: The format of the exported project file to use. Known values
          are: "Conversation" and "Luis". Default value is None.
         :paramtype exported_project_format: str or
-         ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringExportedProjectFormat
         :keyword asset_kind: Kind of asset to export. Default value is None.
         :paramtype asset_kind: str
         :keyword trained_model_label: Trained model label to export. If the trainedModelLabel is null,
@@ -2263,9 +2247,9 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
     async def _import_method_initial(
         self,
         project_name: str,
-        body: Union[_models.AnalyzeConversationAuthoringExportedProject, JSON, IO[bytes]],
+        body: Union[_models.ConversationAuthoringExportedProject, JSON, IO[bytes]],
         *,
-        exported_project_format: Optional[Union[str, _models.ExportedProjectFormat]] = None,
+        exported_project_format: Optional[Union[str, _models.ConversationAuthoringExportedProjectFormat]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2332,9 +2316,9 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
     async def begin_import_method(
         self,
         project_name: str,
-        body: _models.AnalyzeConversationAuthoringExportedProject,
+        body: _models.ConversationAuthoringExportedProject,
         *,
-        exported_project_format: Optional[Union[str, _models.ExportedProjectFormat]] = None,
+        exported_project_format: Optional[Union[str, _models.ConversationAuthoringExportedProjectFormat]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
@@ -2345,11 +2329,11 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         :type project_name: str
         :param body: The project data to import. Required.
         :type body:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringExportedProject
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringExportedProject
         :keyword exported_project_format: The format of the exported project file to use. Known values
          are: "Conversation" and "Luis". Default value is None.
         :paramtype exported_project_format: str or
-         ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringExportedProjectFormat
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2364,7 +2348,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         project_name: str,
         body: JSON,
         *,
-        exported_project_format: Optional[Union[str, _models.ExportedProjectFormat]] = None,
+        exported_project_format: Optional[Union[str, _models.ConversationAuthoringExportedProjectFormat]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
@@ -2378,7 +2362,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         :keyword exported_project_format: The format of the exported project file to use. Known values
          are: "Conversation" and "Luis". Default value is None.
         :paramtype exported_project_format: str or
-         ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringExportedProjectFormat
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2393,7 +2377,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         project_name: str,
         body: IO[bytes],
         *,
-        exported_project_format: Optional[Union[str, _models.ExportedProjectFormat]] = None,
+        exported_project_format: Optional[Union[str, _models.ConversationAuthoringExportedProjectFormat]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
@@ -2407,7 +2391,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         :keyword exported_project_format: The format of the exported project file to use. Known values
          are: "Conversation" and "Luis". Default value is None.
         :paramtype exported_project_format: str or
-         ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringExportedProjectFormat
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2420,9 +2404,9 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
     async def begin_import_method(
         self,
         project_name: str,
-        body: Union[_models.AnalyzeConversationAuthoringExportedProject, JSON, IO[bytes]],
+        body: Union[_models.ConversationAuthoringExportedProject, JSON, IO[bytes]],
         *,
-        exported_project_format: Optional[Union[str, _models.ExportedProjectFormat]] = None,
+        exported_project_format: Optional[Union[str, _models.ConversationAuthoringExportedProjectFormat]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Triggers a job to import a project. If a project with the same name already exists, the data of
@@ -2431,14 +2415,14 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param body: The project data to import. Is one of the following types:
-         AnalyzeConversationAuthoringExportedProject, JSON, IO[bytes] Required.
+         ConversationAuthoringExportedProject, JSON, IO[bytes] Required.
         :type body:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringExportedProject
-         or JSON or IO[bytes]
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringExportedProject or JSON
+         or IO[bytes]
         :keyword exported_project_format: The format of the exported project file to use. Known values
          are: "Conversation" and "Luis". Default value is None.
         :paramtype exported_project_format: str or
-         ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringExportedProjectFormat
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2494,17 +2478,17 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
     @distributed_trace_async
     async def get_export_status(
         self, project_name: str, job_id: str, **kwargs: Any
-    ) -> _models.AnalyzeConversationAuthoringExportProjectJobState:
+    ) -> _models.ConversationAuthoringExportProjectState:
         """Gets the status of an export job. Once job completes, returns the project metadata, and assets.
 
         :param project_name: The new project name. Required.
         :type project_name: str
         :param job_id: The job ID. Required.
         :type job_id: str
-        :return: AnalyzeConversationAuthoringExportProjectJobState. The
-         AnalyzeConversationAuthoringExportProjectJobState is compatible with MutableMapping
+        :return: ConversationAuthoringExportProjectState. The ConversationAuthoringExportProjectState
+         is compatible with MutableMapping
         :rtype:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringExportProjectJobState
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringExportProjectState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2518,7 +2502,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AnalyzeConversationAuthoringExportProjectJobState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ConversationAuthoringExportProjectState] = kwargs.pop("cls", None)
 
         _request = build_conversation_authoring_project_get_export_status_request(
             project_name=project_name,
@@ -2551,7 +2535,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AnalyzeConversationAuthoringExportProjectJobState, response.json())
+            deserialized = _deserialize(_models.ConversationAuthoringExportProjectState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2561,17 +2545,17 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
     @distributed_trace_async
     async def get_import_status(
         self, project_name: str, job_id: str, **kwargs: Any
-    ) -> _models.AnalyzeConversationAuthoringImportProjectJobState:
+    ) -> _models.ConversationAuthoringImportProjectState:
         """Gets the status for an import.
 
         :param project_name: The new project name. Required.
         :type project_name: str
         :param job_id: The job ID. Required.
         :type job_id: str
-        :return: AnalyzeConversationAuthoringImportProjectJobState. The
-         AnalyzeConversationAuthoringImportProjectJobState is compatible with MutableMapping
+        :return: ConversationAuthoringImportProjectState. The ConversationAuthoringImportProjectState
+         is compatible with MutableMapping
         :rtype:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringImportProjectJobState
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringImportProjectState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2585,7 +2569,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AnalyzeConversationAuthoringImportProjectJobState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ConversationAuthoringImportProjectState] = kwargs.pop("cls", None)
 
         _request = build_conversation_authoring_project_get_import_status_request(
             project_name=project_name,
@@ -2618,7 +2602,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AnalyzeConversationAuthoringImportProjectJobState, response.json())
+            deserialized = _deserialize(_models.ConversationAuthoringImportProjectState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2626,23 +2610,24 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         return deserialized  # type: ignore
 
     @overload
-    async def copy_project_authorization(
+    async def authorize_project_copy(
         self,
         project_name: str,
         *,
-        project_kind: Union[str, _models.ProjectKind],
+        project_kind: Union[str, _models.ConversationAuthoringProjectKind],
         content_type: str = "application/json",
         storage_input_container_name: Optional[str] = None,
         allow_overwrite: Optional[bool] = None,
         **kwargs: Any
-    ) -> _models.AnalyzeConversationAuthoringCopiedProjectOptions:
+    ) -> _models.ConversationAuthoringCopyProjectDetails:
         """Generates a copy project operation authorization to the current target Azure resource.
 
         :param project_name: The new project name. Required.
         :type project_name: str
         :keyword project_kind: Represents the project kind. Known values are: "Conversation",
          "Orchestration", and "CustomConversationSummarization". Required.
-        :paramtype project_kind: str or ~azure.ai.language.conversations.authoring.models.ProjectKind
+        :paramtype project_kind: str or
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringProjectKind
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2652,17 +2637,17 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         :keyword allow_overwrite: Whether to allow an existing project to be overwritten using the
          resulting copy authorization. Default value is None.
         :paramtype allow_overwrite: bool
-        :return: AnalyzeConversationAuthoringCopiedProjectOptions. The
-         AnalyzeConversationAuthoringCopiedProjectOptions is compatible with MutableMapping
+        :return: ConversationAuthoringCopyProjectDetails. The ConversationAuthoringCopyProjectDetails
+         is compatible with MutableMapping
         :rtype:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringCopiedProjectOptions
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringCopyProjectDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def copy_project_authorization(
+    async def authorize_project_copy(
         self, project_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AnalyzeConversationAuthoringCopiedProjectOptions:
+    ) -> _models.ConversationAuthoringCopyProjectDetails:
         """Generates a copy project operation authorization to the current target Azure resource.
 
         :param project_name: The new project name. Required.
@@ -2672,17 +2657,17 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AnalyzeConversationAuthoringCopiedProjectOptions. The
-         AnalyzeConversationAuthoringCopiedProjectOptions is compatible with MutableMapping
+        :return: ConversationAuthoringCopyProjectDetails. The ConversationAuthoringCopyProjectDetails
+         is compatible with MutableMapping
         :rtype:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringCopiedProjectOptions
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringCopyProjectDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def copy_project_authorization(
+    async def authorize_project_copy(
         self, project_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AnalyzeConversationAuthoringCopiedProjectOptions:
+    ) -> _models.ConversationAuthoringCopyProjectDetails:
         """Generates a copy project operation authorization to the current target Azure resource.
 
         :param project_name: The new project name. Required.
@@ -2692,10 +2677,10 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AnalyzeConversationAuthoringCopiedProjectOptions. The
-         AnalyzeConversationAuthoringCopiedProjectOptions is compatible with MutableMapping
+        :return: ConversationAuthoringCopyProjectDetails. The ConversationAuthoringCopyProjectDetails
+         is compatible with MutableMapping
         :rtype:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringCopiedProjectOptions
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringCopyProjectDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2705,16 +2690,16 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         params_added_on={"2023-04-15-preview": ["api_version", "project_name", "content_type", "accept"]},
         api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
     )
-    async def copy_project_authorization(
+    async def authorize_project_copy(
         self,
         project_name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        project_kind: Union[str, _models.ProjectKind] = _Unset,
+        project_kind: Union[str, _models.ConversationAuthoringProjectKind] = _Unset,
         storage_input_container_name: Optional[str] = None,
         allow_overwrite: Optional[bool] = None,
         **kwargs: Any
-    ) -> _models.AnalyzeConversationAuthoringCopiedProjectOptions:
+    ) -> _models.ConversationAuthoringCopyProjectDetails:
         """Generates a copy project operation authorization to the current target Azure resource.
 
         :param project_name: The new project name. Required.
@@ -2723,17 +2708,18 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         :type body: JSON or IO[bytes]
         :keyword project_kind: Represents the project kind. Known values are: "Conversation",
          "Orchestration", and "CustomConversationSummarization". Required.
-        :paramtype project_kind: str or ~azure.ai.language.conversations.authoring.models.ProjectKind
+        :paramtype project_kind: str or
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringProjectKind
         :keyword storage_input_container_name: The name of the storage container. Default value is
          None.
         :paramtype storage_input_container_name: str
         :keyword allow_overwrite: Whether to allow an existing project to be overwritten using the
          resulting copy authorization. Default value is None.
         :paramtype allow_overwrite: bool
-        :return: AnalyzeConversationAuthoringCopiedProjectOptions. The
-         AnalyzeConversationAuthoringCopiedProjectOptions is compatible with MutableMapping
+        :return: ConversationAuthoringCopyProjectDetails. The ConversationAuthoringCopyProjectDetails
+         is compatible with MutableMapping
         :rtype:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringCopiedProjectOptions
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringCopyProjectDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2748,7 +2734,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AnalyzeConversationAuthoringCopiedProjectOptions] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ConversationAuthoringCopyProjectDetails] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if project_kind is _Unset:
@@ -2766,7 +2752,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_conversation_authoring_project_copy_project_authorization_request(
+        _request = build_conversation_authoring_project_authorize_project_copy_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2798,7 +2784,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AnalyzeConversationAuthoringCopiedProjectOptions, response.json())
+            deserialized = _deserialize(_models.ConversationAuthoringCopyProjectDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2813,7 +2799,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
     async def _copy_project_initial(
         self,
         project_name: str,
-        body: Union[_models.AnalyzeConversationAuthoringCopiedProjectOptions, JSON, IO[bytes]],
+        body: Union[_models.ConversationAuthoringCopyProjectDetails, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2879,7 +2865,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
     async def begin_copy_project(
         self,
         project_name: str,
-        body: _models.AnalyzeConversationAuthoringCopiedProjectOptions,
+        body: _models.ConversationAuthoringCopyProjectDetails,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2890,7 +2876,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         :type project_name: str
         :param body: The copy project info. Required.
         :type body:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringCopiedProjectOptions
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringCopyProjectDetails
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2944,7 +2930,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
     async def begin_copy_project(
         self,
         project_name: str,
-        body: Union[_models.AnalyzeConversationAuthoringCopiedProjectOptions, JSON, IO[bytes]],
+        body: Union[_models.ConversationAuthoringCopyProjectDetails, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Copies an existing project to another Azure resource.
@@ -2952,10 +2938,10 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param body: The copy project info. Is one of the following types:
-         AnalyzeConversationAuthoringCopiedProjectOptions, JSON, IO[bytes] Required.
+         ConversationAuthoringCopyProjectDetails, JSON, IO[bytes] Required.
         :type body:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringCopiedProjectOptions
-         or JSON or IO[bytes]
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringCopyProjectDetails or
+         JSON or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3015,17 +3001,16 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
     )
     async def get_copy_project_status(
         self, project_name: str, job_id: str, **kwargs: Any
-    ) -> _models.AnalyzeConversationAuthoringCopiedProjectJobState:
+    ) -> _models.ConversationAuthoringCopyProjectState:
         """Gets the status of an existing copy project job.
 
         :param project_name: The new project name. Required.
         :type project_name: str
         :param job_id: The job ID. Required.
         :type job_id: str
-        :return: AnalyzeConversationAuthoringCopiedProjectJobState. The
-         AnalyzeConversationAuthoringCopiedProjectJobState is compatible with MutableMapping
-        :rtype:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringCopiedProjectJobState
+        :return: ConversationAuthoringCopyProjectState. The ConversationAuthoringCopyProjectState is
+         compatible with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models.ConversationAuthoringCopyProjectState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3039,7 +3024,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AnalyzeConversationAuthoringCopiedProjectJobState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ConversationAuthoringCopyProjectState] = kwargs.pop("cls", None)
 
         _request = build_conversation_authoring_project_get_copy_project_status_request(
             project_name=project_name,
@@ -3072,7 +3057,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AnalyzeConversationAuthoringCopiedProjectJobState, response.json())
+            deserialized = _deserialize(_models.ConversationAuthoringCopyProjectState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3082,7 +3067,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
     async def _train_initial(
         self,
         project_name: str,
-        body: Union[_models.AnalyzeConversationAuthoringTrainingJobOptions, JSON, IO[bytes]],
+        body: Union[_models.ConversationAuthoringTrainingJobDetails, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3148,33 +3133,32 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
     async def begin_train(
         self,
         project_name: str,
-        body: _models.AnalyzeConversationAuthoringTrainingJobOptions,
+        body: _models.ConversationAuthoringTrainingJobDetails,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.AnalyzeConversationAuthoringTrainingJobResult]:
+    ) -> AsyncLROPoller[_models.ConversationAuthoringTrainingJobResult]:
         """Triggers a training job for a project.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param body: The training input parameters. Required.
         :type body:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringTrainingJobOptions
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringTrainingJobDetails
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns
-         AnalyzeConversationAuthoringTrainingJobResult. The
-         AnalyzeConversationAuthoringTrainingJobResult is compatible with MutableMapping
+        :return: An instance of AsyncLROPoller that returns ConversationAuthoringTrainingJobResult. The
+         ConversationAuthoringTrainingJobResult is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringTrainingJobResult]
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.ConversationAuthoringTrainingJobResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def begin_train(
         self, project_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[_models.AnalyzeConversationAuthoringTrainingJobResult]:
+    ) -> AsyncLROPoller[_models.ConversationAuthoringTrainingJobResult]:
         """Triggers a training job for a project.
 
         :param project_name: The name of the project to use. Required.
@@ -3184,18 +3168,17 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns
-         AnalyzeConversationAuthoringTrainingJobResult. The
-         AnalyzeConversationAuthoringTrainingJobResult is compatible with MutableMapping
+        :return: An instance of AsyncLROPoller that returns ConversationAuthoringTrainingJobResult. The
+         ConversationAuthoringTrainingJobResult is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringTrainingJobResult]
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.ConversationAuthoringTrainingJobResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def begin_train(
         self, project_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[_models.AnalyzeConversationAuthoringTrainingJobResult]:
+    ) -> AsyncLROPoller[_models.ConversationAuthoringTrainingJobResult]:
         """Triggers a training job for a project.
 
         :param project_name: The name of the project to use. Required.
@@ -3205,11 +3188,10 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns
-         AnalyzeConversationAuthoringTrainingJobResult. The
-         AnalyzeConversationAuthoringTrainingJobResult is compatible with MutableMapping
+        :return: An instance of AsyncLROPoller that returns ConversationAuthoringTrainingJobResult. The
+         ConversationAuthoringTrainingJobResult is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringTrainingJobResult]
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.ConversationAuthoringTrainingJobResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3217,30 +3199,29 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
     async def begin_train(
         self,
         project_name: str,
-        body: Union[_models.AnalyzeConversationAuthoringTrainingJobOptions, JSON, IO[bytes]],
+        body: Union[_models.ConversationAuthoringTrainingJobDetails, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.AnalyzeConversationAuthoringTrainingJobResult]:
+    ) -> AsyncLROPoller[_models.ConversationAuthoringTrainingJobResult]:
         """Triggers a training job for a project.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param body: The training input parameters. Is one of the following types:
-         AnalyzeConversationAuthoringTrainingJobOptions, JSON, IO[bytes] Required.
+         ConversationAuthoringTrainingJobDetails, JSON, IO[bytes] Required.
         :type body:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringTrainingJobOptions
-         or JSON or IO[bytes]
-        :return: An instance of AsyncLROPoller that returns
-         AnalyzeConversationAuthoringTrainingJobResult. The
-         AnalyzeConversationAuthoringTrainingJobResult is compatible with MutableMapping
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringTrainingJobDetails or
+         JSON or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns ConversationAuthoringTrainingJobResult. The
+         ConversationAuthoringTrainingJobResult is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringTrainingJobResult]
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.ConversationAuthoringTrainingJobResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AnalyzeConversationAuthoringTrainingJobResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ConversationAuthoringTrainingJobResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -3265,7 +3246,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
             )
 
             deserialized = _deserialize(
-                _models.AnalyzeConversationAuthoringTrainingJobResult, response.json().get("result", {})
+                _models.ConversationAuthoringTrainingJobResult, response.json().get("result", {})
             )
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3285,30 +3266,29 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models.AnalyzeConversationAuthoringTrainingJobResult].from_continuation_token(
+            return AsyncLROPoller[_models.ConversationAuthoringTrainingJobResult].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[_models.AnalyzeConversationAuthoringTrainingJobResult](
+        return AsyncLROPoller[_models.ConversationAuthoringTrainingJobResult](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
     @distributed_trace_async
     async def get_training_status(
         self, project_name: str, job_id: str, **kwargs: Any
-    ) -> _models.AnalyzeConversationAuthoringTrainingJobState:
+    ) -> _models.ConversationAuthoringTrainingState:
         """Gets the status for a training job.
 
         :param project_name: The new project name. Required.
         :type project_name: str
         :param job_id: The job ID. Required.
         :type job_id: str
-        :return: AnalyzeConversationAuthoringTrainingJobState. The
-         AnalyzeConversationAuthoringTrainingJobState is compatible with MutableMapping
-        :rtype:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringTrainingJobState
+        :return: ConversationAuthoringTrainingState. The ConversationAuthoringTrainingState is
+         compatible with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models.ConversationAuthoringTrainingState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3322,7 +3302,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AnalyzeConversationAuthoringTrainingJobState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ConversationAuthoringTrainingState] = kwargs.pop("cls", None)
 
         _request = build_conversation_authoring_project_get_training_status_request(
             project_name=project_name,
@@ -3355,7 +3335,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AnalyzeConversationAuthoringTrainingJobState, response.json())
+            deserialized = _deserialize(_models.ConversationAuthoringTrainingState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3416,24 +3396,23 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
     @distributed_trace_async
     async def begin_cancel_training_job(
         self, project_name: str, job_id: str, **kwargs: Any
-    ) -> AsyncLROPoller[_models.AnalyzeConversationAuthoringTrainingJobResult]:
+    ) -> AsyncLROPoller[_models.ConversationAuthoringTrainingJobResult]:
         """Triggers a cancellation for a running training job.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param job_id: The job ID. Required.
         :type job_id: str
-        :return: An instance of AsyncLROPoller that returns
-         AnalyzeConversationAuthoringTrainingJobResult. The
-         AnalyzeConversationAuthoringTrainingJobResult is compatible with MutableMapping
+        :return: An instance of AsyncLROPoller that returns ConversationAuthoringTrainingJobResult. The
+         ConversationAuthoringTrainingJobResult is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringTrainingJobResult]
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.ConversationAuthoringTrainingJobResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AnalyzeConversationAuthoringTrainingJobResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ConversationAuthoringTrainingJobResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -3457,7 +3436,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
             )
 
             deserialized = _deserialize(
-                _models.AnalyzeConversationAuthoringTrainingJobResult, response.json().get("result", {})
+                _models.ConversationAuthoringTrainingJobResult, response.json().get("result", {})
             )
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3477,13 +3456,13 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models.AnalyzeConversationAuthoringTrainingJobResult].from_continuation_token(
+            return AsyncLROPoller[_models.ConversationAuthoringTrainingJobResult].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[_models.AnalyzeConversationAuthoringTrainingJobResult](
+        return AsyncLROPoller[_models.ConversationAuthoringTrainingJobResult](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
@@ -3513,17 +3492,17 @@ class ConversationAuthoringExportedModelOperations:  # pylint: disable=name-too-
     )
     async def get_exported_model(
         self, project_name: str, exported_model_name: str, **kwargs: Any
-    ) -> _models.AnalyzeConversationAuthoringExportedTrainedModel:
+    ) -> _models.ConversationAuthoringExportedTrainedModel:
         """Gets the details of an exported model.
 
         :param project_name: The new project name. Required.
         :type project_name: str
         :param exported_model_name: The exported model name. Required.
         :type exported_model_name: str
-        :return: AnalyzeConversationAuthoringExportedTrainedModel. The
-         AnalyzeConversationAuthoringExportedTrainedModel is compatible with MutableMapping
+        :return: ConversationAuthoringExportedTrainedModel. The
+         ConversationAuthoringExportedTrainedModel is compatible with MutableMapping
         :rtype:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringExportedTrainedModel
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringExportedTrainedModel
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3537,7 +3516,7 @@ class ConversationAuthoringExportedModelOperations:  # pylint: disable=name-too-
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AnalyzeConversationAuthoringExportedTrainedModel] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ConversationAuthoringExportedTrainedModel] = kwargs.pop("cls", None)
 
         _request = build_conversation_authoring_exported_model_get_exported_model_request(
             project_name=project_name,
@@ -3570,7 +3549,7 @@ class ConversationAuthoringExportedModelOperations:  # pylint: disable=name-too-
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AnalyzeConversationAuthoringExportedTrainedModel, response.json())
+            deserialized = _deserialize(_models.ConversationAuthoringExportedTrainedModel, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3710,7 +3689,7 @@ class ConversationAuthoringExportedModelOperations:  # pylint: disable=name-too-
         self,
         project_name: str,
         exported_model_name: str,
-        body: Union[_models.ExportedModelOptions, JSON, IO[bytes]],
+        body: Union[_models.ConversationAuthoringExportedModelDetails, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3778,7 +3757,7 @@ class ConversationAuthoringExportedModelOperations:  # pylint: disable=name-too-
         self,
         project_name: str,
         exported_model_name: str,
-        body: _models.ExportedModelOptions,
+        body: _models.ConversationAuthoringExportedModelDetails,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3790,7 +3769,8 @@ class ConversationAuthoringExportedModelOperations:  # pylint: disable=name-too-
         :param exported_model_name: The exported model name. Required.
         :type exported_model_name: str
         :param body: The exported model info. Required.
-        :type body: ~azure.ai.language.conversations.authoring.models.ExportedModelOptions
+        :type body:
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringExportedModelDetails
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3863,7 +3843,7 @@ class ConversationAuthoringExportedModelOperations:  # pylint: disable=name-too-
         self,
         project_name: str,
         exported_model_name: str,
-        body: Union[_models.ExportedModelOptions, JSON, IO[bytes]],
+        body: Union[_models.ConversationAuthoringExportedModelDetails, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Creates a new exported model or replaces an existing one.
@@ -3872,10 +3852,11 @@ class ConversationAuthoringExportedModelOperations:  # pylint: disable=name-too-
         :type project_name: str
         :param exported_model_name: The exported model name. Required.
         :type exported_model_name: str
-        :param body: The exported model info. Is one of the following types: ExportedModelOptions,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.ai.language.conversations.authoring.models.ExportedModelOptions or JSON or
-         IO[bytes]
+        :param body: The exported model info. Is one of the following types:
+         ConversationAuthoringExportedModelDetails, JSON, IO[bytes] Required.
+        :type body:
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringExportedModelDetails or
+         JSON or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3938,7 +3919,7 @@ class ConversationAuthoringExportedModelOperations:  # pylint: disable=name-too-
     )
     async def get_exported_model_job_status(
         self, project_name: str, exported_model_name: str, job_id: str, **kwargs: Any
-    ) -> _models.AnalyzeConversationAuthoringExportedModelJobState:
+    ) -> _models.ConversationAuthoringExportedModelState:
         """Gets the status for an existing job to create or update an exported model.
 
         :param project_name: The new project name. Required.
@@ -3947,10 +3928,10 @@ class ConversationAuthoringExportedModelOperations:  # pylint: disable=name-too-
         :type exported_model_name: str
         :param job_id: The job ID. Required.
         :type job_id: str
-        :return: AnalyzeConversationAuthoringExportedModelJobState. The
-         AnalyzeConversationAuthoringExportedModelJobState is compatible with MutableMapping
+        :return: ConversationAuthoringExportedModelState. The ConversationAuthoringExportedModelState
+         is compatible with MutableMapping
         :rtype:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringExportedModelJobState
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringExportedModelState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3964,7 +3945,7 @@ class ConversationAuthoringExportedModelOperations:  # pylint: disable=name-too-
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AnalyzeConversationAuthoringExportedModelJobState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ConversationAuthoringExportedModelState] = kwargs.pop("cls", None)
 
         _request = build_conversation_authoring_exported_model_get_exported_model_job_status_request(
             project_name=project_name,
@@ -3998,7 +3979,7 @@ class ConversationAuthoringExportedModelOperations:  # pylint: disable=name-too-
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AnalyzeConversationAuthoringExportedModelJobState, response.json())
+            deserialized = _deserialize(_models.ConversationAuthoringExportedModelState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4026,17 +4007,17 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
     @distributed_trace_async
     async def get_trained_model(
         self, project_name: str, trained_model_label: str, **kwargs: Any
-    ) -> _models.AnalyzeConversationAuthoringProjectTrainedModel:
+    ) -> _models.ConversationAuthoringProjectTrainedModel:
         """Gets the details of a trained model.
 
         :param project_name: The new project name. Required.
         :type project_name: str
         :param trained_model_label: The trained model label. Required.
         :type trained_model_label: str
-        :return: AnalyzeConversationAuthoringProjectTrainedModel. The
-         AnalyzeConversationAuthoringProjectTrainedModel is compatible with MutableMapping
+        :return: ConversationAuthoringProjectTrainedModel. The ConversationAuthoringProjectTrainedModel
+         is compatible with MutableMapping
         :rtype:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringProjectTrainedModel
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringProjectTrainedModel
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4050,7 +4031,7 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AnalyzeConversationAuthoringProjectTrainedModel] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ConversationAuthoringProjectTrainedModel] = kwargs.pop("cls", None)
 
         _request = build_conversation_authoring_trained_model_get_trained_model_request(
             project_name=project_name,
@@ -4083,7 +4064,7 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AnalyzeConversationAuthoringProjectTrainedModel, response.json())
+            deserialized = _deserialize(_models.ConversationAuthoringProjectTrainedModel, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4152,7 +4133,7 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
         self,
         project_name: str,
         trained_model_label: str,
-        body: Union[_models.AnalyzeConversationAuthoringEvaluationOptions, JSON, IO[bytes]],
+        body: Union[_models.ConversationAuthoringEvaluationDetails, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -4220,11 +4201,11 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
         self,
         project_name: str,
         trained_model_label: str,
-        body: _models.AnalyzeConversationAuthoringEvaluationOptions,
+        body: _models.ConversationAuthoringEvaluationDetails,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.AnalyzeConversationAuthoringEvaluationJobResult]:
+    ) -> AsyncLROPoller[_models.ConversationAuthoringEvaluationJobResult]:
         """Triggers evaluation operation on a trained model.
 
         :param project_name: The name of the project to use. Required.
@@ -4233,15 +4214,14 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
         :type trained_model_label: str
         :param body: The training input parameters. Required.
         :type body:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringEvaluationOptions
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringEvaluationDetails
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns
-         AnalyzeConversationAuthoringEvaluationJobResult. The
-         AnalyzeConversationAuthoringEvaluationJobResult is compatible with MutableMapping
+        :return: An instance of AsyncLROPoller that returns ConversationAuthoringEvaluationJobResult.
+         The ConversationAuthoringEvaluationJobResult is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringEvaluationJobResult]
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.ConversationAuthoringEvaluationJobResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -4254,7 +4234,7 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.AnalyzeConversationAuthoringEvaluationJobResult]:
+    ) -> AsyncLROPoller[_models.ConversationAuthoringEvaluationJobResult]:
         """Triggers evaluation operation on a trained model.
 
         :param project_name: The name of the project to use. Required.
@@ -4266,11 +4246,10 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns
-         AnalyzeConversationAuthoringEvaluationJobResult. The
-         AnalyzeConversationAuthoringEvaluationJobResult is compatible with MutableMapping
+        :return: An instance of AsyncLROPoller that returns ConversationAuthoringEvaluationJobResult.
+         The ConversationAuthoringEvaluationJobResult is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringEvaluationJobResult]
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.ConversationAuthoringEvaluationJobResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -4283,7 +4262,7 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.AnalyzeConversationAuthoringEvaluationJobResult]:
+    ) -> AsyncLROPoller[_models.ConversationAuthoringEvaluationJobResult]:
         """Triggers evaluation operation on a trained model.
 
         :param project_name: The name of the project to use. Required.
@@ -4295,11 +4274,10 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns
-         AnalyzeConversationAuthoringEvaluationJobResult. The
-         AnalyzeConversationAuthoringEvaluationJobResult is compatible with MutableMapping
+        :return: An instance of AsyncLROPoller that returns ConversationAuthoringEvaluationJobResult.
+         The ConversationAuthoringEvaluationJobResult is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringEvaluationJobResult]
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.ConversationAuthoringEvaluationJobResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -4315,9 +4293,9 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
         self,
         project_name: str,
         trained_model_label: str,
-        body: Union[_models.AnalyzeConversationAuthoringEvaluationOptions, JSON, IO[bytes]],
+        body: Union[_models.ConversationAuthoringEvaluationDetails, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.AnalyzeConversationAuthoringEvaluationJobResult]:
+    ) -> AsyncLROPoller[_models.ConversationAuthoringEvaluationJobResult]:
         """Triggers evaluation operation on a trained model.
 
         :param project_name: The name of the project to use. Required.
@@ -4325,22 +4303,21 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
         :param trained_model_label: The trained model label. Required.
         :type trained_model_label: str
         :param body: The training input parameters. Is one of the following types:
-         AnalyzeConversationAuthoringEvaluationOptions, JSON, IO[bytes] Required.
+         ConversationAuthoringEvaluationDetails, JSON, IO[bytes] Required.
         :type body:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringEvaluationOptions
-         or JSON or IO[bytes]
-        :return: An instance of AsyncLROPoller that returns
-         AnalyzeConversationAuthoringEvaluationJobResult. The
-         AnalyzeConversationAuthoringEvaluationJobResult is compatible with MutableMapping
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringEvaluationDetails or
+         JSON or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns ConversationAuthoringEvaluationJobResult.
+         The ConversationAuthoringEvaluationJobResult is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringEvaluationJobResult]
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.ConversationAuthoringEvaluationJobResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AnalyzeConversationAuthoringEvaluationJobResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ConversationAuthoringEvaluationJobResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -4366,7 +4343,7 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
             )
 
             deserialized = _deserialize(
-                _models.AnalyzeConversationAuthoringEvaluationJobResult, response.json().get("result", {})
+                _models.ConversationAuthoringEvaluationJobResult, response.json().get("result", {})
             )
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4386,13 +4363,13 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models.AnalyzeConversationAuthoringEvaluationJobResult].from_continuation_token(
+            return AsyncLROPoller[_models.ConversationAuthoringEvaluationJobResult].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[_models.AnalyzeConversationAuthoringEvaluationJobResult](
+        return AsyncLROPoller[_models.ConversationAuthoringEvaluationJobResult](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
@@ -4518,7 +4495,7 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
     )
     async def get_evaluation_status(
         self, project_name: str, trained_model_label: str, job_id: str, **kwargs: Any
-    ) -> _models.AnalyzeConversationAuthoringEvaluationJobState:
+    ) -> _models.ConversationAuthoringEvaluationState:
         """Gets the status for an evaluation job.
 
         :param project_name: The new project name. Required.
@@ -4527,10 +4504,9 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
         :type trained_model_label: str
         :param job_id: The job ID. Required.
         :type job_id: str
-        :return: AnalyzeConversationAuthoringEvaluationJobState. The
-         AnalyzeConversationAuthoringEvaluationJobState is compatible with MutableMapping
-        :rtype:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringEvaluationJobState
+        :return: ConversationAuthoringEvaluationState. The ConversationAuthoringEvaluationState is
+         compatible with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models.ConversationAuthoringEvaluationState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4544,7 +4520,7 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AnalyzeConversationAuthoringEvaluationJobState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ConversationAuthoringEvaluationState] = kwargs.pop("cls", None)
 
         _request = build_conversation_authoring_trained_model_get_evaluation_status_request(
             project_name=project_name,
@@ -4578,7 +4554,7 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AnalyzeConversationAuthoringEvaluationJobState, response.json())
+            deserialized = _deserialize(_models.ConversationAuthoringEvaluationState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4700,7 +4676,7 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
     @distributed_trace_async
     async def get_model_evaluation_summary(
         self, project_name: str, trained_model_label: str, **kwargs: Any
-    ) -> _models.AnalyzeConversationAuthoringEvaluationSummary:
+    ) -> _models.ConversationAuthoringEvalSummary:
         """Gets the evaluation summary of a trained model. The summary includes high level performance
         measurements of the model e.g., F1, Precision, Recall, etc.
 
@@ -4708,10 +4684,9 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
         :type project_name: str
         :param trained_model_label: The trained model label. Required.
         :type trained_model_label: str
-        :return: AnalyzeConversationAuthoringEvaluationSummary. The
-         AnalyzeConversationAuthoringEvaluationSummary is compatible with MutableMapping
-        :rtype:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringEvaluationSummary
+        :return: ConversationAuthoringEvalSummary. The ConversationAuthoringEvalSummary is compatible
+         with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models.ConversationAuthoringEvalSummary
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4725,7 +4700,7 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AnalyzeConversationAuthoringEvaluationSummary] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ConversationAuthoringEvalSummary] = kwargs.pop("cls", None)
 
         _request = build_conversation_authoring_trained_model_get_model_evaluation_summary_request(
             project_name=project_name,
@@ -4758,7 +4733,7 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AnalyzeConversationAuthoringEvaluationSummary, response.json())
+            deserialized = _deserialize(_models.ConversationAuthoringEvalSummary, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4768,7 +4743,7 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
     @distributed_trace_async
     async def get_load_snapshot_status(
         self, project_name: str, trained_model_label: str, job_id: str, **kwargs: Any
-    ) -> _models.AnalyzeConversationAuthoringLoadSnapshotJobState:
+    ) -> _models.ConversationAuthoringLoadSnapshotState:
         """Gets the status for loading a snapshot.
 
         :param project_name: The new project name. Required.
@@ -4777,10 +4752,10 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
         :type trained_model_label: str
         :param job_id: The job ID. Required.
         :type job_id: str
-        :return: AnalyzeConversationAuthoringLoadSnapshotJobState. The
-         AnalyzeConversationAuthoringLoadSnapshotJobState is compatible with MutableMapping
+        :return: ConversationAuthoringLoadSnapshotState. The ConversationAuthoringLoadSnapshotState is
+         compatible with MutableMapping
         :rtype:
-         ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringLoadSnapshotJobState
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringLoadSnapshotState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4794,7 +4769,7 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AnalyzeConversationAuthoringLoadSnapshotJobState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ConversationAuthoringLoadSnapshotState] = kwargs.pop("cls", None)
 
         _request = build_conversation_authoring_trained_model_get_load_snapshot_status_request(
             project_name=project_name,
@@ -4828,7 +4803,7 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AnalyzeConversationAuthoringLoadSnapshotJobState, response.json())
+            deserialized = _deserialize(_models.ConversationAuthoringLoadSnapshotState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4841,9 +4816,9 @@ class _AuthoringClientOperationsMixin(
 ):
 
     @distributed_trace
-    def conversation_authoring_list_deployments(
+    def list_deployments(
         self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> AsyncItemPaged["_models.AnalyzeConversationAuthoringProjectDeployment"]:
+    ) -> AsyncItemPaged["_models.ConversationAuthoringProjectDeployment"]:
         """Lists the deployments belonging to a project.
 
         :param project_name: The new project name. Required.
@@ -4852,16 +4827,16 @@ class _AuthoringClientOperationsMixin(
         :paramtype top: int
         :keyword skip: The number of result items to skip. Default value is None.
         :paramtype skip: int
-        :return: An iterator like instance of AnalyzeConversationAuthoringProjectDeployment
+        :return: An iterator like instance of ConversationAuthoringProjectDeployment
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringProjectDeployment]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.language.conversations.authoring.models.ConversationAuthoringProjectDeployment]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.AnalyzeConversationAuthoringProjectDeployment]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.ConversationAuthoringProjectDeployment]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4874,7 +4849,7 @@ class _AuthoringClientOperationsMixin(
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_authoring_conversation_authoring_list_deployments_request(
+                _request = build_authoring_list_deployments_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
@@ -4911,7 +4886,7 @@ class _AuthoringClientOperationsMixin(
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.AnalyzeConversationAuthoringProjectDeployment], deserialized.get("value", [])
+                List[_models.ConversationAuthoringProjectDeployment], deserialized.get("value", [])
             )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -4935,25 +4910,25 @@ class _AuthoringClientOperationsMixin(
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def conversation_authoring_list_projects(
+    def list_projects(
         self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> AsyncItemPaged["_models.AnalyzeConversationAuthoringProjectMetadata"]:
+    ) -> AsyncItemPaged["_models.ConversationAuthoringProjectMetadata"]:
         """Lists the existing projects.
 
         :keyword top: The number of result items to return. Default value is None.
         :paramtype top: int
         :keyword skip: The number of result items to skip. Default value is None.
         :paramtype skip: int
-        :return: An iterator like instance of AnalyzeConversationAuthoringProjectMetadata
+        :return: An iterator like instance of ConversationAuthoringProjectMetadata
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringProjectMetadata]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.language.conversations.authoring.models.ConversationAuthoringProjectMetadata]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.AnalyzeConversationAuthoringProjectMetadata]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.ConversationAuthoringProjectMetadata]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4966,7 +4941,7 @@ class _AuthoringClientOperationsMixin(
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_authoring_conversation_authoring_list_projects_request(
+                _request = build_authoring_list_projects_request(
                     top=top,
                     skip=skip,
                     maxpagesize=maxpagesize,
@@ -5002,7 +4977,7 @@ class _AuthoringClientOperationsMixin(
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.AnalyzeConversationAuthoringProjectMetadata], deserialized.get("value", [])
+                List[_models.ConversationAuthoringProjectMetadata], deserialized.get("value", [])
             )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -5026,33 +5001,34 @@ class _AuthoringClientOperationsMixin(
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def conversation_authoring_list_supported_languages(  # pylint: disable=name-too-long
+    def list_supported_languages(
         self,
         *,
-        project_kind: Union[str, _models.ProjectKind],
+        project_kind: Union[str, _models.ConversationAuthoringProjectKind],
         top: Optional[int] = None,
         skip: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncItemPaged["_models.AnalyzeConversationAuthoringSupportedLanguage"]:
+    ) -> AsyncItemPaged["_models.ConversationAuthoringSupportedLanguage"]:
         """Lists the supported languages for the given project type.
 
         :keyword project_kind: The project kind. Known values are: "Conversation", "Orchestration", and
          "CustomConversationSummarization". Required.
-        :paramtype project_kind: str or ~azure.ai.language.conversations.authoring.models.ProjectKind
+        :paramtype project_kind: str or
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringProjectKind
         :keyword top: The number of result items to return. Default value is None.
         :paramtype top: int
         :keyword skip: The number of result items to skip. Default value is None.
         :paramtype skip: int
-        :return: An iterator like instance of AnalyzeConversationAuthoringSupportedLanguage
+        :return: An iterator like instance of ConversationAuthoringSupportedLanguage
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringSupportedLanguage]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.language.conversations.authoring.models.ConversationAuthoringSupportedLanguage]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.AnalyzeConversationAuthoringSupportedLanguage]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.ConversationAuthoringSupportedLanguage]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5065,7 +5041,7 @@ class _AuthoringClientOperationsMixin(
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_authoring_conversation_authoring_list_supported_languages_request(
+                _request = build_authoring_list_supported_languages_request(
                     project_kind=project_kind,
                     top=top,
                     skip=skip,
@@ -5102,7 +5078,7 @@ class _AuthoringClientOperationsMixin(
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.AnalyzeConversationAuthoringSupportedLanguage], deserialized.get("value", [])
+                List[_models.ConversationAuthoringSupportedLanguage], deserialized.get("value", [])
             )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -5131,9 +5107,9 @@ class _AuthoringClientOperationsMixin(
         params_added_on={"2023-04-15-preview": ["api_version", "top", "skip", "maxpagesize", "accept"]},
         api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
     )
-    def conversation_authoring_list_assigned_resource_deployments(  # pylint: disable=name-too-long
+    def list_assigned_resource_deployments(
         self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> AsyncItemPaged["_models.AnalyzeConversationAuthoringAssignedProjectDeploymentsMetadata"]:
+    ) -> AsyncItemPaged["_models.ConversationAuthoringAssignedProjectDeploymentsMetadata"]:
         """Lists the deployments to which an Azure resource is assigned. This doesn't return deployments
         belonging to projects owned by this resource. It only returns deployments belonging to projects
         owned by other resources.
@@ -5142,19 +5118,16 @@ class _AuthoringClientOperationsMixin(
         :paramtype top: int
         :keyword skip: The number of result items to skip. Default value is None.
         :paramtype skip: int
-        :return: An iterator like instance of
-         AnalyzeConversationAuthoringAssignedProjectDeploymentsMetadata
+        :return: An iterator like instance of ConversationAuthoringAssignedProjectDeploymentsMetadata
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringAssignedProjectDeploymentsMetadata]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.language.conversations.authoring.models.ConversationAuthoringAssignedProjectDeploymentsMetadata]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.AnalyzeConversationAuthoringAssignedProjectDeploymentsMetadata]] = kwargs.pop(
-            "cls", None
-        )
+        cls: ClsType[List[_models.ConversationAuthoringAssignedProjectDeploymentsMetadata]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5167,7 +5140,7 @@ class _AuthoringClientOperationsMixin(
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_authoring_conversation_authoring_list_assigned_resource_deployments_request(
+                _request = build_authoring_list_assigned_resource_deployments_request(
                     top=top,
                     skip=skip,
                     maxpagesize=maxpagesize,
@@ -5203,8 +5176,7 @@ class _AuthoringClientOperationsMixin(
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.AnalyzeConversationAuthoringAssignedProjectDeploymentsMetadata],
-                deserialized.get("value", []),
+                List[_models.ConversationAuthoringAssignedProjectDeploymentsMetadata], deserialized.get("value", [])
             )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -5233,9 +5205,9 @@ class _AuthoringClientOperationsMixin(
         params_added_on={"2023-04-15-preview": ["api_version", "project_name", "top", "skip", "maxpagesize", "accept"]},
         api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
     )
-    def conversation_authoring_list_deployment_resources(  # pylint: disable=name-too-long
+    def list_deployment_resources(
         self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> AsyncItemPaged["_models.AnalyzeConversationAuthoringAssignedDeploymentResource"]:
+    ) -> AsyncItemPaged["_models.ConversationAuthoringAssignedDeploymentResource"]:
         """Lists the deployments resources assigned to the project.
 
         :param project_name: The new project name. Required.
@@ -5244,16 +5216,16 @@ class _AuthoringClientOperationsMixin(
         :paramtype top: int
         :keyword skip: The number of result items to skip. Default value is None.
         :paramtype skip: int
-        :return: An iterator like instance of AnalyzeConversationAuthoringAssignedDeploymentResource
+        :return: An iterator like instance of ConversationAuthoringAssignedDeploymentResource
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringAssignedDeploymentResource]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.language.conversations.authoring.models.ConversationAuthoringAssignedDeploymentResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.AnalyzeConversationAuthoringAssignedDeploymentResource]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.ConversationAuthoringAssignedDeploymentResource]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5266,7 +5238,7 @@ class _AuthoringClientOperationsMixin(
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_authoring_conversation_authoring_list_deployment_resources_request(
+                _request = build_authoring_list_deployment_resources_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
@@ -5303,7 +5275,7 @@ class _AuthoringClientOperationsMixin(
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.AnalyzeConversationAuthoringAssignedDeploymentResource], deserialized.get("value", [])
+                List[_models.ConversationAuthoringAssignedDeploymentResource], deserialized.get("value", [])
             )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -5327,7 +5299,7 @@ class _AuthoringClientOperationsMixin(
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def conversation_authoring_list_supported_prebuilt_entities(  # pylint: disable=name-too-long
+    def list_supported_prebuilt_entities(
         self,
         *,
         top: Optional[int] = None,
@@ -5335,7 +5307,7 @@ class _AuthoringClientOperationsMixin(
         language: Optional[str] = None,
         multilingual: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncItemPaged["_models.AnalyzeConversationAuthoringPrebuiltEntity"]:
+    ) -> AsyncItemPaged["_models.ConversationAuthoringPrebuiltEntity"]:
         """Lists the supported prebuilt entities that can be used while creating composed entities.
 
         :keyword top: The number of result items to return. Default value is None.
@@ -5349,16 +5321,16 @@ class _AuthoringClientOperationsMixin(
         :keyword multilingual: Whether to get the support prebuilt entities for multilingual or
          monolingual projects. If true, the language parameter is ignored. Default value is None.
         :paramtype multilingual: str
-        :return: An iterator like instance of AnalyzeConversationAuthoringPrebuiltEntity
+        :return: An iterator like instance of ConversationAuthoringPrebuiltEntity
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringPrebuiltEntity]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.language.conversations.authoring.models.ConversationAuthoringPrebuiltEntity]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.AnalyzeConversationAuthoringPrebuiltEntity]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.ConversationAuthoringPrebuiltEntity]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5371,7 +5343,7 @@ class _AuthoringClientOperationsMixin(
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_authoring_conversation_authoring_list_supported_prebuilt_entities_request(
+                _request = build_authoring_list_supported_prebuilt_entities_request(
                     top=top,
                     skip=skip,
                     maxpagesize=maxpagesize,
@@ -5409,7 +5381,7 @@ class _AuthoringClientOperationsMixin(
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.AnalyzeConversationAuthoringPrebuiltEntity], deserialized.get("value", [])
+                List[_models.ConversationAuthoringPrebuiltEntity], deserialized.get("value", [])
             )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -5433,33 +5405,34 @@ class _AuthoringClientOperationsMixin(
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def conversation_authoring_list_training_config_versions(  # pylint: disable=name-too-long
+    def list_training_config_versions(
         self,
         *,
-        project_kind: Union[str, _models.ProjectKind],
+        project_kind: Union[str, _models.ConversationAuthoringProjectKind],
         top: Optional[int] = None,
         skip: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncItemPaged["_models.AnalyzeConversationAuthoringTrainingConfigVersion"]:
+    ) -> AsyncItemPaged["_models.ConversationAuthoringTrainingConfigVersion"]:
         """Lists the support training config version for a given project type.
 
         :keyword project_kind: The project kind. Known values are: "Conversation", "Orchestration", and
          "CustomConversationSummarization". Required.
-        :paramtype project_kind: str or ~azure.ai.language.conversations.authoring.models.ProjectKind
+        :paramtype project_kind: str or
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringProjectKind
         :keyword top: The number of result items to return. Default value is None.
         :paramtype top: int
         :keyword skip: The number of result items to skip. Default value is None.
         :paramtype skip: int
-        :return: An iterator like instance of AnalyzeConversationAuthoringTrainingConfigVersion
+        :return: An iterator like instance of ConversationAuthoringTrainingConfigVersion
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringTrainingConfigVersion]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.language.conversations.authoring.models.ConversationAuthoringTrainingConfigVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.AnalyzeConversationAuthoringTrainingConfigVersion]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.ConversationAuthoringTrainingConfigVersion]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5472,7 +5445,7 @@ class _AuthoringClientOperationsMixin(
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_authoring_conversation_authoring_list_training_config_versions_request(
+                _request = build_authoring_list_training_config_versions_request(
                     project_kind=project_kind,
                     top=top,
                     skip=skip,
@@ -5509,7 +5482,7 @@ class _AuthoringClientOperationsMixin(
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.AnalyzeConversationAuthoringTrainingConfigVersion], deserialized.get("value", [])
+                List[_models.ConversationAuthoringTrainingConfigVersion], deserialized.get("value", [])
             )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -5533,9 +5506,9 @@ class _AuthoringClientOperationsMixin(
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def conversation_authoring_list_training_jobs(  # pylint: disable=name-too-long
+    def list_training_jobs(
         self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> AsyncItemPaged["_models.AnalyzeConversationAuthoringTrainingJobState"]:
+    ) -> AsyncItemPaged["_models.ConversationAuthoringTrainingState"]:
         """Lists the non-expired training jobs created for a project.
 
         :param project_name: The new project name. Required.
@@ -5544,16 +5517,16 @@ class _AuthoringClientOperationsMixin(
         :paramtype top: int
         :keyword skip: The number of result items to skip. Default value is None.
         :paramtype skip: int
-        :return: An iterator like instance of AnalyzeConversationAuthoringTrainingJobState
+        :return: An iterator like instance of ConversationAuthoringTrainingState
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringTrainingJobState]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.language.conversations.authoring.models.ConversationAuthoringTrainingState]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.AnalyzeConversationAuthoringTrainingJobState]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.ConversationAuthoringTrainingState]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5566,7 +5539,7 @@ class _AuthoringClientOperationsMixin(
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_authoring_conversation_authoring_list_training_jobs_request(
+                _request = build_authoring_list_training_jobs_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
@@ -5602,9 +5575,7 @@ class _AuthoringClientOperationsMixin(
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.AnalyzeConversationAuthoringTrainingJobState], deserialized.get("value", [])
-            )
+            list_of_elem = _deserialize(List[_models.ConversationAuthoringTrainingState], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -5627,9 +5598,9 @@ class _AuthoringClientOperationsMixin(
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def conversation_authoring_list_trained_models(  # pylint: disable=name-too-long
+    def list_trained_models(
         self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> AsyncItemPaged["_models.AnalyzeConversationAuthoringProjectTrainedModel"]:
+    ) -> AsyncItemPaged["_models.ConversationAuthoringProjectTrainedModel"]:
         """Lists the trained models belonging to a project.
 
         :param project_name: The new project name. Required.
@@ -5638,16 +5609,16 @@ class _AuthoringClientOperationsMixin(
         :paramtype top: int
         :keyword skip: The number of result items to skip. Default value is None.
         :paramtype skip: int
-        :return: An iterator like instance of AnalyzeConversationAuthoringProjectTrainedModel
+        :return: An iterator like instance of ConversationAuthoringProjectTrainedModel
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringProjectTrainedModel]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.language.conversations.authoring.models.ConversationAuthoringProjectTrainedModel]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.AnalyzeConversationAuthoringProjectTrainedModel]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.ConversationAuthoringProjectTrainedModel]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5660,7 +5631,7 @@ class _AuthoringClientOperationsMixin(
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_authoring_conversation_authoring_list_trained_models_request(
+                _request = build_authoring_list_trained_models_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
@@ -5697,7 +5668,7 @@ class _AuthoringClientOperationsMixin(
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.AnalyzeConversationAuthoringProjectTrainedModel], deserialized.get("value", [])
+                List[_models.ConversationAuthoringProjectTrainedModel], deserialized.get("value", [])
             )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -5726,9 +5697,9 @@ class _AuthoringClientOperationsMixin(
         params_added_on={"2024-11-15-preview": ["api_version", "project_name", "top", "skip", "maxpagesize", "accept"]},
         api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
     )
-    def conversation_authoring_list_exported_models(  # pylint: disable=name-too-long
+    def list_exported_models(
         self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> AsyncItemPaged["_models.AnalyzeConversationAuthoringExportedTrainedModel"]:
+    ) -> AsyncItemPaged["_models.ConversationAuthoringExportedTrainedModel"]:
         """Lists the exported models belonging to a project.
 
         :param project_name: The new project name. Required.
@@ -5737,16 +5708,16 @@ class _AuthoringClientOperationsMixin(
         :paramtype top: int
         :keyword skip: The number of result items to skip. Default value is None.
         :paramtype skip: int
-        :return: An iterator like instance of AnalyzeConversationAuthoringExportedTrainedModel
+        :return: An iterator like instance of ConversationAuthoringExportedTrainedModel
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringExportedTrainedModel]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.language.conversations.authoring.models.ConversationAuthoringExportedTrainedModel]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.AnalyzeConversationAuthoringExportedTrainedModel]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.ConversationAuthoringExportedTrainedModel]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5759,7 +5730,7 @@ class _AuthoringClientOperationsMixin(
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_authoring_conversation_authoring_list_exported_models_request(
+                _request = build_authoring_list_exported_models_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
@@ -5796,7 +5767,7 @@ class _AuthoringClientOperationsMixin(
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.AnalyzeConversationAuthoringExportedTrainedModel], deserialized.get("value", [])
+                List[_models.ConversationAuthoringExportedTrainedModel], deserialized.get("value", [])
             )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore

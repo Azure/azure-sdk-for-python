@@ -167,7 +167,7 @@ class TestAuthoringConversationAuthoringProjectOperations(AuthoringClientTestBas
                 },
                 "projectFileVersion": "str",
                 "stringIndexType": "str",
-                "assets": "analyze_conversation_authoring_exported_project_assets",
+                "assets": "conversation_authoring_exported_project_asset",
             },
         ).result()  # call '.result()' to poll until service return final result
 
@@ -200,9 +200,9 @@ class TestAuthoringConversationAuthoringProjectOperations(AuthoringClientTestBas
 
     @AuthoringPreparer()
     @recorded_by_proxy
-    def test_conversation_authoring_project_copy_project_authorization(self, authoring_endpoint):
+    def test_conversation_authoring_project_authorize_project_copy(self, authoring_endpoint):
         client = self.create_client(endpoint=authoring_endpoint)
-        response = client.conversation_authoring_project.copy_project_authorization(
+        response = client.conversation_authoring_project.authorize_project_copy(
             project_name="str",
             body={"projectKind": "str", "allowOverwrite": bool, "storageInputContainerName": "str"},
             project_kind="str",

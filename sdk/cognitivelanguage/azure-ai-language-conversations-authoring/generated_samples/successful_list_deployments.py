@@ -22,7 +22,7 @@ def main():
         credential="CREDENTIAL",
     )
 
-    response = client.conversation_authoring_list_deployments(
+    response = client.list_deployments(
         project_name="EmailApp",
     )
     for item in response:

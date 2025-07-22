@@ -15,9 +15,9 @@ from testpreparer_async import AuthoringClientTestBaseAsync
 class TestAuthoringAsync(AuthoringClientTestBaseAsync):
     @AuthoringPreparer()
     @recorded_by_proxy_async
-    async def test_conversation_authoring_list_deployments(self, authoring_endpoint):
+    async def test_list_deployments(self, authoring_endpoint):
         client = self.create_async_client(endpoint=authoring_endpoint)
-        response = client.conversation_authoring_list_deployments(
+        response = client.list_deployments(
             project_name="str",
         )
         result = [r async for r in response]
@@ -26,18 +26,18 @@ class TestAuthoringAsync(AuthoringClientTestBaseAsync):
 
     @AuthoringPreparer()
     @recorded_by_proxy_async
-    async def test_conversation_authoring_list_projects(self, authoring_endpoint):
+    async def test_list_projects(self, authoring_endpoint):
         client = self.create_async_client(endpoint=authoring_endpoint)
-        response = client.conversation_authoring_list_projects()
+        response = client.list_projects()
         result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
     @AuthoringPreparer()
     @recorded_by_proxy_async
-    async def test_conversation_authoring_list_supported_languages(self, authoring_endpoint):
+    async def test_list_supported_languages(self, authoring_endpoint):
         client = self.create_async_client(endpoint=authoring_endpoint)
-        response = client.conversation_authoring_list_supported_languages(
+        response = client.list_supported_languages(
             project_kind="str",
         )
         result = [r async for r in response]
@@ -46,18 +46,18 @@ class TestAuthoringAsync(AuthoringClientTestBaseAsync):
 
     @AuthoringPreparer()
     @recorded_by_proxy_async
-    async def test_conversation_authoring_list_assigned_resource_deployments(self, authoring_endpoint):
+    async def test_list_assigned_resource_deployments(self, authoring_endpoint):
         client = self.create_async_client(endpoint=authoring_endpoint)
-        response = client.conversation_authoring_list_assigned_resource_deployments()
+        response = client.list_assigned_resource_deployments()
         result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
     @AuthoringPreparer()
     @recorded_by_proxy_async
-    async def test_conversation_authoring_list_deployment_resources(self, authoring_endpoint):
+    async def test_list_deployment_resources(self, authoring_endpoint):
         client = self.create_async_client(endpoint=authoring_endpoint)
-        response = client.conversation_authoring_list_deployment_resources(
+        response = client.list_deployment_resources(
             project_name="str",
         )
         result = [r async for r in response]
@@ -66,18 +66,18 @@ class TestAuthoringAsync(AuthoringClientTestBaseAsync):
 
     @AuthoringPreparer()
     @recorded_by_proxy_async
-    async def test_conversation_authoring_list_supported_prebuilt_entities(self, authoring_endpoint):
+    async def test_list_supported_prebuilt_entities(self, authoring_endpoint):
         client = self.create_async_client(endpoint=authoring_endpoint)
-        response = client.conversation_authoring_list_supported_prebuilt_entities()
+        response = client.list_supported_prebuilt_entities()
         result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
     @AuthoringPreparer()
     @recorded_by_proxy_async
-    async def test_conversation_authoring_list_training_config_versions(self, authoring_endpoint):
+    async def test_list_training_config_versions(self, authoring_endpoint):
         client = self.create_async_client(endpoint=authoring_endpoint)
-        response = client.conversation_authoring_list_training_config_versions(
+        response = client.list_training_config_versions(
             project_kind="str",
         )
         result = [r async for r in response]
@@ -86,9 +86,9 @@ class TestAuthoringAsync(AuthoringClientTestBaseAsync):
 
     @AuthoringPreparer()
     @recorded_by_proxy_async
-    async def test_conversation_authoring_list_training_jobs(self, authoring_endpoint):
+    async def test_list_training_jobs(self, authoring_endpoint):
         client = self.create_async_client(endpoint=authoring_endpoint)
-        response = client.conversation_authoring_list_training_jobs(
+        response = client.list_training_jobs(
             project_name="str",
         )
         result = [r async for r in response]
@@ -97,9 +97,9 @@ class TestAuthoringAsync(AuthoringClientTestBaseAsync):
 
     @AuthoringPreparer()
     @recorded_by_proxy_async
-    async def test_conversation_authoring_list_trained_models(self, authoring_endpoint):
+    async def test_list_trained_models(self, authoring_endpoint):
         client = self.create_async_client(endpoint=authoring_endpoint)
-        response = client.conversation_authoring_list_trained_models(
+        response = client.list_trained_models(
             project_name="str",
         )
         result = [r async for r in response]
@@ -108,9 +108,9 @@ class TestAuthoringAsync(AuthoringClientTestBaseAsync):
 
     @AuthoringPreparer()
     @recorded_by_proxy_async
-    async def test_conversation_authoring_list_exported_models(self, authoring_endpoint):
+    async def test_list_exported_models(self, authoring_endpoint):
         client = self.create_async_client(endpoint=authoring_endpoint)
-        response = client.conversation_authoring_list_exported_models(
+        response = client.list_exported_models(
             project_name="str",
         )
         result = [r async for r in response]

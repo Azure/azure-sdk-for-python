@@ -22,7 +22,7 @@ def main():
         credential="CREDENTIAL",
     )
 
-    response = client.conversation_authoring_list_supported_languages(
+    response = client.list_supported_languages(
         project_kind="Conversation",
     )
     for item in response:
