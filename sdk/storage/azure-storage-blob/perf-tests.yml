@@ -5,8 +5,8 @@ Project: sdk/storage/azure-storage-blob
 PrimaryPackage: azure-storage-blob
 
 PackageVersions:
-- azure-core: 1.31.0
-  azure-storage-blob: 12.18.3
+- azure-core: 1.35.0
+  azure-storage-blob: 12.26.0
 - azure-core: source
   azure-storage-blob: source
 
@@ -14,10 +14,9 @@ Tests:
 - Test: download
   Class: DownloadTest
   Arguments: &sizes
-  - --size 10240 --parallel 1
-  - --size 10240 --parallel 1 --use-entra-id
+  - --size 10240 --parallel 64
+  - --size 10240 --parallel 64 --use-entra-id
   - --size 10485760 --parallel 32
-  - --size 1073741824 --parallel 1 --warmup 60 --duration 60
   - --size 1073741824 --parallel 8 --warmup 60 --duration 60
 
 - Test: upload
