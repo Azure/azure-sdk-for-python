@@ -32,7 +32,6 @@ from ..._operations._operations import (
     build_web_pub_sub_service_add_connection_to_group_request,
     build_web_pub_sub_service_add_connections_to_groups_request,
     build_web_pub_sub_service_add_user_to_group_request,
-    build_web_pub_sub_service_check_permission_request,
     build_web_pub_sub_service_close_all_connections_request,
     build_web_pub_sub_service_close_connection_request,
     build_web_pub_sub_service_close_group_connections_request,
@@ -42,6 +41,7 @@ from ..._operations._operations import (
     build_web_pub_sub_service_get_service_status_request,
     build_web_pub_sub_service_grant_permission_request,
     build_web_pub_sub_service_group_exists_request,
+    build_web_pub_sub_service_has_permission_request,
     build_web_pub_sub_service_list_connections_request,
     build_web_pub_sub_service_remove_connection_from_all_groups_request,
     build_web_pub_sub_service_remove_connection_from_group_request,
@@ -1047,7 +1047,7 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def check_permission(
+    async def has_permission(
         self,
         permission: Union[str, _models.WebPubSubPermission],
         connection_id: str,
@@ -1085,7 +1085,7 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_web_pub_sub_service_check_permission_request(
+        _request = build_web_pub_sub_service_has_permission_request(
             permission=permission,
             connection_id=connection_id,
             hub=self._config.hub,
