@@ -2947,6 +2947,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     feed_options['excludedLocations'] = options['excludedLocations']
                 await change_feed_state.populate_request_headers_async(self._routing_map_provider, headers,
                                                                        feed_options)
+                request_params.headers = headers
 
             result, last_response_headers = await self.__Get(path, request_params, headers, **kwargs)
             self.last_response_headers = last_response_headers
