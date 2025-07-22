@@ -22,15 +22,11 @@ def mock_credential():
 class TestRedTeamLanguageSupport:
     """Test language support functionality in RedTeam class."""
 
-    def test_red_team_init_default_language(
-        self, mock_azure_ai_project, mock_credential
-    ):
+    def test_red_team_init_default_language(self, mock_azure_ai_project, mock_credential):
         """Test that RedTeam initializes with default English language."""
         with patch("azure.ai.evaluation.red_team._red_team.GeneratedRAIClient"), patch(
             "azure.ai.evaluation.red_team._red_team.setup_logger"
-        ) as mock_setup_logger, patch(
-            "azure.ai.evaluation.red_team._red_team.initialize_pyrit"
-        ), patch(
+        ) as mock_setup_logger, patch("azure.ai.evaluation.red_team._red_team.initialize_pyrit"), patch(
             "azure.ai.evaluation.red_team._red_team._AttackObjectiveGenerator"
         ):
 
@@ -47,15 +43,11 @@ class TestRedTeamLanguageSupport:
             # Verify default language is English
             assert agent.language == SupportedLanguages.English
 
-    def test_red_team_init_custom_language(
-        self, mock_azure_ai_project, mock_credential
-    ):
+    def test_red_team_init_custom_language(self, mock_azure_ai_project, mock_credential):
         """Test that RedTeam initializes with custom language."""
         with patch("azure.ai.evaluation.red_team._red_team.GeneratedRAIClient"), patch(
             "azure.ai.evaluation.red_team._red_team.setup_logger"
-        ) as mock_setup_logger, patch(
-            "azure.ai.evaluation.red_team._red_team.initialize_pyrit"
-        ), patch(
+        ) as mock_setup_logger, patch("azure.ai.evaluation.red_team._red_team.initialize_pyrit"), patch(
             "azure.ai.evaluation.red_team._red_team._AttackObjectiveGenerator"
         ):
 
@@ -87,15 +79,11 @@ class TestRedTeamLanguageSupport:
             SupportedLanguages.SimplifiedChinese,
         ],
     )
-    def test_red_team_init_all_supported_languages(
-        self, mock_azure_ai_project, mock_credential, language
-    ):
+    def test_red_team_init_all_supported_languages(self, mock_azure_ai_project, mock_credential, language):
         """Test that RedTeam initializes correctly with all supported languages."""
         with patch("azure.ai.evaluation.red_team._red_team.GeneratedRAIClient"), patch(
             "azure.ai.evaluation.red_team._red_team.setup_logger"
-        ) as mock_setup_logger, patch(
-            "azure.ai.evaluation.red_team._red_team.initialize_pyrit"
-        ), patch(
+        ) as mock_setup_logger, patch("azure.ai.evaluation.red_team._red_team.initialize_pyrit"), patch(
             "azure.ai.evaluation.red_team._red_team._AttackObjectiveGenerator"
         ):
 
@@ -113,19 +101,13 @@ class TestRedTeamLanguageSupport:
             assert agent.language == language
 
     @pytest.mark.asyncio
-    async def test_get_attack_objectives_passes_language(
-        self, mock_azure_ai_project, mock_credential
-    ):
+    async def test_get_attack_objectives_passes_language(self, mock_azure_ai_project, mock_credential):
         """Test that _get_attack_objectives passes language parameter to generated RAI client."""
-        with patch(
-            "azure.ai.evaluation.red_team._red_team.GeneratedRAIClient"
-        ) as mock_rai_client_class, patch(
+        with patch("azure.ai.evaluation.red_team._red_team.GeneratedRAIClient") as mock_rai_client_class, patch(
             "azure.ai.evaluation.red_team._red_team.setup_logger"
-        ) as mock_setup_logger, patch(
-            "azure.ai.evaluation.red_team._red_team.initialize_pyrit"
-        ), patch(
+        ) as mock_setup_logger, patch("azure.ai.evaluation.red_team._red_team.initialize_pyrit"), patch(
             "azure.ai.evaluation.red_team._red_team._AttackObjectiveGenerator"
-        ):
+        ) as mock_attack_obj_generator_class:
 
             mock_logger = MagicMock()
             mock_setup_logger.return_value = mock_logger
@@ -142,6 +124,13 @@ class TestRedTeamLanguageSupport:
                 ]
             )
             mock_rai_client_class.return_value = mock_rai_client
+
+            # Set up mock attack objective generator instance
+            mock_attack_obj_generator = MagicMock()
+            mock_attack_obj_generator.num_objectives = 5
+            mock_attack_obj_generator.custom_attack_seed_prompts = None
+            mock_attack_obj_generator.validated_prompts = False
+            mock_attack_obj_generator_class.return_value = mock_attack_obj_generator
 
             # Create RedTeam instance with Spanish language
             agent = RedTeam(
@@ -168,19 +157,13 @@ class TestRedTeamLanguageSupport:
             assert call_args.kwargs["language"] == "es"  # Spanish language code
 
     @pytest.mark.asyncio
-    async def test_get_attack_objectives_tense_strategy_passes_language(
-        self, mock_azure_ai_project, mock_credential
-    ):
+    async def test_get_attack_objectives_tense_strategy_passes_language(self, mock_azure_ai_project, mock_credential):
         """Test that _get_attack_objectives passes language parameter for tense strategy."""
-        with patch(
-            "azure.ai.evaluation.red_team._red_team.GeneratedRAIClient"
-        ) as mock_rai_client_class, patch(
+        with patch("azure.ai.evaluation.red_team._red_team.GeneratedRAIClient") as mock_rai_client_class, patch(
             "azure.ai.evaluation.red_team._red_team.setup_logger"
-        ) as mock_setup_logger, patch(
-            "azure.ai.evaluation.red_team._red_team.initialize_pyrit"
-        ), patch(
+        ) as mock_setup_logger, patch("azure.ai.evaluation.red_team._red_team.initialize_pyrit"), patch(
             "azure.ai.evaluation.red_team._red_team._AttackObjectiveGenerator"
-        ):
+        ) as mock_attack_obj_generator_class:
 
             mock_logger = MagicMock()
             mock_setup_logger.return_value = mock_logger
@@ -197,6 +180,13 @@ class TestRedTeamLanguageSupport:
                 ]
             )
             mock_rai_client_class.return_value = mock_rai_client
+
+            # Set up mock attack objective generator instance
+            mock_attack_obj_generator = MagicMock()
+            mock_attack_obj_generator.num_objectives = 5
+            mock_attack_obj_generator.custom_attack_seed_prompts = None
+            mock_attack_obj_generator.validated_prompts = False
+            mock_attack_obj_generator_class.return_value = mock_attack_obj_generator
 
             # Create RedTeam instance with French language
             agent = RedTeam(
