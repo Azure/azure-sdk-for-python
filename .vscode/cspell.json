@@ -1780,7 +1780,8 @@
         "wday",
         "mday",
         "deseralize",
-        "astimezone"
+        "astimezone",
+        "mrenclave"
       ]
     },
     {
