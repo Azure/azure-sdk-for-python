@@ -7,27 +7,6 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List
-
-__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
-
-
-def patch_sdk():
-    """Do not remove from this file.
-
-    `patch_sdk` is a last resort escape hatch that allows you to do customizations
-    you can't accomplish using the techniques described in
-    https://aka.ms/azsdk/python/dpcodegen/python/customize
-    """
-# coding=utf-8
-# --------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for license information.
-# --------------------------------------------------------------------------
-"""Customize generated code here.
-
-Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
-"""
 from typing import Any, Union, Optional, Dict, List, IO, overload
 from azure.core.credentials import AzureKeyCredential
 from azure.core.async_paging import AsyncItemPaged
@@ -43,10 +22,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ._operations import (
-    _WebPubSubServiceClientOperationsMixin as WebPubSubServiceClientOperationsMixinGenerated,
-    JSON
-)
+from ._operations import _WebPubSubServiceClientOperationsMixin as WebPubSubServiceClientOperationsMixinGenerated, JSON
 from ..._operations._patch import (
     get_token_by_key,
     build_web_pub_sub_service_send_to_all_request,
@@ -55,6 +31,7 @@ from ..._operations._patch import (
     build_web_pub_sub_service_send_to_group_request,
 )
 from ...models import GroupMember
+
 
 class _WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixinGenerated):
     @distributed_trace_async
@@ -151,13 +128,7 @@ class _WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMix
     get_client_access_token.metadata = {"url": "/api/hubs/{hub}/:generateToken"}  # type: ignore
 
     @distributed_trace
-    def list_connections(
-        self,
-        *,
-        group: str,
-        top: Optional[int] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged[GroupMember]:
+    def list_connections(self, *, group: str, top: Optional[int] = None, **kwargs: Any) -> AsyncItemPaged[GroupMember]:
         """List connections in a group.
 
         List connections in a group.
@@ -185,36 +156,29 @@ class _WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMix
 
 
         """
-        paged_json = super().list_connections(
-            group=group,
-            top=top,
-            **kwargs
-        )
+        paged_json = super().list_connections(group=group, top=top, **kwargs)
 
         class GroupMemberPaged(AsyncItemPaged):
             def __aiter__(self_inner):
                 async def generator():
                     async for item in paged_json:
-                        yield GroupMember(
-                            connection_id=item.get("connectionId"),
-                            user_id=item.get("userId")
-                        )
+                        yield GroupMember(connection_id=item.get("connectionId"), user_id=item.get("userId"))
+
                 return generator()
 
             def by_page(self_inner, continuation_token: Optional[str] = None):
                 async def page_generator():
                     async for page in paged_json.by_page(continuation_token=continuation_token):
+
                         async def group_member_page():
                             async for item in page:
-                                yield GroupMember(
-                                    connection_id=item.get("connectionId"),
-                                    user_id=item.get("userId")
-                                )
+                                yield GroupMember(connection_id=item.get("connectionId"), user_id=item.get("userId"))
+
                         yield group_member_page()
+
                 return page_generator()
 
         return GroupMemberPaged()
-
 
     @overload
     async def send_to_all(  # pylint: disable=inconsistent-return-statements
@@ -875,7 +839,9 @@ class _WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMix
             return cls(pipeline_response, None, {})
 
 
-__all__: List[str] = ["_WebPubSubServiceClientOperationsMixin"]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = [
+    "_WebPubSubServiceClientOperationsMixin"
+]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
