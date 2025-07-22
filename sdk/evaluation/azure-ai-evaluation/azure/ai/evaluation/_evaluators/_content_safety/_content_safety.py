@@ -33,8 +33,8 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
     :type self_harm_threshold: int
     :param hate_unfairness_threshold: The threshold for hate/unfairness evaluation. Default is 3.
     :type hate_unfairness_threshold: int
-    :param _evaluate_query: Whether to also evaluate the query in addition to the response. Default is False.
-    :type _evaluate_query: bool
+    :param evaluate_query: Whether to also evaluate the query in addition to the response. Default is False.
+    :type evaluate_query: bool
     :param kwargs: Additional arguments to pass to the evaluator.
     :type kwargs: Any
     :return: A function that evaluates content-safety metrics for "question-answering" scenario.
@@ -81,7 +81,7 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
         sexual_threshold: int = 3,
         self_harm_threshold: int = 3,
         hate_unfairness_threshold: int = 3,
-        _evaluate_query: bool = False,
+        evaluate_query: bool = False,
         **kwargs,
     ):
         # Type checking
@@ -96,14 +96,14 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
 
         evaluators = [
             ViolenceEvaluator(
-                credential, azure_ai_project, threshold=violence_threshold, _evaluate_query=_evaluate_query
+                credential, azure_ai_project, threshold=violence_threshold, evaluate_query=evaluate_query
             ),
-            SexualEvaluator(credential, azure_ai_project, threshold=sexual_threshold, _evaluate_query=_evaluate_query),
+            SexualEvaluator(credential, azure_ai_project, threshold=sexual_threshold, evaluate_query=evaluate_query),
             SelfHarmEvaluator(
-                credential, azure_ai_project, threshold=self_harm_threshold, _evaluate_query=_evaluate_query
+                credential, azure_ai_project, threshold=self_harm_threshold, evaluate_query=evaluate_query
             ),
             HateUnfairnessEvaluator(
-                credential, azure_ai_project, threshold=hate_unfairness_threshold, _evaluate_query=_evaluate_query
+                credential, azure_ai_project, threshold=hate_unfairness_threshold, evaluate_query=evaluate_query
             ),
         ]
         super().__init__(evaluators=evaluators, **kwargs)

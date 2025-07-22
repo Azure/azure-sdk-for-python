@@ -41,9 +41,9 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
     :type conversation_aggregation_type: ~azure.ai.evaluation._AggregationType
     :param threshold: The threshold for the evaluation. Default is 3.
     :type threshold: Optional[int]
-    :param _evaluate_query: If True, the query will be included in the evaluation data when evaluating
+    :param evaluate_query: If True, the query will be included in the evaluation data when evaluating
         query-response pairs. If False, only the response will be evaluated. Default is False.
-    :type _evaluate_query: bool
+    :type evaluate_query: bool
     :param _higher_is_better: If True, higher scores are better. Default is True.
     :type _higher_is_better: Optional[bool]
     """
@@ -57,8 +57,10 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         eval_last_turn: bool = False,
         conversation_aggregation_type: _AggregationType = _AggregationType.MEAN,
         threshold: int = 3,
-        _evaluate_query: bool = False,
+        evaluate_query: bool = False,
         _higher_is_better: Optional[bool] = False,
+        *,
+        _evaluate_query: Optional[bool] = None,
     ):
         super().__init__(
             eval_last_turn=eval_last_turn,
@@ -70,7 +72,21 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         self._azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self._credential = credential
         self._threshold = threshold
-        self._evaluate_query = _evaluate_query
+        
+        # Handle backward compatibility with _evaluate_query parameter
+        if _evaluate_query is not None:
+            import warnings
+            warnings.warn(
+                "The '_evaluate_query' parameter is deprecated. Use 'evaluate_query' instead.",
+                DeprecationWarning,
+                stacklevel=2
+            )
+            # If both are provided, that's an error
+            if evaluate_query != False:  # evaluate_query was explicitly set to something other than default
+                raise ValueError("Cannot specify both 'evaluate_query' and '_evaluate_query'. Use 'evaluate_query'.")
+            evaluate_query = _evaluate_query
+        
+        self._evaluate_query = evaluate_query
         self._higher_is_better = _higher_is_better
 
     @override
