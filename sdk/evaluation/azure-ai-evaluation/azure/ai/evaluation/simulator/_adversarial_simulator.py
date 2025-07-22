@@ -239,8 +239,11 @@ class AdversarialSimulator:
             # So randomize a the selection instead of the parameter list directly,
             # or a potentially large deep copy.
             if randomization_seed is not None:
-                random.seed(randomization_seed)
-            random.shuffle(templates)
+                # Create a local random instance to avoid polluting global state
+                local_random = random.Random(randomization_seed)
+                local_random.shuffle(templates)
+            else:
+                random.shuffle(templates)
 
         # Prepare task parameters based on scenario - but use a single append call for all scenarios
         tasks = []

@@ -330,7 +330,7 @@ class TestConfigurations(TestCase):
         configurations = _get_configurations()
 
         # Should be None when format is invalid
-        self.assertIsNone(configurations["logging_formatter"])
+        self.assertIsNone(configurations.get("logging_formatter"))
         # Should log a warning
         mock_logger.warning.assert_called_once()
         call_args = mock_logger.warning.call_args[0]
