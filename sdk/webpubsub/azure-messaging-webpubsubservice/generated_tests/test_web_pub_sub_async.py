@@ -7,25 +7,25 @@
 # --------------------------------------------------------------------------
 import pytest
 from devtools_testutils.aio import recorded_by_proxy_async
-from testpreparer import WebPubSubServicePreparer
-from testpreparer_async import WebPubSubServiceClientTestBaseAsync
+from testpreparer import WebPubSubPreparer
+from testpreparer_async import WebPubSubClientTestBaseAsync
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestWebPubSubServiceAsync(WebPubSubServiceClientTestBaseAsync):
-    @WebPubSubServicePreparer()
+class TestWebPubSubAsync(WebPubSubClientTestBaseAsync):
+    @WebPubSubPreparer()
     @recorded_by_proxy_async
-    async def test_get_service_status(self, webpubsubservice_endpoint):
-        client = self.create_async_client(endpoint=webpubsubservice_endpoint)
+    async def test_get_service_status(self, webpubsub_endpoint):
+        client = self.create_async_client(endpoint=webpubsub_endpoint)
         response = await client.get_service_status()
 
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy_async
-    async def test_add_connections_to_groups(self, webpubsubservice_endpoint):
-        client = self.create_async_client(endpoint=webpubsubservice_endpoint)
+    async def test_add_connections_to_groups(self, webpubsub_endpoint):
+        client = self.create_async_client(endpoint=webpubsub_endpoint)
         response = await client.add_connections_to_groups(
             groups_to_add={"filter": "str", "groups": ["str"]},
         )
@@ -33,28 +33,28 @@ class TestWebPubSubServiceAsync(WebPubSubServiceClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy_async
-    async def test_close_all_connections(self, webpubsubservice_endpoint):
-        client = self.create_async_client(endpoint=webpubsubservice_endpoint)
+    async def test_close_all_connections(self, webpubsub_endpoint):
+        client = self.create_async_client(endpoint=webpubsub_endpoint)
         response = await client.close_all_connections()
 
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy_async
-    async def test_get_client_access_token(self, webpubsubservice_endpoint):
-        client = self.create_async_client(endpoint=webpubsubservice_endpoint)
+    async def test_get_client_access_token(self, webpubsub_endpoint):
+        client = self.create_async_client(endpoint=webpubsub_endpoint)
         response = await client.get_client_access_token()
 
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy_async
-    async def test_remove_connections_from_groups(self, webpubsubservice_endpoint):
-        client = self.create_async_client(endpoint=webpubsubservice_endpoint)
+    async def test_remove_connections_from_groups(self, webpubsub_endpoint):
+        client = self.create_async_client(endpoint=webpubsub_endpoint)
         response = await client.remove_connections_from_groups(
             groups_to_remove={"filter": "str", "groups": ["str"]},
         )
@@ -62,10 +62,10 @@ class TestWebPubSubServiceAsync(WebPubSubServiceClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy_async
-    async def test_send_to_all(self, webpubsubservice_endpoint):
-        client = self.create_async_client(endpoint=webpubsubservice_endpoint)
+    async def test_send_to_all(self, webpubsub_endpoint):
+        client = self.create_async_client(endpoint=webpubsub_endpoint)
         response = await client.send_to_all(
             message=bytes("bytes", encoding="utf-8"),
             content_type="str",
@@ -74,10 +74,10 @@ class TestWebPubSubServiceAsync(WebPubSubServiceClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy_async
-    async def test_close_connection(self, webpubsubservice_endpoint):
-        client = self.create_async_client(endpoint=webpubsubservice_endpoint)
+    async def test_close_connection(self, webpubsub_endpoint):
+        client = self.create_async_client(endpoint=webpubsub_endpoint)
         response = await client.close_connection(
             connection_id="str",
         )
@@ -85,10 +85,10 @@ class TestWebPubSubServiceAsync(WebPubSubServiceClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy_async
-    async def test_connection_exists(self, webpubsubservice_endpoint):
-        client = self.create_async_client(endpoint=webpubsubservice_endpoint)
+    async def test_connection_exists(self, webpubsub_endpoint):
+        client = self.create_async_client(endpoint=webpubsub_endpoint)
         response = await client.connection_exists(
             connection_id="str",
         )
@@ -96,10 +96,10 @@ class TestWebPubSubServiceAsync(WebPubSubServiceClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy_async
-    async def test_send_to_connection(self, webpubsubservice_endpoint):
-        client = self.create_async_client(endpoint=webpubsubservice_endpoint)
+    async def test_send_to_connection(self, webpubsub_endpoint):
+        client = self.create_async_client(endpoint=webpubsub_endpoint)
         response = await client.send_to_connection(
             connection_id="str",
             message=bytes("bytes", encoding="utf-8"),
@@ -109,10 +109,10 @@ class TestWebPubSubServiceAsync(WebPubSubServiceClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy_async
-    async def test_remove_connection_from_all_groups(self, webpubsubservice_endpoint):
-        client = self.create_async_client(endpoint=webpubsubservice_endpoint)
+    async def test_remove_connection_from_all_groups(self, webpubsub_endpoint):
+        client = self.create_async_client(endpoint=webpubsub_endpoint)
         response = await client.remove_connection_from_all_groups(
             connection_id="str",
         )
@@ -120,10 +120,10 @@ class TestWebPubSubServiceAsync(WebPubSubServiceClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy_async
-    async def test_group_exists(self, webpubsubservice_endpoint):
-        client = self.create_async_client(endpoint=webpubsubservice_endpoint)
+    async def test_group_exists(self, webpubsub_endpoint):
+        client = self.create_async_client(endpoint=webpubsub_endpoint)
         response = await client.group_exists(
             group="str",
         )
@@ -131,10 +131,10 @@ class TestWebPubSubServiceAsync(WebPubSubServiceClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy_async
-    async def test_close_group_connections(self, webpubsubservice_endpoint):
-        client = self.create_async_client(endpoint=webpubsubservice_endpoint)
+    async def test_close_group_connections(self, webpubsub_endpoint):
+        client = self.create_async_client(endpoint=webpubsub_endpoint)
         response = await client.close_group_connections(
             group="str",
         )
@@ -142,10 +142,10 @@ class TestWebPubSubServiceAsync(WebPubSubServiceClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy_async
-    async def test_send_to_group(self, webpubsubservice_endpoint):
-        client = self.create_async_client(endpoint=webpubsubservice_endpoint)
+    async def test_send_to_group(self, webpubsub_endpoint):
+        client = self.create_async_client(endpoint=webpubsub_endpoint)
         response = await client.send_to_group(
             group="str",
             message=bytes("bytes", encoding="utf-8"),
@@ -155,21 +155,21 @@ class TestWebPubSubServiceAsync(WebPubSubServiceClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy_async
-    async def test_list_connections(self, webpubsubservice_endpoint):
-        client = self.create_async_client(endpoint=webpubsubservice_endpoint)
-        response = client.list_connections(
+    async def test_list_connections(self, webpubsub_endpoint):
+        client = self.create_async_client(endpoint=webpubsub_endpoint)
+        response = await client.list_connections(
             group="str",
         )
-        result = [r async for r in response]
+
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy_async
-    async def test_remove_connection_from_group(self, webpubsubservice_endpoint):
-        client = self.create_async_client(endpoint=webpubsubservice_endpoint)
+    async def test_remove_connection_from_group(self, webpubsub_endpoint):
+        client = self.create_async_client(endpoint=webpubsub_endpoint)
         response = await client.remove_connection_from_group(
             group="str",
             connection_id="str",
@@ -178,10 +178,10 @@ class TestWebPubSubServiceAsync(WebPubSubServiceClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy_async
-    async def test_add_connection_to_group(self, webpubsubservice_endpoint):
-        client = self.create_async_client(endpoint=webpubsubservice_endpoint)
+    async def test_add_connection_to_group(self, webpubsub_endpoint):
+        client = self.create_async_client(endpoint=webpubsub_endpoint)
         response = await client.add_connection_to_group(
             group="str",
             connection_id="str",
@@ -190,10 +190,10 @@ class TestWebPubSubServiceAsync(WebPubSubServiceClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy_async
-    async def test_revoke_permission(self, webpubsubservice_endpoint):
-        client = self.create_async_client(endpoint=webpubsubservice_endpoint)
+    async def test_revoke_permission(self, webpubsub_endpoint):
+        client = self.create_async_client(endpoint=webpubsub_endpoint)
         response = await client.revoke_permission(
             permission="str",
             connection_id="str",
@@ -202,10 +202,10 @@ class TestWebPubSubServiceAsync(WebPubSubServiceClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy_async
-    async def test_has_permission(self, webpubsubservice_endpoint):
-        client = self.create_async_client(endpoint=webpubsubservice_endpoint)
+    async def test_has_permission(self, webpubsub_endpoint):
+        client = self.create_async_client(endpoint=webpubsub_endpoint)
         response = await client.has_permission(
             permission="str",
             connection_id="str",
@@ -214,10 +214,10 @@ class TestWebPubSubServiceAsync(WebPubSubServiceClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy_async
-    async def test_grant_permission(self, webpubsubservice_endpoint):
-        client = self.create_async_client(endpoint=webpubsubservice_endpoint)
+    async def test_grant_permission(self, webpubsub_endpoint):
+        client = self.create_async_client(endpoint=webpubsub_endpoint)
         response = await client.grant_permission(
             permission="str",
             connection_id="str",
@@ -226,10 +226,10 @@ class TestWebPubSubServiceAsync(WebPubSubServiceClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy_async
-    async def test_user_exists(self, webpubsubservice_endpoint):
-        client = self.create_async_client(endpoint=webpubsubservice_endpoint)
+    async def test_user_exists(self, webpubsub_endpoint):
+        client = self.create_async_client(endpoint=webpubsub_endpoint)
         response = await client.user_exists(
             user_id="str",
         )
@@ -237,10 +237,10 @@ class TestWebPubSubServiceAsync(WebPubSubServiceClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy_async
-    async def test_close_user_connections(self, webpubsubservice_endpoint):
-        client = self.create_async_client(endpoint=webpubsubservice_endpoint)
+    async def test_close_user_connections(self, webpubsub_endpoint):
+        client = self.create_async_client(endpoint=webpubsub_endpoint)
         response = await client.close_user_connections(
             user_id="str",
         )
@@ -248,10 +248,10 @@ class TestWebPubSubServiceAsync(WebPubSubServiceClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy_async
-    async def test_send_to_user(self, webpubsubservice_endpoint):
-        client = self.create_async_client(endpoint=webpubsubservice_endpoint)
+    async def test_send_to_user(self, webpubsub_endpoint):
+        client = self.create_async_client(endpoint=webpubsub_endpoint)
         response = await client.send_to_user(
             user_id="str",
             message=bytes("bytes", encoding="utf-8"),
@@ -261,10 +261,10 @@ class TestWebPubSubServiceAsync(WebPubSubServiceClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy_async
-    async def test_remove_user_from_all_groups(self, webpubsubservice_endpoint):
-        client = self.create_async_client(endpoint=webpubsubservice_endpoint)
+    async def test_remove_user_from_all_groups(self, webpubsub_endpoint):
+        client = self.create_async_client(endpoint=webpubsub_endpoint)
         response = await client.remove_user_from_all_groups(
             user_id="str",
         )
@@ -272,10 +272,10 @@ class TestWebPubSubServiceAsync(WebPubSubServiceClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy_async
-    async def test_remove_user_from_group(self, webpubsubservice_endpoint):
-        client = self.create_async_client(endpoint=webpubsubservice_endpoint)
+    async def test_remove_user_from_group(self, webpubsub_endpoint):
+        client = self.create_async_client(endpoint=webpubsub_endpoint)
         response = await client.remove_user_from_group(
             group="str",
             user_id="str",
@@ -284,10 +284,10 @@ class TestWebPubSubServiceAsync(WebPubSubServiceClientTestBaseAsync):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy_async
-    async def test_add_user_to_group(self, webpubsubservice_endpoint):
-        client = self.create_async_client(endpoint=webpubsubservice_endpoint)
+    async def test_add_user_to_group(self, webpubsub_endpoint):
+        client = self.create_async_client(endpoint=webpubsub_endpoint)
         response = await client.add_user_to_group(
             group="str",
             user_id="str",

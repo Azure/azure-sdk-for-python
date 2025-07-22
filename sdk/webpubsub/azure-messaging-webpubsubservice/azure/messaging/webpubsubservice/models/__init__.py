@@ -17,7 +17,6 @@ from ._models import (  # type: ignore
     AddToGroupsRequest,
     ClientTokenResponse,
     GroupMember,
-    GroupMemberPagedValues,
     RemoveFromGroupsRequest,
 )
 
@@ -35,7 +34,6 @@ __all__ = [
     "AddToGroupsRequest",
     "ClientTokenResponse",
     "GroupMember",
-    "GroupMemberPagedValues",
     "RemoveFromGroupsRequest",
     "MessageContentType",
     "ResponseContentType",
