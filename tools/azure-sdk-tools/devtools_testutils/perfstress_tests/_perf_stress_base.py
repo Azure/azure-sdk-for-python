@@ -230,10 +230,11 @@ class _PerfTestBase(_PerfTestABC):
         tenant_id = os.environ.get("AZURESUBSCRIPTION_TENANT_ID")
         system_access_token = os.environ.get("SYSTEM_ACCESSTOKEN")
         if service_connection_id and client_id and tenant_id and system_access_token:
-            from azure.identity import AzurePipelinesCredential
-
             if is_async:
                 from azure.identity.aio import AzurePipelinesCredential
+            else:
+                from azure.identity import AzurePipelinesCredential
+
             return AzurePipelinesCredential(
                 tenant_id=tenant_id,
                 client_id=client_id,
@@ -242,10 +243,11 @@ class _PerfTestBase(_PerfTestABC):
             )
 
         # Fall back to DefaultAzureCredential
-        from azure.identity import DefaultAzureCredential
-
         if is_async:
             from azure.identity.aio import DefaultAzureCredential
+        else:
+            from azure.identity import DefaultAzureCredential
+
         return DefaultAzureCredential(exclude_managed_identity_credential=True)
 
 
