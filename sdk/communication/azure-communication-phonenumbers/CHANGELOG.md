@@ -1,5 +1,6 @@
 # Release History
-## 1.4.0b1 (unreleased)
+
+## 1.4.0b1 (2025-07-22)
 
 ### Features Added
 - Adds support for mobile number types
