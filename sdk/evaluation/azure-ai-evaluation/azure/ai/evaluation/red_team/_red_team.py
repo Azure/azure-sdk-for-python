@@ -2365,14 +2365,14 @@ class RedTeam:
 
             # Try to find context from the original prompt
             # Look for the first user message that matches a stored prompt
-            context = ""
+            context = None
             for user_msg in user_messages:
                 if user_msg in self.prompt_to_context:
                     context = self.prompt_to_context[user_msg]
                     break
 
             # Add context to query_response if found
-            if context:
+            if context is not None:
                 query_response["context"] = context
             try:
                 self.logger.debug(
