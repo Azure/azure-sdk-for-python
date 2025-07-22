@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2021-11-01",
+  "commit": "3406c2edddaf48830e44ebccc120c40b81e0fef2",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/contosowidgetmanager/Contoso.Management",
+  "emitterVersion": "0.47.0"
+}
