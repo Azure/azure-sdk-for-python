@@ -320,7 +320,7 @@ async def fetch_result(operation_id: str, rai_svc_url: str, credential: TokenCre
         headers = get_common_headers(token)
 
         async with get_async_http_client() as client:
-            response = await client.get(url, headers=headers)
+            response = await client.get(url, headers=headers, timeout=RAIService.TIMEOUT)
 
         if response.status_code == 200:
             return response.json()
