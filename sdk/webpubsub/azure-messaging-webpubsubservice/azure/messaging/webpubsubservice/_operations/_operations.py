@@ -150,13 +150,13 @@ def build_web_pub_sub_service_get_client_access_token_request(  # pylint: disabl
     if user_id is not None:
         _params["userId"] = _SERIALIZER.query("user_id", user_id, "str")
     if roles is not None:
-        _params["role"] = _SERIALIZER.query("roles", roles, "[str]", div=",")
+        _params["roles"] = _SERIALIZER.query("roles", roles, "[str]", div=",")
     if minutes_to_expire is not None:
         _params["minutesToExpire"] = _SERIALIZER.query("minutes_to_expire", minutes_to_expire, "int")
     if groups is not None:
-        _params["group"] = _SERIALIZER.query("groups", groups, "[str]", div=",")
+        _params["groups"] = _SERIALIZER.query("groups", groups, "[str]", div=",")
     if client_protocol is not None:
-        _params["clientType"] = _SERIALIZER.query("client_protocol", client_protocol, "str")
+        _params["clientProtocol"] = _SERIALIZER.query("client_protocol", client_protocol, "str")
 
     # Construct headers
     if accept is not None:
