@@ -52,20 +52,3 @@ def grade(sample: dict, item: dict) -> float:
                 pass_threshold=1.5,
                 source=source_code,
             )
-
-    def test_invalid_source_code(self):
-        """Test invalid source code without grade function."""
-        model_config = AzureOpenAIModelConfiguration(
-            azure_endpoint="https://test.openai.azure.com",
-            api_key="test-key",
-            azure_deployment="test-deployment",
-        )
-        
-        with pytest.raises(ValueError, match="source must contain a 'grade' function"):
-            AzureOpenAIPythonGrader(
-                model_config=model_config,
-                name="python_test",
-                image_tag="2025-05-08",
-                pass_threshold=0.5,
-                source="def invalid_function(): pass",
-            )

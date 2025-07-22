@@ -69,10 +69,6 @@ class AzureOpenAIPythonGrader(AzureOpenAIGrader):
         if not 0.0 <= pass_threshold <= 1.0:
             raise ValueError("pass_threshold must be between 0.0 and 1.0")
 
-        # Validate source code contains required function
-        if "def grade(" not in source:
-            raise ValueError("source must contain a 'grade' function with signature: def grade(sample: dict, item: dict) -> float")
-
         # Store pass_threshold as instance attribute for potential future use
         self.pass_threshold = pass_threshold
 
