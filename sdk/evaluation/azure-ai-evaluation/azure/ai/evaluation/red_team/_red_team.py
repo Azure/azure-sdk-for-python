@@ -2352,7 +2352,7 @@ class RedTeam:
 
         # Extract all assistant messages for evaluation
         assistant_messages = [msg["content"] for msg in messages if msg.get("role") == "assistant"]
-        
+
         # Extract user messages to find the original prompt for context lookup
         user_messages = [msg["content"] for msg in messages if msg.get("role") == "user"]
 
@@ -2362,7 +2362,7 @@ class RedTeam:
                 "query": "query",  # Empty query as required
                 "response": " ".join(assistant_messages),  # Join all assistant messages
             }
-            
+
             # Try to find context from the original prompt
             # Look for the first user message that matches a stored prompt
             context = ""
@@ -2370,7 +2370,7 @@ class RedTeam:
                 if user_msg in self.prompt_to_context:
                     context = self.prompt_to_context[user_msg]
                     break
-            
+
             # Add context to query_response if found
             if context:
                 query_response["context"] = context

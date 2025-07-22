@@ -521,16 +521,16 @@ class RedTeamSamples(object):
             "project_name": os.environ.get("AZURE_PROJECT_NAME"),
         }
         credential = DefaultAzureCredential()
-        
+
         # Path to custom objectives file with context
         custom_objectives_path = "samples/data/custom_objectives_with_context_example.json"
-        
+
         agent = RedTeam(
             azure_ai_project=self.azure_ai_project,
             credential=credential,
             risk_categories=[RiskCategory.Violence, RiskCategory.HateUnfairness],
             num_objectives=2,
-            custom_attack_seed_prompts=custom_objectives_path
+            custom_attack_seed_prompts=custom_objectives_path,
         )
 
         # Define an educational AI assistant
@@ -551,7 +551,9 @@ class RedTeamSamples(object):
             application_scenario="Educational AI assistant for academic and training purposes",
         )
 
-        print(f"Context-aware scan completed with {len(results.scan_result) if results.scan_result else 0} conversations")
+        print(
+            f"Context-aware scan completed with {len(results.scan_result) if results.scan_result else 0} conversations"
+        )
         print("Context information was used during evaluation for better accuracy")
         # [END red_team_context_objectives]
         return results
