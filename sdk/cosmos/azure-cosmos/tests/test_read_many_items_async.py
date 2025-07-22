@@ -163,7 +163,7 @@ class TestReadManyItems(unittest.IsolatedAsyncioTestCase):
         self.assertGreaterEqual(float(headers.get('x-ms-request-charge', 0)), 0)
         self.assertTrue(headers.get('x-ms-activity-id'))
 
-    async def test_read_many_items(self):
+    async def test_read_many_items_basic(self):
         """Tests the basic functionality of read_many_items."""
         items_to_read, item_ids = await self._create_items_for_read_many(self.container, 5)
 
@@ -175,7 +175,7 @@ class TestReadManyItems(unittest.IsolatedAsyncioTestCase):
 
     async def test_read_many_items_large_count(self):
         """Tests read_many_items with a large number of items."""
-        items_to_read, item_ids = await self._create_items_for_read_many(self.container, 10)
+        items_to_read, item_ids = await self._create_items_for_read_many(self.container, 3100)
 
         read_items = await self.container.read_many_items(items=items_to_read)
 
@@ -183,7 +183,7 @@ class TestReadManyItems(unittest.IsolatedAsyncioTestCase):
         read_ids = {item['id'] for item in read_items}
         self.assertSetEqual(read_ids, set(item_ids))
 
-    async def test_read_many_items_with_injected_fault_async(self):
+    async def test_read_many_items_surfaces_exceptions(self):
         """Tests that read_many_items surfaces exceptions from the transport layer."""
         fault_injection_transport = FaultInjectionTransportAsync()
         client_with_faults = CosmosClient(self.host, self.masterKey, transport=fault_injection_transport)

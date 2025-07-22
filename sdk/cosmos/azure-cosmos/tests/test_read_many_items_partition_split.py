@@ -82,9 +82,6 @@ class TestReadManyItemsPartitionSplitScenarios(unittest.TestCase):
 
         # 5. Force a routing map refresh by clearing the client-side cache
         print("Clearing client routing map cache to force refresh...")
-        # container_link = container.container_link
-        # remote_client.client_connection.refresh_routing_map_provider()
-        print("Cache cleared.")
 
         # 6. Call read_many_items again after the split
         print("Performing post-split read_many_items call...")
