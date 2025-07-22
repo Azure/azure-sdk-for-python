@@ -7,24 +7,24 @@
 # --------------------------------------------------------------------------
 import pytest
 from devtools_testutils import recorded_by_proxy
-from testpreparer import WebPubSubServiceClientTestBase, WebPubSubServicePreparer
+from testpreparer import WebPubSubClientTestBase, WebPubSubPreparer
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestWebPubSubService(WebPubSubServiceClientTestBase):
-    @WebPubSubServicePreparer()
+class TestWebPubSub(WebPubSubClientTestBase):
+    @WebPubSubPreparer()
     @recorded_by_proxy
-    def test_get_service_status(self, webpubsubservice_endpoint):
-        client = self.create_client(endpoint=webpubsubservice_endpoint)
+    def test_get_service_status(self, webpubsub_endpoint):
+        client = self.create_client(endpoint=webpubsub_endpoint)
         response = client.get_service_status()
 
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy
-    def test_add_connections_to_groups(self, webpubsubservice_endpoint):
-        client = self.create_client(endpoint=webpubsubservice_endpoint)
+    def test_add_connections_to_groups(self, webpubsub_endpoint):
+        client = self.create_client(endpoint=webpubsub_endpoint)
         response = client.add_connections_to_groups(
             groups_to_add={"filter": "str", "groups": ["str"]},
         )
@@ -32,28 +32,28 @@ class TestWebPubSubService(WebPubSubServiceClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy
-    def test_close_all_connections(self, webpubsubservice_endpoint):
-        client = self.create_client(endpoint=webpubsubservice_endpoint)
+    def test_close_all_connections(self, webpubsub_endpoint):
+        client = self.create_client(endpoint=webpubsub_endpoint)
         response = client.close_all_connections()
 
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy
-    def test_get_client_access_token(self, webpubsubservice_endpoint):
-        client = self.create_client(endpoint=webpubsubservice_endpoint)
+    def test_get_client_access_token(self, webpubsub_endpoint):
+        client = self.create_client(endpoint=webpubsub_endpoint)
         response = client.get_client_access_token()
 
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy
-    def test_remove_connections_from_groups(self, webpubsubservice_endpoint):
-        client = self.create_client(endpoint=webpubsubservice_endpoint)
+    def test_remove_connections_from_groups(self, webpubsub_endpoint):
+        client = self.create_client(endpoint=webpubsub_endpoint)
         response = client.remove_connections_from_groups(
             groups_to_remove={"filter": "str", "groups": ["str"]},
         )
@@ -61,10 +61,10 @@ class TestWebPubSubService(WebPubSubServiceClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy
-    def test_send_to_all(self, webpubsubservice_endpoint):
-        client = self.create_client(endpoint=webpubsubservice_endpoint)
+    def test_send_to_all(self, webpubsub_endpoint):
+        client = self.create_client(endpoint=webpubsub_endpoint)
         response = client.send_to_all(
             message=bytes("bytes", encoding="utf-8"),
             content_type="str",
@@ -73,10 +73,10 @@ class TestWebPubSubService(WebPubSubServiceClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy
-    def test_close_connection(self, webpubsubservice_endpoint):
-        client = self.create_client(endpoint=webpubsubservice_endpoint)
+    def test_close_connection(self, webpubsub_endpoint):
+        client = self.create_client(endpoint=webpubsub_endpoint)
         response = client.close_connection(
             connection_id="str",
         )
@@ -84,10 +84,10 @@ class TestWebPubSubService(WebPubSubServiceClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy
-    def test_connection_exists(self, webpubsubservice_endpoint):
-        client = self.create_client(endpoint=webpubsubservice_endpoint)
+    def test_connection_exists(self, webpubsub_endpoint):
+        client = self.create_client(endpoint=webpubsub_endpoint)
         response = client.connection_exists(
             connection_id="str",
         )
@@ -95,10 +95,10 @@ class TestWebPubSubService(WebPubSubServiceClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy
-    def test_send_to_connection(self, webpubsubservice_endpoint):
-        client = self.create_client(endpoint=webpubsubservice_endpoint)
+    def test_send_to_connection(self, webpubsub_endpoint):
+        client = self.create_client(endpoint=webpubsub_endpoint)
         response = client.send_to_connection(
             connection_id="str",
             message=bytes("bytes", encoding="utf-8"),
@@ -108,10 +108,10 @@ class TestWebPubSubService(WebPubSubServiceClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy
-    def test_remove_connection_from_all_groups(self, webpubsubservice_endpoint):
-        client = self.create_client(endpoint=webpubsubservice_endpoint)
+    def test_remove_connection_from_all_groups(self, webpubsub_endpoint):
+        client = self.create_client(endpoint=webpubsub_endpoint)
         response = client.remove_connection_from_all_groups(
             connection_id="str",
         )
@@ -119,10 +119,10 @@ class TestWebPubSubService(WebPubSubServiceClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy
-    def test_group_exists(self, webpubsubservice_endpoint):
-        client = self.create_client(endpoint=webpubsubservice_endpoint)
+    def test_group_exists(self, webpubsub_endpoint):
+        client = self.create_client(endpoint=webpubsub_endpoint)
         response = client.group_exists(
             group="str",
         )
@@ -130,10 +130,10 @@ class TestWebPubSubService(WebPubSubServiceClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy
-    def test_close_group_connections(self, webpubsubservice_endpoint):
-        client = self.create_client(endpoint=webpubsubservice_endpoint)
+    def test_close_group_connections(self, webpubsub_endpoint):
+        client = self.create_client(endpoint=webpubsub_endpoint)
         response = client.close_group_connections(
             group="str",
         )
@@ -141,10 +141,10 @@ class TestWebPubSubService(WebPubSubServiceClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy
-    def test_send_to_group(self, webpubsubservice_endpoint):
-        client = self.create_client(endpoint=webpubsubservice_endpoint)
+    def test_send_to_group(self, webpubsub_endpoint):
+        client = self.create_client(endpoint=webpubsub_endpoint)
         response = client.send_to_group(
             group="str",
             message=bytes("bytes", encoding="utf-8"),
@@ -154,21 +154,21 @@ class TestWebPubSubService(WebPubSubServiceClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy
-    def test_list_connections(self, webpubsubservice_endpoint):
-        client = self.create_client(endpoint=webpubsubservice_endpoint)
+    def test_list_connections(self, webpubsub_endpoint):
+        client = self.create_client(endpoint=webpubsub_endpoint)
         response = client.list_connections(
             group="str",
         )
-        result = [r for r in response]
+
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy
-    def test_remove_connection_from_group(self, webpubsubservice_endpoint):
-        client = self.create_client(endpoint=webpubsubservice_endpoint)
+    def test_remove_connection_from_group(self, webpubsub_endpoint):
+        client = self.create_client(endpoint=webpubsub_endpoint)
         response = client.remove_connection_from_group(
             group="str",
             connection_id="str",
@@ -177,10 +177,10 @@ class TestWebPubSubService(WebPubSubServiceClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy
-    def test_add_connection_to_group(self, webpubsubservice_endpoint):
-        client = self.create_client(endpoint=webpubsubservice_endpoint)
+    def test_add_connection_to_group(self, webpubsub_endpoint):
+        client = self.create_client(endpoint=webpubsub_endpoint)
         response = client.add_connection_to_group(
             group="str",
             connection_id="str",
@@ -189,10 +189,10 @@ class TestWebPubSubService(WebPubSubServiceClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy
-    def test_revoke_permission(self, webpubsubservice_endpoint):
-        client = self.create_client(endpoint=webpubsubservice_endpoint)
+    def test_revoke_permission(self, webpubsub_endpoint):
+        client = self.create_client(endpoint=webpubsub_endpoint)
         response = client.revoke_permission(
             permission="str",
             connection_id="str",
@@ -201,10 +201,10 @@ class TestWebPubSubService(WebPubSubServiceClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy
-    def test_has_permission(self, webpubsubservice_endpoint):
-        client = self.create_client(endpoint=webpubsubservice_endpoint)
+    def test_has_permission(self, webpubsub_endpoint):
+        client = self.create_client(endpoint=webpubsub_endpoint)
         response = client.has_permission(
             permission="str",
             connection_id="str",
@@ -213,10 +213,10 @@ class TestWebPubSubService(WebPubSubServiceClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy
-    def test_grant_permission(self, webpubsubservice_endpoint):
-        client = self.create_client(endpoint=webpubsubservice_endpoint)
+    def test_grant_permission(self, webpubsub_endpoint):
+        client = self.create_client(endpoint=webpubsub_endpoint)
         response = client.grant_permission(
             permission="str",
             connection_id="str",
@@ -225,10 +225,10 @@ class TestWebPubSubService(WebPubSubServiceClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy
-    def test_user_exists(self, webpubsubservice_endpoint):
-        client = self.create_client(endpoint=webpubsubservice_endpoint)
+    def test_user_exists(self, webpubsub_endpoint):
+        client = self.create_client(endpoint=webpubsub_endpoint)
         response = client.user_exists(
             user_id="str",
         )
@@ -236,10 +236,10 @@ class TestWebPubSubService(WebPubSubServiceClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy
-    def test_close_user_connections(self, webpubsubservice_endpoint):
-        client = self.create_client(endpoint=webpubsubservice_endpoint)
+    def test_close_user_connections(self, webpubsub_endpoint):
+        client = self.create_client(endpoint=webpubsub_endpoint)
         response = client.close_user_connections(
             user_id="str",
         )
@@ -247,10 +247,10 @@ class TestWebPubSubService(WebPubSubServiceClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy
-    def test_send_to_user(self, webpubsubservice_endpoint):
-        client = self.create_client(endpoint=webpubsubservice_endpoint)
+    def test_send_to_user(self, webpubsub_endpoint):
+        client = self.create_client(endpoint=webpubsub_endpoint)
         response = client.send_to_user(
             user_id="str",
             message=bytes("bytes", encoding="utf-8"),
@@ -260,10 +260,10 @@ class TestWebPubSubService(WebPubSubServiceClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy
-    def test_remove_user_from_all_groups(self, webpubsubservice_endpoint):
-        client = self.create_client(endpoint=webpubsubservice_endpoint)
+    def test_remove_user_from_all_groups(self, webpubsub_endpoint):
+        client = self.create_client(endpoint=webpubsub_endpoint)
         response = client.remove_user_from_all_groups(
             user_id="str",
         )
@@ -271,10 +271,10 @@ class TestWebPubSubService(WebPubSubServiceClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy
-    def test_remove_user_from_group(self, webpubsubservice_endpoint):
-        client = self.create_client(endpoint=webpubsubservice_endpoint)
+    def test_remove_user_from_group(self, webpubsub_endpoint):
+        client = self.create_client(endpoint=webpubsub_endpoint)
         response = client.remove_user_from_group(
             group="str",
             user_id="str",
@@ -283,10 +283,10 @@ class TestWebPubSubService(WebPubSubServiceClientTestBase):
         # please add some check logic here by yourself
         # ...
 
-    @WebPubSubServicePreparer()
+    @WebPubSubPreparer()
     @recorded_by_proxy
-    def test_add_user_to_group(self, webpubsubservice_endpoint):
-        client = self.create_client(endpoint=webpubsubservice_endpoint)
+    def test_add_user_to_group(self, webpubsub_endpoint):
+        client = self.create_client(endpoint=webpubsub_endpoint)
         response = client.add_user_to_group(
             group="str",
             user_id="str",
