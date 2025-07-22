@@ -11,11 +11,16 @@ import asyncio
 import re
 from typing import Dict, Optional, Any, Tuple, List
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
-from azure.ai.evaluation.simulator._model_tools._generated_rai_client import GeneratedRAIClient
+from azure.ai.evaluation.simulator._model_tools._generated_rai_client import (
+    GeneratedRAIClient,
+)
 from pyrit.models import PromptRequestResponse, construct_response_from_request
 from pyrit.prompt_target import PromptChatTarget
 
-from .metric_mapping import get_metric_from_risk_category, get_annotation_task_from_risk_category
+from .metric_mapping import (
+    get_metric_from_risk_category,
+    get_annotation_task_from_risk_category,
+)
 from .._attack_objective_generator import RiskCategory
 
 
