@@ -152,7 +152,12 @@ class TestSamples:
             ("samples\\connections\\sample_connections.py", "", "connection1", ""),
             ("samples\\deployments\\sample_deployments.py", "DeepSeek-V3", "", ""),
             ("samples\\datasets\\sample_datasets.py", "", "balapvbyostoragecanary", "samples\\datasets\\data_folder"),
-            ("samples\\datasets\\sample_datasets_download.py", "", "balapvbyostoragecanary", "samples\\datasets\\data_folder"),
+            (
+                "samples\\datasets\\sample_datasets_download.py",
+                "",
+                "balapvbyostoragecanary",
+                "samples\\datasets\\data_folder",
+            ),
             ("samples\\indexes\\sample_indexes.py", "", "", ""),
             ("samples\\inference\\sample_chat_completions_with_azure_ai_inference_client.py", "Phi-4", "", ""),
             (

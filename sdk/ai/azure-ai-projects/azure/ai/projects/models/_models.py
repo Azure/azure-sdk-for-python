@@ -82,36 +82,6 @@ class ApiKeyCredentials(BaseCredentials, discriminator="ApiKey"):
         super().__init__(*args, type=CredentialType.API_KEY, **kwargs)
 
 
-class AssetCredentialResponse(_Model):
-    """Represents a reference to a blob for consumption.
-
-    :ivar blob_reference: Credential info to access the storage account. Required.
-    :vartype blob_reference: ~azure.ai.projects.models.BlobReference
-    """
-
-    blob_reference: "_models.BlobReference" = rest_field(
-        name="blobReference", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Credential info to access the storage account. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        blob_reference: "_models.BlobReference",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class Index(_Model):
     """Index resource Definition.
 
@@ -418,6 +388,36 @@ class CustomCredential(BaseCredentials, discriminator="CustomKeys"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, type=CredentialType.CUSTOM, **kwargs)
+
+
+class DatasetCredential(_Model):
+    """Represents a reference to a blob for consumption.
+
+    :ivar blob_reference: Credential info to access the storage account. Required.
+    :vartype blob_reference: ~azure.ai.projects.models.BlobReference
+    """
+
+    blob_reference: "_models.BlobReference" = rest_field(
+        name="blobReference", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Credential info to access the storage account. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        blob_reference: "_models.BlobReference",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class DatasetVersion(_Model):
@@ -913,7 +913,7 @@ class NoAuthenticationCredentials(BaseCredentials, discriminator="None"):
         super().__init__(*args, type=CredentialType.NONE, **kwargs)
 
 
-class PendingUploadRequest(_Model):
+class PendingUploadConfiguration(_Model):
     """Represents a request for a pending upload.
 
     :ivar pending_upload_id: If PendingUploadId is not provided, a random GUID will be used.
@@ -959,7 +959,7 @@ class PendingUploadRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PendingUploadResponse(_Model):
+class PendingUploadResult(_Model):
     """Represents the response for a pending upload request.
 
     :ivar blob_reference: Container-level read, write, list SAS. Required.

@@ -15,7 +15,6 @@ if TYPE_CHECKING:
 
 from ._models import (  # type: ignore
     ApiKeyCredentials,
-    AssetCredentialResponse,
     AzureAISearchIndex,
     BaseCredentials,
     BlobReference,
@@ -23,6 +22,7 @@ from ._models import (  # type: ignore
     Connection,
     CosmosDBIndex,
     CustomCredential,
+    DatasetCredential,
     DatasetVersion,
     Deployment,
     EmbeddingConfiguration,
@@ -35,8 +35,8 @@ from ._models import (  # type: ignore
     ModelDeployment,
     ModelDeploymentSku,
     NoAuthenticationCredentials,
-    PendingUploadRequest,
-    PendingUploadResponse,
+    PendingUploadConfiguration,
+    PendingUploadResult,
     SASCredentials,
 )
 
@@ -54,7 +54,6 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "ApiKeyCredentials",
-    "AssetCredentialResponse",
     "AzureAISearchIndex",
     "BaseCredentials",
     "BlobReference",
@@ -62,6 +61,7 @@ __all__ = [
     "Connection",
     "CosmosDBIndex",
     "CustomCredential",
+    "DatasetCredential",
     "DatasetVersion",
     "Deployment",
     "EmbeddingConfiguration",
@@ -74,8 +74,8 @@ __all__ = [
     "ModelDeployment",
     "ModelDeploymentSku",
     "NoAuthenticationCredentials",
-    "PendingUploadRequest",
-    "PendingUploadResponse",
+    "PendingUploadConfiguration",
+    "PendingUploadResult",
     "SASCredentials",
     "ConnectionType",
     "CredentialType",
