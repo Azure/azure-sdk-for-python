@@ -81,7 +81,6 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
         sexual_threshold: int = 3,
         self_harm_threshold: int = 3,
         hate_unfairness_threshold: int = 3,
-        evaluate_query: bool = False,
         **kwargs,
     ):
         # Type checking
@@ -94,16 +93,23 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
             if not isinstance(value, int):
                 raise TypeError(f"{name} must be an int, got {type(value)}")
 
+        # Extract evaluate_query from kwargs if present
+        evaluate_query_kwargs = {}
+        if 'evaluate_query' in kwargs:
+            evaluate_query_kwargs['evaluate_query'] = kwargs['evaluate_query']
+        if '_evaluate_query' in kwargs:
+            evaluate_query_kwargs['_evaluate_query'] = kwargs['_evaluate_query']
+        
         evaluators = [
             ViolenceEvaluator(
-                credential, azure_ai_project, threshold=violence_threshold, evaluate_query=evaluate_query
+                credential, azure_ai_project, threshold=violence_threshold, **evaluate_query_kwargs
             ),
-            SexualEvaluator(credential, azure_ai_project, threshold=sexual_threshold, evaluate_query=evaluate_query),
+            SexualEvaluator(credential, azure_ai_project, threshold=sexual_threshold, **evaluate_query_kwargs),
             SelfHarmEvaluator(
-                credential, azure_ai_project, threshold=self_harm_threshold, evaluate_query=evaluate_query
+                credential, azure_ai_project, threshold=self_harm_threshold, **evaluate_query_kwargs
             ),
             HateUnfairnessEvaluator(
-                credential, azure_ai_project, threshold=hate_unfairness_threshold, evaluate_query=evaluate_query
+                credential, azure_ai_project, threshold=hate_unfairness_threshold, **evaluate_query_kwargs
             ),
         ]
         super().__init__(evaluators=evaluators, **kwargs)

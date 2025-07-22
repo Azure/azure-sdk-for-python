@@ -76,7 +76,7 @@ class SelfHarmEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
         azure_ai_project,
         *,
         threshold: int = 3,
-        evaluate_query: bool = False,
+        **kwargs,
     ):
         super().__init__(
             eval_metric=EvaluationMetrics.SELF_HARM,
@@ -85,7 +85,7 @@ class SelfHarmEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             conversation_aggregation_type=_AggregationType.MAX,
             threshold=threshold,
             _higher_is_better=False,
-            evaluate_query=evaluate_query,
+            **kwargs,
         )
 
     @overload
