@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -35,7 +36,7 @@ from .._models import GroupMember
 
 def get_token_by_key(endpoint: str, path: str, hub: str, key: str, **kwargs: Any) -> str:
     """Build token with access key.
-    
+
     :param endpoint: HTTPS endpoint for the WebPubSub service instance.
     :type endpoint: str
     :param path: HTTPS path for the WebPubSub service instance.
@@ -67,6 +68,7 @@ def get_token_by_key(endpoint: str, path: str, hub: str, key: str, **kwargs: Any
         payload["webpubsub.group"] = groups
     encoded = jwt.encode(payload, key, algorithm="HS256", headers=kwargs.pop("jwt_headers", {}))
     return encoded
+
 
 def build_web_pub_sub_service_send_to_all_request(  # pylint: disable=name-too-long
     hub: str,
@@ -110,6 +112,7 @@ def build_web_pub_sub_service_send_to_all_request(  # pylint: disable=name-too-l
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
+
 def build_web_pub_sub_service_send_to_connection_request(  # pylint: disable=name-too-long
     connection_id: str, hub: str, *, content: IO[bytes], message_ttl_seconds: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
@@ -142,6 +145,7 @@ def build_web_pub_sub_service_send_to_connection_request(  # pylint: disable=nam
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
+
 
 def build_web_pub_sub_service_send_to_user_request(  # pylint: disable=name-too-long
     user_id: str,
@@ -183,6 +187,7 @@ def build_web_pub_sub_service_send_to_user_request(  # pylint: disable=name-too-
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
+
 
 def build_web_pub_sub_service_send_to_group_request(  # pylint: disable=name-too-long
     group: str,
@@ -227,6 +232,7 @@ def build_web_pub_sub_service_send_to_group_request(  # pylint: disable=name-too
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
+
 
 @distributed_trace
 def send_to_all(  # pylint: disable=inconsistent-return-statements
@@ -294,7 +300,8 @@ def send_to_all(  # pylint: disable=inconsistent-return-statements
         raise HttpResponseError(response=response)
     if cls:
         return cls(pipeline_response, None, {})  # type: ignore
-    
+
+
 @distributed_trace
 def send_to_connection(  # pylint: disable=inconsistent-return-statements
     self, connection_id: str, message: IO[bytes], *, message_ttl_seconds: Optional[int] = None, **kwargs: Any
@@ -351,6 +358,7 @@ def send_to_connection(  # pylint: disable=inconsistent-return-statements
         raise HttpResponseError(response=response)
     if cls:
         return cls(pipeline_response, None, {})  # type: ignore
+
 
 @distributed_trace
 def send_to_group(  # pylint: disable=inconsistent-return-statements
@@ -424,6 +432,7 @@ def send_to_group(  # pylint: disable=inconsistent-return-statements
     if cls:
         return cls(pipeline_response, None, {})  # type: ignore
 
+
 @distributed_trace
 def send_to_user(  # pylint: disable=inconsistent-return-statements
     self,
@@ -490,6 +499,7 @@ def send_to_user(  # pylint: disable=inconsistent-return-statements
         raise HttpResponseError(response=response)
     if cls:
         return cls(pipeline_response, None, {})  # type: ignore
+
 
 class _WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixinGenerated):
     @distributed_trace
@@ -559,13 +569,7 @@ class _WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMix
     get_client_access_token.metadata = {"url": "/api/hubs/{hub}/:generateToken"}  # type: ignore
 
     @distributed_trace
-    def list_connections(
-        self,
-        *,
-        group: str,
-        top: Optional[int] = None,
-        **kwargs: Any
-    ) -> ItemPaged[GroupMember]:
+    def list_connections(self, *, group: str, top: Optional[int] = None, **kwargs: Any) -> ItemPaged[GroupMember]:
         """List connections in a group.
 
         List connections in a group.
@@ -593,30 +597,20 @@ class _WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMix
 
         """
         # Call the base implementation to get ItemPaged[dict]
-        paged_json = super().list_connections(
-            group=group,
-            top=top,
-            **kwargs
-        )
+        paged_json = super().list_connections(group=group, top=top, **kwargs)
 
         # Wrap the iterator to convert each item to GroupMember
         class GroupMemberPaged(ItemPaged):
             def __iter__(self_inner):
                 for item in paged_json:
-                    yield GroupMember(
-                        connection_id=item.get("connectionId"),
-                        user_id=item.get("userId")
-                    )
+                    yield GroupMember(connection_id=item.get("connectionId"), user_id=item.get("userId"))
 
             def by_page(self_inner, continuation_token: Optional[str] = None):
                 for page in paged_json.by_page(continuation_token=continuation_token):
                     yield [
-                        GroupMember(
-                            connection_id=item.get("connectionId"),
-                            user_id=item.get("userId")
-                        )
-                        for item in page
+                        GroupMember(connection_id=item.get("connectionId"), user_id=item.get("userId")) for item in page
                     ]
+
         return GroupMemberPaged()
 
     @overload
