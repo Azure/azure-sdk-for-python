@@ -1,5 +1,12 @@
 # Release History
 
+## 7.1.0 (2025-07-21)
+
+### Features Added
+
+  - Model Identity has a new parameter isolation_scope
+  - Model IdentityUpdate has a new parameter isolation_scope
+
 ## 7.1.0b1 (2023-02-16)
 
 ### Other Changes

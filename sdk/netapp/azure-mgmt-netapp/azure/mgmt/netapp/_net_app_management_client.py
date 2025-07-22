@@ -28,9 +28,7 @@ from .operations import (
     BackupsUnderAccountOperations,
     BackupsUnderBackupVaultOperations,
     BackupsUnderVolumeOperations,
-    BucketsOperations,
     NetAppResourceOperations,
-    NetAppResourceQuotaLimitsAccountOperations,
     NetAppResourceQuotaLimitsOperations,
     NetAppResourceRegionInfosOperations,
     NetAppResourceUsagesOperations,
@@ -83,10 +81,6 @@ class NetAppManagementClient:  # pylint: disable=too-many-instance-attributes
     :vartype subvolumes: azure.mgmt.netapp.operations.SubvolumesOperations
     :ivar backups: BackupsOperations operations
     :vartype backups: azure.mgmt.netapp.operations.BackupsOperations
-    :ivar net_app_resource_quota_limits_account: NetAppResourceQuotaLimitsAccountOperations
-     operations
-    :vartype net_app_resource_quota_limits_account:
-     azure.mgmt.netapp.operations.NetAppResourceQuotaLimitsAccountOperations
     :ivar backup_vaults: BackupVaultsOperations operations
     :vartype backup_vaults: azure.mgmt.netapp.operations.BackupVaultsOperations
     :ivar backups_under_backup_vault: BackupsUnderBackupVaultOperations operations
@@ -96,16 +90,14 @@ class NetAppManagementClient:  # pylint: disable=too-many-instance-attributes
     :vartype backups_under_volume: azure.mgmt.netapp.operations.BackupsUnderVolumeOperations
     :ivar backups_under_account: BackupsUnderAccountOperations operations
     :vartype backups_under_account: azure.mgmt.netapp.operations.BackupsUnderAccountOperations
-    :ivar buckets: BucketsOperations operations
-    :vartype buckets: azure.mgmt.netapp.operations.BucketsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is None.
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2025-01-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2025-03-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -172,9 +164,6 @@ class NetAppManagementClient:  # pylint: disable=too-many-instance-attributes
         self.volume_groups = VolumeGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.subvolumes = SubvolumesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.backups = BackupsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.net_app_resource_quota_limits_account = NetAppResourceQuotaLimitsAccountOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.backup_vaults = BackupVaultsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.backups_under_backup_vault = BackupsUnderBackupVaultOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -185,7 +174,6 @@ class NetAppManagementClient:  # pylint: disable=too-many-instance-attributes
         self.backups_under_account = BackupsUnderAccountOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.buckets = BucketsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

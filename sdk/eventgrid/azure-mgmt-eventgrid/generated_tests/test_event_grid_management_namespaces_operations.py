@@ -24,7 +24,7 @@ class TestEventGridManagementNamespacesOperations(AzureMgmtRecordedTestCase):
         response = self.client.namespaces.get(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -77,6 +77,23 @@ class TestEventGridManagementNamespacesOperations(AzureMgmtRecordedTestCase):
                 },
                 "tags": {"str": "str"},
                 "topicSpacesConfiguration": {
+                    "clientAuthentication": {
+                        "alternativeAuthenticationNameSources": ["str"],
+                        "customJwtAuthentication": {
+                            "encodedIssuerCertificates": [{"encodedCertificate": "str", "kid": "str"}],
+                            "issuerCertificates": [
+                                {"certificateUrl": "str", "identity": {"type": "str", "userAssignedIdentity": "str"}}
+                            ],
+                            "tokenIssuer": "str",
+                        },
+                        "webhookAuthentication": {
+                            "azureActiveDirectoryApplicationIdOrUri": "str",
+                            "azureActiveDirectoryTenantId": "str",
+                            "endpointUrl": "str",
+                            "identity": {"type": "str", "userAssignedIdentity": "str"},
+                            "endpointBaseUrl": "str",
+                        },
+                    },
                     "customDomains": [
                         {
                             "fullyQualifiedDomainName": "str",
@@ -113,7 +130,7 @@ class TestEventGridManagementNamespacesOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -125,7 +142,7 @@ class TestEventGridManagementNamespacesOperations(AzureMgmtRecordedTestCase):
         response = self.client.namespaces.begin_delete(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -149,6 +166,23 @@ class TestEventGridManagementNamespacesOperations(AzureMgmtRecordedTestCase):
                 "sku": {"capacity": 0, "name": "str"},
                 "tags": {"str": "str"},
                 "topicSpacesConfiguration": {
+                    "clientAuthentication": {
+                        "alternativeAuthenticationNameSources": ["str"],
+                        "customJwtAuthentication": {
+                            "encodedIssuerCertificates": [{"encodedCertificate": "str", "kid": "str"}],
+                            "issuerCertificates": [
+                                {"certificateUrl": "str", "identity": {"type": "str", "userAssignedIdentity": "str"}}
+                            ],
+                            "tokenIssuer": "str",
+                        },
+                        "webhookAuthentication": {
+                            "azureActiveDirectoryApplicationIdOrUri": "str",
+                            "azureActiveDirectoryTenantId": "str",
+                            "endpointUrl": "str",
+                            "identity": {"type": "str", "userAssignedIdentity": "str"},
+                            "endpointBaseUrl": "str",
+                        },
+                    },
                     "customDomains": [
                         {
                             "fullyQualifiedDomainName": "str",
@@ -182,7 +216,7 @@ class TestEventGridManagementNamespacesOperations(AzureMgmtRecordedTestCase):
                     ]
                 },
             },
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -192,7 +226,7 @@ class TestEventGridManagementNamespacesOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_namespaces_list_by_subscription(self, resource_group):
         response = self.client.namespaces.list_by_subscription(
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -203,7 +237,7 @@ class TestEventGridManagementNamespacesOperations(AzureMgmtRecordedTestCase):
     def test_namespaces_list_by_resource_group(self, resource_group):
         response = self.client.namespaces.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -215,7 +249,7 @@ class TestEventGridManagementNamespacesOperations(AzureMgmtRecordedTestCase):
         response = self.client.namespaces.list_shared_access_keys(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -228,7 +262,7 @@ class TestEventGridManagementNamespacesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             namespace_name="str",
             regenerate_key_request={"keyName": "str"},
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -240,7 +274,7 @@ class TestEventGridManagementNamespacesOperations(AzureMgmtRecordedTestCase):
         response = self.client.namespaces.begin_validate_custom_domain_ownership(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

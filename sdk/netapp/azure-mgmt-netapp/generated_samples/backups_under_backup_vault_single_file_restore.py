@@ -43,6 +43,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/preview/2025-01-01-preview/examples/BackupsUnderBackupVault_SingleFileRestore.json
+# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2025-03-01/examples/BackupsUnderBackupVault_SingleFileRestore.json
 if __name__ == "__main__":
     main()

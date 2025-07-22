@@ -451,6 +451,24 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.target, "www.example.com")
 
+        span._attributes = {
+            "http.request.method": "GET",
+            "gen_ai.system": "az.ai.inference"
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.target, "az.ai.inference")
+        self.assertEqual(envelope.data.base_data.name, "GET /")
+
+        span._attributes = {
+            "http.request.method": "GET",
+            "server.address": "www.example.com",
+            "server.port": 80,
+            "url.scheme": "http",
+            "gen_ai.system": "az.ai.inference"
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.target, "www.example.com")
+
         # url
         # spell-checker:ignore ddds
         span._attributes = {
@@ -773,8 +791,60 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.result_code, "0")
 
         self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
-        self.assertEqual(envelope.data.base_data.type, "az.ai.inference")
+        self.assertEqual(envelope.data.base_data.type, "GenAI | az.ai.inference")
+        self.assertEqual(envelope.data.base_data.target, "az.ai.inference")
         self.assertEqual(len(envelope.data.base_data.properties), 1)
+        
+    def test_span_to_envelope_client_internal_gen_ai_type(self):
+        exporter = self._exporter
+        start_time = 1575494316027613500
+        end_time = start_time + 1001000000
+
+        span = trace._Span(
+            name="test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557337,
+                is_remote=False,
+            ),
+            attributes={
+                "gen_ai.system": "az.ai.inference",
+            },
+            kind=SpanKind.INTERNAL,
+        )
+        span.start(start_time=start_time)
+        span.end(end_time=end_time)
+        span._status = Status(status_code=StatusCode.UNSET)
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.type, "GenAI | az.ai.inference")
+    
+    def test_span_to_envelope_client_multiple_types_with_gen_ai(self):
+        exporter = self._exporter
+        start_time = 1575494316027613500
+        end_time = start_time + 1001000000
+
+        span = trace._Span(
+            name="test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557337,
+                is_remote=False,
+            ),
+            attributes={
+                "gen_ai.system": "az.ai.inference",
+                "az.namespace": "Microsoft.EventHub",
+                "peer.address": "test_address",
+                "message_bus.destination": "test_destination",
+            },
+            kind=SpanKind.CLIENT,
+        )
+        span.start(start_time=start_time)
+        span.end(end_time=end_time)
+        span._status = Status(status_code=StatusCode.UNSET)
+        envelope = exporter._span_to_envelope(span)
+
+        self.assertEqual(envelope.data.base_data.type, "GenAI | az.ai.inference")
+        self.assertEqual(envelope.data.base_data.target, "test_address/test_destination")
 
     def test_span_to_envelope_client_azure(self):
         exporter = self._exporter

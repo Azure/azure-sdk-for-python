@@ -708,6 +708,115 @@ class ActivityLogAlertResource(Resource):
         self.description = description
 
 
+class AdxDestination(_serialization.Model):
+    """Azure Data Explorer (Adx) destination.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar resource_id: The ARM resource id of the Adx resource.
+    :vartype resource_id: str
+    :ivar database_name: The name of the database to which data will be ingested.
+    :vartype database_name: str
+    :ivar ingestion_uri: The ingestion uri of the Adx resource.
+    :vartype ingestion_uri: str
+    :ivar name: A friendly name for the destination.
+     This name should be unique across all destinations (regardless of type) within the data
+     collection rule.
+    :vartype name: str
+    """
+
+    _validation = {
+        "ingestion_uri": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "database_name": {"key": "databaseName", "type": "str"},
+        "ingestion_uri": {"key": "ingestionUri", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        resource_id: Optional[str] = None,
+        database_name: Optional[str] = None,
+        name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword resource_id: The ARM resource id of the Adx resource.
+        :paramtype resource_id: str
+        :keyword database_name: The name of the database to which data will be ingested.
+        :paramtype database_name: str
+        :keyword name: A friendly name for the destination.
+         This name should be unique across all destinations (regardless of type) within the data
+         collection rule.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.resource_id = resource_id
+        self.database_name = database_name
+        self.ingestion_uri: Optional[str] = None
+        self.name = name
+
+
+class AgentSetting(_serialization.Model):
+    """A setting used to control an agent behavior on a host machine.
+
+    :ivar name: The name of the setting.
+     Must be part of the list of supported settings. Known values are: "MaxDiskQuotaInMB" and
+     "UseTimeReceivedForForwardedEvents".
+    :vartype name: str or ~azure.mgmt.monitor.models.KnownAgentSettingName
+    :ivar value: The value of the setting.
+    :vartype value: str
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[Union[str, "_models.KnownAgentSettingName"]] = None,
+        value: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: The name of the setting.
+         Must be part of the list of supported settings. Known values are: "MaxDiskQuotaInMB" and
+         "UseTimeReceivedForForwardedEvents".
+        :paramtype name: str or ~azure.mgmt.monitor.models.KnownAgentSettingName
+        :keyword value: The value of the setting.
+        :paramtype value: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.value = value
+
+
+class AgentSettingsSpec(_serialization.Model):
+    """An agent setting.
+
+    :ivar logs: All the settings that are applicable to the logs agent (AMA).
+    :vartype logs: list[~azure.mgmt.monitor.models.AgentSetting]
+    """
+
+    _attribute_map = {
+        "logs": {"key": "logs", "type": "[AgentSetting]"},
+    }
+
+    def __init__(self, *, logs: Optional[List["_models.AgentSetting"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword logs: All the settings that are applicable to the logs agent (AMA).
+        :paramtype logs: list[~azure.mgmt.monitor.models.AgentSetting]
+        """
+        super().__init__(**kwargs)
+        self.logs = logs
+
+
 class AlertingAction(Action):
     """Specify action need to be taken when rule type is Alert.
 
@@ -1523,6 +1632,30 @@ class AzureFunctionReceiver(_serialization.Model):
         self.use_common_alert_schema = use_common_alert_schema
 
 
+class AzureMonitorMetricsDestination(_serialization.Model):
+    """Azure Monitor Metrics destination.
+
+    :ivar name: A friendly name for the destination.
+     This name should be unique across all destinations (regardless of type) within the data
+     collection rule.
+    :vartype name: str
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(self, *, name: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword name: A friendly name for the destination.
+         This name should be unique across all destinations (regardless of type) within the data
+         collection rule.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+
+
 class PrivateLinkScopesResource(_serialization.Model):
     """An azure resource object.
 
@@ -2134,6 +2267,63 @@ class BaselineMetadata(_serialization.Model):
         self.value = value
 
 
+class ColumnDefinition(_serialization.Model):
+    """Definition of custom data column.
+
+    :ivar name: The name of the column.
+    :vartype name: str
+    :ivar type: The type of the column data. Known values are: "string", "int", "long", "real",
+     "boolean", "datetime", "dynamic", and "int".
+    :vartype type: str or ~azure.mgmt.monitor.models.KnownColumnDefinitionType
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        type: Optional[Union[str, "_models.KnownColumnDefinitionType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: The name of the column.
+        :paramtype name: str
+        :keyword type: The type of the column data. Known values are: "string", "int", "long", "real",
+         "boolean", "datetime", "dynamic", and "int".
+        :paramtype type: str or ~azure.mgmt.monitor.models.KnownColumnDefinitionType
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.type = type
+
+
+class ConfigurationAccessEndpointSpec(_serialization.Model):
+    """Definition of the endpoint used for accessing configuration.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar endpoint: The endpoint. This property is READ-ONLY.
+    :vartype endpoint: str
+    """
+
+    _validation = {
+        "endpoint": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "endpoint": {"key": "endpoint", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.endpoint: Optional[str] = None
+
+
 class Context(_serialization.Model):
     """The context info.
 
@@ -2196,6 +2386,1680 @@ class Criteria(_serialization.Model):
         self.dimensions = dimensions
 
 
+class DataCollectionEndpoint(_serialization.Model):
+    """Definition of data collection endpoint.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar description: Description of the data collection endpoint.
+    :vartype description: str
+    :ivar immutable_id: The immutable ID of this data collection endpoint resource. This property
+     is READ-ONLY.
+    :vartype immutable_id: str
+    :ivar configuration_access: The endpoint used by clients to access their configuration.
+    :vartype configuration_access:
+     ~azure.mgmt.monitor.models.DataCollectionEndpointConfigurationAccess
+    :ivar logs_ingestion: The endpoint used by clients to ingest logs.
+    :vartype logs_ingestion: ~azure.mgmt.monitor.models.DataCollectionEndpointLogsIngestion
+    :ivar metrics_ingestion: The endpoint used by clients to ingest metrics.
+    :vartype metrics_ingestion: ~azure.mgmt.monitor.models.DataCollectionEndpointMetricsIngestion
+    :ivar network_acls: Network access control rules for the endpoints.
+    :vartype network_acls: ~azure.mgmt.monitor.models.DataCollectionEndpointNetworkAcls
+    :ivar provisioning_state: The resource provisioning state. This property is READ-ONLY. Known
+     values are: "Creating", "Updating", "Deleting", "Succeeded", "Canceled", and "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.monitor.models.KnownDataCollectionEndpointProvisioningState
+    :ivar private_link_scoped_resources: List of Azure Monitor Private Link Scope Resources to
+     which this data collection endpoint resource is associated. This property is READ-ONLY.
+    :vartype private_link_scoped_resources:
+     list[~azure.mgmt.monitor.models.PrivateLinkScopedResource]
+    :ivar failover_configuration: Failover configuration on this endpoint. This property is
+     READ-ONLY.
+    :vartype failover_configuration:
+     ~azure.mgmt.monitor.models.DataCollectionEndpointFailoverConfiguration
+    :ivar metadata: Metadata for the resource. This property is READ-ONLY.
+    :vartype metadata: ~azure.mgmt.monitor.models.DataCollectionEndpointMetadata
+    """
+
+    _validation = {
+        "provisioning_state": {"readonly": True},
+        "private_link_scoped_resources": {"readonly": True},
+        "failover_configuration": {"readonly": True},
+        "metadata": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "description": {"key": "description", "type": "str"},
+        "immutable_id": {"key": "immutableId", "type": "str"},
+        "configuration_access": {"key": "configurationAccess", "type": "DataCollectionEndpointConfigurationAccess"},
+        "logs_ingestion": {"key": "logsIngestion", "type": "DataCollectionEndpointLogsIngestion"},
+        "metrics_ingestion": {"key": "metricsIngestion", "type": "DataCollectionEndpointMetricsIngestion"},
+        "network_acls": {"key": "networkAcls", "type": "DataCollectionEndpointNetworkAcls"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "private_link_scoped_resources": {"key": "privateLinkScopedResources", "type": "[PrivateLinkScopedResource]"},
+        "failover_configuration": {
+            "key": "failoverConfiguration",
+            "type": "DataCollectionEndpointFailoverConfiguration",
+        },
+        "metadata": {"key": "metadata", "type": "DataCollectionEndpointMetadata"},
+    }
+
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        immutable_id: Optional[str] = None,
+        configuration_access: Optional["_models.DataCollectionEndpointConfigurationAccess"] = None,
+        logs_ingestion: Optional["_models.DataCollectionEndpointLogsIngestion"] = None,
+        metrics_ingestion: Optional["_models.DataCollectionEndpointMetricsIngestion"] = None,
+        network_acls: Optional["_models.DataCollectionEndpointNetworkAcls"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword description: Description of the data collection endpoint.
+        :paramtype description: str
+        :keyword immutable_id: The immutable ID of this data collection endpoint resource. This
+         property is READ-ONLY.
+        :paramtype immutable_id: str
+        :keyword configuration_access: The endpoint used by clients to access their configuration.
+        :paramtype configuration_access:
+         ~azure.mgmt.monitor.models.DataCollectionEndpointConfigurationAccess
+        :keyword logs_ingestion: The endpoint used by clients to ingest logs.
+        :paramtype logs_ingestion: ~azure.mgmt.monitor.models.DataCollectionEndpointLogsIngestion
+        :keyword metrics_ingestion: The endpoint used by clients to ingest metrics.
+        :paramtype metrics_ingestion: ~azure.mgmt.monitor.models.DataCollectionEndpointMetricsIngestion
+        :keyword network_acls: Network access control rules for the endpoints.
+        :paramtype network_acls: ~azure.mgmt.monitor.models.DataCollectionEndpointNetworkAcls
+        """
+        super().__init__(**kwargs)
+        self.description = description
+        self.immutable_id = immutable_id
+        self.configuration_access = configuration_access
+        self.logs_ingestion = logs_ingestion
+        self.metrics_ingestion = metrics_ingestion
+        self.network_acls = network_acls
+        self.provisioning_state: Optional[Union[str, "_models.KnownDataCollectionEndpointProvisioningState"]] = None
+        self.private_link_scoped_resources: Optional[List["_models.PrivateLinkScopedResource"]] = None
+        self.failover_configuration: Optional["_models.DataCollectionEndpointFailoverConfiguration"] = None
+        self.metadata: Optional["_models.DataCollectionEndpointMetadata"] = None
+
+
+class DataCollectionEndpointConfigurationAccess(ConfigurationAccessEndpointSpec):  # pylint: disable=name-too-long
+    """The endpoint used by clients to access their configuration.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar endpoint: The endpoint. This property is READ-ONLY.
+    :vartype endpoint: str
+    """
+
+
+class FailoverConfigurationSpec(_serialization.Model):
+    """FailoverConfigurationSpec.
+
+    :ivar active_location: Active location where data flow will occur.
+    :vartype active_location: str
+    :ivar locations: Locations that are configured for failover.
+    :vartype locations: list[~azure.mgmt.monitor.models.LocationSpec]
+    """
+
+    _attribute_map = {
+        "active_location": {"key": "activeLocation", "type": "str"},
+        "locations": {"key": "locations", "type": "[LocationSpec]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        active_location: Optional[str] = None,
+        locations: Optional[List["_models.LocationSpec"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword active_location: Active location where data flow will occur.
+        :paramtype active_location: str
+        :keyword locations: Locations that are configured for failover.
+        :paramtype locations: list[~azure.mgmt.monitor.models.LocationSpec]
+        """
+        super().__init__(**kwargs)
+        self.active_location = active_location
+        self.locations = locations
+
+
+class DataCollectionEndpointFailoverConfiguration(FailoverConfigurationSpec):  # pylint: disable=name-too-long
+    """Failover configuration on this endpoint. This property is READ-ONLY.
+
+    :ivar active_location: Active location where data flow will occur.
+    :vartype active_location: str
+    :ivar locations: Locations that are configured for failover.
+    :vartype locations: list[~azure.mgmt.monitor.models.LocationSpec]
+    """
+
+
+class LogsIngestionEndpointSpec(_serialization.Model):
+    """Definition of the endpoint used for ingesting logs.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar endpoint: The endpoint. This property is READ-ONLY.
+    :vartype endpoint: str
+    """
+
+    _validation = {
+        "endpoint": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "endpoint": {"key": "endpoint", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.endpoint: Optional[str] = None
+
+
+class DataCollectionEndpointLogsIngestion(LogsIngestionEndpointSpec):
+    """The endpoint used by clients to ingest logs.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar endpoint: The endpoint. This property is READ-ONLY.
+    :vartype endpoint: str
+    """
+
+
+class Metadata(_serialization.Model):
+    """Metadata about the resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar provisioned_by: Azure offering managing this resource on-behalf-of customer.
+    :vartype provisioned_by: str
+    :ivar provisioned_by_resource_id: Resource Id of azure offering managing this resource
+     on-behalf-of customer.
+    :vartype provisioned_by_resource_id: str
+    :ivar provisioned_by_immutable_id: Immutable Id of azure offering managing this resource
+     on-behalf-of customer.
+    :vartype provisioned_by_immutable_id: str
+    """
+
+    _validation = {
+        "provisioned_by": {"readonly": True},
+        "provisioned_by_resource_id": {"readonly": True},
+        "provisioned_by_immutable_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "provisioned_by": {"key": "provisionedBy", "type": "str"},
+        "provisioned_by_resource_id": {"key": "provisionedByResourceId", "type": "str"},
+        "provisioned_by_immutable_id": {"key": "provisionedByImmutableId", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.provisioned_by: Optional[str] = None
+        self.provisioned_by_resource_id: Optional[str] = None
+        self.provisioned_by_immutable_id: Optional[str] = None
+
+
+class DataCollectionEndpointMetadata(Metadata):
+    """Metadata for the resource. This property is READ-ONLY.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar provisioned_by: Azure offering managing this resource on-behalf-of customer.
+    :vartype provisioned_by: str
+    :ivar provisioned_by_resource_id: Resource Id of azure offering managing this resource
+     on-behalf-of customer.
+    :vartype provisioned_by_resource_id: str
+    :ivar provisioned_by_immutable_id: Immutable Id of azure offering managing this resource
+     on-behalf-of customer.
+    :vartype provisioned_by_immutable_id: str
+    """
+
+
+class MetricsIngestionEndpointSpec(_serialization.Model):
+    """Definition of the endpoint used for ingesting metrics.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar endpoint: The endpoint. This property is READ-ONLY.
+    :vartype endpoint: str
+    """
+
+    _validation = {
+        "endpoint": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "endpoint": {"key": "endpoint", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.endpoint: Optional[str] = None
+
+
+class DataCollectionEndpointMetricsIngestion(MetricsIngestionEndpointSpec):
+    """The endpoint used by clients to ingest metrics.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar endpoint: The endpoint. This property is READ-ONLY.
+    :vartype endpoint: str
+    """
+
+
+class NetworkRuleSet(_serialization.Model):
+    """Definition of the network rules.
+
+    :ivar public_network_access: The configuration to set whether network access from public
+     internet to the endpoints are allowed. Known values are: "Enabled", "Disabled", and
+     "SecuredByPerimeter".
+    :vartype public_network_access: str or
+     ~azure.mgmt.monitor.models.KnownPublicNetworkAccessOptions
+    """
+
+    _attribute_map = {
+        "public_network_access": {"key": "publicNetworkAccess", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        public_network_access: Optional[Union[str, "_models.KnownPublicNetworkAccessOptions"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword public_network_access: The configuration to set whether network access from public
+         internet to the endpoints are allowed. Known values are: "Enabled", "Disabled", and
+         "SecuredByPerimeter".
+        :paramtype public_network_access: str or
+         ~azure.mgmt.monitor.models.KnownPublicNetworkAccessOptions
+        """
+        super().__init__(**kwargs)
+        self.public_network_access = public_network_access
+
+
+class DataCollectionEndpointNetworkAcls(NetworkRuleSet):
+    """Network access control rules for the endpoints.
+
+    :ivar public_network_access: The configuration to set whether network access from public
+     internet to the endpoints are allowed. Known values are: "Enabled", "Disabled", and
+     "SecuredByPerimeter".
+    :vartype public_network_access: str or
+     ~azure.mgmt.monitor.models.KnownPublicNetworkAccessOptions
+    """
+
+
+class DataCollectionEndpointResource(_serialization.Model):
+    """Definition of ARM tracked top level resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar kind: The kind of the resource. Known values are: "Linux" and "Windows".
+    :vartype kind: str or ~azure.mgmt.monitor.models.KnownDataCollectionEndpointResourceKind
+    :ivar identity: Managed service identity of the resource.
+    :vartype identity: ~azure.mgmt.monitor.models.DataCollectionEndpointResourceIdentity
+    :ivar id: Fully qualified ID of the resource.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :ivar etag: Resource entity tag (ETag).
+    :vartype etag: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.monitor.models.DataCollectionEndpointResourceSystemData
+    :ivar description: Description of the data collection endpoint.
+    :vartype description: str
+    :ivar immutable_id: The immutable ID of this data collection endpoint resource. This property
+     is READ-ONLY.
+    :vartype immutable_id: str
+    :ivar configuration_access: The endpoint used by clients to access their configuration.
+    :vartype configuration_access:
+     ~azure.mgmt.monitor.models.DataCollectionEndpointConfigurationAccess
+    :ivar logs_ingestion: The endpoint used by clients to ingest logs.
+    :vartype logs_ingestion: ~azure.mgmt.monitor.models.DataCollectionEndpointLogsIngestion
+    :ivar metrics_ingestion: The endpoint used by clients to ingest metrics.
+    :vartype metrics_ingestion: ~azure.mgmt.monitor.models.DataCollectionEndpointMetricsIngestion
+    :ivar network_acls: Network access control rules for the endpoints.
+    :vartype network_acls: ~azure.mgmt.monitor.models.DataCollectionEndpointNetworkAcls
+    :ivar provisioning_state: The resource provisioning state. This property is READ-ONLY. Known
+     values are: "Creating", "Updating", "Deleting", "Succeeded", "Canceled", and "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.monitor.models.KnownDataCollectionEndpointProvisioningState
+    :ivar private_link_scoped_resources: List of Azure Monitor Private Link Scope Resources to
+     which this data collection endpoint resource is associated. This property is READ-ONLY.
+    :vartype private_link_scoped_resources:
+     list[~azure.mgmt.monitor.models.PrivateLinkScopedResource]
+    :ivar failover_configuration: Failover configuration on this endpoint. This property is
+     READ-ONLY.
+    :vartype failover_configuration:
+     ~azure.mgmt.monitor.models.DataCollectionEndpointFailoverConfiguration
+    :ivar metadata: Metadata for the resource. This property is READ-ONLY.
+    :vartype metadata: ~azure.mgmt.monitor.models.DataCollectionEndpointMetadata
+    """
+
+    _validation = {
+        "location": {"required": True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "private_link_scoped_resources": {"readonly": True},
+        "failover_configuration": {"readonly": True},
+        "metadata": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "kind": {"key": "kind", "type": "str"},
+        "identity": {"key": "identity", "type": "DataCollectionEndpointResourceIdentity"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "system_data": {"key": "systemData", "type": "DataCollectionEndpointResourceSystemData"},
+        "description": {"key": "properties.description", "type": "str"},
+        "immutable_id": {"key": "properties.immutableId", "type": "str"},
+        "configuration_access": {
+            "key": "properties.configurationAccess",
+            "type": "DataCollectionEndpointConfigurationAccess",
+        },
+        "logs_ingestion": {"key": "properties.logsIngestion", "type": "DataCollectionEndpointLogsIngestion"},
+        "metrics_ingestion": {"key": "properties.metricsIngestion", "type": "DataCollectionEndpointMetricsIngestion"},
+        "network_acls": {"key": "properties.networkAcls", "type": "DataCollectionEndpointNetworkAcls"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "private_link_scoped_resources": {
+            "key": "properties.privateLinkScopedResources",
+            "type": "[PrivateLinkScopedResource]",
+        },
+        "failover_configuration": {
+            "key": "properties.failoverConfiguration",
+            "type": "DataCollectionEndpointFailoverConfiguration",
+        },
+        "metadata": {"key": "properties.metadata", "type": "DataCollectionEndpointMetadata"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        kind: Optional[Union[str, "_models.KnownDataCollectionEndpointResourceKind"]] = None,
+        identity: Optional["_models.DataCollectionEndpointResourceIdentity"] = None,
+        description: Optional[str] = None,
+        immutable_id: Optional[str] = None,
+        configuration_access: Optional["_models.DataCollectionEndpointConfigurationAccess"] = None,
+        logs_ingestion: Optional["_models.DataCollectionEndpointLogsIngestion"] = None,
+        metrics_ingestion: Optional["_models.DataCollectionEndpointMetricsIngestion"] = None,
+        network_acls: Optional["_models.DataCollectionEndpointNetworkAcls"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword kind: The kind of the resource. Known values are: "Linux" and "Windows".
+        :paramtype kind: str or ~azure.mgmt.monitor.models.KnownDataCollectionEndpointResourceKind
+        :keyword identity: Managed service identity of the resource.
+        :paramtype identity: ~azure.mgmt.monitor.models.DataCollectionEndpointResourceIdentity
+        :keyword description: Description of the data collection endpoint.
+        :paramtype description: str
+        :keyword immutable_id: The immutable ID of this data collection endpoint resource. This
+         property is READ-ONLY.
+        :paramtype immutable_id: str
+        :keyword configuration_access: The endpoint used by clients to access their configuration.
+        :paramtype configuration_access:
+         ~azure.mgmt.monitor.models.DataCollectionEndpointConfigurationAccess
+        :keyword logs_ingestion: The endpoint used by clients to ingest logs.
+        :paramtype logs_ingestion: ~azure.mgmt.monitor.models.DataCollectionEndpointLogsIngestion
+        :keyword metrics_ingestion: The endpoint used by clients to ingest metrics.
+        :paramtype metrics_ingestion: ~azure.mgmt.monitor.models.DataCollectionEndpointMetricsIngestion
+        :keyword network_acls: Network access control rules for the endpoints.
+        :paramtype network_acls: ~azure.mgmt.monitor.models.DataCollectionEndpointNetworkAcls
+        """
+        super().__init__(**kwargs)
+        self.location = location
+        self.tags = tags
+        self.kind = kind
+        self.identity = identity
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.etag: Optional[str] = None
+        self.system_data: Optional["_models.DataCollectionEndpointResourceSystemData"] = None
+        self.description = description
+        self.immutable_id = immutable_id
+        self.configuration_access = configuration_access
+        self.logs_ingestion = logs_ingestion
+        self.metrics_ingestion = metrics_ingestion
+        self.network_acls = network_acls
+        self.provisioning_state: Optional[Union[str, "_models.KnownDataCollectionEndpointProvisioningState"]] = None
+        self.private_link_scoped_resources: Optional[List["_models.PrivateLinkScopedResource"]] = None
+        self.failover_configuration: Optional["_models.DataCollectionEndpointFailoverConfiguration"] = None
+        self.metadata: Optional["_models.DataCollectionEndpointMetadata"] = None
+
+
+class ManagedServiceIdentity(_serialization.Model):
+    """Managed service identity (system assigned and/or user assigned identities).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar principal_id: The service principal ID of the system assigned identity. This property
+     will only be provided for a system assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+     provided for a system assigned identity.
+    :vartype tenant_id: str
+    :ivar type: Type of managed service identity (where both SystemAssigned and UserAssigned types
+     are allowed). Required. Known values are: "None", "SystemAssigned", "UserAssigned", and
+     "SystemAssigned,UserAssigned".
+    :vartype type: str or ~azure.mgmt.monitor.models.ManagedServiceIdentityType
+    :ivar user_assigned_identities: The set of user assigned identities associated with the
+     resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+     The dictionary values can be empty objects ({}) in requests.
+    :vartype user_assigned_identities: dict[str, ~azure.mgmt.monitor.models.UserAssignedIdentity]
+    """
+
+    _validation = {
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentity}"},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.ManagedServiceIdentityType"],
+        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword type: Type of managed service identity (where both SystemAssigned and UserAssigned
+         types are allowed). Required. Known values are: "None", "SystemAssigned", "UserAssigned", and
+         "SystemAssigned,UserAssigned".
+        :paramtype type: str or ~azure.mgmt.monitor.models.ManagedServiceIdentityType
+        :keyword user_assigned_identities: The set of user assigned identities associated with the
+         resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+         The dictionary values can be empty objects ({}) in requests.
+        :paramtype user_assigned_identities: dict[str, ~azure.mgmt.monitor.models.UserAssignedIdentity]
+        """
+        super().__init__(**kwargs)
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
+        self.type = type
+        self.user_assigned_identities = user_assigned_identities
+
+
+class DataCollectionEndpointResourceIdentity(ManagedServiceIdentity):
+    """Managed service identity of the resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar principal_id: The service principal ID of the system assigned identity. This property
+     will only be provided for a system assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+     provided for a system assigned identity.
+    :vartype tenant_id: str
+    :ivar type: Type of managed service identity (where both SystemAssigned and UserAssigned types
+     are allowed). Required. Known values are: "None", "SystemAssigned", "UserAssigned", and
+     "SystemAssigned,UserAssigned".
+    :vartype type: str or ~azure.mgmt.monitor.models.ManagedServiceIdentityType
+    :ivar user_assigned_identities: The set of user assigned identities associated with the
+     resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+     The dictionary values can be empty objects ({}) in requests.
+    :vartype user_assigned_identities: dict[str, ~azure.mgmt.monitor.models.UserAssignedIdentity]
+    """
+
+
+class DataCollectionEndpointResourceListResult(_serialization.Model):
+    """A pageable list of resources.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: A list of resources. Required.
+    :vartype value: list[~azure.mgmt.monitor.models.DataCollectionEndpointResource]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[DataCollectionEndpointResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: List["_models.DataCollectionEndpointResource"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: A list of resources. Required.
+        :paramtype value: list[~azure.mgmt.monitor.models.DataCollectionEndpointResource]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class DataCollectionEndpointResourceProperties(DataCollectionEndpoint):
+    """Resource properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar description: Description of the data collection endpoint.
+    :vartype description: str
+    :ivar immutable_id: The immutable ID of this data collection endpoint resource. This property
+     is READ-ONLY.
+    :vartype immutable_id: str
+    :ivar configuration_access: The endpoint used by clients to access their configuration.
+    :vartype configuration_access:
+     ~azure.mgmt.monitor.models.DataCollectionEndpointConfigurationAccess
+    :ivar logs_ingestion: The endpoint used by clients to ingest logs.
+    :vartype logs_ingestion: ~azure.mgmt.monitor.models.DataCollectionEndpointLogsIngestion
+    :ivar metrics_ingestion: The endpoint used by clients to ingest metrics.
+    :vartype metrics_ingestion: ~azure.mgmt.monitor.models.DataCollectionEndpointMetricsIngestion
+    :ivar network_acls: Network access control rules for the endpoints.
+    :vartype network_acls: ~azure.mgmt.monitor.models.DataCollectionEndpointNetworkAcls
+    :ivar provisioning_state: The resource provisioning state. This property is READ-ONLY. Known
+     values are: "Creating", "Updating", "Deleting", "Succeeded", "Canceled", and "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.monitor.models.KnownDataCollectionEndpointProvisioningState
+    :ivar private_link_scoped_resources: List of Azure Monitor Private Link Scope Resources to
+     which this data collection endpoint resource is associated. This property is READ-ONLY.
+    :vartype private_link_scoped_resources:
+     list[~azure.mgmt.monitor.models.PrivateLinkScopedResource]
+    :ivar failover_configuration: Failover configuration on this endpoint. This property is
+     READ-ONLY.
+    :vartype failover_configuration:
+     ~azure.mgmt.monitor.models.DataCollectionEndpointFailoverConfiguration
+    :ivar metadata: Metadata for the resource. This property is READ-ONLY.
+    :vartype metadata: ~azure.mgmt.monitor.models.DataCollectionEndpointMetadata
+    """
+
+
+class SystemData(_serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.monitor.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.monitor.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self,
+        *,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.monitor.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.monitor.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
+
+
+class DataCollectionEndpointResourceSystemData(SystemData):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.monitor.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.monitor.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+
+class DataCollectionRule(_serialization.Model):
+    """Definition of what monitoring data to collect and where that data should be sent.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar description: Description of the data collection rule.
+    :vartype description: str
+    :ivar immutable_id: The immutable ID of this data collection rule. This property is READ-ONLY.
+    :vartype immutable_id: str
+    :ivar data_collection_endpoint_id: The resource ID of the data collection endpoint that this
+     rule can be used with.
+    :vartype data_collection_endpoint_id: str
+    :ivar metadata: Metadata about the resource.
+    :vartype metadata: ~azure.mgmt.monitor.models.DataCollectionRuleMetadata
+    :ivar endpoints: Defines the ingestion endpoints to send data to via this rule.
+    :vartype endpoints: ~azure.mgmt.monitor.models.DataCollectionRuleEndpoints
+    :ivar references: Defines all the references that may be used in other sections of the DCR.
+    :vartype references: ~azure.mgmt.monitor.models.DataCollectionRuleReferences
+    :ivar agent_settings: Agent settings used to modify agent behavior on a given host.
+    :vartype agent_settings: ~azure.mgmt.monitor.models.DataCollectionRuleAgentSettings
+    :ivar stream_declarations: Declaration of custom streams used in this rule.
+    :vartype stream_declarations: dict[str, ~azure.mgmt.monitor.models.StreamDeclaration]
+    :ivar data_sources: The specification of data sources.
+     This property is optional and can be omitted if the rule is meant to be used via direct calls
+     to the provisioned endpoint.
+    :vartype data_sources: ~azure.mgmt.monitor.models.DataCollectionRuleDataSources
+    :ivar destinations: The specification of destinations.
+    :vartype destinations: ~azure.mgmt.monitor.models.DataCollectionRuleDestinations
+    :ivar data_flows: The specification of data flows.
+    :vartype data_flows: list[~azure.mgmt.monitor.models.DataFlow]
+    :ivar provisioning_state: The resource provisioning state. Known values are: "Creating",
+     "Updating", "Deleting", "Succeeded", "Canceled", and "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.monitor.models.KnownDataCollectionRuleProvisioningState
+    """
+
+    _validation = {
+        "immutable_id": {"readonly": True},
+        "metadata": {"readonly": True},
+        "endpoints": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "description": {"key": "description", "type": "str"},
+        "immutable_id": {"key": "immutableId", "type": "str"},
+        "data_collection_endpoint_id": {"key": "dataCollectionEndpointId", "type": "str"},
+        "metadata": {"key": "metadata", "type": "DataCollectionRuleMetadata"},
+        "endpoints": {"key": "endpoints", "type": "DataCollectionRuleEndpoints"},
+        "references": {"key": "references", "type": "DataCollectionRuleReferences"},
+        "agent_settings": {"key": "agentSettings", "type": "DataCollectionRuleAgentSettings"},
+        "stream_declarations": {"key": "streamDeclarations", "type": "{StreamDeclaration}"},
+        "data_sources": {"key": "dataSources", "type": "DataCollectionRuleDataSources"},
+        "destinations": {"key": "destinations", "type": "DataCollectionRuleDestinations"},
+        "data_flows": {"key": "dataFlows", "type": "[DataFlow]"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        data_collection_endpoint_id: Optional[str] = None,
+        references: Optional["_models.DataCollectionRuleReferences"] = None,
+        agent_settings: Optional["_models.DataCollectionRuleAgentSettings"] = None,
+        stream_declarations: Optional[Dict[str, "_models.StreamDeclaration"]] = None,
+        data_sources: Optional["_models.DataCollectionRuleDataSources"] = None,
+        destinations: Optional["_models.DataCollectionRuleDestinations"] = None,
+        data_flows: Optional[List["_models.DataFlow"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword description: Description of the data collection rule.
+        :paramtype description: str
+        :keyword data_collection_endpoint_id: The resource ID of the data collection endpoint that this
+         rule can be used with.
+        :paramtype data_collection_endpoint_id: str
+        :keyword references: Defines all the references that may be used in other sections of the DCR.
+        :paramtype references: ~azure.mgmt.monitor.models.DataCollectionRuleReferences
+        :keyword agent_settings: Agent settings used to modify agent behavior on a given host.
+        :paramtype agent_settings: ~azure.mgmt.monitor.models.DataCollectionRuleAgentSettings
+        :keyword stream_declarations: Declaration of custom streams used in this rule.
+        :paramtype stream_declarations: dict[str, ~azure.mgmt.monitor.models.StreamDeclaration]
+        :keyword data_sources: The specification of data sources.
+         This property is optional and can be omitted if the rule is meant to be used via direct calls
+         to the provisioned endpoint.
+        :paramtype data_sources: ~azure.mgmt.monitor.models.DataCollectionRuleDataSources
+        :keyword destinations: The specification of destinations.
+        :paramtype destinations: ~azure.mgmt.monitor.models.DataCollectionRuleDestinations
+        :keyword data_flows: The specification of data flows.
+        :paramtype data_flows: list[~azure.mgmt.monitor.models.DataFlow]
+        """
+        super().__init__(**kwargs)
+        self.description = description
+        self.immutable_id: Optional[str] = None
+        self.data_collection_endpoint_id = data_collection_endpoint_id
+        self.metadata: Optional["_models.DataCollectionRuleMetadata"] = None
+        self.endpoints: Optional["_models.DataCollectionRuleEndpoints"] = None
+        self.references = references
+        self.agent_settings = agent_settings
+        self.stream_declarations = stream_declarations
+        self.data_sources = data_sources
+        self.destinations = destinations
+        self.data_flows = data_flows
+        self.provisioning_state: Optional[Union[str, "_models.KnownDataCollectionRuleProvisioningState"]] = None
+
+
+class DataCollectionRuleAgentSettings(AgentSettingsSpec):
+    """Agent settings used to modify agent behavior on a given host.
+
+    :ivar logs: All the settings that are applicable to the logs agent (AMA).
+    :vartype logs: list[~azure.mgmt.monitor.models.AgentSetting]
+    """
+
+
+class DataCollectionRuleAssociation(_serialization.Model):
+    """Definition of association of a data collection rule with a monitored Azure resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar description: Description of the association.
+    :vartype description: str
+    :ivar data_collection_rule_id: The resource ID of the data collection rule that is to be
+     associated.
+    :vartype data_collection_rule_id: str
+    :ivar data_collection_endpoint_id: The resource ID of the data collection endpoint that is to
+     be associated.
+    :vartype data_collection_endpoint_id: str
+    :ivar provisioning_state: The resource provisioning state. Known values are: "Creating",
+     "Updating", "Deleting", "Succeeded", "Canceled", and "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.monitor.models.KnownDataCollectionRuleAssociationProvisioningState
+    :ivar metadata: Metadata about the resource.
+    :vartype metadata: ~azure.mgmt.monitor.models.DataCollectionRuleAssociationMetadata
+    """
+
+    _validation = {
+        "provisioning_state": {"readonly": True},
+        "metadata": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "description": {"key": "description", "type": "str"},
+        "data_collection_rule_id": {"key": "dataCollectionRuleId", "type": "str"},
+        "data_collection_endpoint_id": {"key": "dataCollectionEndpointId", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "metadata": {"key": "metadata", "type": "DataCollectionRuleAssociationMetadata"},
+    }
+
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        data_collection_rule_id: Optional[str] = None,
+        data_collection_endpoint_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword description: Description of the association.
+        :paramtype description: str
+        :keyword data_collection_rule_id: The resource ID of the data collection rule that is to be
+         associated.
+        :paramtype data_collection_rule_id: str
+        :keyword data_collection_endpoint_id: The resource ID of the data collection endpoint that is
+         to be associated.
+        :paramtype data_collection_endpoint_id: str
+        """
+        super().__init__(**kwargs)
+        self.description = description
+        self.data_collection_rule_id = data_collection_rule_id
+        self.data_collection_endpoint_id = data_collection_endpoint_id
+        self.provisioning_state: Optional[Union[str, "_models.KnownDataCollectionRuleAssociationProvisioningState"]] = (
+            None
+        )
+        self.metadata: Optional["_models.DataCollectionRuleAssociationMetadata"] = None
+
+
+class DataCollectionRuleAssociationMetadata(Metadata):
+    """Metadata about the resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar provisioned_by: Azure offering managing this resource on-behalf-of customer.
+    :vartype provisioned_by: str
+    :ivar provisioned_by_resource_id: Resource Id of azure offering managing this resource
+     on-behalf-of customer.
+    :vartype provisioned_by_resource_id: str
+    :ivar provisioned_by_immutable_id: Immutable Id of azure offering managing this resource
+     on-behalf-of customer.
+    :vartype provisioned_by_immutable_id: str
+    """
+
+
+class DataCollectionRuleAssociationProxyOnlyResource(_serialization.Model):  # pylint: disable=name-too-long
+    """Definition of generic ARM proxy resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified ID of the resource.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :ivar etag: Resource entity tag (ETag).
+    :vartype etag: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data:
+     ~azure.mgmt.monitor.models.DataCollectionRuleAssociationProxyOnlyResourceSystemData
+    :ivar description: Description of the association.
+    :vartype description: str
+    :ivar data_collection_rule_id: The resource ID of the data collection rule that is to be
+     associated.
+    :vartype data_collection_rule_id: str
+    :ivar data_collection_endpoint_id: The resource ID of the data collection endpoint that is to
+     be associated.
+    :vartype data_collection_endpoint_id: str
+    :ivar provisioning_state: The resource provisioning state. Known values are: "Creating",
+     "Updating", "Deleting", "Succeeded", "Canceled", and "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.monitor.models.KnownDataCollectionRuleAssociationProvisioningState
+    :ivar metadata: Metadata about the resource.
+    :vartype metadata: ~azure.mgmt.monitor.models.DataCollectionRuleAssociationMetadata
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "metadata": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "system_data": {"key": "systemData", "type": "DataCollectionRuleAssociationProxyOnlyResourceSystemData"},
+        "description": {"key": "properties.description", "type": "str"},
+        "data_collection_rule_id": {"key": "properties.dataCollectionRuleId", "type": "str"},
+        "data_collection_endpoint_id": {"key": "properties.dataCollectionEndpointId", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "metadata": {"key": "properties.metadata", "type": "DataCollectionRuleAssociationMetadata"},
+    }
+
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        data_collection_rule_id: Optional[str] = None,
+        data_collection_endpoint_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword description: Description of the association.
+        :paramtype description: str
+        :keyword data_collection_rule_id: The resource ID of the data collection rule that is to be
+         associated.
+        :paramtype data_collection_rule_id: str
+        :keyword data_collection_endpoint_id: The resource ID of the data collection endpoint that is
+         to be associated.
+        :paramtype data_collection_endpoint_id: str
+        """
+        super().__init__(**kwargs)
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.etag: Optional[str] = None
+        self.system_data: Optional["_models.DataCollectionRuleAssociationProxyOnlyResourceSystemData"] = None
+        self.description = description
+        self.data_collection_rule_id = data_collection_rule_id
+        self.data_collection_endpoint_id = data_collection_endpoint_id
+        self.provisioning_state: Optional[Union[str, "_models.KnownDataCollectionRuleAssociationProvisioningState"]] = (
+            None
+        )
+        self.metadata: Optional["_models.DataCollectionRuleAssociationMetadata"] = None
+
+
+class DataCollectionRuleAssociationProxyOnlyResourceListResult(_serialization.Model):  # pylint: disable=name-too-long
+    """A pageable list of resources.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: A list of resources. Required.
+    :vartype value: list[~azure.mgmt.monitor.models.DataCollectionRuleAssociationProxyOnlyResource]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[DataCollectionRuleAssociationProxyOnlyResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: List["_models.DataCollectionRuleAssociationProxyOnlyResource"],
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: A list of resources. Required.
+        :paramtype value:
+         list[~azure.mgmt.monitor.models.DataCollectionRuleAssociationProxyOnlyResource]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class DataCollectionRuleAssociationProxyOnlyResourceProperties(
+    DataCollectionRuleAssociation
+):  # pylint: disable=name-too-long
+    """Resource properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar description: Description of the association.
+    :vartype description: str
+    :ivar data_collection_rule_id: The resource ID of the data collection rule that is to be
+     associated.
+    :vartype data_collection_rule_id: str
+    :ivar data_collection_endpoint_id: The resource ID of the data collection endpoint that is to
+     be associated.
+    :vartype data_collection_endpoint_id: str
+    :ivar provisioning_state: The resource provisioning state. Known values are: "Creating",
+     "Updating", "Deleting", "Succeeded", "Canceled", and "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.monitor.models.KnownDataCollectionRuleAssociationProvisioningState
+    :ivar metadata: Metadata about the resource.
+    :vartype metadata: ~azure.mgmt.monitor.models.DataCollectionRuleAssociationMetadata
+    """
+
+
+class DataCollectionRuleAssociationProxyOnlyResourceSystemData(SystemData):  # pylint: disable=name-too-long
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.monitor.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.monitor.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+
+class DataSourcesSpec(_serialization.Model):
+    """Specification of data sources that will be collected.
+
+    :ivar performance_counters: The list of performance counter data source configurations.
+    :vartype performance_counters: list[~azure.mgmt.monitor.models.PerfCounterDataSource]
+    :ivar windows_event_logs: The list of Windows Event Log data source configurations.
+    :vartype windows_event_logs: list[~azure.mgmt.monitor.models.WindowsEventLogDataSource]
+    :ivar syslog: The list of Syslog data source configurations.
+    :vartype syslog: list[~azure.mgmt.monitor.models.SyslogDataSource]
+    :ivar extensions: The list of Azure VM extension data source configurations.
+    :vartype extensions: list[~azure.mgmt.monitor.models.ExtensionDataSource]
+    :ivar log_files: The list of Log files source configurations.
+    :vartype log_files: list[~azure.mgmt.monitor.models.LogFilesDataSource]
+    :ivar iis_logs: The list of IIS logs source configurations.
+    :vartype iis_logs: list[~azure.mgmt.monitor.models.IisLogsDataSource]
+    :ivar windows_firewall_logs: The list of Windows Firewall logs source configurations.
+    :vartype windows_firewall_logs: list[~azure.mgmt.monitor.models.WindowsFirewallLogsDataSource]
+    :ivar prometheus_forwarder: The list of Prometheus forwarder data source configurations.
+    :vartype prometheus_forwarder: list[~azure.mgmt.monitor.models.PrometheusForwarderDataSource]
+    :ivar platform_telemetry: The list of platform telemetry configurations.
+    :vartype platform_telemetry: list[~azure.mgmt.monitor.models.PlatformTelemetryDataSource]
+    :ivar data_imports: Specifications of pull based data sources.
+    :vartype data_imports: ~azure.mgmt.monitor.models.DataSourcesSpecDataImports
+    """
+
+    _attribute_map = {
+        "performance_counters": {"key": "performanceCounters", "type": "[PerfCounterDataSource]"},
+        "windows_event_logs": {"key": "windowsEventLogs", "type": "[WindowsEventLogDataSource]"},
+        "syslog": {"key": "syslog", "type": "[SyslogDataSource]"},
+        "extensions": {"key": "extensions", "type": "[ExtensionDataSource]"},
+        "log_files": {"key": "logFiles", "type": "[LogFilesDataSource]"},
+        "iis_logs": {"key": "iisLogs", "type": "[IisLogsDataSource]"},
+        "windows_firewall_logs": {"key": "windowsFirewallLogs", "type": "[WindowsFirewallLogsDataSource]"},
+        "prometheus_forwarder": {"key": "prometheusForwarder", "type": "[PrometheusForwarderDataSource]"},
+        "platform_telemetry": {"key": "platformTelemetry", "type": "[PlatformTelemetryDataSource]"},
+        "data_imports": {"key": "dataImports", "type": "DataSourcesSpecDataImports"},
+    }
+
+    def __init__(
+        self,
+        *,
+        performance_counters: Optional[List["_models.PerfCounterDataSource"]] = None,
+        windows_event_logs: Optional[List["_models.WindowsEventLogDataSource"]] = None,
+        syslog: Optional[List["_models.SyslogDataSource"]] = None,
+        extensions: Optional[List["_models.ExtensionDataSource"]] = None,
+        log_files: Optional[List["_models.LogFilesDataSource"]] = None,
+        iis_logs: Optional[List["_models.IisLogsDataSource"]] = None,
+        windows_firewall_logs: Optional[List["_models.WindowsFirewallLogsDataSource"]] = None,
+        prometheus_forwarder: Optional[List["_models.PrometheusForwarderDataSource"]] = None,
+        platform_telemetry: Optional[List["_models.PlatformTelemetryDataSource"]] = None,
+        data_imports: Optional["_models.DataSourcesSpecDataImports"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword performance_counters: The list of performance counter data source configurations.
+        :paramtype performance_counters: list[~azure.mgmt.monitor.models.PerfCounterDataSource]
+        :keyword windows_event_logs: The list of Windows Event Log data source configurations.
+        :paramtype windows_event_logs: list[~azure.mgmt.monitor.models.WindowsEventLogDataSource]
+        :keyword syslog: The list of Syslog data source configurations.
+        :paramtype syslog: list[~azure.mgmt.monitor.models.SyslogDataSource]
+        :keyword extensions: The list of Azure VM extension data source configurations.
+        :paramtype extensions: list[~azure.mgmt.monitor.models.ExtensionDataSource]
+        :keyword log_files: The list of Log files source configurations.
+        :paramtype log_files: list[~azure.mgmt.monitor.models.LogFilesDataSource]
+        :keyword iis_logs: The list of IIS logs source configurations.
+        :paramtype iis_logs: list[~azure.mgmt.monitor.models.IisLogsDataSource]
+        :keyword windows_firewall_logs: The list of Windows Firewall logs source configurations.
+        :paramtype windows_firewall_logs:
+         list[~azure.mgmt.monitor.models.WindowsFirewallLogsDataSource]
+        :keyword prometheus_forwarder: The list of Prometheus forwarder data source configurations.
+        :paramtype prometheus_forwarder: list[~azure.mgmt.monitor.models.PrometheusForwarderDataSource]
+        :keyword platform_telemetry: The list of platform telemetry configurations.
+        :paramtype platform_telemetry: list[~azure.mgmt.monitor.models.PlatformTelemetryDataSource]
+        :keyword data_imports: Specifications of pull based data sources.
+        :paramtype data_imports: ~azure.mgmt.monitor.models.DataSourcesSpecDataImports
+        """
+        super().__init__(**kwargs)
+        self.performance_counters = performance_counters
+        self.windows_event_logs = windows_event_logs
+        self.syslog = syslog
+        self.extensions = extensions
+        self.log_files = log_files
+        self.iis_logs = iis_logs
+        self.windows_firewall_logs = windows_firewall_logs
+        self.prometheus_forwarder = prometheus_forwarder
+        self.platform_telemetry = platform_telemetry
+        self.data_imports = data_imports
+
+
+class DataCollectionRuleDataSources(DataSourcesSpec):
+    """The specification of data sources.
+    This property is optional and can be omitted if the rule is meant to be used via direct calls
+    to the provisioned endpoint.
+
+    :ivar performance_counters: The list of performance counter data source configurations.
+    :vartype performance_counters: list[~azure.mgmt.monitor.models.PerfCounterDataSource]
+    :ivar windows_event_logs: The list of Windows Event Log data source configurations.
+    :vartype windows_event_logs: list[~azure.mgmt.monitor.models.WindowsEventLogDataSource]
+    :ivar syslog: The list of Syslog data source configurations.
+    :vartype syslog: list[~azure.mgmt.monitor.models.SyslogDataSource]
+    :ivar extensions: The list of Azure VM extension data source configurations.
+    :vartype extensions: list[~azure.mgmt.monitor.models.ExtensionDataSource]
+    :ivar log_files: The list of Log files source configurations.
+    :vartype log_files: list[~azure.mgmt.monitor.models.LogFilesDataSource]
+    :ivar iis_logs: The list of IIS logs source configurations.
+    :vartype iis_logs: list[~azure.mgmt.monitor.models.IisLogsDataSource]
+    :ivar windows_firewall_logs: The list of Windows Firewall logs source configurations.
+    :vartype windows_firewall_logs: list[~azure.mgmt.monitor.models.WindowsFirewallLogsDataSource]
+    :ivar prometheus_forwarder: The list of Prometheus forwarder data source configurations.
+    :vartype prometheus_forwarder: list[~azure.mgmt.monitor.models.PrometheusForwarderDataSource]
+    :ivar platform_telemetry: The list of platform telemetry configurations.
+    :vartype platform_telemetry: list[~azure.mgmt.monitor.models.PlatformTelemetryDataSource]
+    :ivar data_imports: Specifications of pull based data sources.
+    :vartype data_imports: ~azure.mgmt.monitor.models.DataSourcesSpecDataImports
+    """
+
+
+class DestinationsSpec(_serialization.Model):
+    """Specification of destinations that can be used in data flows.
+
+    :ivar log_analytics: List of Log Analytics destinations.
+    :vartype log_analytics: list[~azure.mgmt.monitor.models.LogAnalyticsDestination]
+    :ivar monitoring_accounts: List of monitoring account destinations.
+    :vartype monitoring_accounts: list[~azure.mgmt.monitor.models.MonitoringAccountDestination]
+    :ivar azure_monitor_metrics: Azure Monitor Metrics destination.
+    :vartype azure_monitor_metrics: ~azure.mgmt.monitor.models.DestinationsSpecAzureMonitorMetrics
+    :ivar event_hubs: List of Event Hubs destinations.
+    :vartype event_hubs: list[~azure.mgmt.monitor.models.EventHubDestination]
+    :ivar event_hubs_direct: List of Event Hubs Direct destinations.
+    :vartype event_hubs_direct: list[~azure.mgmt.monitor.models.EventHubDirectDestination]
+    :ivar storage_blobs_direct: List of Storage Blob Direct destinations. To be used only for
+     sending data directly to store from the agent.
+    :vartype storage_blobs_direct: list[~azure.mgmt.monitor.models.StorageBlobDestination]
+    :ivar storage_tables_direct: List of Storage Table Direct destinations.
+    :vartype storage_tables_direct: list[~azure.mgmt.monitor.models.StorageTableDestination]
+    :ivar storage_accounts: List of storage accounts destinations.
+    :vartype storage_accounts: list[~azure.mgmt.monitor.models.StorageBlobDestination]
+    :ivar microsoft_fabric: List of Microsoft Fabric destinations.
+    :vartype microsoft_fabric: list[~azure.mgmt.monitor.models.MicrosoftFabricDestination]
+    :ivar azure_data_explorer: List of Azure Data Explorer destinations.
+    :vartype azure_data_explorer: list[~azure.mgmt.monitor.models.AdxDestination]
+    """
+
+    _attribute_map = {
+        "log_analytics": {"key": "logAnalytics", "type": "[LogAnalyticsDestination]"},
+        "monitoring_accounts": {"key": "monitoringAccounts", "type": "[MonitoringAccountDestination]"},
+        "azure_monitor_metrics": {"key": "azureMonitorMetrics", "type": "DestinationsSpecAzureMonitorMetrics"},
+        "event_hubs": {"key": "eventHubs", "type": "[EventHubDestination]"},
+        "event_hubs_direct": {"key": "eventHubsDirect", "type": "[EventHubDirectDestination]"},
+        "storage_blobs_direct": {"key": "storageBlobsDirect", "type": "[StorageBlobDestination]"},
+        "storage_tables_direct": {"key": "storageTablesDirect", "type": "[StorageTableDestination]"},
+        "storage_accounts": {"key": "storageAccounts", "type": "[StorageBlobDestination]"},
+        "microsoft_fabric": {"key": "microsoftFabric", "type": "[MicrosoftFabricDestination]"},
+        "azure_data_explorer": {"key": "azureDataExplorer", "type": "[AdxDestination]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        log_analytics: Optional[List["_models.LogAnalyticsDestination"]] = None,
+        monitoring_accounts: Optional[List["_models.MonitoringAccountDestination"]] = None,
+        azure_monitor_metrics: Optional["_models.DestinationsSpecAzureMonitorMetrics"] = None,
+        event_hubs: Optional[List["_models.EventHubDestination"]] = None,
+        event_hubs_direct: Optional[List["_models.EventHubDirectDestination"]] = None,
+        storage_blobs_direct: Optional[List["_models.StorageBlobDestination"]] = None,
+        storage_tables_direct: Optional[List["_models.StorageTableDestination"]] = None,
+        storage_accounts: Optional[List["_models.StorageBlobDestination"]] = None,
+        microsoft_fabric: Optional[List["_models.MicrosoftFabricDestination"]] = None,
+        azure_data_explorer: Optional[List["_models.AdxDestination"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword log_analytics: List of Log Analytics destinations.
+        :paramtype log_analytics: list[~azure.mgmt.monitor.models.LogAnalyticsDestination]
+        :keyword monitoring_accounts: List of monitoring account destinations.
+        :paramtype monitoring_accounts: list[~azure.mgmt.monitor.models.MonitoringAccountDestination]
+        :keyword azure_monitor_metrics: Azure Monitor Metrics destination.
+        :paramtype azure_monitor_metrics:
+         ~azure.mgmt.monitor.models.DestinationsSpecAzureMonitorMetrics
+        :keyword event_hubs: List of Event Hubs destinations.
+        :paramtype event_hubs: list[~azure.mgmt.monitor.models.EventHubDestination]
+        :keyword event_hubs_direct: List of Event Hubs Direct destinations.
+        :paramtype event_hubs_direct: list[~azure.mgmt.monitor.models.EventHubDirectDestination]
+        :keyword storage_blobs_direct: List of Storage Blob Direct destinations. To be used only for
+         sending data directly to store from the agent.
+        :paramtype storage_blobs_direct: list[~azure.mgmt.monitor.models.StorageBlobDestination]
+        :keyword storage_tables_direct: List of Storage Table Direct destinations.
+        :paramtype storage_tables_direct: list[~azure.mgmt.monitor.models.StorageTableDestination]
+        :keyword storage_accounts: List of storage accounts destinations.
+        :paramtype storage_accounts: list[~azure.mgmt.monitor.models.StorageBlobDestination]
+        :keyword microsoft_fabric: List of Microsoft Fabric destinations.
+        :paramtype microsoft_fabric: list[~azure.mgmt.monitor.models.MicrosoftFabricDestination]
+        :keyword azure_data_explorer: List of Azure Data Explorer destinations.
+        :paramtype azure_data_explorer: list[~azure.mgmt.monitor.models.AdxDestination]
+        """
+        super().__init__(**kwargs)
+        self.log_analytics = log_analytics
+        self.monitoring_accounts = monitoring_accounts
+        self.azure_monitor_metrics = azure_monitor_metrics
+        self.event_hubs = event_hubs
+        self.event_hubs_direct = event_hubs_direct
+        self.storage_blobs_direct = storage_blobs_direct
+        self.storage_tables_direct = storage_tables_direct
+        self.storage_accounts = storage_accounts
+        self.microsoft_fabric = microsoft_fabric
+        self.azure_data_explorer = azure_data_explorer
+
+
+class DataCollectionRuleDestinations(DestinationsSpec):
+    """The specification of destinations.
+
+    :ivar log_analytics: List of Log Analytics destinations.
+    :vartype log_analytics: list[~azure.mgmt.monitor.models.LogAnalyticsDestination]
+    :ivar monitoring_accounts: List of monitoring account destinations.
+    :vartype monitoring_accounts: list[~azure.mgmt.monitor.models.MonitoringAccountDestination]
+    :ivar azure_monitor_metrics: Azure Monitor Metrics destination.
+    :vartype azure_monitor_metrics: ~azure.mgmt.monitor.models.DestinationsSpecAzureMonitorMetrics
+    :ivar event_hubs: List of Event Hubs destinations.
+    :vartype event_hubs: list[~azure.mgmt.monitor.models.EventHubDestination]
+    :ivar event_hubs_direct: List of Event Hubs Direct destinations.
+    :vartype event_hubs_direct: list[~azure.mgmt.monitor.models.EventHubDirectDestination]
+    :ivar storage_blobs_direct: List of Storage Blob Direct destinations. To be used only for
+     sending data directly to store from the agent.
+    :vartype storage_blobs_direct: list[~azure.mgmt.monitor.models.StorageBlobDestination]
+    :ivar storage_tables_direct: List of Storage Table Direct destinations.
+    :vartype storage_tables_direct: list[~azure.mgmt.monitor.models.StorageTableDestination]
+    :ivar storage_accounts: List of storage accounts destinations.
+    :vartype storage_accounts: list[~azure.mgmt.monitor.models.StorageBlobDestination]
+    :ivar microsoft_fabric: List of Microsoft Fabric destinations.
+    :vartype microsoft_fabric: list[~azure.mgmt.monitor.models.MicrosoftFabricDestination]
+    :ivar azure_data_explorer: List of Azure Data Explorer destinations.
+    :vartype azure_data_explorer: list[~azure.mgmt.monitor.models.AdxDestination]
+    """
+
+
+class EndpointsSpec(_serialization.Model):
+    """This defines all the ingestion endpoints that can be used by this rule.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar logs_ingestion: The ingestion endpoint for logs.
+    :vartype logs_ingestion: str
+    :ivar metrics_ingestion: The ingestion endpoint for metrics.
+    :vartype metrics_ingestion: str
+    """
+
+    _validation = {
+        "logs_ingestion": {"readonly": True},
+        "metrics_ingestion": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "logs_ingestion": {"key": "logsIngestion", "type": "str"},
+        "metrics_ingestion": {"key": "metricsIngestion", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.logs_ingestion: Optional[str] = None
+        self.metrics_ingestion: Optional[str] = None
+
+
+class DataCollectionRuleEndpoints(EndpointsSpec):
+    """Defines the ingestion endpoints to send data to via this rule.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar logs_ingestion: The ingestion endpoint for logs.
+    :vartype logs_ingestion: str
+    :ivar metrics_ingestion: The ingestion endpoint for metrics.
+    :vartype metrics_ingestion: str
+    """
+
+
+class DataCollectionRuleMetadata(Metadata):
+    """Metadata about the resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar provisioned_by: Azure offering managing this resource on-behalf-of customer.
+    :vartype provisioned_by: str
+    :ivar provisioned_by_resource_id: Resource Id of azure offering managing this resource
+     on-behalf-of customer.
+    :vartype provisioned_by_resource_id: str
+    :ivar provisioned_by_immutable_id: Immutable Id of azure offering managing this resource
+     on-behalf-of customer.
+    :vartype provisioned_by_immutable_id: str
+    """
+
+
+class ReferencesSpec(_serialization.Model):
+    """This section defines all the references that may be used in other sections of the DCR.
+
+    :ivar enrichment_data: All the enrichment data sources referenced in data flows.
+    :vartype enrichment_data: ~azure.mgmt.monitor.models.ReferencesSpecEnrichmentData
+    """
+
+    _attribute_map = {
+        "enrichment_data": {"key": "enrichmentData", "type": "ReferencesSpecEnrichmentData"},
+    }
+
+    def __init__(
+        self, *, enrichment_data: Optional["_models.ReferencesSpecEnrichmentData"] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword enrichment_data: All the enrichment data sources referenced in data flows.
+        :paramtype enrichment_data: ~azure.mgmt.monitor.models.ReferencesSpecEnrichmentData
+        """
+        super().__init__(**kwargs)
+        self.enrichment_data = enrichment_data
+
+
+class DataCollectionRuleReferences(ReferencesSpec):
+    """Defines all the references that may be used in other sections of the DCR.
+
+    :ivar enrichment_data: All the enrichment data sources referenced in data flows.
+    :vartype enrichment_data: ~azure.mgmt.monitor.models.ReferencesSpecEnrichmentData
+    """
+
+
+class DataCollectionRuleResource(_serialization.Model):
+    """Definition of ARM tracked top level resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar kind: The kind of the resource. Known values are: "Linux" and "Windows".
+    :vartype kind: str or ~azure.mgmt.monitor.models.KnownDataCollectionRuleResourceKind
+    :ivar identity: Managed service identity of the resource.
+    :vartype identity: ~azure.mgmt.monitor.models.DataCollectionRuleResourceIdentity
+    :ivar id: Fully qualified ID of the resource.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :ivar etag: Resource entity tag (ETag).
+    :vartype etag: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.monitor.models.DataCollectionRuleResourceSystemData
+    :ivar description: Description of the data collection rule.
+    :vartype description: str
+    :ivar immutable_id: The immutable ID of this data collection rule. This property is READ-ONLY.
+    :vartype immutable_id: str
+    :ivar data_collection_endpoint_id: The resource ID of the data collection endpoint that this
+     rule can be used with.
+    :vartype data_collection_endpoint_id: str
+    :ivar metadata: Metadata about the resource.
+    :vartype metadata: ~azure.mgmt.monitor.models.DataCollectionRuleMetadata
+    :ivar endpoints: Defines the ingestion endpoints to send data to via this rule.
+    :vartype endpoints: ~azure.mgmt.monitor.models.DataCollectionRuleEndpoints
+    :ivar references: Defines all the references that may be used in other sections of the DCR.
+    :vartype references: ~azure.mgmt.monitor.models.DataCollectionRuleReferences
+    :ivar agent_settings: Agent settings used to modify agent behavior on a given host.
+    :vartype agent_settings: ~azure.mgmt.monitor.models.DataCollectionRuleAgentSettings
+    :ivar stream_declarations: Declaration of custom streams used in this rule.
+    :vartype stream_declarations: dict[str, ~azure.mgmt.monitor.models.StreamDeclaration]
+    :ivar data_sources: The specification of data sources.
+     This property is optional and can be omitted if the rule is meant to be used via direct calls
+     to the provisioned endpoint.
+    :vartype data_sources: ~azure.mgmt.monitor.models.DataCollectionRuleDataSources
+    :ivar destinations: The specification of destinations.
+    :vartype destinations: ~azure.mgmt.monitor.models.DataCollectionRuleDestinations
+    :ivar data_flows: The specification of data flows.
+    :vartype data_flows: list[~azure.mgmt.monitor.models.DataFlow]
+    :ivar provisioning_state: The resource provisioning state. Known values are: "Creating",
+     "Updating", "Deleting", "Succeeded", "Canceled", and "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.monitor.models.KnownDataCollectionRuleProvisioningState
+    """
+
+    _validation = {
+        "location": {"required": True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "system_data": {"readonly": True},
+        "immutable_id": {"readonly": True},
+        "metadata": {"readonly": True},
+        "endpoints": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "kind": {"key": "kind", "type": "str"},
+        "identity": {"key": "identity", "type": "DataCollectionRuleResourceIdentity"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "system_data": {"key": "systemData", "type": "DataCollectionRuleResourceSystemData"},
+        "description": {"key": "properties.description", "type": "str"},
+        "immutable_id": {"key": "properties.immutableId", "type": "str"},
+        "data_collection_endpoint_id": {"key": "properties.dataCollectionEndpointId", "type": "str"},
+        "metadata": {"key": "properties.metadata", "type": "DataCollectionRuleMetadata"},
+        "endpoints": {"key": "properties.endpoints", "type": "DataCollectionRuleEndpoints"},
+        "references": {"key": "properties.references", "type": "DataCollectionRuleReferences"},
+        "agent_settings": {"key": "properties.agentSettings", "type": "DataCollectionRuleAgentSettings"},
+        "stream_declarations": {"key": "properties.streamDeclarations", "type": "{StreamDeclaration}"},
+        "data_sources": {"key": "properties.dataSources", "type": "DataCollectionRuleDataSources"},
+        "destinations": {"key": "properties.destinations", "type": "DataCollectionRuleDestinations"},
+        "data_flows": {"key": "properties.dataFlows", "type": "[DataFlow]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        kind: Optional[Union[str, "_models.KnownDataCollectionRuleResourceKind"]] = None,
+        identity: Optional["_models.DataCollectionRuleResourceIdentity"] = None,
+        description: Optional[str] = None,
+        data_collection_endpoint_id: Optional[str] = None,
+        references: Optional["_models.DataCollectionRuleReferences"] = None,
+        agent_settings: Optional["_models.DataCollectionRuleAgentSettings"] = None,
+        stream_declarations: Optional[Dict[str, "_models.StreamDeclaration"]] = None,
+        data_sources: Optional["_models.DataCollectionRuleDataSources"] = None,
+        destinations: Optional["_models.DataCollectionRuleDestinations"] = None,
+        data_flows: Optional[List["_models.DataFlow"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword kind: The kind of the resource. Known values are: "Linux" and "Windows".
+        :paramtype kind: str or ~azure.mgmt.monitor.models.KnownDataCollectionRuleResourceKind
+        :keyword identity: Managed service identity of the resource.
+        :paramtype identity: ~azure.mgmt.monitor.models.DataCollectionRuleResourceIdentity
+        :keyword description: Description of the data collection rule.
+        :paramtype description: str
+        :keyword data_collection_endpoint_id: The resource ID of the data collection endpoint that this
+         rule can be used with.
+        :paramtype data_collection_endpoint_id: str
+        :keyword references: Defines all the references that may be used in other sections of the DCR.
+        :paramtype references: ~azure.mgmt.monitor.models.DataCollectionRuleReferences
+        :keyword agent_settings: Agent settings used to modify agent behavior on a given host.
+        :paramtype agent_settings: ~azure.mgmt.monitor.models.DataCollectionRuleAgentSettings
+        :keyword stream_declarations: Declaration of custom streams used in this rule.
+        :paramtype stream_declarations: dict[str, ~azure.mgmt.monitor.models.StreamDeclaration]
+        :keyword data_sources: The specification of data sources.
+         This property is optional and can be omitted if the rule is meant to be used via direct calls
+         to the provisioned endpoint.
+        :paramtype data_sources: ~azure.mgmt.monitor.models.DataCollectionRuleDataSources
+        :keyword destinations: The specification of destinations.
+        :paramtype destinations: ~azure.mgmt.monitor.models.DataCollectionRuleDestinations
+        :keyword data_flows: The specification of data flows.
+        :paramtype data_flows: list[~azure.mgmt.monitor.models.DataFlow]
+        """
+        super().__init__(**kwargs)
+        self.location = location
+        self.tags = tags
+        self.kind = kind
+        self.identity = identity
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.etag: Optional[str] = None
+        self.system_data: Optional["_models.DataCollectionRuleResourceSystemData"] = None
+        self.description = description
+        self.immutable_id: Optional[str] = None
+        self.data_collection_endpoint_id = data_collection_endpoint_id
+        self.metadata: Optional["_models.DataCollectionRuleMetadata"] = None
+        self.endpoints: Optional["_models.DataCollectionRuleEndpoints"] = None
+        self.references = references
+        self.agent_settings = agent_settings
+        self.stream_declarations = stream_declarations
+        self.data_sources = data_sources
+        self.destinations = destinations
+        self.data_flows = data_flows
+        self.provisioning_state: Optional[Union[str, "_models.KnownDataCollectionRuleProvisioningState"]] = None
+
+
+class DataCollectionRuleResourceIdentity(ManagedServiceIdentity):
+    """Managed service identity of the resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar principal_id: The service principal ID of the system assigned identity. This property
+     will only be provided for a system assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+     provided for a system assigned identity.
+    :vartype tenant_id: str
+    :ivar type: Type of managed service identity (where both SystemAssigned and UserAssigned types
+     are allowed). Required. Known values are: "None", "SystemAssigned", "UserAssigned", and
+     "SystemAssigned,UserAssigned".
+    :vartype type: str or ~azure.mgmt.monitor.models.ManagedServiceIdentityType
+    :ivar user_assigned_identities: The set of user assigned identities associated with the
+     resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+     The dictionary values can be empty objects ({}) in requests.
+    :vartype user_assigned_identities: dict[str, ~azure.mgmt.monitor.models.UserAssignedIdentity]
+    """
+
+
+class DataCollectionRuleResourceListResult(_serialization.Model):
+    """A pageable list of resources.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: A list of resources. Required.
+    :vartype value: list[~azure.mgmt.monitor.models.DataCollectionRuleResource]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[DataCollectionRuleResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: List["_models.DataCollectionRuleResource"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: A list of resources. Required.
+        :paramtype value: list[~azure.mgmt.monitor.models.DataCollectionRuleResource]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class DataCollectionRuleResourceProperties(DataCollectionRule):
+    """Resource properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar description: Description of the data collection rule.
+    :vartype description: str
+    :ivar immutable_id: The immutable ID of this data collection rule. This property is READ-ONLY.
+    :vartype immutable_id: str
+    :ivar data_collection_endpoint_id: The resource ID of the data collection endpoint that this
+     rule can be used with.
+    :vartype data_collection_endpoint_id: str
+    :ivar metadata: Metadata about the resource.
+    :vartype metadata: ~azure.mgmt.monitor.models.DataCollectionRuleMetadata
+    :ivar endpoints: Defines the ingestion endpoints to send data to via this rule.
+    :vartype endpoints: ~azure.mgmt.monitor.models.DataCollectionRuleEndpoints
+    :ivar references: Defines all the references that may be used in other sections of the DCR.
+    :vartype references: ~azure.mgmt.monitor.models.DataCollectionRuleReferences
+    :ivar agent_settings: Agent settings used to modify agent behavior on a given host.
+    :vartype agent_settings: ~azure.mgmt.monitor.models.DataCollectionRuleAgentSettings
+    :ivar stream_declarations: Declaration of custom streams used in this rule.
+    :vartype stream_declarations: dict[str, ~azure.mgmt.monitor.models.StreamDeclaration]
+    :ivar data_sources: The specification of data sources.
+     This property is optional and can be omitted if the rule is meant to be used via direct calls
+     to the provisioned endpoint.
+    :vartype data_sources: ~azure.mgmt.monitor.models.DataCollectionRuleDataSources
+    :ivar destinations: The specification of destinations.
+    :vartype destinations: ~azure.mgmt.monitor.models.DataCollectionRuleDestinations
+    :ivar data_flows: The specification of data flows.
+    :vartype data_flows: list[~azure.mgmt.monitor.models.DataFlow]
+    :ivar provisioning_state: The resource provisioning state. Known values are: "Creating",
+     "Updating", "Deleting", "Succeeded", "Canceled", and "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.monitor.models.KnownDataCollectionRuleProvisioningState
+    """
+
+
+class DataCollectionRuleResourceSystemData(SystemData):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.monitor.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.monitor.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+
 class DataContainer(_serialization.Model):
     """Information about a container with data for a given resource.
 
@@ -2220,6 +4084,145 @@ class DataContainer(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.workspace = workspace
+
+
+class DataFlow(_serialization.Model):
+    """Definition of which streams are sent to which destinations.
+
+    :ivar streams: List of streams for this data flow.
+    :vartype streams: list[str or ~azure.mgmt.monitor.models.KnownDataFlowStreams]
+    :ivar destinations: List of destinations for this data flow.
+    :vartype destinations: list[str]
+    :ivar transform_kql: The KQL query to transform stream data.
+    :vartype transform_kql: str
+    :ivar output_stream: The output stream of the transform. Only required if the transform changes
+     data to a different stream.
+    :vartype output_stream: str
+    :ivar built_in_transform: The builtIn transform to transform stream data.
+    :vartype built_in_transform: str
+    :ivar capture_overflow: Flag to enable overflow column in LA destinations.
+    :vartype capture_overflow: bool
+    """
+
+    _attribute_map = {
+        "streams": {"key": "streams", "type": "[str]"},
+        "destinations": {"key": "destinations", "type": "[str]"},
+        "transform_kql": {"key": "transformKql", "type": "str"},
+        "output_stream": {"key": "outputStream", "type": "str"},
+        "built_in_transform": {"key": "builtInTransform", "type": "str"},
+        "capture_overflow": {"key": "captureOverflow", "type": "bool"},
+    }
+
+    def __init__(
+        self,
+        *,
+        streams: Optional[List[Union[str, "_models.KnownDataFlowStreams"]]] = None,
+        destinations: Optional[List[str]] = None,
+        transform_kql: Optional[str] = None,
+        output_stream: Optional[str] = None,
+        built_in_transform: Optional[str] = None,
+        capture_overflow: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword streams: List of streams for this data flow.
+        :paramtype streams: list[str or ~azure.mgmt.monitor.models.KnownDataFlowStreams]
+        :keyword destinations: List of destinations for this data flow.
+        :paramtype destinations: list[str]
+        :keyword transform_kql: The KQL query to transform stream data.
+        :paramtype transform_kql: str
+        :keyword output_stream: The output stream of the transform. Only required if the transform
+         changes data to a different stream.
+        :paramtype output_stream: str
+        :keyword built_in_transform: The builtIn transform to transform stream data.
+        :paramtype built_in_transform: str
+        :keyword capture_overflow: Flag to enable overflow column in LA destinations.
+        :paramtype capture_overflow: bool
+        """
+        super().__init__(**kwargs)
+        self.streams = streams
+        self.destinations = destinations
+        self.transform_kql = transform_kql
+        self.output_stream = output_stream
+        self.built_in_transform = built_in_transform
+        self.capture_overflow = capture_overflow
+
+
+class DataImportSources(_serialization.Model):
+    """DataImportSources.
+
+    :ivar event_hub: Definition of Event Hub configuration.
+    :vartype event_hub: ~azure.mgmt.monitor.models.DataImportSourcesEventHub
+    """
+
+    _attribute_map = {
+        "event_hub": {"key": "eventHub", "type": "DataImportSourcesEventHub"},
+    }
+
+    def __init__(self, *, event_hub: Optional["_models.DataImportSourcesEventHub"] = None, **kwargs: Any) -> None:
+        """
+        :keyword event_hub: Definition of Event Hub configuration.
+        :paramtype event_hub: ~azure.mgmt.monitor.models.DataImportSourcesEventHub
+        """
+        super().__init__(**kwargs)
+        self.event_hub = event_hub
+
+
+class EventHubDataSource(_serialization.Model):
+    """EventHubDataSource.
+
+    :ivar name: A friendly name for the data source.
+     This name should be unique across all data sources (regardless of type) within the data
+     collection rule.
+    :vartype name: str
+    :ivar consumer_group: Event Hub consumer group name.
+    :vartype consumer_group: str
+    :ivar stream: The stream to collect from EventHub.
+    :vartype stream: str
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "consumer_group": {"key": "consumerGroup", "type": "str"},
+        "stream": {"key": "stream", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        consumer_group: Optional[str] = None,
+        stream: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: A friendly name for the data source.
+         This name should be unique across all data sources (regardless of type) within the data
+         collection rule.
+        :paramtype name: str
+        :keyword consumer_group: Event Hub consumer group name.
+        :paramtype consumer_group: str
+        :keyword stream: The stream to collect from EventHub.
+        :paramtype stream: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.consumer_group = consumer_group
+        self.stream = stream
+
+
+class DataImportSourcesEventHub(EventHubDataSource):
+    """Definition of Event Hub configuration.
+
+    :ivar name: A friendly name for the data source.
+     This name should be unique across all data sources (regardless of type) within the data
+     collection rule.
+    :vartype name: str
+    :ivar consumer_group: Event Hub consumer group name.
+    :vartype consumer_group: str
+    :ivar stream: The stream to collect from EventHub.
+    :vartype stream: str
+    """
 
 
 class DataSource(_serialization.Model):
@@ -2309,6 +4312,24 @@ class DataSourceConfiguration(_serialization.Model):
         self.providers = providers
         self.perf_counters = perf_counters
         self.event_logs = event_logs
+
+
+class DataSourcesSpecDataImports(DataImportSources):
+    """Specifications of pull based data sources.
+
+    :ivar event_hub: Definition of Event Hub configuration.
+    :vartype event_hub: ~azure.mgmt.monitor.models.DataImportSourcesEventHub
+    """
+
+
+class DestinationsSpecAzureMonitorMetrics(AzureMonitorMetricsDestination):
+    """Azure Monitor Metrics destination.
+
+    :ivar name: A friendly name for the destination.
+     This name should be unique across all destinations (regardless of type) within the data
+     collection rule.
+    :vartype name: str
+    """
 
 
 class ProxyOnlyResource(_serialization.Model):
@@ -3016,6 +5037,26 @@ class EnableRequest(_serialization.Model):
         self.receiver_name = receiver_name
 
 
+class EnrichmentData(_serialization.Model):
+    """All the enrichment data sources referenced in data flows.
+
+    :ivar storage_blobs: All the storage blobs used as enrichment data sources.
+    :vartype storage_blobs: list[~azure.mgmt.monitor.models.StorageBlob]
+    """
+
+    _attribute_map = {
+        "storage_blobs": {"key": "storageBlobs", "type": "[StorageBlob]"},
+    }
+
+    def __init__(self, *, storage_blobs: Optional[List["_models.StorageBlob"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword storage_blobs: All the storage blobs used as enrichment data sources.
+        :paramtype storage_blobs: list[~azure.mgmt.monitor.models.StorageBlob]
+        """
+        super().__init__(**kwargs)
+        self.storage_blobs = storage_blobs
+
+
 class Error(_serialization.Model):
     """Error details.
 
@@ -3215,6 +5256,49 @@ class ErrorDetailAutoGenerated(_serialization.Model):
         self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
 
 
+class ErrorDetailAutoGenerated2(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.monitor.models.ErrorDetailAutoGenerated2]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.monitor.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetailAutoGenerated2]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[List["_models.ErrorDetailAutoGenerated2"]] = None
+        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
+
+
 class ErrorResponse(_serialization.Model):
     """Describes the format of Error response.
 
@@ -3339,6 +5423,27 @@ class ErrorResponseCommon(ErrorResponse):
         super().__init__(code=code, message=message, **kwargs)
         self.details: Optional[List["_models.ErrorResponseCommon"]] = None
         self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
+
+
+class ErrorResponseCommonV2(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.monitor.models.ErrorDetailAutoGenerated2
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "ErrorDetailAutoGenerated2"},
+    }
+
+    def __init__(self, *, error: Optional["_models.ErrorDetailAutoGenerated2"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.monitor.models.ErrorDetailAutoGenerated2
+        """
+        super().__init__(**kwargs)
+        self.error = error
 
 
 class ErrorResponseError(_serialization.Model):
@@ -3731,6 +5836,70 @@ class EventDataCollection(_serialization.Model):
         self.next_link = next_link
 
 
+class EventHubDestination(_serialization.Model):
+    """EventHubDestination.
+
+    :ivar event_hub_resource_id: The resource ID of the event hub.
+    :vartype event_hub_resource_id: str
+    :ivar name: A friendly name for the destination.
+     This name should be unique across all destinations (regardless of type) within the data
+     collection rule.
+    :vartype name: str
+    """
+
+    _attribute_map = {
+        "event_hub_resource_id": {"key": "eventHubResourceId", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(
+        self, *, event_hub_resource_id: Optional[str] = None, name: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword event_hub_resource_id: The resource ID of the event hub.
+        :paramtype event_hub_resource_id: str
+        :keyword name: A friendly name for the destination.
+         This name should be unique across all destinations (regardless of type) within the data
+         collection rule.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.event_hub_resource_id = event_hub_resource_id
+        self.name = name
+
+
+class EventHubDirectDestination(_serialization.Model):
+    """EventHubDirectDestination.
+
+    :ivar event_hub_resource_id: The resource ID of the event hub.
+    :vartype event_hub_resource_id: str
+    :ivar name: A friendly name for the destination.
+     This name should be unique across all destinations (regardless of type) within the data
+     collection rule.
+    :vartype name: str
+    """
+
+    _attribute_map = {
+        "event_hub_resource_id": {"key": "eventHubResourceId", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(
+        self, *, event_hub_resource_id: Optional[str] = None, name: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword event_hub_resource_id: The resource ID of the event hub.
+        :paramtype event_hub_resource_id: str
+        :keyword name: A friendly name for the destination.
+         This name should be unique across all destinations (regardless of type) within the data
+         collection rule.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.event_hub_resource_id = event_hub_resource_id
+        self.name = name
+
+
 class EventHubReceiver(_serialization.Model):
     """An Event hub receiver.
 
@@ -3834,6 +6003,77 @@ class EventLogConfiguration(_serialization.Model):
         super().__init__(**kwargs)
         self.log_name = log_name
         self.filter = filter
+
+
+class ExtensionDataSource(_serialization.Model):
+    """Definition of which data will be collected from a separate VM extension that integrates with
+    the Azure Monitor Agent.
+    Collected from either Windows and Linux machines, depending on which extension is defined.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar streams: List of streams that this data source will be sent to.
+     A stream indicates what schema will be used for this data and usually what table in Log
+     Analytics the data will be sent to.
+    :vartype streams: list[str or ~azure.mgmt.monitor.models.KnownExtensionDataSourceStreams]
+    :ivar extension_name: The name of the VM extension. Required.
+    :vartype extension_name: str
+    :ivar extension_settings: The extension settings. The format is specific for particular
+     extension.
+    :vartype extension_settings: JSON
+    :ivar input_data_sources: The list of data sources this extension needs data from.
+    :vartype input_data_sources: list[str]
+    :ivar name: A friendly name for the data source.
+     This name should be unique across all data sources (regardless of type) within the data
+     collection rule.
+    :vartype name: str
+    """
+
+    _validation = {
+        "extension_name": {"required": True},
+    }
+
+    _attribute_map = {
+        "streams": {"key": "streams", "type": "[str]"},
+        "extension_name": {"key": "extensionName", "type": "str"},
+        "extension_settings": {"key": "extensionSettings", "type": "object"},
+        "input_data_sources": {"key": "inputDataSources", "type": "[str]"},
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        extension_name: str,
+        streams: Optional[List[Union[str, "_models.KnownExtensionDataSourceStreams"]]] = None,
+        extension_settings: Optional[JSON] = None,
+        input_data_sources: Optional[List[str]] = None,
+        name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword streams: List of streams that this data source will be sent to.
+         A stream indicates what schema will be used for this data and usually what table in Log
+         Analytics the data will be sent to.
+        :paramtype streams: list[str or ~azure.mgmt.monitor.models.KnownExtensionDataSourceStreams]
+        :keyword extension_name: The name of the VM extension. Required.
+        :paramtype extension_name: str
+        :keyword extension_settings: The extension settings. The format is specific for particular
+         extension.
+        :paramtype extension_settings: JSON
+        :keyword input_data_sources: The list of data sources this extension needs data from.
+        :paramtype input_data_sources: list[str]
+        :keyword name: A friendly name for the data source.
+         This name should be unique across all data sources (regardless of type) within the data
+         collection rule.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.streams = streams
+        self.extension_name = extension_name
+        self.extension_settings = extension_settings
+        self.input_data_sources = input_data_sources
+        self.name = name
 
 
 class GuestDiagnosticSettingsAssociationList(_serialization.Model):
@@ -4161,6 +6401,62 @@ class HttpRequestInfo(_serialization.Model):
         self.uri = uri
 
 
+class IisLogsDataSource(_serialization.Model):
+    """Enables IIS logs to be collected by this data collection rule.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar streams: IIS streams. Required.
+    :vartype streams: list[str]
+    :ivar log_directories: Absolute paths file location.
+    :vartype log_directories: list[str]
+    :ivar transform_kql: The KQL query to transform the data source.
+    :vartype transform_kql: str
+    :ivar name: A friendly name for the data source.
+     This name should be unique across all data sources (regardless of type) within the data
+     collection rule.
+    :vartype name: str
+    """
+
+    _validation = {
+        "streams": {"required": True},
+    }
+
+    _attribute_map = {
+        "streams": {"key": "streams", "type": "[str]"},
+        "log_directories": {"key": "logDirectories", "type": "[str]"},
+        "transform_kql": {"key": "transformKql", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        streams: List[str],
+        log_directories: Optional[List[str]] = None,
+        transform_kql: Optional[str] = None,
+        name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword streams: IIS streams. Required.
+        :paramtype streams: list[str]
+        :keyword log_directories: Absolute paths file location.
+        :paramtype log_directories: list[str]
+        :keyword transform_kql: The KQL query to transform the data source.
+        :paramtype transform_kql: str
+        :keyword name: A friendly name for the data source.
+         This name should be unique across all data sources (regardless of type) within the data
+         collection rule.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.streams = streams
+        self.log_directories = log_directories
+        self.transform_kql = transform_kql
+        self.name = name
+
+
 class Incident(_serialization.Model):
     """An alert incident indicates the activation status of an alert rule.
 
@@ -4353,6 +6649,240 @@ class LocalizableStringAutoGenerated(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.localized_value = localized_value
+
+
+class LocationSpec(_serialization.Model):
+    """LocationSpec.
+
+    :ivar location: Name of location.
+    :vartype location: str
+    :ivar provisioning_status: The resource provisioning state in this location. Known values are:
+     "Creating", "Updating", "Deleting", "Succeeded", "Canceled", and "Failed".
+    :vartype provisioning_status: str or
+     ~azure.mgmt.monitor.models.KnownLocationSpecProvisioningStatus
+    """
+
+    _attribute_map = {
+        "location": {"key": "location", "type": "str"},
+        "provisioning_status": {"key": "provisioningStatus", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: Optional[str] = None,
+        provisioning_status: Optional[Union[str, "_models.KnownLocationSpecProvisioningStatus"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword location: Name of location.
+        :paramtype location: str
+        :keyword provisioning_status: The resource provisioning state in this location. Known values
+         are: "Creating", "Updating", "Deleting", "Succeeded", "Canceled", and "Failed".
+        :paramtype provisioning_status: str or
+         ~azure.mgmt.monitor.models.KnownLocationSpecProvisioningStatus
+        """
+        super().__init__(**kwargs)
+        self.location = location
+        self.provisioning_status = provisioning_status
+
+
+class LogAnalyticsDestination(_serialization.Model):
+    """Log Analytics destination.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar workspace_resource_id: The resource ID of the Log Analytics workspace.
+    :vartype workspace_resource_id: str
+    :ivar workspace_id: The Customer ID of the Log Analytics workspace.
+    :vartype workspace_id: str
+    :ivar name: A friendly name for the destination.
+     This name should be unique across all destinations (regardless of type) within the data
+     collection rule.
+    :vartype name: str
+    """
+
+    _validation = {
+        "workspace_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "workspace_resource_id": {"key": "workspaceResourceId", "type": "str"},
+        "workspace_id": {"key": "workspaceId", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(
+        self, *, workspace_resource_id: Optional[str] = None, name: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword workspace_resource_id: The resource ID of the Log Analytics workspace.
+        :paramtype workspace_resource_id: str
+        :keyword name: A friendly name for the destination.
+         This name should be unique across all destinations (regardless of type) within the data
+         collection rule.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.workspace_resource_id = workspace_resource_id
+        self.workspace_id: Optional[str] = None
+        self.name = name
+
+
+class LogFilesDataSource(_serialization.Model):
+    """Definition of which custom log files will be collected by this data collection rule.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar streams: List of streams that this data source will be sent to.
+     A stream indicates what schema will be used for this data source. Required.
+    :vartype streams: list[str]
+    :ivar file_patterns: File Patterns where the log files are located. Required.
+    :vartype file_patterns: list[str]
+    :ivar format: The data format of the log files. Required. Known values are: "json" and "text".
+    :vartype format: str or ~azure.mgmt.monitor.models.KnownLogFilesDataSourceFormat
+    :ivar settings: The log files specific settings.
+    :vartype settings: ~azure.mgmt.monitor.models.LogFilesDataSourceSettings
+    :ivar transform_kql: The KQL query to transform the data source.
+    :vartype transform_kql: str
+    :ivar name: A friendly name for the data source.
+     This name should be unique across all data sources (regardless of type) within the data
+     collection rule.
+    :vartype name: str
+    """
+
+    _validation = {
+        "streams": {"required": True},
+        "file_patterns": {"required": True},
+        "format": {"required": True},
+    }
+
+    _attribute_map = {
+        "streams": {"key": "streams", "type": "[str]"},
+        "file_patterns": {"key": "filePatterns", "type": "[str]"},
+        "format": {"key": "format", "type": "str"},
+        "settings": {"key": "settings", "type": "LogFilesDataSourceSettings"},
+        "transform_kql": {"key": "transformKql", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        streams: List[str],
+        file_patterns: List[str],
+        format: Union[str, "_models.KnownLogFilesDataSourceFormat"],
+        settings: Optional["_models.LogFilesDataSourceSettings"] = None,
+        transform_kql: Optional[str] = None,
+        name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword streams: List of streams that this data source will be sent to.
+         A stream indicates what schema will be used for this data source. Required.
+        :paramtype streams: list[str]
+        :keyword file_patterns: File Patterns where the log files are located. Required.
+        :paramtype file_patterns: list[str]
+        :keyword format: The data format of the log files. Required. Known values are: "json" and
+         "text".
+        :paramtype format: str or ~azure.mgmt.monitor.models.KnownLogFilesDataSourceFormat
+        :keyword settings: The log files specific settings.
+        :paramtype settings: ~azure.mgmt.monitor.models.LogFilesDataSourceSettings
+        :keyword transform_kql: The KQL query to transform the data source.
+        :paramtype transform_kql: str
+        :keyword name: A friendly name for the data source.
+         This name should be unique across all data sources (regardless of type) within the data
+         collection rule.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.streams = streams
+        self.file_patterns = file_patterns
+        self.format = format
+        self.settings = settings
+        self.transform_kql = transform_kql
+        self.name = name
+
+
+class LogFileSettings(_serialization.Model):
+    """Settings for different log file formats.
+
+    :ivar text: Text settings.
+    :vartype text: ~azure.mgmt.monitor.models.LogFileSettingsText
+    """
+
+    _attribute_map = {
+        "text": {"key": "text", "type": "LogFileSettingsText"},
+    }
+
+    def __init__(self, *, text: Optional["_models.LogFileSettingsText"] = None, **kwargs: Any) -> None:
+        """
+        :keyword text: Text settings.
+        :paramtype text: ~azure.mgmt.monitor.models.LogFileSettingsText
+        """
+        super().__init__(**kwargs)
+        self.text = text
+
+
+class LogFilesDataSourceSettings(LogFileSettings):
+    """The log files specific settings.
+
+    :ivar text: Text settings.
+    :vartype text: ~azure.mgmt.monitor.models.LogFileSettingsText
+    """
+
+
+class LogFileTextSettings(_serialization.Model):
+    """Settings for text log files.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar record_start_timestamp_format: One of the supported timestamp formats. Required. Known
+     values are: "ISO 8601", "YYYY-MM-DD HH:MM:SS", "M/D/YYYY HH:MM:SS AM/PM", "Mon DD, YYYY
+     HH:MM:SS", "yyMMdd HH:mm:ss", "ddMMyy HH:mm:ss", "MMM d hh:mm:ss", "dd/MMM/yyyy:HH:mm:ss zzz",
+     and "yyyy-MM-ddTHH:mm:ssK".
+    :vartype record_start_timestamp_format: str or
+     ~azure.mgmt.monitor.models.KnownLogFileTextSettingsRecordStartTimestampFormat
+    """
+
+    _validation = {
+        "record_start_timestamp_format": {"required": True},
+    }
+
+    _attribute_map = {
+        "record_start_timestamp_format": {"key": "recordStartTimestampFormat", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        record_start_timestamp_format: Union[str, "_models.KnownLogFileTextSettingsRecordStartTimestampFormat"],
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword record_start_timestamp_format: One of the supported timestamp formats. Required. Known
+         values are: "ISO 8601", "YYYY-MM-DD HH:MM:SS", "M/D/YYYY HH:MM:SS AM/PM", "Mon DD, YYYY
+         HH:MM:SS", "yyMMdd HH:mm:ss", "ddMMyy HH:mm:ss", "MMM d hh:mm:ss", "dd/MMM/yyyy:HH:mm:ss zzz",
+         and "yyyy-MM-ddTHH:mm:ssK".
+        :paramtype record_start_timestamp_format: str or
+         ~azure.mgmt.monitor.models.KnownLogFileTextSettingsRecordStartTimestampFormat
+        """
+        super().__init__(**kwargs)
+        self.record_start_timestamp_format = record_start_timestamp_format
+
+
+class LogFileSettingsText(LogFileTextSettings):
+    """Text settings.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar record_start_timestamp_format: One of the supported timestamp formats. Required. Known
+     values are: "ISO 8601", "YYYY-MM-DD HH:MM:SS", "M/D/YYYY HH:MM:SS AM/PM", "Mon DD, YYYY
+     HH:MM:SS", "yyMMdd HH:mm:ss", "ddMMyy HH:mm:ss", "MMM d hh:mm:ss", "dd/MMM/yyyy:HH:mm:ss zzz",
+     and "yyyy-MM-ddTHH:mm:ssK".
+    :vartype record_start_timestamp_format: str or
+     ~azure.mgmt.monitor.models.KnownLogFileTextSettingsRecordStartTimestampFormat
+    """
 
 
 class LogicAppReceiver(_serialization.Model):
@@ -6561,6 +9091,103 @@ class MetricValue(_serialization.Model):
         self.count = count
 
 
+class MicrosoftFabricDestination(_serialization.Model):
+    """Microsoft Fabric destination (non-Azure).
+
+    :ivar tenant_id: The tenant id of the Microsoft Fabric resource.
+    :vartype tenant_id: str
+    :ivar artifact_id: The artifact id of the Microsoft Fabric resource.
+    :vartype artifact_id: str
+    :ivar database_name: The name of the database to which data will be ingested.
+    :vartype database_name: str
+    :ivar ingestion_uri: The ingestion uri of the Microsoft Fabric resource.
+    :vartype ingestion_uri: str
+    :ivar name: A friendly name for the destination.
+     This name should be unique across all destinations (regardless of type) within the data
+     collection rule.
+    :vartype name: str
+    """
+
+    _attribute_map = {
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "artifact_id": {"key": "artifactId", "type": "str"},
+        "database_name": {"key": "databaseName", "type": "str"},
+        "ingestion_uri": {"key": "ingestionUri", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        tenant_id: Optional[str] = None,
+        artifact_id: Optional[str] = None,
+        database_name: Optional[str] = None,
+        ingestion_uri: Optional[str] = None,
+        name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tenant_id: The tenant id of the Microsoft Fabric resource.
+        :paramtype tenant_id: str
+        :keyword artifact_id: The artifact id of the Microsoft Fabric resource.
+        :paramtype artifact_id: str
+        :keyword database_name: The name of the database to which data will be ingested.
+        :paramtype database_name: str
+        :keyword ingestion_uri: The ingestion uri of the Microsoft Fabric resource.
+        :paramtype ingestion_uri: str
+        :keyword name: A friendly name for the destination.
+         This name should be unique across all destinations (regardless of type) within the data
+         collection rule.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.tenant_id = tenant_id
+        self.artifact_id = artifact_id
+        self.database_name = database_name
+        self.ingestion_uri = ingestion_uri
+        self.name = name
+
+
+class MonitoringAccountDestination(_serialization.Model):
+    """Monitoring account destination.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar account_resource_id: The resource ID of the monitoring account.
+    :vartype account_resource_id: str
+    :ivar account_id: The immutable ID  of the account.
+    :vartype account_id: str
+    :ivar name: A friendly name for the destination.
+     This name should be unique across all destinations (regardless of type) within the data
+     collection rule.
+    :vartype name: str
+    """
+
+    _validation = {
+        "account_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "account_resource_id": {"key": "accountResourceId", "type": "str"},
+        "account_id": {"key": "accountId", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(self, *, account_resource_id: Optional[str] = None, name: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword account_resource_id: The resource ID of the monitoring account.
+        :paramtype account_resource_id: str
+        :keyword name: A friendly name for the destination.
+         This name should be unique across all destinations (regardless of type) within the data
+         collection rule.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.account_resource_id = account_resource_id
+        self.account_id: Optional[str] = None
+        self.name = name
+
+
 class NotificationRequestBody(_serialization.Model):
     """The request body which contain contact detail metadata.
 
@@ -6964,6 +9591,77 @@ class OperationStatus(_serialization.Model):
         self.error = error
 
 
+class PerfCounterDataSource(_serialization.Model):
+    """Definition of which performance counters will be collected and how they will be collected by
+    this data collection rule.
+    Collected from both Windows and Linux machines where the counter is present.
+
+    :ivar streams: List of streams that this data source will be sent to.
+     A stream indicates what schema will be used for this data and usually what table in Log
+     Analytics the data will be sent to.
+    :vartype streams: list[str or ~azure.mgmt.monitor.models.KnownPerfCounterDataSourceStreams]
+    :ivar sampling_frequency_in_seconds: The number of seconds between consecutive counter
+     measurements (samples).
+    :vartype sampling_frequency_in_seconds: int
+    :ivar counter_specifiers: A list of specifier names of the performance counters you want to
+     collect.
+     Use a wildcard (*) to collect a counter for all instances.
+     To get a list of performance counters on Windows, run the command 'typeperf'.
+    :vartype counter_specifiers: list[str]
+    :ivar transform_kql: The KQL query to transform the data source.
+    :vartype transform_kql: str
+    :ivar name: A friendly name for the data source.
+     This name should be unique across all data sources (regardless of type) within the data
+     collection rule.
+    :vartype name: str
+    """
+
+    _attribute_map = {
+        "streams": {"key": "streams", "type": "[str]"},
+        "sampling_frequency_in_seconds": {"key": "samplingFrequencyInSeconds", "type": "int"},
+        "counter_specifiers": {"key": "counterSpecifiers", "type": "[str]"},
+        "transform_kql": {"key": "transformKql", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        streams: Optional[List[Union[str, "_models.KnownPerfCounterDataSourceStreams"]]] = None,
+        sampling_frequency_in_seconds: Optional[int] = None,
+        counter_specifiers: Optional[List[str]] = None,
+        transform_kql: Optional[str] = None,
+        name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword streams: List of streams that this data source will be sent to.
+         A stream indicates what schema will be used for this data and usually what table in Log
+         Analytics the data will be sent to.
+        :paramtype streams: list[str or ~azure.mgmt.monitor.models.KnownPerfCounterDataSourceStreams]
+        :keyword sampling_frequency_in_seconds: The number of seconds between consecutive counter
+         measurements (samples).
+        :paramtype sampling_frequency_in_seconds: int
+        :keyword counter_specifiers: A list of specifier names of the performance counters you want to
+         collect.
+         Use a wildcard (*) to collect a counter for all instances.
+         To get a list of performance counters on Windows, run the command 'typeperf'.
+        :paramtype counter_specifiers: list[str]
+        :keyword transform_kql: The KQL query to transform the data source.
+        :paramtype transform_kql: str
+        :keyword name: A friendly name for the data source.
+         This name should be unique across all data sources (regardless of type) within the data
+         collection rule.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.streams = streams
+        self.sampling_frequency_in_seconds = sampling_frequency_in_seconds
+        self.counter_specifiers = counter_specifiers
+        self.transform_kql = transform_kql
+        self.name = name
+
+
 class PerformanceCounterConfiguration(_serialization.Model):
     """PerformanceCounterConfiguration.
 
@@ -7001,6 +9699,42 @@ class PerformanceCounterConfiguration(_serialization.Model):
         self.name = name
         self.sampling_period = sampling_period
         self.instance = instance
+
+
+class PlatformTelemetryDataSource(_serialization.Model):
+    """Definition of platform telemetry data source configuration.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar streams: List of platform telemetry streams to collect. Required.
+    :vartype streams: list[str]
+    :ivar name: A friendly name for the data source.
+     This name should be unique across all data sources (regardless of type) within the data
+     collection rule.
+    :vartype name: str
+    """
+
+    _validation = {
+        "streams": {"required": True},
+    }
+
+    _attribute_map = {
+        "streams": {"key": "streams", "type": "[str]"},
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(self, *, streams: List[str], name: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword streams: List of platform telemetry streams to collect. Required.
+        :paramtype streams: list[str]
+        :keyword name: A friendly name for the data source.
+         This name should be unique across all data sources (regardless of type) within the data
+         collection rule.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.streams = streams
+        self.name = name
 
 
 class PredictiveAutoscalePolicy(_serialization.Model):
@@ -7488,6 +10222,36 @@ class PrivateLinkResourceListResult(_serialization.Model):
         self.next_link: Optional[str] = None
 
 
+class PrivateLinkScopedResource(_serialization.Model):
+    """PrivateLinkScopedResource.
+
+    :ivar resource_id: The resourceId of the Azure Monitor Private Link Scope Scoped Resource
+     through which this DCE is associated with a Azure Monitor Private Link Scope.
+    :vartype resource_id: str
+    :ivar scope_id: The immutableId of the Azure Monitor Private Link Scope Resource to which the
+     association is.
+    :vartype scope_id: str
+    """
+
+    _attribute_map = {
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "scope_id": {"key": "scopeId", "type": "str"},
+    }
+
+    def __init__(self, *, resource_id: Optional[str] = None, scope_id: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword resource_id: The resourceId of the Azure Monitor Private Link Scope Scoped Resource
+         through which this DCE is associated with a Azure Monitor Private Link Scope.
+        :paramtype resource_id: str
+        :keyword scope_id: The immutableId of the Azure Monitor Private Link Scope Resource to which
+         the association is.
+        :paramtype scope_id: str
+        """
+        super().__init__(**kwargs)
+        self.resource_id = resource_id
+        self.scope_id = scope_id
+
+
 class PrivateLinkServiceConnectionState(_serialization.Model):
     """A collection of information about the state of the connection between service consumer and
     provider.
@@ -7570,6 +10334,57 @@ class PrivateLinkServiceConnectionStateProperty(_serialization.Model):  # pylint
         self.status = status
         self.description = description
         self.actions_required: Optional[str] = None
+
+
+class PrometheusForwarderDataSource(_serialization.Model):
+    """Definition of Prometheus metrics forwarding configuration.
+
+    :ivar streams: List of streams that this data source will be sent to.
+    :vartype streams: list[str or
+     ~azure.mgmt.monitor.models.KnownPrometheusForwarderDataSourceStreams]
+    :ivar label_include_filter: The list of label inclusion filters in the form of label
+     "name-value" pairs.
+     Currently only one label is supported: 'microsoft_metrics_include_label'.
+     Label values are matched case-insensitively.
+    :vartype label_include_filter: dict[str, str]
+    :ivar name: A friendly name for the data source.
+     This name should be unique across all data sources (regardless of type) within the data
+     collection rule.
+    :vartype name: str
+    """
+
+    _attribute_map = {
+        "streams": {"key": "streams", "type": "[str]"},
+        "label_include_filter": {"key": "labelIncludeFilter", "type": "{str}"},
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        streams: Optional[List[Union[str, "_models.KnownPrometheusForwarderDataSourceStreams"]]] = None,
+        label_include_filter: Optional[Dict[str, str]] = None,
+        name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword streams: List of streams that this data source will be sent to.
+        :paramtype streams: list[str or
+         ~azure.mgmt.monitor.models.KnownPrometheusForwarderDataSourceStreams]
+        :keyword label_include_filter: The list of label inclusion filters in the form of label
+         "name-value" pairs.
+         Currently only one label is supported: 'microsoft_metrics_include_label'.
+         Label values are matched case-insensitively.
+        :paramtype label_include_filter: dict[str, str]
+        :keyword name: A friendly name for the data source.
+         This name should be unique across all data sources (regardless of type) within the data
+         collection rule.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.streams = streams
+        self.label_include_filter = label_include_filter
+        self.name = name
 
 
 class Recurrence(_serialization.Model):
@@ -7727,6 +10542,71 @@ class RecurrentSchedule(_serialization.Model):
         self.days = days
         self.hours = hours
         self.minutes = minutes
+
+
+class ReferencesSpecEnrichmentData(EnrichmentData):
+    """All the enrichment data sources referenced in data flows.
+
+    :ivar storage_blobs: All the storage blobs used as enrichment data sources.
+    :vartype storage_blobs: list[~azure.mgmt.monitor.models.StorageBlob]
+    """
+
+
+class ResourceForUpdate(_serialization.Model):
+    """Definition of ARM tracked top level resource properties for update operation.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar identity: Managed Service Identity.
+    :vartype identity: ~azure.mgmt.monitor.models.ResourceForUpdateIdentity
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+        "identity": {"key": "identity", "type": "ResourceForUpdateIdentity"},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        identity: Optional["_models.ResourceForUpdateIdentity"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword identity: Managed Service Identity.
+        :paramtype identity: ~azure.mgmt.monitor.models.ResourceForUpdateIdentity
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+        self.identity = identity
+
+
+class ResourceForUpdateIdentity(ManagedServiceIdentity):
+    """Managed Service Identity.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar principal_id: The service principal ID of the system assigned identity. This property
+     will only be provided for a system assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+     provided for a system assigned identity.
+    :vartype tenant_id: str
+    :ivar type: Type of managed service identity (where both SystemAssigned and UserAssigned types
+     are allowed). Required. Known values are: "None", "SystemAssigned", "UserAssigned", and
+     "SystemAssigned,UserAssigned".
+    :vartype type: str or ~azure.mgmt.monitor.models.ManagedServiceIdentityType
+    :ivar user_assigned_identities: The set of user assigned identities associated with the
+     resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+     The dictionary values can be empty objects ({}) in requests.
+    :vartype user_assigned_identities: dict[str, ~azure.mgmt.monitor.models.UserAssignedIdentity]
+    """
 
 
 class Response(_serialization.Model):
@@ -8654,6 +11534,162 @@ class Source(_serialization.Model):
         self.query_type = query_type
 
 
+class StorageBlob(_serialization.Model):
+    """StorageBlob.
+
+    :ivar resource_id: Resource Id of the storage account that hosts the blob.
+    :vartype resource_id: str
+    :ivar blob_url: Url of the storage blob.
+    :vartype blob_url: str
+    :ivar lookup_type: The type of lookup to perform on the blob. Known values are: "String" and
+     "Cidr".
+    :vartype lookup_type: str or ~azure.mgmt.monitor.models.KnownStorageBlobLookupType
+    :ivar name: The name of the enrichment data source used as an alias when referencing this data
+     source in data flows.
+    :vartype name: str
+    """
+
+    _attribute_map = {
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "blob_url": {"key": "blobUrl", "type": "str"},
+        "lookup_type": {"key": "lookupType", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        resource_id: Optional[str] = None,
+        blob_url: Optional[str] = None,
+        lookup_type: Optional[Union[str, "_models.KnownStorageBlobLookupType"]] = None,
+        name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword resource_id: Resource Id of the storage account that hosts the blob.
+        :paramtype resource_id: str
+        :keyword blob_url: Url of the storage blob.
+        :paramtype blob_url: str
+        :keyword lookup_type: The type of lookup to perform on the blob. Known values are: "String" and
+         "Cidr".
+        :paramtype lookup_type: str or ~azure.mgmt.monitor.models.KnownStorageBlobLookupType
+        :keyword name: The name of the enrichment data source used as an alias when referencing this
+         data source in data flows.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.resource_id = resource_id
+        self.blob_url = blob_url
+        self.lookup_type = lookup_type
+        self.name = name
+
+
+class StorageBlobDestination(_serialization.Model):
+    """StorageBlobDestination.
+
+    :ivar container_name: The container name of the Storage Blob.
+    :vartype container_name: str
+    :ivar storage_account_resource_id: The resource ID of the storage account.
+    :vartype storage_account_resource_id: str
+    :ivar name: A friendly name for the destination.
+     This name should be unique across all destinations (regardless of type) within the data
+     collection rule.
+    :vartype name: str
+    """
+
+    _attribute_map = {
+        "container_name": {"key": "containerName", "type": "str"},
+        "storage_account_resource_id": {"key": "storageAccountResourceId", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        container_name: Optional[str] = None,
+        storage_account_resource_id: Optional[str] = None,
+        name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword container_name: The container name of the Storage Blob.
+        :paramtype container_name: str
+        :keyword storage_account_resource_id: The resource ID of the storage account.
+        :paramtype storage_account_resource_id: str
+        :keyword name: A friendly name for the destination.
+         This name should be unique across all destinations (regardless of type) within the data
+         collection rule.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.container_name = container_name
+        self.storage_account_resource_id = storage_account_resource_id
+        self.name = name
+
+
+class StorageTableDestination(_serialization.Model):
+    """StorageTableDestination.
+
+    :ivar table_name: The name of the Storage Table.
+    :vartype table_name: str
+    :ivar storage_account_resource_id: The resource ID of the storage account.
+    :vartype storage_account_resource_id: str
+    :ivar name: A friendly name for the destination.
+     This name should be unique across all destinations (regardless of type) within the data
+     collection rule.
+    :vartype name: str
+    """
+
+    _attribute_map = {
+        "table_name": {"key": "tableName", "type": "str"},
+        "storage_account_resource_id": {"key": "storageAccountResourceId", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        table_name: Optional[str] = None,
+        storage_account_resource_id: Optional[str] = None,
+        name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword table_name: The name of the Storage Table.
+        :paramtype table_name: str
+        :keyword storage_account_resource_id: The resource ID of the storage account.
+        :paramtype storage_account_resource_id: str
+        :keyword name: A friendly name for the destination.
+         This name should be unique across all destinations (regardless of type) within the data
+         collection rule.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.table_name = table_name
+        self.storage_account_resource_id = storage_account_resource_id
+        self.name = name
+
+
+class StreamDeclaration(_serialization.Model):
+    """Declaration of a custom stream.
+
+    :ivar columns: List of columns used by data in this stream.
+    :vartype columns: list[~azure.mgmt.monitor.models.ColumnDefinition]
+    """
+
+    _attribute_map = {
+        "columns": {"key": "columns", "type": "[ColumnDefinition]"},
+    }
+
+    def __init__(self, *, columns: Optional[List["_models.ColumnDefinition"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword columns: List of columns used by data in this stream.
+        :paramtype columns: list[~azure.mgmt.monitor.models.ColumnDefinition]
+        """
+        super().__init__(**kwargs)
+        self.columns = columns
+
+
 class SubscriptionProxyOnlyResource(_serialization.Model):
     """A proxy only azure resource object.
 
@@ -8843,68 +11879,68 @@ class SubscriptionLogSettings(_serialization.Model):
         self.enabled = enabled
 
 
-class SystemData(_serialization.Model):
-    """Metadata pertaining to creation and last modification of the resource.
+class SyslogDataSource(_serialization.Model):
+    """Definition of which syslog data will be collected and how it will be collected.
+    Only collected from Linux machines.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: str or ~azure.mgmt.monitor.models.CreatedByType
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: ~datetime.datetime
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
-     are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: str or ~azure.mgmt.monitor.models.CreatedByType
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: ~datetime.datetime
+    :ivar streams: List of streams that this data source will be sent to.
+     A stream indicates what schema will be used for this data and usually what table in Log
+     Analytics the data will be sent to.
+    :vartype streams: list[str or ~azure.mgmt.monitor.models.KnownSyslogDataSourceStreams]
+    :ivar facility_names: The list of facility names.
+    :vartype facility_names: list[str or
+     ~azure.mgmt.monitor.models.KnownSyslogDataSourceFacilityNames]
+    :ivar log_levels: The log levels to collect.
+    :vartype log_levels: list[str or ~azure.mgmt.monitor.models.KnownSyslogDataSourceLogLevels]
+    :ivar transform_kql: The KQL query to transform the data source.
+    :vartype transform_kql: str
+    :ivar name: A friendly name for the data source.
+     This name should be unique across all data sources (regardless of type) within the data
+     collection rule.
+    :vartype name: str
     """
 
     _attribute_map = {
-        "created_by": {"key": "createdBy", "type": "str"},
-        "created_by_type": {"key": "createdByType", "type": "str"},
-        "created_at": {"key": "createdAt", "type": "iso-8601"},
-        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
-        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
-        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
+        "streams": {"key": "streams", "type": "[str]"},
+        "facility_names": {"key": "facilityNames", "type": "[str]"},
+        "log_levels": {"key": "logLevels", "type": "[str]"},
+        "transform_kql": {"key": "transformKql", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
-        created_at: Optional[datetime.datetime] = None,
-        last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
-        last_modified_at: Optional[datetime.datetime] = None,
+        streams: Optional[List[Union[str, "_models.KnownSyslogDataSourceStreams"]]] = None,
+        facility_names: Optional[List[Union[str, "_models.KnownSyslogDataSourceFacilityNames"]]] = None,
+        log_levels: Optional[List[Union[str, "_models.KnownSyslogDataSourceLogLevels"]]] = None,
+        transform_kql: Optional[str] = None,
+        name: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword created_by: The identity that created the resource.
-        :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Known values are:
-         "User", "Application", "ManagedIdentity", and "Key".
-        :paramtype created_by_type: str or ~azure.mgmt.monitor.models.CreatedByType
-        :keyword created_at: The timestamp of resource creation (UTC).
-        :paramtype created_at: ~datetime.datetime
-        :keyword last_modified_by: The identity that last modified the resource.
-        :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
-         values are: "User", "Application", "ManagedIdentity", and "Key".
-        :paramtype last_modified_by_type: str or ~azure.mgmt.monitor.models.CreatedByType
-        :keyword last_modified_at: The timestamp of resource last modification (UTC).
-        :paramtype last_modified_at: ~datetime.datetime
+        :keyword streams: List of streams that this data source will be sent to.
+         A stream indicates what schema will be used for this data and usually what table in Log
+         Analytics the data will be sent to.
+        :paramtype streams: list[str or ~azure.mgmt.monitor.models.KnownSyslogDataSourceStreams]
+        :keyword facility_names: The list of facility names.
+        :paramtype facility_names: list[str or
+         ~azure.mgmt.monitor.models.KnownSyslogDataSourceFacilityNames]
+        :keyword log_levels: The log levels to collect.
+        :paramtype log_levels: list[str or ~azure.mgmt.monitor.models.KnownSyslogDataSourceLogLevels]
+        :keyword transform_kql: The KQL query to transform the data source.
+        :paramtype transform_kql: str
+        :keyword name: A friendly name for the data source.
+         This name should be unique across all data sources (regardless of type) within the data
+         collection rule.
+        :paramtype name: str
         """
         super().__init__(**kwargs)
-        self.created_by = created_by
-        self.created_by_type = created_by_type
-        self.created_at = created_at
-        self.last_modified_by = last_modified_by
-        self.last_modified_by_type = last_modified_by_type
-        self.last_modified_at = last_modified_at
+        self.streams = streams
+        self.facility_names = facility_names
+        self.log_levels = log_levels
+        self.transform_kql = transform_kql
+        self.name = name
 
 
 class TagsResource(_serialization.Model):
@@ -9230,6 +12266,34 @@ class TriggerCondition(_serialization.Model):
         self.metric_trigger = metric_trigger
 
 
+class UserAssignedIdentity(_serialization.Model):
+    """User assigned identity properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal ID of the assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client ID of the assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.principal_id: Optional[str] = None
+        self.client_id: Optional[str] = None
+
+
 class VMInsightsOnboardingStatus(ProxyResource):
     """VM Insights onboarding status for a resource.
 
@@ -9510,6 +12574,113 @@ class WebtestLocationAvailabilityCriteria(MetricAlertCriteria):
         self.web_test_id = web_test_id
         self.component_id = component_id
         self.failed_location_count = failed_location_count
+
+
+class WindowsEventLogDataSource(_serialization.Model):
+    """Definition of which Windows Event Log events will be collected and how they will be collected.
+    Only collected from Windows machines.
+
+    :ivar streams: List of streams that this data source will be sent to.
+     A stream indicates what schema will be used for this data and usually what table in Log
+     Analytics the data will be sent to.
+    :vartype streams: list[str or ~azure.mgmt.monitor.models.KnownWindowsEventLogDataSourceStreams]
+    :ivar x_path_queries: A list of Windows Event Log queries in XPATH format.
+    :vartype x_path_queries: list[str]
+    :ivar transform_kql: The KQL query to transform the data source.
+    :vartype transform_kql: str
+    :ivar name: A friendly name for the data source.
+     This name should be unique across all data sources (regardless of type) within the data
+     collection rule.
+    :vartype name: str
+    """
+
+    _attribute_map = {
+        "streams": {"key": "streams", "type": "[str]"},
+        "x_path_queries": {"key": "xPathQueries", "type": "[str]"},
+        "transform_kql": {"key": "transformKql", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        streams: Optional[List[Union[str, "_models.KnownWindowsEventLogDataSourceStreams"]]] = None,
+        x_path_queries: Optional[List[str]] = None,
+        transform_kql: Optional[str] = None,
+        name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword streams: List of streams that this data source will be sent to.
+         A stream indicates what schema will be used for this data and usually what table in Log
+         Analytics the data will be sent to.
+        :paramtype streams: list[str or
+         ~azure.mgmt.monitor.models.KnownWindowsEventLogDataSourceStreams]
+        :keyword x_path_queries: A list of Windows Event Log queries in XPATH format.
+        :paramtype x_path_queries: list[str]
+        :keyword transform_kql: The KQL query to transform the data source.
+        :paramtype transform_kql: str
+        :keyword name: A friendly name for the data source.
+         This name should be unique across all data sources (regardless of type) within the data
+         collection rule.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.streams = streams
+        self.x_path_queries = x_path_queries
+        self.transform_kql = transform_kql
+        self.name = name
+
+
+class WindowsFirewallLogsDataSource(_serialization.Model):
+    """Enables Firewall logs to be collected by this data collection rule.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar streams: Firewall logs streams. Required.
+    :vartype streams: list[str]
+    :ivar profile_filter: Firewall logs profile filter.
+    :vartype profile_filter: list[str or
+     ~azure.mgmt.monitor.models.KnownWindowsFirewallLogsDataSourceProfileFilter]
+    :ivar name: A friendly name for the data source.
+     This name should be unique across all data sources (regardless of type) within the data
+     collection rule.
+    :vartype name: str
+    """
+
+    _validation = {
+        "streams": {"required": True},
+    }
+
+    _attribute_map = {
+        "streams": {"key": "streams", "type": "[str]"},
+        "profile_filter": {"key": "profileFilter", "type": "[str]"},
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        streams: List[str],
+        profile_filter: Optional[List[Union[str, "_models.KnownWindowsFirewallLogsDataSourceProfileFilter"]]] = None,
+        name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword streams: Firewall logs streams. Required.
+        :paramtype streams: list[str]
+        :keyword profile_filter: Firewall logs profile filter.
+        :paramtype profile_filter: list[str or
+         ~azure.mgmt.monitor.models.KnownWindowsFirewallLogsDataSourceProfileFilter]
+        :keyword name: A friendly name for the data source.
+         This name should be unique across all data sources (regardless of type) within the data
+         collection rule.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.streams = streams
+        self.profile_filter = profile_filter
+        self.name = name
 
 
 class WorkspaceInfo(_serialization.Model):

@@ -1,5 +1,67 @@
 # Release History
 
+## 9.2.0 (2025-07-21)
+
+### Features Added
+
+  - Client `SearchManagementClient` added operation group `network_security_perimeter_configurations`
+  - Model `Identity` added property `user_assigned_identities`
+  - Enum `IdentityType` added member `SYSTEM_ASSIGNED_USER_ASSIGNED`
+  - Enum `IdentityType` added member `USER_ASSIGNED`
+  - Model `NetworkRuleSet` added property `bypass`
+  - Model `Operation` added property `is_data_action`
+  - Model `Operation` added property `origin`
+  - Model `Operation` added property `action_type`
+  - Model `PrivateEndpointConnection` added property `system_data`
+  - Model `PrivateLinkResource` added property `system_data`
+  - Enum `PublicNetworkAccess` added member `SECURED_BY_PERIMETER`
+  - Model `Resource` added property `system_data`
+  - Model `SearchService` added property `endpoint`
+  - Model `SearchService` added property `compute_type`
+  - Model `SearchService` added property `data_exfiltration_protections`
+  - Model `SearchService` added property `e_tag`
+  - Model `SearchService` added property `upgrade_available`
+  - Model `SearchService` added property `service_upgraded_at`
+  - Model `SearchService` added property `system_data`
+  - Enum `SearchServiceStatus` added member `STOPPED`
+  - Model `SearchServiceUpdate` added property `endpoint`
+  - Model `SearchServiceUpdate` added property `compute_type`
+  - Model `SearchServiceUpdate` added property `data_exfiltration_protections`
+  - Model `SearchServiceUpdate` added property `e_tag`
+  - Model `SearchServiceUpdate` added property `upgrade_available`
+  - Model `SearchServiceUpdate` added property `service_upgraded_at`
+  - Model `SearchServiceUpdate` added property `system_data`
+  - Model `SharedPrivateLinkResource` added property `system_data`
+  - Model `TrackedResource` added property `system_data`
+  - Added model `AccessRule`
+  - Added enum `AccessRuleDirection`
+  - Added model `AccessRuleProperties`
+  - Added model `AccessRulePropertiesSubscriptionsItem`
+  - Added enum `ActionType`
+  - Added enum `ComputeType`
+  - Added enum `CreatedByType`
+  - Added enum `IssueType`
+  - Added model `NetworkSecurityPerimeter`
+  - Added model `NetworkSecurityPerimeterConfiguration`
+  - Added model `NetworkSecurityPerimeterConfigurationListResult`
+  - Added model `NetworkSecurityPerimeterConfigurationProperties`
+  - Added enum `NetworkSecurityPerimeterConfigurationProvisioningState`
+  - Added model `NetworkSecurityProfile`
+  - Added enum `Origin`
+  - Added model `ProvisioningIssue`
+  - Added model `ProvisioningIssueProperties`
+  - Added model `ProxyResource`
+  - Added model `ResourceAssociation`
+  - Added enum `ResourceAssociationAccessMode`
+  - Added enum `SearchBypass`
+  - Added enum `SearchDataExfiltrationProtection`
+  - Added enum `Severity`
+  - Added model `SystemData`
+  - Added enum `UpgradeAvailable`
+  - Added model `UserAssignedIdentity`
+  - Model `ServicesOperations` added method `begin_upgrade`
+  - Added operation group `NetworkSecurityPerimeterConfigurationsOperations`
+
 ## 9.2.0b3 (2025-04-02)
 
 ### Features Added

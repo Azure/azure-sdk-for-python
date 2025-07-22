@@ -1,5 +1,5 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -9,10 +9,9 @@
 
 from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
-from ... import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -96,9 +95,9 @@ class Resource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
 
 
 class TrackedResource(Resource):
@@ -107,7 +106,7 @@ class TrackedResource(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -155,7 +154,7 @@ class Identity(TrackedResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -208,9 +207,9 @@ class Identity(TrackedResource):
         :paramtype location: str
         """
         super().__init__(tags=tags, location=location, **kwargs)
-        self.tenant_id = None
-        self.principal_id = None
-        self.client_id = None
+        self.tenant_id: Optional[str] = None
+        self.principal_id: Optional[str] = None
+        self.client_id: Optional[str] = None
 
 
 class IdentityUpdate(Resource):
@@ -270,9 +269,9 @@ class IdentityUpdate(Resource):
         super().__init__(**kwargs)
         self.location = location
         self.tags = tags
-        self.tenant_id = None
-        self.principal_id = None
-        self.client_id = None
+        self.tenant_id: Optional[str] = None
+        self.principal_id: Optional[str] = None
+        self.client_id: Optional[str] = None
 
 
 class Operation(_serialization.Model):
@@ -395,29 +394,13 @@ class ProxyResource(Resource):
     :vartype type: str
     """
 
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-
 
 class SystemAssignedIdentity(ProxyResource):
     """Describes a system assigned identity resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -477,10 +460,10 @@ class SystemAssignedIdentity(ProxyResource):
         super().__init__(**kwargs)
         self.location = location
         self.tags = tags
-        self.tenant_id = None
-        self.principal_id = None
-        self.client_id = None
-        self.client_secret_url = None
+        self.tenant_id: Optional[str] = None
+        self.principal_id: Optional[str] = None
+        self.client_id: Optional[str] = None
+        self.client_secret_url: Optional[str] = None
 
 
 class UserAssignedIdentitiesListResult(_serialization.Model):

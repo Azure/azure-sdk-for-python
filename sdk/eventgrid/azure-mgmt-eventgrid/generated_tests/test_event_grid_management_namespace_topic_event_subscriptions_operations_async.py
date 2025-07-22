@@ -27,7 +27,7 @@ class TestEventGridManagementNamespaceTopicEventSubscriptionsOperationsAsync(Azu
             namespace_name="str",
             topic_name="str",
             event_subscription_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -48,11 +48,19 @@ class TestEventGridManagementNamespaceTopicEventSubscriptionsOperationsAsync(Azu
                         "push": {
                             "deadLetterDestinationWithResourceIdentity": {
                                 "deadLetterDestination": "dead_letter_destination",
-                                "identity": {"type": "str", "userAssignedIdentity": "str"},
+                                "identity": {
+                                    "federatedIdentityCredentialInfo": {"federatedClientId": "str"},
+                                    "type": "str",
+                                    "userAssignedIdentity": "str",
+                                },
                             },
                             "deliveryWithResourceIdentity": {
                                 "destination": "event_subscription_destination",
-                                "identity": {"type": "str", "userAssignedIdentity": "str"},
+                                "identity": {
+                                    "federatedIdentityCredentialInfo": {"federatedClientId": "str"},
+                                    "type": "str",
+                                    "userAssignedIdentity": "str",
+                                },
                             },
                             "destination": "event_subscription_destination",
                             "eventTimeToLive": "str",
@@ -61,7 +69,11 @@ class TestEventGridManagementNamespaceTopicEventSubscriptionsOperationsAsync(Azu
                         "queue": {
                             "deadLetterDestinationWithResourceIdentity": {
                                 "deadLetterDestination": "dead_letter_destination",
-                                "identity": {"type": "str", "userAssignedIdentity": "str"},
+                                "identity": {
+                                    "federatedIdentityCredentialInfo": {"federatedClientId": "str"},
+                                    "type": "str",
+                                    "userAssignedIdentity": "str",
+                                },
                             },
                             "eventTimeToLive": "1 day, 0:00:00",
                             "maxDeliveryCount": 0,
@@ -82,9 +94,10 @@ class TestEventGridManagementNamespaceTopicEventSubscriptionsOperationsAsync(Azu
                         "lastModifiedBy": "str",
                         "lastModifiedByType": "str",
                     },
+                    "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-02-15",
+                api_version="2025-04-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -100,7 +113,7 @@ class TestEventGridManagementNamespaceTopicEventSubscriptionsOperationsAsync(Azu
                 namespace_name="str",
                 topic_name="str",
                 event_subscription_name="str",
-                api_version="2025-02-15",
+                api_version="2025-04-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -122,11 +135,19 @@ class TestEventGridManagementNamespaceTopicEventSubscriptionsOperationsAsync(Azu
                         "push": {
                             "deadLetterDestinationWithResourceIdentity": {
                                 "deadLetterDestination": "dead_letter_destination",
-                                "identity": {"type": "str", "userAssignedIdentity": "str"},
+                                "identity": {
+                                    "federatedIdentityCredentialInfo": {"federatedClientId": "str"},
+                                    "type": "str",
+                                    "userAssignedIdentity": "str",
+                                },
                             },
                             "deliveryWithResourceIdentity": {
                                 "destination": "event_subscription_destination",
-                                "identity": {"type": "str", "userAssignedIdentity": "str"},
+                                "identity": {
+                                    "federatedIdentityCredentialInfo": {"federatedClientId": "str"},
+                                    "type": "str",
+                                    "userAssignedIdentity": "str",
+                                },
                             },
                             "destination": "event_subscription_destination",
                             "eventTimeToLive": "str",
@@ -135,7 +156,11 @@ class TestEventGridManagementNamespaceTopicEventSubscriptionsOperationsAsync(Azu
                         "queue": {
                             "deadLetterDestinationWithResourceIdentity": {
                                 "deadLetterDestination": "dead_letter_destination",
-                                "identity": {"type": "str", "userAssignedIdentity": "str"},
+                                "identity": {
+                                    "federatedIdentityCredentialInfo": {"federatedClientId": "str"},
+                                    "type": "str",
+                                    "userAssignedIdentity": "str",
+                                },
                             },
                             "eventTimeToLive": "1 day, 0:00:00",
                             "maxDeliveryCount": 0,
@@ -145,8 +170,9 @@ class TestEventGridManagementNamespaceTopicEventSubscriptionsOperationsAsync(Azu
                     "eventDeliverySchema": "str",
                     "expirationTimeUtc": "2020-02-20 00:00:00",
                     "filtersConfiguration": {"filters": ["filter"], "includedEventTypes": ["str"]},
+                    "tags": {"str": "str"},
                 },
-                api_version="2025-02-15",
+                api_version="2025-04-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -160,7 +186,7 @@ class TestEventGridManagementNamespaceTopicEventSubscriptionsOperationsAsync(Azu
             resource_group_name=resource_group.name,
             namespace_name="str",
             topic_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -174,7 +200,7 @@ class TestEventGridManagementNamespaceTopicEventSubscriptionsOperationsAsync(Azu
             namespace_name="str",
             topic_name="str",
             event_subscription_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -188,7 +214,7 @@ class TestEventGridManagementNamespaceTopicEventSubscriptionsOperationsAsync(Azu
             namespace_name="str",
             topic_name="str",
             event_subscription_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
