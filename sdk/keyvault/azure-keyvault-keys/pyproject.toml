@@ -44,7 +44,7 @@ dynamic = [
 repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk"
 
 [tool.setuptools.dynamic]
-version = {attr = "azure.keyvault.keys._generated._version.VERSION"}
+version = {attr = "azure.keyvault.keys._version.VERSION"}
 readme = {file = ["README.md"], content-type = "text/markdown"}
 
 [tool.setuptools.packages.find]
