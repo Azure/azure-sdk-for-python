@@ -1227,7 +1227,7 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1333,7 +1333,7 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1595,7 +1595,7 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1729,7 +1729,7 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1797,7 +1797,7 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1848,7 +1848,7 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -2076,7 +2076,7 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
