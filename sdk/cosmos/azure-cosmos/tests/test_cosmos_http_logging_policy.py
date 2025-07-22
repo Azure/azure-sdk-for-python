@@ -23,18 +23,6 @@ except ImportError:  # python < 3.3
     from mock import Mock  # type: ignore
 
 
-class MockHandler(logging.Handler):
-
-    def __init__(self):
-        super(MockHandler, self).__init__()
-        self.messages = []
-
-    def reset(self):
-        self.messages = []
-
-    def emit(self, record):
-        self.messages.append(record)
-
 class FilterStatusCode(logging.Filter):
     def filter(self, record):
         if hasattr(record, 'status_code') and record.status_code >= 400:
@@ -87,9 +75,9 @@ class TestCosmosHttpLogger(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.mock_handler_default = MockHandler()
-        cls.mock_handler_diagnostic = MockHandler()
-        cls.mock_handler_filtered_diagnostic = MockHandler()
+        cls.mock_handler_default = test_config.MockHandler()
+        cls.mock_handler_diagnostic = test_config.MockHandler()
+        cls.mock_handler_filtered_diagnostic = test_config.MockHandler()
 
         # Add filter to the filtered diagnostics handler
 
@@ -233,7 +221,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
         multiple_write_locations = True
 
         # Client setup
-        mock_handler = MockHandler()
+        mock_handler = test_config.MockHandler()
         logger = create_logger("test_logger_client_settings", mock_handler)
 
         custom_transport = FaultInjectionTransport()
