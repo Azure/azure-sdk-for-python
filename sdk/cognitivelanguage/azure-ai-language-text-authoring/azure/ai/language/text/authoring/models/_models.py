@@ -14,492 +14,24 @@ from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, U
 from azure.core.exceptions import ODataV4Format
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
-from ._enums import ProjectKind
+from ._enums import TextAuthoringProjectKind
 
 if TYPE_CHECKING:
     from .. import models as _models
 
 
-class DataGenerationSetting(_Model):
-    """Represents the settings for using data generation as part of training a custom model.
-
-    :ivar enable_data_generation: If set to true, augment customer provided training data with
-     synthetic data to improve model quality. Required.
-    :vartype enable_data_generation: bool
-    :ivar data_generation_connection_info: Represents the connection info for the Azure resource to
-     use during data generation as part of training a custom model. Required.
-    :vartype data_generation_connection_info:
-     ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringDataGenerationConnectionInfo
-    """
-
-    enable_data_generation: bool = rest_field(
-        name="enableDataGeneration", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """If set to true, augment customer provided training data with synthetic data to improve model
-     quality. Required."""
-    data_generation_connection_info: "_models.TextAnalysisAuthoringDataGenerationConnectionInfo" = rest_field(
-        name="dataGenerationConnectionInfo", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the connection info for the Azure resource to use during data generation as part of
-     training a custom model. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        enable_data_generation: bool,
-        data_generation_connection_info: "_models.TextAnalysisAuthoringDataGenerationConnectionInfo",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringAssignDeploymentResourcesOptions(_Model):  # pylint: disable=name-too-long
-    """Represents the options for assigning Azure resources to a project.
-
-    :ivar resources_metadata: Represents the metadata for the resources to be assigned. Required.
-    :vartype resources_metadata:
-     list[~azure.ai.language.text.authoring.models.TextAnalysisAuthoringResourceMetadata]
-    """
-
-    resources_metadata: List["_models.TextAnalysisAuthoringResourceMetadata"] = rest_field(
-        name="resourcesMetadata", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the metadata for the resources to be assigned. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resources_metadata: List["_models.TextAnalysisAuthoringResourceMetadata"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringAssignedDeploymentResource(_Model):  # pylint: disable=name-too-long
-    """Represents the assigned deployment resource.
-
-    :ivar azure_resource_id: The resource ID. Required.
-    :vartype azure_resource_id: str
-    :ivar region: The resource region. Required.
-    :vartype region: str
-    """
-
-    azure_resource_id: str = rest_field(name="azureResourceId", visibility=["read"])
-    """The resource ID. Required."""
-    region: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The resource region. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        region: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringAssignedProjectDeploymentMetadata(_Model):  # pylint: disable=name-too-long
-    """Represents the metadata for an assigned deployment.
-
-    :ivar deployment_name: Represents the deployment name. Required.
-    :vartype deployment_name: str
-    :ivar last_deployed_date_time: Represents deployment last deployed time. Required.
-    :vartype last_deployed_date_time: ~datetime.datetime
-    :ivar deployment_expiration_date: Represents deployment expiration date in the runtime.
-     Required.
-    :vartype deployment_expiration_date: ~datetime.date
-    """
-
-    deployment_name: str = rest_field(name="deploymentName", visibility=["read", "create", "update", "delete", "query"])
-    """Represents the deployment name. Required."""
-    last_deployed_date_time: datetime.datetime = rest_field(
-        name="lastDeployedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """Represents deployment last deployed time. Required."""
-    deployment_expiration_date: datetime.date = rest_field(
-        name="deploymentExpirationDate", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents deployment expiration date in the runtime. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        deployment_name: str,
-        last_deployed_date_time: datetime.datetime,
-        deployment_expiration_date: datetime.date,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringAssignedProjectDeploymentsMetadata(_Model):  # pylint: disable=name-too-long
-    """Represents the metadata for assigned deployments for a project.
-
-    :ivar project_name: Represents the project name. Required.
-    :vartype project_name: str
-    :ivar deployments_metadata: Represents the resource region. Required.
-    :vartype deployments_metadata:
-     list[~azure.ai.language.text.authoring.models.TextAnalysisAuthoringAssignedProjectDeploymentMetadata]
-    """
-
-    project_name: str = rest_field(name="projectName", visibility=["read"])
-    """Represents the project name. Required."""
-    deployments_metadata: List["_models.TextAnalysisAuthoringAssignedProjectDeploymentMetadata"] = rest_field(
-        name="deploymentsMetadata", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the resource region. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        deployments_metadata: List["_models.TextAnalysisAuthoringAssignedProjectDeploymentMetadata"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringConfusionMatrixCell(_Model):
-    """Represents a cell in a confusion matrix.
-
-    :ivar normalized_value: Represents normalized value in percentages. Required.
-    :vartype normalized_value: float
-    :ivar raw_value: Represents raw value. Required.
-    :vartype raw_value: float
-    """
-
-    normalized_value: float = rest_field(
-        name="normalizedValue", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents normalized value in percentages. Required."""
-    raw_value: float = rest_field(name="rawValue", visibility=["read", "create", "update", "delete", "query"])
-    """Represents raw value. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        normalized_value: float,
-        raw_value: float,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringConfusionMatrixRow(_Model):
-    """TextAnalysisAuthoringConfusionMatrixRow."""
-
-
-class TextAnalysisAuthoringCopyProjectJobState(_Model):
-    """Represents the state of a copy job.
-
-    :ivar job_id: The job ID. Required.
-    :vartype job_id: str
-    :ivar created_date_time: The creation date time of the job. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_updated_date_time: The last date time the job was updated. Required.
-    :vartype last_updated_date_time: ~datetime.datetime
-    :ivar expiration_date_time: The expiration date time of the job.
-    :vartype expiration_date_time: ~datetime.datetime
-    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", and "partiallyCompleted".
-    :vartype status: str or ~azure.ai.language.text.authoring.models.JobStatus
-    :ivar warnings: The warnings that were encountered while executing the job.
-    :vartype warnings: list[~azure.core.ODataV4Format]
-    :ivar errors: The errors encountered while executing the job.
-    :vartype errors: list[~azure.core.ODataV4Format]
-    """
-
-    job_id: str = rest_field(name="jobId", visibility=["read"])
-    """The job ID. Required."""
-    created_date_time: datetime.datetime = rest_field(
-        name="createdDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The creation date time of the job. Required."""
-    last_updated_date_time: datetime.datetime = rest_field(
-        name="lastUpdatedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The last date time the job was updated. Required."""
-    expiration_date_time: Optional[datetime.datetime] = rest_field(
-        name="expirationDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The expiration date time of the job."""
-    status: Union[str, "_models.JobStatus"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
-     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The warnings that were encountered while executing the job."""
-    errors: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The errors encountered while executing the job."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        status: Union[str, "_models.JobStatus"],
-        expiration_date_time: Optional[datetime.datetime] = None,
-        warnings: Optional[List[ODataV4Format]] = None,
-        errors: Optional[List[ODataV4Format]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringCopyProjectOptions(_Model):
-    """Represents the options for copying an existing project to another Azure resource.
-
-    :ivar project_kind: Represents the project kind. Required. Known values are:
-     "CustomSingleLabelClassification", "CustomMultiLabelClassification", "CustomEntityRecognition",
-     "CustomAbstractiveSummarization", "CustomHealthcare", and "CustomTextSentiment".
-    :vartype project_kind: str or ~azure.ai.language.text.authoring.models.ProjectKind
-    :ivar target_project_name: The project name to be copied-into. Required.
-    :vartype target_project_name: str
-    :ivar access_token: The access token. Required.
-    :vartype access_token: str
-    :ivar expires_at: The expiration of the access token. Required.
-    :vartype expires_at: ~datetime.datetime
-    :ivar target_resource_id: Represents the target Azure resource ID. Required.
-    :vartype target_resource_id: str
-    :ivar target_resource_region: Represents the target Azure resource region. Required.
-    :vartype target_resource_region: str
-    """
-
-    project_kind: Union[str, "_models.ProjectKind"] = rest_field(
-        name="projectKind", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the project kind. Required. Known values are: \"CustomSingleLabelClassification\",
-     \"CustomMultiLabelClassification\", \"CustomEntityRecognition\",
-     \"CustomAbstractiveSummarization\", \"CustomHealthcare\", and \"CustomTextSentiment\"."""
-    target_project_name: str = rest_field(
-        name="targetProjectName", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The project name to be copied-into. Required."""
-    access_token: str = rest_field(name="accessToken", visibility=["read", "create", "update", "delete", "query"])
-    """The access token. Required."""
-    expires_at: datetime.datetime = rest_field(
-        name="expiresAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The expiration of the access token. Required."""
-    target_resource_id: str = rest_field(
-        name="targetResourceId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the target Azure resource ID. Required."""
-    target_resource_region: str = rest_field(
-        name="targetResourceRegion", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the target Azure resource region. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        project_kind: Union[str, "_models.ProjectKind"],
-        target_project_name: str,
-        access_token: str,
-        expires_at: datetime.datetime,
-        target_resource_id: str,
-        target_resource_region: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringCreateDeploymentOptions(_Model):  # pylint: disable=name-too-long
-    """Represents the options for creating or updating a project deployment.
-
-    :ivar trained_model_label: Represents the trained model label. Required.
-    :vartype trained_model_label: str
-    :ivar assigned_resources: Represents the resources to be assigned to the deployment. If
-     provided, the deployment will be rolled out to the resources provided here as well as the
-     original resource in which the project is created.
-    :vartype assigned_resources:
-     list[~azure.ai.language.text.authoring.models.TextAnalysisAuthoringDeploymentResource]
-    """
-
-    trained_model_label: str = rest_field(
-        name="trainedModelLabel", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the trained model label. Required."""
-    assigned_resources: Optional[List["_models.TextAnalysisAuthoringDeploymentResource"]] = rest_field(
-        name="assignedResources", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the resources to be assigned to the deployment. If provided, the deployment will be
-     rolled out to the resources provided here as well as the original resource in which the project
-     is created."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        trained_model_label: str,
-        assigned_resources: Optional[List["_models.TextAnalysisAuthoringDeploymentResource"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringCreateProjectOptions(_Model):  # pylint: disable=name-too-long
-    """Represents the options used to create or update a project.
-
-    :ivar project_kind: The project kind. Required. Known values are:
-     "CustomSingleLabelClassification", "CustomMultiLabelClassification", "CustomEntityRecognition",
-     "CustomAbstractiveSummarization", "CustomHealthcare", and "CustomTextSentiment".
-    :vartype project_kind: str or ~azure.ai.language.text.authoring.models.ProjectKind
-    :ivar storage_input_container_name: The storage container name. Required.
-    :vartype storage_input_container_name: str
-    :ivar settings: The project settings.
-    :vartype settings: ~azure.ai.language.text.authoring.models.TextAuthoringProjectSettings
-    :ivar project_name: The new project name. Required.
-    :vartype project_name: str
-    :ivar multilingual: Whether the project would be used for multiple languages or not.
-    :vartype multilingual: bool
-    :ivar description: The project description.
-    :vartype description: str
-    :ivar language: The project language. This is BCP-47 representation of a language. For example,
-     use "en" for English, "en-gb" for English (UK), "es" for Spanish etc. Required.
-    :vartype language: str
-    """
-
-    project_kind: Union[str, "_models.ProjectKind"] = rest_field(
-        name="projectKind", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The project kind. Required. Known values are: \"CustomSingleLabelClassification\",
-     \"CustomMultiLabelClassification\", \"CustomEntityRecognition\",
-     \"CustomAbstractiveSummarization\", \"CustomHealthcare\", and \"CustomTextSentiment\"."""
-    storage_input_container_name: str = rest_field(
-        name="storageInputContainerName", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The storage container name. Required."""
-    settings: Optional["_models.TextAuthoringProjectSettings"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The project settings."""
-    project_name: str = rest_field(name="projectName", visibility=["read", "create", "update", "delete", "query"])
-    """The new project name. Required."""
-    multilingual: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Whether the project would be used for multiple languages or not."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The project description."""
-    language: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The project language. This is BCP-47 representation of a language. For example, use \"en\" for
-     English, \"en-gb\" for English (UK), \"es\" for Spanish etc. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        project_kind: Union[str, "_models.ProjectKind"],
-        storage_input_container_name: str,
-        project_name: str,
-        language: str,
-        settings: Optional["_models.TextAuthoringProjectSettings"] = None,
-        multilingual: Optional[bool] = None,
-        description: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringDocumentEvaluationResult(_Model):  # pylint: disable=name-too-long
+class TextAuthoringDocumentEvalResult(_Model):
     """Represents the evaluation result of a document.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    TextAnalysisAuthoringCustomEntityRecognitionDocumentEvaluationResult,
-    TextAnalysisAuthoringCustomHealthcareDocumentEvaluationResult,
-    TextAnalysisAuthoringCustomMultiLabelClassificationDocumentEvaluationResult,
-    TextAnalysisAuthoringCustomSingleLabelClassificationDocumentEvaluationResult,
-    TextAnalysisAuthoringCustomTextSentimentDocumentEvaluationResult
+    CustomEntityRecognitionDocumentEvalResult, CustomHealthcareDocumentEvalResult,
+    CustomMultiLabelClassificationDocumentEvalResult,
+    CustomSingleLabelClassificationDocumentEvalResult, CustomTextSentimentDocumentEvalResult
 
     :ivar project_kind: Represents the project kind. Required. Known values are:
      "CustomSingleLabelClassification", "CustomMultiLabelClassification", "CustomEntityRecognition",
      "CustomAbstractiveSummarization", "CustomHealthcare", and "CustomTextSentiment".
-    :vartype project_kind: str or ~azure.ai.language.text.authoring.models.ProjectKind
+    :vartype project_kind: str or ~azure.ai.language.text.authoring.models.TextAuthoringProjectKind
     :ivar location: Represents the document path. Required.
     :vartype location: str
     :ivar language: Represents the document language. This is BCP-47 representation of a language.
@@ -538,8 +70,8 @@ class TextAnalysisAuthoringDocumentEvaluationResult(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringCustomEntityRecognitionDocumentEvaluationResult(
-    TextAnalysisAuthoringDocumentEvaluationResult, discriminator="CustomEntityRecognition"
+class CustomEntityRecognitionDocumentEvalResult(
+    TextAuthoringDocumentEvalResult, discriminator="CustomEntityRecognition"
 ):  # pylint: disable=name-too-long
     """Represents the document evaluation result for a custom entity recognition project.
 
@@ -551,18 +83,18 @@ class TextAnalysisAuthoringCustomEntityRecognitionDocumentEvaluationResult(
     :ivar custom_entity_recognition_result: Represents the evaluation prediction for entity
      recognition. Required.
     :vartype custom_entity_recognition_result:
-     ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringDocumentEntityRecognitionEvaluationResult
+     ~azure.ai.language.text.authoring.models.DocumentEntityRecognitionEvalResult
     :ivar project_kind: Represents the project kind. Required. For building an extraction model to
      identify your domain categories using your own data.
     :vartype project_kind: str or
      ~azure.ai.language.text.authoring.models.CUSTOM_ENTITY_RECOGNITION
     """
 
-    custom_entity_recognition_result: "_models.TextAnalysisAuthoringDocumentEntityRecognitionEvaluationResult" = (
-        rest_field(name="customEntityRecognitionResult", visibility=["read", "create", "update", "delete", "query"])
+    custom_entity_recognition_result: "_models.DocumentEntityRecognitionEvalResult" = rest_field(
+        name="customEntityRecognitionResult", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the evaluation prediction for entity recognition. Required."""
-    project_kind: Literal[ProjectKind.CUSTOM_ENTITY_RECOGNITION] = rest_discriminator(name="projectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    project_kind: Literal[TextAuthoringProjectKind.CUSTOM_ENTITY_RECOGNITION] = rest_discriminator(name="projectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Represents the project kind. Required. For building an extraction model to identify your domain
      categories using your own data."""
 
@@ -572,7 +104,7 @@ class TextAnalysisAuthoringCustomEntityRecognitionDocumentEvaluationResult(
         *,
         location: str,
         language: str,
-        custom_entity_recognition_result: "_models.TextAnalysisAuthoringDocumentEntityRecognitionEvaluationResult",
+        custom_entity_recognition_result: "_models.DocumentEntityRecognitionEvalResult",
     ) -> None: ...
 
     @overload
@@ -583,27 +115,25 @@ class TextAnalysisAuthoringCustomEntityRecognitionDocumentEvaluationResult(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, project_kind=ProjectKind.CUSTOM_ENTITY_RECOGNITION, **kwargs)
+        super().__init__(*args, project_kind=TextAuthoringProjectKind.CUSTOM_ENTITY_RECOGNITION, **kwargs)
 
 
-class TextAnalysisAuthoringEvaluationSummary(_Model):
+class TextAuthoringEvalSummary(_Model):
     """Represents the summary for an evaluation operation.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    TextAnalysisAuthoringCustomEntityRecognitionEvaluationSummary,
-    TextAnalysisAuthoringCustomHealthcareEvaluationSummary,
-    TextAnalysisAuthoringCustomMultiLabelClassificationEvaluationSummary,
-    TextAnalysisAuthoringCustomSingleLabelClassificationEvaluationSummary,
-    TextAnalysisAuthoringCustomTextSentimentEvaluationSummary
+    CustomEntityRecognitionEvalSummary, CustomHealthcareEvalSummary,
+    CustomMultiLabelClassificationEvalSummary, CustomSingleLabelClassificationEvalSummary,
+    CustomTextSentimentEvalSummary
 
     :ivar project_kind: Represents the project type that the evaluation ran on. Required. Known
      values are: "CustomSingleLabelClassification", "CustomMultiLabelClassification",
      "CustomEntityRecognition", "CustomAbstractiveSummarization", "CustomHealthcare", and
      "CustomTextSentiment".
-    :vartype project_kind: str or ~azure.ai.language.text.authoring.models.ProjectKind
+    :vartype project_kind: str or ~azure.ai.language.text.authoring.models.TextAuthoringProjectKind
     :ivar evaluation_options: Represents the options used running the evaluation. Required.
     :vartype evaluation_options:
-     ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringEvaluationOptions
+     ~azure.ai.language.text.authoring.models.TextAuthoringEvaluationDetails
     """
 
     __mapping__: Dict[str, _Model] = {}
@@ -614,7 +144,7 @@ class TextAnalysisAuthoringEvaluationSummary(_Model):
      \"CustomSingleLabelClassification\", \"CustomMultiLabelClassification\",
      \"CustomEntityRecognition\", \"CustomAbstractiveSummarization\", \"CustomHealthcare\", and
      \"CustomTextSentiment\"."""
-    evaluation_options: "_models.TextAnalysisAuthoringEvaluationOptions" = rest_field(
+    evaluation_options: "_models.TextAuthoringEvaluationDetails" = rest_field(
         name="evaluationOptions", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the options used running the evaluation. Required."""
@@ -624,7 +154,7 @@ class TextAnalysisAuthoringEvaluationSummary(_Model):
         self,
         *,
         project_kind: str,
-        evaluation_options: "_models.TextAnalysisAuthoringEvaluationOptions",
+        evaluation_options: "_models.TextAuthoringEvaluationDetails",
     ) -> None: ...
 
     @overload
@@ -638,29 +168,27 @@ class TextAnalysisAuthoringEvaluationSummary(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringCustomEntityRecognitionEvaluationSummary(
-    TextAnalysisAuthoringEvaluationSummary, discriminator="CustomEntityRecognition"
-):  # pylint: disable=name-too-long
+class CustomEntityRecognitionEvalSummary(TextAuthoringEvalSummary, discriminator="CustomEntityRecognition"):
     """Represents the evaluation summary for a custom entity recognition project.
 
     :ivar evaluation_options: Represents the options used running the evaluation. Required.
     :vartype evaluation_options:
-     ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringEvaluationOptions
+     ~azure.ai.language.text.authoring.models.TextAuthoringEvaluationDetails
     :ivar custom_entity_recognition_evaluation: Contains the data related to extraction evaluation.
      Required.
     :vartype custom_entity_recognition_evaluation:
-     ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringEntityRecognitionEvaluationSummary
+     ~azure.ai.language.text.authoring.models.EntityRecognitionEvalSummary
     :ivar project_kind: Represents the project type that the evaluation ran on. Required. For
      building an extraction model to identify your domain categories using your own data.
     :vartype project_kind: str or
      ~azure.ai.language.text.authoring.models.CUSTOM_ENTITY_RECOGNITION
     """
 
-    custom_entity_recognition_evaluation: "_models.TextAnalysisAuthoringEntityRecognitionEvaluationSummary" = (
-        rest_field(name="customEntityRecognitionEvaluation", visibility=["read", "create", "update", "delete", "query"])
+    custom_entity_recognition_evaluation: "_models.EntityRecognitionEvalSummary" = rest_field(
+        name="customEntityRecognitionEvaluation", visibility=["read", "create", "update", "delete", "query"]
     )
     """Contains the data related to extraction evaluation. Required."""
-    project_kind: Literal[ProjectKind.CUSTOM_ENTITY_RECOGNITION] = rest_discriminator(name="projectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    project_kind: Literal[TextAuthoringProjectKind.CUSTOM_ENTITY_RECOGNITION] = rest_discriminator(name="projectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Represents the project type that the evaluation ran on. Required. For building an extraction
      model to identify your domain categories using your own data."""
 
@@ -668,8 +196,8 @@ class TextAnalysisAuthoringCustomEntityRecognitionEvaluationSummary(
     def __init__(
         self,
         *,
-        evaluation_options: "_models.TextAnalysisAuthoringEvaluationOptions",
-        custom_entity_recognition_evaluation: "_models.TextAnalysisAuthoringEntityRecognitionEvaluationSummary",
+        evaluation_options: "_models.TextAuthoringEvaluationDetails",
+        custom_entity_recognition_evaluation: "_models.EntityRecognitionEvalSummary",
     ) -> None: ...
 
     @overload
@@ -680,12 +208,10 @@ class TextAnalysisAuthoringCustomEntityRecognitionEvaluationSummary(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, project_kind=ProjectKind.CUSTOM_ENTITY_RECOGNITION, **kwargs)
+        super().__init__(*args, project_kind=TextAuthoringProjectKind.CUSTOM_ENTITY_RECOGNITION, **kwargs)
 
 
-class TextAnalysisAuthoringCustomHealthcareDocumentEvaluationResult(
-    TextAnalysisAuthoringDocumentEvaluationResult, discriminator="CustomHealthcare"
-):  # pylint: disable=name-too-long
+class CustomHealthcareDocumentEvalResult(TextAuthoringDocumentEvalResult, discriminator="CustomHealthcare"):
     """Represents the document evaluation result for a custom entity recognition project.
 
     :ivar location: Represents the document path. Required.
@@ -696,17 +222,17 @@ class TextAnalysisAuthoringCustomHealthcareDocumentEvaluationResult(
     :ivar custom_healthcare_result: Represents the evaluation prediction for entity recognition.
      Required.
     :vartype custom_healthcare_result:
-     ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringDocumentHealthcareEvaluationResult
+     ~azure.ai.language.text.authoring.models.DocumentHealthcareEvalResult
     :ivar project_kind: Represents the project kind. Required. For building an text analytics for
      health model to identify your health domain data.
     :vartype project_kind: str or ~azure.ai.language.text.authoring.models.CUSTOM_HEALTHCARE
     """
 
-    custom_healthcare_result: "_models.TextAnalysisAuthoringDocumentHealthcareEvaluationResult" = rest_field(
+    custom_healthcare_result: "_models.DocumentHealthcareEvalResult" = rest_field(
         name="customHealthcareResult", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the evaluation prediction for entity recognition. Required."""
-    project_kind: Literal[ProjectKind.CUSTOM_HEALTHCARE] = rest_discriminator(name="projectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    project_kind: Literal[TextAuthoringProjectKind.CUSTOM_HEALTHCARE] = rest_discriminator(name="projectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Represents the project kind. Required. For building an text analytics for health model to
      identify your health domain data."""
 
@@ -716,7 +242,7 @@ class TextAnalysisAuthoringCustomHealthcareDocumentEvaluationResult(
         *,
         location: str,
         language: str,
-        custom_healthcare_result: "_models.TextAnalysisAuthoringDocumentHealthcareEvaluationResult",
+        custom_healthcare_result: "_models.DocumentHealthcareEvalResult",
     ) -> None: ...
 
     @overload
@@ -727,31 +253,29 @@ class TextAnalysisAuthoringCustomHealthcareDocumentEvaluationResult(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, project_kind=ProjectKind.CUSTOM_HEALTHCARE, **kwargs)
+        super().__init__(*args, project_kind=TextAuthoringProjectKind.CUSTOM_HEALTHCARE, **kwargs)
 
 
-class TextAnalysisAuthoringCustomHealthcareEvaluationSummary(
-    TextAnalysisAuthoringEvaluationSummary, discriminator="CustomHealthcare"
-):  # pylint: disable=name-too-long
+class CustomHealthcareEvalSummary(TextAuthoringEvalSummary, discriminator="CustomHealthcare"):
     """Represents the evaluation summary for a custom health care project.
 
     :ivar evaluation_options: Represents the options used running the evaluation. Required.
     :vartype evaluation_options:
-     ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringEvaluationOptions
+     ~azure.ai.language.text.authoring.models.TextAuthoringEvaluationDetails
     :ivar custom_healthcare_evaluation: Contains the data related to health care evaluation.
      Required.
     :vartype custom_healthcare_evaluation:
-     ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringEntityRecognitionEvaluationSummary
+     ~azure.ai.language.text.authoring.models.EntityRecognitionEvalSummary
     :ivar project_kind: Represents the project type that the evaluation ran on. Required. For
      building an text analytics for health model to identify your health domain data.
     :vartype project_kind: str or ~azure.ai.language.text.authoring.models.CUSTOM_HEALTHCARE
     """
 
-    custom_healthcare_evaluation: "_models.TextAnalysisAuthoringEntityRecognitionEvaluationSummary" = rest_field(
+    custom_healthcare_evaluation: "_models.EntityRecognitionEvalSummary" = rest_field(
         name="customHealthcareEvaluation", visibility=["read", "create", "update", "delete", "query"]
     )
     """Contains the data related to health care evaluation. Required."""
-    project_kind: Literal[ProjectKind.CUSTOM_HEALTHCARE] = rest_discriminator(name="projectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    project_kind: Literal[TextAuthoringProjectKind.CUSTOM_HEALTHCARE] = rest_discriminator(name="projectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Represents the project type that the evaluation ran on. Required. For building an text
      analytics for health model to identify your health domain data."""
 
@@ -759,8 +283,8 @@ class TextAnalysisAuthoringCustomHealthcareEvaluationSummary(
     def __init__(
         self,
         *,
-        evaluation_options: "_models.TextAnalysisAuthoringEvaluationOptions",
-        custom_healthcare_evaluation: "_models.TextAnalysisAuthoringEntityRecognitionEvaluationSummary",
+        evaluation_options: "_models.TextAuthoringEvaluationDetails",
+        custom_healthcare_evaluation: "_models.EntityRecognitionEvalSummary",
     ) -> None: ...
 
     @overload
@@ -771,11 +295,11 @@ class TextAnalysisAuthoringCustomHealthcareEvaluationSummary(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, project_kind=ProjectKind.CUSTOM_HEALTHCARE, **kwargs)
+        super().__init__(*args, project_kind=TextAuthoringProjectKind.CUSTOM_HEALTHCARE, **kwargs)
 
 
-class TextAnalysisAuthoringCustomMultiLabelClassificationDocumentEvaluationResult(
-    TextAnalysisAuthoringDocumentEvaluationResult, discriminator="CustomMultiLabelClassification"
+class CustomMultiLabelClassificationDocumentEvalResult(
+    TextAuthoringDocumentEvalResult, discriminator="CustomMultiLabelClassification"
 ):  # pylint: disable=name-too-long
     """Represents the document evaluation result for a custom multi-label classification project.
 
@@ -787,7 +311,7 @@ class TextAnalysisAuthoringCustomMultiLabelClassificationDocumentEvaluationResul
     :ivar custom_multi_label_classification_result: Represents the evaluation prediction for multi
      label classification. Required.
     :vartype custom_multi_label_classification_result:
-     ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringDocumentMultiLabelClassificationEvaluationResult
+     ~azure.ai.language.text.authoring.models.DocumentMultiLabelClassificationEvalResult
     :ivar project_kind: Represents the project kind. Required. For building a classification model
      to classify text using your own data. Each file can have one or many labels. For example, file
      1 is classified as A, B, and C and file 2 is classified as B and C.
@@ -795,13 +319,11 @@ class TextAnalysisAuthoringCustomMultiLabelClassificationDocumentEvaluationResul
      ~azure.ai.language.text.authoring.models.CUSTOM_MULTI_LABEL_CLASSIFICATION
     """
 
-    custom_multi_label_classification_result: (
-        "_models.TextAnalysisAuthoringDocumentMultiLabelClassificationEvaluationResult"
-    ) = rest_field(
+    custom_multi_label_classification_result: "_models.DocumentMultiLabelClassificationEvalResult" = rest_field(
         name="customMultiLabelClassificationResult", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the evaluation prediction for multi label classification. Required."""
-    project_kind: Literal[ProjectKind.CUSTOM_MULTI_LABEL_CLASSIFICATION] = rest_discriminator(name="projectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    project_kind: Literal[TextAuthoringProjectKind.CUSTOM_MULTI_LABEL_CLASSIFICATION] = rest_discriminator(name="projectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Represents the project kind. Required. For building a classification model to classify text
      using your own data. Each file can have one or many labels. For example, file 1 is classified
      as A, B, and C and file 2 is classified as B and C."""
@@ -812,7 +334,7 @@ class TextAnalysisAuthoringCustomMultiLabelClassificationDocumentEvaluationResul
         *,
         location: str,
         language: str,
-        custom_multi_label_classification_result: "_models.TextAnalysisAuthoringDocumentMultiLabelClassificationEvaluationResult",
+        custom_multi_label_classification_result: "_models.DocumentMultiLabelClassificationEvalResult",
     ) -> None: ...
 
     @overload
@@ -823,21 +345,21 @@ class TextAnalysisAuthoringCustomMultiLabelClassificationDocumentEvaluationResul
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, project_kind=ProjectKind.CUSTOM_MULTI_LABEL_CLASSIFICATION, **kwargs)
+        super().__init__(*args, project_kind=TextAuthoringProjectKind.CUSTOM_MULTI_LABEL_CLASSIFICATION, **kwargs)
 
 
-class TextAnalysisAuthoringCustomMultiLabelClassificationEvaluationSummary(
-    TextAnalysisAuthoringEvaluationSummary, discriminator="CustomMultiLabelClassification"
+class CustomMultiLabelClassificationEvalSummary(
+    TextAuthoringEvalSummary, discriminator="CustomMultiLabelClassification"
 ):  # pylint: disable=name-too-long
     """Represents the evaluation summary for a custom multi-label classification project.
 
     :ivar evaluation_options: Represents the options used running the evaluation. Required.
     :vartype evaluation_options:
-     ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringEvaluationOptions
+     ~azure.ai.language.text.authoring.models.TextAuthoringEvaluationDetails
     :ivar custom_multi_label_classification_evaluation: Contains the data related to multi label
      classification evaluation. Required.
     :vartype custom_multi_label_classification_evaluation:
-     ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringMultiLabelClassificationEvaluationSummary
+     ~azure.ai.language.text.authoring.models.MultiLabelClassificationEvalSummary
     :ivar project_kind: Represents the project type that the evaluation ran on. Required. For
      building a classification model to classify text using your own data. Each file can have one or
      many labels. For example, file 1 is classified as A, B, and C and file 2 is classified as B and
@@ -846,13 +368,11 @@ class TextAnalysisAuthoringCustomMultiLabelClassificationEvaluationSummary(
      ~azure.ai.language.text.authoring.models.CUSTOM_MULTI_LABEL_CLASSIFICATION
     """
 
-    custom_multi_label_classification_evaluation: (
-        "_models.TextAnalysisAuthoringMultiLabelClassificationEvaluationSummary"
-    ) = rest_field(
+    custom_multi_label_classification_evaluation: "_models.MultiLabelClassificationEvalSummary" = rest_field(
         name="customMultiLabelClassificationEvaluation", visibility=["read", "create", "update", "delete", "query"]
     )
     """Contains the data related to multi label classification evaluation. Required."""
-    project_kind: Literal[ProjectKind.CUSTOM_MULTI_LABEL_CLASSIFICATION] = rest_discriminator(name="projectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    project_kind: Literal[TextAuthoringProjectKind.CUSTOM_MULTI_LABEL_CLASSIFICATION] = rest_discriminator(name="projectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Represents the project type that the evaluation ran on. Required. For building a classification
      model to classify text using your own data. Each file can have one or many labels. For example,
      file 1 is classified as A, B, and C and file 2 is classified as B and C."""
@@ -861,8 +381,8 @@ class TextAnalysisAuthoringCustomMultiLabelClassificationEvaluationSummary(
     def __init__(
         self,
         *,
-        evaluation_options: "_models.TextAnalysisAuthoringEvaluationOptions",
-        custom_multi_label_classification_evaluation: "_models.TextAnalysisAuthoringMultiLabelClassificationEvaluationSummary",
+        evaluation_options: "_models.TextAuthoringEvaluationDetails",
+        custom_multi_label_classification_evaluation: "_models.MultiLabelClassificationEvalSummary",
     ) -> None: ...
 
     @overload
@@ -873,11 +393,11 @@ class TextAnalysisAuthoringCustomMultiLabelClassificationEvaluationSummary(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, project_kind=ProjectKind.CUSTOM_MULTI_LABEL_CLASSIFICATION, **kwargs)
+        super().__init__(*args, project_kind=TextAuthoringProjectKind.CUSTOM_MULTI_LABEL_CLASSIFICATION, **kwargs)
 
 
-class TextAnalysisAuthoringCustomSingleLabelClassificationDocumentEvaluationResult(
-    TextAnalysisAuthoringDocumentEvaluationResult, discriminator="CustomSingleLabelClassification"
+class CustomSingleLabelClassificationDocumentEvalResult(
+    TextAuthoringDocumentEvalResult, discriminator="CustomSingleLabelClassification"
 ):  # pylint: disable=name-too-long
     """Represents the document evaluation result for a custom single-label classification project.
 
@@ -889,7 +409,7 @@ class TextAnalysisAuthoringCustomSingleLabelClassificationDocumentEvaluationResu
     :ivar custom_single_label_classification_result: Represents the evaluation prediction for
      single label classification. Required.
     :vartype custom_single_label_classification_result:
-     ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringDocumentSingleLabelClassificationEvaluationResult
+     ~azure.ai.language.text.authoring.models.DocumentSingleLabelClassificationEvalResult
     :ivar project_kind: Represents the project kind. Required. For building a classification model
      to classify text using your own data. Each file will have only one label. For example, file 1
      is classified as A and file 2 is classified as B.
@@ -897,13 +417,11 @@ class TextAnalysisAuthoringCustomSingleLabelClassificationDocumentEvaluationResu
      ~azure.ai.language.text.authoring.models.CUSTOM_SINGLE_LABEL_CLASSIFICATION
     """
 
-    custom_single_label_classification_result: (
-        "_models.TextAnalysisAuthoringDocumentSingleLabelClassificationEvaluationResult"
-    ) = rest_field(
+    custom_single_label_classification_result: "_models.DocumentSingleLabelClassificationEvalResult" = rest_field(
         name="customSingleLabelClassificationResult", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the evaluation prediction for single label classification. Required."""
-    project_kind: Literal[ProjectKind.CUSTOM_SINGLE_LABEL_CLASSIFICATION] = rest_discriminator(name="projectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    project_kind: Literal[TextAuthoringProjectKind.CUSTOM_SINGLE_LABEL_CLASSIFICATION] = rest_discriminator(name="projectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Represents the project kind. Required. For building a classification model to classify text
      using your own data. Each file will have only one label. For example, file 1 is classified as A
      and file 2 is classified as B."""
@@ -914,7 +432,7 @@ class TextAnalysisAuthoringCustomSingleLabelClassificationDocumentEvaluationResu
         *,
         location: str,
         language: str,
-        custom_single_label_classification_result: "_models.TextAnalysisAuthoringDocumentSingleLabelClassificationEvaluationResult",
+        custom_single_label_classification_result: "_models.DocumentSingleLabelClassificationEvalResult",
     ) -> None: ...
 
     @overload
@@ -925,21 +443,21 @@ class TextAnalysisAuthoringCustomSingleLabelClassificationDocumentEvaluationResu
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, project_kind=ProjectKind.CUSTOM_SINGLE_LABEL_CLASSIFICATION, **kwargs)
+        super().__init__(*args, project_kind=TextAuthoringProjectKind.CUSTOM_SINGLE_LABEL_CLASSIFICATION, **kwargs)
 
 
-class TextAnalysisAuthoringCustomSingleLabelClassificationEvaluationSummary(
-    TextAnalysisAuthoringEvaluationSummary, discriminator="CustomSingleLabelClassification"
+class CustomSingleLabelClassificationEvalSummary(
+    TextAuthoringEvalSummary, discriminator="CustomSingleLabelClassification"
 ):  # pylint: disable=name-too-long
     """Represents the evaluation summary for a custom single-label classification project.
 
     :ivar evaluation_options: Represents the options used running the evaluation. Required.
     :vartype evaluation_options:
-     ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringEvaluationOptions
+     ~azure.ai.language.text.authoring.models.TextAuthoringEvaluationDetails
     :ivar custom_single_label_classification_evaluation: Contains the data related to single label
      classification evaluation. Required.
     :vartype custom_single_label_classification_evaluation:
-     ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringSingleLabelClassificationEvaluationSummary
+     ~azure.ai.language.text.authoring.models.SingleLabelClassificationEvalSummary
     :ivar project_kind: Represents the project type that the evaluation ran on. Required. For
      building a classification model to classify text using your own data. Each file will have only
      one label. For example, file 1 is classified as A and file 2 is classified as B.
@@ -947,13 +465,11 @@ class TextAnalysisAuthoringCustomSingleLabelClassificationEvaluationSummary(
      ~azure.ai.language.text.authoring.models.CUSTOM_SINGLE_LABEL_CLASSIFICATION
     """
 
-    custom_single_label_classification_evaluation: (
-        "_models.TextAnalysisAuthoringSingleLabelClassificationEvaluationSummary"
-    ) = rest_field(
+    custom_single_label_classification_evaluation: "_models.SingleLabelClassificationEvalSummary" = rest_field(
         name="customSingleLabelClassificationEvaluation", visibility=["read", "create", "update", "delete", "query"]
     )
     """Contains the data related to single label classification evaluation. Required."""
-    project_kind: Literal[ProjectKind.CUSTOM_SINGLE_LABEL_CLASSIFICATION] = rest_discriminator(name="projectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    project_kind: Literal[TextAuthoringProjectKind.CUSTOM_SINGLE_LABEL_CLASSIFICATION] = rest_discriminator(name="projectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Represents the project type that the evaluation ran on. Required. For building a classification
      model to classify text using your own data. Each file will have only one label. For example,
      file 1 is classified as A and file 2 is classified as B."""
@@ -962,8 +478,8 @@ class TextAnalysisAuthoringCustomSingleLabelClassificationEvaluationSummary(
     def __init__(
         self,
         *,
-        evaluation_options: "_models.TextAnalysisAuthoringEvaluationOptions",
-        custom_single_label_classification_evaluation: "_models.TextAnalysisAuthoringSingleLabelClassificationEvaluationSummary",
+        evaluation_options: "_models.TextAuthoringEvaluationDetails",
+        custom_single_label_classification_evaluation: "_models.SingleLabelClassificationEvalSummary",
     ) -> None: ...
 
     @overload
@@ -974,12 +490,10 @@ class TextAnalysisAuthoringCustomSingleLabelClassificationEvaluationSummary(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, project_kind=ProjectKind.CUSTOM_SINGLE_LABEL_CLASSIFICATION, **kwargs)
+        super().__init__(*args, project_kind=TextAuthoringProjectKind.CUSTOM_SINGLE_LABEL_CLASSIFICATION, **kwargs)
 
 
-class TextAnalysisAuthoringCustomTextSentimentDocumentEvaluationResult(
-    TextAnalysisAuthoringDocumentEvaluationResult, discriminator="CustomTextSentiment"
-):  # pylint: disable=name-too-long
+class CustomTextSentimentDocumentEvalResult(TextAuthoringDocumentEvalResult, discriminator="CustomTextSentiment"):
     """Represents the document evaluation result for a custom sentiment project.
 
     :ivar location: Represents the document path. Required.
@@ -990,17 +504,17 @@ class TextAnalysisAuthoringCustomTextSentimentDocumentEvaluationResult(
     :ivar custom_text_sentiment_result: Represents the evaluation prediction for text sentiment.
      Required.
     :vartype custom_text_sentiment_result:
-     ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringDocumentTextSentimentEvaluationResult
+     ~azure.ai.language.text.authoring.models.DocumentTextSentimentEvalResult
     :ivar project_kind: Represents the project kind. Required. For building a sentiment models
      which are able to extract sentiment for long documents.
     :vartype project_kind: str or ~azure.ai.language.text.authoring.models.CUSTOM_TEXT_SENTIMENT
     """
 
-    custom_text_sentiment_result: "_models.TextAnalysisAuthoringDocumentTextSentimentEvaluationResult" = rest_field(
+    custom_text_sentiment_result: "_models.DocumentTextSentimentEvalResult" = rest_field(
         name="customTextSentimentResult", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the evaluation prediction for text sentiment. Required."""
-    project_kind: Literal[ProjectKind.CUSTOM_TEXT_SENTIMENT] = rest_discriminator(name="projectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    project_kind: Literal[TextAuthoringProjectKind.CUSTOM_TEXT_SENTIMENT] = rest_discriminator(name="projectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Represents the project kind. Required. For building a sentiment models which are able to
      extract sentiment for long documents."""
 
@@ -1010,7 +524,7 @@ class TextAnalysisAuthoringCustomTextSentimentDocumentEvaluationResult(
         *,
         location: str,
         language: str,
-        custom_text_sentiment_result: "_models.TextAnalysisAuthoringDocumentTextSentimentEvaluationResult",
+        custom_text_sentiment_result: "_models.DocumentTextSentimentEvalResult",
     ) -> None: ...
 
     @overload
@@ -1021,31 +535,29 @@ class TextAnalysisAuthoringCustomTextSentimentDocumentEvaluationResult(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, project_kind=ProjectKind.CUSTOM_TEXT_SENTIMENT, **kwargs)
+        super().__init__(*args, project_kind=TextAuthoringProjectKind.CUSTOM_TEXT_SENTIMENT, **kwargs)
 
 
-class TextAnalysisAuthoringCustomTextSentimentEvaluationSummary(
-    TextAnalysisAuthoringEvaluationSummary, discriminator="CustomTextSentiment"
-):  # pylint: disable=name-too-long
+class CustomTextSentimentEvalSummary(TextAuthoringEvalSummary, discriminator="CustomTextSentiment"):
     """Represents the evaluation summary for a custom text sentiment project.
 
     :ivar evaluation_options: Represents the options used running the evaluation. Required.
     :vartype evaluation_options:
-     ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringEvaluationOptions
+     ~azure.ai.language.text.authoring.models.TextAuthoringEvaluationDetails
     :ivar custom_text_sentiment_evaluation: Contains the data related to custom sentiment
      evaluation. Required.
     :vartype custom_text_sentiment_evaluation:
-     ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringTextSentimentEvaluationSummary
+     ~azure.ai.language.text.authoring.models.TextSentimentEvalSummary
     :ivar project_kind: Represents the project type that the evaluation ran on. Required. For
      building a sentiment models which are able to extract sentiment for long documents.
     :vartype project_kind: str or ~azure.ai.language.text.authoring.models.CUSTOM_TEXT_SENTIMENT
     """
 
-    custom_text_sentiment_evaluation: "_models.TextAnalysisAuthoringTextSentimentEvaluationSummary" = rest_field(
+    custom_text_sentiment_evaluation: "_models.TextSentimentEvalSummary" = rest_field(
         name="customTextSentimentEvaluation", visibility=["read", "create", "update", "delete", "query"]
     )
     """Contains the data related to custom sentiment evaluation. Required."""
-    project_kind: Literal[ProjectKind.CUSTOM_TEXT_SENTIMENT] = rest_discriminator(name="projectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    project_kind: Literal[TextAuthoringProjectKind.CUSTOM_TEXT_SENTIMENT] = rest_discriminator(name="projectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Represents the project type that the evaluation ran on. Required. For building a sentiment
      models which are able to extract sentiment for long documents."""
 
@@ -1053,8 +565,8 @@ class TextAnalysisAuthoringCustomTextSentimentEvaluationSummary(
     def __init__(
         self,
         *,
-        evaluation_options: "_models.TextAnalysisAuthoringEvaluationOptions",
-        custom_text_sentiment_evaluation: "_models.TextAnalysisAuthoringTextSentimentEvaluationSummary",
+        evaluation_options: "_models.TextAuthoringEvaluationDetails",
+        custom_text_sentiment_evaluation: "_models.TextSentimentEvalSummary",
     ) -> None: ...
 
     @overload
@@ -1065,10 +577,88 @@ class TextAnalysisAuthoringCustomTextSentimentEvaluationSummary(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, project_kind=ProjectKind.CUSTOM_TEXT_SENTIMENT, **kwargs)
+        super().__init__(*args, project_kind=TextAuthoringProjectKind.CUSTOM_TEXT_SENTIMENT, **kwargs)
 
 
-class TextAnalysisAuthoringDataGenerationConnectionInfo(_Model):  # pylint: disable=name-too-long
+class TextAuthoringExportedProjectAsset(_Model):
+    """Represents the assets of an exported project.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ExportedCustomAbstractiveSummarizationProjectAsset,
+    ExportedCustomEntityRecognitionProjectAsset, ExportedCustomHealthcareProjectAsset,
+    ExportedCustomMultiLabelClassificationProjectAsset,
+    ExportedCustomSingleLabelClassificationProjectAsset, CustomTextSentimentProjectAssets
+
+    :ivar project_kind: Required. Known values are: "CustomSingleLabelClassification",
+     "CustomMultiLabelClassification", "CustomEntityRecognition", "CustomAbstractiveSummarization",
+     "CustomHealthcare", and "CustomTextSentiment".
+    :vartype project_kind: str or ~azure.ai.language.text.authoring.models.TextAuthoringProjectKind
+    """
+
+    __mapping__: Dict[str, _Model] = {}
+    project_kind: str = rest_discriminator(
+        name="projectKind", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required. Known values are: \"CustomSingleLabelClassification\",
+     \"CustomMultiLabelClassification\", \"CustomEntityRecognition\",
+     \"CustomAbstractiveSummarization\", \"CustomHealthcare\", and \"CustomTextSentiment\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        project_kind: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CustomTextSentimentProjectAssets(TextAuthoringExportedProjectAsset, discriminator="CustomTextSentiment"):
+    """Represents the exported assets for a custom text sentiment project.
+
+    :ivar documents: The list of documents belonging to the project.
+    :vartype documents:
+     list[~azure.ai.language.text.authoring.models.ExportedCustomTextSentimentDocument]
+    :ivar project_kind: The type of the project the assets belong to. Required. For building a
+     sentiment models which are able to extract sentiment for long documents.
+    :vartype project_kind: str or ~azure.ai.language.text.authoring.models.CUSTOM_TEXT_SENTIMENT
+    """
+
+    documents: Optional[List["_models.ExportedCustomTextSentimentDocument"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of documents belonging to the project."""
+    project_kind: Literal[TextAuthoringProjectKind.CUSTOM_TEXT_SENTIMENT] = rest_discriminator(name="projectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the project the assets belong to. Required. For building a sentiment models which
+     are able to extract sentiment for long documents."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        documents: Optional[List["_models.ExportedCustomTextSentimentDocument"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, project_kind=TextAuthoringProjectKind.CUSTOM_TEXT_SENTIMENT, **kwargs)
+
+
+class DataGenerationConnectionInfo(_Model):
     """Represents the connection info for the Azure resource to use during data generation as part of
     training a custom model.
 
@@ -1114,28 +704,35 @@ class TextAnalysisAuthoringDataGenerationConnectionInfo(_Model):  # pylint: disa
         self.kind: Literal["AzureOpenAI"] = "AzureOpenAI"
 
 
-class TextAnalysisAuthoringDeleteDeploymentOptions(_Model):  # pylint: disable=name-too-long
-    """Represents the options for deleting a project deployment.
+class DataGenerationSetting(_Model):
+    """Represents the settings for using data generation as part of training a custom model.
 
-    :ivar assigned_resource_ids: Represents the resource IDs to delete the deployment from. If not
-     provided, the deployment will be rolled out from all the resources it is deployed to. If
-     provided, it will delete the deployment only from the specified assigned resources, and leave
-     it for the rest.
-    :vartype assigned_resource_ids: list[str]
+    :ivar enable_data_generation: If set to true, augment customer provided training data with
+     synthetic data to improve model quality. Required.
+    :vartype enable_data_generation: bool
+    :ivar data_generation_connection_info: Represents the connection info for the Azure resource to
+     use during data generation as part of training a custom model. Required.
+    :vartype data_generation_connection_info:
+     ~azure.ai.language.text.authoring.models.DataGenerationConnectionInfo
     """
 
-    assigned_resource_ids: Optional[List[str]] = rest_field(
-        name="assignedResourceIds", visibility=["read", "create", "update", "delete", "query"]
+    enable_data_generation: bool = rest_field(
+        name="enableDataGeneration", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Represents the resource IDs to delete the deployment from. If not provided, the deployment will
-     be rolled out from all the resources it is deployed to. If provided, it will delete the
-     deployment only from the specified assigned resources, and leave it for the rest."""
+    """If set to true, augment customer provided training data with synthetic data to improve model
+     quality. Required."""
+    data_generation_connection_info: "_models.DataGenerationConnectionInfo" = rest_field(
+        name="dataGenerationConnectionInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the connection info for the Azure resource to use during data generation as part of
+     training a custom model. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        assigned_resource_ids: Optional[List[str]] = None,
+        enable_data_generation: bool,
+        data_generation_connection_info: "_models.DataGenerationConnectionInfo",
     ) -> None: ...
 
     @overload
@@ -1149,243 +746,7 @@ class TextAnalysisAuthoringDeleteDeploymentOptions(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringDeploymentDeleteFromResourcesJobState(_Model):  # pylint: disable=name-too-long
-    """Represents the state of an existing delete deployment from specific resources job.
-
-    :ivar job_id: The job ID. Required.
-    :vartype job_id: str
-    :ivar created_date_time: The creation date time of the job. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_updated_date_time: The last date time the job was updated. Required.
-    :vartype last_updated_date_time: ~datetime.datetime
-    :ivar expiration_date_time: The expiration date time of the job.
-    :vartype expiration_date_time: ~datetime.datetime
-    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", and "partiallyCompleted".
-    :vartype status: str or ~azure.ai.language.text.authoring.models.JobStatus
-    :ivar warnings: The warnings that were encountered while executing the job.
-    :vartype warnings: list[~azure.core.ODataV4Format]
-    :ivar errors: The errors encountered while executing the job.
-    :vartype errors: list[~azure.core.ODataV4Format]
-    """
-
-    job_id: str = rest_field(name="jobId", visibility=["read"])
-    """The job ID. Required."""
-    created_date_time: datetime.datetime = rest_field(
-        name="createdDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The creation date time of the job. Required."""
-    last_updated_date_time: datetime.datetime = rest_field(
-        name="lastUpdatedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The last date time the job was updated. Required."""
-    expiration_date_time: Optional[datetime.datetime] = rest_field(
-        name="expirationDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The expiration date time of the job."""
-    status: Union[str, "_models.JobStatus"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
-     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The warnings that were encountered while executing the job."""
-    errors: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The errors encountered while executing the job."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        status: Union[str, "_models.JobStatus"],
-        expiration_date_time: Optional[datetime.datetime] = None,
-        warnings: Optional[List[ODataV4Format]] = None,
-        errors: Optional[List[ODataV4Format]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringDeploymentJobState(_Model):
-    """Represents the state of a deployment job.
-
-    :ivar job_id: The job ID. Required.
-    :vartype job_id: str
-    :ivar created_date_time: The creation date time of the job. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_updated_date_time: The last date time the job was updated. Required.
-    :vartype last_updated_date_time: ~datetime.datetime
-    :ivar expiration_date_time: The expiration date time of the job.
-    :vartype expiration_date_time: ~datetime.datetime
-    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", and "partiallyCompleted".
-    :vartype status: str or ~azure.ai.language.text.authoring.models.JobStatus
-    :ivar warnings: The warnings that were encountered while executing the job.
-    :vartype warnings: list[~azure.core.ODataV4Format]
-    :ivar errors: The errors encountered while executing the job.
-    :vartype errors: list[~azure.core.ODataV4Format]
-    """
-
-    job_id: str = rest_field(name="jobId", visibility=["read"])
-    """The job ID. Required."""
-    created_date_time: datetime.datetime = rest_field(
-        name="createdDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The creation date time of the job. Required."""
-    last_updated_date_time: datetime.datetime = rest_field(
-        name="lastUpdatedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The last date time the job was updated. Required."""
-    expiration_date_time: Optional[datetime.datetime] = rest_field(
-        name="expirationDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The expiration date time of the job."""
-    status: Union[str, "_models.JobStatus"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
-     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The warnings that were encountered while executing the job."""
-    errors: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The errors encountered while executing the job."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        status: Union[str, "_models.JobStatus"],
-        expiration_date_time: Optional[datetime.datetime] = None,
-        warnings: Optional[List[ODataV4Format]] = None,
-        errors: Optional[List[ODataV4Format]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringDeploymentResource(_Model):
-    """Represents an Azure resource assigned to a deployment.
-
-    :ivar resource_id: Represents the Azure resource Id. Required.
-    :vartype resource_id: str
-    :ivar region: Represents the resource region. Required.
-    :vartype region: str
-    :ivar assigned_aoai_resource: Represents the AOAI resource assigned for data generation.
-    :vartype assigned_aoai_resource:
-     ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringDataGenerationConnectionInfo
-    """
-
-    resource_id: str = rest_field(name="resourceId", visibility=["read", "create", "update", "delete", "query"])
-    """Represents the Azure resource Id. Required."""
-    region: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Represents the resource region. Required."""
-    assigned_aoai_resource: Optional["_models.TextAnalysisAuthoringDataGenerationConnectionInfo"] = rest_field(
-        name="assignedAoaiResource", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the AOAI resource assigned for data generation."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resource_id: str,
-        region: str,
-        assigned_aoai_resource: Optional["_models.TextAnalysisAuthoringDataGenerationConnectionInfo"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringDeploymentResourcesJobState(_Model):  # pylint: disable=name-too-long
-    """Represents the state of a deployment resources job.
-
-    :ivar job_id: The job ID. Required.
-    :vartype job_id: str
-    :ivar created_date_time: The creation date time of the job. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_updated_date_time: The last date time the job was updated. Required.
-    :vartype last_updated_date_time: ~datetime.datetime
-    :ivar expiration_date_time: The expiration date time of the job.
-    :vartype expiration_date_time: ~datetime.datetime
-    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", and "partiallyCompleted".
-    :vartype status: str or ~azure.ai.language.text.authoring.models.JobStatus
-    :ivar warnings: The warnings that were encountered while executing the job.
-    :vartype warnings: list[~azure.core.ODataV4Format]
-    :ivar errors: The errors encountered while executing the job.
-    :vartype errors: list[~azure.core.ODataV4Format]
-    """
-
-    job_id: str = rest_field(name="jobId", visibility=["read"])
-    """The job ID. Required."""
-    created_date_time: datetime.datetime = rest_field(
-        name="createdDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The creation date time of the job. Required."""
-    last_updated_date_time: datetime.datetime = rest_field(
-        name="lastUpdatedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The last date time the job was updated. Required."""
-    expiration_date_time: Optional[datetime.datetime] = rest_field(
-        name="expirationDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The expiration date time of the job."""
-    status: Union[str, "_models.JobStatus"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
-     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The warnings that were encountered while executing the job."""
-    errors: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The errors encountered while executing the job."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        status: Union[str, "_models.JobStatus"],
-        expiration_date_time: Optional[datetime.datetime] = None,
-        warnings: Optional[List[ODataV4Format]] = None,
-        errors: Optional[List[ODataV4Format]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringDocumentEntityLabelEvaluationResult(_Model):  # pylint: disable=name-too-long
+class DocumentEntityLabelEvalResult(_Model):
     """Represents an evaluation result entity label.
 
     :ivar category: Represents the entity category. Required.
@@ -1423,15 +784,15 @@ class TextAnalysisAuthoringDocumentEntityLabelEvaluationResult(_Model):  # pylin
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringDocumentEntityRecognitionEvaluationResult(_Model):  # pylint: disable=name-too-long
+class DocumentEntityRecognitionEvalResult(_Model):
     """Represents the entity recognition evaluation result for a document.
 
     :ivar entities: Represents the document labelled entities. Required.
     :vartype entities:
-     list[~azure.ai.language.text.authoring.models.TextAnalysisAuthoringDocumentEntityRegionEvaluationResult]
+     list[~azure.ai.language.text.authoring.models.DocumentEntityRegionEvalResult]
     """
 
-    entities: List["_models.TextAnalysisAuthoringDocumentEntityRegionEvaluationResult"] = rest_field(
+    entities: List["_models.DocumentEntityRegionEvalResult"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the document labelled entities. Required."""
@@ -1440,7 +801,7 @@ class TextAnalysisAuthoringDocumentEntityRecognitionEvaluationResult(_Model):  #
     def __init__(
         self,
         *,
-        entities: List["_models.TextAnalysisAuthoringDocumentEntityRegionEvaluationResult"],
+        entities: List["_models.DocumentEntityRegionEvalResult"],
     ) -> None: ...
 
     @overload
@@ -1454,27 +815,27 @@ class TextAnalysisAuthoringDocumentEntityRecognitionEvaluationResult(_Model):  #
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringDocumentEntityRegionEvaluationResult(_Model):  # pylint: disable=name-too-long
+class DocumentEntityRegionEvalResult(_Model):
     """Represents the evaluation comparison between the expected and predicted entities of a document
     region.
 
     :ivar expected_entities: Represents the region's expected entity labels. Required.
     :vartype expected_entities:
-     list[~azure.ai.language.text.authoring.models.TextAnalysisAuthoringDocumentEntityLabelEvaluationResult]
+     list[~azure.ai.language.text.authoring.models.DocumentEntityLabelEvalResult]
     :ivar predicted_entities: Represents the region's predicted entity labels. Required.
     :vartype predicted_entities:
-     list[~azure.ai.language.text.authoring.models.TextAnalysisAuthoringDocumentEntityLabelEvaluationResult]
+     list[~azure.ai.language.text.authoring.models.DocumentEntityLabelEvalResult]
     :ivar region_offset: Represents the region offset. Required.
     :vartype region_offset: int
     :ivar region_length: Represents the region length. Required.
     :vartype region_length: int
     """
 
-    expected_entities: List["_models.TextAnalysisAuthoringDocumentEntityLabelEvaluationResult"] = rest_field(
+    expected_entities: List["_models.DocumentEntityLabelEvalResult"] = rest_field(
         name="expectedEntities", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the region's expected entity labels. Required."""
-    predicted_entities: List["_models.TextAnalysisAuthoringDocumentEntityLabelEvaluationResult"] = rest_field(
+    predicted_entities: List["_models.DocumentEntityLabelEvalResult"] = rest_field(
         name="predictedEntities", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the region's predicted entity labels. Required."""
@@ -1487,8 +848,8 @@ class TextAnalysisAuthoringDocumentEntityRegionEvaluationResult(_Model):  # pyli
     def __init__(
         self,
         *,
-        expected_entities: List["_models.TextAnalysisAuthoringDocumentEntityLabelEvaluationResult"],
-        predicted_entities: List["_models.TextAnalysisAuthoringDocumentEntityLabelEvaluationResult"],
+        expected_entities: List["_models.DocumentEntityLabelEvalResult"],
+        predicted_entities: List["_models.DocumentEntityLabelEvalResult"],
         region_offset: int,
         region_length: int,
     ) -> None: ...
@@ -1504,15 +865,15 @@ class TextAnalysisAuthoringDocumentEntityRegionEvaluationResult(_Model):  # pyli
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringDocumentHealthcareEvaluationResult(_Model):  # pylint: disable=name-too-long
+class DocumentHealthcareEvalResult(_Model):
     """Represents the healthcare evaluation result for a document.
 
     :ivar entities: Represents the document labelled entities. Required.
     :vartype entities:
-     list[~azure.ai.language.text.authoring.models.TextAnalysisAuthoringDocumentEntityRegionEvaluationResult]
+     list[~azure.ai.language.text.authoring.models.DocumentEntityRegionEvalResult]
     """
 
-    entities: List["_models.TextAnalysisAuthoringDocumentEntityRegionEvaluationResult"] = rest_field(
+    entities: List["_models.DocumentEntityRegionEvalResult"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the document labelled entities. Required."""
@@ -1521,7 +882,7 @@ class TextAnalysisAuthoringDocumentHealthcareEvaluationResult(_Model):  # pylint
     def __init__(
         self,
         *,
-        entities: List["_models.TextAnalysisAuthoringDocumentEntityRegionEvaluationResult"],
+        entities: List["_models.DocumentEntityRegionEvalResult"],
     ) -> None: ...
 
     @overload
@@ -1535,7 +896,7 @@ class TextAnalysisAuthoringDocumentHealthcareEvaluationResult(_Model):  # pylint
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringDocumentMultiLabelClassificationEvaluationResult(_Model):  # pylint: disable=name-too-long
+class DocumentMultiLabelClassificationEvalResult(_Model):  # pylint: disable=name-too-long
     """Represents the comparison between the expected and predicted classes that are result from the
     evaluation operation.
 
@@ -1573,19 +934,21 @@ class TextAnalysisAuthoringDocumentMultiLabelClassificationEvaluationResult(_Mod
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringDocumentSentimentLabelEvaluationResult(_Model):  # pylint: disable=name-too-long
+class DocumentSentimentLabelEvalResult(_Model):
     """Represents an evaluation result Sentiment label.
 
     :ivar category: Represents the sentiment category. Required. Known values are: "positive",
      "negative", and "neutral".
-    :vartype category: str or ~azure.ai.language.text.authoring.models.Sentiment
+    :vartype category: str or ~azure.ai.language.text.authoring.models.TextAuthoringSentiment
     :ivar offset: Represents the sentiment offset index relative to the original text. Required.
     :vartype offset: int
     :ivar length: Represents the sentiment length. Required.
     :vartype length: int
     """
 
-    category: Union[str, "_models.Sentiment"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    category: Union[str, "_models.TextAuthoringSentiment"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Represents the sentiment category. Required. Known values are: \"positive\", \"negative\", and
      \"neutral\"."""
     offset: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1597,7 +960,7 @@ class TextAnalysisAuthoringDocumentSentimentLabelEvaluationResult(_Model):  # py
     def __init__(
         self,
         *,
-        category: Union[str, "_models.Sentiment"],
+        category: Union[str, "_models.TextAuthoringSentiment"],
         offset: int,
         length: int,
     ) -> None: ...
@@ -1613,7 +976,7 @@ class TextAnalysisAuthoringDocumentSentimentLabelEvaluationResult(_Model):  # py
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringDocumentSingleLabelClassificationEvaluationResult(_Model):  # pylint: disable=name-too-long
+class DocumentSingleLabelClassificationEvalResult(_Model):  # pylint: disable=name-too-long
     """Represents the comparison between the expected and predicted class that result from an
     evaluation operation.
 
@@ -1647,24 +1010,24 @@ class TextAnalysisAuthoringDocumentSingleLabelClassificationEvaluationResult(_Mo
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringDocumentTextSentimentEvaluationResult(_Model):  # pylint: disable=name-too-long
+class DocumentTextSentimentEvalResult(_Model):
     """Represents the comparison between the expected and predicted sentiment that result from an
     evaluation operation.
 
     :ivar expected_sentiment_spans: Represents the document's expected sentiment labels. Required.
     :vartype expected_sentiment_spans:
-     list[~azure.ai.language.text.authoring.models.TextAnalysisAuthoringDocumentSentimentLabelEvaluationResult]
+     list[~azure.ai.language.text.authoring.models.DocumentSentimentLabelEvalResult]
     :ivar predicted_sentiment_spans: Represents the document's predicted sentiment labels.
      Required.
     :vartype predicted_sentiment_spans:
-     list[~azure.ai.language.text.authoring.models.TextAnalysisAuthoringDocumentSentimentLabelEvaluationResult]
+     list[~azure.ai.language.text.authoring.models.DocumentSentimentLabelEvalResult]
     """
 
-    expected_sentiment_spans: List["_models.TextAnalysisAuthoringDocumentSentimentLabelEvaluationResult"] = rest_field(
+    expected_sentiment_spans: List["_models.DocumentSentimentLabelEvalResult"] = rest_field(
         name="expectedSentimentSpans", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the document's expected sentiment labels. Required."""
-    predicted_sentiment_spans: List["_models.TextAnalysisAuthoringDocumentSentimentLabelEvaluationResult"] = rest_field(
+    predicted_sentiment_spans: List["_models.DocumentSentimentLabelEvalResult"] = rest_field(
         name="predictedSentimentSpans", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the document's predicted sentiment labels. Required."""
@@ -1673,8 +1036,8 @@ class TextAnalysisAuthoringDocumentTextSentimentEvaluationResult(_Model):  # pyl
     def __init__(
         self,
         *,
-        expected_sentiment_spans: List["_models.TextAnalysisAuthoringDocumentSentimentLabelEvaluationResult"],
-        predicted_sentiment_spans: List["_models.TextAnalysisAuthoringDocumentSentimentLabelEvaluationResult"],
+        expected_sentiment_spans: List["_models.DocumentSentimentLabelEvalResult"],
+        predicted_sentiment_spans: List["_models.DocumentSentimentLabelEvalResult"],
     ) -> None: ...
 
     @overload
@@ -1688,83 +1051,17 @@ class TextAnalysisAuthoringDocumentTextSentimentEvaluationResult(_Model):  # pyl
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringEntityEvaluationSummary(_Model):  # pylint: disable=name-too-long
-    """Represents the evaluation summary for an entity.
-
-    :ivar f1: Represents the model precision. Required.
-    :vartype f1: float
-    :ivar precision: Represents the model recall. Required.
-    :vartype precision: float
-    :ivar recall: Represents the model F1 score. Required.
-    :vartype recall: float
-    :ivar true_positive_count: Represents the count of true positive. Required.
-    :vartype true_positive_count: int
-    :ivar true_negative_count: Represents the count of true negative. Required.
-    :vartype true_negative_count: int
-    :ivar false_positive_count: Represents the count of false positive. Required.
-    :vartype false_positive_count: int
-    :ivar false_negative_count: Represents the count of false negative. Required.
-    :vartype false_negative_count: int
-    """
-
-    f1: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Represents the model precision. Required."""
-    precision: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Represents the model recall. Required."""
-    recall: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Represents the model F1 score. Required."""
-    true_positive_count: int = rest_field(
-        name="truePositiveCount", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the count of true positive. Required."""
-    true_negative_count: int = rest_field(
-        name="trueNegativeCount", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the count of true negative. Required."""
-    false_positive_count: int = rest_field(
-        name="falsePositiveCount", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the count of false positive. Required."""
-    false_negative_count: int = rest_field(
-        name="falseNegativeCount", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the count of false negative. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        f1: float,
-        precision: float,
-        recall: float,
-        true_positive_count: int,
-        true_negative_count: int,
-        false_positive_count: int,
-        false_negative_count: int,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringEntityRecognitionEvaluationSummary(_Model):  # pylint: disable=name-too-long
+class EntityRecognitionEvalSummary(_Model):
     """Represents the evaluation summary for a custom entity recognition project.
 
     :ivar confusion_matrix: Represents the confusion matrix between two entities (the two entities
      can be the same). The matrix is between the entity that was labelled and the entity that was
      predicted. Required.
     :vartype confusion_matrix: dict[str,
-     ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringConfusionMatrixRow]
+     ~azure.ai.language.text.authoring.models.TextAuthoringConfusionMatrixRow]
     :ivar entities: Represents the entities evaluation. Required.
     :vartype entities: dict[str,
-     ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringEntityEvaluationSummary]
+     ~azure.ai.language.text.authoring.models.TextAuthoringEntityEvalSummary]
     :ivar micro_f1: Represents the micro F1. Expected value is a float between 0 and 1 inclusive.
      Required.
     :vartype micro_f1: float
@@ -1785,12 +1082,12 @@ class TextAnalysisAuthoringEntityRecognitionEvaluationSummary(_Model):  # pylint
     :vartype macro_recall: float
     """
 
-    confusion_matrix: Dict[str, "_models.TextAnalysisAuthoringConfusionMatrixRow"] = rest_field(
+    confusion_matrix: Dict[str, "_models.TextAuthoringConfusionMatrixRow"] = rest_field(
         name="confusionMatrix", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the confusion matrix between two entities (the two entities can be the same). The
      matrix is between the entity that was labelled and the entity that was predicted. Required."""
-    entities: Dict[str, "_models.TextAnalysisAuthoringEntityEvaluationSummary"] = rest_field(
+    entities: Dict[str, "_models.TextAuthoringEntityEvalSummary"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the entities evaluation. Required."""
@@ -1815,8 +1112,8 @@ class TextAnalysisAuthoringEntityRecognitionEvaluationSummary(_Model):  # pylint
     def __init__(
         self,
         *,
-        confusion_matrix: Dict[str, "_models.TextAnalysisAuthoringConfusionMatrixRow"],
-        entities: Dict[str, "_models.TextAnalysisAuthoringEntityEvaluationSummary"],
+        confusion_matrix: Dict[str, "_models.TextAuthoringConfusionMatrixRow"],
+        entities: Dict[str, "_models.TextAuthoringEntityEvalSummary"],
         micro_f1: float,
         micro_precision: float,
         micro_recall: float,
@@ -1836,261 +1133,7 @@ class TextAnalysisAuthoringEntityRecognitionEvaluationSummary(_Model):  # pylint
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringEvaluationJobResult(_Model):
-    """TextAnalysisAuthoringEvaluationJobResult.
-
-    :ivar evaluation_options: Represents the options used running the evaluation. Required.
-    :vartype evaluation_options:
-     ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringEvaluationOptions
-    :ivar model_label: Represents trained model label. Required.
-    :vartype model_label: str
-    :ivar training_config_version: Represents training config version. Required.
-    :vartype training_config_version: str
-    :ivar percent_complete: Represents progress percentage. Required.
-    :vartype percent_complete: int
-    """
-
-    evaluation_options: "_models.TextAnalysisAuthoringEvaluationOptions" = rest_field(
-        name="evaluationOptions", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the options used running the evaluation. Required."""
-    model_label: str = rest_field(name="modelLabel", visibility=["read", "create", "update", "delete", "query"])
-    """Represents trained model label. Required."""
-    training_config_version: str = rest_field(
-        name="trainingConfigVersion", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents training config version. Required."""
-    percent_complete: int = rest_field(
-        name="percentComplete", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents progress percentage. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        evaluation_options: "_models.TextAnalysisAuthoringEvaluationOptions",
-        model_label: str,
-        training_config_version: str,
-        percent_complete: int,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringEvaluationJobState(_Model):
-    """Represents the state of a evaluation job.
-
-    :ivar job_id: The job ID. Required.
-    :vartype job_id: str
-    :ivar created_date_time: The creation date time of the job. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_updated_date_time: The last date time the job was updated. Required.
-    :vartype last_updated_date_time: ~datetime.datetime
-    :ivar expiration_date_time: The expiration date time of the job.
-    :vartype expiration_date_time: ~datetime.datetime
-    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", and "partiallyCompleted".
-    :vartype status: str or ~azure.ai.language.text.authoring.models.JobStatus
-    :ivar warnings: The warnings that were encountered while executing the job.
-    :vartype warnings: list[~azure.core.ODataV4Format]
-    :ivar errors: The errors encountered while executing the job.
-    :vartype errors: list[~azure.core.ODataV4Format]
-    :ivar result: Represents evaluation task detailed result. Required.
-    :vartype result:
-     ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringEvaluationJobResult
-    """
-
-    job_id: str = rest_field(name="jobId", visibility=["read"])
-    """The job ID. Required."""
-    created_date_time: datetime.datetime = rest_field(
-        name="createdDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The creation date time of the job. Required."""
-    last_updated_date_time: datetime.datetime = rest_field(
-        name="lastUpdatedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The last date time the job was updated. Required."""
-    expiration_date_time: Optional[datetime.datetime] = rest_field(
-        name="expirationDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The expiration date time of the job."""
-    status: Union[str, "_models.JobStatus"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
-     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The warnings that were encountered while executing the job."""
-    errors: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The errors encountered while executing the job."""
-    result: "_models.TextAnalysisAuthoringEvaluationJobResult" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents evaluation task detailed result. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        status: Union[str, "_models.JobStatus"],
-        result: "_models.TextAnalysisAuthoringEvaluationJobResult",
-        expiration_date_time: Optional[datetime.datetime] = None,
-        warnings: Optional[List[ODataV4Format]] = None,
-        errors: Optional[List[ODataV4Format]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringEvaluationOptions(_Model):
-    """Represents the options used running the evaluation.
-
-    :ivar kind: Represents the evaluation kind. By default, the evaluation kind is set to
-     percentage. Known values are: "percentage" and "manual".
-    :vartype kind: str or ~azure.ai.language.text.authoring.models.EvaluationKind
-    :ivar training_split_percentage: Represents the training dataset split percentage. Only needed
-     in case the evaluation kind is percentage.
-    :vartype training_split_percentage: int
-    :ivar testing_split_percentage: Represents the testing dataset split percentage. Only needed in
-     case the evaluation kind is percentage.
-    :vartype testing_split_percentage: int
-    """
-
-    kind: Optional[Union[str, "_models.EvaluationKind"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the evaluation kind. By default, the evaluation kind is set to percentage. Known
-     values are: \"percentage\" and \"manual\"."""
-    training_split_percentage: Optional[int] = rest_field(
-        name="trainingSplitPercentage", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the training dataset split percentage. Only needed in case the evaluation kind is
-     percentage."""
-    testing_split_percentage: Optional[int] = rest_field(
-        name="testingSplitPercentage", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the testing dataset split percentage. Only needed in case the evaluation kind is
-     percentage."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        kind: Optional[Union[str, "_models.EvaluationKind"]] = None,
-        training_split_percentage: Optional[int] = None,
-        testing_split_percentage: Optional[int] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringExportedClass(_Model):
-    """Represents a class of an exported project.
-
-    :ivar category: The class category.
-    :vartype category: str
-    """
-
-    category: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The class category."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        category: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringExportedCompositeEntity(_Model):  # pylint: disable=name-too-long
-    """Represents an entity in an exported project with composite entities enabled.
-
-    :ivar composition_setting: The behavior to follow when the entity's components overlap with
-     each other. Known values are: "separateComponents" and "combineComponents".
-    :vartype composition_setting: str or
-     ~azure.ai.language.text.authoring.models.CompositionSetting
-    :ivar list: The list component of the entity.
-    :vartype list: ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringExportedEntityList
-    :ivar prebuilts: The prebuilt entities components.
-    :vartype prebuilts:
-     list[~azure.ai.language.text.authoring.models.TextAnalysisAuthoringExportedPrebuiltEntity]
-    :ivar category: The entity category.
-    :vartype category: str
-    """
-
-    composition_setting: Optional[Union[str, "_models.CompositionSetting"]] = rest_field(
-        name="compositionSetting", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The behavior to follow when the entity's components overlap with each other. Known values are:
-     \"separateComponents\" and \"combineComponents\"."""
-    list: Optional["_models.TextAnalysisAuthoringExportedEntityList"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The list component of the entity."""
-    prebuilts: Optional[List["_models.TextAnalysisAuthoringExportedPrebuiltEntity"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The prebuilt entities components."""
-    category: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The entity category."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        composition_setting: Optional[Union[str, "_models.CompositionSetting"]] = None,
-        list: Optional["_models.TextAnalysisAuthoringExportedEntityList"] = None,
-        prebuilts: Optional[List["_models.TextAnalysisAuthoringExportedPrebuiltEntity"]] = None,
-        category: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringExportedCustomAbstractiveSummarizationDocument(_Model):  # pylint: disable=name-too-long
+class ExportedCustomAbstractiveSummarizationDocument(_Model):  # pylint: disable=name-too-long
     """Represents an exported document for a custom abstractive summarization project.
 
     :ivar summary_location: Represents the summary file location in the blob store container
@@ -2139,68 +1182,25 @@ class TextAnalysisAuthoringExportedCustomAbstractiveSummarizationDocument(_Model
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringExportedProjectAssets(_Model):  # pylint: disable=name-too-long
-    """Represents the assets of an exported project.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    TextAnalysisAuthoringExportedCustomAbstractiveSummarizationProjectAssets,
-    TextAnalysisAuthoringExportedCustomEntityRecognitionProjectAssets,
-    TextAnalysisAuthoringExportedCustomHealthcareProjectAssets,
-    TextAnalysisAuthoringExportedCustomMultiLabelClassificationProjectAssets,
-    TextAnalysisAuthoringExportedCustomSingleLabelClassificationProjectAssets,
-    TextAnalysisAuthoringExportedCustomTextSentimentProjectAssets
-
-    :ivar project_kind: Required. Known values are: "CustomSingleLabelClassification",
-     "CustomMultiLabelClassification", "CustomEntityRecognition", "CustomAbstractiveSummarization",
-     "CustomHealthcare", and "CustomTextSentiment".
-    :vartype project_kind: str or ~azure.ai.language.text.authoring.models.ProjectKind
-    """
-
-    __mapping__: Dict[str, _Model] = {}
-    project_kind: str = rest_discriminator(
-        name="projectKind", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Required. Known values are: \"CustomSingleLabelClassification\",
-     \"CustomMultiLabelClassification\", \"CustomEntityRecognition\",
-     \"CustomAbstractiveSummarization\", \"CustomHealthcare\", and \"CustomTextSentiment\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        project_kind: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringExportedCustomAbstractiveSummarizationProjectAssets(
-    TextAnalysisAuthoringExportedProjectAssets, discriminator="CustomAbstractiveSummarization"
+class ExportedCustomAbstractiveSummarizationProjectAsset(
+    TextAuthoringExportedProjectAsset, discriminator="CustomAbstractiveSummarization"
 ):  # pylint: disable=name-too-long
     """Represents the exported assets for an abstractive summarization project.
 
     :ivar documents: The list of documents belonging to this project.
     :vartype documents:
-     list[~azure.ai.language.text.authoring.models.TextAnalysisAuthoringExportedCustomAbstractiveSummarizationDocument]
+     list[~azure.ai.language.text.authoring.models.ExportedCustomAbstractiveSummarizationDocument]
     :ivar project_kind: The type of the project the assets belong to. Required. For building an
      abstractive summarization models which are able to summarize long documents.
     :vartype project_kind: str or
      ~azure.ai.language.text.authoring.models.CUSTOM_ABSTRACTIVE_SUMMARIZATION
     """
 
-    documents: Optional[List["_models.TextAnalysisAuthoringExportedCustomAbstractiveSummarizationDocument"]] = (
-        rest_field(visibility=["read", "create", "update", "delete", "query"])
+    documents: Optional[List["_models.ExportedCustomAbstractiveSummarizationDocument"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of documents belonging to this project."""
-    project_kind: Literal[ProjectKind.CUSTOM_ABSTRACTIVE_SUMMARIZATION] = rest_discriminator(name="projectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    project_kind: Literal[TextAuthoringProjectKind.CUSTOM_ABSTRACTIVE_SUMMARIZATION] = rest_discriminator(name="projectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the project the assets belong to. Required. For building an abstractive
      summarization models which are able to summarize long documents."""
 
@@ -2208,7 +1208,7 @@ class TextAnalysisAuthoringExportedCustomAbstractiveSummarizationProjectAssets(
     def __init__(
         self,
         *,
-        documents: Optional[List["_models.TextAnalysisAuthoringExportedCustomAbstractiveSummarizationDocument"]] = None,
+        documents: Optional[List["_models.ExportedCustomAbstractiveSummarizationDocument"]] = None,
     ) -> None: ...
 
     @overload
@@ -2219,15 +1219,14 @@ class TextAnalysisAuthoringExportedCustomAbstractiveSummarizationProjectAssets(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, project_kind=ProjectKind.CUSTOM_ABSTRACTIVE_SUMMARIZATION, **kwargs)
+        super().__init__(*args, project_kind=TextAuthoringProjectKind.CUSTOM_ABSTRACTIVE_SUMMARIZATION, **kwargs)
 
 
-class TextAnalysisAuthoringExportedCustomEntityRecognitionDocument(_Model):  # pylint: disable=name-too-long
+class ExportedCustomEntityRecognitionDocument(_Model):
     """Represents an exported document for a custom entity recognition project.
 
     :ivar entities: The list of entity labels belonging to the document.
-    :vartype entities:
-     list[~azure.ai.language.text.authoring.models.TextAnalysisAuthoringExportedDocumentEntityRegion]
+    :vartype entities: list[~azure.ai.language.text.authoring.models.ExportedDocumentEntityRegion]
     :ivar location: The location of the document in the storage.
     :vartype location: str
     :ivar language: Represents the document language. This is BCP-47 representation of a language.
@@ -2237,7 +1236,7 @@ class TextAnalysisAuthoringExportedCustomEntityRecognitionDocument(_Model):  # p
     :vartype dataset: str
     """
 
-    entities: Optional[List["_models.TextAnalysisAuthoringExportedDocumentEntityRegion"]] = rest_field(
+    entities: Optional[List["_models.ExportedDocumentEntityRegion"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of entity labels belonging to the document."""
@@ -2253,7 +1252,7 @@ class TextAnalysisAuthoringExportedCustomEntityRecognitionDocument(_Model):  # p
     def __init__(
         self,
         *,
-        entities: Optional[List["_models.TextAnalysisAuthoringExportedDocumentEntityRegion"]] = None,
+        entities: Optional[List["_models.ExportedDocumentEntityRegion"]] = None,
         location: Optional[str] = None,
         language: Optional[str] = None,
         dataset: Optional[str] = None,
@@ -2270,32 +1269,31 @@ class TextAnalysisAuthoringExportedCustomEntityRecognitionDocument(_Model):  # p
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringExportedCustomEntityRecognitionProjectAssets(
-    TextAnalysisAuthoringExportedProjectAssets, discriminator="CustomEntityRecognition"
+class ExportedCustomEntityRecognitionProjectAsset(
+    TextAuthoringExportedProjectAsset, discriminator="CustomEntityRecognition"
 ):  # pylint: disable=name-too-long
     """Represents the exported assets for a entity recognition project.
 
     :ivar entities: The list of entities belonging to the project.
-    :vartype entities:
-     list[~azure.ai.language.text.authoring.models.TextAnalysisAuthoringExportedEntity]
+    :vartype entities: list[~azure.ai.language.text.authoring.models.TextAuthoringExportedEntity]
     :ivar documents: The list of documents belonging to the project.
     :vartype documents:
-     list[~azure.ai.language.text.authoring.models.TextAnalysisAuthoringExportedCustomEntityRecognitionDocument]
+     list[~azure.ai.language.text.authoring.models.ExportedCustomEntityRecognitionDocument]
     :ivar project_kind: The type of the project the assets belong to. Required. For building an
      extraction model to identify your domain categories using your own data.
     :vartype project_kind: str or
      ~azure.ai.language.text.authoring.models.CUSTOM_ENTITY_RECOGNITION
     """
 
-    entities: Optional[List["_models.TextAnalysisAuthoringExportedEntity"]] = rest_field(
+    entities: Optional[List["_models.TextAuthoringExportedEntity"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of entities belonging to the project."""
-    documents: Optional[List["_models.TextAnalysisAuthoringExportedCustomEntityRecognitionDocument"]] = rest_field(
+    documents: Optional[List["_models.ExportedCustomEntityRecognitionDocument"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of documents belonging to the project."""
-    project_kind: Literal[ProjectKind.CUSTOM_ENTITY_RECOGNITION] = rest_discriminator(name="projectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    project_kind: Literal[TextAuthoringProjectKind.CUSTOM_ENTITY_RECOGNITION] = rest_discriminator(name="projectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the project the assets belong to. Required. For building an extraction model to
      identify your domain categories using your own data."""
 
@@ -2303,8 +1301,8 @@ class TextAnalysisAuthoringExportedCustomEntityRecognitionProjectAssets(
     def __init__(
         self,
         *,
-        entities: Optional[List["_models.TextAnalysisAuthoringExportedEntity"]] = None,
-        documents: Optional[List["_models.TextAnalysisAuthoringExportedCustomEntityRecognitionDocument"]] = None,
+        entities: Optional[List["_models.TextAuthoringExportedEntity"]] = None,
+        documents: Optional[List["_models.ExportedCustomEntityRecognitionDocument"]] = None,
     ) -> None: ...
 
     @overload
@@ -2315,15 +1313,14 @@ class TextAnalysisAuthoringExportedCustomEntityRecognitionProjectAssets(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, project_kind=ProjectKind.CUSTOM_ENTITY_RECOGNITION, **kwargs)
+        super().__init__(*args, project_kind=TextAuthoringProjectKind.CUSTOM_ENTITY_RECOGNITION, **kwargs)
 
 
-class TextAnalysisAuthoringExportedCustomHealthcareDocument(_Model):  # pylint: disable=name-too-long
+class ExportedCustomHealthcareDocument(_Model):
     """Represents an exported document for a CustomHealthcare project.
 
     :ivar entities: The list of entity labels belonging to the document.
-    :vartype entities:
-     list[~azure.ai.language.text.authoring.models.TextAnalysisAuthoringExportedDocumentEntityRegion]
+    :vartype entities: list[~azure.ai.language.text.authoring.models.ExportedDocumentEntityRegion]
     :ivar location: The location of the document in the storage.
     :vartype location: str
     :ivar language: Represents the document language. This is BCP-47 representation of a language.
@@ -2333,7 +1330,7 @@ class TextAnalysisAuthoringExportedCustomHealthcareDocument(_Model):  # pylint: 
     :vartype dataset: str
     """
 
-    entities: Optional[List["_models.TextAnalysisAuthoringExportedDocumentEntityRegion"]] = rest_field(
+    entities: Optional[List["_models.ExportedDocumentEntityRegion"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of entity labels belonging to the document."""
@@ -2349,7 +1346,7 @@ class TextAnalysisAuthoringExportedCustomHealthcareDocument(_Model):  # pylint: 
     def __init__(
         self,
         *,
-        entities: Optional[List["_models.TextAnalysisAuthoringExportedDocumentEntityRegion"]] = None,
+        entities: Optional[List["_models.ExportedDocumentEntityRegion"]] = None,
         location: Optional[str] = None,
         language: Optional[str] = None,
         dataset: Optional[str] = None,
@@ -2366,31 +1363,29 @@ class TextAnalysisAuthoringExportedCustomHealthcareDocument(_Model):  # pylint: 
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringExportedCustomHealthcareProjectAssets(
-    TextAnalysisAuthoringExportedProjectAssets, discriminator="CustomHealthcare"
-):  # pylint: disable=name-too-long
+class ExportedCustomHealthcareProjectAsset(TextAuthoringExportedProjectAsset, discriminator="CustomHealthcare"):
     """Represents the exported assets for a CustomHealthcare project.
 
     :ivar entities: The list of entities belonging to the project.
     :vartype entities:
-     list[~azure.ai.language.text.authoring.models.TextAnalysisAuthoringExportedCompositeEntity]
+     list[~azure.ai.language.text.authoring.models.TextAuthoringExportedCompositeEntity]
     :ivar documents: The list of documents belonging to the project.
     :vartype documents:
-     list[~azure.ai.language.text.authoring.models.TextAnalysisAuthoringExportedCustomHealthcareDocument]
+     list[~azure.ai.language.text.authoring.models.ExportedCustomHealthcareDocument]
     :ivar project_kind: The type of the project the assets belong to. Required. For building an
      text analytics for health model to identify your health domain data.
     :vartype project_kind: str or ~azure.ai.language.text.authoring.models.CUSTOM_HEALTHCARE
     """
 
-    entities: Optional[List["_models.TextAnalysisAuthoringExportedCompositeEntity"]] = rest_field(
+    entities: Optional[List["_models.TextAuthoringExportedCompositeEntity"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of entities belonging to the project."""
-    documents: Optional[List["_models.TextAnalysisAuthoringExportedCustomHealthcareDocument"]] = rest_field(
+    documents: Optional[List["_models.ExportedCustomHealthcareDocument"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of documents belonging to the project."""
-    project_kind: Literal[ProjectKind.CUSTOM_HEALTHCARE] = rest_discriminator(name="projectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    project_kind: Literal[TextAuthoringProjectKind.CUSTOM_HEALTHCARE] = rest_discriminator(name="projectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the project the assets belong to. Required. For building an text analytics for
      health model to identify your health domain data."""
 
@@ -2398,8 +1393,8 @@ class TextAnalysisAuthoringExportedCustomHealthcareProjectAssets(
     def __init__(
         self,
         *,
-        entities: Optional[List["_models.TextAnalysisAuthoringExportedCompositeEntity"]] = None,
-        documents: Optional[List["_models.TextAnalysisAuthoringExportedCustomHealthcareDocument"]] = None,
+        entities: Optional[List["_models.TextAuthoringExportedCompositeEntity"]] = None,
+        documents: Optional[List["_models.ExportedCustomHealthcareDocument"]] = None,
     ) -> None: ...
 
     @overload
@@ -2410,15 +1405,14 @@ class TextAnalysisAuthoringExportedCustomHealthcareProjectAssets(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, project_kind=ProjectKind.CUSTOM_HEALTHCARE, **kwargs)
+        super().__init__(*args, project_kind=TextAuthoringProjectKind.CUSTOM_HEALTHCARE, **kwargs)
 
 
-class TextAnalysisAuthoringExportedCustomMultiLabelClassificationDocument(_Model):  # pylint: disable=name-too-long
+class ExportedCustomMultiLabelClassificationDocument(_Model):  # pylint: disable=name-too-long
     """Represents an exported document of a custom multi-label classification project.
 
     :ivar classes: The document classes.
-    :vartype classes:
-     list[~azure.ai.language.text.authoring.models.TextAnalysisAuthoringExportedDocumentClass]
+    :vartype classes: list[~azure.ai.language.text.authoring.models.ExportedDocumentClass]
     :ivar location: The location of the document in the storage.
     :vartype location: str
     :ivar language: Represents the document language. This is BCP-47 representation of a language.
@@ -2428,7 +1422,7 @@ class TextAnalysisAuthoringExportedCustomMultiLabelClassificationDocument(_Model
     :vartype dataset: str
     """
 
-    classes: Optional[List["_models.TextAnalysisAuthoringExportedDocumentClass"]] = rest_field(
+    classes: Optional[List["_models.ExportedDocumentClass"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The document classes."""
@@ -2444,7 +1438,7 @@ class TextAnalysisAuthoringExportedCustomMultiLabelClassificationDocument(_Model
     def __init__(
         self,
         *,
-        classes: Optional[List["_models.TextAnalysisAuthoringExportedDocumentClass"]] = None,
+        classes: Optional[List["_models.ExportedDocumentClass"]] = None,
         location: Optional[str] = None,
         language: Optional[str] = None,
         dataset: Optional[str] = None,
@@ -2461,17 +1455,16 @@ class TextAnalysisAuthoringExportedCustomMultiLabelClassificationDocument(_Model
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringExportedCustomMultiLabelClassificationProjectAssets(
-    TextAnalysisAuthoringExportedProjectAssets, discriminator="CustomMultiLabelClassification"
+class ExportedCustomMultiLabelClassificationProjectAsset(
+    TextAuthoringExportedProjectAsset, discriminator="CustomMultiLabelClassification"
 ):  # pylint: disable=name-too-long
     """Represents the exported assets for a custom multi-label classification project.
 
     :ivar classes: The list of classes in the project.
-    :vartype classes:
-     list[~azure.ai.language.text.authoring.models.TextAnalysisAuthoringExportedClass]
+    :vartype classes: list[~azure.ai.language.text.authoring.models.TextAuthoringExportedClass]
     :ivar documents: The list of documents in the project.
     :vartype documents:
-     list[~azure.ai.language.text.authoring.models.TextAnalysisAuthoringExportedCustomMultiLabelClassificationDocument]
+     list[~azure.ai.language.text.authoring.models.ExportedCustomMultiLabelClassificationDocument]
     :ivar project_kind: The type of the project the assets belong to. Required. For building a
      classification model to classify text using your own data. Each file can have one or many
      labels. For example, file 1 is classified as A, B, and C and file 2 is classified as B and C.
@@ -2479,15 +1472,15 @@ class TextAnalysisAuthoringExportedCustomMultiLabelClassificationProjectAssets(
      ~azure.ai.language.text.authoring.models.CUSTOM_MULTI_LABEL_CLASSIFICATION
     """
 
-    classes: Optional[List["_models.TextAnalysisAuthoringExportedClass"]] = rest_field(
+    classes: Optional[List["_models.TextAuthoringExportedClass"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of classes in the project."""
-    documents: Optional[List["_models.TextAnalysisAuthoringExportedCustomMultiLabelClassificationDocument"]] = (
-        rest_field(visibility=["read", "create", "update", "delete", "query"])
+    documents: Optional[List["_models.ExportedCustomMultiLabelClassificationDocument"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of documents in the project."""
-    project_kind: Literal[ProjectKind.CUSTOM_MULTI_LABEL_CLASSIFICATION] = rest_discriminator(name="projectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    project_kind: Literal[TextAuthoringProjectKind.CUSTOM_MULTI_LABEL_CLASSIFICATION] = rest_discriminator(name="projectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the project the assets belong to. Required. For building a classification model to
      classify text using your own data. Each file can have one or many labels. For example, file 1
      is classified as A, B, and C and file 2 is classified as B and C."""
@@ -2496,8 +1489,8 @@ class TextAnalysisAuthoringExportedCustomMultiLabelClassificationProjectAssets(
     def __init__(
         self,
         *,
-        classes: Optional[List["_models.TextAnalysisAuthoringExportedClass"]] = None,
-        documents: Optional[List["_models.TextAnalysisAuthoringExportedCustomMultiLabelClassificationDocument"]] = None,
+        classes: Optional[List["_models.TextAuthoringExportedClass"]] = None,
+        documents: Optional[List["_models.ExportedCustomMultiLabelClassificationDocument"]] = None,
     ) -> None: ...
 
     @overload
@@ -2508,15 +1501,14 @@ class TextAnalysisAuthoringExportedCustomMultiLabelClassificationProjectAssets(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, project_kind=ProjectKind.CUSTOM_MULTI_LABEL_CLASSIFICATION, **kwargs)
+        super().__init__(*args, project_kind=TextAuthoringProjectKind.CUSTOM_MULTI_LABEL_CLASSIFICATION, **kwargs)
 
 
-class TextAnalysisAuthoringExportedCustomSingleLabelClassificationDocument(_Model):  # pylint: disable=name-too-long
+class ExportedCustomSingleLabelClassificationDocument(_Model):  # pylint: disable=name-too-long
     """Represents an exported document for a custom single-label classification project.
 
     :ivar class_property: The class of the documents.
-    :vartype class_property:
-     ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringExportedDocumentClass
+    :vartype class_property: ~azure.ai.language.text.authoring.models.ExportedDocumentClass
     :ivar location: The location of the document in the storage.
     :vartype location: str
     :ivar language: Represents the document language. This is BCP-47 representation of a language.
@@ -2526,7 +1518,7 @@ class TextAnalysisAuthoringExportedCustomSingleLabelClassificationDocument(_Mode
     :vartype dataset: str
     """
 
-    class_property: Optional["_models.TextAnalysisAuthoringExportedDocumentClass"] = rest_field(
+    class_property: Optional["_models.ExportedDocumentClass"] = rest_field(
         name="class", visibility=["read", "create", "update", "delete", "query"]
     )
     """The class of the documents."""
@@ -2542,7 +1534,7 @@ class TextAnalysisAuthoringExportedCustomSingleLabelClassificationDocument(_Mode
     def __init__(
         self,
         *,
-        class_property: Optional["_models.TextAnalysisAuthoringExportedDocumentClass"] = None,
+        class_property: Optional["_models.ExportedDocumentClass"] = None,
         location: Optional[str] = None,
         language: Optional[str] = None,
         dataset: Optional[str] = None,
@@ -2559,17 +1551,16 @@ class TextAnalysisAuthoringExportedCustomSingleLabelClassificationDocument(_Mode
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringExportedCustomSingleLabelClassificationProjectAssets(
-    TextAnalysisAuthoringExportedProjectAssets, discriminator="CustomSingleLabelClassification"
+class ExportedCustomSingleLabelClassificationProjectAsset(
+    TextAuthoringExportedProjectAsset, discriminator="CustomSingleLabelClassification"
 ):  # pylint: disable=name-too-long
     """Represents the exported assets for a single-label classification project.
 
     :ivar classes: The list of classes belonging to this project.
-    :vartype classes:
-     list[~azure.ai.language.text.authoring.models.TextAnalysisAuthoringExportedClass]
+    :vartype classes: list[~azure.ai.language.text.authoring.models.TextAuthoringExportedClass]
     :ivar documents: The list of documents belonging to this project.
     :vartype documents:
-     list[~azure.ai.language.text.authoring.models.TextAnalysisAuthoringExportedCustomSingleLabelClassificationDocument]
+     list[~azure.ai.language.text.authoring.models.ExportedCustomSingleLabelClassificationDocument]
     :ivar project_kind: The type of the project the assets belong to. Required. For building a
      classification model to classify text using your own data. Each file will have only one label.
      For example, file 1 is classified as A and file 2 is classified as B.
@@ -2577,15 +1568,15 @@ class TextAnalysisAuthoringExportedCustomSingleLabelClassificationProjectAssets(
      ~azure.ai.language.text.authoring.models.CUSTOM_SINGLE_LABEL_CLASSIFICATION
     """
 
-    classes: Optional[List["_models.TextAnalysisAuthoringExportedClass"]] = rest_field(
+    classes: Optional[List["_models.TextAuthoringExportedClass"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of classes belonging to this project."""
-    documents: Optional[List["_models.TextAnalysisAuthoringExportedCustomSingleLabelClassificationDocument"]] = (
-        rest_field(visibility=["read", "create", "update", "delete", "query"])
+    documents: Optional[List["_models.ExportedCustomSingleLabelClassificationDocument"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of documents belonging to this project."""
-    project_kind: Literal[ProjectKind.CUSTOM_SINGLE_LABEL_CLASSIFICATION] = rest_discriminator(name="projectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    project_kind: Literal[TextAuthoringProjectKind.CUSTOM_SINGLE_LABEL_CLASSIFICATION] = rest_discriminator(name="projectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the project the assets belong to. Required. For building a classification model to
      classify text using your own data. Each file will have only one label. For example, file 1 is
      classified as A and file 2 is classified as B."""
@@ -2594,10 +1585,8 @@ class TextAnalysisAuthoringExportedCustomSingleLabelClassificationProjectAssets(
     def __init__(
         self,
         *,
-        classes: Optional[List["_models.TextAnalysisAuthoringExportedClass"]] = None,
-        documents: Optional[
-            List["_models.TextAnalysisAuthoringExportedCustomSingleLabelClassificationDocument"]
-        ] = None,
+        classes: Optional[List["_models.TextAuthoringExportedClass"]] = None,
+        documents: Optional[List["_models.ExportedCustomSingleLabelClassificationDocument"]] = None,
     ) -> None: ...
 
     @overload
@@ -2608,15 +1597,15 @@ class TextAnalysisAuthoringExportedCustomSingleLabelClassificationProjectAssets(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, project_kind=ProjectKind.CUSTOM_SINGLE_LABEL_CLASSIFICATION, **kwargs)
+        super().__init__(*args, project_kind=TextAuthoringProjectKind.CUSTOM_SINGLE_LABEL_CLASSIFICATION, **kwargs)
 
 
-class TextAnalysisAuthoringExportedCustomTextSentimentDocument(_Model):  # pylint: disable=name-too-long
+class ExportedCustomTextSentimentDocument(_Model):
     """Represents an exported document for a custom text sentiment project.
 
     :ivar sentiment_spans:
     :vartype sentiment_spans:
-     list[~azure.ai.language.text.authoring.models.TextAnalysisAuthoringExportedDocumentSentimentLabel]
+     list[~azure.ai.language.text.authoring.models.ExportedDocumentSentimentLabel]
     :ivar location: The location of the document in the storage.
     :vartype location: str
     :ivar language: Represents the document language. This is BCP-47 representation of a language.
@@ -2626,7 +1615,7 @@ class TextAnalysisAuthoringExportedCustomTextSentimentDocument(_Model):  # pylin
     :vartype dataset: str
     """
 
-    sentiment_spans: Optional[List["_models.TextAnalysisAuthoringExportedDocumentSentimentLabel"]] = rest_field(
+    sentiment_spans: Optional[List["_models.ExportedDocumentSentimentLabel"]] = rest_field(
         name="sentimentSpans", visibility=["read", "create", "update", "delete", "query"]
     )
     location: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -2641,7 +1630,7 @@ class TextAnalysisAuthoringExportedCustomTextSentimentDocument(_Model):  # pylin
     def __init__(
         self,
         *,
-        sentiment_spans: Optional[List["_models.TextAnalysisAuthoringExportedDocumentSentimentLabel"]] = None,
+        sentiment_spans: Optional[List["_models.ExportedDocumentSentimentLabel"]] = None,
         location: Optional[str] = None,
         language: Optional[str] = None,
         dataset: Optional[str] = None,
@@ -2658,46 +1647,7 @@ class TextAnalysisAuthoringExportedCustomTextSentimentDocument(_Model):  # pylin
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringExportedCustomTextSentimentProjectAssets(
-    TextAnalysisAuthoringExportedProjectAssets, discriminator="CustomTextSentiment"
-):  # pylint: disable=name-too-long
-    """Represents the exported assets for a custom text sentiment project.
-
-    :ivar documents: The list of documents belonging to the project.
-    :vartype documents:
-     list[~azure.ai.language.text.authoring.models.TextAnalysisAuthoringExportedCustomTextSentimentDocument]
-    :ivar project_kind: The type of the project the assets belong to. Required. For building a
-     sentiment models which are able to extract sentiment for long documents.
-    :vartype project_kind: str or ~azure.ai.language.text.authoring.models.CUSTOM_TEXT_SENTIMENT
-    """
-
-    documents: Optional[List["_models.TextAnalysisAuthoringExportedCustomTextSentimentDocument"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The list of documents belonging to the project."""
-    project_kind: Literal[ProjectKind.CUSTOM_TEXT_SENTIMENT] = rest_discriminator(name="projectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of the project the assets belong to. Required. For building a sentiment models which
-     are able to extract sentiment for long documents."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        documents: Optional[List["_models.TextAnalysisAuthoringExportedCustomTextSentimentDocument"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, project_kind=ProjectKind.CUSTOM_TEXT_SENTIMENT, **kwargs)
-
-
-class TextAnalysisAuthoringExportedDocumentClass(_Model):  # pylint: disable=name-too-long
+class ExportedDocumentClass(_Model):
     """Represents a classification label for a document.
 
     :ivar category:
@@ -2724,7 +1674,7 @@ class TextAnalysisAuthoringExportedDocumentClass(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringExportedDocumentEntityLabel(_Model):  # pylint: disable=name-too-long
+class ExportedDocumentEntityLabel(_Model):
     """Represents an entity label for a document.
 
     :ivar category: The entity category.
@@ -2762,7 +1712,7 @@ class TextAnalysisAuthoringExportedDocumentEntityLabel(_Model):  # pylint: disab
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringExportedDocumentEntityRegion(_Model):  # pylint: disable=name-too-long
+class ExportedDocumentEntityRegion(_Model):
     """Represents a region in a document for entity labeling.
 
     :ivar region_offset: Start position for the region.
@@ -2770,8 +1720,7 @@ class TextAnalysisAuthoringExportedDocumentEntityRegion(_Model):  # pylint: disa
     :ivar region_length: Length for the region text.
     :vartype region_length: int
     :ivar labels: The list of entity labels belonging to this region.
-    :vartype labels:
-     list[~azure.ai.language.text.authoring.models.TextAnalysisAuthoringExportedDocumentEntityLabel]
+    :vartype labels: list[~azure.ai.language.text.authoring.models.ExportedDocumentEntityLabel]
     """
 
     region_offset: Optional[int] = rest_field(
@@ -2782,7 +1731,7 @@ class TextAnalysisAuthoringExportedDocumentEntityRegion(_Model):  # pylint: disa
         name="regionLength", visibility=["read", "create", "update", "delete", "query"]
     )
     """Length for the region text."""
-    labels: Optional[List["_models.TextAnalysisAuthoringExportedDocumentEntityLabel"]] = rest_field(
+    labels: Optional[List["_models.ExportedDocumentEntityLabel"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of entity labels belonging to this region."""
@@ -2793,7 +1742,7 @@ class TextAnalysisAuthoringExportedDocumentEntityRegion(_Model):  # pylint: disa
         *,
         region_offset: Optional[int] = None,
         region_length: Optional[int] = None,
-        labels: Optional[List["_models.TextAnalysisAuthoringExportedDocumentEntityLabel"]] = None,
+        labels: Optional[List["_models.ExportedDocumentEntityLabel"]] = None,
     ) -> None: ...
 
     @overload
@@ -2807,19 +1756,19 @@ class TextAnalysisAuthoringExportedDocumentEntityRegion(_Model):  # pylint: disa
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringExportedDocumentSentimentLabel(_Model):  # pylint: disable=name-too-long
+class ExportedDocumentSentimentLabel(_Model):
     """Represents an entity label for a document.
 
     :ivar category: The sentiment category. Known values are: "positive", "negative", and
      "neutral".
-    :vartype category: str or ~azure.ai.language.text.authoring.models.Sentiment
+    :vartype category: str or ~azure.ai.language.text.authoring.models.TextAuthoringSentiment
     :ivar offset: Start position for the sentiment text.
     :vartype offset: int
     :ivar length: Length for the sentiment text.
     :vartype length: int
     """
 
-    category: Optional[Union[str, "_models.Sentiment"]] = rest_field(
+    category: Optional[Union[str, "_models.TextAuthoringSentiment"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The sentiment category. Known values are: \"positive\", \"negative\", and \"neutral\"."""
@@ -2832,7 +1781,7 @@ class TextAnalysisAuthoringExportedDocumentSentimentLabel(_Model):  # pylint: di
     def __init__(
         self,
         *,
-        category: Optional[Union[str, "_models.Sentiment"]] = None,
+        category: Optional[Union[str, "_models.TextAuthoringSentiment"]] = None,
         offset: Optional[int] = None,
         length: Optional[int] = None,
     ) -> None: ...
@@ -2848,218 +1797,14 @@ class TextAnalysisAuthoringExportedDocumentSentimentLabel(_Model):  # pylint: di
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringExportedEntity(_Model):
-    """Represents an entity in an exported project.
-
-    :ivar category: The entity category.
-    :vartype category: str
-    :ivar description: Short description for entity category. Required when enabling synthetic data
-     generation.
-    :vartype description: str
-    """
-
-    category: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The entity category."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Short description for entity category. Required when enabling synthetic data generation."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        category: Optional[str] = None,
-        description: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringExportedEntityList(_Model):
-    """Represents a list component of an entity.
-
-    :ivar sublists: The sub-lists of the list component.
-    :vartype sublists:
-     list[~azure.ai.language.text.authoring.models.TextAnalysisAuthoringExportedEntitySublist]
-    """
-
-    sublists: Optional[List["_models.TextAnalysisAuthoringExportedEntitySublist"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The sub-lists of the list component."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        sublists: Optional[List["_models.TextAnalysisAuthoringExportedEntitySublist"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringExportedEntityListSynonym(_Model):  # pylint: disable=name-too-long
-    """Represents a list of synonyms inside a list component.
-
-    :ivar language: Represents the language of the synonyms. This is BCP-47 representation of a
-     language. For example, use "en" for English, "en-gb" for English (UK), "es" for Spanish etc.
-    :vartype language: str
-    :ivar values_property: The list of synonyms.
-    :vartype values_property: list[str]
-    """
-
-    language: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Represents the language of the synonyms. This is BCP-47 representation of a language. For
-     example, use \"en\" for English, \"en-gb\" for English (UK), \"es\" for Spanish etc."""
-    values_property: Optional[List[str]] = rest_field(
-        name="values", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The list of synonyms."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        language: Optional[str] = None,
-        values_property: Optional[List[str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringExportedEntitySublist(_Model):  # pylint: disable=name-too-long
-    """Represents a sub-list inside a list component.
-
-    :ivar list_key: The key of the sub-list.
-    :vartype list_key: str
-    :ivar synonyms: The phrases of that correspond to the sub-list.
-    :vartype synonyms:
-     list[~azure.ai.language.text.authoring.models.TextAnalysisAuthoringExportedEntityListSynonym]
-    """
-
-    list_key: Optional[str] = rest_field(name="listKey", visibility=["read", "create", "update", "delete", "query"])
-    """The key of the sub-list."""
-    synonyms: Optional[List["_models.TextAnalysisAuthoringExportedEntityListSynonym"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The phrases of that correspond to the sub-list."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        list_key: Optional[str] = None,
-        synonyms: Optional[List["_models.TextAnalysisAuthoringExportedEntityListSynonym"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringExportedModelJobState(_Model):  # pylint: disable=name-too-long
-    """Represents the state of a job to create or updated an exported model.
-
-    :ivar job_id: The job ID. Required.
-    :vartype job_id: str
-    :ivar created_date_time: The creation date time of the job. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_updated_date_time: The last date time the job was updated. Required.
-    :vartype last_updated_date_time: ~datetime.datetime
-    :ivar expiration_date_time: The expiration date time of the job.
-    :vartype expiration_date_time: ~datetime.datetime
-    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", and "partiallyCompleted".
-    :vartype status: str or ~azure.ai.language.text.authoring.models.JobStatus
-    :ivar warnings: The warnings that were encountered while executing the job.
-    :vartype warnings: list[~azure.core.ODataV4Format]
-    :ivar errors: The errors encountered while executing the job.
-    :vartype errors: list[~azure.core.ODataV4Format]
-    """
-
-    job_id: str = rest_field(name="jobId", visibility=["read"])
-    """The job ID. Required."""
-    created_date_time: datetime.datetime = rest_field(
-        name="createdDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The creation date time of the job. Required."""
-    last_updated_date_time: datetime.datetime = rest_field(
-        name="lastUpdatedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The last date time the job was updated. Required."""
-    expiration_date_time: Optional[datetime.datetime] = rest_field(
-        name="expirationDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The expiration date time of the job."""
-    status: Union[str, "_models.JobStatus"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
-     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The warnings that were encountered while executing the job."""
-    errors: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The errors encountered while executing the job."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        status: Union[str, "_models.JobStatus"],
-        expiration_date_time: Optional[datetime.datetime] = None,
-        warnings: Optional[List[ODataV4Format]] = None,
-        errors: Optional[List[ODataV4Format]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringExportedModelManifest(_Model):  # pylint: disable=name-too-long
+class ExportedModelManifest(_Model):
     """Represents the properties for the exported model manifest.
 
     :ivar model_files: The model files belonging to this model. Required.
-    :vartype model_files:
-     list[~azure.ai.language.text.authoring.models.TextAnalysisAuthoringModelFile]
+    :vartype model_files: list[~azure.ai.language.text.authoring.models.TextAuthoringModelFile]
     """
 
-    model_files: List["_models.TextAnalysisAuthoringModelFile"] = rest_field(
+    model_files: List["_models.TextAuthoringModelFile"] = rest_field(
         name="modelFiles", visibility=["read", "create", "update", "delete", "query"]
     )
     """The model files belonging to this model. Required."""
@@ -3068,7 +1813,7 @@ class TextAnalysisAuthoringExportedModelManifest(_Model):  # pylint: disable=nam
     def __init__(
         self,
         *,
-        model_files: List["_models.TextAnalysisAuthoringModelFile"],
+        model_files: List["_models.TextAuthoringModelFile"],
     ) -> None: ...
 
     @overload
@@ -3082,415 +1827,7 @@ class TextAnalysisAuthoringExportedModelManifest(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringExportedModelOptions(_Model):  # pylint: disable=name-too-long
-    """Represents the options for creating or replacing an exported model.
-
-    :ivar trained_model_label: The trained model label. Required.
-    :vartype trained_model_label: str
-    """
-
-    trained_model_label: str = rest_field(
-        name="trainedModelLabel", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The trained model label. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        trained_model_label: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringExportedPrebuiltEntity(_Model):  # pylint: disable=name-too-long
-    """Represents an exported prebuilt entity component.
-
-    :ivar category: The prebuilt entity category. Required.
-    :vartype category: str
-    """
-
-    category: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The prebuilt entity category. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        category: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringExportedProject(_Model):
-    """Represents an exported project.
-
-    :ivar project_file_version: The version of the exported file. Required.
-    :vartype project_file_version: str
-    :ivar string_index_type: Specifies the method used to interpret string offsets. For additional
-     information see `https://aka.ms/text-analytics-offsets
-     <https://aka.ms/text-analytics-offsets>`_. Required. "Utf16CodeUnit"
-    :vartype string_index_type: str or ~azure.ai.language.text.authoring.models.StringIndexType
-    :ivar metadata: Represents the project metadata. Required.
-    :vartype metadata:
-     ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringCreateProjectOptions
-    :ivar assets: Represents the project assets.
-    :vartype assets:
-     ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringExportedProjectAssets
-    """
-
-    project_file_version: str = rest_field(
-        name="projectFileVersion", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The version of the exported file. Required."""
-    string_index_type: Union[str, "_models.StringIndexType"] = rest_field(
-        name="stringIndexType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Specifies the method used to interpret string offsets. For additional information see
-     `https://aka.ms/text-analytics-offsets <https://aka.ms/text-analytics-offsets>`_. Required.
-     \"Utf16CodeUnit\""""
-    metadata: "_models.TextAnalysisAuthoringCreateProjectOptions" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the project metadata. Required."""
-    assets: Optional["_models.TextAnalysisAuthoringExportedProjectAssets"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the project assets."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        project_file_version: str,
-        string_index_type: Union[str, "_models.StringIndexType"],
-        metadata: "_models.TextAnalysisAuthoringCreateProjectOptions",
-        assets: Optional["_models.TextAnalysisAuthoringExportedProjectAssets"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringExportedTrainedModel(_Model):  # pylint: disable=name-too-long
-    """Represents an exported trained model.
-
-    :ivar exported_model_name: The exported model name. Required.
-    :vartype exported_model_name: str
-    :ivar model_id: The model ID. Required.
-    :vartype model_id: str
-    :ivar last_trained_date_time: The last trained date time of the model. Required.
-    :vartype last_trained_date_time: ~datetime.datetime
-    :ivar last_exported_model_date_time: The last exported date time of the model. Required.
-    :vartype last_exported_model_date_time: ~datetime.datetime
-    :ivar model_expiration_date: The model expiration date. Required.
-    :vartype model_expiration_date: ~datetime.date
-    :ivar model_training_config_version: The model training config version. Required.
-    :vartype model_training_config_version: str
-    """
-
-    exported_model_name: str = rest_field(name="exportedModelName", visibility=["read"])
-    """The exported model name. Required."""
-    model_id: str = rest_field(name="modelId", visibility=["read", "create", "update", "delete", "query"])
-    """The model ID. Required."""
-    last_trained_date_time: datetime.datetime = rest_field(
-        name="lastTrainedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The last trained date time of the model. Required."""
-    last_exported_model_date_time: datetime.datetime = rest_field(
-        name="lastExportedModelDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The last exported date time of the model. Required."""
-    model_expiration_date: datetime.date = rest_field(
-        name="modelExpirationDate", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The model expiration date. Required."""
-    model_training_config_version: str = rest_field(
-        name="modelTrainingConfigVersion", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The model training config version. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        model_id: str,
-        last_trained_date_time: datetime.datetime,
-        last_exported_model_date_time: datetime.datetime,
-        model_expiration_date: datetime.date,
-        model_training_config_version: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringExportProjectJobState(_Model):  # pylint: disable=name-too-long
-    """Represents the state of an export job.
-
-    :ivar job_id: The job ID. Required.
-    :vartype job_id: str
-    :ivar created_date_time: The creation date time of the job. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_updated_date_time: The last date time the job was updated. Required.
-    :vartype last_updated_date_time: ~datetime.datetime
-    :ivar expiration_date_time: The expiration date time of the job.
-    :vartype expiration_date_time: ~datetime.datetime
-    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", and "partiallyCompleted".
-    :vartype status: str or ~azure.ai.language.text.authoring.models.JobStatus
-    :ivar warnings: The warnings that were encountered while executing the job.
-    :vartype warnings: list[~azure.core.ODataV4Format]
-    :ivar errors: The errors encountered while executing the job.
-    :vartype errors: list[~azure.core.ODataV4Format]
-    :ivar result_url: The URL to use in order to download the exported project.
-    :vartype result_url: str
-    """
-
-    job_id: str = rest_field(name="jobId", visibility=["read"])
-    """The job ID. Required."""
-    created_date_time: datetime.datetime = rest_field(
-        name="createdDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The creation date time of the job. Required."""
-    last_updated_date_time: datetime.datetime = rest_field(
-        name="lastUpdatedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The last date time the job was updated. Required."""
-    expiration_date_time: Optional[datetime.datetime] = rest_field(
-        name="expirationDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The expiration date time of the job."""
-    status: Union[str, "_models.JobStatus"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
-     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The warnings that were encountered while executing the job."""
-    errors: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The errors encountered while executing the job."""
-    result_url: Optional[str] = rest_field(name="resultUrl", visibility=["read", "create", "update", "delete", "query"])
-    """The URL to use in order to download the exported project."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        status: Union[str, "_models.JobStatus"],
-        expiration_date_time: Optional[datetime.datetime] = None,
-        warnings: Optional[List[ODataV4Format]] = None,
-        errors: Optional[List[ODataV4Format]] = None,
-        result_url: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringImportProjectJobState(_Model):  # pylint: disable=name-too-long
-    """Represents the state of an import job.
-
-    :ivar job_id: The job ID. Required.
-    :vartype job_id: str
-    :ivar created_date_time: The creation date time of the job. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_updated_date_time: The last date time the job was updated. Required.
-    :vartype last_updated_date_time: ~datetime.datetime
-    :ivar expiration_date_time: The expiration date time of the job.
-    :vartype expiration_date_time: ~datetime.datetime
-    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", and "partiallyCompleted".
-    :vartype status: str or ~azure.ai.language.text.authoring.models.JobStatus
-    :ivar warnings: The warnings that were encountered while executing the job.
-    :vartype warnings: list[~azure.core.ODataV4Format]
-    :ivar errors: The errors encountered while executing the job.
-    :vartype errors: list[~azure.core.ODataV4Format]
-    """
-
-    job_id: str = rest_field(name="jobId", visibility=["read"])
-    """The job ID. Required."""
-    created_date_time: datetime.datetime = rest_field(
-        name="createdDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The creation date time of the job. Required."""
-    last_updated_date_time: datetime.datetime = rest_field(
-        name="lastUpdatedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The last date time the job was updated. Required."""
-    expiration_date_time: Optional[datetime.datetime] = rest_field(
-        name="expirationDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The expiration date time of the job."""
-    status: Union[str, "_models.JobStatus"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
-     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The warnings that were encountered while executing the job."""
-    errors: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The errors encountered while executing the job."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        status: Union[str, "_models.JobStatus"],
-        expiration_date_time: Optional[datetime.datetime] = None,
-        warnings: Optional[List[ODataV4Format]] = None,
-        errors: Optional[List[ODataV4Format]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringLoadSnapshotJobState(_Model):  # pylint: disable=name-too-long
-    """Represents the state of loading a snapshot job.
-
-    :ivar job_id: The job ID. Required.
-    :vartype job_id: str
-    :ivar created_date_time: The creation date time of the job. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_updated_date_time: The last date time the job was updated. Required.
-    :vartype last_updated_date_time: ~datetime.datetime
-    :ivar expiration_date_time: The expiration date time of the job.
-    :vartype expiration_date_time: ~datetime.datetime
-    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", and "partiallyCompleted".
-    :vartype status: str or ~azure.ai.language.text.authoring.models.JobStatus
-    :ivar warnings: The warnings that were encountered while executing the job.
-    :vartype warnings: list[~azure.core.ODataV4Format]
-    :ivar errors: The errors encountered while executing the job.
-    :vartype errors: list[~azure.core.ODataV4Format]
-    """
-
-    job_id: str = rest_field(name="jobId", visibility=["read"])
-    """The job ID. Required."""
-    created_date_time: datetime.datetime = rest_field(
-        name="createdDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The creation date time of the job. Required."""
-    last_updated_date_time: datetime.datetime = rest_field(
-        name="lastUpdatedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The last date time the job was updated. Required."""
-    expiration_date_time: Optional[datetime.datetime] = rest_field(
-        name="expirationDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The expiration date time of the job."""
-    status: Union[str, "_models.JobStatus"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
-     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The warnings that were encountered while executing the job."""
-    errors: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The errors encountered while executing the job."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        status: Union[str, "_models.JobStatus"],
-        expiration_date_time: Optional[datetime.datetime] = None,
-        warnings: Optional[List[ODataV4Format]] = None,
-        errors: Optional[List[ODataV4Format]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringModelFile(_Model):
-    """Represents the properties for the model file.
-
-    :ivar name: The name of the file. Required.
-    :vartype name: str
-    :ivar content_uri: The URI to retrieve the content of the file. Required.
-    :vartype content_uri: str
-    """
-
-    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of the file. Required."""
-    content_uri: str = rest_field(name="contentUri", visibility=["read", "create", "update", "delete", "query"])
-    """The URI to retrieve the content of the file. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        content_uri: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringMultiLabelClassEvaluationSummary(_Model):  # pylint: disable=name-too-long
+class MultiLabelClassEvalSummary(_Model):
     """Represents the evaluation summary of a class in a multi-label classification project.
 
     :ivar f1: Represents the model precision. Required.
@@ -3556,12 +1893,12 @@ class TextAnalysisAuthoringMultiLabelClassEvaluationSummary(_Model):  # pylint: 
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringMultiLabelClassificationEvaluationSummary(_Model):  # pylint: disable=name-too-long
+class MultiLabelClassificationEvalSummary(_Model):
     """Represents the evaluation summary for a multi-label classification project.
 
     :ivar classes: Represents the classes evaluation. Required.
     :vartype classes: dict[str,
-     ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringMultiLabelClassEvaluationSummary]
+     ~azure.ai.language.text.authoring.models.MultiLabelClassEvalSummary]
     :ivar micro_f1: Represents the micro F1. Expected value is a float between 0 and 1 inclusive.
      Required.
     :vartype micro_f1: float
@@ -3582,7 +1919,7 @@ class TextAnalysisAuthoringMultiLabelClassificationEvaluationSummary(_Model):  #
     :vartype macro_recall: float
     """
 
-    classes: Dict[str, "_models.TextAnalysisAuthoringMultiLabelClassEvaluationSummary"] = rest_field(
+    classes: Dict[str, "_models.MultiLabelClassEvalSummary"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the classes evaluation. Required."""
@@ -3607,7 +1944,7 @@ class TextAnalysisAuthoringMultiLabelClassificationEvaluationSummary(_Model):  #
     def __init__(
         self,
         *,
-        classes: Dict[str, "_models.TextAnalysisAuthoringMultiLabelClassEvaluationSummary"],
+        classes: Dict[str, "_models.MultiLabelClassEvalSummary"],
         micro_f1: float,
         micro_precision: float,
         micro_recall: float,
@@ -3627,388 +1964,7 @@ class TextAnalysisAuthoringMultiLabelClassificationEvaluationSummary(_Model):  #
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringPrebuiltEntity(_Model):
-    """Represents a supported prebuilt entity.
-
-    :ivar category: The prebuilt entity category. Required.
-    :vartype category: str
-    :ivar description: The description. Required.
-    :vartype description: str
-    :ivar examples: English examples for the entity. Required.
-    :vartype examples: str
-    """
-
-    category: str = rest_field(visibility=["read"])
-    """The prebuilt entity category. Required."""
-    description: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The description. Required."""
-    examples: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """English examples for the entity. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        description: str,
-        examples: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringProjectDeletionJobState(_Model):  # pylint: disable=name-too-long
-    """Represents the state of a project deletion job.
-
-    :ivar job_id: The job ID. Required.
-    :vartype job_id: str
-    :ivar created_date_time: The creation date time of the job. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_updated_date_time: The last date time the job was updated. Required.
-    :vartype last_updated_date_time: ~datetime.datetime
-    :ivar expiration_date_time: The expiration date time of the job.
-    :vartype expiration_date_time: ~datetime.datetime
-    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
-     "failed", "cancelled", "cancelling", and "partiallyCompleted".
-    :vartype status: str or ~azure.ai.language.text.authoring.models.JobStatus
-    :ivar warnings: The warnings that were encountered while executing the job.
-    :vartype warnings: list[~azure.core.ODataV4Format]
-    :ivar errors: The errors encountered while executing the job.
-    :vartype errors: list[~azure.core.ODataV4Format]
-    """
-
-    job_id: str = rest_field(name="jobId", visibility=["read"])
-    """The job ID. Required."""
-    created_date_time: datetime.datetime = rest_field(
-        name="createdDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The creation date time of the job. Required."""
-    last_updated_date_time: datetime.datetime = rest_field(
-        name="lastUpdatedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The last date time the job was updated. Required."""
-    expiration_date_time: Optional[datetime.datetime] = rest_field(
-        name="expirationDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The expiration date time of the job."""
-    status: Union[str, "_models.JobStatus"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
-     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
-    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The warnings that were encountered while executing the job."""
-    errors: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The errors encountered while executing the job."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        status: Union[str, "_models.JobStatus"],
-        expiration_date_time: Optional[datetime.datetime] = None,
-        warnings: Optional[List[ODataV4Format]] = None,
-        errors: Optional[List[ODataV4Format]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringProjectDeployment(_Model):
-    """Represents a project deployment.
-
-    :ivar deployment_name: Represents deployment name. Required.
-    :vartype deployment_name: str
-    :ivar model_id: Represents deployment modelId. Required.
-    :vartype model_id: str
-    :ivar last_trained_date_time: Represents deployment last trained time. Required.
-    :vartype last_trained_date_time: ~datetime.datetime
-    :ivar last_deployed_date_time: Represents deployment last deployed time. Required.
-    :vartype last_deployed_date_time: ~datetime.datetime
-    :ivar deployment_expiration_date: Represents deployment expiration date in the runtime.
-     Required.
-    :vartype deployment_expiration_date: ~datetime.date
-    :ivar model_training_config_version: Represents model training config version. Required.
-    :vartype model_training_config_version: str
-    :ivar assigned_resources: Represents the metadata of the assigned Azure resources. Required.
-    :vartype assigned_resources:
-     list[~azure.ai.language.text.authoring.models.TextAnalysisAuthoringDeploymentResource]
-    """
-
-    deployment_name: str = rest_field(name="deploymentName", visibility=["read"])
-    """Represents deployment name. Required."""
-    model_id: str = rest_field(name="modelId", visibility=["read", "create", "update", "delete", "query"])
-    """Represents deployment modelId. Required."""
-    last_trained_date_time: datetime.datetime = rest_field(
-        name="lastTrainedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """Represents deployment last trained time. Required."""
-    last_deployed_date_time: datetime.datetime = rest_field(
-        name="lastDeployedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """Represents deployment last deployed time. Required."""
-    deployment_expiration_date: datetime.date = rest_field(
-        name="deploymentExpirationDate", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents deployment expiration date in the runtime. Required."""
-    model_training_config_version: str = rest_field(
-        name="modelTrainingConfigVersion", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents model training config version. Required."""
-    assigned_resources: List["_models.TextAnalysisAuthoringDeploymentResource"] = rest_field(
-        name="assignedResources", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the metadata of the assigned Azure resources. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        model_id: str,
-        last_trained_date_time: datetime.datetime,
-        last_deployed_date_time: datetime.datetime,
-        deployment_expiration_date: datetime.date,
-        model_training_config_version: str,
-        assigned_resources: List["_models.TextAnalysisAuthoringDeploymentResource"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringProjectMetadata(_Model):
-    """Represents the metadata of a project.
-
-    :ivar created_date_time: Represents the project creation datetime. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_modified_date_time: Represents the project last modification datetime. Required.
-    :vartype last_modified_date_time: ~datetime.datetime
-    :ivar last_trained_date_time: Represents the project last training datetime.
-    :vartype last_trained_date_time: ~datetime.datetime
-    :ivar last_deployed_date_time: Represents the project last deployment datetime.
-    :vartype last_deployed_date_time: ~datetime.datetime
-    :ivar project_kind: The project kind. Required. Known values are:
-     "CustomSingleLabelClassification", "CustomMultiLabelClassification", "CustomEntityRecognition",
-     "CustomAbstractiveSummarization", "CustomHealthcare", and "CustomTextSentiment".
-    :vartype project_kind: str or ~azure.ai.language.text.authoring.models.ProjectKind
-    :ivar storage_account_resource_id: The project storage account resource ID.
-    :vartype storage_account_resource_id: str
-    :ivar storage_input_container_name: The storage container name. Required.
-    :vartype storage_input_container_name: str
-    :ivar settings: The project settings.
-    :vartype settings: ~azure.ai.language.text.authoring.models.TextAuthoringProjectSettings
-    :ivar project_name: The new project name. Required.
-    :vartype project_name: str
-    :ivar multilingual: Whether the project would be used for multiple languages or not.
-    :vartype multilingual: bool
-    :ivar description: The project description.
-    :vartype description: str
-    :ivar language: The project language. This is BCP-47 representation of a language. For example,
-     use "en" for English, "en-gb" for English (UK), "es" for Spanish etc. Required.
-    :vartype language: str
-    """
-
-    created_date_time: datetime.datetime = rest_field(
-        name="createdDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """Represents the project creation datetime. Required."""
-    last_modified_date_time: datetime.datetime = rest_field(
-        name="lastModifiedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """Represents the project last modification datetime. Required."""
-    last_trained_date_time: Optional[datetime.datetime] = rest_field(
-        name="lastTrainedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """Represents the project last training datetime."""
-    last_deployed_date_time: Optional[datetime.datetime] = rest_field(
-        name="lastDeployedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """Represents the project last deployment datetime."""
-    project_kind: Union[str, "_models.ProjectKind"] = rest_field(
-        name="projectKind", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The project kind. Required. Known values are: \"CustomSingleLabelClassification\",
-     \"CustomMultiLabelClassification\", \"CustomEntityRecognition\",
-     \"CustomAbstractiveSummarization\", \"CustomHealthcare\", and \"CustomTextSentiment\"."""
-    storage_account_resource_id: Optional[str] = rest_field(
-        name="storageAccountResourceId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The project storage account resource ID."""
-    storage_input_container_name: str = rest_field(
-        name="storageInputContainerName", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The storage container name. Required."""
-    settings: Optional["_models.TextAuthoringProjectSettings"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The project settings."""
-    project_name: str = rest_field(name="projectName", visibility=["read"])
-    """The new project name. Required."""
-    multilingual: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Whether the project would be used for multiple languages or not."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The project description."""
-    language: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The project language. This is BCP-47 representation of a language. For example, use \"en\" for
-     English, \"en-gb\" for English (UK), \"es\" for Spanish etc. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        created_date_time: datetime.datetime,
-        last_modified_date_time: datetime.datetime,
-        project_kind: Union[str, "_models.ProjectKind"],
-        storage_input_container_name: str,
-        language: str,
-        last_trained_date_time: Optional[datetime.datetime] = None,
-        last_deployed_date_time: Optional[datetime.datetime] = None,
-        storage_account_resource_id: Optional[str] = None,
-        settings: Optional["_models.TextAuthoringProjectSettings"] = None,
-        multilingual: Optional[bool] = None,
-        description: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringProjectTrainedModel(_Model):
-    """Represents a trained model.
-
-    :ivar label: The trained model label. Required.
-    :vartype label: str
-    :ivar model_id: The model ID. Required.
-    :vartype model_id: str
-    :ivar last_trained_date_time: The last trained date time of the model. Required.
-    :vartype last_trained_date_time: ~datetime.datetime
-    :ivar last_training_duration_in_seconds: The duration of the model's last training request in
-     seconds. Required.
-    :vartype last_training_duration_in_seconds: int
-    :ivar model_expiration_date: The model expiration date. Required.
-    :vartype model_expiration_date: ~datetime.date
-    :ivar model_training_config_version: The model training config version. Required.
-    :vartype model_training_config_version: str
-    :ivar has_snapshot: The flag to indicate if the trained model has a snapshot ready. Required.
-    :vartype has_snapshot: bool
-    """
-
-    label: str = rest_field(visibility=["read"])
-    """The trained model label. Required."""
-    model_id: str = rest_field(name="modelId", visibility=["read", "create", "update", "delete", "query"])
-    """The model ID. Required."""
-    last_trained_date_time: datetime.datetime = rest_field(
-        name="lastTrainedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The last trained date time of the model. Required."""
-    last_training_duration_in_seconds: int = rest_field(
-        name="lastTrainingDurationInSeconds", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The duration of the model's last training request in seconds. Required."""
-    model_expiration_date: datetime.date = rest_field(
-        name="modelExpirationDate", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The model expiration date. Required."""
-    model_training_config_version: str = rest_field(
-        name="modelTrainingConfigVersion", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The model training config version. Required."""
-    has_snapshot: bool = rest_field(name="hasSnapshot", visibility=["read", "create", "update", "delete", "query"])
-    """The flag to indicate if the trained model has a snapshot ready. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        model_id: str,
-        last_trained_date_time: datetime.datetime,
-        last_training_duration_in_seconds: int,
-        model_expiration_date: datetime.date,
-        model_training_config_version: str,
-        has_snapshot: bool,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringResourceMetadata(_Model):
-    """Represents metadata for the Azure resource..
-
-    :ivar azure_resource_id: Represents the Azure resource ID. Required.
-    :vartype azure_resource_id: str
-    :ivar custom_domain: Represents the Azure resource custom domain. Required.
-    :vartype custom_domain: str
-    :ivar region: Represents the Azure resource region. Required.
-    :vartype region: str
-    """
-
-    azure_resource_id: str = rest_field(
-        name="azureResourceId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the Azure resource ID. Required."""
-    custom_domain: str = rest_field(name="customDomain", visibility=["read", "create", "update", "delete", "query"])
-    """Represents the Azure resource custom domain. Required."""
-    region: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Represents the Azure resource region. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        azure_resource_id: str,
-        custom_domain: str,
-        region: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringSentimentEvaluationSummary(_Model):  # pylint: disable=name-too-long
+class SentimentEvalSummary(_Model):
     """Represents the evaluation summary for a sentiment in a custom sentiment project.
 
     :ivar f1: Represents the model precision. Required.
@@ -4074,7 +2030,7 @@ class TextAnalysisAuthoringSentimentEvaluationSummary(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringSingleLabelClassEvaluationSummary(_Model):  # pylint: disable=name-too-long
+class SingleLabelClassEvalSummary(_Model):
     """Represents the evaluation summary for a class in a single-label classification project.
 
     :ivar f1: Represents the model precision. Required.
@@ -4140,17 +2096,17 @@ class TextAnalysisAuthoringSingleLabelClassEvaluationSummary(_Model):  # pylint:
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringSingleLabelClassificationEvaluationSummary(_Model):  # pylint: disable=name-too-long
+class SingleLabelClassificationEvalSummary(_Model):
     """Represents the evaluation summary for a custom single-label classification project.
 
     :ivar confusion_matrix: Represents the confusion matrix between two classes (the two classes
      can be the same). The matrix is between the class that was labelled and the class that was
      predicted. Required.
     :vartype confusion_matrix: dict[str,
-     ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringConfusionMatrixRow]
+     ~azure.ai.language.text.authoring.models.TextAuthoringConfusionMatrixRow]
     :ivar classes: Represents the classes evaluation. Required.
     :vartype classes: dict[str,
-     ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringSingleLabelClassEvaluationSummary]
+     ~azure.ai.language.text.authoring.models.SingleLabelClassEvalSummary]
     :ivar micro_f1: Represents the micro F1. Expected value is a float between 0 and 1 inclusive.
      Required.
     :vartype micro_f1: float
@@ -4171,12 +2127,12 @@ class TextAnalysisAuthoringSingleLabelClassificationEvaluationSummary(_Model):  
     :vartype macro_recall: float
     """
 
-    confusion_matrix: Dict[str, "_models.TextAnalysisAuthoringConfusionMatrixRow"] = rest_field(
+    confusion_matrix: Dict[str, "_models.TextAuthoringConfusionMatrixRow"] = rest_field(
         name="confusionMatrix", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the confusion matrix between two classes (the two classes can be the same). The
      matrix is between the class that was labelled and the class that was predicted. Required."""
-    classes: Dict[str, "_models.TextAnalysisAuthoringSingleLabelClassEvaluationSummary"] = rest_field(
+    classes: Dict[str, "_models.SingleLabelClassEvalSummary"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the classes evaluation. Required."""
@@ -4201,8 +2157,8 @@ class TextAnalysisAuthoringSingleLabelClassificationEvaluationSummary(_Model):  
     def __init__(
         self,
         *,
-        confusion_matrix: Dict[str, "_models.TextAnalysisAuthoringConfusionMatrixRow"],
-        classes: Dict[str, "_models.TextAnalysisAuthoringSingleLabelClassEvaluationSummary"],
+        confusion_matrix: Dict[str, "_models.TextAuthoringConfusionMatrixRow"],
+        classes: Dict[str, "_models.SingleLabelClassEvalSummary"],
         micro_f1: float,
         micro_precision: float,
         micro_recall: float,
@@ -4222,17 +2178,16 @@ class TextAnalysisAuthoringSingleLabelClassificationEvaluationSummary(_Model):  
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringSpanSentimentEvaluationSummary(_Model):  # pylint: disable=name-too-long
+class SpanSentimentEvalSummary(_Model):
     """Represents the evaluation summary for a custom sentiment project.
 
     :ivar confusion_matrix: Represents the confusion matrix between two sentiments (the two
      sentiments can be the same). The matrix is between the sentiment that was labelled and the
      sentiment that was predicted. Required.
     :vartype confusion_matrix: dict[str,
-     ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringConfusionMatrixRow]
+     ~azure.ai.language.text.authoring.models.TextAuthoringConfusionMatrixRow]
     :ivar sentiments: Represents the sentiment evaluation. Required.
-    :vartype sentiments: dict[str,
-     ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringSentimentEvaluationSummary]
+    :vartype sentiments: dict[str, ~azure.ai.language.text.authoring.models.SentimentEvalSummary]
     :ivar micro_f1: Represents the micro F1. Expected value is a float between 0 and 1 inclusive.
      Required.
     :vartype micro_f1: float
@@ -4253,13 +2208,13 @@ class TextAnalysisAuthoringSpanSentimentEvaluationSummary(_Model):  # pylint: di
     :vartype macro_recall: float
     """
 
-    confusion_matrix: Dict[str, "_models.TextAnalysisAuthoringConfusionMatrixRow"] = rest_field(
+    confusion_matrix: Dict[str, "_models.TextAuthoringConfusionMatrixRow"] = rest_field(
         name="confusionMatrix", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the confusion matrix between two sentiments (the two sentiments can be the same).
      The matrix is between the sentiment that was labelled and the sentiment that was predicted.
      Required."""
-    sentiments: Dict[str, "_models.TextAnalysisAuthoringSentimentEvaluationSummary"] = rest_field(
+    sentiments: Dict[str, "_models.SentimentEvalSummary"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the sentiment evaluation. Required."""
@@ -4284,8 +2239,8 @@ class TextAnalysisAuthoringSpanSentimentEvaluationSummary(_Model):  # pylint: di
     def __init__(
         self,
         *,
-        confusion_matrix: Dict[str, "_models.TextAnalysisAuthoringConfusionMatrixRow"],
-        sentiments: Dict[str, "_models.TextAnalysisAuthoringSentimentEvaluationSummary"],
+        confusion_matrix: Dict[str, "_models.TextAuthoringConfusionMatrixRow"],
+        sentiments: Dict[str, "_models.SentimentEvalSummary"],
         micro_f1: float,
         micro_precision: float,
         micro_recall: float,
@@ -4305,46 +2260,24 @@ class TextAnalysisAuthoringSpanSentimentEvaluationSummary(_Model):  # pylint: di
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringSubTrainingJobState(_Model):
-    """Represents the detailed state of a training sub-operation.
+class TextAuthoringAssignDeploymentResourcesDetails(_Model):  # pylint: disable=name-too-long
+    """Represents the options for assigning Azure resources to a project.
 
-    :ivar percent_complete: Represents progress percentage. Required.
-    :vartype percent_complete: int
-    :ivar start_date_time: Represents the start date time.
-    :vartype start_date_time: ~datetime.datetime
-    :ivar end_date_time: Represents the end date time.
-    :vartype end_date_time: ~datetime.datetime
-    :ivar status: Represents the status of the sub-operation. Required. Known values are:
-     "notStarted", "running", "succeeded", "failed", "cancelled", "cancelling", and
-     "partiallyCompleted".
-    :vartype status: str or ~azure.ai.language.text.authoring.models.JobStatus
+    :ivar resources_metadata: Represents the metadata for the resources to be assigned. Required.
+    :vartype resources_metadata:
+     list[~azure.ai.language.text.authoring.models.TextAuthoringResourceMetadata]
     """
 
-    percent_complete: int = rest_field(
-        name="percentComplete", visibility=["read", "create", "update", "delete", "query"]
+    resources_metadata: List["_models.TextAuthoringResourceMetadata"] = rest_field(
+        name="resourcesMetadata", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Represents progress percentage. Required."""
-    start_date_time: Optional[datetime.datetime] = rest_field(
-        name="startDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """Represents the start date time."""
-    end_date_time: Optional[datetime.datetime] = rest_field(
-        name="endDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """Represents the end date time."""
-    status: Union[str, "_models.JobStatus"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Represents the status of the sub-operation. Required. Known values are: \"notStarted\",
-     \"running\", \"succeeded\", \"failed\", \"cancelled\", \"cancelling\", and
-     \"partiallyCompleted\"."""
+    """Represents the metadata for the resources to be assigned. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        percent_complete: int,
-        status: Union[str, "_models.JobStatus"],
-        start_date_time: Optional[datetime.datetime] = None,
-        end_date_time: Optional[datetime.datetime] = None,
+        resources_metadata: List["_models.TextAuthoringResourceMetadata"],
     ) -> None: ...
 
     @overload
@@ -4358,27 +2291,387 @@ class TextAnalysisAuthoringSubTrainingJobState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringSupportedLanguage(_Model):
-    """Represents a supported language.
+class TextAuthoringAssignedDeploymentResource(_Model):
+    """Represents the assigned deployment resource.
 
-    :ivar language_name: The language name. Required.
-    :vartype language_name: str
-    :ivar language_code: The language code. This is BCP-47 representation of a language. For
-     example, "en" for English, "en-gb" for English (UK), "es" for Spanish etc. Required.
-    :vartype language_code: str
+    :ivar azure_resource_id: The resource ID. Required.
+    :vartype azure_resource_id: str
+    :ivar region: The resource region. Required.
+    :vartype region: str
     """
 
-    language_name: str = rest_field(name="languageName", visibility=["read"])
-    """The language name. Required."""
-    language_code: str = rest_field(name="languageCode", visibility=["read", "create", "update", "delete", "query"])
-    """The language code. This is BCP-47 representation of a language. For example, \"en\" for
+    azure_resource_id: str = rest_field(name="azureResourceId", visibility=["read"])
+    """The resource ID. Required."""
+    region: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The resource region. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        region: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringAssignedProjectDeploymentMetadata(_Model):  # pylint: disable=name-too-long
+    """Represents the metadata for an assigned deployment.
+
+    :ivar deployment_name: Represents the deployment name. Required.
+    :vartype deployment_name: str
+    :ivar last_deployed_on: Represents deployment last deployed time. Required.
+    :vartype last_deployed_on: ~datetime.datetime
+    :ivar deployment_expires_on: Represents deployment expiration date in the runtime. Required.
+    :vartype deployment_expires_on: ~datetime.date
+    """
+
+    deployment_name: str = rest_field(name="deploymentName", visibility=["read", "create", "update", "delete", "query"])
+    """Represents the deployment name. Required."""
+    last_deployed_on: datetime.datetime = rest_field(
+        name="lastDeployedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Represents deployment last deployed time. Required."""
+    deployment_expires_on: datetime.date = rest_field(
+        name="deploymentExpirationDate", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents deployment expiration date in the runtime. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        deployment_name: str,
+        last_deployed_on: datetime.datetime,
+        deployment_expires_on: datetime.date,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringAssignedProjectDeploymentsMetadata(_Model):  # pylint: disable=name-too-long
+    """Represents the metadata for assigned deployments for a project.
+
+    :ivar project_name: Represents the project name. Required.
+    :vartype project_name: str
+    :ivar deployments_metadata: Represents the resource region. Required.
+    :vartype deployments_metadata:
+     list[~azure.ai.language.text.authoring.models.TextAuthoringAssignedProjectDeploymentMetadata]
+    """
+
+    project_name: str = rest_field(name="projectName", visibility=["read"])
+    """Represents the project name. Required."""
+    deployments_metadata: List["_models.TextAuthoringAssignedProjectDeploymentMetadata"] = rest_field(
+        name="deploymentsMetadata", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the resource region. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        deployments_metadata: List["_models.TextAuthoringAssignedProjectDeploymentMetadata"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringConfusionMatrixCell(_Model):
+    """Represents a cell in a confusion matrix.
+
+    :ivar normalized_value: Represents normalized value in percentages. Required.
+    :vartype normalized_value: float
+    :ivar raw_value: Represents raw value. Required.
+    :vartype raw_value: float
+    """
+
+    normalized_value: float = rest_field(
+        name="normalizedValue", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents normalized value in percentages. Required."""
+    raw_value: float = rest_field(name="rawValue", visibility=["read", "create", "update", "delete", "query"])
+    """Represents raw value. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        normalized_value: float,
+        raw_value: float,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringConfusionMatrixRow(_Model):
+    """TextAuthoringConfusionMatrixRow."""
+
+
+class TextAuthoringCopyProjectDetails(_Model):
+    """Represents the options for copying an existing project to another Azure resource.
+
+    :ivar project_kind: Represents the project kind. Required. Known values are:
+     "CustomSingleLabelClassification", "CustomMultiLabelClassification", "CustomEntityRecognition",
+     "CustomAbstractiveSummarization", "CustomHealthcare", and "CustomTextSentiment".
+    :vartype project_kind: str or ~azure.ai.language.text.authoring.models.TextAuthoringProjectKind
+    :ivar target_project_name: The project name to be copied-into. Required.
+    :vartype target_project_name: str
+    :ivar access_token: The access token. Required.
+    :vartype access_token: str
+    :ivar expires_at: The expiration of the access token. Required.
+    :vartype expires_at: ~datetime.datetime
+    :ivar target_resource_id: Represents the target Azure resource ID. Required.
+    :vartype target_resource_id: str
+    :ivar target_resource_region: Represents the target Azure resource region. Required.
+    :vartype target_resource_region: str
+    """
+
+    project_kind: Union[str, "_models.TextAuthoringProjectKind"] = rest_field(
+        name="projectKind", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the project kind. Required. Known values are: \"CustomSingleLabelClassification\",
+     \"CustomMultiLabelClassification\", \"CustomEntityRecognition\",
+     \"CustomAbstractiveSummarization\", \"CustomHealthcare\", and \"CustomTextSentiment\"."""
+    target_project_name: str = rest_field(
+        name="targetProjectName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The project name to be copied-into. Required."""
+    access_token: str = rest_field(name="accessToken", visibility=["read", "create", "update", "delete", "query"])
+    """The access token. Required."""
+    expires_at: datetime.datetime = rest_field(
+        name="expiresAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The expiration of the access token. Required."""
+    target_resource_id: str = rest_field(
+        name="targetResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the target Azure resource ID. Required."""
+    target_resource_region: str = rest_field(
+        name="targetResourceRegion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the target Azure resource region. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        project_kind: Union[str, "_models.TextAuthoringProjectKind"],
+        target_project_name: str,
+        access_token: str,
+        expires_at: datetime.datetime,
+        target_resource_id: str,
+        target_resource_region: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringCopyProjectState(_Model):
+    """Represents the state of a copy job.
+
+    :ivar job_id: The job ID. Required.
+    :vartype job_id: str
+    :ivar created_on: The creation date time of the job. Required.
+    :vartype created_on: ~datetime.datetime
+    :ivar last_updated_on: The last date time the job was updated. Required.
+    :vartype last_updated_on: ~datetime.datetime
+    :ivar expires_on: The expiration date time of the job.
+    :vartype expires_on: ~datetime.datetime
+    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
+     "failed", "cancelled", "cancelling", and "partiallyCompleted".
+    :vartype status: str or ~azure.ai.language.text.authoring.models.TextAuthoringOperationStatus
+    :ivar warnings: The warnings that were encountered while executing the job.
+    :vartype warnings: list[~azure.core.ODataV4Format]
+    :ivar errors: The errors encountered while executing the job.
+    :vartype errors: list[~azure.core.ODataV4Format]
+    """
+
+    job_id: str = rest_field(name="jobId", visibility=["read"])
+    """The job ID. Required."""
+    created_on: datetime.datetime = rest_field(
+        name="createdDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The creation date time of the job. Required."""
+    last_updated_on: datetime.datetime = rest_field(
+        name="lastUpdatedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The last date time the job was updated. Required."""
+    expires_on: Optional[datetime.datetime] = rest_field(
+        name="expirationDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The expiration date time of the job."""
+    status: Union[str, "_models.TextAuthoringOperationStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
+     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
+    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The warnings that were encountered while executing the job."""
+    errors: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The errors encountered while executing the job."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        created_on: datetime.datetime,
+        last_updated_on: datetime.datetime,
+        status: Union[str, "_models.TextAuthoringOperationStatus"],
+        expires_on: Optional[datetime.datetime] = None,
+        warnings: Optional[List[ODataV4Format]] = None,
+        errors: Optional[List[ODataV4Format]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringCreateDeploymentDetails(_Model):
+    """Represents the options for creating or updating a project deployment.
+
+    :ivar trained_model_label: Represents the trained model label. Required.
+    :vartype trained_model_label: str
+    :ivar assigned_resources: Represents the resources to be assigned to the deployment. If
+     provided, the deployment will be rolled out to the resources provided here as well as the
+     original resource in which the project is created.
+    :vartype assigned_resources:
+     list[~azure.ai.language.text.authoring.models.TextAuthoringDeploymentResource]
+    """
+
+    trained_model_label: str = rest_field(
+        name="trainedModelLabel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the trained model label. Required."""
+    assigned_resources: Optional[List["_models.TextAuthoringDeploymentResource"]] = rest_field(
+        name="assignedResources", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the resources to be assigned to the deployment. If provided, the deployment will be
+     rolled out to the resources provided here as well as the original resource in which the project
+     is created."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        trained_model_label: str,
+        assigned_resources: Optional[List["_models.TextAuthoringDeploymentResource"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringCreateProjectDetails(_Model):
+    """Represents the options used to create or update a project.
+
+    :ivar project_kind: The project kind. Required. Known values are:
+     "CustomSingleLabelClassification", "CustomMultiLabelClassification", "CustomEntityRecognition",
+     "CustomAbstractiveSummarization", "CustomHealthcare", and "CustomTextSentiment".
+    :vartype project_kind: str or ~azure.ai.language.text.authoring.models.TextAuthoringProjectKind
+    :ivar storage_input_container_name: The storage container name. Required.
+    :vartype storage_input_container_name: str
+    :ivar settings: The project settings.
+    :vartype settings: ~azure.ai.language.text.authoring.models.TextAuthoringProjectSettings
+    :ivar project_name: The new project name. Required.
+    :vartype project_name: str
+    :ivar multilingual: Whether the project would be used for multiple languages or not.
+    :vartype multilingual: bool
+    :ivar description: The project description.
+    :vartype description: str
+    :ivar language: The project language. This is BCP-47 representation of a language. For example,
+     use "en" for English, "en-gb" for English (UK), "es" for Spanish etc. Required.
+    :vartype language: str
+    """
+
+    project_kind: Union[str, "_models.TextAuthoringProjectKind"] = rest_field(
+        name="projectKind", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The project kind. Required. Known values are: \"CustomSingleLabelClassification\",
+     \"CustomMultiLabelClassification\", \"CustomEntityRecognition\",
+     \"CustomAbstractiveSummarization\", \"CustomHealthcare\", and \"CustomTextSentiment\"."""
+    storage_input_container_name: str = rest_field(
+        name="storageInputContainerName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The storage container name. Required."""
+    settings: Optional["_models.TextAuthoringProjectSettings"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The project settings."""
+    project_name: str = rest_field(name="projectName", visibility=["read", "create", "update", "delete", "query"])
+    """The new project name. Required."""
+    multilingual: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether the project would be used for multiple languages or not."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The project description."""
+    language: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The project language. This is BCP-47 representation of a language. For example, use \"en\" for
      English, \"en-gb\" for English (UK), \"es\" for Spanish etc. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        language_code: str,
+        project_kind: Union[str, "_models.TextAuthoringProjectKind"],
+        storage_input_container_name: str,
+        project_name: str,
+        language: str,
+        settings: Optional["_models.TextAuthoringProjectSettings"] = None,
+        multilingual: Optional[bool] = None,
+        description: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -4392,20 +2685,55 @@ class TextAnalysisAuthoringSupportedLanguage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringSwapDeploymentsJobState(_Model):  # pylint: disable=name-too-long
-    """Represents the state of a deployment job.
+class TextAuthoringDeleteDeploymentDetails(_Model):
+    """Represents the options for deleting a project deployment.
+
+    :ivar assigned_resource_ids: Represents the resource IDs to delete the deployment from. If not
+     provided, the deployment will be rolled out from all the resources it is deployed to. If
+     provided, it will delete the deployment only from the specified assigned resources, and leave
+     it for the rest.
+    :vartype assigned_resource_ids: list[str]
+    """
+
+    assigned_resource_ids: Optional[List[str]] = rest_field(
+        name="assignedResourceIds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the resource IDs to delete the deployment from. If not provided, the deployment will
+     be rolled out from all the resources it is deployed to. If provided, it will delete the
+     deployment only from the specified assigned resources, and leave it for the rest."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        assigned_resource_ids: Optional[List[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringDeploymentDeleteFromResourcesState(_Model):  # pylint: disable=name-too-long
+    """Represents the state of an existing delete deployment from specific resources job.
 
     :ivar job_id: The job ID. Required.
     :vartype job_id: str
-    :ivar created_date_time: The creation date time of the job. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_updated_date_time: The last date time the job was updated. Required.
-    :vartype last_updated_date_time: ~datetime.datetime
-    :ivar expiration_date_time: The expiration date time of the job.
-    :vartype expiration_date_time: ~datetime.datetime
+    :ivar created_on: The creation date time of the job. Required.
+    :vartype created_on: ~datetime.datetime
+    :ivar last_updated_on: The last date time the job was updated. Required.
+    :vartype last_updated_on: ~datetime.datetime
+    :ivar expires_on: The expiration date time of the job.
+    :vartype expires_on: ~datetime.datetime
     :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
      "failed", "cancelled", "cancelling", and "partiallyCompleted".
-    :vartype status: str or ~azure.ai.language.text.authoring.models.JobStatus
+    :vartype status: str or ~azure.ai.language.text.authoring.models.TextAuthoringOperationStatus
     :ivar warnings: The warnings that were encountered while executing the job.
     :vartype warnings: list[~azure.core.ODataV4Format]
     :ivar errors: The errors encountered while executing the job.
@@ -4414,19 +2742,21 @@ class TextAnalysisAuthoringSwapDeploymentsJobState(_Model):  # pylint: disable=n
 
     job_id: str = rest_field(name="jobId", visibility=["read"])
     """The job ID. Required."""
-    created_date_time: datetime.datetime = rest_field(
+    created_on: datetime.datetime = rest_field(
         name="createdDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """The creation date time of the job. Required."""
-    last_updated_date_time: datetime.datetime = rest_field(
+    last_updated_on: datetime.datetime = rest_field(
         name="lastUpdatedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """The last date time the job was updated. Required."""
-    expiration_date_time: Optional[datetime.datetime] = rest_field(
+    expires_on: Optional[datetime.datetime] = rest_field(
         name="expirationDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """The expiration date time of the job."""
-    status: Union[str, "_models.JobStatus"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    status: Union[str, "_models.TextAuthoringOperationStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
      \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
     warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -4438,10 +2768,10 @@ class TextAnalysisAuthoringSwapDeploymentsJobState(_Model):  # pylint: disable=n
     def __init__(
         self,
         *,
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        status: Union[str, "_models.JobStatus"],
-        expiration_date_time: Optional[datetime.datetime] = None,
+        created_on: datetime.datetime,
+        last_updated_on: datetime.datetime,
+        status: Union[str, "_models.TextAuthoringOperationStatus"],
+        expires_on: Optional[datetime.datetime] = None,
         warnings: Optional[List[ODataV4Format]] = None,
         errors: Optional[List[ODataV4Format]] = None,
     ) -> None: ...
@@ -4457,30 +2787,34 @@ class TextAnalysisAuthoringSwapDeploymentsJobState(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringSwapDeploymentsOptions(_Model):  # pylint: disable=name-too-long
-    """Represents the options for swapping two deployments together.
+class TextAuthoringDeploymentResource(_Model):
+    """Represents an Azure resource assigned to a deployment.
 
-    :ivar first_deployment_name: Represents the first deployment name. Required.
-    :vartype first_deployment_name: str
-    :ivar second_deployment_name: Represents the second deployment name. Required.
-    :vartype second_deployment_name: str
+    :ivar resource_id: Represents the Azure resource Id. Required.
+    :vartype resource_id: str
+    :ivar region: Represents the resource region. Required.
+    :vartype region: str
+    :ivar assigned_aoai_resource: Represents the AOAI resource assigned for data generation.
+    :vartype assigned_aoai_resource:
+     ~azure.ai.language.text.authoring.models.DataGenerationConnectionInfo
     """
 
-    first_deployment_name: str = rest_field(
-        name="firstDeploymentName", visibility=["read", "create", "update", "delete", "query"]
+    resource_id: str = rest_field(name="resourceId", visibility=["read", "create", "update", "delete", "query"])
+    """Represents the Azure resource Id. Required."""
+    region: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Represents the resource region. Required."""
+    assigned_aoai_resource: Optional["_models.DataGenerationConnectionInfo"] = rest_field(
+        name="assignedAoaiResource", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Represents the first deployment name. Required."""
-    second_deployment_name: str = rest_field(
-        name="secondDeploymentName", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the second deployment name. Required."""
+    """Represents the AOAI resource assigned for data generation."""
 
     @overload
     def __init__(
         self,
         *,
-        first_deployment_name: str,
-        second_deployment_name: str,
+        resource_id: str,
+        region: str,
+        assigned_aoai_resource: Optional["_models.DataGenerationConnectionInfo"] = None,
     ) -> None: ...
 
     @overload
@@ -4494,64 +2828,60 @@ class TextAnalysisAuthoringSwapDeploymentsOptions(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringTextSentimentEvaluationSummary(_Model):  # pylint: disable=name-too-long
-    """Represents the evaluation summary for a custom text sentiment project.
+class TextAuthoringDeploymentResourcesState(_Model):
+    """Represents the state of a deployment resources job.
 
-    :ivar span_sentiments_evaluation: Represents evaluation of span level sentiments. Required.
-    :vartype span_sentiments_evaluation:
-     ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringSpanSentimentEvaluationSummary
-    :ivar micro_f1: Represents the micro F1. Expected value is a float between 0 and 1 inclusive.
-     Required.
-    :vartype micro_f1: float
-    :ivar micro_precision: Represents the micro precision. Expected value is a float between 0 and
-     1 inclusive. Required.
-    :vartype micro_precision: float
-    :ivar micro_recall: Represents the micro recall. Expected value is a float between 0 and 1
-     inclusive. Required.
-    :vartype micro_recall: float
-    :ivar macro_f1: Represents the macro F1. Expected value is a float between 0 and 1 inclusive.
-     Required.
-    :vartype macro_f1: float
-    :ivar macro_precision: Represents the macro precision. Expected value is a float between 0 and
-     1 inclusive. Required.
-    :vartype macro_precision: float
-    :ivar macro_recall: Represents the macro recall. Expected value is a float between 0 and 1
-     inclusive. Required.
-    :vartype macro_recall: float
+    :ivar job_id: The job ID. Required.
+    :vartype job_id: str
+    :ivar created_on: The creation date time of the job. Required.
+    :vartype created_on: ~datetime.datetime
+    :ivar last_updated_on: The last date time the job was updated. Required.
+    :vartype last_updated_on: ~datetime.datetime
+    :ivar expires_on: The expiration date time of the job.
+    :vartype expires_on: ~datetime.datetime
+    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
+     "failed", "cancelled", "cancelling", and "partiallyCompleted".
+    :vartype status: str or ~azure.ai.language.text.authoring.models.TextAuthoringOperationStatus
+    :ivar warnings: The warnings that were encountered while executing the job.
+    :vartype warnings: list[~azure.core.ODataV4Format]
+    :ivar errors: The errors encountered while executing the job.
+    :vartype errors: list[~azure.core.ODataV4Format]
     """
 
-    span_sentiments_evaluation: "_models.TextAnalysisAuthoringSpanSentimentEvaluationSummary" = rest_field(
-        name="spanSentimentsEvaluation", visibility=["read", "create", "update", "delete", "query"]
+    job_id: str = rest_field(name="jobId", visibility=["read"])
+    """The job ID. Required."""
+    created_on: datetime.datetime = rest_field(
+        name="createdDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
-    """Represents evaluation of span level sentiments. Required."""
-    micro_f1: float = rest_field(name="microF1", visibility=["read", "create", "update", "delete", "query"])
-    """Represents the micro F1. Expected value is a float between 0 and 1 inclusive. Required."""
-    micro_precision: float = rest_field(
-        name="microPrecision", visibility=["read", "create", "update", "delete", "query"]
+    """The creation date time of the job. Required."""
+    last_updated_on: datetime.datetime = rest_field(
+        name="lastUpdatedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
-    """Represents the micro precision. Expected value is a float between 0 and 1 inclusive. Required."""
-    micro_recall: float = rest_field(name="microRecall", visibility=["read", "create", "update", "delete", "query"])
-    """Represents the micro recall. Expected value is a float between 0 and 1 inclusive. Required."""
-    macro_f1: float = rest_field(name="macroF1", visibility=["read", "create", "update", "delete", "query"])
-    """Represents the macro F1. Expected value is a float between 0 and 1 inclusive. Required."""
-    macro_precision: float = rest_field(
-        name="macroPrecision", visibility=["read", "create", "update", "delete", "query"]
+    """The last date time the job was updated. Required."""
+    expires_on: Optional[datetime.datetime] = rest_field(
+        name="expirationDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
-    """Represents the macro precision. Expected value is a float between 0 and 1 inclusive. Required."""
-    macro_recall: float = rest_field(name="macroRecall", visibility=["read", "create", "update", "delete", "query"])
-    """Represents the macro recall. Expected value is a float between 0 and 1 inclusive. Required."""
+    """The expiration date time of the job."""
+    status: Union[str, "_models.TextAuthoringOperationStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
+     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
+    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The warnings that were encountered while executing the job."""
+    errors: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The errors encountered while executing the job."""
 
     @overload
     def __init__(
         self,
         *,
-        span_sentiments_evaluation: "_models.TextAnalysisAuthoringSpanSentimentEvaluationSummary",
-        micro_f1: float,
-        micro_precision: float,
-        micro_recall: float,
-        macro_f1: float,
-        macro_precision: float,
-        macro_recall: float,
+        created_on: datetime.datetime,
+        last_updated_on: datetime.datetime,
+        status: Union[str, "_models.TextAuthoringOperationStatus"],
+        expires_on: Optional[datetime.datetime] = None,
+        warnings: Optional[List[ODataV4Format]] = None,
+        errors: Optional[List[ODataV4Format]] = None,
     ) -> None: ...
 
     @overload
@@ -4565,27 +2895,60 @@ class TextAnalysisAuthoringTextSentimentEvaluationSummary(_Model):  # pylint: di
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringTrainingConfigVersion(_Model):  # pylint: disable=name-too-long
-    """Represents a training config version.
+class TextAuthoringDeploymentState(_Model):
+    """Represents the state of a deployment job.
 
-    :ivar training_config_version: Represents the version of the config. Required.
-    :vartype training_config_version: str
-    :ivar model_expiration_date: Represents the training config version expiration date. Required.
-    :vartype model_expiration_date: ~datetime.date
+    :ivar job_id: The job ID. Required.
+    :vartype job_id: str
+    :ivar created_on: The creation date time of the job. Required.
+    :vartype created_on: ~datetime.datetime
+    :ivar last_updated_on: The last date time the job was updated. Required.
+    :vartype last_updated_on: ~datetime.datetime
+    :ivar expires_on: The expiration date time of the job.
+    :vartype expires_on: ~datetime.datetime
+    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
+     "failed", "cancelled", "cancelling", and "partiallyCompleted".
+    :vartype status: str or ~azure.ai.language.text.authoring.models.TextAuthoringOperationStatus
+    :ivar warnings: The warnings that were encountered while executing the job.
+    :vartype warnings: list[~azure.core.ODataV4Format]
+    :ivar errors: The errors encountered while executing the job.
+    :vartype errors: list[~azure.core.ODataV4Format]
     """
 
-    training_config_version: str = rest_field(name="trainingConfigVersion", visibility=["read"])
-    """Represents the version of the config. Required."""
-    model_expiration_date: datetime.date = rest_field(
-        name="modelExpirationDate", visibility=["read", "create", "update", "delete", "query"]
+    job_id: str = rest_field(name="jobId", visibility=["read"])
+    """The job ID. Required."""
+    created_on: datetime.datetime = rest_field(
+        name="createdDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
-    """Represents the training config version expiration date. Required."""
+    """The creation date time of the job. Required."""
+    last_updated_on: datetime.datetime = rest_field(
+        name="lastUpdatedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The last date time the job was updated. Required."""
+    expires_on: Optional[datetime.datetime] = rest_field(
+        name="expirationDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The expiration date time of the job."""
+    status: Union[str, "_models.TextAuthoringOperationStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
+     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
+    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The warnings that were encountered while executing the job."""
+    errors: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The errors encountered while executing the job."""
 
     @overload
     def __init__(
         self,
         *,
-        model_expiration_date: datetime.date,
+        created_on: datetime.datetime,
+        last_updated_on: datetime.datetime,
+        status: Union[str, "_models.TextAuthoringOperationStatus"],
+        expires_on: Optional[datetime.datetime] = None,
+        warnings: Optional[List[ODataV4Format]] = None,
+        errors: Optional[List[ODataV4Format]] = None,
     ) -> None: ...
 
     @overload
@@ -4599,106 +2962,159 @@ class TextAnalysisAuthoringTrainingConfigVersion(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringTrainingJobOptions(_Model):
-    """Represents the options for starting a new training job.
+class TextAuthoringEntityEvalSummary(_Model):
+    """Represents the evaluation summary for an entity.
 
-    :ivar model_label: Represents the output model label. Required.
-    :vartype model_label: str
-    :ivar training_config_version: Represents training config version. Required.
-    :vartype training_config_version: str
-    :ivar evaluation_options: Represents the evaluation options. By default, the evaluation kind is
-     percentage, with training split percentage as 80, and testing split percentage as 20.
+    :ivar f1: Represents the model precision. Required.
+    :vartype f1: float
+    :ivar precision: Represents the model recall. Required.
+    :vartype precision: float
+    :ivar recall: Represents the model F1 score. Required.
+    :vartype recall: float
+    :ivar true_positive_count: Represents the count of true positive. Required.
+    :vartype true_positive_count: int
+    :ivar true_negative_count: Represents the count of true negative. Required.
+    :vartype true_negative_count: int
+    :ivar false_positive_count: Represents the count of false positive. Required.
+    :vartype false_positive_count: int
+    :ivar false_negative_count: Represents the count of false negative. Required.
+    :vartype false_negative_count: int
+    """
+
+    f1: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Represents the model precision. Required."""
+    precision: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Represents the model recall. Required."""
+    recall: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Represents the model F1 score. Required."""
+    true_positive_count: int = rest_field(
+        name="truePositiveCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the count of true positive. Required."""
+    true_negative_count: int = rest_field(
+        name="trueNegativeCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the count of true negative. Required."""
+    false_positive_count: int = rest_field(
+        name="falsePositiveCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the count of false positive. Required."""
+    false_negative_count: int = rest_field(
+        name="falseNegativeCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the count of false negative. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        f1: float,
+        precision: float,
+        recall: float,
+        true_positive_count: int,
+        true_negative_count: int,
+        false_positive_count: int,
+        false_negative_count: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringEvaluationDetails(_Model):
+    """Represents the options used running the evaluation.
+
+    :ivar kind: Represents the evaluation kind. By default, the evaluation kind is set to
+     percentage. Known values are: "percentage" and "manual".
+    :vartype kind: str or ~azure.ai.language.text.authoring.models.TextAuthoringEvaluationKind
+    :ivar training_split_percentage: Represents the training dataset split percentage. Only needed
+     in case the evaluation kind is percentage.
+    :vartype training_split_percentage: int
+    :ivar testing_split_percentage: Represents the testing dataset split percentage. Only needed in
+     case the evaluation kind is percentage.
+    :vartype testing_split_percentage: int
+    """
+
+    kind: Optional[Union[str, "_models.TextAuthoringEvaluationKind"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the evaluation kind. By default, the evaluation kind is set to percentage. Known
+     values are: \"percentage\" and \"manual\"."""
+    training_split_percentage: Optional[int] = rest_field(
+        name="trainingSplitPercentage", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the training dataset split percentage. Only needed in case the evaluation kind is
+     percentage."""
+    testing_split_percentage: Optional[int] = rest_field(
+        name="testingSplitPercentage", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the testing dataset split percentage. Only needed in case the evaluation kind is
+     percentage."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: Optional[Union[str, "_models.TextAuthoringEvaluationKind"]] = None,
+        training_split_percentage: Optional[int] = None,
+        testing_split_percentage: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringEvaluationJobResult(_Model):
+    """TextAuthoringEvaluationJobResult.
+
+    :ivar evaluation_options: Represents the options used running the evaluation. Required.
     :vartype evaluation_options:
-     ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringEvaluationOptions
-    :ivar data_generation_settings: Represents the settings for using data generation as part of
-     training a custom model.
-    :vartype data_generation_settings:
-     ~azure.ai.language.text.authoring.models.DataGenerationSetting
-    """
-
-    model_label: str = rest_field(name="modelLabel", visibility=["read", "create", "update", "delete", "query"])
-    """Represents the output model label. Required."""
-    training_config_version: str = rest_field(
-        name="trainingConfigVersion", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents training config version. Required."""
-    evaluation_options: Optional["_models.TextAnalysisAuthoringEvaluationOptions"] = rest_field(
-        name="evaluationOptions", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the evaluation options. By default, the evaluation kind is percentage, with training
-     split percentage as 80, and testing split percentage as 20."""
-    data_generation_settings: Optional["_models.DataGenerationSetting"] = rest_field(
-        name="dataGenerationSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the settings for using data generation as part of training a custom model."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        model_label: str,
-        training_config_version: str,
-        evaluation_options: Optional["_models.TextAnalysisAuthoringEvaluationOptions"] = None,
-        data_generation_settings: Optional["_models.DataGenerationSetting"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TextAnalysisAuthoringTrainingJobResult(_Model):
-    """Represents the output of a training job.
-
+     ~azure.ai.language.text.authoring.models.TextAuthoringEvaluationDetails
     :ivar model_label: Represents trained model label. Required.
     :vartype model_label: str
     :ivar training_config_version: Represents training config version. Required.
     :vartype training_config_version: str
-    :ivar training_status: Represents model train status. Required.
-    :vartype training_status:
-     ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringSubTrainingJobState
-    :ivar evaluation_status: Represents model evaluation status.
-    :vartype evaluation_status:
-     ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringSubTrainingJobState
-    :ivar estimated_end_date_time: Represents the estimate end date time for training and
-     evaluation.
-    :vartype estimated_end_date_time: ~datetime.datetime
+    :ivar percent_complete: Represents progress percentage. Required.
+    :vartype percent_complete: int
     """
 
+    evaluation_options: "_models.TextAuthoringEvaluationDetails" = rest_field(
+        name="evaluationOptions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the options used running the evaluation. Required."""
     model_label: str = rest_field(name="modelLabel", visibility=["read", "create", "update", "delete", "query"])
     """Represents trained model label. Required."""
     training_config_version: str = rest_field(
         name="trainingConfigVersion", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents training config version. Required."""
-    training_status: "_models.TextAnalysisAuthoringSubTrainingJobState" = rest_field(
-        name="trainingStatus", visibility=["read", "create", "update", "delete", "query"]
+    percent_complete: int = rest_field(
+        name="percentComplete", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Represents model train status. Required."""
-    evaluation_status: Optional["_models.TextAnalysisAuthoringSubTrainingJobState"] = rest_field(
-        name="evaluationStatus", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents model evaluation status."""
-    estimated_end_date_time: Optional[datetime.datetime] = rest_field(
-        name="estimatedEndDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """Represents the estimate end date time for training and evaluation."""
+    """Represents progress percentage. Required."""
 
     @overload
     def __init__(
         self,
         *,
+        evaluation_options: "_models.TextAuthoringEvaluationDetails",
         model_label: str,
         training_config_version: str,
-        training_status: "_models.TextAnalysisAuthoringSubTrainingJobState",
-        evaluation_status: Optional["_models.TextAnalysisAuthoringSubTrainingJobState"] = None,
-        estimated_end_date_time: Optional[datetime.datetime] = None,
+        percent_complete: int,
     ) -> None: ...
 
     @overload
@@ -4712,64 +3128,65 @@ class TextAnalysisAuthoringTrainingJobResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringTrainingJobState(_Model):
-    """Represents the state of a training job.
+class TextAuthoringEvaluationState(_Model):
+    """Represents the state of a evaluation job.
 
     :ivar job_id: The job ID. Required.
     :vartype job_id: str
-    :ivar created_date_time: The creation date time of the job. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_updated_date_time: The last date time the job was updated. Required.
-    :vartype last_updated_date_time: ~datetime.datetime
-    :ivar expiration_date_time: The expiration date time of the job.
-    :vartype expiration_date_time: ~datetime.datetime
+    :ivar created_on: The creation date time of the job. Required.
+    :vartype created_on: ~datetime.datetime
+    :ivar last_updated_on: The last date time the job was updated. Required.
+    :vartype last_updated_on: ~datetime.datetime
+    :ivar expires_on: The expiration date time of the job.
+    :vartype expires_on: ~datetime.datetime
     :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
      "failed", "cancelled", "cancelling", and "partiallyCompleted".
-    :vartype status: str or ~azure.ai.language.text.authoring.models.JobStatus
+    :vartype status: str or ~azure.ai.language.text.authoring.models.TextAuthoringOperationStatus
     :ivar warnings: The warnings that were encountered while executing the job.
     :vartype warnings: list[~azure.core.ODataV4Format]
     :ivar errors: The errors encountered while executing the job.
     :vartype errors: list[~azure.core.ODataV4Format]
-    :ivar result: Represents training tasks detailed result. Required.
-    :vartype result:
-     ~azure.ai.language.text.authoring.models.TextAnalysisAuthoringTrainingJobResult
+    :ivar result: Represents evaluation task detailed result. Required.
+    :vartype result: ~azure.ai.language.text.authoring.models.TextAuthoringEvaluationJobResult
     """
 
     job_id: str = rest_field(name="jobId", visibility=["read"])
     """The job ID. Required."""
-    created_date_time: datetime.datetime = rest_field(
+    created_on: datetime.datetime = rest_field(
         name="createdDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """The creation date time of the job. Required."""
-    last_updated_date_time: datetime.datetime = rest_field(
+    last_updated_on: datetime.datetime = rest_field(
         name="lastUpdatedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """The last date time the job was updated. Required."""
-    expiration_date_time: Optional[datetime.datetime] = rest_field(
+    expires_on: Optional[datetime.datetime] = rest_field(
         name="expirationDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """The expiration date time of the job."""
-    status: Union[str, "_models.JobStatus"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    status: Union[str, "_models.TextAuthoringOperationStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
      \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
     warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The warnings that were encountered while executing the job."""
     errors: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The errors encountered while executing the job."""
-    result: "_models.TextAnalysisAuthoringTrainingJobResult" = rest_field(
+    result: "_models.TextAuthoringEvaluationJobResult" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Represents training tasks detailed result. Required."""
+    """Represents evaluation task detailed result. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        status: Union[str, "_models.JobStatus"],
-        result: "_models.TextAnalysisAuthoringTrainingJobResult",
-        expiration_date_time: Optional[datetime.datetime] = None,
+        created_on: datetime.datetime,
+        last_updated_on: datetime.datetime,
+        status: Union[str, "_models.TextAuthoringOperationStatus"],
+        result: "_models.TextAuthoringEvaluationJobResult",
+        expires_on: Optional[datetime.datetime] = None,
         warnings: Optional[List[ODataV4Format]] = None,
         errors: Optional[List[ODataV4Format]] = None,
     ) -> None: ...
@@ -4785,23 +3202,967 @@ class TextAnalysisAuthoringTrainingJobState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TextAnalysisAuthoringUnassignDeploymentResourcesOptions(_Model):  # pylint: disable=name-too-long
-    """Represents the options to unassign Azure resources from a project.
+class TextAuthoringExportedClass(_Model):
+    """Represents a class of an exported project.
 
-    :ivar assigned_resource_ids: Represents the assigned resource IDs to be unassigned. Required.
-    :vartype assigned_resource_ids: list[str]
+    :ivar category: The class category.
+    :vartype category: str
     """
 
-    assigned_resource_ids: List[str] = rest_field(
-        name="assignedResourceIds", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the assigned resource IDs to be unassigned. Required."""
+    category: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The class category."""
 
     @overload
     def __init__(
         self,
         *,
-        assigned_resource_ids: List[str],
+        category: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringExportedCompositeEntity(_Model):
+    """Represents an entity in an exported project with composite entities enabled.
+
+    :ivar composition_setting: The behavior to follow when the entity's components overlap with
+     each other. Known values are: "separateComponents" and "combineComponents".
+    :vartype composition_setting: str or
+     ~azure.ai.language.text.authoring.models.TextAuthoringCompositionMode
+    :ivar list: The list component of the entity.
+    :vartype list: ~azure.ai.language.text.authoring.models.TextAuthoringExportedEntityList
+    :ivar prebuilts: The prebuilt entities components.
+    :vartype prebuilts:
+     list[~azure.ai.language.text.authoring.models.TextAuthoringExportedPrebuiltEntity]
+    :ivar category: The entity category.
+    :vartype category: str
+    """
+
+    composition_setting: Optional[Union[str, "_models.TextAuthoringCompositionMode"]] = rest_field(
+        name="compositionSetting", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The behavior to follow when the entity's components overlap with each other. Known values are:
+     \"separateComponents\" and \"combineComponents\"."""
+    list: Optional["_models.TextAuthoringExportedEntityList"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list component of the entity."""
+    prebuilts: Optional[List["_models.TextAuthoringExportedPrebuiltEntity"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The prebuilt entities components."""
+    category: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The entity category."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        composition_setting: Optional[Union[str, "_models.TextAuthoringCompositionMode"]] = None,
+        list: Optional["_models.TextAuthoringExportedEntityList"] = None,
+        prebuilts: Optional[List["_models.TextAuthoringExportedPrebuiltEntity"]] = None,
+        category: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringExportedEntity(_Model):
+    """Represents an entity in an exported project.
+
+    :ivar category: The entity category.
+    :vartype category: str
+    :ivar description: Short description for entity category. Required when enabling synthetic data
+     generation.
+    :vartype description: str
+    """
+
+    category: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The entity category."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Short description for entity category. Required when enabling synthetic data generation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        category: Optional[str] = None,
+        description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringExportedEntityList(_Model):
+    """Represents a list component of an entity.
+
+    :ivar sublists: The sub-lists of the list component.
+    :vartype sublists:
+     list[~azure.ai.language.text.authoring.models.TextAuthoringExportedEntitySublist]
+    """
+
+    sublists: Optional[List["_models.TextAuthoringExportedEntitySublist"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The sub-lists of the list component."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        sublists: Optional[List["_models.TextAuthoringExportedEntitySublist"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringExportedEntityListSynonym(_Model):
+    """Represents a list of synonyms inside a list component.
+
+    :ivar language: Represents the language of the synonyms. This is BCP-47 representation of a
+     language. For example, use "en" for English, "en-gb" for English (UK), "es" for Spanish etc.
+    :vartype language: str
+    :ivar values_property: The list of synonyms.
+    :vartype values_property: list[str]
+    """
+
+    language: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Represents the language of the synonyms. This is BCP-47 representation of a language. For
+     example, use \"en\" for English, \"en-gb\" for English (UK), \"es\" for Spanish etc."""
+    values_property: Optional[List[str]] = rest_field(
+        name="values", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of synonyms."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        language: Optional[str] = None,
+        values_property: Optional[List[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringExportedEntitySublist(_Model):
+    """Represents a sub-list inside a list component.
+
+    :ivar list_key: The key of the sub-list.
+    :vartype list_key: str
+    :ivar synonyms: The phrases of that correspond to the sub-list.
+    :vartype synonyms:
+     list[~azure.ai.language.text.authoring.models.TextAuthoringExportedEntityListSynonym]
+    """
+
+    list_key: Optional[str] = rest_field(name="listKey", visibility=["read", "create", "update", "delete", "query"])
+    """The key of the sub-list."""
+    synonyms: Optional[List["_models.TextAuthoringExportedEntityListSynonym"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The phrases of that correspond to the sub-list."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        list_key: Optional[str] = None,
+        synonyms: Optional[List["_models.TextAuthoringExportedEntityListSynonym"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringExportedModelDetails(_Model):
+    """Represents the options for creating or replacing an exported model.
+
+    :ivar trained_model_label: The trained model label. Required.
+    :vartype trained_model_label: str
+    """
+
+    trained_model_label: str = rest_field(
+        name="trainedModelLabel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The trained model label. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        trained_model_label: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringExportedModelState(_Model):
+    """Represents the state of a job to create or updated an exported model.
+
+    :ivar job_id: The job ID. Required.
+    :vartype job_id: str
+    :ivar created_on: The creation date time of the job. Required.
+    :vartype created_on: ~datetime.datetime
+    :ivar last_updated_on: The last date time the job was updated. Required.
+    :vartype last_updated_on: ~datetime.datetime
+    :ivar expires_on: The expiration date time of the job.
+    :vartype expires_on: ~datetime.datetime
+    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
+     "failed", "cancelled", "cancelling", and "partiallyCompleted".
+    :vartype status: str or ~azure.ai.language.text.authoring.models.TextAuthoringOperationStatus
+    :ivar warnings: The warnings that were encountered while executing the job.
+    :vartype warnings: list[~azure.core.ODataV4Format]
+    :ivar errors: The errors encountered while executing the job.
+    :vartype errors: list[~azure.core.ODataV4Format]
+    """
+
+    job_id: str = rest_field(name="jobId", visibility=["read"])
+    """The job ID. Required."""
+    created_on: datetime.datetime = rest_field(
+        name="createdDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The creation date time of the job. Required."""
+    last_updated_on: datetime.datetime = rest_field(
+        name="lastUpdatedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The last date time the job was updated. Required."""
+    expires_on: Optional[datetime.datetime] = rest_field(
+        name="expirationDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The expiration date time of the job."""
+    status: Union[str, "_models.TextAuthoringOperationStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
+     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
+    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The warnings that were encountered while executing the job."""
+    errors: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The errors encountered while executing the job."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        created_on: datetime.datetime,
+        last_updated_on: datetime.datetime,
+        status: Union[str, "_models.TextAuthoringOperationStatus"],
+        expires_on: Optional[datetime.datetime] = None,
+        warnings: Optional[List[ODataV4Format]] = None,
+        errors: Optional[List[ODataV4Format]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringExportedPrebuiltEntity(_Model):
+    """Represents an exported prebuilt entity component.
+
+    :ivar category: The prebuilt entity category. Required.
+    :vartype category: str
+    """
+
+    category: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The prebuilt entity category. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        category: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringExportedProject(_Model):
+    """Represents an exported project.
+
+    :ivar project_file_version: The version of the exported file. Required.
+    :vartype project_file_version: str
+    :ivar string_index_type: Specifies the method used to interpret string offsets. For additional
+     information see `https://aka.ms/text-analytics-offsets
+     <https://aka.ms/text-analytics-offsets>`_. Required. "Utf16CodeUnit"
+    :vartype string_index_type: str or ~azure.ai.language.text.authoring.models.StringIndexType
+    :ivar metadata: Represents the project metadata. Required.
+    :vartype metadata: ~azure.ai.language.text.authoring.models.TextAuthoringCreateProjectDetails
+    :ivar assets: Represents the project assets.
+    :vartype assets: ~azure.ai.language.text.authoring.models.TextAuthoringExportedProjectAsset
+    """
+
+    project_file_version: str = rest_field(
+        name="projectFileVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The version of the exported file. Required."""
+    string_index_type: Union[str, "_models.StringIndexType"] = rest_field(
+        name="stringIndexType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the method used to interpret string offsets. For additional information see
+     `https://aka.ms/text-analytics-offsets <https://aka.ms/text-analytics-offsets>`_. Required.
+     \"Utf16CodeUnit\""""
+    metadata: "_models.TextAuthoringCreateProjectDetails" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the project metadata. Required."""
+    assets: Optional["_models.TextAuthoringExportedProjectAsset"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the project assets."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        project_file_version: str,
+        string_index_type: Union[str, "_models.StringIndexType"],
+        metadata: "_models.TextAuthoringCreateProjectDetails",
+        assets: Optional["_models.TextAuthoringExportedProjectAsset"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringExportedTrainedModel(_Model):
+    """Represents an exported trained model.
+
+    :ivar exported_model_name: The exported model name. Required.
+    :vartype exported_model_name: str
+    :ivar model_id: The model ID. Required.
+    :vartype model_id: str
+    :ivar last_trained_on: The last trained date time of the model. Required.
+    :vartype last_trained_on: ~datetime.datetime
+    :ivar last_exported_model_on: The last exported date time of the model. Required.
+    :vartype last_exported_model_on: ~datetime.datetime
+    :ivar model_expired_on: The model expiration date. Required.
+    :vartype model_expired_on: ~datetime.date
+    :ivar model_training_config_version: The model training config version. Required.
+    :vartype model_training_config_version: str
+    """
+
+    exported_model_name: str = rest_field(name="exportedModelName", visibility=["read"])
+    """The exported model name. Required."""
+    model_id: str = rest_field(name="modelId", visibility=["read", "create", "update", "delete", "query"])
+    """The model ID. Required."""
+    last_trained_on: datetime.datetime = rest_field(
+        name="lastTrainedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The last trained date time of the model. Required."""
+    last_exported_model_on: datetime.datetime = rest_field(
+        name="lastExportedModelDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The last exported date time of the model. Required."""
+    model_expired_on: datetime.date = rest_field(
+        name="modelExpirationDate", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The model expiration date. Required."""
+    model_training_config_version: str = rest_field(
+        name="modelTrainingConfigVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The model training config version. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        model_id: str,
+        last_trained_on: datetime.datetime,
+        last_exported_model_on: datetime.datetime,
+        model_expired_on: datetime.date,
+        model_training_config_version: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringExportProjectState(_Model):
+    """Represents the state of an export job.
+
+    :ivar job_id: The job ID. Required.
+    :vartype job_id: str
+    :ivar created_on: The creation date time of the job. Required.
+    :vartype created_on: ~datetime.datetime
+    :ivar last_updated_on: The last date time the job was updated. Required.
+    :vartype last_updated_on: ~datetime.datetime
+    :ivar expires_on: The expiration date time of the job.
+    :vartype expires_on: ~datetime.datetime
+    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
+     "failed", "cancelled", "cancelling", and "partiallyCompleted".
+    :vartype status: str or ~azure.ai.language.text.authoring.models.TextAuthoringOperationStatus
+    :ivar warnings: The warnings that were encountered while executing the job.
+    :vartype warnings: list[~azure.core.ODataV4Format]
+    :ivar errors: The errors encountered while executing the job.
+    :vartype errors: list[~azure.core.ODataV4Format]
+    :ivar result_url: The URL to use in order to download the exported project.
+    :vartype result_url: str
+    """
+
+    job_id: str = rest_field(name="jobId", visibility=["read"])
+    """The job ID. Required."""
+    created_on: datetime.datetime = rest_field(
+        name="createdDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The creation date time of the job. Required."""
+    last_updated_on: datetime.datetime = rest_field(
+        name="lastUpdatedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The last date time the job was updated. Required."""
+    expires_on: Optional[datetime.datetime] = rest_field(
+        name="expirationDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The expiration date time of the job."""
+    status: Union[str, "_models.TextAuthoringOperationStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
+     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
+    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The warnings that were encountered while executing the job."""
+    errors: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The errors encountered while executing the job."""
+    result_url: Optional[str] = rest_field(name="resultUrl", visibility=["read", "create", "update", "delete", "query"])
+    """The URL to use in order to download the exported project."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        created_on: datetime.datetime,
+        last_updated_on: datetime.datetime,
+        status: Union[str, "_models.TextAuthoringOperationStatus"],
+        expires_on: Optional[datetime.datetime] = None,
+        warnings: Optional[List[ODataV4Format]] = None,
+        errors: Optional[List[ODataV4Format]] = None,
+        result_url: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringImportProjectState(_Model):
+    """Represents the state of an import job.
+
+    :ivar job_id: The job ID. Required.
+    :vartype job_id: str
+    :ivar created_on: The creation date time of the job. Required.
+    :vartype created_on: ~datetime.datetime
+    :ivar last_updated_on: The last date time the job was updated. Required.
+    :vartype last_updated_on: ~datetime.datetime
+    :ivar expires_on: The expiration date time of the job.
+    :vartype expires_on: ~datetime.datetime
+    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
+     "failed", "cancelled", "cancelling", and "partiallyCompleted".
+    :vartype status: str or ~azure.ai.language.text.authoring.models.TextAuthoringOperationStatus
+    :ivar warnings: The warnings that were encountered while executing the job.
+    :vartype warnings: list[~azure.core.ODataV4Format]
+    :ivar errors: The errors encountered while executing the job.
+    :vartype errors: list[~azure.core.ODataV4Format]
+    """
+
+    job_id: str = rest_field(name="jobId", visibility=["read"])
+    """The job ID. Required."""
+    created_on: datetime.datetime = rest_field(
+        name="createdDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The creation date time of the job. Required."""
+    last_updated_on: datetime.datetime = rest_field(
+        name="lastUpdatedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The last date time the job was updated. Required."""
+    expires_on: Optional[datetime.datetime] = rest_field(
+        name="expirationDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The expiration date time of the job."""
+    status: Union[str, "_models.TextAuthoringOperationStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
+     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
+    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The warnings that were encountered while executing the job."""
+    errors: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The errors encountered while executing the job."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        created_on: datetime.datetime,
+        last_updated_on: datetime.datetime,
+        status: Union[str, "_models.TextAuthoringOperationStatus"],
+        expires_on: Optional[datetime.datetime] = None,
+        warnings: Optional[List[ODataV4Format]] = None,
+        errors: Optional[List[ODataV4Format]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringLoadSnapshotState(_Model):
+    """Represents the state of loading a snapshot job.
+
+    :ivar job_id: The job ID. Required.
+    :vartype job_id: str
+    :ivar created_on: The creation date time of the job. Required.
+    :vartype created_on: ~datetime.datetime
+    :ivar last_updated_on: The last date time the job was updated. Required.
+    :vartype last_updated_on: ~datetime.datetime
+    :ivar expires_on: The expiration date time of the job.
+    :vartype expires_on: ~datetime.datetime
+    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
+     "failed", "cancelled", "cancelling", and "partiallyCompleted".
+    :vartype status: str or ~azure.ai.language.text.authoring.models.TextAuthoringOperationStatus
+    :ivar warnings: The warnings that were encountered while executing the job.
+    :vartype warnings: list[~azure.core.ODataV4Format]
+    :ivar errors: The errors encountered while executing the job.
+    :vartype errors: list[~azure.core.ODataV4Format]
+    """
+
+    job_id: str = rest_field(name="jobId", visibility=["read"])
+    """The job ID. Required."""
+    created_on: datetime.datetime = rest_field(
+        name="createdDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The creation date time of the job. Required."""
+    last_updated_on: datetime.datetime = rest_field(
+        name="lastUpdatedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The last date time the job was updated. Required."""
+    expires_on: Optional[datetime.datetime] = rest_field(
+        name="expirationDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The expiration date time of the job."""
+    status: Union[str, "_models.TextAuthoringOperationStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
+     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
+    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The warnings that were encountered while executing the job."""
+    errors: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The errors encountered while executing the job."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        created_on: datetime.datetime,
+        last_updated_on: datetime.datetime,
+        status: Union[str, "_models.TextAuthoringOperationStatus"],
+        expires_on: Optional[datetime.datetime] = None,
+        warnings: Optional[List[ODataV4Format]] = None,
+        errors: Optional[List[ODataV4Format]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringModelFile(_Model):
+    """Represents the properties for the model file.
+
+    :ivar name: The name of the file. Required.
+    :vartype name: str
+    :ivar content_uri: The URI to retrieve the content of the file. Required.
+    :vartype content_uri: str
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the file. Required."""
+    content_uri: str = rest_field(name="contentUri", visibility=["read", "create", "update", "delete", "query"])
+    """The URI to retrieve the content of the file. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        content_uri: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringPrebuiltEntity(_Model):
+    """Represents a supported prebuilt entity.
+
+    :ivar category: The prebuilt entity category. Required.
+    :vartype category: str
+    :ivar description: The description. Required.
+    :vartype description: str
+    :ivar examples: English examples for the entity. Required.
+    :vartype examples: str
+    """
+
+    category: str = rest_field(visibility=["read"])
+    """The prebuilt entity category. Required."""
+    description: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The description. Required."""
+    examples: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """English examples for the entity. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        description: str,
+        examples: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringProjectDeletionState(_Model):
+    """Represents the state of a project deletion job.
+
+    :ivar job_id: The job ID. Required.
+    :vartype job_id: str
+    :ivar created_on: The creation date time of the job. Required.
+    :vartype created_on: ~datetime.datetime
+    :ivar last_updated_on: The last date time the job was updated. Required.
+    :vartype last_updated_on: ~datetime.datetime
+    :ivar expires_on: The expiration date time of the job.
+    :vartype expires_on: ~datetime.datetime
+    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
+     "failed", "cancelled", "cancelling", and "partiallyCompleted".
+    :vartype status: str or ~azure.ai.language.text.authoring.models.TextAuthoringOperationStatus
+    :ivar warnings: The warnings that were encountered while executing the job.
+    :vartype warnings: list[~azure.core.ODataV4Format]
+    :ivar errors: The errors encountered while executing the job.
+    :vartype errors: list[~azure.core.ODataV4Format]
+    """
+
+    job_id: str = rest_field(name="jobId", visibility=["read"])
+    """The job ID. Required."""
+    created_on: datetime.datetime = rest_field(
+        name="createdDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The creation date time of the job. Required."""
+    last_updated_on: datetime.datetime = rest_field(
+        name="lastUpdatedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The last date time the job was updated. Required."""
+    expires_on: Optional[datetime.datetime] = rest_field(
+        name="expirationDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The expiration date time of the job."""
+    status: Union[str, "_models.TextAuthoringOperationStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
+     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
+    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The warnings that were encountered while executing the job."""
+    errors: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The errors encountered while executing the job."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        created_on: datetime.datetime,
+        last_updated_on: datetime.datetime,
+        status: Union[str, "_models.TextAuthoringOperationStatus"],
+        expires_on: Optional[datetime.datetime] = None,
+        warnings: Optional[List[ODataV4Format]] = None,
+        errors: Optional[List[ODataV4Format]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringProjectDeployment(_Model):
+    """Represents a project deployment.
+
+    :ivar deployment_name: Represents deployment name. Required.
+    :vartype deployment_name: str
+    :ivar model_id: Represents deployment modelId. Required.
+    :vartype model_id: str
+    :ivar last_trained_on: Represents deployment last trained time. Required.
+    :vartype last_trained_on: ~datetime.datetime
+    :ivar last_deployed_on: Represents deployment last deployed time. Required.
+    :vartype last_deployed_on: ~datetime.datetime
+    :ivar deployment_expired_on: Represents deployment expiration date in the runtime. Required.
+    :vartype deployment_expired_on: ~datetime.date
+    :ivar model_training_config_version: Represents model training config version. Required.
+    :vartype model_training_config_version: str
+    :ivar assigned_resources: Represents the metadata of the assigned Azure resources. Required.
+    :vartype assigned_resources:
+     list[~azure.ai.language.text.authoring.models.TextAuthoringDeploymentResource]
+    """
+
+    deployment_name: str = rest_field(name="deploymentName", visibility=["read"])
+    """Represents deployment name. Required."""
+    model_id: str = rest_field(name="modelId", visibility=["read", "create", "update", "delete", "query"])
+    """Represents deployment modelId. Required."""
+    last_trained_on: datetime.datetime = rest_field(
+        name="lastTrainedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Represents deployment last trained time. Required."""
+    last_deployed_on: datetime.datetime = rest_field(
+        name="lastDeployedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Represents deployment last deployed time. Required."""
+    deployment_expired_on: datetime.date = rest_field(
+        name="deploymentExpirationDate", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents deployment expiration date in the runtime. Required."""
+    model_training_config_version: str = rest_field(
+        name="modelTrainingConfigVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents model training config version. Required."""
+    assigned_resources: List["_models.TextAuthoringDeploymentResource"] = rest_field(
+        name="assignedResources", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the metadata of the assigned Azure resources. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        model_id: str,
+        last_trained_on: datetime.datetime,
+        last_deployed_on: datetime.datetime,
+        deployment_expired_on: datetime.date,
+        model_training_config_version: str,
+        assigned_resources: List["_models.TextAuthoringDeploymentResource"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringProjectMetadata(_Model):
+    """Represents the metadata of a project.
+
+    :ivar created_on: Represents the project creation datetime. Required.
+    :vartype created_on: ~datetime.datetime
+    :ivar last_modified_on: Represents the project last modification datetime. Required.
+    :vartype last_modified_on: ~datetime.datetime
+    :ivar last_trained_on: Represents the project last training datetime.
+    :vartype last_trained_on: ~datetime.datetime
+    :ivar last_deployed_on: Represents the project last deployment datetime.
+    :vartype last_deployed_on: ~datetime.datetime
+    :ivar project_kind: The project kind. Required. Known values are:
+     "CustomSingleLabelClassification", "CustomMultiLabelClassification", "CustomEntityRecognition",
+     "CustomAbstractiveSummarization", "CustomHealthcare", and "CustomTextSentiment".
+    :vartype project_kind: str or ~azure.ai.language.text.authoring.models.TextAuthoringProjectKind
+    :ivar storage_account_resource_id: The project storage account resource ID.
+    :vartype storage_account_resource_id: str
+    :ivar storage_input_container_name: The storage container name. Required.
+    :vartype storage_input_container_name: str
+    :ivar settings: The project settings.
+    :vartype settings: ~azure.ai.language.text.authoring.models.TextAuthoringProjectSettings
+    :ivar project_name: The new project name. Required.
+    :vartype project_name: str
+    :ivar multilingual: Whether the project would be used for multiple languages or not.
+    :vartype multilingual: bool
+    :ivar description: The project description.
+    :vartype description: str
+    :ivar language: The project language. This is BCP-47 representation of a language. For example,
+     use "en" for English, "en-gb" for English (UK), "es" for Spanish etc. Required.
+    :vartype language: str
+    """
+
+    created_on: datetime.datetime = rest_field(
+        name="createdDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Represents the project creation datetime. Required."""
+    last_modified_on: datetime.datetime = rest_field(
+        name="lastModifiedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Represents the project last modification datetime. Required."""
+    last_trained_on: Optional[datetime.datetime] = rest_field(
+        name="lastTrainedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Represents the project last training datetime."""
+    last_deployed_on: Optional[datetime.datetime] = rest_field(
+        name="lastDeployedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Represents the project last deployment datetime."""
+    project_kind: Union[str, "_models.TextAuthoringProjectKind"] = rest_field(
+        name="projectKind", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The project kind. Required. Known values are: \"CustomSingleLabelClassification\",
+     \"CustomMultiLabelClassification\", \"CustomEntityRecognition\",
+     \"CustomAbstractiveSummarization\", \"CustomHealthcare\", and \"CustomTextSentiment\"."""
+    storage_account_resource_id: Optional[str] = rest_field(
+        name="storageAccountResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The project storage account resource ID."""
+    storage_input_container_name: str = rest_field(
+        name="storageInputContainerName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The storage container name. Required."""
+    settings: Optional["_models.TextAuthoringProjectSettings"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The project settings."""
+    project_name: str = rest_field(name="projectName", visibility=["read"])
+    """The new project name. Required."""
+    multilingual: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether the project would be used for multiple languages or not."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The project description."""
+    language: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The project language. This is BCP-47 representation of a language. For example, use \"en\" for
+     English, \"en-gb\" for English (UK), \"es\" for Spanish etc. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        created_on: datetime.datetime,
+        last_modified_on: datetime.datetime,
+        project_kind: Union[str, "_models.TextAuthoringProjectKind"],
+        storage_input_container_name: str,
+        language: str,
+        last_trained_on: Optional[datetime.datetime] = None,
+        last_deployed_on: Optional[datetime.datetime] = None,
+        storage_account_resource_id: Optional[str] = None,
+        settings: Optional["_models.TextAuthoringProjectSettings"] = None,
+        multilingual: Optional[bool] = None,
+        description: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -4865,6 +4226,626 @@ class TextAuthoringProjectSettings(_Model):
         is_labeling_locked: Optional[bool] = None,
         run_gpt_predictions: Optional[bool] = None,
         gpt_predictive_lookahead: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringProjectTrainedModel(_Model):
+    """Represents a trained model.
+
+    :ivar label: The trained model label. Required.
+    :vartype label: str
+    :ivar model_id: The model ID. Required.
+    :vartype model_id: str
+    :ivar last_trained_on: The last trained date time of the model. Required.
+    :vartype last_trained_on: ~datetime.datetime
+    :ivar last_training_duration_in_seconds: The duration of the model's last training request in
+     seconds. Required.
+    :vartype last_training_duration_in_seconds: int
+    :ivar model_expired_on: The model expiration date. Required.
+    :vartype model_expired_on: ~datetime.date
+    :ivar model_training_config_version: The model training config version. Required.
+    :vartype model_training_config_version: str
+    :ivar has_snapshot: The flag to indicate if the trained model has a snapshot ready. Required.
+    :vartype has_snapshot: bool
+    """
+
+    label: str = rest_field(visibility=["read"])
+    """The trained model label. Required."""
+    model_id: str = rest_field(name="modelId", visibility=["read", "create", "update", "delete", "query"])
+    """The model ID. Required."""
+    last_trained_on: datetime.datetime = rest_field(
+        name="lastTrainedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The last trained date time of the model. Required."""
+    last_training_duration_in_seconds: int = rest_field(
+        name="lastTrainingDurationInSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The duration of the model's last training request in seconds. Required."""
+    model_expired_on: datetime.date = rest_field(
+        name="modelExpirationDate", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The model expiration date. Required."""
+    model_training_config_version: str = rest_field(
+        name="modelTrainingConfigVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The model training config version. Required."""
+    has_snapshot: bool = rest_field(name="hasSnapshot", visibility=["read", "create", "update", "delete", "query"])
+    """The flag to indicate if the trained model has a snapshot ready. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        model_id: str,
+        last_trained_on: datetime.datetime,
+        last_training_duration_in_seconds: int,
+        model_expired_on: datetime.date,
+        model_training_config_version: str,
+        has_snapshot: bool,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringResourceMetadata(_Model):
+    """Represents metadata for the Azure resource..
+
+    :ivar azure_resource_id: Represents the Azure resource ID. Required.
+    :vartype azure_resource_id: str
+    :ivar custom_domain: Represents the Azure resource custom domain. Required.
+    :vartype custom_domain: str
+    :ivar region: Represents the Azure resource region. Required.
+    :vartype region: str
+    """
+
+    azure_resource_id: str = rest_field(
+        name="azureResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the Azure resource ID. Required."""
+    custom_domain: str = rest_field(name="customDomain", visibility=["read", "create", "update", "delete", "query"])
+    """Represents the Azure resource custom domain. Required."""
+    region: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Represents the Azure resource region. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        azure_resource_id: str,
+        custom_domain: str,
+        region: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringSubTrainingState(_Model):
+    """Represents the detailed state of a training sub-operation.
+
+    :ivar percent_complete: Represents progress percentage. Required.
+    :vartype percent_complete: int
+    :ivar started_on: Represents the start date time.
+    :vartype started_on: ~datetime.datetime
+    :ivar ended_on: Represents the end date time.
+    :vartype ended_on: ~datetime.datetime
+    :ivar status: Represents the status of the sub-operation. Required. Known values are:
+     "notStarted", "running", "succeeded", "failed", "cancelled", "cancelling", and
+     "partiallyCompleted".
+    :vartype status: str or ~azure.ai.language.text.authoring.models.TextAuthoringOperationStatus
+    """
+
+    percent_complete: int = rest_field(
+        name="percentComplete", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents progress percentage. Required."""
+    started_on: Optional[datetime.datetime] = rest_field(
+        name="startDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Represents the start date time."""
+    ended_on: Optional[datetime.datetime] = rest_field(
+        name="endDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Represents the end date time."""
+    status: Union[str, "_models.TextAuthoringOperationStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the status of the sub-operation. Required. Known values are: \"notStarted\",
+     \"running\", \"succeeded\", \"failed\", \"cancelled\", \"cancelling\", and
+     \"partiallyCompleted\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        percent_complete: int,
+        status: Union[str, "_models.TextAuthoringOperationStatus"],
+        started_on: Optional[datetime.datetime] = None,
+        ended_on: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringSupportedLanguage(_Model):
+    """Represents a supported language.
+
+    :ivar language_name: The language name. Required.
+    :vartype language_name: str
+    :ivar language_code: The language code. This is BCP-47 representation of a language. For
+     example, "en" for English, "en-gb" for English (UK), "es" for Spanish etc. Required.
+    :vartype language_code: str
+    """
+
+    language_name: str = rest_field(name="languageName", visibility=["read"])
+    """The language name. Required."""
+    language_code: str = rest_field(name="languageCode", visibility=["read", "create", "update", "delete", "query"])
+    """The language code. This is BCP-47 representation of a language. For example, \"en\" for
+     English, \"en-gb\" for English (UK), \"es\" for Spanish etc. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        language_code: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringSwapDeploymentsDetails(_Model):
+    """Represents the options for swapping two deployments together.
+
+    :ivar first_deployment_name: Represents the first deployment name. Required.
+    :vartype first_deployment_name: str
+    :ivar second_deployment_name: Represents the second deployment name. Required.
+    :vartype second_deployment_name: str
+    """
+
+    first_deployment_name: str = rest_field(
+        name="firstDeploymentName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the first deployment name. Required."""
+    second_deployment_name: str = rest_field(
+        name="secondDeploymentName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the second deployment name. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        first_deployment_name: str,
+        second_deployment_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringSwapDeploymentsState(_Model):
+    """Represents the state of a deployment job.
+
+    :ivar job_id: The job ID. Required.
+    :vartype job_id: str
+    :ivar created_on: The creation date time of the job. Required.
+    :vartype created_on: ~datetime.datetime
+    :ivar last_updated_on: The last date time the job was updated. Required.
+    :vartype last_updated_on: ~datetime.datetime
+    :ivar expires_on: The expiration date time of the job.
+    :vartype expires_on: ~datetime.datetime
+    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
+     "failed", "cancelled", "cancelling", and "partiallyCompleted".
+    :vartype status: str or ~azure.ai.language.text.authoring.models.TextAuthoringOperationStatus
+    :ivar warnings: The warnings that were encountered while executing the job.
+    :vartype warnings: list[~azure.core.ODataV4Format]
+    :ivar errors: The errors encountered while executing the job.
+    :vartype errors: list[~azure.core.ODataV4Format]
+    """
+
+    job_id: str = rest_field(name="jobId", visibility=["read"])
+    """The job ID. Required."""
+    created_on: datetime.datetime = rest_field(
+        name="createdDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The creation date time of the job. Required."""
+    last_updated_on: datetime.datetime = rest_field(
+        name="lastUpdatedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The last date time the job was updated. Required."""
+    expires_on: Optional[datetime.datetime] = rest_field(
+        name="expirationDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The expiration date time of the job."""
+    status: Union[str, "_models.TextAuthoringOperationStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
+     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
+    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The warnings that were encountered while executing the job."""
+    errors: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The errors encountered while executing the job."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        created_on: datetime.datetime,
+        last_updated_on: datetime.datetime,
+        status: Union[str, "_models.TextAuthoringOperationStatus"],
+        expires_on: Optional[datetime.datetime] = None,
+        warnings: Optional[List[ODataV4Format]] = None,
+        errors: Optional[List[ODataV4Format]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringTrainingConfigVersion(_Model):
+    """Represents a training config version.
+
+    :ivar training_config_version: Represents the version of the config. Required.
+    :vartype training_config_version: str
+    :ivar model_expired_on: Represents the training config version expiration date. Required.
+    :vartype model_expired_on: ~datetime.date
+    """
+
+    training_config_version: str = rest_field(name="trainingConfigVersion", visibility=["read"])
+    """Represents the version of the config. Required."""
+    model_expired_on: datetime.date = rest_field(
+        name="modelExpirationDate", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the training config version expiration date. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        model_expired_on: datetime.date,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringTrainingJobDetails(_Model):
+    """Represents the options for starting a new training job.
+
+    :ivar model_label: Represents the output model label. Required.
+    :vartype model_label: str
+    :ivar training_config_version: Represents training config version. Required.
+    :vartype training_config_version: str
+    :ivar evaluation_options: Represents the evaluation options. By default, the evaluation kind is
+     percentage, with training split percentage as 80, and testing split percentage as 20.
+    :vartype evaluation_options:
+     ~azure.ai.language.text.authoring.models.TextAuthoringEvaluationDetails
+    :ivar data_generation_settings: Represents the settings for using data generation as part of
+     training a custom model.
+    :vartype data_generation_settings:
+     ~azure.ai.language.text.authoring.models.DataGenerationSetting
+    """
+
+    model_label: str = rest_field(name="modelLabel", visibility=["read", "create", "update", "delete", "query"])
+    """Represents the output model label. Required."""
+    training_config_version: str = rest_field(
+        name="trainingConfigVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents training config version. Required."""
+    evaluation_options: Optional["_models.TextAuthoringEvaluationDetails"] = rest_field(
+        name="evaluationOptions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the evaluation options. By default, the evaluation kind is percentage, with training
+     split percentage as 80, and testing split percentage as 20."""
+    data_generation_settings: Optional["_models.DataGenerationSetting"] = rest_field(
+        name="dataGenerationSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the settings for using data generation as part of training a custom model."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        model_label: str,
+        training_config_version: str,
+        evaluation_options: Optional["_models.TextAuthoringEvaluationDetails"] = None,
+        data_generation_settings: Optional["_models.DataGenerationSetting"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringTrainingJobResult(_Model):
+    """Represents the output of a training job.
+
+    :ivar model_label: Represents trained model label. Required.
+    :vartype model_label: str
+    :ivar training_config_version: Represents training config version. Required.
+    :vartype training_config_version: str
+    :ivar training_status: Represents model train status. Required.
+    :vartype training_status:
+     ~azure.ai.language.text.authoring.models.TextAuthoringSubTrainingState
+    :ivar evaluation_status: Represents model evaluation status.
+    :vartype evaluation_status:
+     ~azure.ai.language.text.authoring.models.TextAuthoringSubTrainingState
+    :ivar estimated_end_on: Represents the estimate end date time for training and evaluation.
+    :vartype estimated_end_on: ~datetime.datetime
+    """
+
+    model_label: str = rest_field(name="modelLabel", visibility=["read", "create", "update", "delete", "query"])
+    """Represents trained model label. Required."""
+    training_config_version: str = rest_field(
+        name="trainingConfigVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents training config version. Required."""
+    training_status: "_models.TextAuthoringSubTrainingState" = rest_field(
+        name="trainingStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents model train status. Required."""
+    evaluation_status: Optional["_models.TextAuthoringSubTrainingState"] = rest_field(
+        name="evaluationStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents model evaluation status."""
+    estimated_end_on: Optional[datetime.datetime] = rest_field(
+        name="estimatedEndDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Represents the estimate end date time for training and evaluation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        model_label: str,
+        training_config_version: str,
+        training_status: "_models.TextAuthoringSubTrainingState",
+        evaluation_status: Optional["_models.TextAuthoringSubTrainingState"] = None,
+        estimated_end_on: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringTrainingState(_Model):
+    """Represents the state of a training job.
+
+    :ivar job_id: The job ID. Required.
+    :vartype job_id: str
+    :ivar created_on: The creation date time of the job. Required.
+    :vartype created_on: ~datetime.datetime
+    :ivar last_updated_on: The last date time the job was updated. Required.
+    :vartype last_updated_on: ~datetime.datetime
+    :ivar expires_on: The expiration date time of the job.
+    :vartype expires_on: ~datetime.datetime
+    :ivar status: The job status. Required. Known values are: "notStarted", "running", "succeeded",
+     "failed", "cancelled", "cancelling", and "partiallyCompleted".
+    :vartype status: str or ~azure.ai.language.text.authoring.models.TextAuthoringOperationStatus
+    :ivar warnings: The warnings that were encountered while executing the job.
+    :vartype warnings: list[~azure.core.ODataV4Format]
+    :ivar errors: The errors encountered while executing the job.
+    :vartype errors: list[~azure.core.ODataV4Format]
+    :ivar result: Represents training tasks detailed result. Required.
+    :vartype result: ~azure.ai.language.text.authoring.models.TextAuthoringTrainingJobResult
+    """
+
+    job_id: str = rest_field(name="jobId", visibility=["read"])
+    """The job ID. Required."""
+    created_on: datetime.datetime = rest_field(
+        name="createdDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The creation date time of the job. Required."""
+    last_updated_on: datetime.datetime = rest_field(
+        name="lastUpdatedDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The last date time the job was updated. Required."""
+    expires_on: Optional[datetime.datetime] = rest_field(
+        name="expirationDateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The expiration date time of the job."""
+    status: Union[str, "_models.TextAuthoringOperationStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The job status. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
+     \"failed\", \"cancelled\", \"cancelling\", and \"partiallyCompleted\"."""
+    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The warnings that were encountered while executing the job."""
+    errors: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The errors encountered while executing the job."""
+    result: "_models.TextAuthoringTrainingJobResult" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents training tasks detailed result. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        created_on: datetime.datetime,
+        last_updated_on: datetime.datetime,
+        status: Union[str, "_models.TextAuthoringOperationStatus"],
+        result: "_models.TextAuthoringTrainingJobResult",
+        expires_on: Optional[datetime.datetime] = None,
+        warnings: Optional[List[ODataV4Format]] = None,
+        errors: Optional[List[ODataV4Format]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextAuthoringUnassignDeploymentResourcesDetails(_Model):  # pylint: disable=name-too-long
+    """Represents the options to unassign Azure resources from a project.
+
+    :ivar assigned_resource_ids: Represents the assigned resource IDs to be unassigned. Required.
+    :vartype assigned_resource_ids: list[str]
+    """
+
+    assigned_resource_ids: List[str] = rest_field(
+        name="assignedResourceIds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the assigned resource IDs to be unassigned. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        assigned_resource_ids: List[str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TextSentimentEvalSummary(_Model):
+    """Represents the evaluation summary for a custom text sentiment project.
+
+    :ivar span_sentiments_evaluation: Represents evaluation of span level sentiments. Required.
+    :vartype span_sentiments_evaluation:
+     ~azure.ai.language.text.authoring.models.SpanSentimentEvalSummary
+    :ivar micro_f1: Represents the micro F1. Expected value is a float between 0 and 1 inclusive.
+     Required.
+    :vartype micro_f1: float
+    :ivar micro_precision: Represents the micro precision. Expected value is a float between 0 and
+     1 inclusive. Required.
+    :vartype micro_precision: float
+    :ivar micro_recall: Represents the micro recall. Expected value is a float between 0 and 1
+     inclusive. Required.
+    :vartype micro_recall: float
+    :ivar macro_f1: Represents the macro F1. Expected value is a float between 0 and 1 inclusive.
+     Required.
+    :vartype macro_f1: float
+    :ivar macro_precision: Represents the macro precision. Expected value is a float between 0 and
+     1 inclusive. Required.
+    :vartype macro_precision: float
+    :ivar macro_recall: Represents the macro recall. Expected value is a float between 0 and 1
+     inclusive. Required.
+    :vartype macro_recall: float
+    """
+
+    span_sentiments_evaluation: "_models.SpanSentimentEvalSummary" = rest_field(
+        name="spanSentimentsEvaluation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents evaluation of span level sentiments. Required."""
+    micro_f1: float = rest_field(name="microF1", visibility=["read", "create", "update", "delete", "query"])
+    """Represents the micro F1. Expected value is a float between 0 and 1 inclusive. Required."""
+    micro_precision: float = rest_field(
+        name="microPrecision", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the micro precision. Expected value is a float between 0 and 1 inclusive. Required."""
+    micro_recall: float = rest_field(name="microRecall", visibility=["read", "create", "update", "delete", "query"])
+    """Represents the micro recall. Expected value is a float between 0 and 1 inclusive. Required."""
+    macro_f1: float = rest_field(name="macroF1", visibility=["read", "create", "update", "delete", "query"])
+    """Represents the macro F1. Expected value is a float between 0 and 1 inclusive. Required."""
+    macro_precision: float = rest_field(
+        name="macroPrecision", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the macro precision. Expected value is a float between 0 and 1 inclusive. Required."""
+    macro_recall: float = rest_field(name="macroRecall", visibility=["read", "create", "update", "delete", "query"])
+    """Represents the macro recall. Expected value is a float between 0 and 1 inclusive. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        span_sentiments_evaluation: "_models.SpanSentimentEvalSummary",
+        micro_f1: float,
+        micro_precision: float,
+        micro_recall: float,
+        macro_f1: float,
+        macro_precision: float,
+        macro_recall: float,
     ) -> None: ...
 
     @overload

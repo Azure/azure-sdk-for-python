@@ -22,7 +22,7 @@ def main():
         credential="CREDENTIAL",
     )
 
-    response = client.text_analysis_authoring_list_training_config_versions()
+    response = client.list_training_config_versions()
     for item in response:
         print(item)
 

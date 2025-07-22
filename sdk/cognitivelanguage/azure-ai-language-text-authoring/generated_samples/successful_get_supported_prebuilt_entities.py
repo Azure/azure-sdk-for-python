@@ -22,7 +22,7 @@ def main():
         credential="CREDENTIAL",
     )
 
-    response = client.text_analysis_authoring_get_supported_prebuilt_entities()
+    response = client.get_supported_prebuilt_entities()
     for item in response:
         print(item)
 

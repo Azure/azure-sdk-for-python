@@ -22,7 +22,7 @@ def main():
         credential="CREDENTIAL",
     )
 
-    response = client.text_analysis_authoring_list_deployment_resources(
+    response = client.list_deployment_resources(
         project_name="LoanAgreements",
     )
     for item in response:

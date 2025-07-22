@@ -86,9 +86,9 @@ class TestAuthoringTextAuthoringProjectOperations(AuthoringClientTestBase):
 
     @AuthoringPreparer()
     @recorded_by_proxy
-    def test_text_authoring_project_copy_project_authorization(self, authoring_endpoint):
+    def test_text_authoring_project_authorize_project_copy(self, authoring_endpoint):
         client = self.create_client(endpoint=authoring_endpoint)
-        response = client.text_authoring_project.copy_project_authorization(
+        response = client.text_authoring_project.authorize_project_copy(
             project_name="str",
             body={"projectKind": "str", "allowOverwrite": bool, "storageInputContainerName": "str"},
             project_kind="str",
@@ -152,7 +152,7 @@ class TestAuthoringTextAuthoringProjectOperations(AuthoringClientTestBase):
                 },
                 "projectFileVersion": "str",
                 "stringIndexType": "str",
-                "assets": "text_analysis_authoring_exported_project_assets",
+                "assets": "text_authoring_exported_project_asset",
             },
         ).result()  # call '.result()' to poll until service return final result
 

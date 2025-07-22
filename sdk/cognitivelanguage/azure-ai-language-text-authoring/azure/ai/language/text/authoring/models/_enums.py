@@ -10,8 +10,16 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class CompositionSetting(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of CompositionSetting."""
+class StringIndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of StringIndexType."""
+
+    UTF16_CODE_UNIT = "Utf16CodeUnit"
+    """The offset and length values will correspond to UTF-16 code units. Use this option if your
+    application is written in a language that support Unicode, for example Java, JavaScript."""
+
+
+class TextAuthoringCompositionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of TextAuthoringCompositionMode."""
 
     SEPARATE_COMPONENTS = "separateComponents"
     """Every component's match or prediction is returned as a separate instance of the entity."""
@@ -20,8 +28,8 @@ class CompositionSetting(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     together into one span combining all of them."""
 
 
-class EvaluationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of EvaluationKind."""
+class TextAuthoringEvaluationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of TextAuthoringEvaluationKind."""
 
     PERCENTAGE = "percentage"
     """Split the data into training and test sets according to user-defined percentages."""
@@ -29,8 +37,8 @@ class EvaluationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Split the data according to the chosen dataset for every example in the data."""
 
 
-class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of JobStatus."""
+class TextAuthoringOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of TextAuthoringOperationStatus."""
 
     NOT_STARTED = "notStarted"
     RUNNING = "running"
@@ -41,8 +49,8 @@ class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PARTIALLY_COMPLETED = "partiallyCompleted"
 
 
-class ProjectKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of ProjectKind."""
+class TextAuthoringProjectKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of TextAuthoringProjectKind."""
 
     CUSTOM_SINGLE_LABEL_CLASSIFICATION = "CustomSingleLabelClassification"
     """For building a classification model to classify text using your own data. Each file will have
@@ -61,17 +69,9 @@ class ProjectKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """For building a sentiment models which are able to extract sentiment for long documents."""
 
 
-class Sentiment(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of Sentiment."""
+class TextAuthoringSentiment(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of TextAuthoringSentiment."""
 
     POSITIVE = "positive"
     NEGATIVE = "negative"
     NEUTRAL = "neutral"
-
-
-class StringIndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of StringIndexType."""
-
-    UTF16_CODE_UNIT = "Utf16CodeUnit"
-    """The offset and length values will correspond to UTF-16 code units. Use this option if your
-    application is written in a language that support Unicode, for example Java, JavaScript."""
