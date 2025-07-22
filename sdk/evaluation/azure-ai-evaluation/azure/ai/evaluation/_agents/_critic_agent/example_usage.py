@@ -115,16 +115,17 @@ def example_mixed_evaluation():
     )
     #
     critic_agent = CriticAgent(model_config=model_config)
+    azure_ai_project = {
+        "azure_endpoint": os.environ.get("PROJECT_ENDPOINT"),
 
+    }
     # Mode 1: Traditional evaluation (thread_id only)
     print("=== Mode 1: Thread Evaluation ===")
     try:
         thread_result = critic_agent.evaluate(
             identifier="thread_789",
-            conversation_history=[
-                {"role": "user", "content": "Hello"},
-                {"role": "assistant", "content": "Hi! How can I help you today?"}
-            ]
+            azure_ai_project=azure_ai_project,
+
         )
         print(thread_result)
     except Exception as e:
@@ -141,10 +142,17 @@ def example_mixed_evaluation():
     }
 
     try:
+        # Streamlining
         agent_result = critic_agent.evaluate(
             identifier="asst_J3Z9NXjcDW8NrtQZIUcIp2Hr",
             azure_ai_project=azure_ai_project,
             evaluation=["IntentResolution", "ToolCallAccuracy", "TaskAdherence"]
+        )
+
+        # Routing
+        agent_result = critic_agent.evaluate_route(
+            identifier="asst_J3Z9NXjcDW8NrtQZIUcIp2Hr",
+            azure_ai_project=azure_ai_project
         )
         print(agent_result)
     except Exception as e:
