@@ -63,6 +63,7 @@ class TestRateLimitedSampler(unittest.TestCase):
     def get_current_time_nanoseconds(self) -> int:
         return self.current_time
     
+    # Test sampling behavior with a high target rate and moderate span frequency
     def test_constant_rate_sampling(self):
         target_rate = 1000.0
         sampler = RateLimitedSampler(target_rate)
@@ -95,6 +96,7 @@ class TestRateLimitedSampler(unittest.TestCase):
 
         self.assertGreater(sampled_count, 0, "Should sample some spans with high target rate")
 
+    # Test throttling behavior under high volume of spans with low target rate
     def test_high_volume_sampling(self):
         target_rate = 5.0
         sampler = RateLimitedSampler(target_rate)
@@ -127,6 +129,7 @@ class TestRateLimitedSampler(unittest.TestCase):
         self.assertGreater(sampled_count, 0, "Should sample at least some spans even under high load")
         self.assertLess(sampled_count, num_spans * 0.1, "Should throttle significantly under high load")
 
+    # Test adaptive sampling when span arrival rate increases over time
     def test_rate_adaptation_increasing_load(self):
         target_rate = 20.0
         sampler = RateLimitedSampler(target_rate)
@@ -171,6 +174,7 @@ class TestRateLimitedSampler(unittest.TestCase):
         self.assertLess(phase2_percentage, phase1_percentage,
                        "Sampling percentage should decrease under high load")
     
+    # Test sampler instantiation with various target rates and description format
     def test_sampler_creation(self):
         for target_rate in [0.1, 0.5, 1.0, 5.0, 100.0]:
             sampler = RateLimitedSampler(target_rate)
@@ -180,10 +184,12 @@ class TestRateLimitedSampler(unittest.TestCase):
                 f"RateLimitedSampler{{{target_rate}}}"
             )
     
+    # Test that negative target rates raise a ValueError
     def test_negative_rate_raises_error(self):
         with self.assertRaises(ValueError):
             RateLimitedSampler(-1.0)
     
+    # Test sampling behavior with zero target rate
     def test_zero_rate_sampling(self):
         sampler = RateLimitedSampler(0.0)
         
@@ -198,6 +204,7 @@ class TestRateLimitedSampler(unittest.TestCase):
             self.assertIn(result.decision, [Decision.RECORD_AND_SAMPLE, Decision.DROP])
             self.assertIn(_SAMPLE_RATE_KEY, result.attributes)
     
+    # Test that the same trace ID produces consistent sampling decisions
     def test_sampling_decision_consistency(self):
         sampler = RateLimitedSampler(50.0)
         
@@ -217,6 +224,7 @@ class TestRateLimitedSampler(unittest.TestCase):
             self.assertEqual(result.decision, first_decision, 
                            "Sampling decision should be consistent for same trace ID")
     
+    # Test that sampling results include valid sample rate attributes
     def test_sampling_attributes(self):
         sampler = RateLimitedSampler(25.0)
         
@@ -235,6 +243,7 @@ class TestRateLimitedSampler(unittest.TestCase):
             self.assertGreaterEqual(float(sample_rate), 0.0)
             self.assertLessEqual(float(sample_rate), 100.0)
     
+    # Test sampling behavior with edge case trace ID values
     def test_sampler_with_extreme_trace_ids(self):
         sampler = RateLimitedSampler(1.0)
         
@@ -264,6 +273,7 @@ class TestRateLimitedSampler(unittest.TestCase):
                     self.assertGreaterEqual(float(sample_rate), 0.0)
                     self.assertLessEqual(float(sample_rate), 100.0)
     
+    # Test that sampler is thread-safe under concurrent access
     def test_thread_safety(self):
         sampler = RateLimitedSampler(10.0)
         results = []
@@ -293,6 +303,7 @@ class TestRateLimitedSampler(unittest.TestCase):
             self.assertIn(result.decision, [Decision.RECORD_AND_SAMPLE, Decision.DROP])
             self.assertIn(_SAMPLE_RATE_KEY, result.attributes)
 
+    # Test inheriting sampling decision from sampled parent span with sample rate
     def test_parent_span_sampled_with_sample_rate(self):
         sampler = RateLimitedSampler(10.0)
         
@@ -310,6 +321,7 @@ class TestRateLimitedSampler(unittest.TestCase):
             self.assertEqual(result.decision, Decision.RECORD_AND_SAMPLE)
             self.assertEqual(result.attributes[_SAMPLE_RATE_KEY], 75.0)
 
+    # Test inheriting sampling decision from non-sampled parent span with sample rate
     def test_parent_span_not_sampled_with_sample_rate(self):
         sampler = RateLimitedSampler(10.0)
         
@@ -327,6 +339,7 @@ class TestRateLimitedSampler(unittest.TestCase):
             self.assertEqual(result.decision, Decision.DROP)
             self.assertEqual(result.attributes[_SAMPLE_RATE_KEY], 0.0)
 
+    # Test parent span with 100% sample rate maintains decision
     def test_parent_span_sampled_with_100_percent_sample_rate(self):
         sampler = RateLimitedSampler(5.0)
         
@@ -344,6 +357,7 @@ class TestRateLimitedSampler(unittest.TestCase):
             self.assertEqual(result.decision, Decision.RECORD_AND_SAMPLE)
             self.assertEqual(result.attributes[_SAMPLE_RATE_KEY], 100.0)
 
+    # Test that remote parent spans are ignored for sampling decisions
     def test_parent_span_remote_ignored(self):
         sampler = RateLimitedSampler(5.0)
         
@@ -366,6 +380,7 @@ class TestRateLimitedSampler(unittest.TestCase):
             
             self.assertNotEqual(result.attributes[_SAMPLE_RATE_KEY], 80.0)
 
+    # Test parent span without sample rate attribute uses local sampling
     def test_parent_span_no_sample_rate_attribute(self):
         sampler = RateLimitedSampler(5.0)
         
@@ -390,6 +405,7 @@ class TestRateLimitedSampler(unittest.TestCase):
             sample_rate = result.attributes[_SAMPLE_RATE_KEY]
             self.assertIsInstance(sample_rate, (int, float))
 
+    # Test handling parent span with invalid span context
     def test_parent_span_invalid_context(self):
         sampler = RateLimitedSampler(5.0)
         
@@ -418,6 +434,7 @@ class TestRateLimitedSampler(unittest.TestCase):
             sample_rate = result.attributes[_SAMPLE_RATE_KEY]
             self.assertIsInstance(sample_rate, (int, float))
 
+    # Test sampling behavior when no parent context is provided
     def test_no_parent_context_uses_local_sampling(self):
         sampler = RateLimitedSampler(5.0)
         
@@ -437,6 +454,7 @@ class TestRateLimitedSampler(unittest.TestCase):
         sample_rate = result.attributes[_SAMPLE_RATE_KEY]
         self.assertIsInstance(sample_rate, (int, float))
 
+    # Test that original span attributes are preserved in sampling result
     def test_parent_context_preserves_original_attributes(self):
         sampler = RateLimitedSampler(10.0)
         
@@ -464,6 +482,7 @@ class TestRateLimitedSampler(unittest.TestCase):
 
 class TestUtilityFunctions(unittest.TestCase):
     
+    # Test that DJB2 hash produces consistent results for the same input
     def test_djb2_hash_consistency(self):
         from azure.monitor.opentelemetry.exporter.export.trace._utils import _get_DJB2_sample_score
         
@@ -473,6 +492,7 @@ class TestUtilityFunctions(unittest.TestCase):
 
         self.assertTrue(all(score == scores[0] for score in scores))
     
+    # Test DJB2 hash function with edge case inputs
     def test_djb2_hash_edge_cases(self):
         from azure.monitor.opentelemetry.exporter.export.trace._utils import _get_DJB2_sample_score
         
