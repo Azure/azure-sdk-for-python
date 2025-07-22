@@ -158,7 +158,7 @@ class RunSubmitter:
                 system_metrics.update(dataclasses.asdict(batch_result.tokens))  # token related
                 system_metrics.update(
                     {
-                        "duration": batch_result.duration.total_seconds(),
+                        # "duration": batch_result.duration.total_seconds(),
                         # "__pf__.lines.completed": batch_result.total_lines - batch_result.failed_lines,
                         # "__pf__.lines.failed": batch_result.failed_lines,
                     }
