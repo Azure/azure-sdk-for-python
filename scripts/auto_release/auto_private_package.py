@@ -53,8 +53,7 @@ class AutoPrivatePackage:
 
     def generate_private_package(self):
         self.step_into_package_folder()
-        check_call("python setup.py bdist_wheel")
-        check_call("python setup.py sdist --format zip")
+        check_call("python -m build")
         print(f'\n package in : {str(Path(os.getcwd()) / "dist")}')
         os.system("pause")
 
