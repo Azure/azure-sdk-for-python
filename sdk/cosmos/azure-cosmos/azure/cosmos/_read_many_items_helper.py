@@ -55,13 +55,13 @@ class ReadManyItemsHelper:
 
             except Exception as e:
                 # Log the error but skip the item
-                logger.warning(f"Failed to process item {item_id}:{partition_key_value} - {e}")
+                self.logger.warning(f"Failed to process item {item_id}:{partition_key_value} - {e}")
                 continue  # Skip this item entirely
 
         return items_by_partition
 
+    @staticmethod
     def create_query_chunks(
-            self,
             items_by_partition: Dict[str, List[Tuple[str, PartitionKeyType]]],
             max_items_per_query: int
     ) -> List[Dict[str, List[Tuple[str, PartitionKeyType]]]]:
@@ -73,6 +73,7 @@ class ReadManyItemsHelper:
                 chunk = partition_items[i:i + max_items_per_query]
                 query_chunks.append({partition_id: chunk})
         return query_chunks
+
 
     async def execute_queries_concurrently(
             self,
@@ -91,10 +92,13 @@ class ReadManyItemsHelper:
 
         async def execute_chunk_query(partition_id, chunk_partition_items):
             async with semaphore:
-                if _QueryBuilder._can_optimize_with_id_in_clause(chunk_partition_items, partition_key_definition):
-                    query_obj = _QueryBuilder._build_id_in_query(chunk_partition_items)
+                if _QueryBuilder.is_id_partition_key_query(chunk_partition_items, partition_key_definition):
+                    query_obj = _QueryBuilder.build_id_in_query(chunk_partition_items)
+                # Optimization for single logical partition key
+                elif _QueryBuilder.is_single_logical_partition_query(chunk_partition_items):
+                    query_obj = _QueryBuilder.build_pk_and_id_in_query(chunk_partition_items, partition_key_definition)
                 else:
-                    query_obj = _QueryBuilder._build_parameterized_query_for_items(
+                    query_obj = _QueryBuilder.build_parameterized_query_for_items(
                         {partition_id: chunk_partition_items},
                         partition_key_definition)
 

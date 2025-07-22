@@ -34,6 +34,7 @@ from azure.cosmos._change_feed.change_feed_utils import validate_kwargs
 
 from ._cosmos_client_connection_async import CosmosClientConnection
 from ._scripts import ScriptsProxy
+from .. import exceptions
 from .._base import (
     build_options as _build_options,
     validate_cache_staleness_value,
@@ -453,8 +454,20 @@ class ContainerProxy:
             kwargs['initial_headers'] = custom_headers
         if consistency_level is not None:
             kwargs['consistencyLevel'] = consistency_level
-        kwargs["containerProperties"] = self._get_properties_with_options
 
+
+        # Optimization: If only one item, use point read
+        if len(items) == 1:
+            item_id, partition_key = items[0]
+            if item_id is None or partition_key is None:
+                raise ValueError("Each item must have an 'id' and a partition key value.")
+            try:
+                result = await self.read_item(item=item_id, partition_key=partition_key, **kwargs)
+                return CosmosList([result], response_headers=self.client_connection.last_response_headers)
+            except exceptions.CosmosResourceNotFoundError:
+                return CosmosList([], response_headers=self.client_connection.last_response_headers)
+
+        kwargs["containerProperties"] = self._get_properties_with_options
         query_options = _build_options(kwargs)
         await self._get_properties_with_options(query_options)
         query_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]

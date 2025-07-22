@@ -11,7 +11,7 @@ class _QueryBuilder:
     """Internal class for building optimized queries for multi-item operations."""
 
     @staticmethod
-    def _can_optimize_with_id_in_clause(
+    def is_id_partition_key_query(
             items: List[Tuple[str, PartitionKeyType]],
             partition_key_definition: Dict[str, Any]
     ) -> bool:
@@ -33,7 +33,41 @@ class _QueryBuilder:
         return True
 
     @staticmethod
-    def _build_id_in_query(items: List[Tuple[str, PartitionKeyType]]) -> Dict[str, Any]:
+    def is_single_logical_partition_query(
+            items: List[Tuple[str, PartitionKeyType]]
+    ) -> bool:
+        """
+        Check if all items in a chunk belong to the same logical partition and would benefit from an IN clause.
+        """
+        if not items or len(items) <= 1:
+            return False
+        first_pk = items[0][1]
+        return all(item[1] == first_pk for item in items)
+
+    @staticmethod
+    def build_pk_and_id_in_query(
+            items: List[Tuple[str, PartitionKeyType]],
+            partition_key_definition: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """
+        Build a query for items in a single logical partition using an IN clause for IDs.
+        e.g., SELECT * FROM c WHERE c.pk = @pk AND c.id IN (@id1, @id2)
+        """
+        partition_key_path = partition_key_definition['paths'][0].replace('/', '')
+        partition_key_value = items[0][1]
+
+        id_params = {f"@id{i}": item[0] for i, item in enumerate(items)}
+        id_param_names = ", ".join(id_params.keys())
+
+        query_text = f"SELECT * FROM c WHERE c.{partition_key_path} = @pk AND c.id IN ({id_param_names})"
+
+        parameters = [{"name": "@pk", "value": partition_key_value}]
+        parameters.extend([{"name": name, "value": value} for name, value in id_params.items()])
+
+        return {"query": query_text, "parameters": parameters}
+
+    @staticmethod
+    def build_id_in_query(items: List[Tuple[str, PartitionKeyType]]) -> Dict[str, Any]:
         """Build optimized query using ID IN clause when ID equals partition key."""
         param_names = []
         parameters = []
@@ -51,7 +85,7 @@ class _QueryBuilder:
         }
 
     @staticmethod
-    def _build_parameterized_query_for_items(
+    def build_parameterized_query_for_items(
             items_by_partition: Dict[str, List[Tuple[str, PartitionKeyType]]],
             partition_key_definition: Dict[str, Any]
     ) -> Dict[str, Any]:
