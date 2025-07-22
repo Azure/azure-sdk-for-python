@@ -125,13 +125,14 @@ class TestCRUDOperations(unittest.TestCase):
         self.assertEqual(replaced_document.get('key'), document_definition.get('key'))
 
         # upsert document(create scenario)
-        document_definition['id'] = 'document2'
-        document_definition['key'] = 'value2'
+        new_document_definition = {'id': 'document2',
+                               'key': 'value2',
+                               'pk': 'pk'}
 
-        upserted_document = created_collection.upsert_item(body=document_definition)
+        upserted_document = created_collection.upsert_item(body=new_document_definition)
 
-        self.assertEqual(upserted_document.get('id'), document_definition.get('id'))
-        self.assertEqual(upserted_document.get('key'), document_definition.get('key'))
+        self.assertEqual(upserted_document.get('id'), new_document_definition.get('id'))
+        self.assertEqual(upserted_document.get('key'), new_document_definition.get('key'))
 
         documentlist = list(created_collection.read_all_items())
         self.assertEqual(2, len(documentlist))

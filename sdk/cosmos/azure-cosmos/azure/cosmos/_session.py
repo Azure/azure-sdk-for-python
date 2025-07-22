@@ -160,6 +160,8 @@ class SessionContainer(object):
                     else:
                         # if the collection name is not in the map, we need to get the rid from containers cache
                         collection_rid = container_properties_cache.get(collection_name, {}).get("_rid")
+                        if collection_rid:
+                            self.collection_name_to_rid[collection_name] = collection_rid
                 else:
                     collection_rid = _base.GetItemContainerLink(resource_path)
 
