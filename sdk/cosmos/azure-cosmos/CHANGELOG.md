@@ -10,6 +10,7 @@
 #### Bugs Fixed
 * Fixed session container compound session token logic. The SDK will now only send the relevant partition-local session tokens for each read request, as opposed to the entire compound session token for the container. See [PR 41678](https://github.com/Azure/azure-sdk-for-python/pull/41678).
 * Write requests for single-write region accounts will no longer send session tokens when using session consistency. See [PR 41678](https://github.com/Azure/azure-sdk-for-python/pull/41678).
+* Fixed bug where container cache was not being properly updated resulting in unnecessary extra requests. See [PR 42143](https://github.com/Azure/azure-sdk-for-python/pull/42143).
 
 #### Other Changes
 

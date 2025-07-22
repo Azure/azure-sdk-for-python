@@ -29,6 +29,7 @@
 - Fixes and improvements to ToolCallAccuracy evaluator. New version has less variance. and now works on all tool calls that happen in a turn at once. Previously, it worked on each tool call independently without having context on the other tool calls that happen in the same turn, and then aggregated the results to a score in the range [0-1]. The score range is now [1-5].
 - Fixed MeteorScoreEvaluator and other threshold-based evaluators returning incorrect binary results due to integer conversion of decimal scores. Previously, decimal scores like 0.9375 were incorrectly converted to integers (0) before threshold comparison, causing them to fail even when above the threshold. [#41415](https://github.com/Azure/azure-sdk-for-python/issues/41415)
 - Added a new enum `ADVERSARIAL_QA_DOCUMENTS` which moves all the "file_content" type prompts away from `ADVERSARIAL_QA` to the new enum
+- `AzureOpenAIScoreModelGrader` evaluator now supports `pass_threshold` parameter to set the minimum score required for a response to be considered passing. This allows users to define custom thresholds for evaluation results, enhancing flexibility in grading AI model responses.
 
 ## 1.8.0 (2025-05-29)
 
