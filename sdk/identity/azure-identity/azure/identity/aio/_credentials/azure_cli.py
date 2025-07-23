@@ -104,7 +104,7 @@ class AzureCliCredential(AsyncContextManager):
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked the Azure CLI but didn't
           receive an access token.
         """
-        if claims:
+        if claims and claims.strip():
             raise CredentialUnavailableError(f"Fail to get token, please run az login --claims-challenge {claims}")
             
         # only ProactorEventLoop supports subprocesses on Windows (and it isn't the default loop on Python < 3.8)
@@ -139,7 +139,7 @@ class AzureCliCredential(AsyncContextManager):
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked the Azure CLI but didn't
           receive an access token.
         """
-        if options and options.get("claims"):
+        if options and options.get("claims") and options.get("claims").strip():
             claims = options["claims"]
             raise CredentialUnavailableError(f"Fail to get token, please run az login --claims-challenge {claims}")
             

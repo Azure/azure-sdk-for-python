@@ -113,7 +113,7 @@ class AzureCliCredential:
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked the Azure CLI but didn't
           receive an access token.
         """
-        if claims:
+        if claims and claims.strip():
             raise CredentialUnavailableError(f"Fail to get token, please run az login --claims-challenge {claims}")
 
         options: TokenRequestOptions = {}
@@ -144,7 +144,7 @@ class AzureCliCredential:
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked the Azure CLI but didn't
           receive an access token.
         """
-        if options and options.get("claims"):
+        if options and options.get("claims") and options.get("claims").strip():
             claims = options["claims"]
             raise CredentialUnavailableError(f"Fail to get token, please run az login --claims-challenge {claims}")
             

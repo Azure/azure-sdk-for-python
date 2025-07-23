@@ -434,6 +434,10 @@ async def test_empty_claims_does_not_raise_error(get_token_method):
                 # Test with None explicitly
                 token = await AzureCliCredential().get_token("scope", claims=None)
                 assert token.token == "access-token"
+                
+                # Test with whitespace-only string
+                token = await AzureCliCredential().get_token("scope", claims="   ")
+                assert token.token == "access-token"
             else:  # get_token_info
                 # Test with None options
                 token = await AzureCliCredential().get_token_info("scope")
@@ -449,4 +453,8 @@ async def test_empty_claims_does_not_raise_error(get_token_method):
                 
                 # Test with empty string claims in options 
                 token = await AzureCliCredential().get_token_info("scope", options={"claims": ""})
+                assert token.token == "access-token"
+                
+                # Test with whitespace-only claims in options
+                token = await AzureCliCredential().get_token_info("scope", options={"claims": "   "})
                 assert token.token == "access-token"

@@ -432,6 +432,10 @@ def test_empty_claims_does_not_raise_error(get_token_method):
                 # Test with None explicitly
                 token = AzureCliCredential().get_token("scope", claims=None)
                 assert token.token == "token"
+                
+                # Test with whitespace-only string
+                token = AzureCliCredential().get_token("scope", claims="   ")
+                assert token.token == "token"
             else:  # get_token_info
                 # Test with None options
                 token = AzureCliCredential().get_token_info("scope")
@@ -447,4 +451,8 @@ def test_empty_claims_does_not_raise_error(get_token_method):
                 
                 # Test with empty string claims in options 
                 token = AzureCliCredential().get_token_info("scope", options={"claims": ""})
+                assert token.token == "token"
+                
+                # Test with whitespace-only claims in options
+                token = AzureCliCredential().get_token_info("scope", options={"claims": "   "})
                 assert token.token == "token"
