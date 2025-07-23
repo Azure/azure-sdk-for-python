@@ -46,7 +46,6 @@ class UserAgentSingleton:
 
         :param subtype: The subtype to use in the red team user agent. Defaults to "RedTeam"
         :type subtype: str
-        :param kwargs: Additional keyword arguments for future extensibility
         """
         with cls.add_useragent_product(f"(type=redteam; subtype={subtype})"):
             yield
