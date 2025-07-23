@@ -156,9 +156,7 @@ class AzurePowerShellCredential:
         return AccessToken(token_info.token, token_info.expires_on)
 
     @log_get_token
-    def get_token_info(
-        self, *scopes: str, options: Optional[TokenRequestOptions] = None
-    ) -> AccessTokenInfo:
+    def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
         """Request an access token for `scopes`.
 
         This is an alternative to `get_token` to enable certain scenarios that require additional properties
@@ -217,9 +215,7 @@ def run_command_line(command_line: List[str], timeout: int) -> str:
     try:
         proc = start_process(command_line)
         stdout, stderr = proc.communicate(**kwargs)
-        if sys.platform.startswith("win") and (
-            "' is not recognized" in stderr or proc.returncode == 9009
-        ):
+        if sys.platform.startswith("win") and ("' is not recognized" in stderr or proc.returncode == 9009):
             # pwsh.exe isn't on the path; try powershell.exe
             command_line[-1] = command_line[-1].replace("pwsh", "powershell", 1)
             proc = start_process(command_line)
@@ -261,12 +257,8 @@ def parse_token(output: str) -> AccessTokenInfo:
             return AccessTokenInfo(token, int(expires_on))
 
     if within_dac.get():
-        raise CredentialUnavailableError(
-            message='Unexpected output from Get-AzAccessToken: "{}"'.format(output)
-        )
-    raise ClientAuthenticationError(
-        message='Unexpected output from Get-AzAccessToken: "{}"'.format(output)
-    )
+        raise CredentialUnavailableError(message='Unexpected output from Get-AzAccessToken: "{}"'.format(output))
+    raise ClientAuthenticationError(message='Unexpected output from Get-AzAccessToken: "{}"'.format(output))
 
 
 def get_command_line(scopes: Tuple[str, ...], tenant_id: str) -> List[str]:
