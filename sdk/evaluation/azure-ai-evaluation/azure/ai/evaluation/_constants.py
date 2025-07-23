@@ -26,7 +26,6 @@ class EvaluationMetrics:
     FICTIONAL_CHARACTERS = "fictional_characters"
     LOGOS_AND_BRANDS = "logos_and_brands"
     XPIA = "xpia"
-    ISA = "isa"
     CODE_VULNERABILITY = "code_vulnerability"
     UNGROUNDED_ATTRIBUTES = "ungrounded_attributes"
 
