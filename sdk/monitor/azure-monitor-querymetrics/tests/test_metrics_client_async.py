@@ -82,11 +82,11 @@ class TestMetricsClientAsync(MetricsClientTestCase):
         client = MetricsClient(endpoint, credential, audience=audience)
 
         assert client._endpoint == endpoint
-        assert client._client._config.authentication_policy
-        assert f"{audience}/.default" in client._client._config.authentication_policy._scopes
+        assert client._config.authentication_policy
+        assert f"{audience}/.default" in client._config.authentication_policy._scopes
 
     @pytest.mark.asyncio
     async def test_client_user_agent(self):
         client: MetricsClient = self.get_client(MetricsClient, self.get_credential(MetricsClient, is_async=True))
         async with client:
-            assert f"monitor-querymetrics/{VERSION}" in client._client._config.user_agent_policy.user_agent
+            assert f"monitor-querymetrics/{VERSION}" in client._config.user_agent_policy.user_agent

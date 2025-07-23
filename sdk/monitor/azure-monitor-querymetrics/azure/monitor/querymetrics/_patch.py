@@ -11,16 +11,25 @@ from typing import List, Any, TYPE_CHECKING
 
 from ._client import MetricsClient as GeneratedClient
 from ._sdk_moniker import SDK_MONIKER
+from ._enums import MetricAggregationType
+from ._models import MetricsQueryResult, TimeSeriesElement, Metric, MetricValue
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = [
+    "MetricsClient",
+    "MetricAggregationType",
+    "MetricsQueryResult",
+    "TimeSeriesElement",
+    "Metric",
+    "MetricValue",
+]  # Add all objects you want publicly available to users at this package level
 
 
 class MetricsClient(GeneratedClient):
-    """MetricsClient should be used for performing metrics queries on multiple monitored resources in the
+    """MetricsClient Paul should be used for performing metrics queries on multiple monitored resources in the
     same region. A credential with authorization at the subscription level is required when using this client.
 
     :param str endpoint: The regional endpoint to use, for example
@@ -28,10 +37,12 @@ class MetricsClient(GeneratedClient):
         resources. For global resources, the region should be 'global'. Required.
     :param credential: The credential to authenticate the client.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword str audience: The audience to use when requesting tokens for Microsoft Entra ID. Defaults to the public
+    :keyword audience: The audience to use when requesting tokens for Microsoft Entra ID. Defaults to the public
         cloud audience (https://metrics.monitor.azure.com).
-    :keyword str api_version: The API version to use for this operation. Default value is "2024-02-01".
+    :paramtype audience: str
+    :keyword api_version: The API version to use for this operation. Default value is "2024-02-01".
      Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:

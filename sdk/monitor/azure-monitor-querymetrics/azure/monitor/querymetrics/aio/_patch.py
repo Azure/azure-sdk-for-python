@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = ["MetricsClient"]  # Add all objects you want publicly available to users at this package level
 
 
 class MetricsClient(GeneratedClient):
@@ -28,10 +28,12 @@ class MetricsClient(GeneratedClient):
         resources. For global resources, the region should be 'global'. Required.
     :param credential: The credential to authenticate the client.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword str audience: The audience to use when requesting tokens for Microsoft Entra ID. Defaults to the public
+    :keyword audience: The audience to use when requesting tokens for Microsoft Entra ID. Defaults to the public
         cloud audience (https://metrics.monitor.azure.com).
-    :keyword str api_version: The API version to use for this operation. Default value is "2024-02-01".
+    :paramtype audience: str
+    :keyword api_version: The API version to use for this operation. Default value is "2024-02-01".
      Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:

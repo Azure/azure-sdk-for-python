@@ -20,8 +20,6 @@ from .._models import MetricsQueryResult
 from .._helpers import get_timespan_iso8601_endpoints, get_subscription_id_from_resource
 
 
-__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
-
 JSON = MutableMapping[str, Any]
 
 
@@ -140,6 +138,11 @@ class _MetricsClientOperationsMixin(GeneratedOps):
             MetricsQueryResult._from_generated(value)  # pylint: disable=protected-access
             for value in generated["values"]
         ]
+
+
+__all__: List[str] = [
+    "_MetricsClientOperationsMixin"
+]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():

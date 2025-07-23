@@ -1071,7 +1071,8 @@
         "percentilesw",
         "plotly",
         "nbformat",
-        "nbconvert"
+        "nbconvert",
+        "rollupby"
       ]
     },
     {
