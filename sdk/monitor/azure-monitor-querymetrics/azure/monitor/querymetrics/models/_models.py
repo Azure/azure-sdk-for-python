@@ -8,7 +8,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, List, Optional, TYPE_CHECKING, Union
+from typing import Any, List, Optional, Mapping, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_field
 
