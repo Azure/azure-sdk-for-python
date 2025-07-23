@@ -84,7 +84,7 @@ class AzurePowerShellCredential(AsyncContextManager):
         # Check if claims challenge is provided
         if claims:
             raise CredentialUnavailableError(
-                message="Fail to get token, please run Connect-AzAccount --ClaimsChallenge"
+                message=f"Fail to get token with claims challenge '{claims}', please run Connect-AzAccount --ClaimsChallenge"
             )
 
         # only ProactorEventLoop supports subprocesses on Windows (and it isn't the default loop on Python < 3.8)
@@ -122,8 +122,9 @@ class AzurePowerShellCredential(AsyncContextManager):
 
         # Check if claims challenge is provided
         if options and options.get("claims"):
+            claims_value = options.get("claims")
             raise CredentialUnavailableError(
-                message="Fail to get token, please run Connect-AzAccount --ClaimsChallenge"
+                message=f"Fail to get token with claims challenge '{claims_value}', please run Connect-AzAccount --ClaimsChallenge"
             )
 
         if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
@@ -136,8 +137,9 @@ class AzurePowerShellCredential(AsyncContextManager):
 
         # Check if claims challenge is provided
         if options and options.get("claims"):
+            claims_value = options.get("claims")
             raise CredentialUnavailableError(
-                message="Fail to get token, please run Connect-AzAccount --ClaimsChallenge"
+                message=f"Fail to get token with claims challenge '{claims_value}', please run Connect-AzAccount --ClaimsChallenge"
             )
 
         tenant_id = options.get("tenant_id") if options else None
