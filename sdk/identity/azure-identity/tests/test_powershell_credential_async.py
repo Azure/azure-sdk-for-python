@@ -389,3 +389,52 @@ async def test_multitenant_authentication_not_allowed(get_token_method):
                 kwargs = {"options": kwargs}
             token = await getattr(credential, get_token_method)("scope", **kwargs)
             assert token.token == expected_token
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_claims_challenge_error(get_token_method):
+    """The credential should raise CredentialUnavailableError when claims challenge is provided"""
+    
+    if get_token_method == "get_token":
+        # Test claims parameter in get_token method
+        with pytest.raises(CredentialUnavailableError) as exc_info:
+            await getattr(AzurePowerShellCredential(), get_token_method)("scope", claims="some-claims")
+        assert "Fail to get token, please run Connect-AzAccount --ClaimsChallenge" in str(exc_info.value)
+    else:
+        # Test claims in options for get_token_info method
+        with pytest.raises(CredentialUnavailableError) as exc_info:
+            await getattr(AzurePowerShellCredential(), get_token_method)("scope", options={"claims": "some-claims"})
+        assert "Fail to get token, please run Connect-AzAccount --ClaimsChallenge" in str(exc_info.value)
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_empty_claims_no_error(get_token_method):
+    """The credential should not raise error for empty or None claims"""
+    
+    # Mock successful token response
+    expected_access_token = "access"
+    expected_expires_on = 1617923581
+    stdout = "azsdk%{}%{}".format(expected_access_token, expected_expires_on)
+    
+    exec_mock = get_mock_exec(stdout=stdout)
+    with patch(CREATE_SUBPROCESS_EXEC, exec_mock):
+        if get_token_method == "get_token":
+            # Test None claims parameter in get_token method
+            token = await getattr(AzurePowerShellCredential(), get_token_method)("scope", claims=None)
+            assert token.token == expected_access_token
+            
+            # Test empty string claims
+            token = await getattr(AzurePowerShellCredential(), get_token_method)("scope", claims="")
+            assert token.token == expected_access_token
+        else:
+            # Test None claims in options for get_token_info method
+            token = await getattr(AzurePowerShellCredential(), get_token_method)("scope", options={"claims": None})
+            assert token.token == expected_access_token
+            
+            # Test empty string claims in options
+            token = await getattr(AzurePowerShellCredential(), get_token_method)("scope", options={"claims": ""})
+            assert token.token == expected_access_token
+            
+            # Test missing claims key in options
+            token = await getattr(AzurePowerShellCredential(), get_token_method)("scope", options={})
+            assert token.token == expected_access_token

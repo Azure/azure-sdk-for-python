@@ -112,7 +112,7 @@ class AzurePowerShellCredential:
     def get_token(
         self,
         *scopes: str,
-        claims: Optional[str] = None,  # pylint:disable=unused-argument
+        claims: Optional[str] = None,
         tenant_id: Optional[str] = None,
         **kwargs: Any,
     ) -> AccessToken:
@@ -135,6 +135,12 @@ class AzurePowerShellCredential:
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked Azure PowerShell but didn't
           receive an access token
         """
+
+        # Check if claims challenge is provided
+        if claims:
+            raise CredentialUnavailableError(
+                message="Fail to get token, please run Connect-AzAccount --ClaimsChallenge"
+            )
 
         options: TokenRequestOptions = {}
         if tenant_id:
@@ -169,6 +175,12 @@ class AzurePowerShellCredential:
     def _get_token_base(
         self, *scopes: str, options: Optional[TokenRequestOptions] = None, **kwargs: Any
     ) -> AccessTokenInfo:
+
+        # Check if claims challenge is provided
+        if options and options.get("claims"):
+            raise CredentialUnavailableError(
+                message="Fail to get token, please run Connect-AzAccount --ClaimsChallenge"
+            )
 
         tenant_id = options.get("tenant_id") if options else None
         if tenant_id:
