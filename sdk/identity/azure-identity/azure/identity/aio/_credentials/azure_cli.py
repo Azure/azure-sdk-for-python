@@ -94,7 +94,8 @@ class AzureCliCredential(AsyncContextManager):
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
             For more information about scopes, see
             https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
-        :keyword str claims: additional claims required in the token. This credential does not support claims challenges.
+        :keyword str claims: additional claims required in the token. This credential does not support claims
+            challenges.
         :keyword str tenant_id: optional tenant to include in the token request.
 
         :return: An access token with the desired scopes.
@@ -106,7 +107,7 @@ class AzureCliCredential(AsyncContextManager):
         """
         if claims and claims.strip():
             raise CredentialUnavailableError(f"Fail to get token, please run az login --claims-challenge {claims}")
-            
+
         # only ProactorEventLoop supports subprocesses on Windows (and it isn't the default loop on Python < 3.8)
         if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
             return _SyncAzureCliCredential().get_token(*scopes, tenant_id=tenant_id, **kwargs)
@@ -141,8 +142,9 @@ class AzureCliCredential(AsyncContextManager):
         """
         claims_value = options.get("claims") if options else None
         if claims_value and claims_value.strip():
-            raise CredentialUnavailableError(f"Fail to get token, please run az login --claims-challenge {claims_value}")
-            
+            raise CredentialUnavailableError(
+                f"Fail to get token, please run az login --claims-challenge {claims_value}"
+            )
         # only ProactorEventLoop supports subprocesses on Windows (and it isn't the default loop on Python < 3.8)
         if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
             return _SyncAzureCliCredential().get_token_info(*scopes, options=options)

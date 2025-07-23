@@ -102,7 +102,8 @@ class AzureCliCredential:
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
             For more information about scopes, see
             https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
-        :keyword str claims: additional claims required in the token. This credential does not support claims challenges.
+        :keyword str claims: additional claims required in the token. This credential does not support claims
+            challenges.
         :keyword str tenant_id: optional tenant to include in the token request.
 
         :return: An access token with the desired scopes.
@@ -146,8 +147,9 @@ class AzureCliCredential:
         """
         claims_value = options.get("claims") if options else None
         if claims_value and claims_value.strip():
-            raise CredentialUnavailableError(f"Fail to get token, please run az login --claims-challenge {claims_value}")
-            
+            raise CredentialUnavailableError(
+                f"Fail to get token, please run az login --claims-challenge {claims_value}"
+            )
         return self._get_token_base(*scopes, options=options)
 
     def _get_token_base(
