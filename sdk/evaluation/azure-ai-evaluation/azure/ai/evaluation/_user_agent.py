@@ -36,16 +36,4 @@ class UserAgentSingleton:
 
         cls.__BASE_USER_AGENT = old_useragent
 
-    @classmethod
-    @contextmanager
-    def redteam_context(cls, *, subtype: str = "RedTeam", **kwargs) -> Iterator[None]:
-        """Context manager to use red team user agent for RAI service calls
 
-        This context manager temporarily sets the user agent to include red team context
-        for all calls within the context.
-
-        :param subtype: The subtype to use in the red team user agent. Defaults to "RedTeam"
-        :type subtype: str
-        """
-        with cls.add_useragent_product(f"(type=redteam; subtype={subtype})"):
-            yield

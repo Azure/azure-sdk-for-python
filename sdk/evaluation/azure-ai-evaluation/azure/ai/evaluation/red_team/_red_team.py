@@ -2894,12 +2894,8 @@ class RedTeam:
         :rtype: RedTeamResult
         """
         # Use red team user agent for RAI service calls made within the scan method
-        user_agent: Optional[str] = kwargs.get("user_agent")
-        with (
-            UserAgentSingleton().add_useragent_product(user_agent)
-            if user_agent
-            else UserAgentSingleton.redteam_context()
-        ):
+        user_agent: Optional[str] = kwargs.get("user_agent", "(type=redteam; subtype=RedTeam)")
+        with UserAgentSingleton().add_useragent_product(user_agent):
             # Start timing for performance tracking
             self.start_time = time.time()
 
