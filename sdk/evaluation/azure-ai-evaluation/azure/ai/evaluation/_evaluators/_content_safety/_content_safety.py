@@ -97,8 +97,6 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
         evaluate_query_kwargs = {}
         if 'evaluate_query' in kwargs:
             evaluate_query_kwargs['evaluate_query'] = kwargs['evaluate_query']
-        if '_evaluate_query' in kwargs:
-            evaluate_query_kwargs['_evaluate_query'] = kwargs['_evaluate_query']
         
         evaluators = [
             ViolenceEvaluator(

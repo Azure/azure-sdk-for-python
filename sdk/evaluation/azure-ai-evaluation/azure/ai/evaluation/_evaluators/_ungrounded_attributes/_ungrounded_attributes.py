@@ -70,7 +70,7 @@ class UngroundedAttributesEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         **kwargs,
     ):
         # Set default for evaluate_query if not provided
-        if 'evaluate_query' not in kwargs and '_evaluate_query' not in kwargs:
+        if 'evaluate_query' not in kwargs:
             kwargs['evaluate_query'] = True
             
         super().__init__(
