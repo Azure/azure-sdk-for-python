@@ -1037,9 +1037,6 @@ class RedTeam:
                 self.task_statuses[task_key] = TASK_STATUS["COMPLETED"]
                 return orchestrator
 
-            # Debug log the first few characters of each prompt
-            self.logger.debug(f"First prompt (truncated): {all_prompts[0][:50]}...")
-
             # Use a batched approach for send_prompts_async to prevent overwhelming
             # the model with too many concurrent requests
             batch_size = min(len(all_prompts), 3)  # Process 3 prompts at a time max
