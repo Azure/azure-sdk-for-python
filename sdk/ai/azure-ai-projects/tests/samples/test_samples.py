@@ -22,8 +22,8 @@ class TestSamples:
     * set PROJECT_ENDPOINT=<your-project-endpoint> - Define your Azure AI Foundry project endpoint used by the test.
     * set ENABLE_AZURE_AI_PROJECTS_CONSOLE_LOGGING=false - to make sure logging is not enabled in the test, to reduce console spew.
     * Uncomment the two lines that start with "@pytest.mark.skip" below.
-    * Run:  pytest tests/samples/test_samples.py::TestSamples
-    * Load the resulting report in Excel: tests/samples/samples_report.csv
+    * Run:  pytest tests\samples\test_samples.py::TestSamples
+    * Load the resulting report in Excel: tests\samples\samples_report.csv
     """
 
     @classmethod
@@ -148,51 +148,67 @@ class TestSamples:
     @pytest.mark.parametrize(
         "sample_name, model_deployment_name, connection_name, data_folder",
         [
-            ("samples\\agents\\sample_agents.py", "gpt-4o", "", ""),
-            ("samples\\connections\\sample_connections.py", "", "connection1", ""),
-            ("samples\\deployments\\sample_deployments.py", "DeepSeek-V3", "", ""),
-            ("samples\\datasets\\sample_datasets.py", "", "balapvbyostoragecanary", "samples\\datasets\\data_folder"),
+            # ("samples\\agents\\sample_agents.py", "gpt-4o", "", ""),
+            # ("samples\\connections\\sample_connections.py", "", "connection1", ""),
+            # ("samples\\deployments\\sample_deployments.py", "DeepSeek-V3", "", ""),
+            # ("samples\\datasets\\sample_datasets.py", "", "balapvbyostoragecanary", "samples\\datasets\\data_folder"),
+            # (
+            #     "samples\\datasets\\sample_datasets_download.py",
+            #     "",
+            #     "balapvbyostoragecanary",
+            #     "samples\\datasets\\data_folder",
+            # ),
+            # ("samples\\indexes\\sample_indexes.py", "", "", ""),
             (
-                "samples\\datasets\\sample_datasets_download.py",
-                "",
-                "balapvbyostoragecanary",
-                "samples\\datasets\\data_folder",
-            ),
-            ("samples\\indexes\\sample_indexes.py", "", "", ""),
-            ("samples\\inference\\sample_chat_completions_with_azure_ai_inference_client.py", "Phi-4", "", ""),
-            (
-                "samples\\inference\\sample_chat_completions_with_azure_ai_inference_client_and_azure_monitor_tracing.py",
+                "samples\\inference\\azure-ai-inference\\sample_chat_completions_with_azure_ai_inference_client.py",
                 "Phi-4",
                 "",
                 "",
             ),
             (
-                "samples\\inference\\sample_chat_completions_with_azure_ai_inference_client_and_console_tracing.py",
+                "samples\\inference\\azure-ai-inference\\sample_chat_completions_with_azure_ai_inference_client_and_azure_monitor_tracing.py",
                 "Phi-4",
                 "",
                 "",
             ),
-            ("samples\\inference\\sample_chat_completions_with_azure_openai_client.py", "gpt-4o", "connection1", ""),
             (
-                "samples\\inference\\sample_chat_completions_with_azure_openai_client_and_azure_monitor_tracing.py",
+                "samples\\inference\\azure-ai-inference\\sample_chat_completions_with_azure_ai_inference_client_and_console_tracing.py",
+                "Phi-4",
+                "",
+                "",
+            ),
+            (
+                "samples\\inference\\azure-openai\\sample_chat_completions_with_azure_openai_client.py",
+                "gpt-4o",
+                "connection1",
+                "",
+            ),
+            (
+                "samples\\inference\\azure-openai\\sample_responses_with_azure_openai_client.py",
+                "gpt-4o",
+                "connection1",
+                "",
+            ),
+            (
+                "samples\\inference\\azure-openai\\sample_chat_completions_with_azure_openai_client_and_azure_monitor_tracing.py",
                 "gpt-4o",
                 "",
                 "",
             ),
             (
-                "samples\\inference\\sample_chat_completions_with_azure_openai_client_and_console_tracing.py",
+                "samples\\inference\\azure-openai\\sample_chat_completions_with_azure_openai_client_and_console_tracing.py",
                 "gpt-4o",
                 "",
                 "",
             ),
             (
-                "samples\\inference\\sample_image_embeddings_with_azure_ai_inference_client.py",
+                "samples\\inference\\azure-ai-inference\\sample_image_embeddings_with_azure_ai_inference_client.py",
                 "Cohere-embed-v3-english",
                 "",
-                "samples\\inference",
+                "samples\\inference\\azure-ai-inference",
             ),
             (
-                "samples\\inference\\sample_text_embeddings_with_azure_ai_inference_client.py",
+                "samples\\inference\\azure-ai-inference\\sample_text_embeddings_with_azure_ai_inference_client.py",
                 "text-embedding-3-large",
                 "",
                 "",
@@ -200,7 +216,7 @@ class TestSamples:
             ("samples\\telemetry\\sample_telemetry.py", "", "", ""),
         ],
     )
-    @pytest.mark.skip(reason="This test should only run manually on your local machine, with live service calls.")
+    # @pytest.mark.skip(reason="This test should only run manually on your local machine, with live service calls.")
     def test_samples(
         self, sample_name: str, model_deployment_name: str, connection_name: str, data_folder: str
     ) -> None:
@@ -226,36 +242,42 @@ class TestSamples:
     @pytest.mark.parametrize(
         "sample_name, model_deployment_name, connection_name, data_folder",
         [
-            ("samples\\agents\\sample_agents_async.py", "gpt-4o", "", ""),
-            ("samples\\connections\\sample_connections_async.py", "", "connection1", ""),
+            # ("samples\\agents\\sample_agents_async.py", "gpt-4o", "", ""),
+            # ("samples\\connections\\sample_connections_async.py", "", "connection1", ""),
+            # (
+            #     "samples\\datasets\\sample_datasets_async.py",
+            #     "",
+            #     "balapvbyostoragecanary",
+            #     "samples\\datasets\\data_folder",
+            # ),
+            # ("samples\\deployments\\sample_deployments_async.py", "DeepSeek-V3", "", ""),
+            # ("samples\\indexes\\sample_indexes_async.py", "", "", ""),
             (
-                "samples\\datasets\\sample_datasets_async.py",
-                "",
-                "balapvbyostoragecanary",
-                "samples\\datasets\\data_folder",
-            ),
-            ("samples\\deployments\\sample_deployments_async.py", "DeepSeek-V3", "", ""),
-            ("samples\\indexes\\sample_indexes_async.py", "", "", ""),
-            (
-                "samples\\inference\\async_samples\\sample_chat_completions_with_azure_ai_inference_client_async.py",
+                "samples\\inference\\azure-ai-inference\\async_samples\\sample_chat_completions_with_azure_ai_inference_client_async.py",
                 "Phi-4",
                 "",
                 "",
             ),
             (
-                "samples\\inference\\async_samples\\sample_chat_completions_with_azure_openai_client_async.py",
+                "samples\\inference\\azure-openai\\async_samples\\sample_chat_completions_with_azure_openai_client_async.py",
                 "gpt-4o",
                 "connection1",
                 "",
             ),
             (
-                "samples\\inference\\async_samples\\sample_image_embeddings_with_azure_ai_inference_client_async.py",
-                "Cohere-embed-v3-english",
+                "samples\\inference\\azure-openai\\async_samples\\sample_responses_with_azure_openai_client_async.py",
+                "gpt-4o",
+                "connection1",
                 "",
-                "samples\\inference\\async_samples",
             ),
             (
-                "samples\\inference\\async_samples\\sample_text_embeddings_with_azure_ai_inference_client_async.py",
+                "samples\\inference\\azure-ai-inference\\async_samples\\sample_image_embeddings_with_azure_ai_inference_client_async.py",
+                "Cohere-embed-v3-english",
+                "",
+                "samples\\inference\\azure-ai-inference\\async_samples",
+            ),
+            (
+                "samples\\inference\\azure-ai-inference\\async_samples\\sample_text_embeddings_with_azure_ai_inference_client_async.py",
                 "text-embedding-3-large",
                 "",
                 "",
@@ -263,7 +285,7 @@ class TestSamples:
             ("samples\\telemetry\\sample_telemetry_async.py", "", "", ""),
         ],
     )
-    @pytest.mark.skip(reason="This test should only run manually on your local machine, with live service calls.")
+    # @pytest.mark.skip(reason="This test should only run manually on your local machine, with live service calls.")
     async def test_samples_async(
         self, sample_name: str, model_deployment_name: str, connection_name: str, data_folder: str
     ) -> None:

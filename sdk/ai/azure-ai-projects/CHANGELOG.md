@@ -11,6 +11,7 @@ AI Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects/ga-rest
   * Class `PromptTemplate`.
   * Evaluation operations (`.evaluations`)
   * Red-Team operations (`.red_teams`)
+  * Package function `enable_telemetry()`
 * Classes were renamed:
   * Class `Sku` was renamed `ModelDeploymentSku`
   * Class `SasCredential` was renamed `BlobReferenceSasCredential`
@@ -18,6 +19,13 @@ AI Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects/ga-rest
   * Class `PendingUploadRequest` was renamed `PendingUploadConfiguration`
   * Class `PendingUploadResponse` was renamed `PendingUploadResult`
 * In method `.datasets.pending_upload()`, input argument `pending_upload_request` was renamed `configuration`.
+
+### Sample updates
+
+* Two samples added showing how to do a `responses` operation using an authenticated Azure OpenAI client created
+using `get_openai_client()`.
+* Existing inference samples that used the package function `enable_telemetry()` were updated to remove this call,
+and instead add the necessary tracing configuration calls to the sample.
 
 ## 1.0.0b12 (2025-06-23)
 

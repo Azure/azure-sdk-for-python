@@ -7,6 +7,7 @@ import pprint
 import pytest
 from azure.ai.projects.aio import AIProjectClient
 from test_base import TestBase, servicePreparer
+from openai import AsyncOpenAI
 from devtools_testutils import is_live_and_not_recording
 from devtools_testutils.aio import recorded_by_proxy_async
 
@@ -15,12 +16,41 @@ from devtools_testutils.aio import recorded_by_proxy_async
 # cls & pytest tests\test_inference_async.py -s
 class TestInferenceAsync(TestBase):
 
+    @classmethod
+    async def _test_openai_client_async(cls, client: AsyncOpenAI, model_deployment_name: str):
+        chat_completions = await client.chat.completions.create(
+            model=model_deployment_name,
+            messages=[
+                {
+                    "role": "user",
+                    "content": "How many feet are in a mile?",
+                },
+            ],
+        )
+
+        print("Raw dump of chat completions object: ")
+        pprint.pprint(chat_completions)
+        print("Response message: ", chat_completions.choices[0].message.content)
+        contains = ["5280", "5,280"]
+        assert any(item in chat_completions.choices[0].message.content for item in contains)
+
+        response = await client.responses.create(
+            model=model_deployment_name,
+            input="How many feet are in a mile?",
+        )
+
+        print("Raw dump of responses object: ")
+        pprint.pprint(response)
+        print("Response message: ", response.output_text)
+        contains = ["5280", "5,280"]
+        assert any(item in response.output_text for item in contains)
+
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
     # cls & pytest tests\test_inference_async.py::TestInferenceAsync::test_inference_async -s
     @servicePreparer()
     @pytest.mark.skipif(
         condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record chat completions call with AOAI client",
+        reason="Skipped because we cannot record network calls with AOAI client",
     )
     @recorded_by_proxy_async
     async def test_inference_async(self, **kwargs):
@@ -40,29 +70,14 @@ class TestInferenceAsync(TestBase):
                 "[test_inference_async] Get an authenticated Azure OpenAI client for the parent AI Services resource, and perform a chat completion operation."
             )
             async with await project_client.get_openai_client(api_version=api_version) as client:
-
-                response = await client.chat.completions.create(
-                    model=model_deployment_name,
-                    messages=[
-                        {
-                            "role": "user",
-                            "content": "How many feet are in a mile?",
-                        },
-                    ],
-                )
-
-                print("Raw dump of response object: ")
-                pprint.pprint(response)
-                print("Response message: ", response.choices[0].message.content)
-                contains = ["5280", "5,280"]
-                assert any(item in response.choices[0].message.content for item in contains)
+                await self._test_openai_client_async(client, model_deployment_name)
 
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
     # cls & pytest tests\test_inference_async.py::TestInferenceAsync::test_inference_on_api_key_auth_connection_async -s
     @servicePreparer()
     @pytest.mark.skipif(
         condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record chat completions call with AOAI client",
+        reason="Skipped because we cannot record network calls with AOAI client",
     )
     @recorded_by_proxy_async
     async def test_inference_on_api_key_auth_connection_async(self, **kwargs):
@@ -85,29 +100,14 @@ class TestInferenceAsync(TestBase):
             async with await project_client.get_openai_client(
                 api_version=api_version, connection_name=connection_name
             ) as client:
-
-                response = await client.chat.completions.create(
-                    model=model_deployment_name,
-                    messages=[
-                        {
-                            "role": "user",
-                            "content": "How many feet are in a mile?",
-                        },
-                    ],
-                )
-
-                print("Raw dump of response object: ")
-                pprint.pprint(response)
-                print("Response message: ", response.choices[0].message.content)
-                contains = ["5280", "5,280"]
-                assert any(item in response.choices[0].message.content for item in contains)
+                await self._test_openai_client_async(client, model_deployment_name)
 
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
     # cls & pytest tests\test_inference_async.py::TestInferenceAsync::test_inference_on_entra_id_auth_connection_async -s
     @servicePreparer()
     @pytest.mark.skipif(
         condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record chat completions call with AOAI client",
+        reason="Skipped because we cannot record network calls with AOAI client",
     )
     @recorded_by_proxy_async
     async def test_inference_on_entra_id_auth_connection_async(self, **kwargs):
@@ -130,19 +130,4 @@ class TestInferenceAsync(TestBase):
             async with await project_client.get_openai_client(
                 api_version=api_version, connection_name=connection_name
             ) as client:
-
-                response = await client.chat.completions.create(
-                    model=model_deployment_name,
-                    messages=[
-                        {
-                            "role": "user",
-                            "content": "How many feet are in a mile?",
-                        },
-                    ],
-                )
-
-                print("Raw dump of response object: ")
-                pprint.pprint(response)
-                print("Response message: ", response.choices[0].message.content)
-                contains = ["5280", "5,280"]
-                assert any(item in response.choices[0].message.content for item in contains)
+                await self._test_openai_client_async(client, model_deployment_name)

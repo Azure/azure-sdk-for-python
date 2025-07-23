@@ -17,7 +17,6 @@ from azure.core.credentials import TokenCredential
 from azure.ai.agents import AgentsClient
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations
-from ._patch_telemetry import enable_telemetry
 from .models._enums import ConnectionType
 from .models._models import ApiKeyCredentials, EntraIDCredentials
 
@@ -274,7 +273,6 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
 __all__: List[str] = [
     "AIProjectClient",
-    "enable_telemetry",
 ]  # Add all objects you want publicly available to users at this package level
 
 
