@@ -20,6 +20,10 @@ class TestRiskCategoryEnum:
         assert RiskCategory.Violence.value == "violence"
         assert RiskCategory.Sexual.value == "sexual"
         assert RiskCategory.SelfHarm.value == "self_harm"
+        assert RiskCategory.ProtectedMaterial.value == "protected_material"
+        assert RiskCategory.CodeVulnerability.value == "code_vulnerability"
+        assert RiskCategory.ISA.value == "isa"
+        assert RiskCategory.XPIA.value == "xpia"
 
         # Ensure all values are lower case with underscores
         for category in RiskCategory:

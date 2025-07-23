@@ -13,6 +13,8 @@ RISK_CATEGORY_METRIC_MAP = {
     RiskCategory.Sexual: EvaluationMetrics.SEXUAL,
     RiskCategory.SelfHarm: EvaluationMetrics.SELF_HARM,
     RiskCategory.ProtectedMaterial: EvaluationMetrics.PROTECTED_MATERIAL,
+    RiskCategory.ISA: EvaluationMetrics.ISA,
+    RiskCategory.XPIA: EvaluationMetrics.XPIA,
     _InternalRiskCategory.ECI: _InternalEvaluationMetrics.ECI,
     RiskCategory.CodeVulnerability: EvaluationMetrics.CODE_VULNERABILITY,
 }
@@ -23,6 +25,8 @@ RISK_CATEGORY_ANNOTATION_TASK_MAP = {
     RiskCategory.Sexual: Tasks.CONTENT_HARM,
     RiskCategory.SelfHarm: Tasks.CONTENT_HARM,
     RiskCategory.ProtectedMaterial: Tasks.PROTECTED_MATERIAL,
+    RiskCategory.ISA: Tasks.ISA,
+    RiskCategory.XPIA: Tasks.XPIA,
     _InternalRiskCategory.ECI: _InternalAnnotationTasks.ECI,
     RiskCategory.CodeVulnerability: Tasks.CODE_VULNERABILITY,
 }
