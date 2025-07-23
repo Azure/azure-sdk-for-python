@@ -562,9 +562,6 @@ class AsyncVoiceLiveConnectionManager:
                 log.debug("Using proxy: %s", self.__client._config.proxy_policy.proxies)
             else:
                 log.debug("No proxy configured")    
-
-            #set proxy in websocket options
-            self.__websocket_connection_options.setdefault("proxy", "http://localhost:8888")
             
             if "proxy" in self.__websocket_connection_options:
                 log.debug("Using proxy in websocket options: %s", self.__websocket_connection_options["proxy"])

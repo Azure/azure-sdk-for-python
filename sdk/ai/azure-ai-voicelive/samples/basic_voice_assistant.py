@@ -461,8 +461,7 @@ class BasicVoiceAssistant:
         elif isinstance(event, VoiceLiveServerEventResponseAudioDelta):
             # Stream audio response to speakers
             logger.debug("Received audio delta")
-            audio_data = base64.b64decode(event.delta)
-            await self.audio_processor.queue_audio(audio_data)
+            await self.audio_processor.queue_audio(event.delta)
             
         elif isinstance(event, VoiceLiveServerEventResponseAudioDone):
             logger.info("🤖 Assistant finished speaking")
