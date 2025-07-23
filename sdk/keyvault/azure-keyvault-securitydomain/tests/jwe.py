@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+# The core utilities in this file are copied from the Azure CLI's Security Domain module:
+# https://github.com/Azure/azure-cli/tree/dev/src/azure-cli/azure/cli/command_modules/keyvault/security_domain
 import base64
 import hashlib
 import hmac
@@ -116,7 +118,8 @@ class JWEHeader:  # pylint: disable=too-many-instance-attributes
                  jku=None, jwk=None, kid=None, x5u=None, x5c=None, x5t=None,
                  x5t_S256=None, typ=None, cty=None, crit=None):
         """
-            JWE header
+        JWE header
+
         :param alg: algorithm
         :param enc: encryption algorithm
         :param zip: compression algorithm
