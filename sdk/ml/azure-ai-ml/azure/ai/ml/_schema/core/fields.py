@@ -479,8 +479,15 @@ class NestedField(Nested):
     """anticipates the default coming in next marshmallow version, unknown=True."""
 
     def __init__(self, *args, **kwargs):
-        if kwargs.get("unknown") is None:
-            kwargs["unknown"] = RAISE
+        # Handle unknown parameter compatibility between marshmallow 3.x and 4.x
+        # In marshmallow 4.x, unknown parameter was removed from field constructors
+        unknown_value = kwargs.pop("unknown", None)
+        if unknown_value is None:
+            unknown_value = RAISE
+        
+        # Store unknown value for use at schema level if needed
+        self._unknown_value = unknown_value
+        
         super().__init__(*args, **kwargs)
 
 
@@ -493,6 +500,9 @@ class UnionField(fields.Field):
     """A field that can be one of multiple types."""
 
     def __init__(self, union_fields: List[fields.Field], is_strict=False, **kwargs):
+        # Handle unknown parameter compatibility between marshmallow 3.x and 4.x
+        # In marshmallow 4.x, unknown parameter was removed from field constructors
+        kwargs.pop("unknown", None)
         super().__init__(**kwargs)
         try:
             # add the validation and make sure union_fields must be subclasses or instances of
@@ -917,6 +927,9 @@ class DumpableFloatField(fields.Float):
         **kwargs,
     ):
         self.strict = strict
+        # Handle unknown parameter compatibility between marshmallow 3.x and 4.x
+        # In marshmallow 4.x, unknown parameter was removed from field constructors
+        kwargs.pop("unknown", None)
         super().__init__(allow_nan=allow_nan, as_string=as_string, **kwargs)
 
     def _validated(self, value):
@@ -939,6 +952,9 @@ class DumpableStringField(fields.String):
 
 class ExperimentalField(fields.Field):
     def __init__(self, experimental_field: fields.Field, **kwargs):
+        # Handle unknown parameter compatibility between marshmallow 3.x and 4.x
+        # In marshmallow 4.x, unknown parameter was removed from field constructors
+        kwargs.pop("unknown", None)
         super().__init__(**kwargs)
         try:
             self._experimental_field = resolve_field_instance(experimental_field)
