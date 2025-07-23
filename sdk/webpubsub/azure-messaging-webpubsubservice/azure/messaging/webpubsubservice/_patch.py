@@ -16,7 +16,6 @@ from azure.core.pipeline.policies import SansIOHTTPPolicy, ProxyPolicy
 from azure.core.credentials import AzureKeyCredential
 
 from ._client import WebPubSubServiceClient as WebPubSubServiceClientGenerated
-from .models import GroupMember
 
 
 if TYPE_CHECKING:
@@ -177,7 +176,6 @@ class WebPubSubServiceClient(WebPubSubServiceClientBase, WebPubSubServiceClientG
 
 __all__: List[str] = [
     "WebPubSubServiceClient",
-    "GroupMember",
 ]  # Add all objects you want publicly available to users at this package level
 
 
