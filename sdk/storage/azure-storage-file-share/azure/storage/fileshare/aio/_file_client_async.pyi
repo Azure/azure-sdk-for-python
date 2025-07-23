@@ -205,7 +205,6 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         self,
         new_name: str,
         *,
-        timeout: Optional[int] = None,
         overwrite: Optional[bool] = None,
         ignore_read_only: Optional[bool] = None,
         file_permission: Optional[str] = None,
@@ -219,6 +218,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         metadata: Optional[Dict[str, str]] = None,
         source_lease: Optional[Union[ShareLeaseClient, str]] = None,
         destination_lease: Optional[Union[ShareLeaseClient, str]] = None,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> "ShareFileClient": ...
     @distributed_trace_async

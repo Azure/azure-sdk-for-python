@@ -204,6 +204,7 @@ class ShareFileClient(StorageAccountHostsMixin):
     def rename_file(
         self,
         new_name: str,
+        *,
         overwrite: Optional[bool] = None,
         ignore_read_only: Optional[bool] = None,
         file_permission: Optional[str] = None,
@@ -217,6 +218,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         metadata: Optional[Dict[str, str]] = None,
         source_lease: Optional[Union[ShareLeaseClient, str]] = None,
         destination_lease: Optional[Union[ShareLeaseClient, str]] = None,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> "ShareFileClient": ...
     @distributed_trace
