@@ -35,5 +35,3 @@ class UserAgentSingleton:
         yield
 
         cls.__BASE_USER_AGENT = old_useragent
-
-
