@@ -239,16 +239,11 @@ class SessionContainer(object):
         with self.session_lock:
             try:
                 self_link = response_result.get("_self")
-                # query results don't directly have a self_link - need to fetch it directly from one of the items
-                if self_link is None:
-                    if 'Documents' in response_result and len(response_result['Documents']) > 0:
-                        self_link = response_result['Documents'][0].get('_self')
 
                 # extract alternate content path from the response_headers
                 # (only document level resource updates will have this),
                 # and if not present, then we can assume that we don't have to update
                 # session token for this request
-                alt_content_path = ""
                 alt_content_path_key = http_constants.HttpHeaders.AlternateContentPath
                 response_result_id_key = "id"
                 response_result_id = None
