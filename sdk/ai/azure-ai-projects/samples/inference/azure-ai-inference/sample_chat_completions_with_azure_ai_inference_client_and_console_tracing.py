@@ -53,14 +53,14 @@ tracer_provider = TracerProvider()
 tracer_provider.add_span_processor(SimpleSpanProcessor(span_exporter))
 trace.set_tracer_provider(tracer_provider)
 tracer = trace.get_tracer(__name__)
-file_name = os.path.basename(__file__)
+scenario = os.path.basename(__file__)
 
 AIInferenceInstrumentor().instrument()
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 
-with tracer.start_as_current_span(file_name):
+with tracer.start_as_current_span(scenario):
 
     with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 

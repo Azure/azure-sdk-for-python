@@ -9,6 +9,7 @@ DESCRIPTION:
     AzureOpenAI client from the openai package, and perform one chat completion operation.
     The client is instrumented to upload OpenTelemetry traces to Azure Monitor. View the uploaded traces
     in the "Tracing" tab in your Azure AI Foundry project page.
+    For more information, see: https://learn.microsoft.com/azure/ai-foundry/how-to/develop/trace-application
 
 
 USAGE:
@@ -39,20 +40,20 @@ from opentelemetry.instrumentation.openai_v2 import OpenAIInstrumentor
 
 OpenAIInstrumentor().instrument()
 
-file_name = os.path.basename(__file__)
+scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 
-with tracer.start_as_current_span(file_name):
+with tracer.start_as_current_span(scenario):
 
     with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 
         with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
 
-            application_insights_connection_string = project_client.telemetry.get_connection_string()
-            configure_azure_monitor(connection_string=application_insights_connection_string)
+            connection_string = project_client.telemetry.get_application_insights_connection_string()
+            configure_azure_monitor(connection_string=connection_string)
 
             with project_client.get_openai_client(api_version="2024-10-21") as client:
 

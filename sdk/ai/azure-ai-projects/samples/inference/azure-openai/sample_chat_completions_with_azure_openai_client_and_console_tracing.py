@@ -8,6 +8,7 @@ DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to get an authenticated
     AzureOpenAI client from the openai package, and perform one chat completion operation.
     The client is already instrumented with console OpenTelemetry tracing.
+    For more information, see: https://learn.microsoft.com/azure/ai-foundry/how-to/develop/trace-application
 
 USAGE:
     python sample_chat_completions_with_azure_openai_client_and_console_tracing.py
@@ -52,14 +53,14 @@ tracer_provider = TracerProvider()
 tracer_provider.add_span_processor(SimpleSpanProcessor(span_exporter))
 trace.set_tracer_provider(tracer_provider)
 tracer = trace.get_tracer(__name__)
-file_name = os.path.basename(__file__)
+scenario = os.path.basename(__file__)
 
 OpenAIInstrumentor().instrument()
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 
-with tracer.start_as_current_span(file_name):
+with tracer.start_as_current_span(scenario):
 
     with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 

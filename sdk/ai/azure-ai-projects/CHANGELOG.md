@@ -20,8 +20,9 @@ AI Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects/ga-rest
   * Class `PendingUploadResponse` was renamed `PendingUploadResult`
 * In method `.datasets.pending_upload()`, input argument `pending_upload_request` was renamed `configuration`.
 * Method `.inference.get_azure_openai_client()` was renamed `.get_openai_client()`. The `.inference` property was removed.
-The method is documented as returning an object of type `OpenAI`, but it still returns an object of the derived type `AzureOpenAI`.
-The function implementation has not changed.
+  The method is documented as returning an object of type `OpenAI`, but it still returns an object of the derived type `AzureOpenAI`.
+  The function implementation has not changed.
+* Method `.telemetry.get_connection_string()` was renamed `.telemetry.get_application_insights_connection_string()`
 
 ### Sample updates
 
