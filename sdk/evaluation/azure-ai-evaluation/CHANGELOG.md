@@ -2,11 +2,8 @@
 
 ## 1.10.0 (Unreleased)
 
-### Breaking Changes
-- Added `_evaluate_query` parameter to `RaiServiceEvaluatorBase` class with a default value of `False`. This parameter controls whether queries are included in evaluation data when evaluating query-response pairs. Previously, queries were always included in evaluations. Existing code that relies on queries being evaluated will need to explicitly set `_evaluate_query=True` to maintain the previous behavior.
-
 ### Features Added
-- Refactored `_evaluate_query` parameter from private to public API using kwargs pattern across all RAI service evaluators. The parameter now follows standard kwargs conventions instead of being an explicit parameter. The old `_evaluate_query` parameter is still supported but deprecated with a warning. Users should pass `evaluate_query` as a keyword argument instead of using the private `_evaluate_query` parameter.
+- Added `evaluate_query` parameter to all RAI service evaluators that can be passed as a keyword argument. This parameter controls whether queries are included in evaluation data when evaluating query-response pairs. When set to `True`, both query and response will be evaluated; when set to `False` (default), only the response will be evaluated. This parameter is available across all RAI service evaluators including `ContentSafetyEvaluator`, `ViolenceEvaluator`, `SexualEvaluator`, `SelfHarmEvaluator`, `HateUnfairnessEvaluator`, `ProtectedMaterialEvaluator`, `IndirectAttackEvaluator`, `CodeVulnerabilityEvaluator`, `UngroundedAttributesEvaluator`, `GroundednessProEvaluator`, and `EciEvaluator`.
 
 ### Bugs Fixed
 

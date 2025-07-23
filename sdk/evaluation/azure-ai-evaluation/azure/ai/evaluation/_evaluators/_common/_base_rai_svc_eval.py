@@ -73,23 +73,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         self._threshold = threshold
         
         # Handle evaluate_query parameter from kwargs
-        evaluate_query = kwargs.get('evaluate_query', False)
-        _evaluate_query = kwargs.get('_evaluate_query', None)
-        
-        # Handle backward compatibility with _evaluate_query parameter
-        if _evaluate_query is not None:
-            import warnings
-            warnings.warn(
-                "The '_evaluate_query' parameter is deprecated. Use 'evaluate_query' instead.",
-                DeprecationWarning,
-                stacklevel=2
-            )
-            # If both are provided, that's an error
-            if 'evaluate_query' in kwargs:  # evaluate_query was explicitly passed
-                raise ValueError("Cannot specify both 'evaluate_query' and '_evaluate_query'. Use 'evaluate_query'.")
-            evaluate_query = _evaluate_query
-        
-        self._evaluate_query = evaluate_query
+        self._evaluate_query = kwargs.get('evaluate_query', False)
         self._higher_is_better = _higher_is_better
 
     @override
