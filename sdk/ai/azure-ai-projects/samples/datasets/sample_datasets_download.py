@@ -72,16 +72,16 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
         )
 
         print("Looping over all blobs in the container:")
-        for blob in container_client.list_blobs():
-            blob_client = container_client.get_blob_client(blob)
+        for blob_name in container_client.list_blob_names():
+            blob_client = container_client.get_blob_client(blob_name)
 
-            file_path = os.path.join(download_folder, blob.name)
+            file_path = os.path.join(download_folder, blob_name)
             os.makedirs(os.path.dirname(file_path), exist_ok=True)  # Handle sub-folders if needed
 
             with open(file_path, "wb") as f:
                 f.write(blob_client.download_blob().readall())
 
-            print(f"Downloaded: {blob.name}")
+            print(f"Downloaded: {blob_name}")
 
         print("Delete the dataset created above:")
         project_client.datasets.delete(name=dataset_name, version=dataset_version)

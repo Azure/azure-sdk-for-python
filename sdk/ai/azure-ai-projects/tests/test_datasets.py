@@ -89,7 +89,9 @@ class TestDatasets(TestBase):
             )
 
             print(f"[test_datasets_upload_file] Get credentials of an existing Dataset version `{dataset_version}`:")
-            dataset_credential = project_client.datasets.get_credentials(name=dataset_name, version=str(dataset_version))
+            dataset_credential = project_client.datasets.get_credentials(
+                name=dataset_name, version=str(dataset_version)
+            )
             print(dataset_credential)
             TestBase.validate_dataset_credential(dataset_credential)
 
@@ -185,7 +187,9 @@ class TestDatasets(TestBase):
             )
 
             print(f"[test_datasets_upload_file] Get credentials of an existing Dataset version `{dataset_version}`:")
-            dataset_credential = project_client.datasets.get_credentials(name=dataset_name, version=str(dataset_version))
+            dataset_credential = project_client.datasets.get_credentials(
+                name=dataset_name, version=str(dataset_version)
+            )
             print(dataset_credential)
             TestBase.validate_dataset_credential(dataset_credential)
 
