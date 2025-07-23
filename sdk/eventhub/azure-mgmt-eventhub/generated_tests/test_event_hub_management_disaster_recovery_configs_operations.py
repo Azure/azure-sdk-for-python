@@ -25,7 +25,7 @@ class TestEventHubManagementDisasterRecoveryConfigsOperations(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             namespace_name="str",
             alias="str",
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -39,7 +39,7 @@ class TestEventHubManagementDisasterRecoveryConfigsOperations(AzureMgmtRecordedT
             namespace_name="str",
             alias="str",
             authorization_rule_name="str",
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -53,7 +53,7 @@ class TestEventHubManagementDisasterRecoveryConfigsOperations(AzureMgmtRecordedT
             namespace_name="str",
             alias="str",
             authorization_rule_name="str",
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -66,7 +66,7 @@ class TestEventHubManagementDisasterRecoveryConfigsOperations(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             namespace_name="str",
             parameters={"name": "str"},
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -78,7 +78,7 @@ class TestEventHubManagementDisasterRecoveryConfigsOperations(AzureMgmtRecordedT
         response = self.client.disaster_recovery_configs.list(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -110,7 +110,7 @@ class TestEventHubManagementDisasterRecoveryConfigsOperations(AzureMgmtRecordedT
                 },
                 "type": "str",
             },
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -123,7 +123,7 @@ class TestEventHubManagementDisasterRecoveryConfigsOperations(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             namespace_name="str",
             alias="str",
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -136,7 +136,7 @@ class TestEventHubManagementDisasterRecoveryConfigsOperations(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             namespace_name="str",
             alias="str",
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -149,7 +149,7 @@ class TestEventHubManagementDisasterRecoveryConfigsOperations(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             namespace_name="str",
             alias="str",
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -162,7 +162,7 @@ class TestEventHubManagementDisasterRecoveryConfigsOperations(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             namespace_name="str",
             alias="str",
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself

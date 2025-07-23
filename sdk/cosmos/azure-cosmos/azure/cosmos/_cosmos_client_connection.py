@@ -26,7 +26,7 @@
 import os
 import urllib.parse
 import uuid
-from typing import Callable, Dict, Any, Iterable, List, Mapping, Optional, Sequence, Tuple, Union, cast, Type
+from typing import Callable, Dict, Any, Iterable, List, Mapping, Optional, Sequence, Tuple, Union, cast
 from typing_extensions import TypedDict
 from urllib3.util.retry import Retry
 
@@ -60,6 +60,7 @@ from ._auth_policy import CosmosBearerTokenCredentialPolicy
 from ._base import _build_properties_cache
 from ._change_feed.change_feed_iterable import ChangeFeedIterable
 from ._change_feed.change_feed_state import ChangeFeedState
+from ._change_feed.feed_range_internal import FeedRangeInternalEpk
 from ._constants import _Constants as Constants
 from ._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from ._cosmos_responses import CosmosDict, CosmosList
@@ -71,14 +72,11 @@ from .documents import ConnectionPolicy, DatabaseAccount
 from .partition_key import (
     _Undefined,
     _Empty,
-    PartitionKey,
+    _PartitionKeyKind,
+    _PartitionKeyType,
+    _SequentialPartitionKeyType,
     _return_undefined_or_empty_partition_key,
-    NonePartitionKeyValue,
-    _get_partition_key_from_partition_key_definition
 )
-
-PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]  # pylint: disable=line-too-long
-
 
 class CredentialDict(TypedDict, total=False):
     masterKey: str
@@ -1062,7 +1060,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         database_or_container_link: str,
         query: Optional[Union[str, Dict[str, Any]]],
         options: Optional[Mapping[str, Any]] = None,
-        partition_key: Optional[PartitionKeyType] = None,
+        partition_key: Optional[_PartitionKeyType] = None,
         response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
@@ -2073,6 +2071,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                        documents._OperationType.Patch,
                                        headers)
         request_params.set_excluded_location_from_options(options)
+        request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
         request_data = {}
         if options.get("filterPredicate"):
             request_data["condition"] = options.get("filterPredicate")
@@ -2692,6 +2691,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         request_params = RequestObject(typ, documents._OperationType.Create, headers)
         request_params.set_excluded_location_from_options(options)
+        request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
         result, last_response_headers = self.__Post(path, request_params, body, headers, **kwargs)
         self.last_response_headers = last_response_headers
 
@@ -2739,6 +2739,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Upsert will use WriteEndpoint since it uses POST operation
         request_params = RequestObject(typ, documents._OperationType.Upsert, headers)
         request_params.set_excluded_location_from_options(options)
+        request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
         result, last_response_headers = self.__Post(path, request_params, body, headers, **kwargs)
         self.last_response_headers = last_response_headers
         # update session for write request
@@ -2783,6 +2784,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Replace will use WriteEndpoint since it uses PUT operation
         request_params = RequestObject(typ, documents._OperationType.Replace, headers)
         request_params.set_excluded_location_from_options(options)
+        request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
         result, last_response_headers = self.__Put(path, request_params, resource, headers, **kwargs)
         self.last_response_headers = last_response_headers
 
@@ -2865,6 +2867,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Delete will use WriteEndpoint since it uses DELETE operation
         request_params = RequestObject(typ, documents._OperationType.Delete, headers)
         request_params.set_excluded_location_from_options(options)
+        request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
         result, last_response_headers = self.__Delete(path, request_params, headers, **kwargs)
         self.last_response_headers = last_response_headers
 
@@ -3160,23 +3163,21 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         request_params = RequestObject(resource_type, documents._OperationType.SqlQuery, req_headers)
         request_params.set_excluded_location_from_options(options)
 
-        # check if query has prefix partition key
-        isPrefixPartitionQuery = kwargs.pop("isPrefixPartitionQuery", None)
-        if isPrefixPartitionQuery and "partitionKeyDefinition" in kwargs:
+        # Check if the over lapping ranges can be populated
+        feed_range_epk = None
+        if "feed_range" in kwargs:
+            feed_range = kwargs.pop("feed_range")
+            feed_range_epk = FeedRangeInternalEpk.from_json(feed_range).get_normalized_range()
+        elif "prefix_partition_key_object" in kwargs and "prefix_partition_key_value" in kwargs:
+            prefix_partition_key_obj = kwargs.pop("prefix_partition_key_object")
+            prefix_partition_key_value: _SequentialPartitionKeyType = kwargs.pop("prefix_partition_key_value")
+            feed_range_epk = (
+                prefix_partition_key_obj._get_epk_range_for_prefix_partition_key(prefix_partition_key_value))
+
+        # If feed_range_epk exist, query with the range
+        if feed_range_epk is not None:
             last_response_headers = CaseInsensitiveDict()
-            # here get the over lapping ranges
-            # Default to empty Dictionary, but unlikely to be empty as we first check if we have it in kwargs
-            pk_properties: Union[PartitionKey, Dict] = kwargs.pop("partitionKeyDefinition", {})
-            partition_key_definition = _get_partition_key_from_partition_key_definition(pk_properties)
-            partition_key_value: Sequence[
-                Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]] = cast(
-                Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]],
-                pk_properties.get("partition_key")
-            )
-            feedrangeEPK = partition_key_definition._get_epk_range_for_prefix_partition_key(
-                partition_key_value
-            )  # cspell:disable-line
-            over_lapping_ranges = self._routing_map_provider.get_overlapping_ranges(resource_id, [feedrangeEPK],
+            over_lapping_ranges = self._routing_map_provider.get_overlapping_ranges(resource_id, [feed_range_epk],
                                                                                     options)
             # It is possible to get more than one over lapping range. We need to get the query results for each one
             results: Dict[str, Any] = {}
@@ -3193,8 +3194,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 single_range = routing_range.Range.PartitionKeyRangeToRange(over_lapping_range)
                 # Since the range min and max are all Upper Cased string Hex Values,
                 # we can compare the values lexicographically
-                EPK_sub_range = routing_range.Range(range_min=max(single_range.min, feedrangeEPK.min),
-                                                    range_max=min(single_range.max, feedrangeEPK.max),
+                EPK_sub_range = routing_range.Range(range_min=max(single_range.min, feed_range_epk.min),
+                                                    range_max=min(single_range.max, feed_range_epk.max),
                                                     isMinInclusive=True, isMaxInclusive=False)
                 if single_range.min == EPK_sub_range.min and EPK_sub_range.max == single_range.max:
                     # The Epk Sub Range spans exactly one physical partition
@@ -3339,7 +3340,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         partitionKeyDefinition: Mapping[str, Any],
         document: Mapping[str, Any]
     ) -> Union[List[Optional[Union[str, float, bool]]], str, float, bool, _Empty, _Undefined]:
-        if partitionKeyDefinition["kind"] == "MultiHash":
+        if partitionKeyDefinition["kind"] == _PartitionKeyKind.MULTI_HASH:
             ret: List[Optional[Union[str, float, bool]]] = []
             for partition_key_level in partitionKeyDefinition["paths"]:
                 # Parses the paths into a list of token each representing a property

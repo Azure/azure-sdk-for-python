@@ -23,6 +23,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED,
     _AZURE_SDK_NAMESPACE_NAME,
     _AZURE_SDK_OPENTELEMETRY_NAME,
+    _AZURE_AI_SDK_NAME,
     _INSTRUMENTATION_SUPPORTING_METRICS_LIST,
     _SAMPLE_RATE_KEY,
     _METRIC_ENVELOPE_NAME,
@@ -95,6 +96,8 @@ _STANDARD_OPENTELEMETRY_HTTP_ATTRIBUTES = [
 _STANDARD_AZURE_MONITOR_ATTRIBUTES = [
     _SAMPLE_RATE_KEY,
 ]
+
+_GEN_AI_ATTRIBUTE_PREFIX = "GenAI | {}"
 
 
 class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
@@ -333,6 +336,9 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
         envelope.data = MonitorBase(base_data=data, base_type="RemoteDependencyData")
         target = trace_utils._get_target_for_dependency_from_peer(span.attributes)
         if span.kind is SpanKind.CLIENT:
+            gen_ai_attributes_val = ""
+            if gen_ai_attributes.GEN_AI_SYSTEM in span.attributes:  # GenAI
+                gen_ai_attributes_val = span.attributes[gen_ai_attributes.GEN_AI_SYSTEM]
             if _AZURE_SDK_NAMESPACE_NAME in span.attributes:  # Azure specific resources
                 # Currently only eventhub and servicebus are supported
                 # https://github.com/Azure/azure-sdk-for-python/issues/9256
@@ -407,9 +413,18 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                     span.attributes,
                 )
             elif gen_ai_attributes.GEN_AI_SYSTEM in span.attributes:  # GenAI
-                data.type = span.attributes[gen_ai_attributes.GEN_AI_SYSTEM]
+                data.type = _GEN_AI_ATTRIBUTE_PREFIX.format(gen_ai_attributes_val)
             else:
                 data.type = "N/A"
+            # gen_ai take precedence over other mappings (ex. HTTP)
+            # even if their attributes are also present on the span.
+            # following mappings will override the type
+            if gen_ai_attributes_val:
+                data.type = _GEN_AI_ATTRIBUTE_PREFIX.format(gen_ai_attributes_val)
+            # If no fields are available to set target using standard rules,
+            # set Dependency Target to gen_ai.system if present
+            if not target and not data.target and gen_ai_attributes_val:
+                target = gen_ai_attributes_val
         elif span.kind is SpanKind.PRODUCER:  # Messaging
             # Currently only eventhub and servicebus are supported that produce PRODUCER spans
             if _AZURE_SDK_NAMESPACE_NAME in span.attributes:
@@ -426,7 +441,9 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                 )
         else:  # SpanKind.INTERNAL
             data.type = "InProc"
-            if _AZURE_SDK_NAMESPACE_NAME in span.attributes:
+            if gen_ai_attributes.GEN_AI_SYSTEM in span.attributes:  # GenAI
+                data.type = _GEN_AI_ATTRIBUTE_PREFIX.format(span.attributes[gen_ai_attributes.GEN_AI_SYSTEM])
+            elif _AZURE_SDK_NAMESPACE_NAME in span.attributes:
                 data.type += " | {}".format(span.attributes[_AZURE_SDK_NAMESPACE_NAME])
         # Apply truncation
         # See https://github.com/MohanGsk/ApplicationInsights-Home/tree/master/EndpointSpecs/Schemas/Bond
@@ -525,12 +542,17 @@ def _convert_span_events_to_envelopes(span: ReadableSpan) -> Sequence[TelemetryI
 
 
 def _check_instrumentation_span(span: ReadableSpan) -> None:
-    # Special use-case for spans generated from azure-sdk services
-    # Identified by having az.namespace as a span attribute
-    if span.attributes and _AZURE_SDK_NAMESPACE_NAME in span.attributes:
-        _utils.add_instrumentation(_AZURE_SDK_OPENTELEMETRY_NAME)
-        return
     if span.instrumentation_scope is None:
+        return
+
+    # Special use-case for spans generated from azure-sdk services
+    # `azure-` or `azure.` is a prefix
+    if span.instrumentation_scope.name.startswith("azure"):
+        # spec-case for Azure AI SDKs - identified by `az.namespace` attribute
+        if span.attributes and span.attributes.get(_AZURE_SDK_NAMESPACE_NAME) == "Microsoft.CognitiveServices":
+            _utils.add_instrumentation(_AZURE_AI_SDK_NAME)
+        else:
+            _utils.add_instrumentation(_AZURE_SDK_OPENTELEMETRY_NAME)
         return
     # All instrumentation scope names from OpenTelemetry instrumentations have
     # `opentelemetry.instrumentation.` as a prefix
