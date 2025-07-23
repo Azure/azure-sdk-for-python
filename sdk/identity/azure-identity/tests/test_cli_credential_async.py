@@ -394,10 +394,10 @@ async def test_multitenant_authentication_not_allowed(get_token_method):
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
 async def test_claims_challenge_raises_error(get_token_method):
     """The credential should raise CredentialUnavailableError when claims challenge is provided"""
-    
+
     claims = "test-claims-challenge"
     expected_message = f"Fail to get token, please run az login --claims-challenge {claims}"
-    
+
     if get_token_method == "get_token":
         with pytest.raises(CredentialUnavailableError, match=re.escape(expected_message)):
             await AzureCliCredential().get_token("scope", claims=claims)
@@ -409,32 +409,34 @@ async def test_claims_challenge_raises_error(get_token_method):
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
 async def test_empty_claims_does_not_raise_error(get_token_method):
     """The credential should not raise error when claims parameter is empty or None"""
-    
-    successful_output = json.dumps({
-        "expiresOn": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"),
-        "accessToken": "access-token",
-        "subscription": "subscription",
-        "tenant": "tenant",
-        "tokenType": "Bearer",
-    })
-    
+
+    successful_output = json.dumps(
+        {
+            "expiresOn": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"),
+            "accessToken": "access-token",
+            "subscription": "subscription",
+            "tenant": "tenant",
+            "tokenType": "Bearer",
+        }
+    )
+
     # Mock the CLI to avoid actual invocation
     with mock.patch("shutil.which", return_value="az"):
         with mock.patch(SUBPROCESS_EXEC, mock_exec(successful_output)):
-            
+
             if get_token_method == "get_token":
                 # Test with None (default)
                 token = await AzureCliCredential().get_token("scope")
                 assert token.token == "access-token"
-                
+
                 # Test with empty string
                 token = await AzureCliCredential().get_token("scope", claims="")
                 assert token.token == "access-token"
-                
+
                 # Test with None explicitly
                 token = await AzureCliCredential().get_token("scope", claims=None)
                 assert token.token == "access-token"
-                
+
                 # Test with whitespace-only string
                 token = await AzureCliCredential().get_token("scope", claims="   ")
                 assert token.token == "access-token"
@@ -442,19 +444,19 @@ async def test_empty_claims_does_not_raise_error(get_token_method):
                 # Test with None options
                 token = await AzureCliCredential().get_token_info("scope")
                 assert token.token == "access-token"
-                
+
                 # Test with empty options
                 token = await AzureCliCredential().get_token_info("scope", options={})
                 assert token.token == "access-token"
-                
+
                 # Test with None claims in options
                 token = await AzureCliCredential().get_token_info("scope", options={"claims": None})
                 assert token.token == "access-token"
-                
-                # Test with empty string claims in options 
+
+                # Test with empty string claims in options
                 token = await AzureCliCredential().get_token_info("scope", options={"claims": ""})
                 assert token.token == "access-token"
-                
+
                 # Test with whitespace-only claims in options
                 token = await AzureCliCredential().get_token_info("scope", options={"claims": "   "})
                 assert token.token == "access-token"
