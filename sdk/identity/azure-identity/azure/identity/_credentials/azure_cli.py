@@ -115,7 +115,9 @@ class AzureCliCredential:
           receive an access token.
         """
         if claims and claims.strip():
-            raise CredentialUnavailableError(f"Fail to get token, please run az login --claims-challenge {claims}")
+            raise CredentialUnavailableError(
+                f"Fail to get token, please run az login --claims-challenge {claims}"
+            )
 
         options: TokenRequestOptions = {}
         if tenant_id:
@@ -125,7 +127,9 @@ class AzureCliCredential:
         return AccessToken(token_info.token, token_info.expires_on)
 
     @log_get_token
-    def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
+    def get_token_info(
+        self, *scopes: str, options: Optional[TokenRequestOptions] = None
+    ) -> AccessTokenInfo:
         """Request an access token for `scopes`.
 
         This is an alternative to `get_token` to enable certain scenarios that require additional properties
@@ -226,7 +230,9 @@ def get_safe_working_dir() -> str:
     if sys.platform.startswith("win"):
         path = os.environ.get("SYSTEMROOT")
         if not path:
-            raise CredentialUnavailableError(message="Environment variable 'SYSTEMROOT' has no value")
+            raise CredentialUnavailableError(
+                message="Environment variable 'SYSTEMROOT' has no value"
+            )
         return path
 
     return "/bin"
@@ -246,7 +252,9 @@ def _run_command(command_args: List[str], timeout: int) -> str:
     # Ensure executable exists in PATH first. This avoids a subprocess call that would fail anyway.
     if sys.platform.startswith("win"):
         # On Windows, the expected executable is az.cmd, so we check for that first, falling back to 'az' in case.
-        az_path = shutil.which(EXECUTABLE_NAME + ".cmd") or shutil.which(EXECUTABLE_NAME)
+        az_path = shutil.which(EXECUTABLE_NAME + ".cmd") or shutil.which(
+            EXECUTABLE_NAME
+        )
     else:
         az_path = shutil.which(EXECUTABLE_NAME)
     if not az_path:
@@ -269,10 +277,13 @@ def _run_command(command_args: List[str], timeout: int) -> str:
     except subprocess.CalledProcessError as ex:
         # non-zero return from shell
         # Fallback check in case the executable is not found while executing subprocess.
-        if ex.returncode == 127 or (ex.stderr is not None and ex.stderr.startswith("'az' is not recognized")):
+        if ex.returncode == 127 or (
+            ex.stderr is not None and ex.stderr.startswith("'az' is not recognized")
+        ):
             raise CredentialUnavailableError(message=CLI_NOT_FOUND) from ex
         if ex.stderr is not None and (
-            ("az login" in ex.stderr or "az account set" in ex.stderr) and "AADSTS" not in ex.stderr
+            ("az login" in ex.stderr or "az account set" in ex.stderr)
+            and "AADSTS" not in ex.stderr
         ):
             raise CredentialUnavailableError(message=NOT_LOGGED_IN) from ex
 
@@ -286,7 +297,9 @@ def _run_command(command_args: List[str], timeout: int) -> str:
         raise ClientAuthenticationError(message=message) from ex
     except OSError as ex:
         # failed to execute 'cmd' or '/bin/sh'
-        error = CredentialUnavailableError(message="Failed to execute '{}'".format(args[0]))
+        error = CredentialUnavailableError(
+            message="Failed to execute '{}'".format(args[0])
+        )
         raise error from ex
     except Exception as ex:
         # could be a timeout, for example

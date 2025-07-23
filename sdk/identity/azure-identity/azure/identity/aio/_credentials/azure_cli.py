@@ -106,11 +106,17 @@ class AzureCliCredential(AsyncContextManager):
           receive an access token.
         """
         if claims and claims.strip():
-            raise CredentialUnavailableError(f"Fail to get token, please run az login --claims-challenge {claims}")
+            raise CredentialUnavailableError(
+                f"Fail to get token, please run az login --claims-challenge {claims}"
+            )
 
         # only ProactorEventLoop supports subprocesses on Windows (and it isn't the default loop on Python < 3.8)
-        if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
-            return _SyncAzureCliCredential().get_token(*scopes, tenant_id=tenant_id, **kwargs)
+        if sys.platform.startswith("win") and not isinstance(
+            asyncio.get_event_loop(), asyncio.ProactorEventLoop
+        ):
+            return _SyncAzureCliCredential().get_token(
+                *scopes, tenant_id=tenant_id, **kwargs
+            )
 
         options: TokenRequestOptions = {}
         if tenant_id:
@@ -120,7 +126,9 @@ class AzureCliCredential(AsyncContextManager):
         return AccessToken(token_info.token, token_info.expires_on)
 
     @log_get_token_async
-    async def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
+    async def get_token_info(
+        self, *scopes: str, options: Optional[TokenRequestOptions] = None
+    ) -> AccessTokenInfo:
         """Request an access token for `scopes`.
 
         This is an alternative to `get_token` to enable certain scenarios that require additional properties
@@ -146,7 +154,9 @@ class AzureCliCredential(AsyncContextManager):
                 f"Fail to get token, please run az login --claims-challenge {claims_value}"
             )
         # only ProactorEventLoop supports subprocesses on Windows (and it isn't the default loop on Python < 3.8)
-        if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
+        if sys.platform.startswith("win") and not isinstance(
+            asyncio.get_event_loop(), asyncio.ProactorEventLoop
+        ):
             return _SyncAzureCliCredential().get_token_info(*scopes, options=options)
         return await self._get_token_base(*scopes, options=options)
 
@@ -197,7 +207,9 @@ async def _run_command(command_args: List[str], timeout: int) -> str:
     # Ensure executable exists in PATH first. This avoids a subprocess call that would fail anyway.
     if sys.platform.startswith("win"):
         # On Windows, the expected executable is az.cmd, so we check for that first, falling back to 'az' in case.
-        az_path = shutil.which(EXECUTABLE_NAME + ".cmd") or shutil.which(EXECUTABLE_NAME)
+        az_path = shutil.which(EXECUTABLE_NAME + ".cmd") or shutil.which(
+            EXECUTABLE_NAME
+        )
     else:
         az_path = shutil.which(EXECUTABLE_NAME)
     if not az_path:
@@ -220,10 +232,14 @@ async def _run_command(command_args: List[str], timeout: int) -> str:
         stderr = stderr_b.decode()
     except asyncio.TimeoutError as ex:
         proc.kill()
-        raise CredentialUnavailableError(message="Timed out waiting for Azure CLI") from ex
+        raise CredentialUnavailableError(
+            message="Timed out waiting for Azure CLI"
+        ) from ex
     except OSError as ex:
         # failed to execute 'cmd' or '/bin/sh'
-        error = CredentialUnavailableError(message="Failed to execute '{}'".format(args[0]))
+        error = CredentialUnavailableError(
+            message="Failed to execute '{}'".format(args[0])
+        )
         raise error from ex
 
     if proc.returncode == 0:
