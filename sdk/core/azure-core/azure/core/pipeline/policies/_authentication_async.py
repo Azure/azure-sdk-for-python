@@ -149,9 +149,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
                 padding_needed = -len(encoded_claims) % 4
                 claims = base64.urlsafe_b64decode(encoded_claims + "=" * padding_needed).decode("utf-8")
                 if claims:
-                    token = await self._get_token(*self._scopes, claims=claims)
-                    bearer_token = cast(Union["AccessToken", "AccessTokenInfo"], token).token
-                    request.http_request.headers["Authorization"] = "Bearer " + bearer_token
+                    await self.authorize_request(request, *self._scopes, claims=claims)
                     return True
             except Exception:  # pylint:disable=broad-except
                 return False

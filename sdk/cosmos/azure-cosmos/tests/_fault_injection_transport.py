@@ -38,7 +38,9 @@ import test_config
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 
-from azure.cosmos.http_constants import ResourceType, HttpHeaders
+from azure.cosmos.http_constants import ResourceType, HttpHeaders, StatusCodes, SubStatusCodes
+
+ERROR_WITH_COUNTER = "error_with_counter"
 
 class FaultInjectionTransport(RequestsTransport):
     logger = logging.getLogger('azure.cosmos.fault_injection_transport')
@@ -48,7 +50,18 @@ class FaultInjectionTransport(RequestsTransport):
         self.faults: List[Dict[str, Any]] = []
         self.requestTransformations: List[Dict[str, Any]]  = []
         self.responseTransformations: List[Dict[str, Any]] = []
+        self.counters: Dict[str, int] = {
+            ERROR_WITH_COUNTER: 0
+        }
         super().__init__(session=session, loop=loop, session_owner=session_owner, **config)
+
+    def reset_counters(self):
+        for name in self.counters:
+            self.counters[name] = 0
+
+    def error_with_counter(self, error: Exception) -> Exception:
+        self.counters[ERROR_WITH_COUNTER] += 1
+        return error
 
     def add_fault(self, predicate: Callable[[HttpRequest], bool], fault_factory: Callable[[HttpRequest], Exception]):
         self.faults.append({"predicate": predicate, "apply": fault_factory})
@@ -143,10 +156,21 @@ class FaultInjectionTransport(RequestsTransport):
         return is_document_operation
 
     @staticmethod
+    def predicate_is_resource_type(r: HttpRequest, resource_type: str) -> bool:
+        is_resource_type = r.headers.get(HttpHeaders.ThinClientProxyResourceType) == resource_type
+        return is_resource_type
+
+    @staticmethod
     def predicate_is_operation_type(r: HttpRequest, operation_type: str) -> bool:
         is_operation_type = r.headers.get(HttpHeaders.ThinClientProxyOperationType) == operation_type
 
         return is_operation_type
+
+    @staticmethod
+    def predicate_is_resource_type(r: HttpRequest, resource_type: str) -> bool:
+        is_resource_type = r.headers.get(HttpHeaders.ThinClientProxyResourceType) == resource_type
+
+        return is_resource_type
 
     @staticmethod
     def predicate_is_write_operation(r: HttpRequest, uri_prefix: str) -> bool:
@@ -163,10 +187,26 @@ class FaultInjectionTransport(RequestsTransport):
     @staticmethod
     def error_write_forbidden() -> Exception:
         return CosmosHttpResponseError(
-            status_code=403,
+            status_code=StatusCodes.FORBIDDEN,
             message="Injected error disallowing writes in this region.",
             response=None,
-            sub_status_code=3,
+            sub_status_code=SubStatusCodes.WRITE_FORBIDDEN,
+        )
+
+    @staticmethod
+    def error_request_timeout() -> Exception:
+        return CosmosHttpResponseError(
+            status_code=StatusCodes.REQUEST_TIMEOUT,
+            message="Injected request timeout error.",
+            response=None
+        )
+
+    @staticmethod
+    def error_internal_server_error() -> Exception:
+        return CosmosHttpResponseError(
+            status_code=StatusCodes.INTERNAL_SERVER_ERROR,
+            message="Injected request timeout error.",
+            response=None
         )
 
     @staticmethod
@@ -211,7 +251,7 @@ class FaultInjectionTransport(RequestsTransport):
             first_region_name: str,
             second_region_name: str,
             inner: Callable[[], RequestsTransportResponse],
-            first_region_url: str = None,
+            first_region_url: str = test_config.TestConfig.local_host.replace("localhost", "127.0.0.1"),
             second_region_url: str = test_config.TestConfig.local_host
     ) -> RequestsTransportResponse:
 

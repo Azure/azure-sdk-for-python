@@ -4,13 +4,13 @@
 
 """End-to-end test.
 """
-
-import json
-import os.path
+import logging
+import threading
 import time
 import unittest
 import urllib.parse as urllib
 import uuid
+import os
 
 import pytest
 import requests
@@ -19,7 +19,6 @@ from azure.core.exceptions import AzureError, ServiceResponseError
 from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse
 from urllib3.util.retry import Retry
 
-import azure.cosmos._base as base
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
@@ -47,7 +46,7 @@ class TimeoutTransport(RequestsTransport):
         response = RequestsTransportResponse(None, output)
         return response
 
-
+@pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosLong
 class TestCRUDOperations(unittest.TestCase):
     """Python CRUD Tests.
@@ -75,13 +74,16 @@ class TestCRUDOperations(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        use_multiple_write_locations = False
+        if os.environ.get("AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER", "False") == "True":
+            use_multiple_write_locations = True
         if (cls.masterKey == '[YOUR_KEY_HERE]' or
                 cls.host == '[YOUR_ENDPOINT_HERE]'):
             raise Exception(
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, multiple_write_locations=use_multiple_write_locations)
         cls.databaseForTest = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
 
     def test_partitioned_collection_document_crud_and_query(self):
@@ -616,6 +618,33 @@ class TestCRUDOperations(unittest.TestCase):
                                            replaced_document['id'],
                                            replaced_document['id'])
 
+    def test_read_collection_only_once(self):
+        # Add filter to the filtered diagnostics handler
+        mock_handler = test_config.MockHandler()
+        logger = logging.getLogger("azure.cosmos")
+        logger.setLevel(logging.INFO)
+        logger.addHandler(mock_handler)
+
+        client = cosmos_client.CosmosClient(self.host, self.masterKey)
+        database = client.get_database_client(self.configs.TEST_DATABASE_ID)
+        container = database.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
+
+        def upsert_worker():
+            # Synchronously perform the upsert item operation
+            container.upsert_item(body={'id': str(uuid.uuid4()), 'name': f'sample-'})
+
+        # Perform 10 concurrent upserts
+        threads = []
+        for i in range(10):
+            t = threading.Thread(target=upsert_worker)
+            threads.append(t)
+            t.start()
+
+        for t in threads:
+            t.join()
+        assert sum("'x-ms-thinclient-proxy-resource-type': 'colls'" in response.message for response in mock_handler.messages) == 1
+
+
     def test_document_upsert(self):
         # create database
         created_db = self.databaseForTest
@@ -1143,7 +1172,7 @@ class TestCRUDOperations(unittest.TestCase):
                 container = databaseForTest.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
                 container.create_item(body={'id': str(uuid.uuid4()), 'name': 'sample'})
 
-    async def test_read_timeout_async(self):
+    def test_read_timeout_async(self):
         connection_policy = documents.ConnectionPolicy()
         # making timeout 0 ms to make sure it will throw
         connection_policy.DBAReadTimeout = 0.000000000001

@@ -323,14 +323,71 @@ async def test_need_new_token():
 
 @pytest.mark.asyncio
 async def test_send_with_auth_flows():
-    auth_flows = [{"type": "flow1"}, {"type": "flow2"}]
+    auth_flows = [
+        {
+            "tokenUrl": "https://login.microsoftonline.com/common/oauth2/token",
+            "type": "client_credentials",
+            "scopes": [
+                {"value": "https://test.microsoft.com/.default"},
+            ],
+        }
+    ]
     credential = Mock(
         spec_set=["get_token_info"],
         get_token_info=Mock(return_value=get_completed_future(AccessTokenInfo("***", int(time.time()) + 3600))),
     )
-    policy = AsyncBearerTokenCredentialPolicy(credential, "scope", auth_flows=auth_flows)
+    policy = AsyncBearerTokenCredentialPolicy(credential, "https://test.microsoft.com/.default", auth_flows=auth_flows)
     transport = Mock(send=Mock(return_value=get_completed_future(Mock(status_code=200))))
 
     pipeline = AsyncPipeline(transport=transport, policies=[policy])
     await pipeline.run(HttpRequest("GET", "https://localhost"))
-    policy._credential.get_token_info.assert_called_with("scope", options={"auth_flows": auth_flows})
+    policy._credential.get_token_info.assert_called_with(
+        "https://test.microsoft.com/.default", options={"auth_flows": auth_flows}
+    )
+
+
+@pytest.mark.asyncio
+async def test_disable_authorization_header():
+    """Tests that we can disable the Authorization header in the request"""
+    credential = Mock(
+        spec_set=["get_token_info"],
+        get_token_info=Mock(return_value=get_completed_future(AccessTokenInfo("***", int(time.time()) + 3600))),
+    )
+    policy = AsyncBearerTokenCredentialPolicy(credential, "scope", auth_flows={"foo": "bar"})
+    transport = Mock(send=Mock(return_value=get_completed_future(Mock(status_code=200))))
+
+    pipeline = AsyncPipeline(transport=transport, policies=[policy])
+    request = HttpRequest("GET", "https://localhost")
+    await pipeline.run(request, auth_flows=[])
+    assert "Authorization" not in request.headers
+
+
+@pytest.mark.asyncio
+async def test_auth_flow_operation_override():
+    """Tests that the operation level auth_flow is passed to the credential's get_token_info method."""
+    auth_flows = [
+        {
+            "tokenUrl": "https://login.microsoftonline.com/common/oauth2/token",
+            "type": "client_credentials",
+            "scopes": [{"value": "https://graph.microsoft.com/.default"}],
+        }
+    ]
+    credential = Mock(
+        spec_set=["get_token_info"],
+        get_token_info=Mock(return_value=get_completed_future(AccessTokenInfo("***", int(time.time()) + 3600))),
+    )
+    policy = AsyncBearerTokenCredentialPolicy(credential, "https://graph.microsoft.com/.default", auth_flows=auth_flows)
+    transport = Mock(send=Mock(return_value=get_completed_future(Mock(status_code=200))))
+
+    pipeline = AsyncPipeline(transport=transport, policies=[policy])
+    op_auth_flow = [
+        {
+            "tokenUrl": "https://login.microsoftonline.com/common/oauth2/token",
+            "type": "client_credentials",
+            "scopes": [{"value": "https://foo.microsoft.com/.default"}],
+        }
+    ]
+    await pipeline.run(HttpRequest("GET", "https://localhost"), auth_flows=op_auth_flow)
+    policy._credential.get_token_info.assert_called_with(
+        "https://graph.microsoft.com/.default", options={"auth_flows": op_auth_flow}
+    )

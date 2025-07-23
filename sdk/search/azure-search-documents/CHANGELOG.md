@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added `azure.search.documents.models.DebugInfo`.
+
 ### Breaking Changes
 
 ### Bugs Fixed

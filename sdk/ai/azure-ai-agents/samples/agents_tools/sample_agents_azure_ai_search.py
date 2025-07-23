@@ -7,15 +7,15 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates how to use agent operations with the 
+    This sample demonstrates how to use agent operations with the
     Azure AI Search tool from the Azure agents service using a synchronous client.
 
 PREREQUISITES:
-    You will need an Azure AI Search Resource. 
+    You will need an Azure AI Search Resource.
     If you already have one, you must create an agent that can use an existing Azure AI Search index:
     https://learn.microsoft.com/azure/ai-services/agents/how-to/tools/azure-ai-search?tabs=azurecli%2Cpython&pivots=overview-azure-ai-search
-    
-    If you do not already have an agent Setup with an Azure AI Search resource, follow the guide for a Standard agent setup: 
+
+    If you do not already have an agent Setup with an Azure AI Search resource, follow the guide for a Standard agent setup:
     https://learn.microsoft.com/azure/ai-services/agents/quickstart?pivots=programming-language-python-azure
 
 USAGE:
@@ -23,39 +23,46 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-identity
+    pip install azure-ai-projects azure-ai-projects azure-identity
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview 
+    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
                           page of your Azure AI Foundry portal.
-    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
+    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
     3) AI_SEARCH_CONNECTION_NAME - The connection name of the AI Search connection to your Foundry project,
        as found under the "Name" column in the "Connected Resources" tab in your Azure AI Foundry project.
 """
 
 import os
-from azure.ai.agents import AgentsClient
+from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import ConnectionType
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import AzureAISearchQueryType, AzureAISearchTool, ListSortOrder, MessageRole
 
-agents_client = AgentsClient(
+
+with AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
-)
+) as project_client:
 
-# [START create_agent_with_azure_ai_search_tool]
-conn_id = os.environ["AI_AZURE_AI_CONNECTION_ID"]
+    # [START create_agent_with_azure_ai_search_tool]
+    conn_id = project_client.connections.get_default(ConnectionType.AZURE_AI_SEARCH).id
 
-print(conn_id)
+    print(conn_id)
 
-# Initialize agent AI search tool and add the search index connection id
-ai_search = AzureAISearchTool(
-    index_connection_id=conn_id, index_name="sample_index", query_type=AzureAISearchQueryType.SIMPLE, top_k=3, filter=""
-)
+    # Initialize agent AI search tool and add the search index connection id
+    ai_search = AzureAISearchTool(
+        index_connection_id=conn_id,
+        index_name="sample_index",
+        query_type=AzureAISearchQueryType.SIMPLE,
+        top_k=3,
+        filter="",
+    )
 
-# Create agent with AI search tool and process agent run
-with agents_client:
+    # Create agent with AI search tool and process agent run
+    agents_client = project_client.agents
+
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",

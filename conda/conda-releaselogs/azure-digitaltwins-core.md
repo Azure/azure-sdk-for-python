@@ -1,5 +1,11 @@
 # Azure Digital Twins Core client library for Python (conda)
 
+## 2025.06.01
+
+### Packages included
+
+- azure-digitaltwins-core-1.2.0
+
 ## 2025.03.01
 
 ### Packages included

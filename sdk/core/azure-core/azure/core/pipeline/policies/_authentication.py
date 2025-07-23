@@ -204,9 +204,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
                 padding_needed = -len(encoded_claims) % 4
                 claims = base64.urlsafe_b64decode(encoded_claims + "=" * padding_needed).decode("utf-8")
                 if claims:
-                    token = self._get_token(*self._scopes, claims=claims)
-                    bearer_token = cast(Union["AccessToken", "AccessTokenInfo"], token).token
-                    request.http_request.headers["Authorization"] = "Bearer " + bearer_token
+                    self.authorize_request(request, *self._scopes, claims=claims)
                     return True
             except Exception:  # pylint:disable=broad-except
                 return False
@@ -268,6 +266,11 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
         self._prefix = prefix + " " if prefix else ""
 
     def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
+        """Called before the policy sends a request.
+
+        :param request: The request to be modified before sending.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        """
         request.http_request.headers[self._name] = f"{self._prefix}{self._credential.key}"
 
 
@@ -290,6 +293,11 @@ class AzureSasCredentialPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
         self._credential = credential
 
     def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
+        """Called before the policy sends a request.
+
+        :param request: The request to be modified before sending.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        """
         url = request.http_request.url
         query = request.http_request.query
         signature = self._credential.signature

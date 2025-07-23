@@ -1,5 +1,53 @@
 # Release History
 
+## 29.0.0 (2025-05-22)
+
+### Features Added
+
+  - Added operation NetworkVirtualAppliancesOperations.begin_get_boot_diagnostic_logs
+  - Added operation NetworkVirtualAppliancesOperations.begin_reimage
+  - Added operation VirtualNetworkGatewaysOperations.begin_get_resiliency_information
+  - Added operation VirtualNetworkGatewaysOperations.begin_get_routes_information
+  - Added operation VirtualNetworkGatewaysOperations.begin_invoke_abort_migration
+  - Added operation VirtualNetworkGatewaysOperations.begin_invoke_commit_migration
+  - Added operation VirtualNetworkGatewaysOperations.begin_invoke_execute_migration
+  - Added operation VirtualNetworkGatewaysOperations.begin_invoke_prepare_migration
+  - Added operation group NetworkSecurityPerimeterAccessRulesOperations
+  - Added operation group NetworkSecurityPerimeterAssociableResourceTypesOperations
+  - Added operation group NetworkSecurityPerimeterAssociationsOperations
+  - Added operation group NetworkSecurityPerimeterLinkReferencesOperations
+  - Added operation group NetworkSecurityPerimeterLinksOperations
+  - Added operation group NetworkSecurityPerimeterLoggingConfigurationsOperations
+  - Added operation group NetworkSecurityPerimeterOperationStatusesOperations
+  - Added operation group NetworkSecurityPerimeterProfilesOperations
+  - Added operation group NetworkSecurityPerimetersOperations
+  - Model ActiveConnectivityConfiguration has a new parameter connectivity_capabilities
+  - Model ConnectivityConfiguration has a new parameter connectivity_capabilities
+  - Model EffectiveConnectivityConfiguration has a new parameter connectivity_capabilities
+  - Model ExpressRouteCircuitPeeringConfig has a new parameter advertised_public_prefix_info
+  - Model IpamPool has a new parameter etag
+  - Model LoadBalancingRule has a new parameter enable_connection_tracking
+  - Model ManagedRuleSet has a new parameter computed_disabled_rules
+  - Model NatGateway has a new parameter public_ip_addresses_v6
+  - Model NatGateway has a new parameter public_ip_prefixes_v6
+  - Model NatGateway has a new parameter source_virtual_network
+  - Model VerifierWorkspace has a new parameter etag
+  - Model VirtualNetwork has a new parameter default_public_nat_gateway
+  - Model VirtualNetworkGateway has a new parameter enable_high_bandwidth_vpn_gateway
+  - Model VirtualNetworkGateway has a new parameter virtual_network_gateway_migration_status
+  - Model VirtualNetworkGatewayConnection has a new parameter tunnel_properties
+  - Operation IpamPoolsOperations.begin_create has a new optional parameter if_match
+  - Operation IpamPoolsOperations.begin_delete has a new optional parameter if_match
+  - Operation IpamPoolsOperations.update has a new optional parameter if_match
+  - Operation VerifierWorkspacesOperations.begin_delete has a new optional parameter if_match
+  - Operation VerifierWorkspacesOperations.create has a new optional parameter if_match
+  - Operation VerifierWorkspacesOperations.update has a new optional parameter if_match
+
+### Breaking Changes
+
+  - Removed operation ConnectionMonitorsOperations.begin_query
+  - Removed operation ConnectionMonitorsOperations.begin_start
+
 ## 28.1.0 (2024-12-20)
 
 ### Features Added

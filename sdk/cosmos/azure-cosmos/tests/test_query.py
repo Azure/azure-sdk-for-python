@@ -17,6 +17,7 @@ from azure.cosmos._execution_context.query_execution_info import _PartitionedQue
 from azure.cosmos.documents import _DistinctType
 from azure.cosmos.partition_key import PartitionKey
 
+@pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosQuery
 class TestQuery(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
@@ -32,7 +33,10 @@ class TestQuery(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.credential)
+        use_multiple_write_locations = False
+        if os.environ.get("AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER", "False") == "True":
+            use_multiple_write_locations = True
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.credential, multiple_write_locations=use_multiple_write_locations)
         cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
         if cls.host == "https://localhost:8081/":
             os.environ["AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY"] = "True"
@@ -564,6 +568,51 @@ class TestQuery(unittest.TestCase):
         retry_utility.ExecuteFunction = self.OriginalExecuteFunction
         self.created_db.delete_container(created_collection.id)
 
+    def test_query_positional_args(self):
+        container = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
+        partition_key_value1 = "pk1"
+        partition_key_value2 = "pk2"
+
+        num_items = 10
+        new_items = []
+        for pk_value in [partition_key_value1, partition_key_value2]:
+            for i in range(num_items):
+                item = {
+                    self.config.TEST_CONTAINER_PARTITION_KEY: pk_value,
+                    'id': f"{pk_value}_{i}",
+                    'name': 'sample name'
+                }
+                new_items.append(item)
+
+        for item in new_items:
+            container.upsert_item(body=item)
+
+        query = "SELECT * FROM root r WHERE r.name=@name"
+        parameters = [{'name': '@name', 'value': 'sample name'}]
+        partition_key_value = partition_key_value2
+        enable_cross_partition_query = True
+        max_item_count = 3
+        enable_scan_in_query = True
+        populate_query_metrics = True
+        pager = container.query_items(
+            query,
+            parameters,
+            partition_key_value,
+            enable_cross_partition_query,
+            max_item_count,
+            enable_scan_in_query,
+            populate_query_metrics,
+        ).by_page()
+
+        ids = []
+        for page in pager:
+            items = list(page)
+            num_items = len(items)
+            for item in items:
+                assert item['pk'] == partition_key_value
+                ids.append(item['id'])
+            assert num_items <= max_item_count
+        assert ids == [item['id'] for item in new_items if item['pk'] == partition_key_value]
 
     def _MockExecuteFunctionSessionRetry(self, function, *args, **kwargs):
         if args:

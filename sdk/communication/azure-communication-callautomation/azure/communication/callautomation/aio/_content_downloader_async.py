@@ -20,7 +20,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.utils import case_insensitive_dict
 
 from .._generated import models as _models
-from .._generated._serialization import Serializer
+from .._generated._utils.serialization import Serializer
 from .._generated.aio.operations import CallRecordingOperations
 
 _SERIALIZER = Serializer()

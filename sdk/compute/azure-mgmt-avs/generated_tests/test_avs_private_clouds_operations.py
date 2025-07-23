@@ -20,9 +20,9 @@ class TestAVSPrivateCloudsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_in_subscription(self, resource_group):
+    def test_private_clouds_list_in_subscription(self, resource_group):
         response = self.client.private_clouds.list_in_subscription(
-            api_version="2023-09-01",
+            api_version="2024-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -30,10 +30,10 @@ class TestAVSPrivateCloudsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_private_clouds_list(self, resource_group):
         response = self.client.private_clouds.list(
             resource_group_name=resource_group.name,
-            api_version="2023-09-01",
+            api_version="2024-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -41,11 +41,11 @@ class TestAVSPrivateCloudsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_private_clouds_get(self, resource_group):
         response = self.client.private_clouds.get(
             resource_group_name=resource_group.name,
             private_cloud_name="str",
-            api_version="2023-09-01",
+            api_version="2024-09-01",
         )
 
         # please add some check logic here by yourself
@@ -53,7 +53,7 @@ class TestAVSPrivateCloudsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_private_clouds_begin_create_or_update(self, resource_group):
         response = self.client.private_clouds.begin_create_or_update(
             resource_group_name=resource_group.name,
             private_cloud_name="str",
@@ -141,8 +141,9 @@ class TestAVSPrivateCloudsOperations(AzureMgmtRecordedTestCase):
                 "vcenterPassword": "str",
                 "virtualNetworkId": "str",
                 "vmotionNetwork": "str",
+                "zones": ["str"],
             },
-            api_version="2023-09-01",
+            api_version="2024-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -150,7 +151,7 @@ class TestAVSPrivateCloudsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update(self, resource_group):
+    def test_private_clouds_begin_update(self, resource_group):
         response = self.client.private_clouds.begin_update(
             resource_group_name=resource_group.name,
             private_cloud_name="str",
@@ -195,7 +196,7 @@ class TestAVSPrivateCloudsOperations(AzureMgmtRecordedTestCase):
                 "sku": {"name": "str", "capacity": 0, "family": "str", "size": "str", "tier": "str"},
                 "tags": {"str": "str"},
             },
-            api_version="2023-09-01",
+            api_version="2024-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -203,11 +204,11 @@ class TestAVSPrivateCloudsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_private_clouds_begin_delete(self, resource_group):
         response = self.client.private_clouds.begin_delete(
             resource_group_name=resource_group.name,
             private_cloud_name="str",
-            api_version="2023-09-01",
+            api_version="2024-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -215,11 +216,11 @@ class TestAVSPrivateCloudsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_admin_credentials(self, resource_group):
+    def test_private_clouds_list_admin_credentials(self, resource_group):
         response = self.client.private_clouds.list_admin_credentials(
             resource_group_name=resource_group.name,
             private_cloud_name="str",
-            api_version="2023-09-01",
+            api_version="2024-09-01",
         )
 
         # please add some check logic here by yourself
@@ -227,11 +228,11 @@ class TestAVSPrivateCloudsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_rotate_nsxt_password(self, resource_group):
+    def test_private_clouds_begin_rotate_nsxt_password(self, resource_group):
         response = self.client.private_clouds.begin_rotate_nsxt_password(
             resource_group_name=resource_group.name,
             private_cloud_name="str",
-            api_version="2023-09-01",
+            api_version="2024-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -239,11 +240,11 @@ class TestAVSPrivateCloudsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_rotate_vcenter_password(self, resource_group):
+    def test_private_clouds_begin_rotate_vcenter_password(self, resource_group):
         response = self.client.private_clouds.begin_rotate_vcenter_password(
             resource_group_name=resource_group.name,
             private_cloud_name="str",
-            api_version="2023-09-01",
+            api_version="2024-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

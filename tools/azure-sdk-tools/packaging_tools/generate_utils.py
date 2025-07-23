@@ -397,8 +397,9 @@ def generate_ci(template_path: Path, folder_path: Path, package_name: str) -> No
             for line in content:
                 if package_name in line:
                     return
-            content.append(f"    - name: {package_name}\n")
-            content.append(f"      safeName: {safe_name}\n")
+            new_line = "" if content[-1].endswith("\n") else "\n"
+            content.append(f"{new_line}    - name: {package_name}\n")
+            content.append(f"      safeName: {safe_name}")
     with open(ci, "w") as file_out:
         file_out.writelines(content)
 
@@ -414,19 +415,21 @@ def gen_typespec(
     typespec_python = "@azure-tools/typespec-python"
     # call scirpt to generate sdk
     try:
-        tsp_dir = (Path(spec_folder) / typespec_relative_path).resolve()
-        repo_url = rest_repo_url.replace("https://github.com/", "")
-        tspconfig = tsp_dir / "tspconfig.yaml"
-        if api_version and tspconfig.exists():
-            with open(tspconfig, "r") as file_in:
-                content = yaml.safe_load(file_in)
-                if content.get("options", {}).get("@azure-tools/typespec-python"):
-                    content["options"]["@azure-tools/typespec-python"]["api-version"] = api_version
-            with open(tspconfig, "w") as file_out:
-                yaml.dump(content, file_out)
-        cmd = (
-            f"tsp-client init --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {repo_url}"
-        )
+        if spec_folder:
+            tsp_dir = (Path(spec_folder) / typespec_relative_path).resolve()
+            repo_url = rest_repo_url.replace("https://github.com/", "")
+            tspconfig = tsp_dir / "tspconfig.yaml"
+            if api_version and tspconfig.exists():
+                with open(tspconfig, "r") as file_in:
+                    content = yaml.safe_load(file_in)
+                    if content.get("options", {}).get("@azure-tools/typespec-python"):
+                        content["options"]["@azure-tools/typespec-python"]["api-version"] = api_version
+                with open(tspconfig, "w") as file_out:
+                    yaml.dump(content, file_out)
+            cmd = f"tsp-client init --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {repo_url}"
+        else:
+            tsp_config_url = f"{rest_repo_url}/blob/{head_sha}/{typespec_relative_path}/tspconfig.yaml"
+            cmd = f"tsp-client init -c {tsp_config_url}"
         if run_in_pipeline:
             emitter_name = "@azure-tools/typespec-python"
             if not os.path.exists(f"node_modules/{emitter_name}"):

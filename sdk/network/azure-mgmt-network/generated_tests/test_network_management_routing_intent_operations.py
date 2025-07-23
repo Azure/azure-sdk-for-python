@@ -33,7 +33,7 @@ class TestNetworkManagementRoutingIntentOperations(AzureMgmtRecordedTestCase):
                 "routingPolicies": [{"destinations": ["str"], "name": "str", "nextHop": "str"}],
                 "type": "str",
             },
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestNetworkManagementRoutingIntentOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
             routing_intent_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -59,7 +59,7 @@ class TestNetworkManagementRoutingIntentOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
             routing_intent_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -71,7 +71,7 @@ class TestNetworkManagementRoutingIntentOperations(AzureMgmtRecordedTestCase):
         response = self.client.routing_intent.list(
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

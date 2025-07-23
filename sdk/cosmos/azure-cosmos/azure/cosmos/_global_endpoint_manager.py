@@ -30,8 +30,10 @@ from azure.core.exceptions import AzureError
 
 from . import _constants as constants
 from . import exceptions
+from ._request_object import RequestObject
 from .documents import DatabaseAccount
 from ._location_cache import LocationCache
+from ._utils import current_time_millis
 
 
 # pylint: disable=protected-access
@@ -45,7 +47,6 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
 
     def __init__(self, client):
         self.client = client
-        self.EnableEndpointDiscovery = client.connection_policy.EnableEndpointDiscovery
         self.PreferredLocations = client.connection_policy.PreferredLocations
         self.DefaultEndpoint = client.url_connection
         self.refresh_time_interval_in_ms = self.get_refresh_time_interval_in_ms_stub()
@@ -67,7 +68,10 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
     def get_read_endpoint(self):
         return self.location_cache.get_read_regional_routing_context()
 
-    def resolve_service_endpoint(self, request):
+    def _resolve_service_endpoint(
+            self,
+            request: RequestObject
+    ) -> str:
         return self.location_cache.resolve_service_endpoint(request)
 
     def mark_endpoint_unavailable_for_read(self, endpoint, refresh_cache):
@@ -93,7 +97,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self.location_cache.update_location_cache()
 
     def refresh_endpoint_list(self, database_account, **kwargs):
-        if self.location_cache.current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms:
+        if current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms:
             self.refresh_needed = True
         if self.refresh_needed:
             with self.refresh_lock:
@@ -109,11 +113,11 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         if database_account:
             self.location_cache.perform_on_database_account_read(database_account)
             self.refresh_needed = False
-            self.last_refresh_time = self.location_cache.current_time_millis()
+            self.last_refresh_time = current_time_millis()
         else:
             if self.location_cache.should_refresh_endpoints() or self.refresh_needed:
                 self.refresh_needed = False
-                self.last_refresh_time = self.location_cache.current_time_millis()
+                self.last_refresh_time = current_time_millis()
                 # this will perform getDatabaseAccount calls to check endpoint health
                 self._endpoints_health_check(**kwargs)
 

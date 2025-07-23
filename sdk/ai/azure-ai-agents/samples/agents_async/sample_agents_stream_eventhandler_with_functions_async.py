@@ -14,10 +14,10 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-agents azure-identity aiohttp
+    pip install azure-ai-projects azure-ai-agents azure-identity aiohttp
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview 
+    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
                           page of your Azure AI Foundry portal.
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model.
 """
@@ -25,10 +25,12 @@ import asyncio
 from typing import Any
 
 import os
+from azure.ai.projects.aio import AIProjectClient
 from azure.ai.agents.aio import AgentsClient
 from azure.ai.agents.models import (
     AsyncAgentEventHandler,
     AsyncFunctionTool,
+    AsyncToolSet,
     ListSortOrder,
     MessageTextContent,
     MessageDeltaChunk,
@@ -41,6 +43,11 @@ from azure.ai.agents.models import (
 )
 from azure.identity.aio import DefaultAzureCredential
 from utils.user_async_functions import user_async_functions
+
+# Initialize function tool with user functions
+functions = AsyncFunctionTool(functions=user_async_functions)
+toolset = AsyncToolSet()
+toolset.add(functions)
 
 
 class MyEventHandler(AsyncAgentEventHandler[str]):
@@ -65,21 +72,8 @@ class MyEventHandler(AsyncAgentEventHandler[str]):
         if run.status == "requires_action" and isinstance(run.required_action, SubmitToolOutputsAction):
             tool_calls = run.required_action.submit_tool_outputs.tool_calls
 
-            tool_outputs = []
-            for tool_call in tool_calls:
-                if isinstance(tool_call, RequiredFunctionToolCall):
-                    try:
-                        output = await self.functions.execute(tool_call)
-                        tool_outputs.append(
-                            ToolOutput(
-                                tool_call_id=tool_call.id,
-                                output=output,
-                            )
-                        )
-                    except Exception as e:
-                        print(f"Error executing tool_call {tool_call.id}: {e}")
+            tool_outputs = await toolset.execute_tool_calls(tool_calls)
 
-            print(f"Tool outputs: {tool_outputs}")
             if tool_outputs:
                 await self.agents_client.runs.submit_tool_outputs_stream(
                     thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs, event_handler=self
@@ -99,49 +93,47 @@ class MyEventHandler(AsyncAgentEventHandler[str]):
 
 
 async def main() -> None:
-    async with DefaultAzureCredential() as creds:
-        async with AgentsClient(
-            endpoint=os.environ["PROJECT_ENDPOINT"],
-            credential=creds,
-        ) as agents_client:
+    project_client = AIProjectClient(
+        endpoint=os.environ["PROJECT_ENDPOINT"],
+        credential=DefaultAzureCredential(),
+    )
 
-            # [START create_agent_with_function_tool]
-            functions = AsyncFunctionTool(functions=user_async_functions)
+    async with project_client:
+        agents_client = project_client.agents
 
-            agent = await agents_client.create_agent(
-                model=os.environ["MODEL_DEPLOYMENT_NAME"],
-                name="my-agent",
-                instructions="You are a helpful agent",
-                tools=functions.definitions,
-            )
-            # [END create_agent_with_function_tool]
-            print(f"Created agent, ID: {agent.id}")
+        agent = await agents_client.create_agent(
+            model=os.environ["MODEL_DEPLOYMENT_NAME"],
+            name="my-agent",
+            instructions="You are a helpful agent",
+            tools=functions.definitions,
+        )
+        print(f"Created agent, ID: {agent.id}")
 
-            thread = await agents_client.threads.create()
-            print(f"Created thread, thread ID {thread.id}")
+        thread = await agents_client.threads.create()
+        print(f"Created thread, thread ID {thread.id}")
 
-            message = await agents_client.messages.create(
-                thread_id=thread.id,
-                role="user",
-                content="Hello, send an email with the datetime and weather information in New York? Also let me know the details.",
-            )
-            print(f"Created message, message ID {message.id}")
+        message = await agents_client.messages.create(
+            thread_id=thread.id,
+            role="user",
+            content="Hello, send an email with the datetime and weather information in New York? Also let me know the details.",
+        )
+        print(f"Created message, message ID {message.id}")
 
-            async with await agents_client.runs.stream(
-                thread_id=thread.id,
-                agent_id=agent.id,
-                event_handler=MyEventHandler(functions, agents_client),
-            ) as stream:
-                await stream.until_done()
+        async with await agents_client.runs.stream(
+            thread_id=thread.id,
+            agent_id=agent.id,
+            event_handler=MyEventHandler(functions, agents_client),
+        ) as stream:
+            await stream.until_done()
 
-            await agents_client.delete_agent(agent.id)
-            print("Deleted agent")
+        await agents_client.delete_agent(agent.id)
+        print("Deleted agent")
 
-            messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
-            async for msg in messages:
-                last_part = msg.content[-1]
-                if isinstance(last_part, MessageTextContent):
-                    print(f"{msg.role}: {last_part.text.value}")
+        messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
+        async for msg in messages:
+            last_part = msg.content[-1]
+            if isinstance(last_part, MessageTextContent):
+                print(f"{msg.role}: {last_part.text.value}")
 
 
 if __name__ == "__main__":

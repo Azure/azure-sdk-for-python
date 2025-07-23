@@ -1197,7 +1197,7 @@ class _AIAgentsInstrumentorPreview:
         if span is None:
             return function(*args, **kwargs)
 
-        with span.change_context(span.span_instance):
+        with span.change_context(span):
             try:
                 result = function(*args, **kwargs)
             except Exception as exc:
@@ -1215,7 +1215,7 @@ class _AIAgentsInstrumentorPreview:
         if span is None:
             return await function(*args, **kwargs)
 
-        with span.change_context(span.span_instance):
+        with span.change_context(span):
             try:
                 result = await function(*args, **kwargs)
             except Exception as exc:
@@ -1261,7 +1261,7 @@ class _AIAgentsInstrumentorPreview:
         if span is None:
             return function(*args, **kwargs)
 
-        with span.change_context(span.span_instance):
+        with span.change_context(span):
             try:
                 kwargs["event_handler"] = self.wrap_handler(event_handler, span)
                 result = function(*args, **kwargs)
@@ -1310,7 +1310,7 @@ class _AIAgentsInstrumentorPreview:
 
         # TODO: how to keep span active in the current context without existing?
         # TODO: dummy span for none
-        with span.change_context(span.span_instance):
+        with span.change_context(span):
             try:
                 kwargs["event_handler"] = self.wrap_async_handler(event_handler, span)
                 result = await function(*args, **kwargs)
@@ -1324,27 +1324,48 @@ class _AIAgentsInstrumentorPreview:
         server_address = self.get_server_address_from_arg(args[0])
         thread_id = kwargs.get("thread_id")
 
-        span = self.start_list_messages_span(server_address=server_address, thread_id=thread_id)
-
-        return _InstrumentedItemPaged(function(*args, **kwargs), self.add_thread_message_event, span)
+        return _InstrumentedItemPaged(
+            function(*args, **kwargs),
+            start_span_function=self.start_trace_list_messages,
+            item_instrumentation_function=self.add_thread_message_event,
+            server_address=server_address,
+            thread_id=thread_id,
+            run_id=None,
+        )
 
     def trace_list_messages_async(self, function, *args, **kwargs):
         # Note that this method is not async, but it operates on AsyncIterable.
         server_address = self.get_server_address_from_arg(args[0])
         thread_id = kwargs.get("thread_id")
 
-        span = self.start_list_messages_span(server_address=server_address, thread_id=thread_id)
+        return _AsyncInstrumentedItemPaged(
+            function(*args, **kwargs),
+            start_span_function=self.start_trace_list_messages,
+            item_instrumentation_function=self.add_thread_message_event,
+            server_address=server_address,
+            thread_id=thread_id,
+            run_id=None,
+        )
 
-        return _AsyncInstrumentedItemPaged(function(*args, **kwargs), self.add_thread_message_event, span)
+    def start_trace_list_messages(
+        self, server_address: Optional[str] = None, thread_id: Optional[str] = None, run_id: Optional[str] = None
+    ):
+        _ = run_id  # Unused parameter, but kept for compatibility.
+        return self.start_list_messages_span(server_address=server_address, thread_id=thread_id)
 
     def trace_list_run_steps(self, function, *args, **kwargs):
         server_address = self.get_server_address_from_arg(args[0])
         run_id = kwargs.get("run_id")
         thread_id = kwargs.get("thread_id")
 
-        span = self.start_list_run_steps_span(server_address=server_address, run_id=run_id, thread_id=thread_id)
-
-        return _InstrumentedItemPaged(function(*args, **kwargs), self.add_run_step_event, span)
+        return _InstrumentedItemPaged(
+            function(*args, **kwargs),
+            start_span_function=self.start_list_run_steps_span,
+            item_instrumentation_function=self.add_run_step_event,
+            server_address=server_address,
+            thread_id=thread_id,
+            run_id=run_id,
+        )
 
     def trace_list_run_steps_async(self, function, *args, **kwargs):
         # Note that this method is not async, but it operates on AsyncIterable.
@@ -1352,9 +1373,19 @@ class _AIAgentsInstrumentorPreview:
         run_id = kwargs.get("run_id")
         thread_id = kwargs.get("thread_id")
 
-        span = self.start_list_run_steps_span(server_address=server_address, run_id=run_id, thread_id=thread_id)
+        return _AsyncInstrumentedItemPaged(
+            function(*args, **kwargs),
+            start_span_function=self.start_list_run_steps_span,
+            item_instrumentation_function=self.add_run_step_event,
+            server_address=server_address,
+            thread_id=thread_id,
+            run_id=run_id,
+        )
 
-        return _AsyncInstrumentedItemPaged(function(*args, **kwargs), self.add_run_step_event, span)
+    def start_trace_list_run_steps(
+        self, server_address: Optional[str] = None, thread_id: Optional[str] = None, run_id: Optional[str] = None
+    ):
+        return self.start_list_run_steps_span(server_address=server_address, thread_id=thread_id, run_id=run_id)
 
     def handle_run_stream_exit(self, _function, *args, **kwargs):
         agent_run_stream = args[0]
@@ -1379,10 +1410,6 @@ class _AIAgentsInstrumentorPreview:
         handler: "Optional[AgentEventHandler]" = None,
         span: "Optional[AbstractSpan]" = None,
     ) -> "Optional[AgentEventHandler]":
-        # Do not create a handler wrapper if we do not have handler in the first place.
-        if not handler:
-            return None
-
         if isinstance(handler, _AgentEventHandlerTraceWrapper):
             return handler
 
@@ -1396,10 +1423,6 @@ class _AIAgentsInstrumentorPreview:
         handler: "Optional[AsyncAgentEventHandler]" = None,
         span: "Optional[AbstractSpan]" = None,
     ) -> "Optional[AsyncAgentEventHandler]":
-        # Do not create a handler wrapper if we do not have handler in the first place.
-        if not handler:
-            return None
-
         if isinstance(handler, _AsyncAgentEventHandlerTraceWrapper):
             return handler
 
@@ -1470,6 +1493,9 @@ class _AIAgentsInstrumentorPreview:
                 kwargs.setdefault("merge_span", True)
                 return self.trace_get_run(OperationName.GET_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("RunsOperations.create_and_process"):
+                kwargs.setdefault("merge_span", True)
+                return self.trace_create_run(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
+            if class_function_name.startswith("AgentsClient.create_thread_and_run"):
                 kwargs.setdefault("merge_span", True)
                 return self.trace_create_run(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("RunsOperations.submit_tool_outputs"):
@@ -1543,6 +1569,9 @@ class _AIAgentsInstrumentorPreview:
                 kwargs.setdefault("merge_span", True)
                 return await self.trace_get_run_async(OperationName.GET_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("RunsOperations.create_and_process"):
+                kwargs.setdefault("merge_span", True)
+                return await self.trace_create_run_async(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
+            if class_function_name.startswith("AgentsClient.create_thread_and_run"):
                 kwargs.setdefault("merge_span", True)
                 return await self.trace_create_run_async(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("RunsOperations.submit_tool_outputs"):
@@ -1690,6 +1719,13 @@ class _AIAgentsInstrumentorPreview:
                 TraceType.AGENTS,
                 "stream",
             ),
+            (
+                "azure.ai.agents",
+                "AgentsClient",
+                "create_thread_and_run",
+                TraceType.AGENTS,
+                "create_thread_and_run",
+            ),
             # Switching off the instrumentation for list method as it requires
             # monkey patching inside pageable class.
             (
@@ -1785,6 +1821,13 @@ class _AIAgentsInstrumentorPreview:
                 TraceType.AGENTS,
                 "stream",
             ),
+            (
+                "azure.ai.agents.aio",
+                "AgentsClient",
+                "create_thread_and_run",
+                TraceType.AGENTS,
+                "create_thread_and_run",
+            ),
             # Switching off the instrumentation for list method as it requires
             # monkey patching inside async pageable class.
             (
@@ -1827,7 +1870,7 @@ class _AIAgentsInstrumentorPreview:
                         yield api, method_name, trace_type, injector, name
                 except AttributeError as e:
                     # Log the attribute exception with the missing class information
-                    logger.warning(
+                    logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
                         "AttributeError: The module '%s' does not have the class '%s'. %s",
                         module_name,
                         class_name,
@@ -1835,7 +1878,9 @@ class _AIAgentsInstrumentorPreview:
                     )
                 except Exception as e:  # pylint: disable=broad-except
                     # Log other exceptions as a warning, as we are not sure what they might be
-                    logger.warning("An unexpected error occurred: '%s'", str(e))
+                    logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
+                        "An unexpected error occurred: '%s'", str(e)
+                    )
 
     def _available_agents_apis_and_injectors(self):
         """
@@ -1955,22 +2000,30 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
                 response_iterator=response_iterator,
                 submit_tool_outputs=submit_tool_outputs,
             )
+        else:
+            super().initialize(
+                response_iterator=response_iterator,
+                submit_tool_outputs=submit_tool_outputs,
+            )
 
     def __next__(self) -> Any:
         if self.inner_handler:
             event_bytes = self.inner_handler.__next_impl__()
             return self._process_event(event_bytes.decode("utf-8"))
-        return None
+        return super().__next__()
 
     # pylint: disable=R1710
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return self.inner_handler.on_message_delta(delta)  # type: ignore
+        return super().on_message_delta(delta)  # type: ignore
 
     def on_thread_message(self, message: "ThreadMessage") -> None:  # type: ignore[func-returns-value]
         retval = None
         if self.inner_handler:
             retval = self.inner_handler.on_thread_message(message)  # type: ignore
+        else:
+            retval = super().on_thread_message(message)  # pylint: disable=assignment-from-none # type: ignore
 
         if message.status in {"completed", "incomplete"}:
             self.last_message = message
@@ -1982,6 +2035,8 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
 
         if self.inner_handler:
             retval = self.inner_handler.on_thread_run(run)  # type: ignore
+        else:
+            retval = super().on_thread_run(run)  # pylint: disable=assignment-from-none # type: ignore
         self.last_run = run
 
         return retval  # type: ignore
@@ -1990,6 +2045,8 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
         retval = None
         if self.inner_handler:
             retval = self.inner_handler.on_run_step(step)  # type: ignore
+        else:
+            retval = super().on_run_step(step)  # pylint: disable=assignment-from-none # type: ignore
 
         if (
             step.type == "tool_calls"
@@ -2015,19 +2072,23 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
     def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return self.inner_handler.on_run_step_delta(delta)  # type: ignore
+        return super().on_run_step_delta(delta)  # type: ignore
 
     def on_error(self, data: str) -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return self.inner_handler.on_error(data)  # type: ignore
+        return super().on_error(data)  # type: ignore
 
     def on_done(self) -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return self.inner_handler.on_done()  # type: ignore
+        return super().on_done()  # type: ignore
         # it could be called multiple tines (for each step) __exit__
 
     def on_unhandled_event(self, event_type: str, event_data: Any) -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return self.inner_handler.on_unhandled_event(event_type, event_data)  # type: ignore
+        return super().on_unhandled_event(event_type, event_data)  # type: ignore
 
     # pylint: enable=R1710
 
@@ -2073,6 +2134,11 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
                 response_iterator=response_iterator,
                 submit_tool_outputs=submit_tool_outputs,
             )
+        else:
+            super().initialize(
+                response_iterator=response_iterator,
+                submit_tool_outputs=submit_tool_outputs,
+            )
 
     # cspell:disable-next-line
     async def __anext__(self) -> Any:
@@ -2080,16 +2146,21 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
             # cspell:disable-next-line
             event_bytes = await self.inner_handler.__anext_impl__()
             return await self._process_event(event_bytes.decode("utf-8"))
+        # cspell:disable-next-line
+        return await super().__anext__()
 
     # pylint: disable=R1710
     async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return await self.inner_handler.on_message_delta(delta)  # type: ignore
+        return await super().on_message_delta(delta)  # type: ignore
 
     async def on_thread_message(self, message: "ThreadMessage") -> None:  # type: ignore[func-returns-value]
         retval = None
         if self.inner_handler:
             retval = await self.inner_handler.on_thread_message(message)  # type: ignore
+        else:
+            retval = await super().on_thread_message(message)  # type: ignore
 
         if message.status in {"completed", "incomplete"}:
             self.last_message = message
@@ -2101,6 +2172,8 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
 
         if self.inner_handler:
             retval = await self.inner_handler.on_thread_run(run)  # type: ignore
+        else:
+            retval = await super().on_thread_run(run)  # type: ignore
         self.last_run = run
 
         return retval  # type: ignore
@@ -2109,6 +2182,8 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
         retval = None
         if self.inner_handler:
             retval = await self.inner_handler.on_run_step(step)  # type: ignore
+        else:
+            retval = await super().on_run_step(step)  # type: ignore
 
         if (
             step.type == "tool_calls"
@@ -2134,19 +2209,23 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
     async def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return await self.inner_handler.on_run_step_delta(delta)  # type: ignore
+        return await super().on_run_step_delta(delta)  # type: ignore
 
     async def on_error(self, data: str) -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return await self.inner_handler.on_error(data)  # type: ignore
+        return await super().on_error(data)  # type: ignore
 
     async def on_done(self) -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return await self.inner_handler.on_done()  # type: ignore
+        return await super().on_done()  # type: ignore
         # it could be called multiple tines (for each step) __exit__
 
     async def on_unhandled_event(self, event_type: str, event_data: Any) -> None:  # type: ignore[func-returns-value]
         if self.inner_handler:
             return await self.inner_handler.on_unhandled_event(event_type, event_data)  # type: ignore
+        return await super().on_unhandled_event(event_type, event_data)  # type: ignore
 
     # pylint: enable=R1710
 

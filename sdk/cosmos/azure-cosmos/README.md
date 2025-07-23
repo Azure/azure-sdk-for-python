@@ -668,7 +668,38 @@ as well as containing the list of failed responses for the failed request.
 
 For more information on Transactional Batch, see [Azure Cosmos DB Transactional Batch][cosmos_transactional_batch].
 
-### Public Preview - Vector Embeddings and Vector Indexes
+### Native Retryable Writes
+We have added native retryable writes to the SDK, a feature that can be used by customers who don't mind the
+non-idempotency of these retries and would instead like to ensure that the given operation executed in case of timeouts
+or connectivity issues (status codes 408, 5xx).
+
+This feature can be enabled either at the client level, to retry all write operations under these conditions, 
+or at the per-request level to enable the retries for an individual request.
+
+If enabled at the client level, the one exception to the rule would be patch requests, since the operations can change
+the nature of the overall request - replace, set, and copy for example would be idempotent while add, move or remove would
+not be idempotent unless combined with patch precondition checks. So, for patch we allow opting-in into automatic
+retries only on the request options level.
+
+The snippet below shows how to enable this feature at the client and request level:
+```python
+cosmos_client = CosmosClient(
+    url=URL,
+    credential=KEY,
+    retry_write=True,  # enables native retryable writes at the client level
+)
+
+database = cosmos_client.get_database_client(DATABASE_NAME)
+container = database.get_container_client(CONTAINER_NAME)
+
+container.create_item(
+    item_body,
+    retry_write=True  # enables native retryable writes at the request level
+)
+```
+
+
+### Vector Embeddings and Vector Indexes
 We have added new capabilities to utilize vector embeddings and vector indexing for users to leverage vector
 search utilizing our Cosmos SDK. These two container-level configurations have to be turned on at the account-level
 before you can use them.
@@ -755,7 +786,7 @@ database.create_container(id=container_id, partition_key=PartitionKey(path="/id"
 ```
 ***Note: vector embeddings and vector indexes CANNOT be edited by container replace operations. They are only available directly through creation.***
 
-### Public Preview - Vector Search
+### Vector Search
 
 With the addition of the vector indexing and vector embedding capabilities, the SDK can now perform order by vector search queries.
 These queries specify the VectorDistance to use as a metric within the query text. These must always use a TOP or LIMIT clause within the query though,
@@ -895,6 +926,20 @@ Also, requests with an invalid bucket ID (less than 1 or greater than 5) results
 
 See [here][cosmos_throughput_bucket_configuration] for instructions on configuring throughput buckets through the Azure portal.
 After throughput buckets have been configured, you can find our sync samples [here][cosmos_throughput_bucket_sample] and our async samples [here][cosmos_throughput_bucket_sample_async] as well for additional guidance.
+
+### Per Partition Circuit Breaker 
+Per partition circuit breaker is a feature that allows the SDK to failover requests on a partition level to another region based on client side statistics on 408 and 5xx error codes. This feature is only applicable for 
+reads in single write region accounts and reads and writes for multi-write region accounts. The following are the environment variables to enable per partition circuit breaker and to modify the thresholds for failing over 
+requests to another region:
+- `AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER`: Default is `False`.
+  - Enables the per partition circuit breaker feature.
+- `AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ`: Default is `10` consecutive errors.
+  - After a partition has encountered 10 consecutive errors for read requests, the SDK will send requests routed to that partition to another region.
+- `AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE`: Default is `5` consecutive errors.
+    - After a partition has encountered 5 consecutive errors for write requests, the SDK will send requests routed to that partition to another region.
+- `AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED`: Default is a `90` percent failure rate.
+  - After a partition reaches a 90 percent failure rate for all requests, the SDK will send requests routed to that partition to another region.
+
 ## Troubleshooting
 
 ### General

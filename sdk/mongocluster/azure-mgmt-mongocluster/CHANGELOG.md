@@ -1,5 +1,33 @@
 # Release History
 
+## 1.1.0b1 (2025-06-03)
+
+### Features Added
+
+  - Client `MongoClusterMgmtClient` added operation group `users`
+  - Model `MongoClusterProperties` added property `data_api`
+  - Model `MongoClusterProperties` added property `auth_config`
+  - Model `MongoClusterUpdateProperties` added property `data_api`
+  - Model `MongoClusterUpdateProperties` added property `auth_config`
+  - Model `StorageProperties` added property `type`
+  - Model `StorageProperties` added property `iops`
+  - Model `StorageProperties` added property `throughput`
+  - Added model `AuthConfigProperties`
+  - Added enum `AuthenticationMode`
+  - Added enum `DataApiMode`
+  - Added model `DataApiProperties`
+  - Added model `DatabaseRole`
+  - Added model `EntraIdentityProvider`
+  - Added model `EntraIdentityProviderProperties`
+  - Added enum `EntraPrincipalType`
+  - Added model `IdentityProvider`
+  - Added enum `IdentityProviderType`
+  - Added enum `StorageType`
+  - Added model `User`
+  - Added model `UserProperties`
+  - Added enum `UserRole`
+  - Added operation group `UsersOperations`
+
 ## 1.0.0 (2024-09-26)
 
 ### Features Added

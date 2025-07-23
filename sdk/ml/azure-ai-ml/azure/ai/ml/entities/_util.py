@@ -218,17 +218,17 @@ def decorate_validation_error(schema: Any, pretty_error: str, additional_message
     return f"Validation for {schema.__name__} failed:\n\n {pretty_error} \n\n {additional_message}"
 
 
-def get_md5_string(text: Optional[str]) -> str:
-    """Get md5 string for a given text.
+def get_sha256_string(text: Optional[str]) -> str:
+    """Get sha256 string for a given text.
 
-    :param text: The text to get md5 string for.
+    :param text: The text to get sha256 string for.
     :type text: str
-    :return: The md5 string.
+    :return: The sha256 string.
     :rtype: str
     """
     try:
         if text is not None:
-            return hashlib.md5(text.encode("utf8")).hexdigest()  # nosec
+            return hashlib.sha256(text.encode("utf8")).hexdigest()  # nosec
         return ""
     except Exception as ex:
         raise ex

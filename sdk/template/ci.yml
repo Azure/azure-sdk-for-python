@@ -31,6 +31,14 @@ pr:
     - eng/common/
 
 parameters:
+  - name: ReleaseToDevOpsOnly
+    displayName: 'Release package to DevOps feed instead of PyPi'
+    type: boolean
+    default: false
+  - name: AutoApproveRelease
+    displayName: 'Automatically approve the release stage'
+    type: boolean
+    default: false
   # Switch to canary to test canary 1es branch. 1es template validation will set this parameter
   # to canary on run.
   - name: oneESTemplateTag
@@ -43,6 +51,10 @@ parameters:
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
+    ${{ if eq(parameters.ReleaseToDevOpsOnly, 'true') }}:
+      PublicFeed: 'public/storage-staging'
+    ${{ if eq(parameters.AutoApproveRelease, 'true') }}:
+      PublicPublishEnvironment: none
     oneESTemplateTag: ${{ parameters.oneESTemplateTag }}
     ServiceDirectory: template
     TestProxy: true

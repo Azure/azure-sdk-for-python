@@ -1,14 +1,44 @@
 # Release History
 
-## 1.8.0 (Unreleased)
+## 1.10.0 (Unreleased)
+
+### Breaking Changes
+- Added `_evaluate_query` parameter to `RaiServiceEvaluatorBase` class with a default value of `False`. This parameter controls whether queries are included in evaluation data when evaluating query-response pairs. Previously, queries were always included in evaluations. Existing code that relies on queries being evaluated will need to explicitly set `_evaluate_query=True` to maintain the previous behavior.
 
 ### Features Added
 
-### Breaking Changes
+### Bugs Fixed
+
+- Fixed red team scan `output_path` issue where individual evaluation results were overwriting each other instead of being preserved as separate files. Individual evaluations now create unique files while the user's `output_path` is reserved for final aggregated results.
+- Significant improvements to TaskAdherence evaluator. New version has less variance, is much faster and consumes fewer tokens.
+- Significant improvements to Relevance evaluator. New version has more concrete rubrics and has less variance, is much faster and consumes fewer tokens.
+
+
+## 1.9.0 (2025-07-02)
+
+### Features Added
+
+- Added support for Azure Open AI evaluation via `AzureOpenAIScoreModelGrader` class, which serves as a wrapper around Azure Open AI score model configurations. This new grader object can be supplied to the main `evaluate` method as if it were a normal callable evaluator.
+- Added new experimental risk categories ProtectedMaterial and CodeVulnerability for redteam agent scan.
+
 
 ### Bugs Fixed
 
-### Other Changes
+- Significant improvements to IntentResolution evaluator. New version has less variance, is nearly 2x faster and consumes fewer tokens.
+
+- Fixes and improvements to ToolCallAccuracy evaluator. New version has less variance. and now works on all tool calls that happen in a turn at once. Previously, it worked on each tool call independently without having context on the other tool calls that happen in the same turn, and then aggregated the results to a score in the range [0-1]. The score range is now [1-5].
+- Fixed MeteorScoreEvaluator and other threshold-based evaluators returning incorrect binary results due to integer conversion of decimal scores. Previously, decimal scores like 0.9375 were incorrectly converted to integers (0) before threshold comparison, causing them to fail even when above the threshold. [#41415](https://github.com/Azure/azure-sdk-for-python/issues/41415)
+- Added a new enum `ADVERSARIAL_QA_DOCUMENTS` which moves all the "file_content" type prompts away from `ADVERSARIAL_QA` to the new enum
+- `AzureOpenAIScoreModelGrader` evaluator now supports `pass_threshold` parameter to set the minimum score required for a response to be considered passing. This allows users to define custom thresholds for evaluation results, enhancing flexibility in grading AI model responses.
+
+## 1.8.0 (2025-05-29)
+
+### Features Added
+
+- Introduces `AttackStrategy.MultiTurn` and `AttackStrategy.Crescendo` to `RedTeam`. These strategies attack the target of a `RedTeam` scan over the course of multi-turn conversations. 
+
+### Bugs Fixed
+- AdversarialSimulator in `ADVERSARIAL_CONVERSATION` mode was broken. It is now fixed.
 
 ## 1.7.0 (2025-05-12)
 

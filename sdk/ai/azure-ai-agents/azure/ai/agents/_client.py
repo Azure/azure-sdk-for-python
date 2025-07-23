@@ -17,7 +17,6 @@ from azure.core.rest import HttpRequest, HttpResponse
 from ._configuration import AgentsClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
-    AgentsClientOperationsMixin,
     FilesOperations,
     MessagesOperations,
     RunStepsOperations,
@@ -27,12 +26,13 @@ from .operations import (
     VectorStoreFilesOperations,
     VectorStoresOperations,
 )
+from .operations._operations import _AgentsClientOperationsMixin
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class AgentsClient(AgentsClientOperationsMixin):  # pylint: disable=too-many-instance-attributes
+class AgentsClient(_AgentsClientOperationsMixin):  # pylint: disable=too-many-instance-attributes
     """AgentsClient.
 
     :ivar threads: ThreadsOperations operations
@@ -56,8 +56,9 @@ class AgentsClient(AgentsClientOperationsMixin):  # pylint: disable=too-many-ins
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is "v1". Note
-     that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Default value is
+     "2025-05-15-preview". Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     """
 

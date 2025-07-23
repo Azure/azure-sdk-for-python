@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -58,6 +59,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2024-04-01/examples/RestoreWebAppBackup.json
+# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2024-11-01/examples/RestoreWebAppBackup.json
 if __name__ == "__main__":
     main()
