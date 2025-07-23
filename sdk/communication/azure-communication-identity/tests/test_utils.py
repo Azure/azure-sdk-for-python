@@ -1,5 +1,6 @@
 import unittest
 from datetime import datetime, timezone, timedelta
+from zoneinfo import ZoneInfo
 from azure.communication.identity._shared.utils import create_access_token
 from azure.communication.identity._shared.utils import get_current_utc_as_int
 
@@ -26,19 +27,19 @@ class UtilsTest(unittest.TestCase):
         utc_naive_time_in_sec = _convert_datetime_to_utc_int(datetime(1970, 1, 1, 0, 0, 0, 0))
         assert utc_naive_time_in_sec == 0
         # PST is UTC-8 (Vancouver/Pacific Time)
-        pst_tz = timezone(timedelta(hours=-8))  # PST is UTC-8
+        pst_tz = ZoneInfo("America/Los_Angeles")
         pst_time_in_sec = _convert_datetime_to_utc_int(
             datetime(1970, 1, 1, 0, 0, 0, 0, tzinfo=pst_tz)
         )
         assert pst_time_in_sec == 8 * 3600
         # EST is UTC-5 (Eastern Time)
-        est_tz = timezone(timedelta(hours=-5))  # EST is UTC-5
+        est_tz = ZoneInfo("America/New_York")
         est_time_in_sec = _convert_datetime_to_utc_int(
             datetime(1970, 1, 1, 0, 0, 0, 0, tzinfo=est_tz)
         )
         assert est_time_in_sec == 5 * 3600
         # CST is UTC+8 (China Standard Time)
-        cst_tz = timezone(timedelta(hours=8))  # CST is UTC+8
+        cst_tz = ZoneInfo("Asia/Shanghai")
         cst_time_in_sec = _convert_datetime_to_utc_int(
             datetime(1970, 1, 1, 0, 0, 0, 0, tzinfo=cst_tz)
         )
