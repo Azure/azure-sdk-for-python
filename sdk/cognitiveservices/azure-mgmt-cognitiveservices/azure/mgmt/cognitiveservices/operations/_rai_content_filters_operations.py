@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Dict, Iterable, Optional, TypeVar
+from typing import Any, Callable, Dict, Optional, TypeVar
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -41,7 +41,7 @@ def build_list_request(location: str, subscription_id: str, **kwargs: Any) -> Ht
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -69,7 +69,7 @@ def build_get_request(location: str, filter_name: str, subscription_id: str, **k
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -106,7 +106,7 @@ class RaiContentFiltersOperations:
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: CognitiveServicesManagementClientConfiguration = (
@@ -116,7 +116,7 @@ class RaiContentFiltersOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, location: str, **kwargs: Any) -> Iterable["_models.RaiContentFilter"]:
+    def list(self, location: str, **kwargs: Any) -> ItemPaged["_models.RaiContentFilter"]:
         """List Content Filters types.
 
         :param location: Resource location. Required.

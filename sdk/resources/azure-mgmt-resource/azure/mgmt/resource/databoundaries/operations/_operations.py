@@ -25,7 +25,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
-from .._configuration import DataBoundaryConfiguration
+from .._configuration import DataBoundaryMgmtClientConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
@@ -119,7 +119,7 @@ class DataBoundariesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.resource.databoundaries.DataBoundary`'s
+        :class:`~azure.mgmt.resource.databoundaries.DataBoundaryMgmtClient`'s
         :attr:`data_boundaries` attribute.
     """
 
@@ -128,7 +128,7 @@ class DataBoundariesOperations:
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DataBoundaryConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DataBoundaryMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

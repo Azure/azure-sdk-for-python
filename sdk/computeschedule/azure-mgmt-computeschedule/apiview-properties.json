@@ -55,6 +55,8 @@
         "azure.mgmt.computeschedule.models.ScheduledActionResource": "Microsoft.ComputeSchedule.ScheduledActionResource",
         "azure.mgmt.computeschedule.models.ScheduledActionResources": "Microsoft.ComputeSchedule.ScheduledActionResources",
         "azure.mgmt.computeschedule.models.ScheduledActionsSchedule": "Microsoft.ComputeSchedule.ScheduledActionsSchedule",
+        "azure.mgmt.computeschedule.models.ScheduledActionUpdate": "Azure.ResourceManager.Foundations.ResourceUpdateModel",
+        "azure.mgmt.computeschedule.models.ScheduledActionUpdateProperties": "Azure.ResourceManager.Foundations.ResourceUpdateModelProperties",
         "azure.mgmt.computeschedule.models.StartResourceOperationResponse": "Microsoft.ComputeSchedule.StartResourceOperationResponse",
         "azure.mgmt.computeschedule.models.SubmitDeallocateRequest": "Microsoft.ComputeSchedule.SubmitDeallocateRequest",
         "azure.mgmt.computeschedule.models.SubmitHibernateRequest": "Microsoft.ComputeSchedule.SubmitHibernateRequest",

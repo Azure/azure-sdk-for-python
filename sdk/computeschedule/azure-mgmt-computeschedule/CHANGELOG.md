@@ -1,6 +1,6 @@
 # Release History
 
-## 1.2.0b1 (2025-07-17)
+## 1.2.0b1 (2025-07-23)
 
 ### Features Added
 
@@ -39,6 +39,8 @@
   - Added model `ScheduledActionResource`
   - Added model `ScheduledActionResources`
   - Added enum `ScheduledActionType`
+  - Added model `ScheduledActionUpdate`
+  - Added model `ScheduledActionUpdateProperties`
   - Added model `ScheduledActionsSchedule`
   - Added model `SystemData`
   - Added model `TrackedResource`

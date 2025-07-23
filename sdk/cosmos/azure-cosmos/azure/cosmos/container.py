@@ -21,9 +21,10 @@
 
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
+import threading
 import warnings
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Sequence, Union, Tuple, Mapping, Type, cast, overload, Iterable, Callable
+from typing import Any, Dict, List, Optional, Sequence, Union, Tuple, Mapping, cast, overload, Iterable, Callable
 from typing_extensions import Literal
 
 from azure.core import MatchConditions
@@ -31,6 +32,7 @@ from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.cosmos._change_feed.change_feed_utils import add_args_to_kwargs, validate_kwargs
 
+from . import _utils as utils
 from ._base import (
     build_options,
     validate_cache_staleness_value,
@@ -49,10 +51,10 @@ from .offer import Offer, ThroughputProperties
 from .partition_key import (
     NonePartitionKeyValue,
     PartitionKey,
-    _Empty,
-    _Undefined,
+    _PartitionKeyType,
+    _SequentialPartitionKeyType,
+    _build_partition_key_from_properties,
     _return_undefined_or_empty_partition_key,
-    _get_partition_key_from_partition_key_definition
 )
 from .scripts import ScriptsProxy
 
@@ -62,20 +64,10 @@ __all__ = ("ContainerProxy",)
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
-PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]  # pylint: disable=line-too-long
-
-def get_partition_key_from_properties(container_properties: Dict[str, Any]) -> PartitionKey:
-    partition_key_definition = container_properties["partitionKey"]
-    return _get_partition_key_from_partition_key_definition(partition_key_definition)
-
-def is_prefix_partition_key(container_properties: Dict[str, Any], partition_key: PartitionKeyType) -> bool:
-    partition_key_obj: PartitionKey = get_partition_key_from_properties(container_properties)
-    return partition_key_obj._is_prefix_partition_key(partition_key)
-
 def get_epk_range_for_partition_key(
         container_properties: Dict[str, Any],
-        partition_key_value: PartitionKeyType) -> Range:
-    partition_key_obj: PartitionKey = get_partition_key_from_properties(container_properties)
+        partition_key_value: _PartitionKeyType) -> Range:
+    partition_key_obj: PartitionKey = _build_partition_key_from_properties(container_properties)
     return partition_key_obj._get_epk_range_for_partition_key(partition_key_value)
 
 class ContainerProxy:  # pylint: disable=too-many-public-methods
@@ -103,6 +95,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self.id = id
         self.container_link = "{}/colls/{}".format(database_link, self.id)
         self.client_connection = client_connection
+        self.container_cache_lock = threading.Lock()
         self._is_system_key: Optional[bool] = None
         self._scripts: Optional[ScriptsProxy] = None
         if properties:
@@ -121,7 +114,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     def _get_properties(self, **kwargs: Any) -> Dict[str, Any]:
         if self.container_link not in self.__get_client_container_caches():
-            self.read(**kwargs)
+            with self.container_cache_lock:
+                if self.container_link not in self.__get_client_container_caches():
+                    self.read(**kwargs)
         return self.__get_client_container_caches()[self.container_link]
 
     @property
@@ -151,8 +146,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     def _set_partition_key(
         self,
-        partition_key: PartitionKeyType
-    ) -> Union[str, int, float, bool, List[Union[str, int, float, bool]], _Empty, _Undefined]:
+        partition_key: _PartitionKeyType
+    ) -> _PartitionKeyType:
         if partition_key == NonePartitionKeyValue:
             return _return_undefined_or_empty_partition_key(self.is_system_key)
         return cast(Union[str, int, float, bool, List[Union[str, int, float, bool]]], partition_key)
@@ -221,7 +216,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def read_item(  # pylint:disable=docstring-missing-param
         self,
         item: Union[str, Mapping[str, Any]],
-        partition_key: PartitionKeyType,
+        partition_key: _PartitionKeyType,
         populate_query_metrics: Optional[bool] = None,
         post_trigger_include: Optional[str] = None,
         *,
@@ -369,7 +364,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             *,
             max_item_count: Optional[int] = None,
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
-            partition_key: PartitionKeyType,
+            partition_key: _PartitionKeyType,
             priority: Optional[Literal["High", "Low"]] = None,
             mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
             response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
@@ -578,7 +573,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         container_properties = self._get_properties_with_options(feed_options)
         if "partition_key" in kwargs:
             partition_key = kwargs.pop("partition_key")
-            change_feed_state_context["partitionKey"] = self._set_partition_key(cast(PartitionKeyType, partition_key))
+            change_feed_state_context["partitionKey"] = self._set_partition_key(cast(_PartitionKeyType, partition_key))
             change_feed_state_context["partitionKeyFeedRange"] = \
                 get_epk_range_for_partition_key(container_properties, partition_key)
         if "feed_range" in kwargs:
@@ -598,27 +593,27 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         )
         return result
 
-    @distributed_trace
-    def query_items(  # pylint:disable=docstring-missing-param
-        self,
-        query: str,
-        parameters: Optional[List[Dict[str, object]]] = None,
-        partition_key: Optional[PartitionKeyType] = None,
-        enable_cross_partition_query: Optional[bool] = None,
-        max_item_count: Optional[int] = None,
-        enable_scan_in_query: Optional[bool] = None,
-        populate_query_metrics: Optional[bool] = None,
-        *,
-        populate_index_metrics: Optional[bool] = None,
-        session_token: Optional[str] = None,
-        initial_headers: Optional[Dict[str, str]] = None,
-        max_integrated_cache_staleness_in_ms: Optional[int] = None,
-        priority: Optional[Literal["High", "Low"]] = None,
-        continuation_token_limit: Optional[int] = None,
-        throughput_bucket: Optional[int] = None,
-        response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
-        **kwargs: Any
-    ) -> ItemPaged[Dict[str, Any]]:
+    @overload
+    def query_items(
+            self,
+            query: str,
+            *,
+            continuation_token_limit: Optional[int] = None,
+            enable_cross_partition_query: Optional[bool] = None,
+            enable_scan_in_query: Optional[bool] = None,
+            initial_headers: Optional[Dict[str, str]] = None,
+            max_integrated_cache_staleness_in_ms: Optional[int] = None,
+            max_item_count: Optional[int] = None,
+            parameters: Optional[List[Dict[str, object]]] = None,
+            partition_key: Optional[_PartitionKeyType] = None,
+            populate_index_metrics: Optional[bool] = None,
+            populate_query_metrics: Optional[bool] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
+            session_token: Optional[str] = None,
+            throughput_bucket: Optional[int] = None,
+            **kwargs: Any
+    ):
         """Return all results matching the given `query`.
 
         You can use any value for the container name in the FROM clause, but
@@ -627,40 +622,40 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         the WHERE clause.
 
         :param str query: The Azure Cosmos DB SQL query to execute.
-        :param parameters: Optional array of parameters to the query.
-            Each parameter is a dict() with 'name' and 'value' keys.
-            Ignored if no query is provided.
-        :type parameters: [List[Dict[str, object]]]
-        :param partition_key: partition key at which the query request is targeted.
-        :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
-        :param bool enable_cross_partition_query: Allows sending of more than one request to
-            execute the query in the Azure Cosmos DB service.
-            More than one request is necessary if the query is not scoped to single partition key value.
-        :param int max_item_count: Max number of items to be returned in the enumeration operation.
-        :param bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
-            indexing was opted out on the requested paths.
-        :param bool populate_query_metrics: Enable returning query metrics in response headers.
-        :keyword str session_token: Token for use with Session consistency.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :keyword int continuation_token_limit: The size limit in kb of the response continuation token in the query
             response. Valid values are positive integers.
             A value of 0 is the same as not passing a value (default no limit).
+        :keyword bool enable_cross_partition_query: Allows sending of more than one request to
+            execute the query in the Azure Cosmos DB service.
+            More than one request is necessary if the query is not scoped to single partition key value.
+        :keyword bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
+            indexing was opted out on the requested paths.
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the Azure Cosmos locations like, 'West US', 'East US' and so on.
+            If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
+        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword parameters: Optional array of parameters to the query.
+            Each parameter is a dict() with 'name' and 'value' keys.
+            Ignored if no query is provided.
+        :paramtype parameters: [List[Dict[str, object]]]
+        :keyword partition_key: Partition key at which the query request is targeted.
+        :paramtype partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
+        :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
+            existing indexes and how it could use potential new indexes. Please note that this option will incur
+            overhead, so it should be enabled only when debugging slow queries.
+        :keyword bool populate_query_metrics: Enable returning query metrics in response headers.
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
-            existing indexes and how it could use potential new indexes. Please note that this options will incur
-            overhead, so it should be enabled only when debugging slow queries.
-        :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
-            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
-            If all preferred locations were excluded, primary/hub location will be used.
-            This excluded_location will override existing excluded_locations in client level.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword int throughput_bucket: The desired throughput bucket for the client.
         :returns: An Iterable of items (dicts).
         :rtype: ItemPaged[Dict[str, Any]]
 
@@ -680,47 +675,218 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 :dedent: 0
                 :caption: Parameterized query to get all products that have been discontinued:
         """
-        if session_token is not None:
-            kwargs['session_token'] = session_token
-        if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
-        if priority is not None:
-            kwargs['priority'] = priority
-        if throughput_bucket is not None:
-            kwargs["throughputBucket"] = throughput_bucket
+        ...
+
+    @overload
+    def query_items(
+            self,
+            query: str,
+            *,
+            continuation_token_limit: Optional[int] = None,
+            enable_cross_partition_query: Optional[bool] = None,
+            enable_scan_in_query: Optional[bool] = None,
+            feed_range: Optional[Dict[str, Any]] = None,
+            initial_headers: Optional[Dict[str, str]] = None,
+            max_integrated_cache_staleness_in_ms: Optional[int] = None,
+            max_item_count: Optional[int] = None,
+            parameters: Optional[List[Dict[str, object]]] = None,
+            populate_index_metrics: Optional[bool] = None,
+            populate_query_metrics: Optional[bool] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
+            session_token: Optional[str] = None,
+            throughput_bucket: Optional[int] = None,
+            **kwargs: Any
+    ):
+        """Return all results matching the given `query`.
+
+        You can use any value for the container name in the FROM clause, but
+        often the container name is used. In the examples below, the container
+        name is "products," and is aliased as "p" for easier referencing in
+        the WHERE clause.
+
+        :param str query: The Azure Cosmos DB SQL query to execute.
+        :keyword int continuation_token_limit: The size limit in kb of the response continuation token in the query
+            response. Valid values are positive integers.
+            A value of 0 is the same as not passing a value (default no limit).
+        :keyword bool enable_cross_partition_query: Allows sending of more than one request to
+            execute the query in the Azure Cosmos DB service.
+            More than one request is necessary if the query is not scoped to single partition key value.
+        :keyword bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
+            indexing was opted out on the requested paths.
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the Azure Cosmos locations like, 'West US', 'East US' and so on.
+            If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
+        :keyword Dict[str, Any] feed_range: The feed range that is used to define the scope.
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
+            milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
+            responses are guaranteed to be no staler than this value.
+        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword parameters: Optional array of parameters to the query.
+            Each parameter is a dict() with 'name' and 'value' keys.
+            Ignored if no query is provided.
+        :paramtype parameters: [List[Dict[str, object]]]
+        :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
+            existing indexes and how it could use potential new indexes. Please note that this option will incur
+            overhead, so it should be enabled only when debugging slow queries.
+        :keyword bool populate_query_metrics: Enable returning query metrics in response headers.
+        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
+            request. Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword int throughput_bucket: The desired throughput bucket for the client.
+        :returns: An Iterable of items (dicts).
+        :rtype: ItemPaged[Dict[str, Any]]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/examples.py
+                :start-after: [START query_items]
+                :end-before: [END query_items]
+                :language: python
+                :dedent: 0
+                :caption: Get all products that have not been discontinued:
+
+            .. literalinclude:: ../samples/examples.py
+                :start-after: [START query_items_param]
+                :end-before: [END query_items_param]
+                :language: python
+                :dedent: 0
+                :caption: Parameterized query to get all products that have been discontinued:
+        """
+        ...
+
+    @distributed_trace
+    def query_items(  # pylint:disable=docstring-missing-param
+        self,
+        *args: Any,
+        **kwargs: Any
+    ) -> ItemPaged[Dict[str, Any]]:
+        """Return all results matching the given `query`.
+
+        You can use any value for the container name in the FROM clause, but
+        often the container name is used. In the examples below, the container
+        name is "products," and is aliased as "p" for easier referencing in
+        the WHERE clause.
+
+        :param Any args: args
+        :keyword int continuation_token_limit: The size limit in kb of the response continuation token in the query
+            response. Valid values are positive integers.
+            A value of 0 is the same as not passing a value (default no limit).
+        :keyword bool enable_cross_partition_query: Allows sending of more than one request to
+            execute the query in the Azure Cosmos DB service.
+            More than one request is necessary if the query is not scoped to single partition key value.
+        :keyword bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
+            indexing was opted out on the requested paths.
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the Azure Cosmos locations like, 'West US', 'East US' and so on.
+            If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
+        :keyword Dict[str, Any] feed_range: The feed range that is used to define the scope.
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
+            milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
+            responses are guaranteed to be no staler than this value.
+        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword parameters: Optional array of parameters to the query.
+            Each parameter is a dict() with 'name' and 'value' keys.
+            Ignored if no query is provided.
+        :paramtype parameters: [List[Dict[str, object]]]
+        :keyword partition_key: Partition key at which the query request is targeted.
+        :paramtype partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
+        :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
+            existing indexes and how it could use potential new indexes. Please note that this option will incur
+            overhead, so it should be enabled only when debugging slow queries.
+        :keyword bool populate_query_metrics: Enable returning query metrics in response headers.
+        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
+            request. Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword str query: The Azure Cosmos DB SQL query to execute.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword int throughput_bucket: The desired throughput bucket for the client.
+        :returns: An Iterable of items (dicts).
+        :rtype: ItemPaged[Dict[str, Any]]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/examples.py
+                :start-after: [START query_items]
+                :end-before: [END query_items]
+                :language: python
+                :dedent: 0
+                :caption: Get all products that have not been discontinued:
+
+            .. literalinclude:: ../samples/examples.py
+                :start-after: [START query_items_param]
+                :end-before: [END query_items_param]
+                :language: python
+                :dedent: 0
+                :caption: Parameterized query to get all products that have been discontinued:
+        """
+        # Add positional arguments to keyword argument to support backward compatibility.
+        original_positional_arg_names = ["query", "parameters", "partition_key", "enable_cross_partition_query",
+                                         "max_item_count", "enable_scan_in_query", "populate_query_metrics"]
+        utils.add_args_to_kwargs(original_positional_arg_names, args, kwargs)
         feed_options = build_options(kwargs)
-        if enable_cross_partition_query is not None:
-            feed_options["enableCrossPartitionQuery"] = enable_cross_partition_query
-        if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
-        if populate_query_metrics is not None:
-            feed_options["populateQueryMetrics"] = populate_query_metrics
-        if populate_index_metrics is not None:
-            feed_options["populateIndexMetrics"] = populate_index_metrics
-        properties = self._get_properties_with_options(feed_options)
-        if partition_key is not None:
-            partition_key_value = self._set_partition_key(partition_key)
-            if is_prefix_partition_key(properties, partition_key):
-                kwargs["isPrefixPartitionQuery"] = True
-                kwargs["partitionKeyDefinition"] = properties["partitionKey"]
-                kwargs["partitionKeyDefinition"]["partition_key"] = partition_key_value
-            else:
-                feed_options["partitionKey"] = partition_key_value
-        if enable_scan_in_query is not None:
-            feed_options["enableScanInQuery"] = enable_scan_in_query
-        if max_integrated_cache_staleness_in_ms:
+
+        # Get container property and init client container caches
+        container_properties = self._get_properties_with_options(feed_options)
+
+        # Update 'feed_options' from 'kwargs'
+        if utils.valid_key_value_exist(kwargs, "enable_cross_partition_query"):
+            feed_options["enableCrossPartitionQuery"] = kwargs.pop("enable_cross_partition_query")
+        if utils.valid_key_value_exist(kwargs, "max_item_count"):
+            feed_options["maxItemCount"] = kwargs.pop("max_item_count")
+        if utils.valid_key_value_exist(kwargs, "populate_query_metrics"):
+            feed_options["populateQueryMetrics"] = kwargs.pop("populate_query_metrics")
+        if utils.valid_key_value_exist(kwargs, "populate_index_metrics"):
+            feed_options["populateIndexMetrics"] = kwargs.pop("populate_index_metrics")
+        if utils.valid_key_value_exist(kwargs, "enable_scan_in_query"):
+            feed_options["enableScanInQuery"] = kwargs.pop("enable_scan_in_query")
+        if utils.valid_key_value_exist(kwargs, "max_integrated_cache_staleness_in_ms"):
+            max_integrated_cache_staleness_in_ms = kwargs.pop("max_integrated_cache_staleness_in_ms")
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
-        correlated_activity_id = GenerateGuidId()
-        feed_options["correlatedActivityId"] = correlated_activity_id
-        if continuation_token_limit is not None:
-            feed_options["responseContinuationTokenLimitInKb"] = continuation_token_limit
+        if utils.valid_key_value_exist(kwargs, "continuation_token_limit"):
+            feed_options["responseContinuationTokenLimitInKb"] = kwargs.pop("continuation_token_limit")
+        feed_options["correlatedActivityId"] = GenerateGuidId()
+        feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+
+        # Set query with 'query' and 'parameters' from kwargs
+        if utils.valid_key_value_exist(kwargs, "parameters"):
+            query = {"query": kwargs.pop("query", None), "parameters": kwargs.pop("parameters", None)}
+        else:
+            query = kwargs.pop("query", None)
+
+        # Set range filters for a query. Options are either 'feed_range' or 'partition_key'
+        utils.verify_exclusive_arguments(["feed_range", "partition_key"], **kwargs)
+        if utils.valid_key_value_exist(kwargs, "partition_key"):
+            partition_key_value = self._set_partition_key(kwargs.pop("partition_key"))
+            partition_key_obj = _build_partition_key_from_properties(container_properties)
+            if partition_key_obj._is_prefix_partition_key(partition_key_value):
+                kwargs["prefix_partition_key_object"] = partition_key_obj
+                kwargs["prefix_partition_key_value"] = cast(_SequentialPartitionKeyType, partition_key_value)
+            else:
+                # Add to feed_options, only when feed_range not given and partition_key was not prefixed partition_key
+                feed_options["partitionKey"] = partition_key_value
+
+        # Set 'partition_key' for QueryItems method. This can be 'None' if feed range or prefix partition key was set
+        partition_key = feed_options.get("partitionKey")
+
+        # Set 'response_hook'
+        response_hook = kwargs.pop("response_hook", None)
         if response_hook and hasattr(response_hook, "clear"):
             response_hook.clear()
-        feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+
         items = self.client_connection.QueryItems(
             database_or_container_link=self.container_link,
-            query=query if parameters is None else {"query": query, "parameters": parameters},
+            query=query,
             options=feed_options,
             partition_key=partition_key,
             response_hook=response_hook,
@@ -1025,7 +1191,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def patch_item(
         self,
         item: Union[str, Dict[str, Any]],
-        partition_key: PartitionKeyType,
+        partition_key: _PartitionKeyType,
         patch_operations: List[Dict[str, Any]],
         *,
         filter_predicate: Optional[str] = None,
@@ -1120,7 +1286,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def execute_item_batch(
         self,
         batch_operations: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], Dict[str, Any]]]],
-        partition_key: PartitionKeyType,
+        partition_key: _PartitionKeyType,
         *,
         pre_trigger_include: Optional[str] = None,
         post_trigger_include: Optional[str] = None,
@@ -1192,7 +1358,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def delete_item(  # pylint:disable=docstring-missing-param
         self,
         item: Union[Mapping[str, Any], str],
-        partition_key: PartitionKeyType,
+        partition_key: _PartitionKeyType,
         populate_query_metrics: Optional[bool] = None,
         pre_trigger_include: Optional[str] = None,
         post_trigger_include: Optional[str] = None,
@@ -1390,7 +1556,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         query: str,
         parameters: Optional[List[Dict[str, object]]] = None,
         enable_cross_partition_query: Optional[bool] = None,
-        partition_key: Optional[PartitionKeyType] = None,
+        partition_key: Optional[_PartitionKeyType] = None,
         max_item_count: Optional[int] = None,
         *,
         response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]] = None,
@@ -1436,7 +1602,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def get_conflict(
         self,
         conflict: Union[str, Mapping[str, Any]],
-        partition_key: PartitionKeyType,
+        partition_key: _PartitionKeyType,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Get the conflict identified by `conflict`.
@@ -1464,7 +1630,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def delete_conflict(
         self,
         conflict: Union[str, Mapping[str, Any]],
-        partition_key: PartitionKeyType,
+        partition_key: _PartitionKeyType,
         **kwargs: Any
     ) -> None:
         """Delete a specified conflict from the container.
@@ -1493,7 +1659,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def delete_all_items_by_partition_key(
         self,
-        partition_key: PartitionKeyType,
+        partition_key: _PartitionKeyType,
         *,
         pre_trigger_include: Optional[str] = None,
         post_trigger_include: Optional[str] = None,
@@ -1614,7 +1780,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
         return get_latest_session_token(feed_ranges_to_session_tokens, target_feed_range)
 
-    def feed_range_from_partition_key(self, partition_key: PartitionKeyType) -> Dict[str, Any]:
+    def feed_range_from_partition_key(self, partition_key: _PartitionKeyType) -> Dict[str, Any]:
         """ Gets the feed range for a given partition key.
         :param partition_key: partition key to get feed range.
         :type partition_key: PartitionKeyType

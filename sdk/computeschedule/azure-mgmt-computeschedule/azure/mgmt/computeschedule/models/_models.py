@@ -2306,6 +2306,115 @@ class ScheduledActionsSchedule(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ScheduledActionUpdate(_Model):
+    """The type used for update operations of the ScheduledAction.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.computeschedule.models.ScheduledActionUpdateProperties
+    """
+
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.ScheduledActionUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        properties: Optional["_models.ScheduledActionUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ScheduledActionUpdateProperties(_Model):
+    """The updatable properties of the ScheduledAction.
+
+    :ivar resource_type: The type of resource the scheduled action is targeting. Known values are:
+     "VirtualMachine" and "VirtualMachineScaleSet".
+    :vartype resource_type: str or ~azure.mgmt.computeschedule.models.ResourceType
+    :ivar action_type: The action the scheduled action should perform in the resources. Known
+     values are: "Start", "Deallocate", and "Hibernate".
+    :vartype action_type: str or ~azure.mgmt.computeschedule.models.ScheduledActionType
+    :ivar start_time: The time which the scheduled action is supposed to start running.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: The time when the scheduled action is supposed to stop scheduling.
+    :vartype end_time: ~datetime.datetime
+    :ivar schedule: The schedule the scheduled action is supposed to follow.
+    :vartype schedule: ~azure.mgmt.computeschedule.models.ScheduledActionsSchedule
+    :ivar notification_settings: The notification settings for the scheduled action.
+    :vartype notification_settings: list[~azure.mgmt.computeschedule.models.NotificationProperties]
+    :ivar disabled: Tell if the scheduled action is disabled or not.
+    :vartype disabled: bool
+    """
+
+    resource_type: Optional[Union[str, "_models.ResourceType"]] = rest_field(
+        name="resourceType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of resource the scheduled action is targeting. Known values are: \"VirtualMachine\"
+     and \"VirtualMachineScaleSet\"."""
+    action_type: Optional[Union[str, "_models.ScheduledActionType"]] = rest_field(
+        name="actionType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The action the scheduled action should perform in the resources. Known values are: \"Start\",
+     \"Deallocate\", and \"Hibernate\"."""
+    start_time: Optional[datetime.datetime] = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time which the scheduled action is supposed to start running."""
+    end_time: Optional[datetime.datetime] = rest_field(
+        name="endTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time when the scheduled action is supposed to stop scheduling."""
+    schedule: Optional["_models.ScheduledActionsSchedule"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The schedule the scheduled action is supposed to follow."""
+    notification_settings: Optional[List["_models.NotificationProperties"]] = rest_field(
+        name="notificationSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The notification settings for the scheduled action."""
+    disabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tell if the scheduled action is disabled or not."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_type: Optional[Union[str, "_models.ResourceType"]] = None,
+        action_type: Optional[Union[str, "_models.ScheduledActionType"]] = None,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
+        schedule: Optional["_models.ScheduledActionsSchedule"] = None,
+        notification_settings: Optional[List["_models.NotificationProperties"]] = None,
+        disabled: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class StartResourceOperationResponse(_Model):
     """The response from a start request.
 

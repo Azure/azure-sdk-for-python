@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
+import platform
 import logging
 from contextvars import ContextVar
 from string import ascii_letters, digits
@@ -209,3 +210,11 @@ def get_broker_credential() -> Optional[type]:
         return InteractiveBrowserBrokerCredential
     except ImportError:
         return None
+
+
+def is_wsl() -> bool:
+    # This is how MSAL checks for WSL.
+    uname = platform.uname()
+    platform_name = getattr(uname, "system", uname[0]).lower()
+    release = getattr(uname, "release", uname[2]).lower()
+    return platform_name == "linux" and "microsoft" in release

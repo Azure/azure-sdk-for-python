@@ -17,8 +17,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class DataBoundaryConfiguration:  # pylint: disable=too-many-instance-attributes
-    """Configuration for DataBoundary.
+class DataBoundaryMgmtClientConfiguration:  # pylint: disable=too-many-instance-attributes
+    """Configuration for DataBoundaryMgmtClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.

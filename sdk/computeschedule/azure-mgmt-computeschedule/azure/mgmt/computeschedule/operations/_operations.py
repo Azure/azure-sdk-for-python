@@ -3094,7 +3094,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         scheduled_action_name: str,
-        properties: _models.ScheduledAction,
+        properties: _models.ScheduledActionUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3107,7 +3107,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param scheduled_action_name: The name of the ScheduledAction. Required.
         :type scheduled_action_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.computeschedule.models.ScheduledAction
+        :type properties: ~azure.mgmt.computeschedule.models.ScheduledActionUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3189,7 +3189,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         scheduled_action_name: str,
-        properties: Union[_models.ScheduledAction, JSON, IO[bytes]],
+        properties: Union[_models.ScheduledActionUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.ScheduledAction:
         """Update a ScheduledAction.
@@ -3200,8 +3200,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param scheduled_action_name: The name of the ScheduledAction. Required.
         :type scheduled_action_name: str
         :param properties: The resource properties to be updated. Is one of the following types:
-         ScheduledAction, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.computeschedule.models.ScheduledAction or JSON or IO[bytes]
+         ScheduledActionUpdate, JSON, IO[bytes] Required.
+        :type properties: ~azure.mgmt.computeschedule.models.ScheduledActionUpdate or JSON or IO[bytes]
         :return: ScheduledAction. The ScheduledAction is compatible with MutableMapping
         :rtype: ~azure.mgmt.computeschedule.models.ScheduledAction
         :raises ~azure.core.exceptions.HttpResponseError:
