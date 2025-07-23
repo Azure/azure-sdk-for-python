@@ -1072,7 +1072,9 @@
         "plotly",
         "nbformat",
         "nbconvert",
-        "rollupby"
+        "rollupby",
+        "milli",
+        "resourceid"
       ]
     },
     {
