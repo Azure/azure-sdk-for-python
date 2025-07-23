@@ -23,7 +23,10 @@ from azure.identity._credentials.azure_powershell import (
 )
 import pytest
 
-from credscan_ignore import POWERSHELL_INVALID_OPERATION_EXCEPTION, POWERSHELL_NOT_LOGGED_IN_ERROR
+from credscan_ignore import (
+    POWERSHELL_INVALID_OPERATION_EXCEPTION,
+    POWERSHELL_NOT_LOGGED_IN_ERROR,
+)
 from helpers import INVALID_CHARACTERS, GET_TOKEN_METHODS
 
 
@@ -35,7 +38,9 @@ PREPARING_MODULES = """#< CLIXML
 
 
 def raise_called_process_error(return_code, stdout, stderr="", cmd="..."):
-    error = subprocess.CalledProcessError(return_code, cmd=cmd, output=stdout, stderr=stderr)
+    error = subprocess.CalledProcessError(
+        return_code, cmd=cmd, output=stdout, stderr=stderr
+    )
     return Mock(side_effect=error)
 
 
@@ -57,7 +62,9 @@ def test_multiple_scopes(get_token_method):
     """The credential should raise ValueError when get_token is called with more than one scope"""
 
     with pytest.raises(ValueError):
-        getattr(AzurePowerShellCredential(), get_token_method)("one scope", "and another")
+        getattr(AzurePowerShellCredential(), get_token_method)(
+            "one scope", "and another"
+        )
 
 
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
@@ -93,7 +100,9 @@ def test_invalid_scopes(get_token_method):
             getattr(AzurePowerShellCredential(), get_token_method)("scope" + c)
 
 
-@pytest.mark.parametrize("stderr,get_token_method", product(("", PREPARING_MODULES), GET_TOKEN_METHODS))
+@pytest.mark.parametrize(
+    "stderr,get_token_method", product(("", PREPARING_MODULES), GET_TOKEN_METHODS)
+)
 def test_get_token(stderr, get_token_method):
     """The credential should parse Azure PowerShell's output to an AccessToken"""
 
@@ -126,7 +135,9 @@ def test_get_token(stderr, get_token_method):
     args, kwargs = Popen().communicate.call_args
 
 
-@pytest.mark.parametrize("stderr,get_token_method", product(("", PREPARING_MODULES), GET_TOKEN_METHODS))
+@pytest.mark.parametrize(
+    "stderr,get_token_method", product(("", PREPARING_MODULES), GET_TOKEN_METHODS)
+)
 def test_get_token_tenant_id(stderr, get_token_method):
     expected_access_token = "access"
     expected_expires_on = 1617923581
@@ -149,7 +160,9 @@ def test_ignores_extraneous_stdout_content(get_token_method):
     expected_access_token = "access"
     expected_expires_on = 1617923581
     motd = "MOTD: Customize your experience: save your profile to $HOME/.config/PowerShell\n"
-    Popen = get_mock_Popen(stdout=motd + "azsdk%{}%{}".format(expected_access_token, expected_expires_on))
+    Popen = get_mock_Popen(
+        stdout=motd + "azsdk%{}%{}".format(expected_access_token, expected_expires_on)
+    )
 
     with patch(POPEN, Popen):
         token = getattr(AzurePowerShellCredential(), get_token_method)("scope")
@@ -198,7 +211,10 @@ def test_powershell_not_installed_sh(get_token_method):
 
 @pytest.mark.parametrize(
     "stderr,get_token_method",
-    product((POWERSHELL_INVALID_OPERATION_EXCEPTION, POWERSHELL_NOT_LOGGED_IN_ERROR), GET_TOKEN_METHODS),
+    product(
+        (POWERSHELL_INVALID_OPERATION_EXCEPTION, POWERSHELL_NOT_LOGGED_IN_ERROR),
+        GET_TOKEN_METHODS,
+    ),
 )
 def test_not_logged_in(stderr, get_token_method):
     """The credential should raise CredentialUnavailableError when a user isn't logged in to Azure PowerShell"""
@@ -217,7 +233,9 @@ def test_blocked_by_execution_policy(get_token_method):
 <Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04"><S S="Error">Import-Module : Errors occurred while loading the format data file: _x000D__x000A_</S><S S="Error">C:\Users\foo\Documents\WindowsPowerShell\Modules\Az.Accounts\2.2.7\Accounts.format.ps1xml, , C:\Users\foo\Documents\WindowsPowerShell\Modules\Az.Accounts\2.2.7\Accounts.format.ps1xml: The file was skipped because of the _x000D__x000A_</S><S S="Error">following validation exception: AuthorizationManager check failed.._x000D__x000A_</S><S S="Error">C:\Users\foo\Documents\WindowsPowerShell\Modules\Az.Accounts\2.2.7\Accounts.generated.format.ps1xml, , C:\Users\foo\Documents\WindowsPowerShell\Modules\Az.Accounts\2.2.7\Accounts.generated.format.ps1xml: The file was skipped _x000D__x000A_</S><S S="Error">because of the following validation exception: AuthorizationManager check failed.._x000D__x000A_</S><S S="Error">At line:4 char:6_x000D__x000A_</S><S S="Error">+ $m = Import-Module Az.Accounts -MinimumVersion $minimumVersion -PassT ..._x000D__x000A_</S><S S="Error">+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~_x000D__x000A_</S><S S="Error">    + CategoryInfo          : InvalidOperation: (:) [Import-Module], RuntimeException_x000D__x000A_</S><S S="Error">    + FullyQualifiedErrorId : FormatXmlUpdateException,Microsoft.PowerShell.Commands.ImportModuleCommand_x000D__x000A_</S><S S="Error"> _x000D__x000A_</S></Objs>"""
     Popen = get_mock_Popen(return_code=1, stderr=stderr)
     with patch(POPEN, Popen):
-        with pytest.raises(CredentialUnavailableError, match=BLOCKED_BY_EXECUTION_POLICY):
+        with pytest.raises(
+            CredentialUnavailableError, match=BLOCKED_BY_EXECUTION_POLICY
+        ):
             getattr(AzurePowerShellCredential(), get_token_method)("scope")
 
 
@@ -230,7 +248,9 @@ def test_timeout(get_token_method):
     proc = Mock(communicate=Mock(side_effect=TimeoutExpired("", 42)), returncode=None)
     with patch(POPEN, Mock(return_value=proc)):
         with pytest.raises(CredentialUnavailableError):
-            getattr(AzurePowerShellCredential(process_timeout=42), get_token_method)("scope")
+            getattr(AzurePowerShellCredential(process_timeout=42), get_token_method)(
+                "scope"
+            )
 
     assert proc.communicate.call_count == 1
     # Ensure custom timeout is passed to subprocess
@@ -294,17 +314,23 @@ def test_windows_powershell_fallback(error_message, get_token_method):
             stderr = error_message
             return_code = 9009
         else:
-            assert args[-1].startswith("powershell"), 'credential should fall back to "powershell"'
+            assert args[-1].startswith(
+                "powershell"
+            ), 'credential should fall back to "powershell"'
             stdout = NO_AZ_ACCOUNT_MODULE
             stderr = ""
             return_code = 0
 
-        return Mock(communicate=Mock(return_value=(stdout, stderr)), returncode=return_code)
+        return Mock(
+            communicate=Mock(return_value=(stdout, stderr)), returncode=return_code
+        )
 
     with patch(AzurePowerShellCredential.__module__ + ".sys.platform", "win32"):
         with patch.dict("os.environ", {"SYSTEMROOT": "foo"}):
             with patch(POPEN, Popen):
-                with pytest.raises(CredentialUnavailableError, match=AZ_ACCOUNT_NOT_INSTALLED):
+                with pytest.raises(
+                    CredentialUnavailableError, match=AZ_ACCOUNT_NOT_INSTALLED
+                ):
                     getattr(AzurePowerShellCredential(), get_token_method)("scope")
 
     assert Fake.calls == 2
@@ -317,7 +343,9 @@ def test_multitenant_authentication(get_token_method):
     second_token = first_token * 2
 
     def fake_Popen(command, **_):
-        assert command[-1].startswith("pwsh -NoProfile -NonInteractive -EncodedCommand ")
+        assert command[-1].startswith(
+            "pwsh -NoProfile -NonInteractive -EncodedCommand "
+        )
         match = re.search(r"-EncodedCommand\s+(\S+)", command[-1])
         assert match, "couldn't find encoded script in command line"
         encoded_script = match.groups()[0]
@@ -326,7 +354,9 @@ def test_multitenant_authentication(get_token_method):
         assert match
         tenant = match.group(1)
 
-        assert not tenant or tenant == second_tenant, 'unexpected tenant "{}"'.format(tenant)
+        assert not tenant or tenant == second_tenant, 'unexpected tenant "{}"'.format(
+            tenant
+        )
         token = first_token if not tenant else second_token
         stdout = "azsdk%{}%{}".format(token, int(time.time()) + 3600)
 
@@ -354,7 +384,9 @@ def test_multitenant_authentication_not_allowed(get_token_method):
     expected_token = "***"
 
     def fake_Popen(command, **_):
-        assert command[-1].startswith("pwsh -NoProfile -NonInteractive -EncodedCommand ")
+        assert command[-1].startswith(
+            "pwsh -NoProfile -NonInteractive -EncodedCommand "
+        )
         match = re.search(r"-EncodedCommand\s+(\S+)", command[-1])
         assert match, "couldn't find encoded script in command line"
         encoded_script = match.groups()[0]
@@ -374,7 +406,10 @@ def test_multitenant_authentication_not_allowed(get_token_method):
         token = getattr(credential, get_token_method)("scope")
         assert token.token == expected_token
 
-        with patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
+        with patch.dict(
+            "os.environ",
+            {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"},
+        ):
             kwargs = {"tenant_id": "12345"}
             if get_token_method == "get_token_info":
                 kwargs = {"options": kwargs}
@@ -385,47 +420,67 @@ def test_multitenant_authentication_not_allowed(get_token_method):
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
 def test_claims_challenge_error(get_token_method):
     """The credential should raise CredentialUnavailableError when claims challenge is provided"""
-    
+
     if get_token_method == "get_token":
         # Test claims parameter in get_token method
         with pytest.raises(CredentialUnavailableError) as exc_info:
-            getattr(AzurePowerShellCredential(), get_token_method)("scope", claims="some-claims")
-        assert "Fail to get token, please run Connect-AzAccount --ClaimsChallenge some-claims" in str(exc_info.value)
+            getattr(AzurePowerShellCredential(), get_token_method)(
+                "scope", claims="some-claims"
+            )
+        assert (
+            "Fail to get token, please run Connect-AzAccount --ClaimsChallenge some-claims"
+            in str(exc_info.value)
+        )
     else:
         # Test claims in options for get_token_info method
         with pytest.raises(CredentialUnavailableError) as exc_info:
-            getattr(AzurePowerShellCredential(), get_token_method)("scope", options={"claims": "some-claims"})
-        assert "Fail to get token, please run Connect-AzAccount --ClaimsChallenge some-claims" in str(exc_info.value)
+            getattr(AzurePowerShellCredential(), get_token_method)(
+                "scope", options={"claims": "some-claims"}
+            )
+        assert (
+            "Fail to get token, please run Connect-AzAccount --ClaimsChallenge some-claims"
+            in str(exc_info.value)
+        )
 
 
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
 def test_empty_claims_no_error(get_token_method):
     """The credential should not raise error for empty or None claims"""
-    
+
     # Mock successful token response
     expected_access_token = "access"
     expected_expires_on = 1617923581
     stdout = "azsdk%{}%{}".format(expected_access_token, expected_expires_on)
-    
+
     Popen = get_mock_Popen(stdout=stdout)
     with patch(POPEN, Popen):
         if get_token_method == "get_token":
             # Test None claims parameter in get_token method
-            token = getattr(AzurePowerShellCredential(), get_token_method)("scope", claims=None)
+            token = getattr(AzurePowerShellCredential(), get_token_method)(
+                "scope", claims=None
+            )
             assert token.token == expected_access_token
-            
+
             # Test empty string claims
-            token = getattr(AzurePowerShellCredential(), get_token_method)("scope", claims="")
+            token = getattr(AzurePowerShellCredential(), get_token_method)(
+                "scope", claims=""
+            )
             assert token.token == expected_access_token
         else:
             # Test None claims in options for get_token_info method
-            token = getattr(AzurePowerShellCredential(), get_token_method)("scope", options={"claims": None})
+            token = getattr(AzurePowerShellCredential(), get_token_method)(
+                "scope", options={"claims": None}
+            )
             assert token.token == expected_access_token
-            
+
             # Test empty string claims in options
-            token = getattr(AzurePowerShellCredential(), get_token_method)("scope", options={"claims": ""})
+            token = getattr(AzurePowerShellCredential(), get_token_method)(
+                "scope", options={"claims": ""}
+            )
             assert token.token == expected_access_token
-            
+
             # Test missing claims key in options
-            token = getattr(AzurePowerShellCredential(), get_token_method)("scope", options={})
+            token = getattr(AzurePowerShellCredential(), get_token_method)(
+                "scope", options={}
+            )
             assert token.token == expected_access_token
