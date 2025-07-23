@@ -1,19 +1,4 @@
 {
     "CrossLanguagePackageId": "MonitorQueryMetrics",
-    "CrossLanguageDefinitionId": {
-        "azure.monitor.querymetrics._generated.models.ErrorAdditionalInfo": "Azure.ResourceManager.CommonTypes.ErrorAdditionalInfo",
-        "azure.monitor.querymetrics._generated.models.ErrorDetail": "Azure.ResourceManager.CommonTypes.ErrorDetail",
-        "azure.monitor.querymetrics._generated.models.ErrorResponse": "Azure.ResourceManager.CommonTypes.ErrorResponse",
-        "azure.monitor.querymetrics._generated.models.LocalizableString": "MonitorQueryMetrics.LocalizableString",
-        "azure.monitor.querymetrics._generated.models.MetadataValue": "MonitorQueryMetrics.MetadataValue",
-        "azure.monitor.querymetrics._generated.models.Metric": "MonitorQueryMetrics.Metric",
-        "azure.monitor.querymetrics._generated.models.MetricResultsResponse": "MonitorQueryMetrics.MetricResultsResponse",
-        "azure.monitor.querymetrics._generated.models.MetricResultsResponseValuesItem": "MonitorQueryMetrics.MetricResultsResponseValuesItem",
-        "azure.monitor.querymetrics._generated.models.MetricValue": "MonitorQueryMetrics.MetricValue",
-        "azure.monitor.querymetrics._generated.models.ResourceIdList": "MonitorQueryMetrics.ResourceIdList",
-        "azure.monitor.querymetrics._generated.models.TimeSeriesElement": "MonitorQueryMetrics.TimeSeriesElement",
-        "azure.monitor.querymetrics._generated.models.MetricUnit": "MonitorQueryMetrics.MetricUnit",
-        "azure.monitor.querymetrics._generated.MonitorQueryMetricsClient.query_resources": "MonitorQueryMetrics.batch",
-        "azure.monitor.querymetrics._generated.aio.MonitorQueryMetricsClient.query_resources": "MonitorQueryMetrics.batch"
-    }
+    "CrossLanguageDefinitionId": {}
 }

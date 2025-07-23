@@ -7,7 +7,7 @@
 from datetime import datetime, timedelta, timezone
 from typing import Optional, Tuple, Union
 
-from ._generated._utils.serialization import Serializer
+from ._utils.serialization import Serializer
 
 
 def get_timespan_iso8601_endpoints(

@@ -8,7 +8,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, List, Optional, TYPE_CHECKING, Union
 
 from .._utils.model_base import Model as _Model, rest_field
 
@@ -41,10 +41,9 @@ class ErrorDetail(_Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~azure.monitor.querymetrics._generated.models.ErrorDetail]
+    :vartype details: list[~azure.monitor.querymetrics.models._models.ErrorDetail]
     :ivar additional_info: The error additional info.
-    :vartype additional_info:
-     list[~azure.monitor.querymetrics._generated.models.ErrorAdditionalInfo]
+    :vartype additional_info: list[~azure.monitor.querymetrics.models._models.ErrorAdditionalInfo]
     """
 
     code: Optional[str] = rest_field(visibility=["read"])
@@ -53,9 +52,9 @@ class ErrorDetail(_Model):
     """The error message."""
     target: Optional[str] = rest_field(visibility=["read"])
     """The error target."""
-    details: Optional[List["_models.ErrorDetail"]] = rest_field(visibility=["read"])
+    details: Optional[List["_models._models.ErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
-    additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = rest_field(
+    additional_info: Optional[List["_models._models.ErrorAdditionalInfo"]] = rest_field(
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
@@ -65,17 +64,19 @@ class ErrorResponse(_Model):
     """Error response.
 
     :ivar error: The error object.
-    :vartype error: ~azure.monitor.querymetrics._generated.models.ErrorDetail
+    :vartype error: ~azure.monitor.querymetrics.models._models.ErrorDetail
     """
 
-    error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    error: Optional["_models._models.ErrorDetail"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The error object."""
 
     @overload
     def __init__(
         self,
         *,
-        error: Optional["_models.ErrorDetail"] = None,
+        error: Optional["_models._models.ErrorDetail"] = None,
     ) -> None: ...
 
     @overload
@@ -128,12 +129,14 @@ class MetadataValue(_Model):
     """Represents a metric metadata value.
 
     :ivar name: The name of the metadata.
-    :vartype name: ~azure.monitor.querymetrics._generated.models.LocalizableString
+    :vartype name: ~azure.monitor.querymetrics.models._models.LocalizableString
     :ivar value: The value of the metadata.
     :vartype value: str
     """
 
-    name: Optional["_models.LocalizableString"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    name: Optional["_models._models.LocalizableString"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name of the metadata."""
     value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The value of the metadata."""
@@ -142,7 +145,7 @@ class MetadataValue(_Model):
     def __init__(
         self,
         *,
-        name: Optional["_models.LocalizableString"] = None,
+        name: Optional["_models._models.LocalizableString"] = None,
         value: Optional[str] = None,
     ) -> None: ...
 
@@ -166,7 +169,7 @@ class Metric(_Model):
     :vartype type: str
     :ivar name: The name and the display name of the metric, i.e. it is localizable string.
      Required.
-    :vartype name: ~azure.monitor.querymetrics._generated.models.LocalizableString
+    :vartype name: ~azure.monitor.querymetrics.models._models.LocalizableString
     :ivar display_description: Detailed description of this metric.
     :vartype display_description: str
     :ivar error_code: 'Success' or the error details on query failures for this metric.
@@ -176,16 +179,16 @@ class Metric(_Model):
     :ivar unit: The unit of the metric. Required. Known values are: "Count", "Bytes", "Seconds",
      "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds", "ByteSeconds", "Unspecified",
      "Cores", "MilliCores", "NanoCores", and "BitsPerSecond".
-    :vartype unit: str or ~azure.monitor.querymetrics._generated.models.MetricUnit
+    :vartype unit: str or ~azure.monitor.querymetrics.models.MetricUnit
     :ivar timeseries: The time series returned when a data query is performed. Required.
-    :vartype timeseries: list[~azure.monitor.querymetrics._generated.models.TimeSeriesElement]
+    :vartype timeseries: list[~azure.monitor.querymetrics.models._models.TimeSeriesElement]
     """
 
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The metric Id. Required."""
     type: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The resource type of the metric resource. Required."""
-    name: "_models.LocalizableString" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    name: "_models._models.LocalizableString" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name and the display name of the metric, i.e. it is localizable string. Required."""
     display_description: Optional[str] = rest_field(
         name="displayDescription", visibility=["read", "create", "update", "delete", "query"]
@@ -197,11 +200,13 @@ class Metric(_Model):
         name="errorMessage", visibility=["read", "create", "update", "delete", "query"]
     )
     """Error message encountered querying this specific metric."""
-    unit: Union[str, "_models.MetricUnit"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    unit: Union[str, "_models._enums.MetricUnit"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The unit of the metric. Required. Known values are: \"Count\", \"Bytes\", \"Seconds\",
      \"CountPerSecond\", \"BytesPerSecond\", \"Percent\", \"MilliSeconds\", \"ByteSeconds\",
      \"Unspecified\", \"Cores\", \"MilliCores\", \"NanoCores\", and \"BitsPerSecond\"."""
-    timeseries: List["_models.TimeSeriesElement"] = rest_field(
+    timeseries: List["_models._models.TimeSeriesElement"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The time series returned when a data query is performed. Required."""
@@ -212,9 +217,9 @@ class Metric(_Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         type: str,
-        name: "_models.LocalizableString",
-        unit: Union[str, "_models.MetricUnit"],
-        timeseries: List["_models.TimeSeriesElement"],
+        name: "_models._models.LocalizableString",
+        unit: Union[str, "_models._enums.MetricUnit"],
+        timeseries: List["_models._models.TimeSeriesElement"],
         display_description: Optional[str] = None,
         error_code: Optional[str] = None,
         error_message: Optional[str] = None,
@@ -236,10 +241,10 @@ class MetricResultsResponse(_Model):
 
     :ivar values_property: The collection of metric data responses per resource, per metric.
     :vartype values_property:
-     list[~azure.monitor.querymetrics._generated.models.MetricResultsResponseValuesItem]
+     list[~azure.monitor.querymetrics.models._models.MetricResultsResponseValuesItem]
     """
 
-    values_property: Optional[List["_models.MetricResultsResponseValuesItem"]] = rest_field(
+    values_property: Optional[List["_models._models.MetricResultsResponseValuesItem"]] = rest_field(
         name="values", visibility=["read", "create", "update", "delete", "query"]
     )
     """The collection of metric data responses per resource, per metric."""
@@ -248,7 +253,7 @@ class MetricResultsResponse(_Model):
     def __init__(
         self,
         *,
-        values_property: Optional[List["_models.MetricResultsResponseValuesItem"]] = None,
+        values_property: Optional[List["_models._models.MetricResultsResponseValuesItem"]] = None,
     ) -> None: ...
 
     @overload
@@ -283,7 +288,7 @@ class MetricResultsResponseValuesItem(_Model):
     :ivar resourceid: The resource that has been queried for metrics.
     :vartype resourceid: str
     :ivar value: The value of the collection. Required.
-    :vartype value: list[~azure.monitor.querymetrics._generated.models.Metric]
+    :vartype value: list[~azure.monitor.querymetrics.models._models.Metric]
     """
 
     starttime: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -302,7 +307,7 @@ class MetricResultsResponseValuesItem(_Model):
     """The region of the resource been queried for metrics."""
     resourceid: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The resource that has been queried for metrics."""
-    value: List["_models.Metric"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    value: List["_models._models.Metric"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The value of the collection. Required."""
 
     @overload
@@ -311,7 +316,7 @@ class MetricResultsResponseValuesItem(_Model):
         *,
         starttime: str,
         endtime: str,
-        value: List["_models.Metric"],
+        value: List["_models._models.Metric"],
         interval: Optional[str] = None,
         namespace: Optional[str] = None,
         resourceregion: Optional[str] = None,
@@ -419,17 +424,19 @@ class TimeSeriesElement(_Model):
     case.
 
     :ivar metadatavalues: The metadata values returned if $filter was specified in the call.
-    :vartype metadatavalues: list[~azure.monitor.querymetrics._generated.models.MetadataValue]
+    :vartype metadatavalues: list[~azure.monitor.querymetrics.models._models.MetadataValue]
     :ivar data: An array of data points representing the metric values.  This is only returned
      if a result type of data is specified.
-    :vartype data: list[~azure.monitor.querymetrics._generated.models.MetricValue]
+    :vartype data: list[~azure.monitor.querymetrics.models._models.MetricValue]
     """
 
-    metadatavalues: Optional[List["_models.MetadataValue"]] = rest_field(
+    metadatavalues: Optional[List["_models._models.MetadataValue"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The metadata values returned if $filter was specified in the call."""
-    data: Optional[List["_models.MetricValue"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    data: Optional[List["_models._models.MetricValue"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of data points representing the metric values.  This is only returned
      if a result type of data is specified."""
 
@@ -437,8 +444,8 @@ class TimeSeriesElement(_Model):
     def __init__(
         self,
         *,
-        metadatavalues: Optional[List["_models.MetadataValue"]] = None,
-        data: Optional[List["_models.MetricValue"]] = None,
+        metadatavalues: Optional[List["_models._models.MetadataValue"]] = None,
+        data: Optional[List["_models._models.MetricValue"]] = None,
     ) -> None: ...
 
     @overload

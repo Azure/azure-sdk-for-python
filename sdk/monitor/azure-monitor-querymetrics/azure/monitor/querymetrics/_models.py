@@ -8,7 +8,7 @@ from collections.abc import Mapping
 from datetime import datetime, timedelta
 from typing import Any, Optional, List, Dict
 
-from ._generated._utils.serialization import Deserializer
+from ._utils.serialization import Deserializer
 
 
 JSON = Mapping[str, Any]
