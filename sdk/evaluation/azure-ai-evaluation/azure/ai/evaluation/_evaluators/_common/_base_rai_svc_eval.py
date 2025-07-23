@@ -71,9 +71,9 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         self._azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self._credential = credential
         self._threshold = threshold
-        
+
         # Handle evaluate_query parameter from kwargs
-        self._evaluate_query = kwargs.get('evaluate_query', False)
+        self._evaluate_query = kwargs.get("evaluate_query", False)
         self._higher_is_better = _higher_is_better
 
     @override

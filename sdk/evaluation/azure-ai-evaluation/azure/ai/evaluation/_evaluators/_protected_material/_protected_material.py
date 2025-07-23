@@ -62,9 +62,9 @@ class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         **kwargs,
     ):
         # Set default for evaluate_query if not provided
-        if 'evaluate_query' not in kwargs:
-            kwargs['evaluate_query'] = True
-            
+        if "evaluate_query" not in kwargs:
+            kwargs["evaluate_query"] = True
+
         super().__init__(
             eval_metric=EvaluationMetrics.PROTECTED_MATERIAL,
             azure_ai_project=azure_ai_project,
