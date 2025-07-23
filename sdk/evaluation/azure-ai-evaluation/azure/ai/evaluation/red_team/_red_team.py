@@ -2893,7 +2893,7 @@ class RedTeam:
         :return: The output from the red team scan
         :rtype: RedTeamResult
         """
-        # Use red team user agent for all RAI service calls in this scan
+        # Use red team user agent for RAI service calls made within the scan method
         user_agent: Optional[str] = kwargs.get("user_agent")
         with (
             UserAgentSingleton().add_useragent_product(user_agent)
