@@ -8,9 +8,9 @@ AI Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects/ga-rest
 ### Breaking changes
 
 * Features that are still in preview were removed from this stable release. This includes:
+  * Evaluation operations (property `.evaluations`)
+  * Red-Team operations (property `.red_teams`)
   * Class `PromptTemplate`.
-  * Evaluation operations (`.evaluations`)
-  * Red-Team operations (`.red_teams`)
   * Package function `enable_telemetry()`
 * Classes were renamed:
   * Class `Sku` was renamed `ModelDeploymentSku`
@@ -19,9 +19,13 @@ AI Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects/ga-rest
   * Class `PendingUploadRequest` was renamed `PendingUploadConfiguration`
   * Class `PendingUploadResponse` was renamed `PendingUploadResult`
 * In method `.datasets.pending_upload()`, input argument `pending_upload_request` was renamed `configuration`.
+* Method `.inference.get_azure_openai_client()` was renamed `.get_openai_client()`. The `.inference` property was removed.
+The method is documented as returning an object of type `OpenAI`, but it still returns an object of the derived type `AzureOpenAI`.
+The function implementation has not changed.
 
 ### Sample updates
 
+* Added a new Dataset sample named `sample_datasets_download.py` to show how you can download all files referenced by a certain Dataset (following a question in [this GitHub issue](https://github.com/Azure/azure-sdk-for-python/issues/41960))
 * Two samples added showing how to do a `responses` operation using an authenticated Azure OpenAI client created
 using `get_openai_client()`.
 * Existing inference samples that used the package function `enable_telemetry()` were updated to remove this call,

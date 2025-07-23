@@ -148,17 +148,17 @@ class TestSamples:
     @pytest.mark.parametrize(
         "sample_name, model_deployment_name, connection_name, data_folder",
         [
-            # ("samples\\agents\\sample_agents.py", "gpt-4o", "", ""),
-            # ("samples\\connections\\sample_connections.py", "", "connection1", ""),
-            # ("samples\\deployments\\sample_deployments.py", "DeepSeek-V3", "", ""),
-            # ("samples\\datasets\\sample_datasets.py", "", "balapvbyostoragecanary", "samples\\datasets\\data_folder"),
-            # (
-            #     "samples\\datasets\\sample_datasets_download.py",
-            #     "",
-            #     "balapvbyostoragecanary",
-            #     "samples\\datasets\\data_folder",
-            # ),
-            # ("samples\\indexes\\sample_indexes.py", "", "", ""),
+            ("samples\\agents\\sample_agents.py", "gpt-4o", "", ""),
+            ("samples\\connections\\sample_connections.py", "", "connection1", ""),
+            ("samples\\deployments\\sample_deployments.py", "DeepSeek-V3", "", ""),
+            ("samples\\datasets\\sample_datasets.py", "", "balapvbyostoragecanary", "samples\\datasets\\data_folder"),
+            (
+                "samples\\datasets\\sample_datasets_download.py",
+                "",
+                "balapvbyostoragecanary",
+                "samples\\datasets\\data_folder",
+            ),
+            ("samples\\indexes\\sample_indexes.py", "", "", ""),
             (
                 "samples\\inference\\azure-ai-inference\\sample_chat_completions_with_azure_ai_inference_client.py",
                 "Phi-4",
@@ -216,7 +216,7 @@ class TestSamples:
             ("samples\\telemetry\\sample_telemetry.py", "", "", ""),
         ],
     )
-    # @pytest.mark.skip(reason="This test should only run manually on your local machine, with live service calls.")
+    @pytest.mark.skip(reason="This test should only run manually on your local machine, with live service calls.")
     def test_samples(
         self, sample_name: str, model_deployment_name: str, connection_name: str, data_folder: str
     ) -> None:
@@ -242,16 +242,16 @@ class TestSamples:
     @pytest.mark.parametrize(
         "sample_name, model_deployment_name, connection_name, data_folder",
         [
-            # ("samples\\agents\\sample_agents_async.py", "gpt-4o", "", ""),
-            # ("samples\\connections\\sample_connections_async.py", "", "connection1", ""),
-            # (
-            #     "samples\\datasets\\sample_datasets_async.py",
-            #     "",
-            #     "balapvbyostoragecanary",
-            #     "samples\\datasets\\data_folder",
-            # ),
-            # ("samples\\deployments\\sample_deployments_async.py", "DeepSeek-V3", "", ""),
-            # ("samples\\indexes\\sample_indexes_async.py", "", "", ""),
+            ("samples\\agents\\sample_agents_async.py", "gpt-4o", "", ""),
+            ("samples\\connections\\sample_connections_async.py", "", "connection1", ""),
+            (
+                "samples\\datasets\\sample_datasets_async.py",
+                "",
+                "balapvbyostoragecanary",
+                "samples\\datasets\\data_folder",
+            ),
+            ("samples\\deployments\\sample_deployments_async.py", "DeepSeek-V3", "", ""),
+            ("samples\\indexes\\sample_indexes_async.py", "", "", ""),
             (
                 "samples\\inference\\azure-ai-inference\\async_samples\\sample_chat_completions_with_azure_ai_inference_client_async.py",
                 "Phi-4",
@@ -285,7 +285,7 @@ class TestSamples:
             ("samples\\telemetry\\sample_telemetry_async.py", "", "", ""),
         ],
     )
-    # @pytest.mark.skip(reason="This test should only run manually on your local machine, with live service calls.")
+    @pytest.mark.skip(reason="This test should only run manually on your local machine, with live service calls.")
     async def test_samples_async(
         self, sample_name: str, model_deployment_name: str, connection_name: str, data_folder: str
     ) -> None:
