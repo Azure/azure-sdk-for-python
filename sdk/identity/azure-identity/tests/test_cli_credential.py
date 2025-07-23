@@ -395,3 +395,56 @@ def test_multitenant_authentication_not_allowed(get_token_method):
                     kwargs = {"options": kwargs}
                 token = getattr(credential, get_token_method)("scope", **kwargs)
             assert token.token == expected_token
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_claims_challenge_raises_error(get_token_method):
+    """The credential should raise CredentialUnavailableError when claims challenge is provided"""
+    
+    claims = "test-claims-challenge"
+    expected_message = f"Fail to get token, please run az login --claims-challenge {claims}"
+    
+    if get_token_method == "get_token":
+        with pytest.raises(CredentialUnavailableError, match=re.escape(expected_message)):
+            AzureCliCredential().get_token("scope", claims=claims)
+    else:  # get_token_info
+        with pytest.raises(CredentialUnavailableError, match=re.escape(expected_message)):
+            AzureCliCredential().get_token_info("scope", options={"claims": claims})
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_empty_claims_does_not_raise_error(get_token_method):
+    """The credential should not raise error when claims parameter is empty or None"""
+    
+    # Mock the CLI to avoid actual invocation
+    with mock.patch("shutil.which", return_value="az"):
+        with mock.patch(CHECK_OUTPUT, mock.Mock(return_value='{"accessToken": "token", "expiresOn": "2021-10-07 12:00:00.000000"}')):
+            
+            if get_token_method == "get_token":
+                # Test with None (default)
+                token = AzureCliCredential().get_token("scope")
+                assert token.token == "token"
+                
+                # Test with empty string
+                token = AzureCliCredential().get_token("scope", claims="")
+                assert token.token == "token"
+                
+                # Test with None explicitly
+                token = AzureCliCredential().get_token("scope", claims=None)
+                assert token.token == "token"
+            else:  # get_token_info
+                # Test with None options
+                token = AzureCliCredential().get_token_info("scope")
+                assert token.token == "token"
+                
+                # Test with empty options
+                token = AzureCliCredential().get_token_info("scope", options={})
+                assert token.token == "token"
+                
+                # Test with None claims in options
+                token = AzureCliCredential().get_token_info("scope", options={"claims": None})
+                assert token.token == "token"
+                
+                # Test with empty string claims in options 
+                token = AzureCliCredential().get_token_info("scope", options={"claims": ""})
+                assert token.token == "token"

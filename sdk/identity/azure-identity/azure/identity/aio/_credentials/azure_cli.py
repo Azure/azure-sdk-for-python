@@ -82,7 +82,7 @@ class AzureCliCredential(AsyncContextManager):
     async def get_token(
         self,
         *scopes: str,
-        claims: Optional[str] = None,  # pylint:disable=unused-argument
+        claims: Optional[str] = None,
         tenant_id: Optional[str] = None,
         **kwargs: Any,
     ) -> AccessToken:
@@ -94,15 +94,19 @@ class AzureCliCredential(AsyncContextManager):
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
             For more information about scopes, see
             https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
-        :keyword str claims: not used by this credential; any value provided will be ignored.
+        :keyword str claims: additional claims required in the token. This credential does not support claims challenges.
         :keyword str tenant_id: optional tenant to include in the token request.
 
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
-        :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke the Azure CLI.
+        :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke the Azure CLI,
+          or when claims challenge is provided.
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked the Azure CLI but didn't
           receive an access token.
         """
+        if claims:
+            raise CredentialUnavailableError(f"Fail to get token, please run az login --claims-challenge {claims}")
+            
         # only ProactorEventLoop supports subprocesses on Windows (and it isn't the default loop on Python < 3.8)
         if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
             return _SyncAzureCliCredential().get_token(*scopes, tenant_id=tenant_id, **kwargs)
@@ -130,10 +134,15 @@ class AzureCliCredential(AsyncContextManager):
         :rtype: ~azure.core.credentials.AccessTokenInfo
         :return: An AccessTokenInfo instance containing information about the token.
 
-        :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke the Azure CLI.
+        :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke the Azure CLI,
+          or when claims challenge is provided.
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked the Azure CLI but didn't
           receive an access token.
         """
+        if options and options.get("claims"):
+            claims = options["claims"]
+            raise CredentialUnavailableError(f"Fail to get token, please run az login --claims-challenge {claims}")
+            
         # only ProactorEventLoop supports subprocesses on Windows (and it isn't the default loop on Python < 3.8)
         if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
             return _SyncAzureCliCredential().get_token_info(*scopes, options=options)
