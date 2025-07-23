@@ -31,7 +31,7 @@ from ._operations import (
     _SERIALIZER,
     ClsType,
 )
-from .._models import GroupMember
+from ..models import GroupMember
 
 
 def get_token_by_key(endpoint: str, path: str, hub: str, key: str, **kwargs: Any) -> str:
