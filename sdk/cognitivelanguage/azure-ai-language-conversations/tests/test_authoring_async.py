@@ -13,10 +13,14 @@ class TestConversationAuthoringAsync(AzureRecordedTestCase):
 
     def test_polling_interval(self, conversation_creds):
         # test default
-        client = ConversationAuthoringClient(conversation_creds["endpoint"], AzureKeyCredential(conversation_creds["key"]))
+        client = ConversationAuthoringClient(
+            conversation_creds["endpoint"], AzureKeyCredential(conversation_creds["key"])
+        )
         assert client._config.polling_interval == 5
         # test override
-        client = ConversationAuthoringClient(conversation_creds["endpoint"], AzureKeyCredential(conversation_creds["key"]), polling_interval=1)
+        client = ConversationAuthoringClient(
+            conversation_creds["endpoint"], AzureKeyCredential(conversation_creds["key"]), polling_interval=1
+        )
         assert client._config.polling_interval == 1
 
     @pytest.mark.asyncio

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
@@ -21,6 +22,7 @@ USAGE:
 """
 
 import asyncio
+
 
 async def sample_conv_summarization_async():
     # [START analyze_conversation_app]
@@ -49,26 +51,26 @@ async def sample_conv_summarization_async():
                                     "modality": "text",
                                     "id": "1",
                                     "role": "Agent",
-                                    "participantId": "Agent"
+                                    "participantId": "Agent",
                                 },
                                 {
                                     "text": "How to upgrade Office? I am getting error messages the whole day.",
                                     "modality": "text",
                                     "id": "2",
                                     "role": "Customer",
-                                    "participantId": "Customer"
+                                    "participantId": "Customer",
                                 },
                                 {
                                     "text": "Press the upgrade button please. Then sign in and follow the instructions.",
                                     "modality": "text",
                                     "id": "3",
                                     "role": "Agent",
-                                    "participantId": "Agent"
-                                }
+                                    "participantId": "Agent",
+                                },
                             ],
                             "modality": "text",
                             "id": "conversation1",
-                            "language": "en"
+                            "language": "en",
                         },
                     ]
                 },
@@ -76,18 +78,14 @@ async def sample_conv_summarization_async():
                     {
                         "taskName": "Issue task",
                         "kind": "ConversationalSummarizationTask",
-                        "parameters": {
-                            "summaryAspects": ["issue"]
-                        }
+                        "parameters": {"summaryAspects": ["issue"]},
                     },
                     {
                         "taskName": "Resolution task",
                         "kind": "ConversationalSummarizationTask",
-                        "parameters": {
-                            "summaryAspects": ["resolution"]
-                        }
+                        "parameters": {"summaryAspects": ["resolution"]},
                     },
-                ]
+                ],
             }
         )
 
@@ -119,5 +117,6 @@ async def sample_conv_summarization_async():
 async def main():
     await sample_conv_summarization_async()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())
