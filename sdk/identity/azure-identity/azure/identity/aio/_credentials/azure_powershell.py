@@ -88,7 +88,9 @@ class AzurePowerShellCredential(AsyncContextManager):
             )
 
         # only ProactorEventLoop supports subprocesses on Windows (and it isn't the default loop on Python < 3.8)
-        if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
+        if sys.platform.startswith("win") and not isinstance(
+            asyncio.get_event_loop(), asyncio.ProactorEventLoop
+        ):
             return _SyncCredential().get_token(*scopes, tenant_id=tenant_id, **kwargs)
 
         options: TokenRequestOptions = {}
@@ -99,7 +101,9 @@ class AzurePowerShellCredential(AsyncContextManager):
         return AccessToken(token_info.token, token_info.expires_on)
 
     @log_get_token_async
-    async def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
+    async def get_token_info(
+        self, *scopes: str, options: Optional[TokenRequestOptions] = None
+    ) -> AccessTokenInfo:
         """Request an access token for `scopes`.
 
         This is an alternative to `get_token` to enable certain scenarios that require additional properties
@@ -127,7 +131,9 @@ class AzurePowerShellCredential(AsyncContextManager):
                 message=f"Fail to get token, please run Connect-AzAccount --ClaimsChallenge {claims_value}"
             )
 
-        if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
+        if sys.platform.startswith("win") and not isinstance(
+            asyncio.get_event_loop(), asyncio.ProactorEventLoop
+        ):
             return _SyncCredential().get_token_info(*scopes, options=options)
         return await self._get_token_base(*scopes, options=options)
 
@@ -167,7 +173,9 @@ async def run_command_line(command_line: List[str], timeout: int) -> str:
     try:
         proc = await start_process(command_line)
         stdout, stderr = await asyncio.wait_for(proc.communicate(), 10)
-        if sys.platform.startswith("win") and (b"' is not recognized" in stderr or proc.returncode == 9009):
+        if sys.platform.startswith("win") and (
+            b"' is not recognized" in stderr or proc.returncode == 9009
+        ):
             # pwsh.exe isn't on the path; try powershell.exe
             command_line[-1] = command_line[-1].replace("pwsh", "powershell", 1)
             proc = await start_process(command_line)
@@ -185,7 +193,9 @@ async def run_command_line(command_line: List[str], timeout: int) -> str:
         error = CredentialUnavailableError(
             message='Failed to execute "{}".\n'
             "To mitigate this issue, please refer to the troubleshooting guidelines here at "
-            "https://aka.ms/azsdk/python/identity/powershellcredential/troubleshoot.".format(command_line[0])
+            "https://aka.ms/azsdk/python/identity/powershellcredential/troubleshoot.".format(
+                command_line[0]
+            )
         )
         raise error from ex
 
