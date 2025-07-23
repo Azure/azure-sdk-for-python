@@ -399,12 +399,12 @@ async def test_claims_challenge_error(get_token_method):
         # Test claims parameter in get_token method
         with pytest.raises(CredentialUnavailableError) as exc_info:
             await getattr(AzurePowerShellCredential(), get_token_method)("scope", claims="some-claims")
-        assert "Fail to get token with claims challenge 'some-claims', please run Connect-AzAccount --ClaimsChallenge" in str(exc_info.value)
+        assert "Fail to get token, please run Connect-AzAccount --ClaimsChallenge some-claims" in str(exc_info.value)
     else:
         # Test claims in options for get_token_info method
         with pytest.raises(CredentialUnavailableError) as exc_info:
             await getattr(AzurePowerShellCredential(), get_token_method)("scope", options={"claims": "some-claims"})
-        assert "Fail to get token with claims challenge 'some-claims', please run Connect-AzAccount --ClaimsChallenge" in str(exc_info.value)
+        assert "Fail to get token, please run Connect-AzAccount --ClaimsChallenge some-claims" in str(exc_info.value)
 
 
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
