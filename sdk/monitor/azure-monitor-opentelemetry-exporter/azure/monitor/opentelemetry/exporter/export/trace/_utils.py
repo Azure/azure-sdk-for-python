@@ -370,10 +370,10 @@ def parent_context_sampling(
     parent_context: Optional[Context],
     attributes: Attributes = None
 ) -> Optional["SamplingResult"]:
-    parent_span = get_current_span(parent_context)
-    parent_span_context = parent_span.get_span_context()
 
     if parent_context is not None:
+        parent_span = get_current_span(parent_context)
+        parent_span_context = parent_span.get_span_context()
         if parent_span_context.is_valid and not parent_span_context.is_remote:
             if not parent_span.is_recording():
                 # Parent was dropped, drop this child too
