@@ -39,6 +39,14 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
         :returns: The account setting, as a :class:`~azure.keyvault.administration.KeyVaultSetting`.
         :rtype: ~azure.keyvault.administration.KeyVaultSetting
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_administration_async.py
+                :start-after: [START get_setting]
+                :end-before: [END get_setting]
+                :language: python
+                :caption: Get a specific setting
+                :dedent: 8
         """
         result = await self._client.get_setting(setting_name=name, **kwargs)
         return KeyVaultSetting._from_generated(result)
@@ -50,6 +58,14 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
         :returns: A paged object containing the account's settings.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.administration.KeyVaultSetting]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_administration_async.py
+                :start-after: [START list_settings]
+                :end-before: [END list_settings]
+                :language: python
+                :caption: List all account settings
+                :dedent: 8
         """
         result = self._client.get_settings(*kwargs)
 
@@ -76,6 +92,14 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
         :returns: The updated account setting, as a :class:`~azure.keyvault.administration.KeyVaultSetting`.
         :rtype: ~azure.keyvault.administration.KeyVaultSetting
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_administration_async.py
+                :start-after: [START update_setting]
+                :end-before: [END update_setting]
+                :language: python
+                :caption: Update a setting
+                :dedent: 8
         """
         parameters = UpdateSettingRequest(value=setting.value)
         result = await self._client.update_setting(
