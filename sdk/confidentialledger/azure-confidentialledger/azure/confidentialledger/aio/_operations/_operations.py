@@ -32,7 +32,6 @@ from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._operations._operations import (
-    build_confidential_ledger_certificate_get_ledger_identity_request,
     build_confidential_ledger_create_ledger_entry_request,
     build_confidential_ledger_create_or_update_ledger_user_request,
     build_confidential_ledger_create_or_update_user_request,
@@ -68,7 +67,7 @@ from ..._operations._operations import (
 )
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.utils import ClientMixinABC
-from .._configuration import ConfidentialLedgerCertificateClientConfiguration, ConfidentialLedgerClientConfiguration
+from .._configuration import ConfidentialLedgerClientConfiguration
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
@@ -2943,74 +2942,3 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
-
-
-class ConfidentialLedgerCertificateClientOperationsMixin(  # pylint: disable=name-too-long
-    ClientMixinABC[
-        AsyncPipelineClient[HttpRequest, AsyncHttpResponse], ConfidentialLedgerCertificateClientConfiguration
-    ]
-):
-
-    @distributed_trace_async
-    async def get_ledger_identity(self, ledger_id: str, **kwargs: Any) -> _models.LedgerIdentityInformation:
-        """Gets identity information for a Confidential Ledger instance.
-
-        Gets identity information for a Confidential Ledger instance.
-
-        :param ledger_id: Id of the Confidential Ledger instance to get information for. Required.
-        :type ledger_id: str
-        :return: LedgerIdentityInformation. The LedgerIdentityInformation is compatible with
-         MutableMapping
-        :rtype: ~azure.confidentialledger.models.LedgerIdentityInformation
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.LedgerIdentityInformation] = kwargs.pop("cls", None)
-
-        _request = build_confidential_ledger_certificate_get_ledger_identity_request(
-            ledger_id=ledger_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.LedgerIdentityInformation, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
