@@ -5453,6 +5453,52 @@ class SummarizationOptions(_serialization.Model):
         self.locale = locale
 
 
+class SummarizeCallRequest(_serialization.Model):
+    """SummarizeCallRequest.
+
+    :ivar operation_context: The value to identify context of the operation.
+    :vartype operation_context: str
+    :ivar operation_callback_uri: Set a callback URI that overrides the default callback URI set by
+     CreateCall/AnswerCall for this operation.
+     This setup is per-action. If this is not set, the default callback URI set by
+     CreateCall/AnswerCall will be used.
+    :vartype operation_callback_uri: str
+    :ivar summarization_options: Summarization configuration options.
+    :vartype summarization_options: ~azure.communication.callautomation.models.SummarizationOptions
+    """
+
+    _attribute_map = {
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
+        "summarization_options": {"key": "summarizationOptions", "type": "SummarizationOptions"},
+    }
+
+    def __init__(
+        self,
+        *,
+        operation_context: Optional[str] = None,
+        operation_callback_uri: Optional[str] = None,
+        summarization_options: Optional["_models.SummarizationOptions"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword operation_context: The value to identify context of the operation.
+        :paramtype operation_context: str
+        :keyword operation_callback_uri: Set a callback URI that overrides the default callback URI set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URI set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_uri: str
+        :keyword summarization_options: Summarization configuration options.
+        :paramtype summarization_options:
+         ~azure.communication.callautomation.models.SummarizationOptions
+        """
+        super().__init__(**kwargs)
+        self.operation_context = operation_context
+        self.operation_callback_uri = operation_callback_uri
+        self.summarization_options = summarization_options
+
+
 class TeamsExtensionUserIdentifierModel(_serialization.Model):
     """A Microsoft Teams Phone user who is using a Communication Services resource to extend their
     Teams Phone set up.
@@ -5903,13 +5949,12 @@ class TranscriptionOptions(_serialization.Model):
      may be introduced that are not currently documented. Required. "websocket"
     :vartype transport_type: str or
      ~azure.communication.callautomation.models.StreamingTransportType
-    :ivar locale: Specifies the Locale used for transcription, e.g., en-CA or en-AU. Required.
+    :ivar locale: Specifies the Locale used for transcription, e.g., en-CA or en-AU.
     :vartype locale: str
     """
 
     _validation = {
         "transport_type": {"required": True},
-        "locale": {"required": True},
     }
 
     _attribute_map = {
@@ -5919,9 +5964,9 @@ class TranscriptionOptions(_serialization.Model):
 
     _subtype_map = {"transport_type": {"websocket": "WebSocketTranscriptionOptions"}}
 
-    def __init__(self, *, locale: str, **kwargs: Any) -> None:
+    def __init__(self, *, locale: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword locale: Specifies the Locale used for transcription, e.g., en-CA or en-AU. Required.
+        :keyword locale: Specifies the Locale used for transcription, e.g., en-CA or en-AU.
         :paramtype locale: str
         """
         super().__init__(**kwargs)
@@ -6567,7 +6612,7 @@ class WebSocketTranscriptionOptions(TranscriptionOptions):
      may be introduced that are not currently documented. Required. "websocket"
     :vartype transport_type: str or
      ~azure.communication.callautomation.models.StreamingTransportType
-    :ivar locale: Specifies the Locale used for transcription, e.g., en-CA or en-AU. Required.
+    :ivar locale: Specifies the Locale used for transcription, e.g., en-CA or en-AU.
     :vartype locale: str
     :ivar transport_url: The URL used for live transcription transport.
     :vartype transport_url: str
@@ -6591,7 +6636,6 @@ class WebSocketTranscriptionOptions(TranscriptionOptions):
 
     _validation = {
         "transport_type": {"required": True},
-        "locale": {"required": True},
     }
 
     _attribute_map = {
@@ -6610,7 +6654,7 @@ class WebSocketTranscriptionOptions(TranscriptionOptions):
     def __init__(
         self,
         *,
-        locale: str,
+        locale: Optional[str] = None,
         transport_url: Optional[str] = None,
         speech_model_endpoint_id: Optional[str] = None,
         start_transcription: Optional[bool] = None,
@@ -6622,7 +6666,7 @@ class WebSocketTranscriptionOptions(TranscriptionOptions):
         **kwargs: Any
     ) -> None:
         """
-        :keyword locale: Specifies the Locale used for transcription, e.g., en-CA or en-AU. Required.
+        :keyword locale: Specifies the Locale used for transcription, e.g., en-CA or en-AU.
         :paramtype locale: str
         :keyword transport_url: The URL used for live transcription transport.
         :paramtype transport_url: str

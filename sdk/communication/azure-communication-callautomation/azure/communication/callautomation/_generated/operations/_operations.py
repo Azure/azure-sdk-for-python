@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -645,6 +645,58 @@ def build_call_media_update_transcription_request(  # pylint: disable=name-too-l
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_call_media_summarize_call_request(
+    call_connection_id: str,
+    *,
+    summarize_call_request_operation_context: Optional[str] = None,
+    summarize_call_request_operation_callback_uri: Optional[str] = None,
+    summarize_call_request_summarization_options_enable_end_call_summary: Optional[bool] = None,
+    summarize_call_request_summarization_options_locale: Optional[str] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/calling/callConnections/{callConnectionId}:summarizeCall"
+    path_format_arguments = {
+        "callConnectionId": _SERIALIZER.url("call_connection_id", call_connection_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if summarize_call_request_operation_context is not None:
+        _params["summarizeCallRequest.operationContext"] = _SERIALIZER.query(
+            "summarize_call_request_operation_context", summarize_call_request_operation_context, "str"
+        )
+    if summarize_call_request_operation_callback_uri is not None:
+        _params["summarizeCallRequest.operationCallbackUri"] = _SERIALIZER.query(
+            "summarize_call_request_operation_callback_uri", summarize_call_request_operation_callback_uri, "str"
+        )
+    if summarize_call_request_summarization_options_enable_end_call_summary is not None:
+        _params["summarizeCallRequest.summarizationOptions.enableEndCallSummary"] = _SERIALIZER.query(
+            "summarize_call_request_summarization_options_enable_end_call_summary",
+            summarize_call_request_summarization_options_enable_end_call_summary,
+            "bool",
+        )
+    if summarize_call_request_summarization_options_locale is not None:
+        _params["summarizeCallRequest.summarizationOptions.locale"] = _SERIALIZER.query(
+            "summarize_call_request_summarization_options_locale",
+            summarize_call_request_summarization_options_locale,
+            "str",
+        )
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_call_media_cancel_all_media_operations_request(  # pylint: disable=name-too-long
@@ -3168,6 +3220,84 @@ class CallMediaOperations:
             api_version=self._config.api_version,
             json=_json,
             content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    def summarize_call(  # pylint: disable=inconsistent-return-statements
+        self,
+        call_connection_id: str,
+        *,
+        summarize_call_request_operation_context: Optional[str] = None,
+        summarize_call_request_operation_callback_uri: Optional[str] = None,
+        summarize_call_request_summarization_options_enable_end_call_summary: Optional[bool] = None,
+        summarize_call_request_summarization_options_locale: Optional[str] = None,
+        **kwargs: Any,
+    ) -> None:
+        """API to get a summary of the call so far.
+
+        API to get a summary of the call so far.
+
+        :param call_connection_id: The call connection id. Required.
+        :type call_connection_id: str
+        :keyword summarize_call_request_operation_context: The value to identify context of the
+         operation. Default value is None.
+        :paramtype summarize_call_request_operation_context: str
+        :keyword summarize_call_request_operation_callback_uri: Set a callback URI that overrides the
+         default callback URI set by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URI set by
+         CreateCall/AnswerCall will be used. Default value is None.
+        :paramtype summarize_call_request_operation_callback_uri: str
+        :keyword summarize_call_request_summarization_options_enable_end_call_summary: Indicating
+         whether end call summary should be enabled. Default value is None.
+        :paramtype summarize_call_request_summarization_options_enable_end_call_summary: bool
+        :keyword summarize_call_request_summarization_options_locale: Locale for summarization (e.g.,
+         en-US). Default value is None.
+        :paramtype summarize_call_request_summarization_options_locale: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_call_media_summarize_call_request(
+            call_connection_id=call_connection_id,
+            summarize_call_request_operation_context=summarize_call_request_operation_context,
+            summarize_call_request_operation_callback_uri=summarize_call_request_operation_callback_uri,
+            summarize_call_request_summarization_options_enable_end_call_summary=summarize_call_request_summarization_options_enable_end_call_summary,
+            summarize_call_request_summarization_options_locale=summarize_call_request_summarization_options_locale,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
