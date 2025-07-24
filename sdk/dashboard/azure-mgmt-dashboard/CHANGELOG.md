@@ -22,12 +22,13 @@
   - Added model `Snapshots`
   - Added model `UnifiedAlertingScreenshots`
   - Added model `Users`
-  - Model `GrafanaOperations` added method `begin_update`
+  - Operation group `GrafanaOperations` added method `begin_update`
   - Added operation group `IntegrationFabricsOperations`
   - Added operation group `ManagedDashboardsOperations`
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. And please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Deleted or renamed model `ManagedGrafanaListResponse`
   - Deleted or renamed model `ManagedPrivateEndpointModelListResponse`
   - Deleted or renamed method `GrafanaOperations.update`
