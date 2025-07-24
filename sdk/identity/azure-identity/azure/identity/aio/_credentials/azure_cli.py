@@ -100,13 +100,13 @@ class AzureCliCredential(AsyncContextManager):
 
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
-        :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke the Azure CLI,
-          or when claims challenge is provided.
+        :raises ~azure.identity.CredentialUnavailableError: the credential was either unable to invoke the Azure CLI
+          or a claims challenge was provided.
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked the Azure CLI but didn't
           receive an access token.
         """
         if claims and claims.strip():
-            raise CredentialUnavailableError(f"Fail to get token, please run az login --claims-challenge {claims}")
+            raise CredentialUnavailableError(f"Failed to get token. Run az login --claims-challenge {claims}")
 
         # only ProactorEventLoop supports subprocesses on Windows (and it isn't the default loop on Python < 3.8)
         if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
@@ -135,15 +135,15 @@ class AzureCliCredential(AsyncContextManager):
         :rtype: ~azure.core.credentials.AccessTokenInfo
         :return: An AccessTokenInfo instance containing information about the token.
 
-        :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke the Azure CLI,
-          or when claims challenge is provided.
+        :raises ~azure.identity.CredentialUnavailableError: the credential was either unable to invoke the Azure CLI
+          or a claims challenge was provided.
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked the Azure CLI but didn't
           receive an access token.
         """
         claims_value = options.get("claims") if options else None
         if claims_value and claims_value.strip():
             raise CredentialUnavailableError(
-                f"Fail to get token, please run az login --claims-challenge {claims_value}"
+                f"Failed to get token. Run az login --claims-challenge {claims_value}"
             )
         # only ProactorEventLoop supports subprocesses on Windows (and it isn't the default loop on Python < 3.8)
         if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):

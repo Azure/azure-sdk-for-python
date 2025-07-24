@@ -402,7 +402,7 @@ def test_claims_challenge_raises_error(get_token_method):
     """The credential should raise CredentialUnavailableError when claims challenge is provided"""
 
     claims = "test-claims-challenge"
-    expected_message = f"Fail to get token, please run az login --claims-challenge {claims}"
+    expected_message = f"Failed to get token. Run az login --claims-challenge {claims}"
 
     if get_token_method == "get_token":
         with pytest.raises(CredentialUnavailableError, match=re.escape(expected_message)):
