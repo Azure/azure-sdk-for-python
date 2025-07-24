@@ -1,5 +1,241 @@
 # Release History
 
+## 5.0.0b1 (2025-07-23)
+
+### Features Added
+
+  - Client `AuthorizationManagementClient` added operation group `classic_administrators`
+  - Client `AuthorizationManagementClient` added operation group `global_administrator`
+  - Client `AuthorizationManagementClient` added operation group `deny_assignments`
+  - Client `AuthorizationManagementClient` added operation group `provider_operations_metadata`
+  - Client `AuthorizationManagementClient` added operation group `role_assignments`
+  - Client `AuthorizationManagementClient` added operation group `permissions`
+  - Client `AuthorizationManagementClient` added operation group `role_definitions`
+  - Client `AuthorizationManagementClient` added operation group `operations`
+  - Client `AuthorizationManagementClient` added operation group `access_review_history_definitions`
+  - Client `AuthorizationManagementClient` added operation group `access_review_history_definition`
+  - Client `AuthorizationManagementClient` added operation group `access_review_history_definition_instance`
+  - Client `AuthorizationManagementClient` added operation group `access_review_history_definition_instances`
+  - Client `AuthorizationManagementClient` added operation group `access_review_schedule_definitions`
+  - Client `AuthorizationManagementClient` added operation group `access_review_instances`
+  - Client `AuthorizationManagementClient` added operation group `access_review_instance`
+  - Client `AuthorizationManagementClient` added operation group `access_review_instance_decisions`
+  - Client `AuthorizationManagementClient` added operation group `access_review_instance_contacted_reviewers`
+  - Client `AuthorizationManagementClient` added operation group `access_review_default_settings`
+  - Client `AuthorizationManagementClient` added operation group `scope_access_review_history_definitions`
+  - Client `AuthorizationManagementClient` added operation group `scope_access_review_history_definition`
+  - Client `AuthorizationManagementClient` added operation group `scope_access_review_history_definition_instance`
+  - Client `AuthorizationManagementClient` added operation group `scope_access_review_history_definition_instances`
+  - Client `AuthorizationManagementClient` added operation group `scope_access_review_schedule_definitions`
+  - Client `AuthorizationManagementClient` added operation group `scope_access_review_instances`
+  - Client `AuthorizationManagementClient` added operation group `scope_access_review_instance`
+  - Client `AuthorizationManagementClient` added operation group `scope_access_review_instance_decisions`
+  - Client `AuthorizationManagementClient` added operation group `scope_access_review_instance_contacted_reviewers`
+  - Client `AuthorizationManagementClient` added operation group `scope_access_review_default_settings`
+  - Client `AuthorizationManagementClient` added operation group `access_review_schedule_definitions_assigned_for_my_approval`
+  - Client `AuthorizationManagementClient` added operation group `access_review_instances_assigned_for_my_approval`
+  - Client `AuthorizationManagementClient` added operation group `access_review_instance_my_decisions`
+  - Client `AuthorizationManagementClient` added operation group `tenant_level_access_review_instance_contacted_reviewers`
+  - Client `AuthorizationManagementClient` added operation group `eligible_child_resources`
+  - Client `AuthorizationManagementClient` added operation group `role_assignment_schedules`
+  - Client `AuthorizationManagementClient` added operation group `role_assignment_schedule_instances`
+  - Client `AuthorizationManagementClient` added operation group `role_assignment_schedule_requests`
+  - Client `AuthorizationManagementClient` added operation group `role_eligibility_schedules`
+  - Client `AuthorizationManagementClient` added operation group `role_eligibility_schedule_instances`
+  - Client `AuthorizationManagementClient` added operation group `role_eligibility_schedule_requests`
+  - Client `AuthorizationManagementClient` added operation group `role_management_policies`
+  - Client `AuthorizationManagementClient` added operation group `role_management_policy_assignments`
+  - Added enum `AccessRecommendationType`
+  - Added enum `AccessReviewActorIdentityType`
+  - Added enum `AccessReviewApplyResult`
+  - Added model `AccessReviewContactedReviewer`
+  - Added model `AccessReviewContactedReviewerListResult`
+  - Added model `AccessReviewDecision`
+  - Added model `AccessReviewDecisionIdentity`
+  - Added model `AccessReviewDecisionInsight`
+  - Added model `AccessReviewDecisionInsightProperties`
+  - Added enum `AccessReviewDecisionInsightType`
+  - Added model `AccessReviewDecisionListResult`
+  - Added enum `AccessReviewDecisionPrincipalResourceMembershipType`
+  - Added model `AccessReviewDecisionProperties`
+  - Added model `AccessReviewDecisionServicePrincipalIdentity`
+  - Added model `AccessReviewDecisionUserIdentity`
+  - Added model `AccessReviewDecisionUserSignInInsightProperties`
+  - Added model `AccessReviewDefaultSettings`
+  - Added model `AccessReviewHistoryDefinition`
+  - Added model `AccessReviewHistoryDefinitionInstanceListResult`
+  - Added model `AccessReviewHistoryDefinitionListResult`
+  - Added model `AccessReviewHistoryDefinitionProperties`
+  - Added enum `AccessReviewHistoryDefinitionStatus`
+  - Added model `AccessReviewHistoryInstance`
+  - Added model `AccessReviewInstance`
+  - Added model `AccessReviewInstanceListResult`
+  - Added model `AccessReviewInstanceProperties`
+  - Added enum `AccessReviewInstanceReviewersType`
+  - Added enum `AccessReviewInstanceStatus`
+  - Added enum `AccessReviewRecurrencePatternType`
+  - Added enum `AccessReviewRecurrenceRangeType`
+  - Added enum `AccessReviewResult`
+  - Added model `AccessReviewReviewer`
+  - Added enum `AccessReviewReviewerType`
+  - Added model `AccessReviewScheduleDefinition`
+  - Added model `AccessReviewScheduleDefinitionListResult`
+  - Added model `AccessReviewScheduleDefinitionProperties`
+  - Added enum `AccessReviewScheduleDefinitionReviewersType`
+  - Added enum `AccessReviewScheduleDefinitionStatus`
+  - Added model `AccessReviewScheduleSettings`
+  - Added model `AccessReviewScope`
+  - Added enum `AccessReviewScopeAssignmentState`
+  - Added enum `AccessReviewScopePrincipalType`
+  - Added enum `ApprovalMode`
+  - Added model `ApprovalSettings`
+  - Added model `ApprovalStage`
+  - Added enum `AssignmentType`
+  - Added model `ClassicAdministrator`
+  - Added model `ClassicAdministratorListResult`
+  - Added enum `DecisionResourceType`
+  - Added enum `DecisionTargetType`
+  - Added enum `DefaultDecisionType`
+  - Added model `DenyAssignment`
+  - Added model `DenyAssignmentFilter`
+  - Added model `DenyAssignmentListResult`
+  - Added model `DenyAssignmentPermission`
+  - Added model `EligibleChildResource`
+  - Added model `EligibleChildResourcesListResult`
+  - Added enum `EnablementRules`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `ErrorDefinition`
+  - Added model `ErrorDefinitionProperties`
+  - Added model `ErrorDetail`
+  - Added model `ErrorResponse`
+  - Added enum `ExcludedPrincipalTypes`
+  - Added model `ExpandedProperties`
+  - Added model `ExpandedPropertiesPrincipal`
+  - Added model `ExpandedPropertiesRoleDefinition`
+  - Added model `ExpandedPropertiesScope`
+  - Added enum `MemberType`
+  - Added enum `NotificationDeliveryMechanism`
+  - Added enum `NotificationLevel`
+  - Added model `Operation`
+  - Added model `OperationDisplay`
+  - Added model `OperationListResult`
+  - Added enum `PIMOnlyMode`
+  - Added model `PIMOnlyModeSettings`
+  - Added model `Permission`
+  - Added model `PermissionGetResult`
+  - Added model `PolicyAssignmentProperties`
+  - Added model `PolicyAssignmentPropertiesPolicy`
+  - Added model `PolicyAssignmentPropertiesRoleDefinition`
+  - Added model `PolicyAssignmentPropertiesScope`
+  - Added model `PolicyProperties`
+  - Added model `PolicyPropertiesScope`
+  - Added model `Principal`
+  - Added enum `PrincipalType`
+  - Added model `ProviderOperation`
+  - Added model `ProviderOperationsMetadata`
+  - Added model `ProviderOperationsMetadataListResult`
+  - Added enum `RecipientType`
+  - Added model `RecordAllDecisionsProperties`
+  - Added enum `RecordAllDecisionsResult`
+  - Added enum `RequestType`
+  - Added model `ResourceType`
+  - Added model `RoleAssignment`
+  - Added model `RoleAssignmentCreateParameters`
+  - Added model `RoleAssignmentFilter`
+  - Added model `RoleAssignmentListResult`
+  - Added model `RoleAssignmentSchedule`
+  - Added model `RoleAssignmentScheduleFilter`
+  - Added model `RoleAssignmentScheduleInstance`
+  - Added model `RoleAssignmentScheduleInstanceFilter`
+  - Added model `RoleAssignmentScheduleInstanceListResult`
+  - Added model `RoleAssignmentScheduleListResult`
+  - Added model `RoleAssignmentScheduleRequest`
+  - Added model `RoleAssignmentScheduleRequestFilter`
+  - Added model `RoleAssignmentScheduleRequestListResult`
+  - Added model `RoleAssignmentScheduleRequestPropertiesScheduleInfo`
+  - Added model `RoleAssignmentScheduleRequestPropertiesScheduleInfoExpiration`
+  - Added model `RoleAssignmentScheduleRequestPropertiesTicketInfo`
+  - Added model `RoleDefinition`
+  - Added model `RoleDefinitionFilter`
+  - Added model `RoleDefinitionListResult`
+  - Added model `RoleEligibilitySchedule`
+  - Added model `RoleEligibilityScheduleFilter`
+  - Added model `RoleEligibilityScheduleInstance`
+  - Added model `RoleEligibilityScheduleInstanceFilter`
+  - Added model `RoleEligibilityScheduleInstanceListResult`
+  - Added model `RoleEligibilityScheduleListResult`
+  - Added model `RoleEligibilityScheduleRequest`
+  - Added model `RoleEligibilityScheduleRequestFilter`
+  - Added model `RoleEligibilityScheduleRequestListResult`
+  - Added model `RoleEligibilityScheduleRequestPropertiesScheduleInfo`
+  - Added model `RoleEligibilityScheduleRequestPropertiesScheduleInfoExpiration`
+  - Added model `RoleEligibilityScheduleRequestPropertiesTicketInfo`
+  - Added model `RoleManagementPolicy`
+  - Added model `RoleManagementPolicyApprovalRule`
+  - Added model `RoleManagementPolicyAssignment`
+  - Added model `RoleManagementPolicyAssignmentListResult`
+  - Added model `RoleManagementPolicyAuthenticationContextRule`
+  - Added model `RoleManagementPolicyEnablementRule`
+  - Added model `RoleManagementPolicyExpirationRule`
+  - Added model `RoleManagementPolicyListResult`
+  - Added model `RoleManagementPolicyNotificationRule`
+  - Added model `RoleManagementPolicyPimOnlyModeRule`
+  - Added model `RoleManagementPolicyRule`
+  - Added model `RoleManagementPolicyRuleTarget`
+  - Added enum `RoleManagementPolicyRuleType`
+  - Added enum `Status`
+  - Added enum `Type`
+  - Added model `UserSet`
+  - Added enum `UserType`
+  - Added model `UsersOrServicePrincipalSet`
+  - Added model `ValidationResponse`
+  - Added model `ValidationResponseErrorInfo`
+  - Added model `AccessReviewDefaultSettingsOperations`
+  - Added model `AccessReviewHistoryDefinitionInstanceOperations`
+  - Added model `AccessReviewHistoryDefinitionInstancesOperations`
+  - Added model `AccessReviewHistoryDefinitionOperations`
+  - Added model `AccessReviewHistoryDefinitionsOperations`
+  - Added model `AccessReviewInstanceContactedReviewersOperations`
+  - Added model `AccessReviewInstanceDecisionsOperations`
+  - Added model `AccessReviewInstanceMyDecisionsOperations`
+  - Added model `AccessReviewInstanceOperations`
+  - Added model `AccessReviewInstancesAssignedForMyApprovalOperations`
+  - Added model `AccessReviewInstancesOperations`
+  - Added model `AccessReviewScheduleDefinitionsAssignedForMyApprovalOperations`
+  - Added model `AccessReviewScheduleDefinitionsOperations`
+  - Added model `ClassicAdministratorsOperations`
+  - Added model `DenyAssignmentsOperations`
+  - Added model `EligibleChildResourcesOperations`
+  - Added model `GlobalAdministratorOperations`
+  - Added model `Operations`
+  - Added model `PermissionsOperations`
+  - Added model `ProviderOperationsMetadataOperations`
+  - Added model `RoleAssignmentScheduleInstancesOperations`
+  - Added model `RoleAssignmentScheduleRequestsOperations`
+  - Added model `RoleAssignmentSchedulesOperations`
+  - Added model `RoleAssignmentsOperations`
+  - Added model `RoleDefinitionsOperations`
+  - Added model `RoleEligibilityScheduleInstancesOperations`
+  - Added model `RoleEligibilityScheduleRequestsOperations`
+  - Added model `RoleEligibilitySchedulesOperations`
+  - Added model `RoleManagementPoliciesOperations`
+  - Added model `RoleManagementPolicyAssignmentsOperations`
+  - Added model `ScopeAccessReviewDefaultSettingsOperations`
+  - Added model `ScopeAccessReviewHistoryDefinitionInstanceOperations`
+  - Added model `ScopeAccessReviewHistoryDefinitionInstancesOperations`
+  - Added model `ScopeAccessReviewHistoryDefinitionOperations`
+  - Added model `ScopeAccessReviewHistoryDefinitionsOperations`
+  - Added model `ScopeAccessReviewInstanceContactedReviewersOperations`
+  - Added model `ScopeAccessReviewInstanceDecisionsOperations`
+  - Added model `ScopeAccessReviewInstanceOperations`
+  - Added model `ScopeAccessReviewInstancesOperations`
+  - Added model `ScopeAccessReviewScheduleDefinitionsOperations`
+  - Added model `TenantLevelAccessReviewInstanceContactedReviewersOperations`
+
+### Breaking Changes
+
+  - This package now only targets the latest Api-Version available on Azure and removes APIs of other Api-Version. After this change, the package can have much smaller size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ignore this change.
+
 ## 4.0.0 (2023-07-21)
 
 ### Features Added
