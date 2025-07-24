@@ -263,7 +263,7 @@ def _handle_service_request_retries(
         raise exception
 
 def _handle_service_response_retries(request, client, response_retry_policy, exception, *args):
-    if request and _has_read_retryable_headers(request.headers):
+    if request and (_has_read_retryable_headers(request.headers) or (args and is_write_retryable(args[0], client))):
         # we resolve the request endpoint to the next preferred region
         # once we are out of preferred regions we stop retrying
         retry_policy = response_retry_policy
@@ -273,6 +273,11 @@ def _handle_service_response_retries(request, client, response_retry_policy, exc
             raise exception
     else:
         raise exception
+
+def is_write_retryable(request_params, client):
+    return (request_params.retry_write or
+            client.connection_policy.RetryNonIdempotentWrites and
+            not request_params.operation_type == _OperationType.Patch)
 
 def _configure_timeout(request: PipelineRequest, absolute: Optional[int], per_request: int) -> None:
     if absolute is not None:

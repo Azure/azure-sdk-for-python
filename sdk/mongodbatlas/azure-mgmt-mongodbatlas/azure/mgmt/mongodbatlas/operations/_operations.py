@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterator, List, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -49,7 +49,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-18-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -70,7 +70,7 @@ def build_organizations_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-18-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -99,7 +99,7 @@ def build_organizations_create_or_update_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-18-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -130,7 +130,7 @@ def build_organizations_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-18-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -160,7 +160,7 @@ def build_organizations_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-18-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -188,7 +188,7 @@ def build_organizations_list_by_resource_group_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-18-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -215,7 +215,7 @@ def build_organizations_list_by_subscription_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-18-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -253,7 +253,7 @@ class Operations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> Iterable["_models.Operation"]:
+    def list(self, **kwargs: Any) -> ItemPaged["_models.Operation"]:
         """List the operations for the provider.
 
         :return: An iterator like instance of Operation
@@ -655,7 +655,7 @@ class OrganizationsOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        properties: Union[_models.OrganizationResource, JSON, IO[bytes]],
+        properties: Union[_models.OrganizationResourceUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -727,7 +727,7 @@ class OrganizationsOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        properties: _models.OrganizationResource,
+        properties: _models.OrganizationResourceUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -740,7 +740,7 @@ class OrganizationsOperations:
         :param organization_name: Name of the Organization resource. Required.
         :type organization_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.mongodbatlas.models.OrganizationResource
+        :type properties: ~azure.mgmt.mongodbatlas.models.OrganizationResourceUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -811,7 +811,7 @@ class OrganizationsOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        properties: Union[_models.OrganizationResource, JSON, IO[bytes]],
+        properties: Union[_models.OrganizationResourceUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.OrganizationResource]:
         """Update a OrganizationResource.
@@ -822,8 +822,9 @@ class OrganizationsOperations:
         :param organization_name: Name of the Organization resource. Required.
         :type organization_name: str
         :param properties: The resource properties to be updated. Is one of the following types:
-         OrganizationResource, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.mongodbatlas.models.OrganizationResource or JSON or IO[bytes]
+         OrganizationResourceUpdate, JSON, IO[bytes] Required.
+        :type properties: ~azure.mgmt.mongodbatlas.models.OrganizationResourceUpdate or JSON or
+         IO[bytes]
         :return: An instance of LROPoller that returns OrganizationResource. The OrganizationResource
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.mongodbatlas.models.OrganizationResource]
@@ -996,7 +997,7 @@ class OrganizationsOperations:
     @distributed_trace
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
-    ) -> Iterable["_models.OrganizationResource"]:
+    ) -> ItemPaged["_models.OrganizationResource"]:
         """List OrganizationResource resources by resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1084,7 +1085,7 @@ class OrganizationsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_subscription(self, **kwargs: Any) -> Iterable["_models.OrganizationResource"]:
+    def list_by_subscription(self, **kwargs: Any) -> ItemPaged["_models.OrganizationResource"]:
         """List OrganizationResource resources by subscription ID.
 
         :return: An iterator like instance of OrganizationResource

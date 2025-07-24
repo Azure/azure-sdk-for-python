@@ -14,12 +14,12 @@ from ci_tools.functions import (
     discover_prebuilt_package,
     pip_install,
     pip_uninstall,
+    get_pip_command,
 )
 from ci_tools.build import cleanup_build_artifacts, create_package
 from ci_tools.parsing import ParsedSetup, parse_require
 from ci_tools.functions import get_package_from_repo_or_folder, find_whl, get_pip_list_output, pytest
 from .managed_virtual_env import ManagedVirtualEnv
-
 
 def prepare_environment(package_folder: str, venv_directory: str, env_name: str) -> str:
     """
@@ -51,7 +51,6 @@ def create_package_and_install(
 
     commands_options = []
     built_pkg_path = ""
-    setup_py_path = os.path.join(target_setup, "setup.py")
     additional_downloaded_reqs = []
 
     if not os.path.exists(distribution_directory):
@@ -68,10 +67,10 @@ def create_package_and_install(
     if cache_dir:
         commands_options.extend(["--cache-dir", cache_dir])
 
-    target_package = ParsedSetup.from_path(setup_py_path)
+    target_package = ParsedSetup.from_path(target_setup)
 
     discovered_packages = discover_packages(
-        setup_py_path, distribution_directory, target_setup, package_type, force_create
+        target_setup, distribution_directory, target_setup, package_type, force_create
     )
 
     # ensure that discovered packages are always copied to the distribution directory regardless of other factors
@@ -104,7 +103,7 @@ def create_package_and_install(
                 logging.info("Installing {w} from fresh built package.".format(w=built_package))
 
             if not pre_download_disabled:
-                requirements = ParsedSetup.from_path(os.path.join(os.path.abspath(target_setup), "setup.py")).requires
+                requirements = ParsedSetup.from_path(os.path.join(os.path.abspath(target_setup))).requires
                 azure_requirements = [req.split(";")[0] for req in requirements if req.startswith("azure-")]
 
                 if azure_requirements:
@@ -112,10 +111,8 @@ def create_package_and_install(
                         "Found {} azure requirement(s): {}".format(len(azure_requirements), azure_requirements)
                     )
 
-                    download_command = [
-                        python_exe,
-                        "-m",
-                        "pip",
+                    pip_cmd = get_pip_command(python_exe)
+                    download_command = pip_cmd + [
                         "download",
                         "-d",
                         tmp_dl_folder,
@@ -134,7 +131,7 @@ def create_package_and_install(
 
                         # parse the specifier
                         requirement = parse_require(req)
-                        req_name = requirement.key
+                        req_name = requirement.name
                         req_specifier = requirement.specifier if len(requirement.specifier) else None
 
                         # if we have the package already present...
@@ -163,7 +160,7 @@ def create_package_and_install(
                                 )
                             except subprocess.CalledProcessError as e:
                                 requirement = parse_require(addition)
-                                non_present_reqs.append(requirement.key)
+                                non_present_reqs.append(requirement.name)
 
                         additional_downloaded_reqs = [
                             os.path.abspath(os.path.join(tmp_dl_folder, pth)) for pth in os.listdir(tmp_dl_folder)
@@ -174,7 +171,8 @@ def create_package_and_install(
                             for package_name in non_present_reqs
                         ]
 
-            commands = [python_exe, "-m", "pip", "install", built_pkg_path]
+            pip_cmd = get_pip_command(python_exe)
+            commands = pip_cmd + ["install", built_pkg_path]
             commands.extend(additional_downloaded_reqs)
             commands.extend(commands_options)
 

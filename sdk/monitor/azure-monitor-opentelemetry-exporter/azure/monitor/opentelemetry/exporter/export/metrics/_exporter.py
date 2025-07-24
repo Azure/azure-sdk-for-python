@@ -217,7 +217,7 @@ def _convert_point_to_envelope(
     envelope = _utils._create_telemetry_item(point.time_unix_nano)
     envelope.name = _METRIC_ENVELOPE_NAME
     envelope.tags.update(_utils._populate_part_a_fields(resource))  # type: ignore
-    if _utils._is_synthetic_source(point.attributes):
+    if _utils._is_any_synthetic_source(point.attributes):
         envelope.tags[ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE] = "True"  # type: ignore
     namespace = None
     if scope is not None and _is_metric_namespace_opted_in():

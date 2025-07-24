@@ -1,9 +1,16 @@
 # Release History
 
-## 1.4.0b1 (2025-06-27)
+## 1.4.0b2 (2025-07-27)
 
 ### Features Added
 - Added API version `2024-11-15-preview` for SIP routing client
+
+## 1.4.0b1 (2025-07-22)
+
+### Features Added
+- Adds support for mobile number types
+  - mobile numbers are location associated phone numbers with SMS capabilities
+- API version `2025-06-01` is the default.
 
 ## 1.3.0 (2025-06-20)
 

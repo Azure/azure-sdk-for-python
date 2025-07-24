@@ -1,7 +1,7 @@
 import os
 import ast
 import time
-import importlib
+import shutil
 from typing import Optional, Tuple, Dict, Any, List
 from pathlib import Path
 import logging
@@ -82,6 +82,10 @@ def change_log_generate(
     # try new changelog tool
     if prefolder and not is_multiapi:
         try:
+            tox_cache_path = Path(prefolder, package_name, ".tox")
+            if tox_cache_path.exists():
+                _LOGGER.info(f"Remove {tox_cache_path} to avoid potential tox cache conflict")
+                shutil.rmtree(tox_cache_path)
             return change_log_new(str(Path(prefolder) / package_name), not (last_stable_release and tag_is_stable))
         except Exception as e:
             _LOGGER.warning(f"Failed to generate changelog with breaking_change_detector: {e}")

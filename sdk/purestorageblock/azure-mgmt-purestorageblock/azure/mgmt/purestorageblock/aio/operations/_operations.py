@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -104,7 +104,7 @@ class Operations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.Operation"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.Operation"]:
         """List the operations for the provider.
 
         :return: An iterator like instance of Operation
@@ -851,7 +851,7 @@ class ReservationsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.Reservation"]:
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.Reservation"]:
         """List reservations by resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -940,7 +940,7 @@ class ReservationsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.Reservation"]:
+    def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.Reservation"]:
         """List reservations by Azure subscription ID.
 
         :return: An iterator like instance of Reservation
@@ -1919,7 +1919,7 @@ class StoragePoolsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.StoragePool"]:
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.StoragePool"]:
         """List storage pools by resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2008,7 +2008,7 @@ class StoragePoolsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.StoragePool"]:
+    def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.StoragePool"]:
         """List storage pools by Azure subscription ID.
 
         :return: An iterator like instance of StoragePool
@@ -3195,7 +3195,7 @@ class AvsStorageContainersOperations:
     @distributed_trace
     def list_by_storage_pool(
         self, resource_group_name: str, storage_pool_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.AvsStorageContainer"]:
+    ) -> AsyncItemPaged["_models.AvsStorageContainer"]:
         """List AVS storage containers by storage pool.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3788,7 +3788,7 @@ class AvsStorageContainerVolumesOperations:
     @distributed_trace
     def list_by_avs_storage_container(
         self, resource_group_name: str, storage_pool_name: str, storage_container_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.AvsStorageContainerVolume"]:
+    ) -> AsyncItemPaged["_models.AvsStorageContainerVolume"]:
         """List volumes in an AVS storage container.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -4341,7 +4341,7 @@ class AvsVmsOperations:
     @distributed_trace
     def list_by_storage_pool(
         self, resource_group_name: str, storage_pool_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.AvsVm"]:
+    ) -> AsyncItemPaged["_models.AvsVm"]:
         """List AVS VMs by storage pool.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -4912,7 +4912,7 @@ class AvsVmVolumesOperations:
     @distributed_trace
     def list_by_avs_vm(
         self, resource_group_name: str, storage_pool_name: str, avs_vm_id: str, **kwargs: Any
-    ) -> AsyncIterable["_models.AvsVmVolume"]:
+    ) -> AsyncItemPaged["_models.AvsVmVolume"]:
         """List volumes in an AVS VM.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.

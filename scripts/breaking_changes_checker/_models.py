@@ -47,3 +47,8 @@ class ChangesChecker(Protocol):
 
     def run_check(self, diff: dict, stable_nodes: dict, current_nodes: dict, **kwargs) -> List[BreakingChange]:
         ...
+
+@runtime_checkable
+class PostProcessingChecker(Protocol):
+    def run_check(self, breaking_changes: List, features_added: List, *, diff: dict, stable_nodes: dict, current_nodes: dict, **kwargs) -> tuple[list, list]:
+        ...

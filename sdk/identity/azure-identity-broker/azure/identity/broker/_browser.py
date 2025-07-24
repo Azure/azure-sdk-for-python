@@ -4,7 +4,7 @@
 # ------------------------------------
 import socket
 import sys
-from typing import Dict, Any, Mapping, Union
+from typing import Dict, Any, Mapping, Union, cast
 import msal
 
 from azure.core.exceptions import ClientAuthenticationError
@@ -14,7 +14,7 @@ from azure.identity._credentials import (
 )  # pylint:disable=protected-access
 from azure.identity._exceptions import CredentialUnavailableError  # pylint:disable=protected-access
 from azure.identity._internal.utils import within_dac  # pylint:disable=protected-access
-from ._utils import wrap_exceptions, resolve_tenant
+from ._utils import wrap_exceptions, resolve_tenant, is_wsl
 
 
 class PopTokenRequestOptions(TokenRequestOptions):
@@ -50,6 +50,8 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
         unspecified, users will authenticate to an Azure development application.
     :keyword str login_hint: a username suggestion to pre-fill the login page's username/email address field. A user
         may still log in with a different username.
+    :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
+        will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     :keyword int timeout: seconds to wait for the user to complete authentication. Defaults to 300 (5 minutes).
     :keyword int parent_window_handle: If your app is a GUI app running on Windows 10+ or macOS, you
@@ -80,21 +82,21 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
 
     @wrap_exceptions
     def _request_token(self, *scopes: str, **kwargs: Any) -> Dict:
-        scopes = list(scopes)  # type: ignore
+        scopes_list = list(scopes)
         claims = kwargs.get("claims")
         pop = kwargs.get("pop")
-        app = self._get_app(**kwargs)
+        app = cast(msal.PublicClientApplication, self._get_app(**kwargs))
         port = self._parsed_url.port if self._parsed_url else None
         auth_scheme = None
         if pop:
             auth_scheme = msal.PopAuthScheme(
                 http_method=pop["resource_request_method"], url=pop["resource_request_url"], nonce=pop["nonce"]
             )
-        if sys.platform.startswith("win"):
+        if sys.platform.startswith("win") or is_wsl():
             if self._use_default_broker_account:
                 try:
                     result = app.acquire_token_interactive(
-                        scopes=scopes,
+                        scopes=scopes_list,
                         login_hint=self._login_hint,
                         claims_challenge=claims,
                         timeout=self._timeout,
@@ -110,7 +112,7 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
                     pass
             try:
                 result = app.acquire_token_interactive(
-                    scopes=scopes,
+                    scopes=scopes_list,
                     login_hint=self._login_hint,
                     claims_challenge=claims,
                     timeout=self._timeout,
@@ -133,7 +135,7 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
         else:
             try:
                 result = app.acquire_token_interactive(
-                    scopes=scopes,
+                    scopes=scopes_list,
                     login_hint=self._login_hint,
                     claims_challenge=claims,
                     timeout=self._timeout,
@@ -144,9 +146,9 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
                     auth_scheme=auth_scheme,
                 )
             except Exception:  # pylint: disable=broad-except
-                app = self._disable_broker_on_app(**kwargs)
+                app = cast(msal.PublicClientApplication, self._disable_broker_on_app(**kwargs))
                 result = app.acquire_token_interactive(
-                    scopes=scopes,
+                    scopes=scopes_list,
                     login_hint=self._login_hint,
                     claims_challenge=claims,
                     timeout=self._timeout,
@@ -196,6 +198,8 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
                 instance_discovery=self._instance_discovery,
                 enable_broker_on_windows=True,
                 enable_broker_on_mac=True,
+                enable_broker_on_linux=True,
+                enable_broker_on_wsl=True,
                 enable_pii_log=self._enable_support_logging,
             )
 
@@ -231,6 +235,8 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
             instance_discovery=self._instance_discovery,
             enable_broker_on_windows=False,
             enable_broker_on_mac=False,
+            enable_broker_on_linux=False,
+            enable_broker_on_wsl=False,
             enable_pii_log=self._enable_support_logging,
         )
 

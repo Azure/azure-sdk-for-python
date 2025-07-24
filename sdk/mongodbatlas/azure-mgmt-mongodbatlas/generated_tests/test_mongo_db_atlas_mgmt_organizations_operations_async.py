@@ -96,28 +96,14 @@ class TestMongoDBAtlasMgmtOrganizationsOperationsAsync(AzureMgmtRecordedTestCase
                 resource_group_name=resource_group.name,
                 organization_name="str",
                 properties={
-                    "location": "str",
-                    "id": "str",
                     "identity": {
                         "type": "str",
                         "principalId": "str",
                         "tenantId": "str",
                         "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                     },
-                    "name": "str",
                     "properties": {
-                        "marketplace": {
-                            "offerDetails": {
-                                "offerId": "str",
-                                "planId": "str",
-                                "publisherId": "str",
-                                "planName": "str",
-                                "termId": "str",
-                                "termUnit": "str",
-                            },
-                            "subscriptionId": "str",
-                            "subscriptionStatus": "str",
-                        },
+                        "partnerProperties": {"organizationName": "str", "organizationId": "str", "redirectUrl": "str"},
                         "user": {
                             "emailAddress": "str",
                             "firstName": "str",
@@ -126,19 +112,8 @@ class TestMongoDBAtlasMgmtOrganizationsOperationsAsync(AzureMgmtRecordedTestCase
                             "phoneNumber": "str",
                             "upn": "str",
                         },
-                        "partnerProperties": {"organizationName": "str", "organizationId": "str", "redirectUrl": "str"},
-                        "provisioningState": "str",
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str",
                     },
                     "tags": {"str": "str"},
-                    "type": "str",
                 },
             )
         ).result()  # call '.result()' to poll until service return final result
