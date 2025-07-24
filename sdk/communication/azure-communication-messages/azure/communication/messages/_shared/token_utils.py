@@ -8,7 +8,7 @@
 import json
 from datetime import datetime, timezone
 from typing import Tuple, Any, List, Optional
-from dateutil import parser as dateutil_parser  # type: ignore
+import isodate
 from azure.core.exceptions import HttpResponseError
 
 TEAMS_EXTENSION_SCOPE_PREFIX = "https://auth.msft.communication.azure.com/"
@@ -54,7 +54,7 @@ def determine_endpoint_and_api_version(scopes: Optional[List[str]]) -> Tuple[str
 def parse_expires_on(expires_on, response):
     if isinstance(expires_on, str):
         try:
-            expires_on_dt = dateutil_parser.parse(expires_on)
+            expires_on_dt = isodate.parse_datetime(expires_on)
             expires_on_epoch = int(expires_on_dt.timestamp())
             return expires_on_epoch
         except Exception as exc:
@@ -84,7 +84,7 @@ def is_acs_token_cache_valid(response_cache):
         content = response_cache.http_response.text()
         data = json.loads(content)
         expires_on = data["accessToken"]["expiresOn"]
-        expires_on_dt = dateutil_parser.parse(expires_on)
+        expires_on_dt = isodate.parse_datetime(expires_on)
         return datetime.now(timezone.utc) < expires_on_dt
     except (KeyError, ValueError, json.JSONDecodeError):
         raise ValueError(  # pylint: disable=W0707

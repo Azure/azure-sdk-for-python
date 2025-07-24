@@ -5,4 +5,3 @@
 -e ../../servicebus/azure-servicebus
 ../../core/azure-core
 aiohttp>=3.0
-python-dateutil>=2.8.1

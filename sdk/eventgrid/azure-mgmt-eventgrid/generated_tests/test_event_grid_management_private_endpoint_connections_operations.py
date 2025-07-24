@@ -26,7 +26,7 @@ class TestEventGridManagementPrivateEndpointConnectionsOperations(AzureMgmtRecor
             parent_type="str",
             parent_name="str",
             private_endpoint_connection_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -49,7 +49,7 @@ class TestEventGridManagementPrivateEndpointConnectionsOperations(AzureMgmtRecor
                 "provisioningState": "str",
                 "type": "str",
             },
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -63,7 +63,7 @@ class TestEventGridManagementPrivateEndpointConnectionsOperations(AzureMgmtRecor
             parent_type="str",
             parent_name="str",
             private_endpoint_connection_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -76,7 +76,7 @@ class TestEventGridManagementPrivateEndpointConnectionsOperations(AzureMgmtRecor
             resource_group_name=resource_group.name,
             parent_type="str",
             parent_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
