@@ -3,7 +3,8 @@
 ## 1.10.0 (2025-07-29)
 
 ### Breaking Changes
-- Added `_evaluate_query` parameter to `RaiServiceEvaluatorBase` class with a default value of `False`. This parameter controls whether queries are included in evaluation data when evaluating query-response pairs. Previously, queries were always included in evaluations. Existing code that relies on queries being evaluated will need to explicitly set `_evaluate_query=True` to maintain the previous behavior.
+
+- Added `evaluate_query` parameter to all RAI service evaluators that can be passed as a keyword argument. This parameter controls whether queries are included in evaluation data when evaluating query-response pairs. Previously, queries were always included in evaluations. When set to `True`, both query and response will be evaluated; when set to `False` (default), only the response will be evaluated. This parameter is available across all RAI service evaluators including `ContentSafetyEvaluator`, `ViolenceEvaluator`, `SexualEvaluator`, `SelfHarmEvaluator`, `HateUnfairnessEvaluator`, `ProtectedMaterialEvaluator`, `IndirectAttackEvaluator`, `CodeVulnerabilityEvaluator`, `UngroundedAttributesEvaluator`, `GroundednessProEvaluator`, and `EciEvaluator`.  Existing code that relies on queries being evaluated will need to explicitly set `evaluate_query=True` to maintain the previous behavior.
 
 ### Bugs Fixed
 
