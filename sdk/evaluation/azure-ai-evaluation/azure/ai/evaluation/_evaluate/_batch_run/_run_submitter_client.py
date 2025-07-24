@@ -6,6 +6,7 @@ import asyncio
 import logging
 import pandas as pd
 import sys
+import itertools
 from collections import defaultdict
 from concurrent.futures import Future
 from os import PathLike
@@ -19,6 +20,7 @@ from ..._legacy._adapters._constants import LINE_NUMBER
 from ..._legacy._adapters.types import AttrDict
 from ..._legacy._common._thread_pool_executor_with_context import ThreadPoolExecutorWithContext
 from ..._evaluate._utils import _has_aggregator
+from ..._constants import Prefixes
 
 LOGGER = logging.getLogger(__name__)
 
@@ -73,28 +75,31 @@ class RunSubmitterClient:
         return run_future
 
     def get_details(self, client_run: BatchClientRun, all_results: bool = False) -> pd.DataFrame:
-
         run = self._get_run(client_run)
 
-        data: Dict[str, List[Any]] = defaultdict(list)
-        stop_at: Final[int] = self._config.default_num_results if not all_results else sys.maxsize
+        def concat(*dataframes: pd.DataFrame) -> pd.DataFrame:
+            return pd.concat(dataframes, axis=1, verify_integrity=True)
 
-        def _update(prefix: str, items: Sequence[Mapping[str, Any]]) -> None:
-            for i, line in enumerate(items):
-                if i >= stop_at:
-                    break
-                for k, value in line.items():
-                    key = f"{prefix}.{k}"
-                    data[key].append(value)
+        def to_dataframe(items: Sequence[Mapping[str, Any]], *, max_length: Optional[int] = None) -> pd.DataFrame:
+            """Convert a sequence of dictionaries to a DataFrame.
 
-        # Go from a list of dictionaries (i.e. a row view of the data) to a dictionary of lists
-        # (i.e. a column view of the data)
-        _update("inputs", run.inputs)
-        _update("inputs", [{LINE_NUMBER: i} for i in range(len(run.inputs))])
-        _update("outputs", run.outputs)
+            :param items: Sequence of dictionaries to convert.
+            :type items: Sequence[Mapping[str, Any]]
+            :param max_length: Maximum number of items to include in the DataFrame. If None, include all items.
+            :type max_length: Optional[int]
+            :return: DataFrame containing the items.
+            :rtype: pd.DataFrame
+            """
+            max_length = None if all_results else self._config.default_num_results
+            return pd.DataFrame(data=items if all_results else itertools.islice(items, max_length))
 
-        df = pd.DataFrame(data).reindex(columns=[k for k in data.keys()])
-        return df
+        inputs = concat(
+            to_dataframe(run.inputs), to_dataframe([{LINE_NUMBER: i} for i in range(len(run.inputs))])
+        ).add_prefix(Prefixes.INPUTS)
+
+        outputs = to_dataframe(run.outputs).add_prefix(Prefixes.OUTPUTS)
+
+        return concat(inputs, outputs)
 
     def get_metrics(self, client_run: BatchClientRun) -> Dict[str, Any]:
         run = self._get_run(client_run)
