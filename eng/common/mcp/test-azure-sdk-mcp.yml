@@ -1,0 +1,35 @@
+trigger:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - eng/common/mcp/*
+
+pr:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - eng/common/mcp/*
+
+pool:
+  name: azsdk-pool-mms-ubuntu-2204-general
+
+variables:
+  - template: /eng/pipelines/templates/variables/globals.yml
+
+stages:
+- stage: Test
+  displayName: 'Test Azure SDK MCP'
+  jobs:
+  - job: Test
+    displayName: 'Test Azure SDK MCP'
+    steps:
+    - template: /eng/pipelines/templates/steps/install-pwsh.yml
+    - task: PowerShell@2
+      displayName: 'Run Azure SDK MCP Tests'
+      inputs:
+        pwsh: true
+        filePath: $(Build.SourcesDirectory)/eng/common/mcp/test-azure-sdk-mcp.ps1
