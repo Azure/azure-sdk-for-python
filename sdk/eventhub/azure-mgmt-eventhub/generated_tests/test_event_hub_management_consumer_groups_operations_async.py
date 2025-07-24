@@ -44,7 +44,7 @@ class TestEventHubManagementConsumerGroupsOperationsAsync(AzureMgmtRecordedTestC
                 "updatedAt": "2020-02-20 00:00:00",
                 "userMetadata": "str",
             },
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -58,7 +58,7 @@ class TestEventHubManagementConsumerGroupsOperationsAsync(AzureMgmtRecordedTestC
             namespace_name="str",
             event_hub_name="str",
             consumer_group_name="str",
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -72,7 +72,7 @@ class TestEventHubManagementConsumerGroupsOperationsAsync(AzureMgmtRecordedTestC
             namespace_name="str",
             event_hub_name="str",
             consumer_group_name="str",
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -85,7 +85,7 @@ class TestEventHubManagementConsumerGroupsOperationsAsync(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             namespace_name="str",
             event_hub_name="str",
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

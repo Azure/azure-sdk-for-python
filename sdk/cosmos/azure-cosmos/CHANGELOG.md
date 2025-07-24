@@ -3,10 +3,12 @@
 ### 4.14.0b2 (Unreleased)
 
 #### Features Added
+* Added feed range support in `query_items`. See [PR 41722](https://github.com/Azure/azure-sdk-for-python/pull/41722).
 
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed bug where container cache was not being properly updated resulting in unnecessary extra requests. See [PR 42143](https://github.com/Azure/azure-sdk-for-python/pull/42143).
 
 #### Other Changes
 
