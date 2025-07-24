@@ -139,6 +139,9 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                     sub_status_code=SubStatusCodes.THROUGHPUT_OFFER_NOT_FOUND)
             return result
         except exceptions.CosmosHttpResponseError as e:
+            if request:
+                # update session token for relevant operations
+                client._UpdateSessionIfRequired(request.headers, {}, e.headers)
             if request and _has_database_account_header(request.headers):
                 retry_policy = database_account_retry_policy
             # Re-assign retry policy based on error code
