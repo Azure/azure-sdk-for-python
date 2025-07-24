@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 # Third-party imports
 import asyncio
+import contextlib
 import inspect
 import math
 import os
@@ -31,19 +32,38 @@ from azure.ai.evaluation._constants import (
     TokenScope,
 )
 from azure.ai.evaluation._evaluate._utils import _get_ai_studio_url
-from azure.ai.evaluation._evaluate._utils import extract_workspace_triad_from_trace_provider
+from azure.ai.evaluation._evaluate._utils import (
+    extract_workspace_triad_from_trace_provider,
+)
 from azure.ai.evaluation._version import VERSION
 from azure.ai.evaluation._azure._clients import LiteMLClient
 from azure.ai.evaluation._evaluate._utils import _write_output
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._model_configurations import EvaluationResult
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
-from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenManager, RAIClient
-from azure.ai.evaluation.simulator._model_tools._generated_rai_client import GeneratedRAIClient
-from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation.simulator._model_tools import (
+    ManagedIdentityAPITokenManager,
+    RAIClient,
+)
+from azure.ai.evaluation.simulator._model_tools._generated_rai_client import (
+    GeneratedRAIClient,
+)
+from azure.ai.evaluation._user_agent import UserAgentSingleton
+from azure.ai.evaluation._model_configurations import (
+    AzureOpenAIModelConfiguration,
+    OpenAIModelConfiguration,
+)
+from azure.ai.evaluation._exceptions import (
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+    EvaluationException,
+)
 from azure.ai.evaluation._common.math import list_mean_nan_safe, is_none_or_nan
-from azure.ai.evaluation._common.utils import validate_azure_ai_project, is_onedp_project
+from azure.ai.evaluation._common.utils import (
+    validate_azure_ai_project,
+    is_onedp_project,
+)
 from azure.ai.evaluation import evaluate
 from azure.ai.evaluation._common import RedTeamUpload, ResultType
 
@@ -51,9 +71,18 @@ from azure.ai.evaluation._common import RedTeamUpload, ResultType
 from azure.core.credentials import TokenCredential
 
 # Red Teaming imports
-from ._red_team_result import RedTeamResult, RedTeamingScorecard, RedTeamingParameters, ScanResult
+from ._red_team_result import (
+    RedTeamResult,
+    RedTeamingScorecard,
+    RedTeamingParameters,
+    ScanResult,
+)
 from ._attack_strategy import AttackStrategy
-from ._attack_objective_generator import RiskCategory, _InternalRiskCategory, _AttackObjectiveGenerator
+from ._attack_objective_generator import (
+    RiskCategory,
+    _InternalRiskCategory,
+    _AttackObjectiveGenerator,
+)
 from ._utils._rai_service_target import AzureRAIServiceTarget
 from ._utils._rai_service_true_false_scorer import AzureRAIServiceTrueFalseScorer
 from ._utils._rai_service_eval_chat_target import RAIServiceEvalChatTarget
@@ -64,8 +93,12 @@ from pyrit.common import initialize_pyrit, DUCK_DB
 from pyrit.prompt_target import OpenAIChatTarget, PromptChatTarget
 from pyrit.models import ChatMessage
 from pyrit.memory import CentralMemory
-from pyrit.orchestrator.single_turn.prompt_sending_orchestrator import PromptSendingOrchestrator
-from pyrit.orchestrator.multi_turn.red_teaming_orchestrator import RedTeamingOrchestrator
+from pyrit.orchestrator.single_turn.prompt_sending_orchestrator import (
+    PromptSendingOrchestrator,
+)
+from pyrit.orchestrator.multi_turn.red_teaming_orchestrator import (
+    RedTeamingOrchestrator,
+)
 from pyrit.orchestrator import Orchestrator
 from pyrit.exceptions import PyritException
 from pyrit.prompt_converter import (
@@ -193,7 +226,9 @@ class RedTeam:
                 ),
                 "stop": stop_after_attempt(self.MAX_RETRY_ATTEMPTS),
                 "wait": wait_exponential(
-                    multiplier=1.5, min=self.MIN_RETRY_WAIT_SECONDS, max=self.MAX_RETRY_WAIT_SECONDS
+                    multiplier=1.5,
+                    min=self.MIN_RETRY_WAIT_SECONDS,
+                    max=self.MAX_RETRY_WAIT_SECONDS,
                 ),
                 "retry_error_callback": self._log_retry_error,
                 "before_sleep": self._log_retry_attempt,
@@ -329,7 +364,9 @@ class RedTeam:
         self.logger.debug("RedTeam initialized successfully")
 
     def _start_redteam_mlflow_run(
-        self, azure_ai_project: Optional[AzureAIProject] = None, run_name: Optional[str] = None
+        self,
+        azure_ai_project: Optional[AzureAIProject] = None,
+        run_name: Optional[str] = None,
     ) -> EvalRun:
         """Start an MLFlow run for the Red Team Agent evaluation.
 
@@ -404,7 +441,8 @@ class RedTeam:
             self.logger.debug(f"MLFlow run created successfully with ID: {eval_run}")
 
             self.ai_studio_url = _get_ai_studio_url(
-                trace_destination=self.trace_destination, evaluation_id=eval_run.info.run_id
+                trace_destination=self.trace_destination,
+                evaluation_id=eval_run.info.run_id,
             )
 
             return eval_run
@@ -487,7 +525,11 @@ class RedTeam:
                 # MLFlow requires the artifact_name file to be in the directory we're logging
 
                 # First, create the main artifact file that MLFlow expects
-                with open(os.path.join(tmpdir, artifact_name), "w", encoding=DefaultOpenEncoding.WRITE) as f:
+                with open(
+                    os.path.join(tmpdir, artifact_name),
+                    "w",
+                    encoding=DefaultOpenEncoding.WRITE,
+                ) as f:
                     if _skip_evals:
                         f.write(json.dumps({"conversations": redteam_result.attack_details or []}))
                     elif redteam_result.scan_result:
@@ -560,7 +602,10 @@ class RedTeam:
                 try:
                     create_evaluation_result_response = (
                         self.generated_rai_client._evaluation_onedp_client.create_evaluation_result(
-                            name=uuid.uuid4(), path=tmpdir, metrics=metrics, result_type=ResultType.REDTEAM
+                            name=uuid.uuid4(),
+                            path=tmpdir,
+                            metrics=metrics,
+                            result_type=ResultType.REDTEAM,
                         )
                     )
 
@@ -645,7 +690,10 @@ class RedTeam:
         risk_cat_value = risk_category.value.lower()
         num_objectives = attack_objective_generator.num_objectives
 
-        log_subsection_header(self.logger, f"Getting attack objectives for {risk_cat_value}, strategy: {strategy}")
+        log_subsection_header(
+            self.logger,
+            f"Getting attack objectives for {risk_cat_value}, strategy: {strategy}",
+        )
 
         # Check if we already have baseline objectives for this risk category
         baseline_key = ((risk_cat_value,), "baseline")
@@ -708,7 +756,11 @@ class RedTeam:
                             if isinstance(message, dict) and "content" in message:
                                 message["content"] = f"{random.choice(jailbreak_prefixes)} {message['content']}"
                 except Exception as e:
-                    log_error(self.logger, "Error applying jailbreak prefixes to custom objectives", e)
+                    log_error(
+                        self.logger,
+                        "Error applying jailbreak prefixes to custom objectives",
+                        e,
+                    )
                     # Continue with unmodified prompts instead of failing completely
 
             # Extract content from selected objectives
@@ -1112,7 +1164,10 @@ class RedTeam:
                                 return await asyncio.wait_for(
                                     orchestrator.send_prompts_async(
                                         prompt_list=batch,
-                                        memory_labels={"risk_strategy_path": output_path, "batch": batch_idx + 1},
+                                        memory_labels={
+                                            "risk_strategy_path": output_path,
+                                            "batch": batch_idx + 1,
+                                        },
                                     ),
                                     timeout=timeout,  # Use provided timeouts
                                 )
@@ -1203,7 +1258,10 @@ class RedTeam:
                             return await asyncio.wait_for(
                                 orchestrator.send_prompts_async(
                                     prompt_list=all_prompts,
-                                    memory_labels={"risk_strategy_path": output_path, "batch": 1},
+                                    memory_labels={
+                                        "risk_strategy_path": output_path,
+                                        "batch": 1,
+                                    },
                                 ),
                                 timeout=timeout,  # Use provided timeout
                             )
@@ -1249,7 +1307,12 @@ class RedTeam:
                         batch_idx=1,
                     )
                 except Exception as e:
-                    log_error(self.logger, "Error processing prompts", e, f"{strategy_name}/{risk_category_name}")
+                    log_error(
+                        self.logger,
+                        "Error processing prompts",
+                        e,
+                        f"{strategy_name}/{risk_category_name}",
+                    )
                     self.logger.debug(f"ERROR: Strategy {strategy_name}, Risk {risk_category_name}: {str(e)}")
                     self.red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
                     self._write_pyrit_outputs_to_file(
@@ -1263,7 +1326,12 @@ class RedTeam:
             return orchestrator
 
         except Exception as e:
-            log_error(self.logger, "Failed to initialize orchestrator", e, f"{strategy_name}/{risk_category_name}")
+            log_error(
+                self.logger,
+                "Failed to initialize orchestrator",
+                e,
+                f"{strategy_name}/{risk_category_name}",
+            )
             self.logger.debug(
                 f"CRITICAL: Failed to create orchestrator for {strategy_name}/{risk_category_name}: {str(e)}"
             )
@@ -1387,7 +1455,11 @@ class RedTeam:
                         try:
                             return await asyncio.wait_for(
                                 orchestrator.run_attack_async(
-                                    objective=prompt, memory_labels={"risk_strategy_path": output_path, "batch": 1}
+                                    objective=prompt,
+                                    memory_labels={
+                                        "risk_strategy_path": output_path,
+                                        "batch": 1,
+                                    },
                                 ),
                                 timeout=timeout,  # Use provided timeouts
                             )
@@ -1470,7 +1542,12 @@ class RedTeam:
                     # Continue with other batches even if one fails
                     continue
             except Exception as e:
-                log_error(self.logger, "Failed to initialize orchestrator", e, f"{strategy_name}/{risk_category_name}")
+                log_error(
+                    self.logger,
+                    "Failed to initialize orchestrator",
+                    e,
+                    f"{strategy_name}/{risk_category_name}",
+                )
                 self.logger.debug(
                     f"CRITICAL: Failed to create orchestrator for {strategy_name}/{risk_category_name}: {str(e)}"
                 )
@@ -1583,7 +1660,10 @@ class RedTeam:
                             return await asyncio.wait_for(
                                 orchestrator.run_attack_async(
                                     objective=prompt,
-                                    memory_labels={"risk_strategy_path": output_path, "batch": prompt_idx + 1},
+                                    memory_labels={
+                                        "risk_strategy_path": output_path,
+                                        "batch": prompt_idx + 1,
+                                    },
                                 ),
                                 timeout=timeout,  # Use provided timeouts
                             )
@@ -1667,7 +1747,12 @@ class RedTeam:
                     # Continue with other batches even if one fails
                     continue
             except Exception as e:
-                log_error(self.logger, "Failed to initialize orchestrator", e, f"{strategy_name}/{risk_category_name}")
+                log_error(
+                    self.logger,
+                    "Failed to initialize orchestrator",
+                    e,
+                    f"{strategy_name}/{risk_category_name}",
+                )
                 self.logger.debug(
                     f"CRITICAL: Failed to create orchestrator for {strategy_name}/{risk_category_name}: {str(e)}"
                 )
@@ -1677,7 +1762,12 @@ class RedTeam:
         return orchestrator
 
     def _write_pyrit_outputs_to_file(
-        self, *, orchestrator: Orchestrator, strategy_name: str, risk_category: str, batch_idx: Optional[int] = None
+        self,
+        *,
+        orchestrator: Orchestrator,
+        strategy_name: str,
+        risk_category: str,
+        batch_idx: Optional[int] = None,
     ) -> str:
         """Write PyRIT outputs to a file with a name based on orchestrator, strategy, and risk category.
 
@@ -1772,7 +1862,13 @@ class RedTeam:
 
     # Replace with utility function
     def _get_chat_target(
-        self, target: Union[PromptChatTarget, Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration]
+        self,
+        target: Union[
+            PromptChatTarget,
+            Callable,
+            AzureOpenAIModelConfiguration,
+            OpenAIModelConfiguration,
+        ],
     ) -> PromptChatTarget:
         """Convert various target types to a standardized PromptChatTarget object.
 
@@ -2030,7 +2126,7 @@ class RedTeam:
                                             "attack_complexity": complexity_level,
                                             "risk_category": risk_category,
                                             "conversation": messages,
-                                            "risk_assessment": risk_assessment if risk_assessment else None,
+                                            "risk_assessment": (risk_assessment if risk_assessment else None),
                                             "attack_success_threshold": attack_threshold,
                                         }
                                         conversations.append(conversation)
@@ -2071,10 +2167,18 @@ class RedTeam:
             # Create a basic scorecard structure
             scorecard = {
                 "risk_category_summary": [
-                    {"overall_asr": 0.0, "overall_total": len(conversations), "overall_attack_successes": 0}
+                    {
+                        "overall_asr": 0.0,
+                        "overall_total": len(conversations),
+                        "overall_attack_successes": 0,
+                    }
                 ],
                 "attack_technique_summary": [
-                    {"overall_asr": 0.0, "overall_total": len(conversations), "overall_attack_successes": 0}
+                    {
+                        "overall_asr": 0.0,
+                        "overall_total": len(conversations),
+                        "overall_attack_successes": 0,
+                    }
                 ],
                 "joint_risk_attack_summary": [],
                 "detailed_joint_risk_attack_asr": {},
@@ -2088,7 +2192,7 @@ class RedTeam:
                     "custom_attack_seed_prompts": "",
                     "policy_document": "",
                 },
-                "attack_complexity": list(set(complexity_levels)) if complexity_levels else ["baseline", "easy"],
+                "attack_complexity": (list(set(complexity_levels)) if complexity_levels else ["baseline", "easy"]),
                 "techniques_used": {},
                 "attack_success_thresholds": self._format_thresholds_for_output(),
             }
@@ -2110,7 +2214,10 @@ class RedTeam:
             # Overall metrics across all categories
             try:
                 overall_asr = (
-                    round(list_mean_nan_safe(results_df["attack_success"].tolist()) * 100, 2)
+                    round(
+                        list_mean_nan_safe(results_df["attack_success"].tolist()) * 100,
+                        2,
+                    )
                     if "attack_success" in results_df.columns
                     else 0.0
                 )
@@ -2136,7 +2243,10 @@ class RedTeam:
             for risk, group in risk_category_groups:
                 try:
                     asr = (
-                        round(list_mean_nan_safe(group["attack_success"].tolist()) * 100, 2)
+                        round(
+                            list_mean_nan_safe(group["attack_success"].tolist()) * 100,
+                            2,
+                        )
                         if "attack_success" in group.columns
                         else 0.0
                     )
@@ -2153,7 +2263,11 @@ class RedTeam:
                 )
 
                 risk_category_summary.update(
-                    {f"{risk}_asr": asr, f"{risk}_total": total, f"{risk}_successful_attacks": int(successful_attacks)}
+                    {
+                        f"{risk}_asr": asr,
+                        f"{risk}_total": total,
+                        f"{risk}_successful_attacks": int(successful_attacks),
+                    }
                 )
 
             # Calculate attack technique summaries by complexity level
@@ -2171,7 +2285,10 @@ class RedTeam:
             if not baseline_df.empty:
                 try:
                     baseline_asr = (
-                        round(list_mean_nan_safe(baseline_df["attack_success"].tolist()) * 100, 2)
+                        round(
+                            list_mean_nan_safe(baseline_df["attack_success"].tolist()) * 100,
+                            2,
+                        )
                         if "attack_success" in baseline_df.columns
                         else 0.0
                     )
@@ -2197,7 +2314,10 @@ class RedTeam:
             if not easy_df.empty:
                 try:
                     easy_complexity_asr = (
-                        round(list_mean_nan_safe(easy_df["attack_success"].tolist()) * 100, 2)
+                        round(
+                            list_mean_nan_safe(easy_df["attack_success"].tolist()) * 100,
+                            2,
+                        )
                         if "attack_success" in easy_df.columns
                         else 0.0
                     )
@@ -2223,7 +2343,10 @@ class RedTeam:
             if not moderate_df.empty:
                 try:
                     moderate_complexity_asr = (
-                        round(list_mean_nan_safe(moderate_df["attack_success"].tolist()) * 100, 2)
+                        round(
+                            list_mean_nan_safe(moderate_df["attack_success"].tolist()) * 100,
+                            2,
+                        )
                         if "attack_success" in moderate_df.columns
                         else 0.0
                     )
@@ -2249,7 +2372,10 @@ class RedTeam:
             if not difficult_df.empty:
                 try:
                     difficult_complexity_asr = (
-                        round(list_mean_nan_safe(difficult_df["attack_success"].tolist()) * 100, 2)
+                        round(
+                            list_mean_nan_safe(difficult_df["attack_success"].tolist()) * 100,
+                            2,
+                        )
                         if "attack_success" in difficult_df.columns
                         else 0.0
                     )
@@ -2296,7 +2422,10 @@ class RedTeam:
                 if not baseline_risk_df.empty:
                     try:
                         joint_risk_dict["baseline_asr"] = (
-                            round(list_mean_nan_safe(baseline_risk_df["attack_success"].tolist()) * 100, 2)
+                            round(
+                                list_mean_nan_safe(baseline_risk_df["attack_success"].tolist()) * 100,
+                                2,
+                            )
                             if "attack_success" in baseline_risk_df.columns
                             else 0.0
                         )
@@ -2311,7 +2440,10 @@ class RedTeam:
                 if not easy_risk_df.empty:
                     try:
                         joint_risk_dict["easy_complexity_asr"] = (
-                            round(list_mean_nan_safe(easy_risk_df["attack_success"].tolist()) * 100, 2)
+                            round(
+                                list_mean_nan_safe(easy_risk_df["attack_success"].tolist()) * 100,
+                                2,
+                            )
                             if "attack_success" in easy_risk_df.columns
                             else 0.0
                         )
@@ -2326,7 +2458,10 @@ class RedTeam:
                 if not moderate_risk_df.empty:
                     try:
                         joint_risk_dict["moderate_complexity_asr"] = (
-                            round(list_mean_nan_safe(moderate_risk_df["attack_success"].tolist()) * 100, 2)
+                            round(
+                                list_mean_nan_safe(moderate_risk_df["attack_success"].tolist()) * 100,
+                                2,
+                            )
                             if "attack_success" in moderate_risk_df.columns
                             else 0.0
                         )
@@ -2341,7 +2476,10 @@ class RedTeam:
                 if not difficult_risk_df.empty:
                     try:
                         joint_risk_dict["difficult_complexity_asr"] = (
-                            round(list_mean_nan_safe(difficult_risk_df["attack_success"].tolist()) * 100, 2)
+                            round(
+                                list_mean_nan_safe(difficult_risk_df["attack_success"].tolist()) * 100,
+                                2,
+                            )
                             if "attack_success" in difficult_risk_df.columns
                             else 0.0
                         )
@@ -2378,7 +2516,10 @@ class RedTeam:
                     for converter_name, converter_group in converter_groups:
                         try:
                             asr_value = (
-                                round(list_mean_nan_safe(converter_group["attack_success"].tolist()) * 100, 2)
+                                round(
+                                    list_mean_nan_safe(converter_group["attack_success"].tolist()) * 100,
+                                    2,
+                                )
                                 if "attack_success" in converter_group.columns
                                 else 0.0
                             )
@@ -2449,7 +2590,12 @@ class RedTeam:
         return format_scorecard(redteam_result)
 
     async def _evaluate_conversation(
-        self, conversation: Dict, metric_name: str, strategy_name: str, risk_category: RiskCategory, idx: int
+        self,
+        conversation: Dict,
+        metric_name: str,
+        strategy_name: str,
+        risk_category: RiskCategory,
+        idx: int,
     ) -> None:
         """Evaluate a single conversation using the specified metric and risk category.
 
@@ -2772,7 +2918,11 @@ class RedTeam:
                     timeout=timeout,
                 )
             except PyritException as e:
-                log_error(self.logger, f"Error calling orchestrator for {strategy_name} strategy", e)
+                log_error(
+                    self.logger,
+                    f"Error calling orchestrator for {strategy_name} strategy",
+                    e,
+                )
                 self.logger.debug(f"Orchestrator error for {strategy_name}/{risk_category.value}: {str(e)}")
                 self.task_statuses[task_key] = TASK_STATUS["FAILED"]
                 self.failed_tasks += 1
@@ -2782,7 +2932,9 @@ class RedTeam:
                 return None
 
             data_path = self._write_pyrit_outputs_to_file(
-                orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category.value
+                orchestrator=orchestrator,
+                strategy_name=strategy_name,
+                risk_category=risk_category.value,
             )
             orchestrator.dispose_db_engine()
 
@@ -2802,7 +2954,11 @@ class RedTeam:
                     output_path=None,  # Fix: Do not pass output_path to individual evaluations
                 )
             except Exception as e:
-                log_error(self.logger, f"Error during evaluation for {strategy_name}/{risk_category.value}", e)
+                log_error(
+                    self.logger,
+                    f"Error during evaluation for {strategy_name}/{risk_category.value}",
+                    e,
+                )
                 tqdm.write(f"⚠️ Evaluation error for {strategy_name}/{risk_category.value}: {str(e)}")
                 self.red_team_info[strategy_name][risk_category.value]["status"] = TASK_STATUS["FAILED"]
                 # Continue processing even if evaluation fails
@@ -2835,7 +2991,11 @@ class RedTeam:
             self.task_statuses[task_key] = TASK_STATUS["COMPLETED"]
 
         except Exception as e:
-            log_error(self.logger, f"Unexpected error processing {strategy_name} strategy for {risk_category.value}", e)
+            log_error(
+                self.logger,
+                f"Unexpected error processing {strategy_name} strategy for {risk_category.value}",
+                e,
+            )
             self.logger.debug(f"Critical error in task {strategy_name}/{risk_category.value}: {str(e)}")
             self.task_statuses[task_key] = TASK_STATUS["FAILED"]
             self.failed_tasks += 1
@@ -2847,7 +3007,12 @@ class RedTeam:
 
     async def scan(
         self,
-        target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration, PromptChatTarget],
+        target: Union[
+            Callable,
+            AzureOpenAIModelConfiguration,
+            OpenAIModelConfiguration,
+            PromptChatTarget,
+        ],
         *,
         scan_name: Optional[str] = None,
         attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]] = [],
@@ -2885,455 +3050,485 @@ class RedTeam:
         :return: The output from the red team scan
         :rtype: RedTeamResult
         """
-        # Start timing for performance tracking
-        self.start_time = time.time()
+        # Use red team user agent for RAI service calls made within the scan method
+        user_agent: Optional[str] = kwargs.get("user_agent", "(type=redteam; subtype=RedTeam)")
+        with UserAgentSingleton().add_useragent_product(user_agent):
+            # Start timing for performance tracking
+            self.start_time = time.time()
 
-        # Reset task counters and statuses
-        self.task_statuses = {}
-        self.completed_tasks = 0
-        self.failed_tasks = 0
+            # Reset task counters and statuses
+            self.task_statuses = {}
+            self.completed_tasks = 0
+            self.failed_tasks = 0
 
-        # Generate a unique scan ID for this run
-        self.scan_id = (
-            f"scan_{scan_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-            if scan_name
-            else f"scan_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-        )
-        self.scan_id = self.scan_id.replace(" ", "_")
-
-        self.scan_session_id = str(uuid.uuid4())  # Unique session ID for this scan
-
-        # Create output directory for this scan
-        # If DEBUG environment variable is set, use a regular folder name; otherwise, use a hidden folder
-        is_debug = os.environ.get("DEBUG", "").lower() in ("true", "1", "yes", "y")
-        folder_prefix = "" if is_debug else "."
-        self.scan_output_dir = os.path.join(self.output_dir or ".", f"{folder_prefix}{self.scan_id}")
-        os.makedirs(self.scan_output_dir, exist_ok=True)
-
-        if not is_debug:
-            gitignore_path = os.path.join(self.scan_output_dir, ".gitignore")
-            with open(gitignore_path, "w", encoding="utf-8") as f:
-                f.write("*\n")
-
-        # Re-initialize logger with the scan output directory
-        self.logger = setup_logger(output_dir=self.scan_output_dir)
-
-        # Set up logging filter to suppress various logs we don't want in the console
-        class LogFilter(logging.Filter):
-            def filter(self, record):
-                # Filter out promptflow logs and evaluation warnings about artifacts
-                if record.name.startswith("promptflow"):
-                    return False
-                if "The path to the artifact is either not a directory or does not exist" in record.getMessage():
-                    return False
-                if "RedTeamResult object at" in record.getMessage():
-                    return False
-                if "timeout won't take effect" in record.getMessage():
-                    return False
-                if "Submitting run" in record.getMessage():
-                    return False
-                return True
-
-        # Apply filter to root logger to suppress unwanted logs
-        root_logger = logging.getLogger()
-        log_filter = LogFilter()
-
-        # Remove existing filters first to avoid duplication
-        for handler in root_logger.handlers:
-            for filter in handler.filters:
-                handler.removeFilter(filter)
-            handler.addFilter(log_filter)
-
-        # Also set up stderr logger to use the same filter
-        stderr_logger = logging.getLogger("stderr")
-        for handler in stderr_logger.handlers:
-            handler.addFilter(log_filter)
-
-        log_section_header(self.logger, "Starting red team scan")
-        self.logger.info(f"Scan started with scan_name: {scan_name}")
-        self.logger.info(f"Scan ID: {self.scan_id}")
-        self.logger.info(f"Scan output directory: {self.scan_output_dir}")
-        self.logger.debug(f"Attack strategies: {attack_strategies}")
-        self.logger.debug(f"skip_upload: {skip_upload}, output_path: {output_path}")
-        self.logger.debug(f"Timeout: {timeout} seconds")
-
-        # Clear, minimal output for start of scan
-        tqdm.write(f"🚀 STARTING RED TEAM SCAN: {scan_name}")
-        tqdm.write(f"📂 Output directory: {self.scan_output_dir}")
-        self.logger.info(f"Starting RED TEAM SCAN: {scan_name}")
-        self.logger.info(f"Output directory: {self.scan_output_dir}")
-
-        chat_target = self._get_chat_target(target)
-        self.chat_target = chat_target
-        self.application_scenario = application_scenario or ""
-
-        if not self.attack_objective_generator:
-            error_msg = "Attack objective generator is required for red team agent."
-            log_error(self.logger, error_msg)
-            self.logger.debug(f"{error_msg}")
-            raise EvaluationException(
-                message=error_msg,
-                internal_message="Attack objective generator is not provided.",
-                target=ErrorTarget.RED_TEAM,
-                category=ErrorCategory.MISSING_FIELD,
-                blame=ErrorBlame.USER_ERROR,
+            # Generate a unique scan ID for this run
+            self.scan_id = (
+                f"scan_{scan_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+                if scan_name
+                else f"scan_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
             )
+            self.scan_id = self.scan_id.replace(" ", "_")
 
-        # If risk categories aren't specified, use all available categories
-        if not self.attack_objective_generator.risk_categories:
-            self.logger.info("No risk categories specified, using all available categories")
-            self.attack_objective_generator.risk_categories = [
-                RiskCategory.HateUnfairness,
-                RiskCategory.Sexual,
-                RiskCategory.Violence,
-                RiskCategory.SelfHarm,
-            ]
+            self.scan_session_id = str(uuid.uuid4())  # Unique session ID for this scan
 
-        self.risk_categories = self.attack_objective_generator.risk_categories
-        # Show risk categories to user
-        tqdm.write(f"📊 Risk categories: {[rc.value for rc in self.risk_categories]}")
-        self.logger.info(f"Risk categories to process: {[rc.value for rc in self.risk_categories]}")
+            # Create output directory for this scan
+            # If DEBUG environment variable is set, use a regular folder name; otherwise, use a hidden folder
+            is_debug = os.environ.get("DEBUG", "").lower() in ("true", "1", "yes", "y")
+            folder_prefix = "" if is_debug else "."
+            self.scan_output_dir = os.path.join(self.output_dir or ".", f"{folder_prefix}{self.scan_id}")
+            os.makedirs(self.scan_output_dir, exist_ok=True)
 
-        # Prepend AttackStrategy.Baseline to the attack strategy list
-        if AttackStrategy.Baseline not in attack_strategies:
-            attack_strategies.insert(0, AttackStrategy.Baseline)
-            self.logger.debug("Added Baseline to attack strategies")
+            if not is_debug:
+                gitignore_path = os.path.join(self.scan_output_dir, ".gitignore")
+                with open(gitignore_path, "w", encoding="utf-8") as f:
+                    f.write("*\n")
 
-        # When using custom attack objectives, check for incompatible strategies
-        using_custom_objectives = (
-            self.attack_objective_generator and self.attack_objective_generator.custom_attack_seed_prompts
-        )
-        if using_custom_objectives:
-            # Maintain a list of converters to avoid duplicates
-            used_converter_types = set()
-            strategies_to_remove = []
+            # Re-initialize logger with the scan output directory
+            self.logger = setup_logger(output_dir=self.scan_output_dir)
 
-            for i, strategy in enumerate(attack_strategies):
-                if isinstance(strategy, list):
-                    # Skip composite strategies for now
-                    continue
+            # Set up logging filter to suppress various logs we don't want in the console
+            class LogFilter(logging.Filter):
+                def filter(self, record):
+                    # Filter out promptflow logs and evaluation warnings about artifacts
+                    if record.name.startswith("promptflow"):
+                        return False
+                    if "The path to the artifact is either not a directory or does not exist" in record.getMessage():
+                        return False
+                    if "RedTeamResult object at" in record.getMessage():
+                        return False
+                    if "timeout won't take effect" in record.getMessage():
+                        return False
+                    if "Submitting run" in record.getMessage():
+                        return False
+                    return True
 
-                if strategy == AttackStrategy.Jailbreak:
-                    self.logger.warning(
-                        "Jailbreak strategy with custom attack objectives may not work as expected. The strategy will be run, but results may vary."
-                    )
-                    tqdm.write("⚠️ Warning: Jailbreak strategy with custom attack objectives may not work as expected.")
+            # Apply filter to root logger to suppress unwanted logs
+            root_logger = logging.getLogger()
+            log_filter = LogFilter()
 
-                if strategy == AttackStrategy.Tense:
-                    self.logger.warning(
-                        "Tense strategy requires specific formatting in objectives and may not work correctly with custom attack objectives."
-                    )
-                    tqdm.write(
-                        "⚠️ Warning: Tense strategy requires specific formatting in objectives and may not work correctly with custom attack objectives."
-                    )
+            # Remove existing filters first to avoid duplication
+            for handler in root_logger.handlers:
+                for filter in handler.filters:
+                    handler.removeFilter(filter)
+                handler.addFilter(log_filter)
 
-                # Check for redundant converters
-                # TODO: should this be in flattening logic?
-                converter = self._get_converter_for_strategy(strategy)
-                if converter is not None:
-                    converter_type = (
-                        type(converter).__name__
-                        if not isinstance(converter, list)
-                        else ",".join([type(c).__name__ for c in converter])
-                    )
+            # Also set up stderr logger to use the same filter
+            stderr_logger = logging.getLogger("stderr")
+            for handler in stderr_logger.handlers:
+                handler.addFilter(log_filter)
 
-                    if converter_type in used_converter_types and strategy != AttackStrategy.Baseline:
+            log_section_header(self.logger, "Starting red team scan")
+            self.logger.info(f"Scan started with scan_name: {scan_name}")
+            self.logger.info(f"Scan ID: {self.scan_id}")
+            self.logger.info(f"Scan output directory: {self.scan_output_dir}")
+            self.logger.debug(f"Attack strategies: {attack_strategies}")
+            self.logger.debug(f"skip_upload: {skip_upload}, output_path: {output_path}")
+            self.logger.debug(f"Timeout: {timeout} seconds")
+
+            # Clear, minimal output for start of scan
+            tqdm.write(f"🚀 STARTING RED TEAM SCAN: {scan_name}")
+            tqdm.write(f"📂 Output directory: {self.scan_output_dir}")
+            self.logger.info(f"Starting RED TEAM SCAN: {scan_name}")
+            self.logger.info(f"Output directory: {self.scan_output_dir}")
+
+            chat_target = self._get_chat_target(target)
+            self.chat_target = chat_target
+            self.application_scenario = application_scenario or ""
+
+            if not self.attack_objective_generator:
+                error_msg = "Attack objective generator is required for red team agent."
+                log_error(self.logger, error_msg)
+                self.logger.debug(f"{error_msg}")
+                raise EvaluationException(
+                    message=error_msg,
+                    internal_message="Attack objective generator is not provided.",
+                    target=ErrorTarget.RED_TEAM,
+                    category=ErrorCategory.MISSING_FIELD,
+                    blame=ErrorBlame.USER_ERROR,
+                )
+
+            # If risk categories aren't specified, use all available categories
+            if not self.attack_objective_generator.risk_categories:
+                self.logger.info("No risk categories specified, using all available categories")
+                self.attack_objective_generator.risk_categories = [
+                    RiskCategory.HateUnfairness,
+                    RiskCategory.Sexual,
+                    RiskCategory.Violence,
+                    RiskCategory.SelfHarm,
+                ]
+
+            self.risk_categories = self.attack_objective_generator.risk_categories
+            # Show risk categories to user
+            tqdm.write(f"📊 Risk categories: {[rc.value for rc in self.risk_categories]}")
+            self.logger.info(f"Risk categories to process: {[rc.value for rc in self.risk_categories]}")
+
+            # Prepend AttackStrategy.Baseline to the attack strategy list
+            if AttackStrategy.Baseline not in attack_strategies:
+                attack_strategies.insert(0, AttackStrategy.Baseline)
+                self.logger.debug("Added Baseline to attack strategies")
+
+            # When using custom attack objectives, check for incompatible strategies
+            using_custom_objectives = (
+                self.attack_objective_generator and self.attack_objective_generator.custom_attack_seed_prompts
+            )
+            if using_custom_objectives:
+                # Maintain a list of converters to avoid duplicates
+                used_converter_types = set()
+                strategies_to_remove = []
+
+                for i, strategy in enumerate(attack_strategies):
+                    if isinstance(strategy, list):
+                        # Skip composite strategies for now
+                        continue
+
+                    if strategy == AttackStrategy.Jailbreak:
                         self.logger.warning(
-                            f"Strategy {strategy.name} uses a converter type that has already been used. Skipping redundant strategy."
+                            "Jailbreak strategy with custom attack objectives may not work as expected. The strategy will be run, but results may vary."
                         )
                         tqdm.write(
-                            f"ℹ️ Skipping redundant strategy: {strategy.name} (uses same converter as another strategy)"
+                            "⚠️ Warning: Jailbreak strategy with custom attack objectives may not work as expected."
                         )
-                        strategies_to_remove.append(strategy)
-                    else:
-                        used_converter_types.add(converter_type)
 
-            # Remove redundant strategies
-            if strategies_to_remove:
-                attack_strategies = [s for s in attack_strategies if s not in strategies_to_remove]
-                self.logger.info(
-                    f"Removed {len(strategies_to_remove)} redundant strategies: {[s.name for s in strategies_to_remove]}"
+                    if strategy == AttackStrategy.Tense:
+                        self.logger.warning(
+                            "Tense strategy requires specific formatting in objectives and may not work correctly with custom attack objectives."
+                        )
+                        tqdm.write(
+                            "⚠️ Warning: Tense strategy requires specific formatting in objectives and may not work correctly with custom attack objectives."
+                        )
+
+                    # Check for redundant converters
+                    # TODO: should this be in flattening logic?
+                    converter = self._get_converter_for_strategy(strategy)
+                    if converter is not None:
+                        converter_type = (
+                            type(converter).__name__
+                            if not isinstance(converter, list)
+                            else ",".join([type(c).__name__ for c in converter])
+                        )
+
+                        if converter_type in used_converter_types and strategy != AttackStrategy.Baseline:
+                            self.logger.warning(
+                                f"Strategy {strategy.name} uses a converter type that has already been used. Skipping redundant strategy."
+                            )
+                            tqdm.write(
+                                f"ℹ️ Skipping redundant strategy: {strategy.name} (uses same converter as another strategy)"
+                            )
+                            strategies_to_remove.append(strategy)
+                        else:
+                            used_converter_types.add(converter_type)
+
+                # Remove redundant strategies
+                if strategies_to_remove:
+                    attack_strategies = [s for s in attack_strategies if s not in strategies_to_remove]
+                    self.logger.info(
+                        f"Removed {len(strategies_to_remove)} redundant strategies: {[s.name for s in strategies_to_remove]}"
+                    )
+
+            if skip_upload:
+                self.ai_studio_url = None
+                eval_run = {}
+            else:
+                eval_run = self._start_redteam_mlflow_run(self.azure_ai_project, scan_name)
+
+                # Show URL for tracking progress
+                tqdm.write(f"🔗 Track your red team scan in AI Foundry: {self.ai_studio_url}")
+                self.logger.info(f"Started Uploading run: {self.ai_studio_url}")
+
+            log_subsection_header(self.logger, "Setting up scan configuration")
+            flattened_attack_strategies = self._get_flattened_attack_strategies(attack_strategies)
+            self.logger.info(f"Using {len(flattened_attack_strategies)} attack strategies")
+            self.logger.info(f"Found {len(flattened_attack_strategies)} attack strategies")
+
+            if len(flattened_attack_strategies) > 2 and (
+                AttackStrategy.MultiTurn in flattened_attack_strategies
+                or AttackStrategy.Crescendo in flattened_attack_strategies
+            ):
+                self.logger.warning(
+                    "MultiTurn and Crescendo strategies are not compatible with multiple attack strategies."
+                )
+                print(
+                    "⚠️ Warning: MultiTurn and Crescendo strategies are not compatible with multiple attack strategies."
+                )
+                raise ValueError(
+                    "MultiTurn and Crescendo strategies are not compatible with multiple attack strategies."
                 )
 
-        if skip_upload:
-            self.ai_studio_url = None
-            eval_run = {}
-        else:
-            eval_run = self._start_redteam_mlflow_run(self.azure_ai_project, scan_name)
-
-            # Show URL for tracking progress
-            tqdm.write(f"🔗 Track your red team scan in AI Foundry: {self.ai_studio_url}")
-            self.logger.info(f"Started Uploading run: {self.ai_studio_url}")
-
-        log_subsection_header(self.logger, "Setting up scan configuration")
-        flattened_attack_strategies = self._get_flattened_attack_strategies(attack_strategies)
-        self.logger.info(f"Using {len(flattened_attack_strategies)} attack strategies")
-        self.logger.info(f"Found {len(flattened_attack_strategies)} attack strategies")
-
-        if len(flattened_attack_strategies) > 2 and (
-            AttackStrategy.MultiTurn in flattened_attack_strategies
-            or AttackStrategy.Crescendo in flattened_attack_strategies
-        ):
-            self.logger.warning(
-                "MultiTurn and Crescendo strategies are not compatible with multiple attack strategies."
-            )
-            print("⚠️ Warning: MultiTurn and Crescendo strategies are not compatible with multiple attack strategies.")
-            raise ValueError("MultiTurn and Crescendo strategies are not compatible with multiple attack strategies.")
-
-        # Calculate total tasks: #risk_categories * #converters
-        self.total_tasks = len(self.risk_categories) * len(flattened_attack_strategies)
-        # Show task count for user awareness
-        tqdm.write(f"📋 Planning {self.total_tasks} total tasks")
-        self.logger.info(
-            f"Total tasks: {self.total_tasks} ({len(self.risk_categories)} risk categories * {len(flattened_attack_strategies)} strategies)"
-        )
-
-        # Initialize our tracking dictionary early with empty structures
-        # This ensures we have a place to store results even if tasks fail
-        self.red_team_info = {}
-        for strategy in flattened_attack_strategies:
-            strategy_name = self._get_strategy_name(strategy)
-            self.red_team_info[strategy_name] = {}
-            for risk_category in self.risk_categories:
-                self.red_team_info[strategy_name][risk_category.value] = {
-                    "data_file": "",
-                    "evaluation_result_file": "",
-                    "evaluation_result": None,
-                    "status": TASK_STATUS["PENDING"],
-                }
-
-        self.logger.debug(f"Initialized tracking dictionary with {len(self.red_team_info)} strategies")
-
-        # More visible progress bar with additional status
-        progress_bar = tqdm(
-            total=self.total_tasks,
-            desc="Scanning: ",
-            ncols=100,
-            unit="scan",
-            bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}{postfix}]",
-        )
-        progress_bar.set_postfix({"current": "initializing"})
-        progress_bar_lock = asyncio.Lock()
-
-        # Process all API calls sequentially to respect dependencies between objectives
-        log_section_header(self.logger, "Fetching attack objectives")
-
-        # Log the objective source mode
-        if using_custom_objectives:
+            # Calculate total tasks: #risk_categories * #converters
+            self.total_tasks = len(self.risk_categories) * len(flattened_attack_strategies)
+            # Show task count for user awareness
+            tqdm.write(f"📋 Planning {self.total_tasks} total tasks")
             self.logger.info(
-                f"Using custom attack objectives from {self.attack_objective_generator.custom_attack_seed_prompts}"
-            )
-            tqdm.write(
-                f"📚 Using custom attack objectives from {self.attack_objective_generator.custom_attack_seed_prompts}"
-            )
-        else:
-            self.logger.info("Using attack objectives from Azure RAI service")
-            tqdm.write("📚 Using attack objectives from Azure RAI service")
-
-        # Dictionary to store all objectives
-        all_objectives = {}
-
-        # First fetch baseline objectives for all risk categories
-        # This is important as other strategies depend on baseline objectives
-        self.logger.info("Fetching baseline objectives for all risk categories")
-        for risk_category in self.risk_categories:
-            progress_bar.set_postfix({"current": f"fetching baseline/{risk_category.value}"})
-            self.logger.debug(f"Fetching baseline objectives for {risk_category.value}")
-            baseline_objectives = await self._get_attack_objectives(
-                risk_category=risk_category, application_scenario=application_scenario, strategy="baseline"
-            )
-            if "baseline" not in all_objectives:
-                all_objectives["baseline"] = {}
-            all_objectives["baseline"][risk_category.value] = baseline_objectives
-            tqdm.write(
-                f"📝 Fetched baseline objectives for {risk_category.value}: {len(baseline_objectives)} objectives"
+                f"Total tasks: {self.total_tasks} ({len(self.risk_categories)} risk categories * {len(flattened_attack_strategies)} strategies)"
             )
 
-        # Then fetch objectives for other strategies
-        self.logger.info("Fetching objectives for non-baseline strategies")
-        strategy_count = len(flattened_attack_strategies)
-        for i, strategy in enumerate(flattened_attack_strategies):
-            strategy_name = self._get_strategy_name(strategy)
-            if strategy_name == "baseline":
-                continue  # Already fetched
-
-            tqdm.write(f"🔄 Fetching objectives for strategy {i+1}/{strategy_count}: {strategy_name}")
-            all_objectives[strategy_name] = {}
-
-            for risk_category in self.risk_categories:
-                progress_bar.set_postfix({"current": f"fetching {strategy_name}/{risk_category.value}"})
-                self.logger.debug(
-                    f"Fetching objectives for {strategy_name} strategy and {risk_category.value} risk category"
-                )
-                objectives = await self._get_attack_objectives(
-                    risk_category=risk_category, application_scenario=application_scenario, strategy=strategy_name
-                )
-                all_objectives[strategy_name][risk_category.value] = objectives
-
-        self.logger.info("Completed fetching all attack objectives")
-
-        log_section_header(self.logger, "Starting orchestrator processing")
-
-        # Create all tasks for parallel processing
-        orchestrator_tasks = []
-        combinations = list(itertools.product(flattened_attack_strategies, self.risk_categories))
-
-        for combo_idx, (strategy, risk_category) in enumerate(combinations):
-            strategy_name = self._get_strategy_name(strategy)
-            objectives = all_objectives[strategy_name][risk_category.value]
-
-            if not objectives:
-                self.logger.warning(f"No objectives found for {strategy_name}+{risk_category.value}, skipping")
-                tqdm.write(f"⚠️ No objectives found for {strategy_name}/{risk_category.value}, skipping")
-                self.red_team_info[strategy_name][risk_category.value]["status"] = TASK_STATUS["COMPLETED"]
-                async with progress_bar_lock:
-                    progress_bar.update(1)
-                continue
-
-            self.logger.debug(
-                f"[{combo_idx+1}/{len(combinations)}] Creating task: {strategy_name} + {risk_category.value}"
-            )
-
-            orchestrator_tasks.append(
-                self._process_attack(
-                    all_prompts=objectives,
-                    strategy=strategy,
-                    progress_bar=progress_bar,
-                    progress_bar_lock=progress_bar_lock,
-                    scan_name=scan_name,
-                    skip_upload=skip_upload,
-                    output_path=output_path,
-                    risk_category=risk_category,
-                    timeout=timeout,
-                    _skip_evals=skip_evals,
-                )
-            )
-
-        # Process tasks in parallel with optimized batching
-        if parallel_execution and orchestrator_tasks:
-            tqdm.write(f"⚙️ Processing {len(orchestrator_tasks)} tasks in parallel (max {max_parallel_tasks} at a time)")
-            self.logger.info(
-                f"Processing {len(orchestrator_tasks)} tasks in parallel (max {max_parallel_tasks} at a time)"
-            )
-
-            # Create batches for processing
-            for i in range(0, len(orchestrator_tasks), max_parallel_tasks):
-                end_idx = min(i + max_parallel_tasks, len(orchestrator_tasks))
-                batch = orchestrator_tasks[i:end_idx]
-                progress_bar.set_postfix(
-                    {
-                        "current": f"batch {i//max_parallel_tasks+1}/{math.ceil(len(orchestrator_tasks)/max_parallel_tasks)}"
+            # Initialize our tracking dictionary early with empty structures
+            # This ensures we have a place to store results even if tasks fail
+            self.red_team_info = {}
+            for strategy in flattened_attack_strategies:
+                strategy_name = self._get_strategy_name(strategy)
+                self.red_team_info[strategy_name] = {}
+                for risk_category in self.risk_categories:
+                    self.red_team_info[strategy_name][risk_category.value] = {
+                        "data_file": "",
+                        "evaluation_result_file": "",
+                        "evaluation_result": None,
+                        "status": TASK_STATUS["PENDING"],
                     }
+
+            self.logger.debug(f"Initialized tracking dictionary with {len(self.red_team_info)} strategies")
+
+            # More visible progress bar with additional status
+            progress_bar = tqdm(
+                total=self.total_tasks,
+                desc="Scanning: ",
+                ncols=100,
+                unit="scan",
+                bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}{postfix}]",
+            )
+            progress_bar.set_postfix({"current": "initializing"})
+            progress_bar_lock = asyncio.Lock()
+
+            # Process all API calls sequentially to respect dependencies between objectives
+            log_section_header(self.logger, "Fetching attack objectives")
+
+            # Log the objective source mode
+            if using_custom_objectives:
+                self.logger.info(
+                    f"Using custom attack objectives from {self.attack_objective_generator.custom_attack_seed_prompts}"
                 )
-                self.logger.debug(f"Processing batch of {len(batch)} tasks (tasks {i+1} to {end_idx})")
+                tqdm.write(
+                    f"📚 Using custom attack objectives from {self.attack_objective_generator.custom_attack_seed_prompts}"
+                )
+            else:
+                self.logger.info("Using attack objectives from Azure RAI service")
+                tqdm.write("📚 Using attack objectives from Azure RAI service")
 
-                try:
-                    # Add timeout to each batch
-                    await asyncio.wait_for(asyncio.gather(*batch), timeout=timeout * 2)  # Double timeout for batches
-                except asyncio.TimeoutError:
-                    self.logger.warning(f"Batch {i//max_parallel_tasks+1} timed out after {timeout*2} seconds")
-                    tqdm.write(f"⚠️ Batch {i//max_parallel_tasks+1} timed out, continuing with next batch")
-                    # Set task status to TIMEOUT
-                    batch_task_key = f"scan_batch_{i//max_parallel_tasks+1}"
-                    self.task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
+            # Dictionary to store all objectives
+            all_objectives = {}
+
+            # First fetch baseline objectives for all risk categories
+            # This is important as other strategies depend on baseline objectives
+            self.logger.info("Fetching baseline objectives for all risk categories")
+            for risk_category in self.risk_categories:
+                progress_bar.set_postfix({"current": f"fetching baseline/{risk_category.value}"})
+                self.logger.debug(f"Fetching baseline objectives for {risk_category.value}")
+                baseline_objectives = await self._get_attack_objectives(
+                    risk_category=risk_category,
+                    application_scenario=application_scenario,
+                    strategy="baseline",
+                )
+                if "baseline" not in all_objectives:
+                    all_objectives["baseline"] = {}
+                all_objectives["baseline"][risk_category.value] = baseline_objectives
+                tqdm.write(
+                    f"📝 Fetched baseline objectives for {risk_category.value}: {len(baseline_objectives)} objectives"
+                )
+
+            # Then fetch objectives for other strategies
+            self.logger.info("Fetching objectives for non-baseline strategies")
+            strategy_count = len(flattened_attack_strategies)
+            for i, strategy in enumerate(flattened_attack_strategies):
+                strategy_name = self._get_strategy_name(strategy)
+                if strategy_name == "baseline":
+                    continue  # Already fetched
+
+                tqdm.write(f"🔄 Fetching objectives for strategy {i+1}/{strategy_count}: {strategy_name}")
+                all_objectives[strategy_name] = {}
+
+                for risk_category in self.risk_categories:
+                    progress_bar.set_postfix({"current": f"fetching {strategy_name}/{risk_category.value}"})
+                    self.logger.debug(
+                        f"Fetching objectives for {strategy_name} strategy and {risk_category.value} risk category"
+                    )
+                    objectives = await self._get_attack_objectives(
+                        risk_category=risk_category,
+                        application_scenario=application_scenario,
+                        strategy=strategy_name,
+                    )
+                    all_objectives[strategy_name][risk_category.value] = objectives
+
+            self.logger.info("Completed fetching all attack objectives")
+
+            log_section_header(self.logger, "Starting orchestrator processing")
+
+            # Create all tasks for parallel processing
+            orchestrator_tasks = []
+            combinations = list(itertools.product(flattened_attack_strategies, self.risk_categories))
+
+            for combo_idx, (strategy, risk_category) in enumerate(combinations):
+                strategy_name = self._get_strategy_name(strategy)
+                objectives = all_objectives[strategy_name][risk_category.value]
+
+                if not objectives:
+                    self.logger.warning(f"No objectives found for {strategy_name}+{risk_category.value}, skipping")
+                    tqdm.write(f"⚠️ No objectives found for {strategy_name}/{risk_category.value}, skipping")
+                    self.red_team_info[strategy_name][risk_category.value]["status"] = TASK_STATUS["COMPLETED"]
+                    async with progress_bar_lock:
+                        progress_bar.update(1)
                     continue
-                except Exception as e:
-                    log_error(self.logger, f"Error processing batch {i//max_parallel_tasks+1}", e)
-                    self.logger.debug(f"Error in batch {i//max_parallel_tasks+1}: {str(e)}")
-                    continue
-        else:
-            # Sequential execution
-            self.logger.info("Running orchestrator processing sequentially")
-            tqdm.write("⚙️ Processing tasks sequentially")
-            for i, task in enumerate(orchestrator_tasks):
-                progress_bar.set_postfix({"current": f"task {i+1}/{len(orchestrator_tasks)}"})
-                self.logger.debug(f"Processing task {i+1}/{len(orchestrator_tasks)}")
 
-                try:
-                    # Add timeout to each task
-                    await asyncio.wait_for(task, timeout=timeout)
-                except asyncio.TimeoutError:
-                    self.logger.warning(f"Task {i+1}/{len(orchestrator_tasks)} timed out after {timeout} seconds")
-                    tqdm.write(f"⚠️ Task {i+1} timed out, continuing with next task")
-                    # Set task status to TIMEOUT
-                    task_key = f"scan_task_{i+1}"
-                    self.task_statuses[task_key] = TASK_STATUS["TIMEOUT"]
-                    continue
-                except Exception as e:
-                    log_error(self.logger, f"Error processing task {i+1}/{len(orchestrator_tasks)}", e)
-                    self.logger.debug(f"Error in task {i+1}: {str(e)}")
-                    continue
+                self.logger.debug(
+                    f"[{combo_idx+1}/{len(combinations)}] Creating task: {strategy_name} + {risk_category.value}"
+                )
 
-        progress_bar.close()
+                orchestrator_tasks.append(
+                    self._process_attack(
+                        all_prompts=objectives,
+                        strategy=strategy,
+                        progress_bar=progress_bar,
+                        progress_bar_lock=progress_bar_lock,
+                        scan_name=scan_name,
+                        skip_upload=skip_upload,
+                        output_path=output_path,
+                        risk_category=risk_category,
+                        timeout=timeout,
+                        _skip_evals=skip_evals,
+                    )
+                )
 
-        # Print final status
-        tasks_completed = sum(1 for status in self.task_statuses.values() if status == TASK_STATUS["COMPLETED"])
-        tasks_failed = sum(1 for status in self.task_statuses.values() if status == TASK_STATUS["FAILED"])
-        tasks_timeout = sum(1 for status in self.task_statuses.values() if status == TASK_STATUS["TIMEOUT"])
+            # Process tasks in parallel with optimized batching
+            if parallel_execution and orchestrator_tasks:
+                tqdm.write(
+                    f"⚙️ Processing {len(orchestrator_tasks)} tasks in parallel (max {max_parallel_tasks} at a time)"
+                )
+                self.logger.info(
+                    f"Processing {len(orchestrator_tasks)} tasks in parallel (max {max_parallel_tasks} at a time)"
+                )
 
-        total_time = time.time() - self.start_time
-        # Only log the summary to file, don't print to console
-        self.logger.info(
-            f"Scan Summary: Total tasks: {self.total_tasks}, Completed: {tasks_completed}, Failed: {tasks_failed}, Timeouts: {tasks_timeout}, Total time: {total_time/60:.1f} minutes"
-        )
+                # Create batches for processing
+                for i in range(0, len(orchestrator_tasks), max_parallel_tasks):
+                    end_idx = min(i + max_parallel_tasks, len(orchestrator_tasks))
+                    batch = orchestrator_tasks[i:end_idx]
+                    progress_bar.set_postfix(
+                        {
+                            "current": f"batch {i//max_parallel_tasks+1}/{math.ceil(len(orchestrator_tasks)/max_parallel_tasks)}"
+                        }
+                    )
+                    self.logger.debug(f"Processing batch of {len(batch)} tasks (tasks {i+1} to {end_idx})")
 
-        # Process results
-        log_section_header(self.logger, "Processing results")
+                    try:
+                        # Add timeout to each batch
+                        await asyncio.wait_for(
+                            asyncio.gather(*batch), timeout=timeout * 2
+                        )  # Double timeout for batches
+                    except asyncio.TimeoutError:
+                        self.logger.warning(f"Batch {i//max_parallel_tasks+1} timed out after {timeout*2} seconds")
+                        tqdm.write(f"⚠️ Batch {i//max_parallel_tasks+1} timed out, continuing with next batch")
+                        # Set task status to TIMEOUT
+                        batch_task_key = f"scan_batch_{i//max_parallel_tasks+1}"
+                        self.task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
+                        continue
+                    except Exception as e:
+                        log_error(
+                            self.logger,
+                            f"Error processing batch {i//max_parallel_tasks+1}",
+                            e,
+                        )
+                        self.logger.debug(f"Error in batch {i//max_parallel_tasks+1}: {str(e)}")
+                        continue
+            else:
+                # Sequential execution
+                self.logger.info("Running orchestrator processing sequentially")
+                tqdm.write("⚙️ Processing tasks sequentially")
+                for i, task in enumerate(orchestrator_tasks):
+                    progress_bar.set_postfix({"current": f"task {i+1}/{len(orchestrator_tasks)}"})
+                    self.logger.debug(f"Processing task {i+1}/{len(orchestrator_tasks)}")
 
-        # Convert results to RedTeamResult using only red_team_info
-        red_team_result = self._to_red_team_result()
-        scan_result = ScanResult(
-            scorecard=red_team_result["scorecard"],
-            parameters=red_team_result["parameters"],
-            attack_details=red_team_result["attack_details"],
-            studio_url=red_team_result["studio_url"],
-        )
+                    try:
+                        # Add timeout to each task
+                        await asyncio.wait_for(task, timeout=timeout)
+                    except asyncio.TimeoutError:
+                        self.logger.warning(f"Task {i+1}/{len(orchestrator_tasks)} timed out after {timeout} seconds")
+                        tqdm.write(f"⚠️ Task {i+1} timed out, continuing with next task")
+                        # Set task status to TIMEOUT
+                        task_key = f"scan_task_{i+1}"
+                        self.task_statuses[task_key] = TASK_STATUS["TIMEOUT"]
+                        continue
+                    except Exception as e:
+                        log_error(
+                            self.logger,
+                            f"Error processing task {i+1}/{len(orchestrator_tasks)}",
+                            e,
+                        )
+                        self.logger.debug(f"Error in task {i+1}: {str(e)}")
+                        continue
 
-        output = RedTeamResult(scan_result=red_team_result, attack_details=red_team_result["attack_details"])
+            progress_bar.close()
 
-        if not skip_upload:
-            self.logger.info("Logging results to AI Foundry")
-            await self._log_redteam_results_to_mlflow(redteam_result=output, eval_run=eval_run, _skip_evals=skip_evals)
+            # Print final status
+            tasks_completed = sum(1 for status in self.task_statuses.values() if status == TASK_STATUS["COMPLETED"])
+            tasks_failed = sum(1 for status in self.task_statuses.values() if status == TASK_STATUS["FAILED"])
+            tasks_timeout = sum(1 for status in self.task_statuses.values() if status == TASK_STATUS["TIMEOUT"])
 
-        if output_path and output.scan_result:
-            # Ensure output_path is an absolute path
-            abs_output_path = output_path if os.path.isabs(output_path) else os.path.abspath(output_path)
-            self.logger.info(f"Writing output to {abs_output_path}")
-            _write_output(abs_output_path, output.scan_result)
+            total_time = time.time() - self.start_time
+            # Only log the summary to file, don't print to console
+            self.logger.info(
+                f"Scan Summary: Total tasks: {self.total_tasks}, Completed: {tasks_completed}, Failed: {tasks_failed}, Timeouts: {tasks_timeout}, Total time: {total_time/60:.1f} minutes"
+            )
 
-            # Also save a copy to the scan output directory if available
-            if hasattr(self, "scan_output_dir") and self.scan_output_dir:
+            # Process results
+            log_section_header(self.logger, "Processing results")
+
+            # Convert results to RedTeamResult using only red_team_info
+            red_team_result = self._to_red_team_result()
+            scan_result = ScanResult(
+                scorecard=red_team_result["scorecard"],
+                parameters=red_team_result["parameters"],
+                attack_details=red_team_result["attack_details"],
+                studio_url=red_team_result["studio_url"],
+            )
+
+            output = RedTeamResult(
+                scan_result=red_team_result,
+                attack_details=red_team_result["attack_details"],
+            )
+
+            if not skip_upload:
+                self.logger.info("Logging results to AI Foundry")
+                await self._log_redteam_results_to_mlflow(
+                    redteam_result=output, eval_run=eval_run, _skip_evals=skip_evals
+                )
+
+            if output_path and output.scan_result:
+                # Ensure output_path is an absolute path
+                abs_output_path = output_path if os.path.isabs(output_path) else os.path.abspath(output_path)
+                self.logger.info(f"Writing output to {abs_output_path}")
+                _write_output(abs_output_path, output.scan_result)
+
+                # Also save a copy to the scan output directory if available
+                if hasattr(self, "scan_output_dir") and self.scan_output_dir:
+                    final_output = os.path.join(self.scan_output_dir, "final_results.json")
+                    _write_output(final_output, output.scan_result)
+                    self.logger.info(f"Also saved a copy to {final_output}")
+            elif output.scan_result and hasattr(self, "scan_output_dir") and self.scan_output_dir:
+                # If no output_path was specified but we have scan_output_dir, save there
                 final_output = os.path.join(self.scan_output_dir, "final_results.json")
                 _write_output(final_output, output.scan_result)
-                self.logger.info(f"Also saved a copy to {final_output}")
-        elif output.scan_result and hasattr(self, "scan_output_dir") and self.scan_output_dir:
-            # If no output_path was specified but we have scan_output_dir, save there
-            final_output = os.path.join(self.scan_output_dir, "final_results.json")
-            _write_output(final_output, output.scan_result)
-            self.logger.info(f"Saved results to {final_output}")
+                self.logger.info(f"Saved results to {final_output}")
 
-        if output.scan_result:
-            self.logger.debug("Generating scorecard")
-            scorecard = self._to_scorecard(output.scan_result)
-            # Store scorecard in a variable for accessing later if needed
-            self.scorecard = scorecard
+            if output.scan_result:
+                self.logger.debug("Generating scorecard")
+                scorecard = self._to_scorecard(output.scan_result)
+                # Store scorecard in a variable for accessing later if needed
+                self.scorecard = scorecard
 
-            # Print scorecard to console for user visibility (without extra header)
-            tqdm.write(scorecard)
+                # Print scorecard to console for user visibility (without extra header)
+                tqdm.write(scorecard)
 
-            # Print URL for detailed results (once only)
-            studio_url = output.scan_result.get("studio_url", "")
-            if studio_url:
-                tqdm.write(f"\nDetailed results available at:\n{studio_url}")
+                # Print URL for detailed results (once only)
+                studio_url = output.scan_result.get("studio_url", "")
+                if studio_url:
+                    tqdm.write(f"\nDetailed results available at:\n{studio_url}")
 
-            # Print the output directory path so the user can find it easily
-            if hasattr(self, "scan_output_dir") and self.scan_output_dir:
-                tqdm.write(f"\n📂 All scan files saved to: {self.scan_output_dir}")
+                # Print the output directory path so the user can find it easily
+                if hasattr(self, "scan_output_dir") and self.scan_output_dir:
+                    tqdm.write(f"\n📂 All scan files saved to: {self.scan_output_dir}")
 
-        tqdm.write(f"✅ Scan completed successfully!")
-        self.logger.info("Scan completed successfully")
-        for handler in self.logger.handlers:
-            if isinstance(handler, logging.FileHandler):
-                handler.close()
-                self.logger.removeHandler(handler)
-        return output
+            tqdm.write(f"✅ Scan completed successfully!")
+            self.logger.info("Scan completed successfully")
+            for handler in self.logger.handlers:
+                if isinstance(handler, logging.FileHandler):
+                    handler.close()
+                    self.logger.removeHandler(handler)
+            return output

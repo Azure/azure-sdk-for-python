@@ -3,4 +3,3 @@
 ../../core/azure-core
 ../azure-mgmt-communication
 aiohttp
-python-dateutil>=2.8.0
