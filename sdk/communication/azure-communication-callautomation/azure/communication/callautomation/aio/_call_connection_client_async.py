@@ -9,8 +9,6 @@ from urllib.parse import urlparse
 import warnings
 
 from typing_extensions import Literal
-
-from azure.communication.callautomation._generated.models._models import SummarizeCallRequest
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -1093,14 +1091,14 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             *,
             summarize_call_request_operation_context: Optional[str] = None,
             summarize_call_request_operation_callback_uri: Optional[str] = None,
-            summarize_call_request_summarization_options_enable_end_call_summary: Optional[bool] = None,
+            enable_end_call_summary: Optional[bool] = None,
             summarize_call_request_summarization_options_locale: Optional[str] = None,
         **kwargs
     ) -> None:
         """API to get a summary of the call so far.
 
-        :keyword call_connection_id: The call connection id. Required.
-        :paramtype call_connection_id: str
+        :param call_connection_id: The call connection id. Required.
+        :type call_connection_id: str
         :keyword summarize_call_request_operation_context: The value to identify context of the
          operation. Default value is None.
         :paramtype summarize_call_request_operation_context: str
@@ -1109,9 +1107,9 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
          This setup is per-action. If this is not set, the default callback URI set by
          CreateCall/AnswerCall will be used. Default value is None.
         :paramtype summarize_call_request_operation_callback_uri: str
-        :keyword summarize_call_request_summarization_options_enable_end_call_summary: Indicating
+        :keyword enable_end_call_summary: Indicating
          whether end call summary should be enabled. Default value is None.
-        :paramtype summarize_call_request_summarization_options_enable_end_call_summary: bool
+        :paramtype enable_end_call_summary: bool
         :keyword summarize_call_request_summarization_options_locale: Locale for summarization (e.g.,
          en-US). Default value is None.
         :paramtype summarize_call_request_summarization_options_locale: str
@@ -1124,7 +1122,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             call_connection_id=call_connection_id,
             summarize_call_request_operation_callback_uri=summarize_call_request_operation_callback_uri,
             summarize_call_request_operation_context=summarize_call_request_operation_context,
-            summarize_call_request_summarization_options_enable_end_call_summary=summarize_call_request_summarization_options_enable_end_call_summary,
+            summarize_call_request_summarization_options_enable_end_call_summary=enable_end_call_summary,
             summarize_call_request_summarization_options_locale=summarize_call_request_summarization_options_locale,
             **kwargs
             )
