@@ -14,7 +14,7 @@ from azure.core.credentials import TokenCredential
 from azure.core.pipeline import policies
 
 from azure.confidentialledger._client import ConfidentialLedgerClient as GeneratedClient
-from azure.confidentialledger import ConfidentialLedgerCertificateClient
+from azure.confidentialledger.certificate import ConfidentialLedgerCertificateClient
 
 __all__: List[str] = [
     "ConfidentialLedgerCertificateCredential",
