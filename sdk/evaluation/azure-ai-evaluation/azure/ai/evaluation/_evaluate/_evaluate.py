@@ -60,6 +60,12 @@ from ._evaluate_aoai import (
 
 LOGGER = logging.getLogger(__name__)
 
+# Tag validation constants
+MAX_TAG_COUNT = 50
+MAX_TAG_COUNT_WITHOUT_DEFAULT = 49
+MAX_TAG_KEY_LENGTH = 100
+MAX_TAG_VALUE_LENGTH = 1000
+
 # For metrics (aggregates) whose metric names intentionally differ from their
 # originating column name, usually because the aggregation of the original value
 # means something sufficiently different.
@@ -464,7 +470,7 @@ def _validate_columns_for_evaluators(
         )
 
 
-def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_project, evaluation_name):
+def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_project, evaluation_name, tags):
     if data is None:
         msg = "The 'data' parameter is required for evaluation."
         raise EvaluationException(
@@ -560,6 +566,9 @@ def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_proj
             category=ErrorCategory.INVALID_VALUE,
             blame=ErrorBlame.USER_ERROR,
         ) from e
+
+    # Validate tags parameter
+    _validate_tags(tags)
 
     return initial_data_df
 
@@ -725,6 +734,7 @@ def evaluate(
     azure_ai_project: Optional[Union[str, AzureAIProject]] = None,
     output_path: Optional[Union[str, os.PathLike]] = None,
     fail_on_evaluator_errors: bool = False,
+    tags: Optional[Dict[str, str]] = None,
     **kwargs,
 ) -> EvaluationResult:
     """Evaluates target or data with built-in or custom evaluators. If both target and data are provided,
@@ -757,6 +767,12 @@ def evaluate(
         Defaults to false, which means that evaluations will continue regardless of failures.
         If such failures occur, metrics may be missing, and evidence of failures can be found in the evaluation's logs.
     :paramtype fail_on_evaluator_errors: bool
+    :keyword tags: A dictionary of tags to be added to the evaluation run for tracking and organization purposes.
+        Keys and values must be strings. Maximum of 50 tags allowed, including a default tag `mlflow.user`
+        with value `azure-ai-evaluation`. Callers can provide either 49 additional tags or 50 tags total
+        if they choose to override the default `mlflow.user` value. Tag keys are limited to 100 characters
+        and tag values are limited to 1000 characters.
+    :paramtype tags: Optional[Dict[str, str]]
     :keyword user_agent: A string to append to the default user-agent sent with evaluation http requests
     :paramtype user_agent: Optional[str]
     :return: Evaluation results.
@@ -793,6 +809,7 @@ def evaluate(
                 azure_ai_project=azure_ai_project,
                 output_path=output_path,
                 fail_on_evaluator_errors=fail_on_evaluator_errors,
+                tags=tags,
                 **kwargs,
             )
     except Exception as e:
@@ -861,6 +878,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     azure_ai_project: Optional[Union[str, AzureAIProject]] = None,
     output_path: Optional[Union[str, os.PathLike]] = None,
     fail_on_evaluator_errors: bool = False,
+    tags: Optional[Dict[str, str]] = None,
     **kwargs,
 ) -> EvaluationResult:
     if fail_on_evaluator_errors:
@@ -876,6 +894,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
         output_path=output_path,
         azure_ai_project=azure_ai_project,
         evaluation_name=evaluation_name,
+        tags=tags,
         **kwargs,
     )
 
@@ -955,7 +974,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     name_map = _map_names_to_builtins(evaluators, graders)
     if is_onedp_project(azure_ai_project):
         studio_url = _log_metrics_and_instance_results_onedp(
-            metrics, results_df, azure_ai_project, evaluation_name, name_map, **kwargs
+            metrics, results_df, azure_ai_project, evaluation_name, name_map, tags=tags, **kwargs
         )
     else:
         # Since tracing is disabled, pass None for target_run so a dummy evaluation run will be created each time.
@@ -963,7 +982,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
         studio_url = None
         if trace_destination:
             studio_url = _log_metrics_and_instance_results(
-                metrics, results_df, trace_destination, None, evaluation_name, name_map, **kwargs
+                metrics, results_df, trace_destination, None, evaluation_name, name_map, tags=tags, **kwargs
             )
 
     result_df_dict = results_df.to_dict("records")
@@ -983,6 +1002,7 @@ def _preprocess_data(
     output_path: Optional[Union[str, os.PathLike]] = None,
     azure_ai_project: Optional[Union[str, AzureAIProject]] = None,
     evaluation_name: Optional[str] = None,
+    tags: Optional[Dict[str, str]] = None,
     **kwargs,
 ) -> __ValidatedData:
     # Process evaluator config to replace ${target.} with ${data.}
@@ -990,7 +1010,7 @@ def _preprocess_data(
         evaluator_config = {}
 
     input_data_df = _validate_and_load_data(
-        target, data, evaluators_and_graders, output_path, azure_ai_project, evaluation_name
+        target, data, evaluators_and_graders, output_path, azure_ai_project, evaluation_name, tags
     )
     if target is not None:
         _validate_columns_for_target(input_data_df, target)
@@ -1259,3 +1279,91 @@ def _turn_error_logs_into_exception(log_path: str) -> None:
         category=ErrorCategory.FAILED_EXECUTION,
         blame=ErrorBlame.UNKNOWN,
     )
+
+
+def _validate_tags(tags: Optional[Dict[str, str]]) -> None:
+    """
+    Validate the tags parameter according to the specified constraints.
+
+    :param tags: The tags dictionary to validate.
+    :type tags: Optional[Dict[str, str]]
+    :raises EvaluationException: If tags validation fails.
+    """
+    if tags is None:
+        return
+
+    if not isinstance(tags, dict):
+        msg = "The 'tags' parameter must be a dictionary."
+        raise EvaluationException(
+            message=msg,
+            target=ErrorTarget.EVALUATE,
+            category=ErrorCategory.INVALID_VALUE,
+            blame=ErrorBlame.USER_ERROR,
+        )
+
+    # Check maximum number of tags (MAX_TAG_COUNT total, including default mlflow.user tag)
+    if len(tags) > MAX_TAG_COUNT:
+        msg = "Maximum of {} tags allowed. Current count: {}.".format(MAX_TAG_COUNT, len(tags))
+        raise EvaluationException(
+            message=msg,
+            target=ErrorTarget.EVALUATE,
+            category=ErrorCategory.INVALID_VALUE,
+            blame=ErrorBlame.USER_ERROR,
+        )
+
+    # If user doesn't provide mlflow.user tag, we'll add it, so check for MAX_TAG_COUNT_WITHOUT_DEFAULT max user tags
+    if "mlflow.user" not in tags and len(tags) > MAX_TAG_COUNT_WITHOUT_DEFAULT:
+        msg = (
+            "Maximum of {} user tags allowed when not overriding the default 'mlflow.user' tag. "
+            "Current count: {}. You can provide up to {} tags total if you include 'mlflow.user'.".format(
+                MAX_TAG_COUNT_WITHOUT_DEFAULT, len(tags), MAX_TAG_COUNT
+            )
+        )
+        raise EvaluationException(
+            message=msg,
+            target=ErrorTarget.EVALUATE,
+            category=ErrorCategory.INVALID_VALUE,
+            blame=ErrorBlame.USER_ERROR,
+        )
+
+    # Validate each tag key and value
+    for key, value in tags.items():
+        if not isinstance(key, str):
+            msg = f"Tag key must be a string. Got {type(key).__name__}: {key}"
+            raise EvaluationException(
+                message=msg,
+                target=ErrorTarget.EVALUATE,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
+
+        if not isinstance(value, str):
+            msg = f"Tag value must be a string. Got {type(value).__name__}: {value} for key '{key}'"
+            raise EvaluationException(
+                message=msg,
+                target=ErrorTarget.EVALUATE,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
+
+        # Check key length (max MAX_TAG_KEY_LENGTH characters)
+        if len(key) > MAX_TAG_KEY_LENGTH:
+            msg = (
+                f"Tag key '{key}' exceeds maximum length of {MAX_TAG_KEY_LENGTH} characters. Current length: {len(key)}"
+            )
+            raise EvaluationException(
+                message=msg,
+                target=ErrorTarget.EVALUATE,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
+
+        # Check value length (max MAX_TAG_VALUE_LENGTH characters)
+        if len(value) > MAX_TAG_VALUE_LENGTH:
+            msg = f"Tag value for key '{key}' exceeds maximum length of {MAX_TAG_VALUE_LENGTH} characters. Current length: {len(value)}"
+            raise EvaluationException(
+                message=msg,
+                target=ErrorTarget.EVALUATE,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
