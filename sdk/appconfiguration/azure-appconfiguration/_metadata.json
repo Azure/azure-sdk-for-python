@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2023-11-01",
+  "commit": "4dfa9d8a653b7bc568485929b5d1d17385be5ab0",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/appconfiguration/AppConfiguration",
+  "emitterVersion": "0.47.0"
+}
