@@ -48,7 +48,7 @@ steps:
             Condition: succeededOrFailed()
 
   - script: |
-      python -m pip install "./tools/azure-sdk-tools[build]" -q -I
+      uv pip install "./tools/azure-sdk-tools[build]" -q -I
       sdk_find_invalid_versions --always-succeed --service=${{parameters.ServiceDirectory}}
     displayName: Find Invalid Versions
     condition: succeededOrFailed()
