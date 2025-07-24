@@ -10,6 +10,11 @@
 
 - Added support for Azure OpenAI Python grader via `AzureOpenAIPythonGrader` class, which serves as a wrapper around Azure Open AI Python grader configurations. This new grader object can be supplied to the main `evaluate` method as if it were a normal callable evaluator.
 
+### Features Added
+- Added `attack_success_thresholds` parameter to `RedTeam` class for configuring custom thresholds that determine attack success. This allows users to set specific threshold values for each risk category, with scores greater than the threshold considered successful attacks (i.e. higher threshold means higher 
+tolerance for harmful responses).
+- Enhanced threshold reporting in RedTeam results to include default threshold values when custom thresholds aren't specified, providing better transparency about the evaluation criteria used.
+
 ### Bugs Fixed
 
 - Fixed red team scan `output_path` issue where individual evaluation results were overwriting each other instead of being preserved as separate files. Individual evaluations now create unique files while the user's `output_path` is reserved for final aggregated results.
