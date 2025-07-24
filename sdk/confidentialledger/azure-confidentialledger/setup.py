@@ -13,7 +13,7 @@ from setuptools import setup, find_packages
 
 
 PACKAGE_NAME = "azure-confidentialledger"
-PACKAGE_PPRINT_NAME = "Azure Confidentialledger"
+PACKAGE_PPRINT_NAME = "Confidential Ledger"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace("-", "/")

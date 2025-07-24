@@ -20,7 +20,7 @@ from azure.confidentialledger.aio._client import (
 # Since we can't `await` in __init__, use the sync client for the Identity Service.
 
 
-from azure.confidentialledger import ConfidentialLedgerCertificateClient
+from azure.confidentialledger.certificate import ConfidentialLedgerCertificateClient
 from azure.confidentialledger._patch import ConfidentialLedgerCertificateCredential
 
 __all__: List[str] = [
