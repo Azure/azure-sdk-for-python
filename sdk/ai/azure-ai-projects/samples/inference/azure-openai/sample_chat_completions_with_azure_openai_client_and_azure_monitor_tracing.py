@@ -35,25 +35,24 @@ from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from opentelemetry import trace
 from azure.monitor.opentelemetry import configure_azure_monitor
-
 from opentelemetry.instrumentation.openai_v2 import OpenAIInstrumentor
-
-OpenAIInstrumentor().instrument()
 
 scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)
 
+OpenAIInstrumentor().instrument()
+
 endpoint = os.environ["PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 
-with tracer.start_as_current_span(scenario):
+with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 
-    with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
+    with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
 
-        with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
+        connection_string = project_client.telemetry.get_application_insights_connection_string()
+        configure_azure_monitor(connection_string=connection_string)
 
-            connection_string = project_client.telemetry.get_application_insights_connection_string()
-            configure_azure_monitor(connection_string=connection_string)
+        with tracer.start_as_current_span(scenario):
 
             with project_client.get_openai_client(api_version="2024-10-21") as client:
 

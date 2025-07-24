@@ -31,5 +31,7 @@ class TestTelemetry(TestBase):
                 assert bool(self.REGEX_APPINSIGHTS_CONNECTION_STRING.match(connection_string))
             else:
                 assert connection_string == "Sanitized-api-key"
-            assert connection_string == project_client.telemetry.get_application_insights_connection_string()  # Test cached value
+            assert (
+                connection_string == project_client.telemetry.get_application_insights_connection_string()
+            )  # Test cached value
             print("Application Insights connection string = " + connection_string)

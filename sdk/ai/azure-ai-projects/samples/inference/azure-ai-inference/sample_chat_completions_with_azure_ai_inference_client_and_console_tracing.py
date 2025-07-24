@@ -31,7 +31,7 @@ ALTERNATIVE USAGE:
     pip install opentelemetry-exporter-otlp-proto-grpc
 
     And also define:
-    3) OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT - Optional. Set to `true` to trace the content of chat
+    3) AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
        messages, which may contain personal data. False by default.
 """
 
