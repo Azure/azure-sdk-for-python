@@ -353,6 +353,7 @@ def _get_grader_class(model_id: str) -> Type[AzureOpenAIGrader]:
         AzureOpenAIStringCheckGrader,
         AzureOpenAITextSimilarityGrader,
         AzureOpenAIScoreModelGrader,
+        AzureOpenAIPythonGrader,
     )
 
     id_map = {
@@ -361,6 +362,7 @@ def _get_grader_class(model_id: str) -> Type[AzureOpenAIGrader]:
         AzureOpenAIStringCheckGrader.id: AzureOpenAIStringCheckGrader,
         AzureOpenAITextSimilarityGrader.id: AzureOpenAITextSimilarityGrader,
         AzureOpenAIScoreModelGrader.id: AzureOpenAIScoreModelGrader,
+        AzureOpenAIPythonGrader.id: AzureOpenAIPythonGrader,
     }
 
     for key in id_map.keys():
