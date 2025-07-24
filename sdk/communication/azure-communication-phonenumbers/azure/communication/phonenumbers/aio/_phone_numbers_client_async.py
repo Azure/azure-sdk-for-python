@@ -268,7 +268,10 @@ class PhoneNumbersClient:
          ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.PurchasedPhoneNumber]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return cast(AsyncItemPaged[PurchasedPhoneNumber], self._phone_number_client.phone_numbers.list_phone_numbers(**kwargs))
+        return cast(
+            AsyncItemPaged[PurchasedPhoneNumber],
+            self._phone_number_client.phone_numbers.list_phone_numbers(**kwargs)
+        )
 
     @distributed_trace
     def list_available_countries(self, **kwargs: Any) -> AsyncItemPaged[PhoneNumberCountry]:
@@ -284,9 +287,12 @@ class PhoneNumbersClient:
          ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.PhoneNumberCountry]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return cast(AsyncItemPaged[PhoneNumberCountry], self._phone_number_client.phone_numbers.list_available_countries(
-            accept_language=self._accepted_language, **kwargs
-        ))
+        return cast(
+            AsyncItemPaged[PhoneNumberCountry],
+            self._phone_number_client.phone_numbers.list_available_countries(
+                accept_language=self._accepted_language, **kwargs
+            )
+        )
 
     @distributed_trace
     def list_available_localities(self, country_code: str, **kwargs: Any) -> AsyncItemPaged[PhoneNumberLocality]:
@@ -307,13 +313,16 @@ class PhoneNumbersClient:
          ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.PhoneNumberLocality]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return cast(AsyncItemPaged[PhoneNumberLocality], self._phone_number_client.phone_numbers.list_available_localities(
-            country_code,
-            administrative_division=kwargs.pop(
-                "administrative_division", None),
-            accept_language=self._accepted_language,
-            **kwargs
-        ))
+        return cast(
+            AsyncItemPaged[PhoneNumberLocality],
+            self._phone_number_client.phone_numbers.list_available_localities(
+                country_code,
+                administrative_division=kwargs.pop(
+                    "administrative_division", None),
+                accept_language=self._accepted_language,
+                **kwargs
+            )
+        )
 
     @distributed_trace
     def list_available_offerings(self, country_code: str, **kwargs: Any) -> AsyncItemPaged[PhoneNumberOffering]:
@@ -499,7 +508,8 @@ class PhoneNumbersClient:
                 phone_numbers[number_id] = None
 
         # Cast to satisfy type checker - merge-patch operations allow None values
-        reservation = PhoneNumbersReservation(phone_numbers=cast(Optional[Dict[str, AvailablePhoneNumber]], phone_numbers))
+        reservation = PhoneNumbersReservation(
+            phone_numbers=cast(Optional[Dict[str, AvailablePhoneNumber]], phone_numbers))
 
         return await self._phone_number_client.phone_numbers.create_or_update_reservation(
             reservation_id, reservation, **kwargs

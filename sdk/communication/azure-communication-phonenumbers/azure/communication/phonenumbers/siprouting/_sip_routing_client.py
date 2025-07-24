@@ -96,10 +96,10 @@ class SipRoutingClient(object):
 
         if config.trunks is None:
             raise KeyError(f"Trunk with FQDN '{trunk_fqdn}' not found.")
-        
+
         if trunk_fqdn not in config.trunks:
             raise KeyError(f"Trunk with FQDN '{trunk_fqdn}' not found.")
-            
+
         trunk = config.trunks[trunk_fqdn]
         return SipTrunk(fqdn=trunk_fqdn, sip_signaling_port=trunk.sip_signaling_port)
 
@@ -160,7 +160,10 @@ class SipRoutingClient(object):
             if config.trunks is None:
                 list_of_elem = []
             else:
-                list_of_elem = [SipTrunk(fqdn=k, sip_signaling_port=v.sip_signaling_port) for k, v in config.trunks.items()]
+                list_of_elem = [
+                    SipTrunk(fqdn=k, sip_signaling_port=v.sip_signaling_port)
+                    for k, v in config.trunks.items()
+                ]
             return None, list_of_elem
 
         # pylint: disable=unused-argument
@@ -186,7 +189,12 @@ class SipRoutingClient(object):
                 list_of_elem = []
             else:
                 list_of_elem = [
-                    SipTrunkRoute(description=x.description, name=x.name, number_pattern=x.number_pattern, trunks=x.trunks)
+                    SipTrunkRoute(
+                        description=x.description,
+                        name=x.name,
+                        number_pattern=x.number_pattern,
+                        trunks=x.trunks
+                    )
                     for x in config.routes
                 ]
             return None, list_of_elem

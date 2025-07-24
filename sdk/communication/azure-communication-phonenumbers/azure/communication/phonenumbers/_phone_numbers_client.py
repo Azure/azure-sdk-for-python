@@ -240,8 +240,8 @@ class PhoneNumbersClient:
         )
 
         result_properties = poller.result().additional_properties
-        if (result_properties is not None and 
-            "status" in result_properties and 
+        if (result_properties is not None and
+            "status" in result_properties and
             result_properties["status"].lower() == "failed"):
             raise HttpResponseError(
                 message=result_properties["error"]["message"])
@@ -273,7 +273,7 @@ class PhoneNumbersClient:
         :returns: An iterator of purchased phone numbers.
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.PurchasedPhoneNumber]
         """
-        return cast(ItemPaged[PurchasedPhoneNumber], 
+        return cast(ItemPaged[PurchasedPhoneNumber],
                    self._phone_number_client.phone_numbers.list_phone_numbers(**kwargs))
 
     @distributed_trace
@@ -499,7 +499,8 @@ class PhoneNumbersClient:
                 phone_numbers[number_id] = None
 
         # Cast to satisfy type checker - merge-patch operations allow None values
-        reservation = PhoneNumbersReservation(phone_numbers=cast(Optional[Dict[str, AvailablePhoneNumber]], phone_numbers))
+        reservation = PhoneNumbersReservation(
+            phone_numbers=cast(Optional[Dict[str, AvailablePhoneNumber]], phone_numbers))
 
         return self._phone_number_client.phone_numbers.create_or_update_reservation(
             reservation_id, reservation, **kwargs)
