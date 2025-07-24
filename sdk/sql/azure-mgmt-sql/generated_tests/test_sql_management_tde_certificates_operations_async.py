@@ -27,7 +27,7 @@ class TestSqlManagementTdeCertificatesOperationsAsync(AzureMgmtRecordedTestCase)
                 resource_group_name=resource_group.name,
                 server_name="str",
                 parameters={"certPassword": "str", "id": "str", "name": "str", "privateBlob": "str", "type": "str"},
-                api_version="2024-05-01-preview",
+                api_version="2020-11-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

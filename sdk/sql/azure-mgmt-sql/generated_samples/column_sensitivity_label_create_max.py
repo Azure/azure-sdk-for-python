@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -39,7 +40,6 @@ def main():
         column_name="myColumn",
         parameters={
             "properties": {
-                "clientClassificationSource": "Native",
                 "informationType": "PhoneNumber",
                 "informationTypeId": "d22fa6e9-5ee4-3bde-4c2b-a409604c4646",
                 "labelId": "bf91e08c-f4f0-478a-b016-25164b2a65ff",
@@ -51,6 +51,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2024-05-01-preview/examples/ColumnSensitivityLabelCreateMax.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2020-11-01-preview/examples/ColumnSensitivityLabelCreateMax.json
 if __name__ == "__main__":
     main()

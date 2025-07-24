@@ -26,7 +26,7 @@ class TestSqlManagementManagedDatabaseRestoreDetailsOperations(AzureMgmtRecorded
             managed_instance_name="str",
             database_name="str",
             restore_details_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2022-05-01-preview",
         )
 
         # please add some check logic here by yourself

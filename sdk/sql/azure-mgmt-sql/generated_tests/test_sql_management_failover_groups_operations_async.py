@@ -25,7 +25,7 @@ class TestSqlManagementFailoverGroupsOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.failover_groups.list_by_server(
             resource_group_name=resource_group.name,
             server_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2023-05-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestSqlManagementFailoverGroupsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             failover_group_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2023-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -66,7 +66,7 @@ class TestSqlManagementFailoverGroupsOperationsAsync(AzureMgmtRecordedTestCase):
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-05-01-preview",
+                api_version="2023-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -81,7 +81,7 @@ class TestSqlManagementFailoverGroupsOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 server_name="str",
                 failover_group_name="str",
-                api_version="2024-05-01-preview",
+                api_version="2023-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -104,7 +104,7 @@ class TestSqlManagementFailoverGroupsOperationsAsync(AzureMgmtRecordedTestCase):
                     "secondaryType": "str",
                     "tags": {"str": "str"},
                 },
-                api_version="2024-05-01-preview",
+                api_version="2023-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -119,7 +119,7 @@ class TestSqlManagementFailoverGroupsOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 server_name="str",
                 failover_group_name="str",
-                api_version="2024-05-01-preview",
+                api_version="2023-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -134,7 +134,7 @@ class TestSqlManagementFailoverGroupsOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 server_name="str",
                 failover_group_name="str",
-                api_version="2024-05-01-preview",
+                api_version="2023-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -149,7 +149,7 @@ class TestSqlManagementFailoverGroupsOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 server_name="str",
                 failover_group_name="str",
-                api_version="2024-05-01-preview",
+                api_version="2023-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

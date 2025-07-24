@@ -25,7 +25,7 @@ class TestSqlManagementStartStopManagedInstanceSchedulesOperationsAsync(AzureMgm
         response = self.client.start_stop_managed_instance_schedules.list_by_instance(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2022-08-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestSqlManagementStartStopManagedInstanceSchedulesOperationsAsync(AzureMgm
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             start_stop_schedule_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2022-08-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -69,7 +69,7 @@ class TestSqlManagementStartStopManagedInstanceSchedulesOperationsAsync(AzureMgm
                 "timeZoneId": "UTC",
                 "type": "str",
             },
-            api_version="2024-05-01-preview",
+            api_version="2022-08-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -82,7 +82,7 @@ class TestSqlManagementStartStopManagedInstanceSchedulesOperationsAsync(AzureMgm
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             start_stop_schedule_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2022-08-01-preview",
         )
 
         # please add some check logic here by yourself

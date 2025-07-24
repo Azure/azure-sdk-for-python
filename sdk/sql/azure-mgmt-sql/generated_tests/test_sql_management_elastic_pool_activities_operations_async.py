@@ -21,7 +21,7 @@ class TestSqlManagementElasticPoolActivitiesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_elastic_pool(self, resource_group):
+    async def test_elastic_pool_activities_list_by_elastic_pool(self, resource_group):
         response = self.client.elastic_pool_activities.list_by_elastic_pool(
             resource_group_name=resource_group.name,
             server_name="str",

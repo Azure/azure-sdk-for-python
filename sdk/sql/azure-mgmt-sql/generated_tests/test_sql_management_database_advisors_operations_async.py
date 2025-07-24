@@ -26,7 +26,7 @@ class TestSqlManagementDatabaseAdvisorsOperationsAsync(AzureMgmtRecordedTestCase
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2020-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestSqlManagementDatabaseAdvisorsOperationsAsync(AzureMgmtRecordedTestCase
             server_name="str",
             database_name="str",
             advisor_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2020-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -77,7 +77,7 @@ class TestSqlManagementDatabaseAdvisorsOperationsAsync(AzureMgmtRecordedTestCase
                                 "unit": "str",
                             }
                         ],
-                        "executeActionDuration": "1 day, 0:00:00",
+                        "executeActionDuration": "str",
                         "executeActionInitiatedBy": "str",
                         "executeActionInitiatedTime": "2020-02-20 00:00:00",
                         "executeActionStartTime": "2020-02-20 00:00:00",
@@ -101,7 +101,7 @@ class TestSqlManagementDatabaseAdvisorsOperationsAsync(AzureMgmtRecordedTestCase
                             }
                         ],
                         "recommendationReason": "str",
-                        "revertActionDuration": "1 day, 0:00:00",
+                        "revertActionDuration": "str",
                         "revertActionInitiatedBy": "str",
                         "revertActionInitiatedTime": "2020-02-20 00:00:00",
                         "revertActionStartTime": "2020-02-20 00:00:00",
@@ -126,7 +126,7 @@ class TestSqlManagementDatabaseAdvisorsOperationsAsync(AzureMgmtRecordedTestCase
                 ],
                 "type": "str",
             },
-            api_version="2024-05-01-preview",
+            api_version="2020-11-01-preview",
         )
 
         # please add some check logic here by yourself

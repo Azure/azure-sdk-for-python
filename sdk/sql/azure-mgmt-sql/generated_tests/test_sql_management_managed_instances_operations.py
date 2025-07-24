@@ -22,7 +22,7 @@ class TestSqlManagementManagedInstancesOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_managed_instances_list(self, resource_group):
         response = self.client.managed_instances.list(
-            api_version="2024-05-01-preview",
+            api_version="2023-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestSqlManagementManagedInstancesOperations(AzureMgmtRecordedTestCase):
         response = self.client.managed_instances.list_by_instance_pool(
             resource_group_name=resource_group.name,
             instance_pool_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2023-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestSqlManagementManagedInstancesOperations(AzureMgmtRecordedTestCase):
     def test_managed_instances_list_by_resource_group(self, resource_group):
         response = self.client.managed_instances.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-05-01-preview",
+            api_version="2023-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -57,7 +57,7 @@ class TestSqlManagementManagedInstancesOperations(AzureMgmtRecordedTestCase):
         response = self.client.managed_instances.get(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2023-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -138,13 +138,12 @@ class TestSqlManagementManagedInstancesOperations(AzureMgmtRecordedTestCase):
                 "subnetId": "str",
                 "tags": {"str": "str"},
                 "timezoneId": "str",
-                "totalMemoryMB": 0,
                 "type": "str",
                 "vCores": 0,
                 "virtualClusterId": "str",
                 "zoneRedundant": bool,
             },
-            api_version="2024-05-01-preview",
+            api_version="2023-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -156,7 +155,7 @@ class TestSqlManagementManagedInstancesOperations(AzureMgmtRecordedTestCase):
         response = self.client.managed_instances.begin_delete(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2023-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -234,12 +233,11 @@ class TestSqlManagementManagedInstancesOperations(AzureMgmtRecordedTestCase):
                 "subnetId": "str",
                 "tags": {"str": "str"},
                 "timezoneId": "str",
-                "totalMemoryMB": 0,
                 "vCores": 0,
                 "virtualClusterId": "str",
                 "zoneRedundant": bool,
             },
-            api_version="2024-05-01-preview",
+            api_version="2023-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -251,7 +249,7 @@ class TestSqlManagementManagedInstancesOperations(AzureMgmtRecordedTestCase):
         response = self.client.managed_instances.begin_failover(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2023-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -263,7 +261,7 @@ class TestSqlManagementManagedInstancesOperations(AzureMgmtRecordedTestCase):
         response = self.client.managed_instances.list_outbound_network_dependencies_by_managed_instance(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2023-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -275,7 +273,7 @@ class TestSqlManagementManagedInstancesOperations(AzureMgmtRecordedTestCase):
         response = self.client.managed_instances.begin_refresh_status(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2023-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -287,7 +285,7 @@ class TestSqlManagementManagedInstancesOperations(AzureMgmtRecordedTestCase):
         response = self.client.managed_instances.begin_start(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2023-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -299,7 +297,7 @@ class TestSqlManagementManagedInstancesOperations(AzureMgmtRecordedTestCase):
         response = self.client.managed_instances.begin_stop(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2023-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -311,7 +309,7 @@ class TestSqlManagementManagedInstancesOperations(AzureMgmtRecordedTestCase):
         response = self.client.managed_instances.list_by_managed_instance(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2023-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

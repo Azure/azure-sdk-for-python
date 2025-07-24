@@ -25,7 +25,7 @@ class TestSqlManagementManagedDatabasesOperationsAsync(AzureMgmtRecordedTestCase
         response = self.client.managed_databases.list_by_instance(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2022-08-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestSqlManagementManagedDatabasesOperationsAsync(AzureMgmtRecordedTestCase
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             database_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2022-08-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -81,7 +81,7 @@ class TestSqlManagementManagedDatabasesOperationsAsync(AzureMgmtRecordedTestCase
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-05-01-preview",
+                api_version="2022-08-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -96,7 +96,7 @@ class TestSqlManagementManagedDatabasesOperationsAsync(AzureMgmtRecordedTestCase
                 resource_group_name=resource_group.name,
                 managed_instance_name="str",
                 database_name="str",
-                api_version="2024-05-01-preview",
+                api_version="2022-08-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -136,7 +136,7 @@ class TestSqlManagementManagedDatabasesOperationsAsync(AzureMgmtRecordedTestCase
                     "storageContainerUri": "str",
                     "tags": {"str": "str"},
                 },
-                api_version="2024-05-01-preview",
+                api_version="2022-08-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -152,7 +152,7 @@ class TestSqlManagementManagedDatabasesOperationsAsync(AzureMgmtRecordedTestCase
                 managed_instance_name="str",
                 database_name="str",
                 parameters={"destinationManagedDatabaseId": "str"},
-                api_version="2024-05-01-preview",
+                api_version="2022-08-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -168,7 +168,7 @@ class TestSqlManagementManagedDatabasesOperationsAsync(AzureMgmtRecordedTestCase
                 managed_instance_name="str",
                 database_name="str",
                 parameters={"destinationManagedDatabaseId": "str"},
-                api_version="2024-05-01-preview",
+                api_version="2022-08-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -184,7 +184,7 @@ class TestSqlManagementManagedDatabasesOperationsAsync(AzureMgmtRecordedTestCase
                 managed_instance_name="str",
                 database_name="str",
                 parameters={"lastBackupName": "str"},
-                api_version="2024-05-01-preview",
+                api_version="2022-08-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -200,7 +200,7 @@ class TestSqlManagementManagedDatabasesOperationsAsync(AzureMgmtRecordedTestCase
                 managed_instance_name="str",
                 database_name="str",
                 parameters={"destinationManagedDatabaseId": "str", "operationMode": "str"},
-                api_version="2024-05-01-preview",
+                api_version="2022-08-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -213,7 +213,7 @@ class TestSqlManagementManagedDatabasesOperationsAsync(AzureMgmtRecordedTestCase
         response = self.client.managed_databases.list_inaccessible_by_instance(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2022-08-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

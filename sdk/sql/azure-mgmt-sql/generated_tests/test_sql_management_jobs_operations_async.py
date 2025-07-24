@@ -26,7 +26,7 @@ class TestSqlManagementJobsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             job_agent_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2020-11-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestSqlManagementJobsOperationsAsync(AzureMgmtRecordedTestCase):
             server_name="str",
             job_agent_name="str",
             job_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2020-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -60,15 +60,15 @@ class TestSqlManagementJobsOperationsAsync(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "schedule": {
                     "enabled": bool,
-                    "endTime": "9999-12-31T17:29:59+05:30",
+                    "endTime": "9999-12-31T11:59:59+00:00",
                     "interval": "str",
-                    "startTime": "0001-01-01T05:30:00+05:30",
+                    "startTime": "0001-01-01T00:00:00+00:00",
                     "type": "Once",
                 },
                 "type": "str",
                 "version": 0,
             },
-            api_version="2024-05-01-preview",
+            api_version="2020-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -82,7 +82,7 @@ class TestSqlManagementJobsOperationsAsync(AzureMgmtRecordedTestCase):
             server_name="str",
             job_agent_name="str",
             job_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2020-11-01-preview",
         )
 
         # please add some check logic here by yourself

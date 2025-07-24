@@ -25,7 +25,7 @@ class TestSqlManagementJobPrivateEndpointsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             job_agent_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2023-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -39,7 +39,7 @@ class TestSqlManagementJobPrivateEndpointsOperations(AzureMgmtRecordedTestCase):
             server_name="str",
             job_agent_name="str",
             private_endpoint_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2023-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -60,7 +60,7 @@ class TestSqlManagementJobPrivateEndpointsOperations(AzureMgmtRecordedTestCase):
                 "targetServerAzureResourceId": "str",
                 "type": "str",
             },
-            api_version="2024-05-01-preview",
+            api_version="2023-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -74,7 +74,7 @@ class TestSqlManagementJobPrivateEndpointsOperations(AzureMgmtRecordedTestCase):
             server_name="str",
             job_agent_name="str",
             private_endpoint_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2023-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
