@@ -206,9 +206,6 @@ def _log_metrics_and_instance_results_onedp(
                 properties=properties,
             ),
         )
-        import pdb
-
-        pdb.set_trace()
 
     return update_run_response.properties.get("AiStudioEvaluationUri")
 
