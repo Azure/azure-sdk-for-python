@@ -6,6 +6,10 @@
 
 - Added `evaluate_query` parameter to all RAI service evaluators that can be passed as a keyword argument. This parameter controls whether queries are included in evaluation data when evaluating query-response pairs. Previously, queries were always included in evaluations. When set to `True`, both query and response will be evaluated; when set to `False` (default), only the response will be evaluated. This parameter is available across all RAI service evaluators including `ContentSafetyEvaluator`, `ViolenceEvaluator`, `SexualEvaluator`, `SelfHarmEvaluator`, `HateUnfairnessEvaluator`, `ProtectedMaterialEvaluator`, `IndirectAttackEvaluator`, `CodeVulnerabilityEvaluator`, `UngroundedAttributesEvaluator`, `GroundednessProEvaluator`, and `EciEvaluator`.  Existing code that relies on queries being evaluated will need to explicitly set `evaluate_query=True` to maintain the previous behavior.
 
+### Features Added
+
+- Added support for Azure OpenAI Python grader via `AzureOpenAIPythonGrader` class, which serves as a wrapper around Azure Open AI Python grader configurations. This new grader object can be supplied to the main `evaluate` method as if it were a normal callable evaluator.
+
 ### Bugs Fixed
 
 - Fixed red team scan `output_path` issue where individual evaluation results were overwriting each other instead of being preserved as separate files. Individual evaluations now create unique files while the user's `output_path` is reserved for final aggregated results.
