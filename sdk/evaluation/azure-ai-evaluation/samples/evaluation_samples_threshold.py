@@ -65,8 +65,8 @@ class EvaluationThresholdSamples(object):
                 "evaluation_type": "threshold_testing",
                 "coherence_threshold": "2",
                 "relevance_threshold": "4",
-                "purpose": "quality_gating"
-            }
+                "purpose": "quality_gating",
+            },
         )
 
         # [END threshold_evaluate_method]
@@ -93,7 +93,9 @@ class EvaluationThresholdSamples(object):
             "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
         }
         coherence_evaluator = CoherenceEvaluator(model_config=model_config, threshold=2)
-        coherence_result = coherence_evaluator(query="What is the capital of France?", response="Paris is the capital of France.")
+        coherence_result = coherence_evaluator(
+            query="What is the capital of France?", response="Paris is the capital of France."
+        )
         print(
             f"Coherence Score: {coherence_result['coherence']}, Result: {coherence_result['coherence_result']}, Threshold: {coherence_result['coherence_threshold']}"
         )

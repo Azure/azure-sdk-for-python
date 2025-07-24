@@ -67,8 +67,8 @@ class EvaluationEvaluateSamples(object):
                 "experiment": "basic_evaluation",
                 "model": "gpt-4",
                 "dataset": "sample_qa_data",
-                "environment": "development"
-            }
+                "environment": "development",
+            },
         )
 
         # [END evaluate_method]
@@ -539,15 +539,15 @@ class EvaluationEvaluateSamples(object):
                 "model_version": "gpt-4-0613",
                 "dataset_version": "v1.2",
                 "researcher": "data_science_team",
-                "cost_center": "ai_research"
-            }
+                "cost_center": "ai_research",
+            },
         )
 
         # Example 2: Tags for A/B testing scenarios
         import datetime
-        
+
         current_date = datetime.datetime.now().strftime("%Y-%m-%d")
-        
+
         # Test Group A
         evaluate(
             data=path,
@@ -567,8 +567,8 @@ class EvaluationEvaluateSamples(object):
                 "test_group": "A",
                 "prompt_version": "baseline",
                 "date": current_date,
-                "hypothesis": "baseline_performance"
-            }
+                "hypothesis": "baseline_performance",
+            },
         )
 
         # Test Group B
@@ -587,11 +587,11 @@ class EvaluationEvaluateSamples(object):
             azure_ai_project=azure_ai_project,
             tags={
                 "ab_test": "prompt_optimization",
-                "test_group": "B", 
+                "test_group": "B",
                 "prompt_version": "enhanced",
                 "date": current_date,
-                "hypothesis": "improved_relevance"
-            }
+                "hypothesis": "improved_relevance",
+            },
         )
 
         # Example 3: Override the default mlflow.user tag
@@ -610,8 +610,8 @@ class EvaluationEvaluateSamples(object):
             tags={
                 "mlflow.user": "custom_evaluation_service",  # Override default value
                 "service_version": "2.1.0",
-                "automated": "true"
-            }
+                "automated": "true",
+            },
         )
 
         # Example 4: Production monitoring tags
@@ -643,8 +643,8 @@ class EvaluationEvaluateSamples(object):
                 "alert_threshold": "coherence_below_3",
                 "escalation_team": "ai_ops",
                 "business_unit": "customer_support",
-                "compliance_required": "true"
-            }
+                "compliance_required": "true",
+            },
         )
 
         # Example 5: Empty tags (only default mlflow.user tag will be applied)
@@ -660,7 +660,7 @@ class EvaluationEvaluateSamples(object):
                 },
             },
             azure_ai_project=azure_ai_project,
-            tags={}  # Only default mlflow.user=azure-ai-evaluation will be set
+            tags={},  # Only default mlflow.user=azure-ai-evaluation will be set
         )
 
         # Example 6: No tags parameter - same as empty tags

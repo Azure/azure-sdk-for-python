@@ -211,8 +211,8 @@ def demonstrate_score_model_grader():
                 "model": "gpt-4o-mini",
                 "evaluation_focus": "conversation_quality",
                 "sample_size": "demo",
-                "automation_level": "full"
-            }
+                "automation_level": "full",
+            },
         )
 
         # 4. Display results
