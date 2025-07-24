@@ -30,20 +30,39 @@ from azure.ai.evaluation._constants import (
     EVALUATION_PASS_FAIL_MAPPING,
     TokenScope,
 )
+from azure.ai.evaluation.simulator._constants import SupportedLanguages
 from azure.ai.evaluation._evaluate._utils import _get_ai_studio_url
-from azure.ai.evaluation._evaluate._utils import extract_workspace_triad_from_trace_provider
+from azure.ai.evaluation._evaluate._utils import (
+    extract_workspace_triad_from_trace_provider,
+)
 from azure.ai.evaluation._version import VERSION
 from azure.ai.evaluation._azure._clients import LiteMLClient
 from azure.ai.evaluation._evaluate._utils import _write_output
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._model_configurations import EvaluationResult
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
-from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenManager, RAIClient
-from azure.ai.evaluation.simulator._model_tools._generated_rai_client import GeneratedRAIClient
-from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation.simulator._model_tools import (
+    ManagedIdentityAPITokenManager,
+    RAIClient,
+)
+from azure.ai.evaluation.simulator._model_tools._generated_rai_client import (
+    GeneratedRAIClient,
+)
+from azure.ai.evaluation._model_configurations import (
+    AzureOpenAIModelConfiguration,
+    OpenAIModelConfiguration,
+)
+from azure.ai.evaluation._exceptions import (
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+    EvaluationException,
+)
 from azure.ai.evaluation._common.math import list_mean_nan_safe, is_none_or_nan
-from azure.ai.evaluation._common.utils import validate_azure_ai_project, is_onedp_project
+from azure.ai.evaluation._common.utils import (
+    validate_azure_ai_project,
+    is_onedp_project,
+)
 from azure.ai.evaluation import evaluate
 from azure.ai.evaluation._common import RedTeamUpload, ResultType
 
@@ -51,9 +70,18 @@ from azure.ai.evaluation._common import RedTeamUpload, ResultType
 from azure.core.credentials import TokenCredential
 
 # Red Teaming imports
-from ._red_team_result import RedTeamResult, RedTeamingScorecard, RedTeamingParameters, ScanResult
+from ._red_team_result import (
+    RedTeamResult,
+    RedTeamingScorecard,
+    RedTeamingParameters,
+    ScanResult,
+)
 from ._attack_strategy import AttackStrategy
-from ._attack_objective_generator import RiskCategory, _InternalRiskCategory, _AttackObjectiveGenerator
+from ._attack_objective_generator import (
+    RiskCategory,
+    _InternalRiskCategory,
+    _AttackObjectiveGenerator,
+)
 from ._utils._rai_service_target import AzureRAIServiceTarget
 from ._utils._rai_service_true_false_scorer import AzureRAIServiceTrueFalseScorer
 from ._utils._rai_service_eval_chat_target import RAIServiceEvalChatTarget
@@ -64,8 +92,12 @@ from pyrit.common import initialize_pyrit, DUCK_DB
 from pyrit.prompt_target import OpenAIChatTarget, PromptChatTarget
 from pyrit.models import ChatMessage
 from pyrit.memory import CentralMemory
-from pyrit.orchestrator.single_turn.prompt_sending_orchestrator import PromptSendingOrchestrator
-from pyrit.orchestrator.multi_turn.red_teaming_orchestrator import RedTeamingOrchestrator
+from pyrit.orchestrator.single_turn.prompt_sending_orchestrator import (
+    PromptSendingOrchestrator,
+)
+from pyrit.orchestrator.multi_turn.red_teaming_orchestrator import (
+    RedTeamingOrchestrator,
+)
 from pyrit.orchestrator import Orchestrator
 from pyrit.exceptions import PyritException
 from pyrit.prompt_converter import (
@@ -138,6 +170,8 @@ class RedTeam:
     :type application_scenario: Optional[str]
     :param custom_attack_seed_prompts: Path to a JSON file containing custom attack seed prompts (can be absolute or relative path)
     :type custom_attack_seed_prompts: Optional[str]
+    :param language: Language to use for attack objectives generation. Defaults to English.
+    :type language: SupportedLanguages
     :param output_dir: Directory to save output files (optional)
     :type output_dir: Optional[str]
     """
@@ -188,7 +222,9 @@ class RedTeam:
                 ),
                 "stop": stop_after_attempt(self.MAX_RETRY_ATTEMPTS),
                 "wait": wait_exponential(
-                    multiplier=1.5, min=self.MIN_RETRY_WAIT_SECONDS, max=self.MAX_RETRY_WAIT_SECONDS
+                    multiplier=1.5,
+                    min=self.MIN_RETRY_WAIT_SECONDS,
+                    max=self.MAX_RETRY_WAIT_SECONDS,
                 ),
                 "retry_error_callback": self._log_retry_error,
                 "before_sleep": self._log_retry_attempt,
@@ -239,6 +275,7 @@ class RedTeam:
         num_objectives: int = 10,
         application_scenario: Optional[str] = None,
         custom_attack_seed_prompts: Optional[str] = None,
+        language: SupportedLanguages = SupportedLanguages.English,
         output_dir=".",
     ):
         """Initialize a new Red Team agent for AI model evaluation.
@@ -260,6 +297,8 @@ class RedTeam:
         :type application_scenario: Optional[str]
         :param custom_attack_seed_prompts: Path to a JSON file with custom attack prompts
         :type custom_attack_seed_prompts: Optional[str]
+        :param language: Language to use for attack objectives generation. Defaults to English.
+        :type language: SupportedLanguages
         :param output_dir: Directory to save evaluation outputs and logs. Defaults to current working directory.
         :type output_dir: str
         """
@@ -267,6 +306,7 @@ class RedTeam:
         self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self.credential = credential
         self.output_dir = output_dir
+        self.language = language
         self._one_dp_project = is_onedp_project(azure_ai_project)
 
         # Initialize logger without output directory (will be updated during scan)
@@ -315,7 +355,9 @@ class RedTeam:
         self.logger.debug("RedTeam initialized successfully")
 
     def _start_redteam_mlflow_run(
-        self, azure_ai_project: Optional[AzureAIProject] = None, run_name: Optional[str] = None
+        self,
+        azure_ai_project: Optional[AzureAIProject] = None,
+        run_name: Optional[str] = None,
     ) -> EvalRun:
         """Start an MLFlow run for the Red Team Agent evaluation.
 
@@ -390,7 +432,8 @@ class RedTeam:
             self.logger.debug(f"MLFlow run created successfully with ID: {eval_run}")
 
             self.ai_studio_url = _get_ai_studio_url(
-                trace_destination=self.trace_destination, evaluation_id=eval_run.info.run_id
+                trace_destination=self.trace_destination,
+                evaluation_id=eval_run.info.run_id,
             )
 
             return eval_run
@@ -473,7 +516,11 @@ class RedTeam:
                 # MLFlow requires the artifact_name file to be in the directory we're logging
 
                 # First, create the main artifact file that MLFlow expects
-                with open(os.path.join(tmpdir, artifact_name), "w", encoding=DefaultOpenEncoding.WRITE) as f:
+                with open(
+                    os.path.join(tmpdir, artifact_name),
+                    "w",
+                    encoding=DefaultOpenEncoding.WRITE,
+                ) as f:
                     if _skip_evals:
                         f.write(json.dumps({"conversations": redteam_result.attack_details or []}))
                     elif redteam_result.scan_result:
@@ -546,7 +593,10 @@ class RedTeam:
                 try:
                     create_evaluation_result_response = (
                         self.generated_rai_client._evaluation_onedp_client.create_evaluation_result(
-                            name=uuid.uuid4(), path=tmpdir, metrics=metrics, result_type=ResultType.REDTEAM
+                            name=uuid.uuid4(),
+                            path=tmpdir,
+                            metrics=metrics,
+                            result_type=ResultType.REDTEAM,
                         )
                     )
 
@@ -631,7 +681,10 @@ class RedTeam:
         risk_cat_value = risk_category.value.lower()
         num_objectives = attack_objective_generator.num_objectives
 
-        log_subsection_header(self.logger, f"Getting attack objectives for {risk_cat_value}, strategy: {strategy}")
+        log_subsection_header(
+            self.logger,
+            f"Getting attack objectives for {risk_cat_value}, strategy: {strategy}",
+        )
 
         # Check if we already have baseline objectives for this risk category
         baseline_key = ((risk_cat_value,), "baseline")
@@ -694,7 +747,11 @@ class RedTeam:
                             if isinstance(message, dict) and "content" in message:
                                 message["content"] = f"{random.choice(jailbreak_prefixes)} {message['content']}"
                 except Exception as e:
-                    log_error(self.logger, "Error applying jailbreak prefixes to custom objectives", e)
+                    log_error(
+                        self.logger,
+                        "Error applying jailbreak prefixes to custom objectives",
+                        e,
+                    )
                     # Continue with unmodified prompts instead of failing completely
 
             # Extract content from selected objectives
@@ -743,7 +800,7 @@ class RedTeam:
             # Use the RAI service to get attack objectives
             try:
                 self.logger.debug(
-                    f"API call: get_attack_objectives({risk_cat_value}, app: {application_scenario}, strategy: {strategy})"
+                    f"API call: get_attack_objectives({risk_cat_value}, app: {application_scenario}, strategy: {strategy}, language: {self.language.value})"
                 )
                 # strategy param specifies whether to get a strategy-specific dataset from the RAI service
                 # right now, only tense requires strategy-specific dataset
@@ -753,6 +810,7 @@ class RedTeam:
                         risk_category=other_risk,
                         application_scenario=application_scenario or "",
                         strategy="tense",
+                        language=self.language.value,
                         scan_session_id=self.scan_session_id,
                     )
                 else:
@@ -761,6 +819,7 @@ class RedTeam:
                         risk_category=other_risk,
                         application_scenario=application_scenario or "",
                         strategy=None,
+                        language=self.language.value,
                         scan_session_id=self.scan_session_id,
                     )
                 if isinstance(objectives_response, list):
@@ -1061,7 +1120,10 @@ class RedTeam:
                                 return await asyncio.wait_for(
                                     orchestrator.send_prompts_async(
                                         prompt_list=batch,
-                                        memory_labels={"risk_strategy_path": output_path, "batch": batch_idx + 1},
+                                        memory_labels={
+                                            "risk_strategy_path": output_path,
+                                            "batch": batch_idx + 1,
+                                        },
                                     ),
                                     timeout=timeout,  # Use provided timeouts
                                 )
@@ -1152,7 +1214,10 @@ class RedTeam:
                             return await asyncio.wait_for(
                                 orchestrator.send_prompts_async(
                                     prompt_list=all_prompts,
-                                    memory_labels={"risk_strategy_path": output_path, "batch": 1},
+                                    memory_labels={
+                                        "risk_strategy_path": output_path,
+                                        "batch": 1,
+                                    },
                                 ),
                                 timeout=timeout,  # Use provided timeout
                             )
@@ -1198,7 +1263,12 @@ class RedTeam:
                         batch_idx=1,
                     )
                 except Exception as e:
-                    log_error(self.logger, "Error processing prompts", e, f"{strategy_name}/{risk_category_name}")
+                    log_error(
+                        self.logger,
+                        "Error processing prompts",
+                        e,
+                        f"{strategy_name}/{risk_category_name}",
+                    )
                     self.logger.debug(f"ERROR: Strategy {strategy_name}, Risk {risk_category_name}: {str(e)}")
                     self.red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
                     self._write_pyrit_outputs_to_file(
@@ -1212,7 +1282,12 @@ class RedTeam:
             return orchestrator
 
         except Exception as e:
-            log_error(self.logger, "Failed to initialize orchestrator", e, f"{strategy_name}/{risk_category_name}")
+            log_error(
+                self.logger,
+                "Failed to initialize orchestrator",
+                e,
+                f"{strategy_name}/{risk_category_name}",
+            )
             self.logger.debug(
                 f"CRITICAL: Failed to create orchestrator for {strategy_name}/{risk_category_name}: {str(e)}"
             )
@@ -1334,7 +1409,11 @@ class RedTeam:
                         try:
                             return await asyncio.wait_for(
                                 orchestrator.run_attack_async(
-                                    objective=prompt, memory_labels={"risk_strategy_path": output_path, "batch": 1}
+                                    objective=prompt,
+                                    memory_labels={
+                                        "risk_strategy_path": output_path,
+                                        "batch": 1,
+                                    },
                                 ),
                                 timeout=timeout,  # Use provided timeouts
                             )
@@ -1417,7 +1496,12 @@ class RedTeam:
                     # Continue with other batches even if one fails
                     continue
             except Exception as e:
-                log_error(self.logger, "Failed to initialize orchestrator", e, f"{strategy_name}/{risk_category_name}")
+                log_error(
+                    self.logger,
+                    "Failed to initialize orchestrator",
+                    e,
+                    f"{strategy_name}/{risk_category_name}",
+                )
                 self.logger.debug(
                     f"CRITICAL: Failed to create orchestrator for {strategy_name}/{risk_category_name}: {str(e)}"
                 )
@@ -1530,7 +1614,10 @@ class RedTeam:
                             return await asyncio.wait_for(
                                 orchestrator.run_attack_async(
                                     objective=prompt,
-                                    memory_labels={"risk_strategy_path": output_path, "batch": prompt_idx + 1},
+                                    memory_labels={
+                                        "risk_strategy_path": output_path,
+                                        "batch": prompt_idx + 1,
+                                    },
                                 ),
                                 timeout=timeout,  # Use provided timeouts
                             )
@@ -1614,7 +1701,12 @@ class RedTeam:
                     # Continue with other batches even if one fails
                     continue
             except Exception as e:
-                log_error(self.logger, "Failed to initialize orchestrator", e, f"{strategy_name}/{risk_category_name}")
+                log_error(
+                    self.logger,
+                    "Failed to initialize orchestrator",
+                    e,
+                    f"{strategy_name}/{risk_category_name}",
+                )
                 self.logger.debug(
                     f"CRITICAL: Failed to create orchestrator for {strategy_name}/{risk_category_name}: {str(e)}"
                 )
@@ -1624,7 +1716,12 @@ class RedTeam:
         return orchestrator
 
     def _write_pyrit_outputs_to_file(
-        self, *, orchestrator: Orchestrator, strategy_name: str, risk_category: str, batch_idx: Optional[int] = None
+        self,
+        *,
+        orchestrator: Orchestrator,
+        strategy_name: str,
+        risk_category: str,
+        batch_idx: Optional[int] = None,
     ) -> str:
         """Write PyRIT outputs to a file with a name based on orchestrator, strategy, and risk category.
 
@@ -1719,7 +1816,13 @@ class RedTeam:
 
     # Replace with utility function
     def _get_chat_target(
-        self, target: Union[PromptChatTarget, Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration]
+        self,
+        target: Union[
+            PromptChatTarget,
+            Callable,
+            AzureOpenAIModelConfiguration,
+            OpenAIModelConfiguration,
+        ],
     ) -> PromptChatTarget:
         """Convert various target types to a standardized PromptChatTarget object.
 
@@ -1893,7 +1996,7 @@ class RedTeam:
                                             "attack_complexity": complexity_level,
                                             "risk_category": risk_category,
                                             "conversation": messages,
-                                            "risk_assessment": risk_assessment if risk_assessment else None,
+                                            "risk_assessment": (risk_assessment if risk_assessment else None),
                                         }
                                         conversations.append(conversation)
                                 except json.JSONDecodeError as e:
@@ -1933,10 +2036,18 @@ class RedTeam:
             # Create a basic scorecard structure
             scorecard = {
                 "risk_category_summary": [
-                    {"overall_asr": 0.0, "overall_total": len(conversations), "overall_attack_successes": 0}
+                    {
+                        "overall_asr": 0.0,
+                        "overall_total": len(conversations),
+                        "overall_attack_successes": 0,
+                    }
                 ],
                 "attack_technique_summary": [
-                    {"overall_asr": 0.0, "overall_total": len(conversations), "overall_attack_successes": 0}
+                    {
+                        "overall_asr": 0.0,
+                        "overall_total": len(conversations),
+                        "overall_attack_successes": 0,
+                    }
                 ],
                 "joint_risk_attack_summary": [],
                 "detailed_joint_risk_attack_asr": {},
@@ -1950,7 +2061,7 @@ class RedTeam:
                     "custom_attack_seed_prompts": "",
                     "policy_document": "",
                 },
-                "attack_complexity": list(set(complexity_levels)) if complexity_levels else ["baseline", "easy"],
+                "attack_complexity": (list(set(complexity_levels)) if complexity_levels else ["baseline", "easy"]),
                 "techniques_used": {},
             }
 
@@ -1971,7 +2082,10 @@ class RedTeam:
             # Overall metrics across all categories
             try:
                 overall_asr = (
-                    round(list_mean_nan_safe(results_df["attack_success"].tolist()) * 100, 2)
+                    round(
+                        list_mean_nan_safe(results_df["attack_success"].tolist()) * 100,
+                        2,
+                    )
                     if "attack_success" in results_df.columns
                     else 0.0
                 )
@@ -1997,7 +2111,10 @@ class RedTeam:
             for risk, group in risk_category_groups:
                 try:
                     asr = (
-                        round(list_mean_nan_safe(group["attack_success"].tolist()) * 100, 2)
+                        round(
+                            list_mean_nan_safe(group["attack_success"].tolist()) * 100,
+                            2,
+                        )
                         if "attack_success" in group.columns
                         else 0.0
                     )
@@ -2014,7 +2131,11 @@ class RedTeam:
                 )
 
                 risk_category_summary.update(
-                    {f"{risk}_asr": asr, f"{risk}_total": total, f"{risk}_successful_attacks": int(successful_attacks)}
+                    {
+                        f"{risk}_asr": asr,
+                        f"{risk}_total": total,
+                        f"{risk}_successful_attacks": int(successful_attacks),
+                    }
                 )
 
             # Calculate attack technique summaries by complexity level
@@ -2032,7 +2153,10 @@ class RedTeam:
             if not baseline_df.empty:
                 try:
                     baseline_asr = (
-                        round(list_mean_nan_safe(baseline_df["attack_success"].tolist()) * 100, 2)
+                        round(
+                            list_mean_nan_safe(baseline_df["attack_success"].tolist()) * 100,
+                            2,
+                        )
                         if "attack_success" in baseline_df.columns
                         else 0.0
                     )
@@ -2058,7 +2182,10 @@ class RedTeam:
             if not easy_df.empty:
                 try:
                     easy_complexity_asr = (
-                        round(list_mean_nan_safe(easy_df["attack_success"].tolist()) * 100, 2)
+                        round(
+                            list_mean_nan_safe(easy_df["attack_success"].tolist()) * 100,
+                            2,
+                        )
                         if "attack_success" in easy_df.columns
                         else 0.0
                     )
@@ -2084,7 +2211,10 @@ class RedTeam:
             if not moderate_df.empty:
                 try:
                     moderate_complexity_asr = (
-                        round(list_mean_nan_safe(moderate_df["attack_success"].tolist()) * 100, 2)
+                        round(
+                            list_mean_nan_safe(moderate_df["attack_success"].tolist()) * 100,
+                            2,
+                        )
                         if "attack_success" in moderate_df.columns
                         else 0.0
                     )
@@ -2110,7 +2240,10 @@ class RedTeam:
             if not difficult_df.empty:
                 try:
                     difficult_complexity_asr = (
-                        round(list_mean_nan_safe(difficult_df["attack_success"].tolist()) * 100, 2)
+                        round(
+                            list_mean_nan_safe(difficult_df["attack_success"].tolist()) * 100,
+                            2,
+                        )
                         if "attack_success" in difficult_df.columns
                         else 0.0
                     )
@@ -2157,7 +2290,10 @@ class RedTeam:
                 if not baseline_risk_df.empty:
                     try:
                         joint_risk_dict["baseline_asr"] = (
-                            round(list_mean_nan_safe(baseline_risk_df["attack_success"].tolist()) * 100, 2)
+                            round(
+                                list_mean_nan_safe(baseline_risk_df["attack_success"].tolist()) * 100,
+                                2,
+                            )
                             if "attack_success" in baseline_risk_df.columns
                             else 0.0
                         )
@@ -2172,7 +2308,10 @@ class RedTeam:
                 if not easy_risk_df.empty:
                     try:
                         joint_risk_dict["easy_complexity_asr"] = (
-                            round(list_mean_nan_safe(easy_risk_df["attack_success"].tolist()) * 100, 2)
+                            round(
+                                list_mean_nan_safe(easy_risk_df["attack_success"].tolist()) * 100,
+                                2,
+                            )
                             if "attack_success" in easy_risk_df.columns
                             else 0.0
                         )
@@ -2187,7 +2326,10 @@ class RedTeam:
                 if not moderate_risk_df.empty:
                     try:
                         joint_risk_dict["moderate_complexity_asr"] = (
-                            round(list_mean_nan_safe(moderate_risk_df["attack_success"].tolist()) * 100, 2)
+                            round(
+                                list_mean_nan_safe(moderate_risk_df["attack_success"].tolist()) * 100,
+                                2,
+                            )
                             if "attack_success" in moderate_risk_df.columns
                             else 0.0
                         )
@@ -2202,7 +2344,10 @@ class RedTeam:
                 if not difficult_risk_df.empty:
                     try:
                         joint_risk_dict["difficult_complexity_asr"] = (
-                            round(list_mean_nan_safe(difficult_risk_df["attack_success"].tolist()) * 100, 2)
+                            round(
+                                list_mean_nan_safe(difficult_risk_df["attack_success"].tolist()) * 100,
+                                2,
+                            )
                             if "attack_success" in difficult_risk_df.columns
                             else 0.0
                         )
@@ -2239,7 +2384,10 @@ class RedTeam:
                     for converter_name, converter_group in converter_groups:
                         try:
                             asr_value = (
-                                round(list_mean_nan_safe(converter_group["attack_success"].tolist()) * 100, 2)
+                                round(
+                                    list_mean_nan_safe(converter_group["attack_success"].tolist()) * 100,
+                                    2,
+                                )
                                 if "attack_success" in converter_group.columns
                                 else 0.0
                             )
@@ -2308,7 +2456,12 @@ class RedTeam:
         return format_scorecard(redteam_result)
 
     async def _evaluate_conversation(
-        self, conversation: Dict, metric_name: str, strategy_name: str, risk_category: RiskCategory, idx: int
+        self,
+        conversation: Dict,
+        metric_name: str,
+        strategy_name: str,
+        risk_category: RiskCategory,
+        idx: int,
     ) -> None:
         """Evaluate a single conversation using the specified metric and risk category.
 
@@ -2615,7 +2768,11 @@ class RedTeam:
                     timeout=timeout,
                 )
             except PyritException as e:
-                log_error(self.logger, f"Error calling orchestrator for {strategy_name} strategy", e)
+                log_error(
+                    self.logger,
+                    f"Error calling orchestrator for {strategy_name} strategy",
+                    e,
+                )
                 self.logger.debug(f"Orchestrator error for {strategy_name}/{risk_category.value}: {str(e)}")
                 self.task_statuses[task_key] = TASK_STATUS["FAILED"]
                 self.failed_tasks += 1
@@ -2625,7 +2782,9 @@ class RedTeam:
                 return None
 
             data_path = self._write_pyrit_outputs_to_file(
-                orchestrator=orchestrator, strategy_name=strategy_name, risk_category=risk_category.value
+                orchestrator=orchestrator,
+                strategy_name=strategy_name,
+                risk_category=risk_category.value,
             )
             orchestrator.dispose_db_engine()
 
@@ -2645,7 +2804,11 @@ class RedTeam:
                     output_path=None,  # Fix: Do not pass output_path to individual evaluations
                 )
             except Exception as e:
-                log_error(self.logger, f"Error during evaluation for {strategy_name}/{risk_category.value}", e)
+                log_error(
+                    self.logger,
+                    f"Error during evaluation for {strategy_name}/{risk_category.value}",
+                    e,
+                )
                 tqdm.write(f"⚠️ Evaluation error for {strategy_name}/{risk_category.value}: {str(e)}")
                 self.red_team_info[strategy_name][risk_category.value]["status"] = TASK_STATUS["FAILED"]
                 # Continue processing even if evaluation fails
@@ -2678,7 +2841,11 @@ class RedTeam:
             self.task_statuses[task_key] = TASK_STATUS["COMPLETED"]
 
         except Exception as e:
-            log_error(self.logger, f"Unexpected error processing {strategy_name} strategy for {risk_category.value}", e)
+            log_error(
+                self.logger,
+                f"Unexpected error processing {strategy_name} strategy for {risk_category.value}",
+                e,
+            )
             self.logger.debug(f"Critical error in task {strategy_name}/{risk_category.value}: {str(e)}")
             self.task_statuses[task_key] = TASK_STATUS["FAILED"]
             self.failed_tasks += 1
@@ -2690,7 +2857,12 @@ class RedTeam:
 
     async def scan(
         self,
-        target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration, PromptChatTarget],
+        target: Union[
+            Callable,
+            AzureOpenAIModelConfiguration,
+            OpenAIModelConfiguration,
+            PromptChatTarget,
+        ],
         *,
         scan_name: Optional[str] = None,
         attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]] = [],
@@ -2983,7 +3155,9 @@ class RedTeam:
             progress_bar.set_postfix({"current": f"fetching baseline/{risk_category.value}"})
             self.logger.debug(f"Fetching baseline objectives for {risk_category.value}")
             baseline_objectives = await self._get_attack_objectives(
-                risk_category=risk_category, application_scenario=application_scenario, strategy="baseline"
+                risk_category=risk_category,
+                application_scenario=application_scenario,
+                strategy="baseline",
             )
             if "baseline" not in all_objectives:
                 all_objectives["baseline"] = {}
@@ -3009,7 +3183,9 @@ class RedTeam:
                     f"Fetching objectives for {strategy_name} strategy and {risk_category.value} risk category"
                 )
                 objectives = await self._get_attack_objectives(
-                    risk_category=risk_category, application_scenario=application_scenario, strategy=strategy_name
+                    risk_category=risk_category,
+                    application_scenario=application_scenario,
+                    strategy=strategy_name,
                 )
                 all_objectives[strategy_name][risk_category.value] = objectives
 
@@ -3081,7 +3257,11 @@ class RedTeam:
                     self.task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
                     continue
                 except Exception as e:
-                    log_error(self.logger, f"Error processing batch {i//max_parallel_tasks+1}", e)
+                    log_error(
+                        self.logger,
+                        f"Error processing batch {i//max_parallel_tasks+1}",
+                        e,
+                    )
                     self.logger.debug(f"Error in batch {i//max_parallel_tasks+1}: {str(e)}")
                     continue
         else:
@@ -3103,7 +3283,11 @@ class RedTeam:
                     self.task_statuses[task_key] = TASK_STATUS["TIMEOUT"]
                     continue
                 except Exception as e:
-                    log_error(self.logger, f"Error processing task {i+1}/{len(orchestrator_tasks)}", e)
+                    log_error(
+                        self.logger,
+                        f"Error processing task {i+1}/{len(orchestrator_tasks)}",
+                        e,
+                    )
                     self.logger.debug(f"Error in task {i+1}: {str(e)}")
                     continue
 
@@ -3132,7 +3316,10 @@ class RedTeam:
             studio_url=red_team_result["studio_url"],
         )
 
-        output = RedTeamResult(scan_result=red_team_result, attack_details=red_team_result["attack_details"])
+        output = RedTeamResult(
+            scan_result=red_team_result,
+            attack_details=red_team_result["attack_details"],
+        )
 
         if not skip_upload:
             self.logger.info("Logging results to AI Foundry")
