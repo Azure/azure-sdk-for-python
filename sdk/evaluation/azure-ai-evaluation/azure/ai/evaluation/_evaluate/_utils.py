@@ -202,7 +202,6 @@ def _log_metrics_and_instance_results_onedp(
                 outputs={
                     "evaluationResultId": create_evaluation_result_response.id,
                 },
-                properties=properties,
             ),
         )
 
