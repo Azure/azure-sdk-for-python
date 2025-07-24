@@ -147,9 +147,7 @@ class AzureCliCredential:
         """
         claims_value = options.get("claims") if options else None
         if claims_value and claims_value.strip():
-            raise CredentialUnavailableError(
-                f"Failed to get token. Run az login --claims-challenge {claims_value}"
-            )
+            raise CredentialUnavailableError(f"Failed to get token. Run az login --claims-challenge {claims_value}")
         return self._get_token_base(*scopes, options=options)
 
     def _get_token_base(
