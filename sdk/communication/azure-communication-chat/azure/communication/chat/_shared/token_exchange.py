@@ -8,7 +8,7 @@ import json
 from typing import Any, List, Optional
 # pylint: disable=non-abstract-transport-import
 # pylint: disable=no-name-in-module
-from azure.core.pipeline.transport import RequestsTransport
+
 from azure.core.credentials import AccessToken
 from azure.core.pipeline import Pipeline, PipelineResponse
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
@@ -50,6 +50,9 @@ class TokenExchangeClient:
         policies = [auth_policy, entra_token_guard_policy, retry_policy]
         if pipeline_transport:
             return Pipeline(policies=policies, transport=pipeline_transport)
+
+        from azure.core.pipeline.transport import RequestsTransport
+
         return Pipeline(policies=policies, transport=RequestsTransport())
 
     def exchange_entra_token(self) -> AccessToken:
