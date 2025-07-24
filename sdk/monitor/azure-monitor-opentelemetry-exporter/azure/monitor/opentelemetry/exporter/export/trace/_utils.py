@@ -400,3 +400,4 @@ def parent_context_sampling(
                     _get_parent_trace_state(parent_context),
                 )
         return None
+    return None
