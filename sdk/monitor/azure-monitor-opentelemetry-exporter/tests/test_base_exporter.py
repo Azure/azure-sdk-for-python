@@ -17,7 +17,7 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     BaseExporter,
     ExportResult,
 )
-from azure.monitor.opentelemetry.exporter.statsbeat._state import _REQUESTS_MAP
+from azure.monitor.opentelemetry.exporter.statsbeat._state import _REQUESTS_MAP, _STATSBEAT_STATE
 from azure.monitor.opentelemetry.exporter.statsbeat._exporter import _StatsBeatExporter
 from azure.monitor.opentelemetry.exporter._constants import (
     _DEFAULT_AAD_SCOPE,
@@ -27,6 +27,8 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _REQ_RETRY_NAME,
     _REQ_SUCCESS_NAME,
     _REQ_THROTTLE_NAME,
+    RetryCode,
+    _UNKNOWN,
 )
 from azure.monitor.opentelemetry.exporter._generated import AzureMonitorClient
 from azure.monitor.opentelemetry.exporter._generated.models import (
@@ -88,11 +90,14 @@ class TestBaseExporter(unittest.TestCase):
 
     def setUp(self) -> None:
         _REQUESTS_MAP.clear()
-        _STATSBEAT_STATE = {
+        _STATSBEAT_STATE.clear()
+        _STATSBEAT_STATE.update({
             "INITIAL_FAILURE_COUNT": 0,
             "INITIAL_SUCCESS": False,
             "SHUTDOWN": False,
-        }
+            "CUSTOM_EVENTS_FEATURE_SET": False,
+            "LIVE_METRICS_FEATURE_SET": False,
+        })
 
     def tearDown(self):
         clean_folder(self._base.storage._path)
@@ -520,6 +525,7 @@ class TestBaseExporter(unittest.TestCase):
         os.environ,
         {
             "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "false",
         },
     )
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
@@ -543,6 +549,7 @@ class TestBaseExporter(unittest.TestCase):
         os.environ,
         {
             "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "false",
         },
     )
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
@@ -1133,6 +1140,535 @@ class TestBaseExporter(unittest.TestCase):
         )
         self.assertIsNone(result)
         mock_managed_identity.assert_called_once_with(client_id="TEST_CLIENT_ID")
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    def test_constructor_customer_statsbeat_storage_integration(self):
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat.collect_customer_statsbeat") as mock_collect:
+            mock_customer_statsbeat = mock.Mock()
+            
+            def mock_collect_side_effect(exporter):
+                setattr(exporter, '_customer_statsbeat_metrics', mock_customer_statsbeat)
+                if hasattr(exporter, 'storage') and exporter.storage:
+                    setattr(exporter.storage, '_customer_statsbeat_metrics', mock_customer_statsbeat)
+            
+            mock_collect.side_effect = mock_collect_side_effect
+            
+            exporter = BaseExporter(
+                connection_string="InstrumentationKey=363331ca-f431-4119-bdcd-31a75920f958;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/",
+                disable_offline_storage=False,
+            )
+            
+            mock_collect.assert_called_once_with(exporter)
+            
+            self.assertEqual(exporter._customer_statsbeat_metrics, mock_customer_statsbeat)
+            
+            self.assertIsNotNone(exporter.storage)
+            self.assertEqual(exporter.storage._customer_statsbeat_metrics, mock_customer_statsbeat)
+    
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    def test_constructor_customer_statsbeat_no_storage(self):
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat.collect_customer_statsbeat") as mock_collect:
+            mock_customer_statsbeat = mock.Mock()
+            
+            def mock_collect_side_effect(exporter):
+                exporter._customer_statsbeat_metrics = mock_customer_statsbeat
+                if hasattr(exporter, 'storage') and exporter.storage:
+                    exporter.storage._customer_statsbeat_metrics = mock_customer_statsbeat
+            
+            mock_collect.side_effect = mock_collect_side_effect
+            
+            exporter = BaseExporter(
+                connection_string="InstrumentationKey=363331ca-f431-4119-bdcd-31a75920f958;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/",
+                disable_offline_storage=True,
+            )
+            
+            mock_collect.assert_called_once_with(exporter)
+            
+            self.assertEqual(exporter._customer_statsbeat_metrics, mock_customer_statsbeat)
+            
+            self.assertIsNone(exporter.storage)
+
+    def test_handle_transmit_from_storage_dropped_items_tracked(self):
+        exporter = BaseExporter(disable_offline_storage=False)
+        mock_customer_statsbeat = mock.Mock()
+        exporter._customer_statsbeat_metrics = mock_customer_statsbeat
+        
+        exporter.storage = mock.Mock()
+        exporter.storage._customer_statsbeat_metrics = mock_customer_statsbeat
+        
+        test_envelopes = [
+            TelemetryItem(name="test1", time=datetime.now()),
+            TelemetryItem(name="test2", time=datetime.now()),
+        ]
+        
+        exporter.storage.put.return_value = None
+        
+        exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+        
+        exporter.storage.put.assert_called_once()
+        put_call_args = exporter.storage.put.call_args[0][0]
+        
+        self.assertEqual(len(put_call_args), 2)
+        self.assertIsInstance(put_call_args[0], dict)
+        self.assertIsInstance(put_call_args[1], dict)
+
+    def test_handle_transmit_from_storage_success_triggers_transmit(self):
+        exporter = BaseExporter(disable_offline_storage=False)
+        
+        with mock.patch.object(exporter, '_transmit_from_storage') as mock_transmit_from_storage:
+            test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
+            
+            exporter._handle_transmit_from_storage(test_envelopes, ExportResult.SUCCESS)
+            
+            mock_transmit_from_storage.assert_called_once()
+
+    def test_handle_transmit_from_storage_no_storage(self):
+        exporter = BaseExporter(disable_offline_storage=True)
+        
+        self.assertIsNone(exporter.storage)
+        
+        test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
+        
+        exporter._handle_transmit_from_storage(test_envelopes, ExportResult.SUCCESS)
+        exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+
+    def test_transmit_from_storage_no_storage(self):
+        exporter = BaseExporter(disable_offline_storage=True)
+        
+        self.assertIsNone(exporter.storage)
+        
+        exporter._transmit_from_storage()
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    def test_should_collect_customer_statsbeat_enabled(self):
+        exporter = BaseExporter(disable_offline_storage=True)
+        self.assertTrue(exporter._should_collect_customer_statsbeat())
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "false",
+        },
+    )
+    def test_should_collect_customer_statsbeat_disabled(self):
+        exporter = BaseExporter(disable_offline_storage=True)
+        self.assertFalse(exporter._should_collect_customer_statsbeat())
+
+    def test_should_collect_customer_statsbeat_env_not_set(self):
+        with mock.patch.dict(os.environ, {}, clear=True):
+            exporter = BaseExporter(
+                connection_string="InstrumentationKey=363331ca-f431-4119-bdcd-31a75920f958;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/",
+                disable_offline_storage=True
+            )
+            self.assertFalse(exporter._should_collect_customer_statsbeat())
+
+    def test_should_collect_customer_statsbeat_instrumentation_collection(self):
+        with mock.patch.dict(
+            os.environ,
+            {
+                "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+                "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+            },
+        ):
+            exporter = BaseExporter(disable_offline_storage=True, instrumentation_collection=True)
+            self.assertFalse(exporter._should_collect_customer_statsbeat())
+
+    def test_determine_client_retry_code_http_status_codes(self):
+        exporter = BaseExporter(disable_offline_storage=True)
+        
+        status_codes = [401, 403, 408, 429, 500, 502, 503, 504]
+        
+        for status_code in status_codes:
+            error = mock.Mock()
+            error.status_code = status_code
+            
+            retry_code, message = exporter._determine_client_retry_code(error)
+            self.assertEqual(retry_code, status_code)
+            self.assertEqual(message, _UNKNOWN)
+
+    def test_determine_client_retry_code_service_request_error(self):
+        exporter = BaseExporter(disable_offline_storage=True)
+        
+        error = ServiceRequestError("Connection failed")
+        
+        retry_code, message = exporter._determine_client_retry_code(error)
+        self.assertEqual(retry_code, RetryCode.CLIENT_EXCEPTION)
+        self.assertEqual(message, "Connection failed")
+
+    def test_determine_client_retry_code_service_request_error_with_message(self):
+        exporter = BaseExporter(disable_offline_storage=True)
+        
+        error = ServiceRequestError("Network error")
+        error.message = "Specific network error"
+        
+        retry_code, message = exporter._determine_client_retry_code(error)
+        self.assertEqual(retry_code, RetryCode.CLIENT_EXCEPTION)
+        self.assertEqual(message, "Specific network error")
+
+    def test_determine_client_retry_code_timeout_error(self):
+        exporter = BaseExporter(disable_offline_storage=True)
+        
+        timeout_error = ServiceRequestError("Request timed out")
+        
+        retry_code, message = exporter._determine_client_retry_code(timeout_error)
+        self.assertEqual(retry_code, RetryCode.CLIENT_TIMEOUT)
+        self.assertEqual(message, "Request timed out")
+        
+        timeout_error2 = ServiceRequestError("Connection timeout occurred")
+        
+        retry_code2, message2 = exporter._determine_client_retry_code(timeout_error2)
+        self.assertEqual(retry_code2, RetryCode.CLIENT_TIMEOUT)
+        self.assertEqual(message2, "Connection timeout occurred")
+
+    def test_determine_client_retry_code_general_exception(self):
+        exporter = BaseExporter(disable_offline_storage=True)
+        
+        error = Exception("Something went wrong")
+        
+        retry_code, message = exporter._determine_client_retry_code(error)
+        self.assertEqual(retry_code, RetryCode.CLIENT_EXCEPTION)
+        self.assertEqual(message, "Something went wrong")
+
+    def test_track_retry_items_stats_exporter(self):
+        exporter = _StatsBeatExporter(disable_offline_storage=True)
+        
+        mock_customer_statsbeat = mock.Mock()
+        exporter._customer_statsbeat_metrics = mock_customer_statsbeat
+        
+        test_envelopes = [TelemetryItem(name="test1", time=datetime.now())]
+        
+        error = Exception("Some error")
+        
+        exporter._track_retry_items(test_envelopes, error)
+        
+        mock_customer_statsbeat.count_retry_items.assert_not_called()
+
+    def test_track_retry_items_no_customer_statsbeat(self):
+        exporter = BaseExporter(disable_offline_storage=True)
+        
+        self.assertIsNone(exporter._customer_statsbeat_metrics)
+        
+        test_envelopes = [TelemetryItem(name="test1", time=datetime.now())]
+        
+        error = Exception("Some error")
+        
+        exporter._track_retry_items(test_envelopes, error)
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    def test_track_retry_items_with_customer_statsbeat(self):
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat.collect_customer_statsbeat") as mock_collect:
+            mock_customer_statsbeat = mock.Mock()
+            
+            def mock_collect_side_effect(exporter):
+                setattr(exporter, '_customer_statsbeat_metrics', mock_customer_statsbeat)
+            
+            mock_collect.side_effect = mock_collect_side_effect
+            
+            exporter = BaseExporter(disable_offline_storage=True)
+            
+            test_envelopes = [
+                TelemetryItem(name="test1", time=datetime.now()),
+                TelemetryItem(name="test2", time=datetime.now()),
+            ]
+            
+            error = ServiceRequestError("Connection failed")
+            exporter._track_retry_items(test_envelopes, error)
+            
+            self.assertEqual(mock_customer_statsbeat.count_retry_items.call_count, 2)
+            
+            calls = mock_customer_statsbeat.count_retry_items.call_args_list
+            self.assertEqual(calls[0][0][0], 1)
+            self.assertEqual(calls[0][0][2], RetryCode.CLIENT_EXCEPTION)
+            self.assertEqual(calls[1][0][0], 1)
+            self.assertEqual(calls[1][0][2], RetryCode.CLIENT_EXCEPTION)
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    def test_track_retry_items_with_status_code_error(self):
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat.collect_customer_statsbeat") as mock_collect:
+            mock_customer_statsbeat = mock.Mock()
+            
+            def mock_collect_side_effect(exporter):
+                setattr(exporter, '_customer_statsbeat_metrics', mock_customer_statsbeat)
+            
+            mock_collect.side_effect = mock_collect_side_effect
+            
+            exporter = BaseExporter(disable_offline_storage=True)
+            
+            test_envelopes = [TelemetryItem(name="test1", time=datetime.now())]
+            
+            error = HttpResponseError()
+            error.status_code = 429
+            exporter._track_retry_items(test_envelopes, error)
+            
+            mock_customer_statsbeat.count_retry_items.assert_called_once()
+            
+            args, kwargs = mock_customer_statsbeat.count_retry_items.call_args
+            self.assertEqual(args[0], 1)
+            self.assertEqual(args[2], 429)
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    def test_transmission_success_tracks_successful_items(self):
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat.collect_customer_statsbeat") as mock_collect:
+            mock_customer_statsbeat = mock.Mock()
+            
+            def mock_collect_side_effect(exporter):
+                setattr(exporter, '_customer_statsbeat_metrics', mock_customer_statsbeat)
+            
+            mock_collect.side_effect = mock_collect_side_effect
+            
+            exporter = BaseExporter(disable_offline_storage=True)
+            
+            test_envelopes = [
+                TelemetryItem(name="test1", time=datetime.now()),
+                TelemetryItem(name="test2", time=datetime.now()),
+            ]
+            
+            with mock.patch.object(AzureMonitorClient, "track") as mock_track:
+                mock_track.return_value = TrackResponse(
+                    items_received=2,
+                    items_accepted=2,
+                    errors=[],
+                )
+                
+                result = exporter._transmit(test_envelopes)
+                
+                self.assertEqual(result, ExportResult.SUCCESS)
+                
+                self.assertEqual(mock_customer_statsbeat.count_successful_items.call_count, 2)
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    def test_transmission_206_tracks_dropped_items(self):
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat.collect_customer_statsbeat") as mock_collect:
+            mock_customer_statsbeat = mock.Mock()
+            
+            def mock_collect_side_effect(exporter):
+                setattr(exporter, '_customer_statsbeat_metrics', mock_customer_statsbeat)
+            
+            mock_collect.side_effect = mock_collect_side_effect
+            
+            exporter = BaseExporter(disable_offline_storage=True)
+            
+            test_envelopes = [
+                TelemetryItem(name="test1", time=datetime.now()),
+                TelemetryItem(name="test2", time=datetime.now()),
+                TelemetryItem(name="test3", time=datetime.now()),
+            ]
+            
+            with mock.patch.object(AzureMonitorClient, "track") as mock_track:
+                mock_track.return_value = TrackResponse(
+                    items_received=3,
+                    items_accepted=2,
+                    errors=[
+                        TelemetryErrorDetails(
+                            index=0,
+                            status_code=400,
+                            message="Invalid data",
+                        ),
+                    ],
+                )
+                
+                result = exporter._transmit(test_envelopes)
+                
+                self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+                
+                mock_customer_statsbeat.count_dropped_items.assert_called_once()
+                
+                args, kwargs = mock_customer_statsbeat.count_dropped_items.call_args
+                self.assertEqual(args[0], 1) 
+                self.assertEqual(args[2], 400)  # status_code
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    def test_transmission_206_tracks_retry_items(self):
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat.collect_customer_statsbeat") as mock_collect:
+            mock_customer_statsbeat = mock.Mock()
+            
+            def mock_collect_side_effect(exporter):
+                setattr(exporter, '_customer_statsbeat_metrics', mock_customer_statsbeat)
+            
+            mock_collect.side_effect = mock_collect_side_effect
+            
+            exporter = BaseExporter(disable_offline_storage=False)
+            
+            exporter.storage.put = mock.Mock()
+            
+            test_envelopes = [
+                TelemetryItem(name="test1", time=datetime.now()),
+                TelemetryItem(name="test2", time=datetime.now()),
+                TelemetryItem(name="test3", time=datetime.now()),
+            ]
+            
+            with mock.patch.object(AzureMonitorClient, "track") as mock_track:
+                mock_track.return_value = TrackResponse(
+                    items_received=3,
+                    items_accepted=2,
+                    errors=[
+                        TelemetryErrorDetails(
+                            index=2,
+                            status_code=500,
+                            message="Server error",
+                        ),
+                    ],
+                )
+                
+                result = exporter._transmit(test_envelopes)
+                
+                self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+                
+                exporter.storage.put.assert_called_once()
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    def test_transmission_service_request_error_tracks_retry_items(self):
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat.collect_customer_statsbeat") as mock_collect:
+            mock_customer_statsbeat = mock.Mock()
+            
+            def mock_collect_side_effect(exporter):
+                setattr(exporter, '_customer_statsbeat_metrics', mock_customer_statsbeat)
+            
+            mock_collect.side_effect = mock_collect_side_effect
+            
+
+            exporter = BaseExporter(disable_offline_storage=True)
+            
+            test_envelopes = [TelemetryItem(name="test1", time=datetime.now())]
+            
+            with mock.patch.object(AzureMonitorClient, "track", side_effect=ServiceRequestError("Connection failed")):
+                result = exporter._transmit(test_envelopes)
+                
+                self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+                
+                mock_customer_statsbeat.count_retry_items.assert_called_once()
+                
+                args, kwargs = mock_customer_statsbeat.count_retry_items.call_args
+                self.assertEqual(args[0], 1)
+                self.assertEqual(args[2], RetryCode.CLIENT_EXCEPTION)  
+                self.assertEqual(args[3], "Connection failed")  
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    def test_transmission_general_exception_tracks_retry_items(self):
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat.collect_customer_statsbeat") as mock_collect:
+            mock_customer_statsbeat = mock.Mock()
+            
+            def mock_collect_side_effect(exporter):
+                setattr(exporter, '_customer_statsbeat_metrics', mock_customer_statsbeat)
+            
+            mock_collect.side_effect = mock_collect_side_effect
+            
+            exporter = BaseExporter(disable_offline_storage=True)
+            
+            test_envelopes = [TelemetryItem(name="test1", time=datetime.now())]
+            
+            with mock.patch.object(AzureMonitorClient, "track", side_effect=Exception("Unexpected error")):
+                result = exporter._transmit(test_envelopes)
+                
+                self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+                
+                mock_customer_statsbeat.count_retry_items.assert_called_once()
+                
+                args, kwargs = mock_customer_statsbeat.count_retry_items.call_args
+                self.assertEqual(args[0], 1)
+                self.assertEqual(args[2], RetryCode.CLIENT_EXCEPTION)  
+                self.assertEqual(args[3], "Unexpected error")
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "false",
+        },
+    )
+    def test_constructor_customer_statsbeat_disabled(self):
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat.collect_customer_statsbeat") as mock_collect:
+            exporter = BaseExporter(disable_offline_storage=True)
+            
+            mock_collect.assert_not_called()
+            
+            self.assertIsNone(exporter._customer_statsbeat_metrics)
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    def test_constructor_customer_statsbeat_enabled(self):
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat.collect_customer_statsbeat") as mock_collect:
+            exporter = BaseExporter(disable_offline_storage=True)
+            
+            self.assertGreaterEqual(mock_collect.call_count, 1)
+            
+            exporter_calls = [call[0][0] for call in mock_collect.call_args_list]
+            self.assertIn(exporter, exporter_calls)
+            
+            self.assertIsNone(exporter._customer_statsbeat_metrics)
+
+    def test_is_customer_stats_exporter_false(self):
+        exporter = BaseExporter(disable_offline_storage=True)
+        self.assertFalse(exporter._is_customer_stats_exporter())
+
+    def test_customer_statsbeat_metrics_initialization_none(self):
+        exporter = BaseExporter(disable_offline_storage=True)
+        self.assertIsNone(exporter._customer_statsbeat_metrics)
 
 
 def validate_telemetry_item(item1, item2):
