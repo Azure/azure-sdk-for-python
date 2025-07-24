@@ -149,7 +149,7 @@ class ConversationAuthoringDeploymentOperations:  # pylint: disable=name-too-lon
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -217,7 +217,7 @@ class ConversationAuthoringDeploymentOperations:  # pylint: disable=name-too-lon
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -375,7 +375,7 @@ class ConversationAuthoringDeploymentOperations:  # pylint: disable=name-too-lon
                 return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
@@ -420,7 +420,7 @@ class ConversationAuthoringDeploymentOperations:  # pylint: disable=name-too-lon
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -487,7 +487,7 @@ class ConversationAuthoringDeploymentOperations:  # pylint: disable=name-too-lon
                 return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
@@ -553,7 +553,7 @@ class ConversationAuthoringDeploymentOperations:  # pylint: disable=name-too-lon
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -718,7 +718,7 @@ class ConversationAuthoringDeploymentOperations:  # pylint: disable=name-too-lon
                 return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
@@ -784,7 +784,7 @@ class ConversationAuthoringDeploymentOperations:  # pylint: disable=name-too-lon
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -855,7 +855,7 @@ class ConversationAuthoringDeploymentOperations:  # pylint: disable=name-too-lon
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -944,7 +944,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -1100,7 +1100,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
                 return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
@@ -1162,7 +1162,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -1306,7 +1306,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
                 return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
@@ -1369,7 +1369,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -1441,7 +1441,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -1507,7 +1507,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -1642,7 +1642,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
                 return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
@@ -1700,7 +1700,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -1761,7 +1761,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -1905,7 +1905,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -1956,7 +1956,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2014,7 +2014,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
                 return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
@@ -2069,7 +2069,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2133,7 +2133,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2223,7 +2223,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
                 return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
@@ -2283,7 +2283,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2454,7 +2454,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
                 return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
@@ -2512,7 +2512,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2579,7 +2579,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2761,7 +2761,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2832,7 +2832,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2972,7 +2972,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
                 return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
@@ -3034,7 +3034,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3100,7 +3100,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3253,7 +3253,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
             return deserialized
 
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
@@ -3312,7 +3312,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3364,7 +3364,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3443,7 +3443,7 @@ class ConversationAuthoringProjectOperations:  # pylint: disable=too-many-public
             return deserialized
 
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
@@ -3526,7 +3526,7 @@ class ConversationAuthoringExportedModelOperations:  # pylint: disable=name-too-
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3585,7 +3585,7 @@ class ConversationAuthoringExportedModelOperations:  # pylint: disable=name-too-
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3657,7 +3657,7 @@ class ConversationAuthoringExportedModelOperations:  # pylint: disable=name-too-
                 return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
@@ -3723,7 +3723,7 @@ class ConversationAuthoringExportedModelOperations:  # pylint: disable=name-too-
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3888,7 +3888,7 @@ class ConversationAuthoringExportedModelOperations:  # pylint: disable=name-too-
                 return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
@@ -3956,7 +3956,7 @@ class ConversationAuthoringExportedModelOperations:  # pylint: disable=name-too-
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4041,7 +4041,7 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4104,7 +4104,7 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4167,7 +4167,7 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4350,7 +4350,7 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
             return deserialized
 
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
@@ -4397,7 +4397,7 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4464,7 +4464,7 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
                 return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
@@ -4531,7 +4531,7 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4623,7 +4623,9 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
                     params=_params,
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4641,7 +4643,9 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4710,7 +4714,7 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4780,7 +4784,7 @@ class ConversationAuthoringTrainedModelOperations:  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4859,7 +4863,9 @@ class _AuthoringClientOperationsMixin(
                     params=_params,
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4877,7 +4883,9 @@ class _AuthoringClientOperationsMixin(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4950,7 +4958,9 @@ class _AuthoringClientOperationsMixin(
                     params=_params,
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4968,7 +4978,9 @@ class _AuthoringClientOperationsMixin(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5051,7 +5063,9 @@ class _AuthoringClientOperationsMixin(
                     params=_params,
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5069,7 +5083,9 @@ class _AuthoringClientOperationsMixin(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5149,7 +5165,9 @@ class _AuthoringClientOperationsMixin(
                     params=_params,
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5167,7 +5185,9 @@ class _AuthoringClientOperationsMixin(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5248,7 +5268,9 @@ class _AuthoringClientOperationsMixin(
                     params=_params,
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5266,7 +5288,9 @@ class _AuthoringClientOperationsMixin(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5354,7 +5378,9 @@ class _AuthoringClientOperationsMixin(
                     params=_params,
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5372,7 +5398,9 @@ class _AuthoringClientOperationsMixin(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5455,7 +5483,9 @@ class _AuthoringClientOperationsMixin(
                     params=_params,
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5473,7 +5503,9 @@ class _AuthoringClientOperationsMixin(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5549,7 +5581,9 @@ class _AuthoringClientOperationsMixin(
                     params=_params,
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5567,7 +5601,9 @@ class _AuthoringClientOperationsMixin(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5641,7 +5677,9 @@ class _AuthoringClientOperationsMixin(
                     params=_params,
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5659,7 +5697,9 @@ class _AuthoringClientOperationsMixin(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5740,7 +5780,9 @@ class _AuthoringClientOperationsMixin(
                     params=_params,
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5758,7 +5800,9 @@ class _AuthoringClientOperationsMixin(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 

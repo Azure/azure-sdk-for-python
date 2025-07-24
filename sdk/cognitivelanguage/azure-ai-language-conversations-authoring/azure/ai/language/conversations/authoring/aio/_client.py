@@ -129,7 +129,7 @@ class AuthoringClient(_AuthoringClientOperationsMixin):
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
