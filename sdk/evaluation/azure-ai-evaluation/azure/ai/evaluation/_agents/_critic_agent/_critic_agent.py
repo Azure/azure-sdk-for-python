@@ -6,7 +6,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
-from azure.ai.evaluation._common.utils import reformat_conversation_history, reformat_tool_definitions, reformat_agent_response
+from azure.ai.evaluation._common.utils import reformat_conversation_history, reformat_tool_definitions, \
+    reformat_agent_response
 from azure.ai.evaluation._common._experimental import experimental
 
 # Import evaluators
@@ -61,35 +62,84 @@ class CriticAgent(PromptyEvaluatorBase[Dict[str, Union[str, List[str]]]]):
         self.evaluator_instances = self._initialize_evaluators(self._DEFAULT_AGENT_EVALUATORS)
 
     def evaluate(self,
-                 identifier: str,
+                 agent_id: str = None,
+                 thread_id: str = None,
+                 data: Optional[Dict[str, Any]] = None,
                  azure_ai_project: Optional[Dict[str, str]] = None,
-                 evaluation: Optional[Union[str, List[str]]] = None,
+                 evaluators: Optional[Union[str, List[str]]] = None,
                  **kwargs) -> Dict[str, Any]:
         """
         Evaluate an agent using the specified evaluators.
 
-        :param identifier: Either thread_id for conversation-based evaluation or agent_id for agent-based evaluation
-        :type identifier: str
-        :param azure_ai_project: Azure AI project configuration containing subscription_id, resource_group_name, project_name
+        :param agent_id: The ID of the agent to evaluate
+        :type agent_id: str
+        :param thread_id: The ID of the conversation thread to evaluate
+        :type thread_id: str
+        :param data: Data for evaluation (not used in this implementation)
+        :type data: Optional[Dict[str, Any]]
+        :param azure_ai_project: Azure AI project configuration
         :type azure_ai_project: Optional[Dict[str, str]]
-        :param evaluation: Specific evaluators to run. If None, runs default agent evaluators when azure_ai_project is provided
-        :type evaluation: Optional[Union[str, List[str]]]
+        :param evaluators: Specific evaluators to run
+        :type evaluators: Optional[Union[str, List[str]]]
+        :param kwargs: Additional keyword arguments
         :return: Evaluation results
         :rtype: Dict[str, Any]
+
         """
         # Todo: This needs to be fixed
-        if identifier.startswith("thread_") or identifier.startswith("thread-"):
+        if evaluators is None:
+            logger.warning("Evaluators not specified, using default evaluators: %s", self._DEFAULT_AGENT_EVALUATORS)
+            evaluators = self._DEFAULT_AGENT_EVALUATORS
+        if agent_id is None and thread_id is None and data is None:
+            raise EvaluationException(
+                message="Either agent_id or thread_id must be provided for evaluation.",
+                internal_message="Missing agent_id or thread_id in input.",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.MISSING_FIELD,
+                target=ErrorTarget.CRITIC_AGENT,
+            )
+        if agent_id is not None:
+            return self._evaluate_agent(
+                agent_id=agent_id, azure_ai_project=azure_ai_project, evaluators=evaluators, **kwargs
+            )
+        if thread_id is not None:
             # Agent-based evaluation with data fetching
-            return self._evaluate_conversation(identifier, azure_ai_project, evaluation, **kwargs)
-        else:
-            # Thread/conversation-based evaluation
-            return self._evaluate_agent(identifier, azure_ai_project, evaluation, **kwargs)
+            return self._evaluate_conversation(thread_id, azure_ai_project, evaluators, **kwargs)
+        elif data is not None:
+            # Validate the data and run evaluation (to be implemented)
+            pass
 
+    def auto_evaluate(self, agent_id: str = None,
+                      thread_id: str = None,
+                      data: Optional[Dict[str, Any]] = None,
+                      azure_ai_project: Optional[Dict[str, str]] = None,
+                      **kwargs) -> List[Any]:
+        """
+        Auto-evaluate an agent or conversation thread.
+        """
+        if agent_id is None and thread_id is None and data is None:
+            raise EvaluationException(
+                message="Either agent_id or thread_id must be provided for evaluation.",
+                internal_message="Missing agent_id or thread_id in input.",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.MISSING_FIELD,
+                target=ErrorTarget.CRITIC_AGENT,
+            )
+        if agent_id is not None:
+            return self._evaluate_agent(
+                agent_id=agent_id, azure_ai_project=azure_ai_project, evaluators=None, **kwargs
+            )
+        if thread_id is not None:
+            # Agent-based evaluation with data fetching
+            return self._evaluate_conversation(thread_id, azure_ai_project, **kwargs)
+        elif data is not None:
+            # Validate the data and run evaluation (to be implemented)
+            pass
 
     def _evaluate_agent(self,
                         agent_id: str,
                         azure_ai_project: Dict[str, str],
-                        evaluation: Optional[Union[str, List[str]]] = None,
+                        evaluators: Optional[Union[str, List[str]]] = None,
                         **kwargs) -> List[Any]:
         """
         Evaluate an agent by fetching data from Azure AI Project and running specified evaluators.
@@ -98,31 +148,32 @@ class CriticAgent(PromptyEvaluatorBase[Dict[str, Union[str, List[str]]]]):
         :type agent_id: str
         :param azure_ai_project: Azure AI project configuration
         :type azure_ai_project: Dict[str, str]
-        :param evaluation: Specific evaluators to run
-        :type evaluation: Optional[Union[str, List[str]]]
+        :param evaluators: Specific evaluators to run
+        :type evaluators: Optional[Union[str, List[str]]]
         :return: Evaluation results
         :rtype: Dict[str, Any]
         """
         try:
+            # Max number of threads to fetch. Default=5. This need not be a parameter
+            max_threads = kwargs.get("max_threads", 5)
 
             project_client = AIProjectClient(
                 endpoint=azure_ai_project.get("azure_endpoint"),
                 credential=DefaultAzureCredential(),
             )
 
-            thread_ids = self._fetch_agent_threads(project_client, agent_id)
+            thread_ids = self._fetch_agent_threads(project_client, agent_id, max_threads=max_threads)
             results = []
             for thread_id in thread_ids:
                 evaluated_result = self._evaluate_conversation(
                     thread_id=thread_id,
                     azure_ai_project=azure_ai_project,
-                    evaluation=evaluation,
+                    evaluators_to_run=evaluators,
                     agent_id=agent_id,
                     **kwargs
                 )
                 if evaluated_result is not None:
                     results.append(evaluated_result)
-
             return results
 
         except Exception as e:
@@ -138,16 +189,16 @@ class CriticAgent(PromptyEvaluatorBase[Dict[str, Union[str, List[str]]]]):
     def _evaluate_conversation(self,
                                thread_id: str,
                                azure_ai_project: Optional[Dict[str, str]] = None,
-                               evaluation: Optional[Union[str, List[str]]] = None,
-                                agent_id: Optional[str] = None,
+                               evaluators_to_run: Optional[Union[str, List[str]]] = None,
+                               agent_id: Optional[str] = None,
                                **kwargs) -> Dict[str, Any]:
         """
         Evaluate a specific conversation thread.
 
         :param thread_id: The ID of the conversation thread
         :type thread_id: str
-        :param evaluation: Specific evaluators to run
-        :type evaluation: Optional[Union[str, List[str]]]
+        :param evaluators_to_run: Specific evaluators to run
+        :type evaluators_to_run: Optional[Union[str, List[str]]]
         :return: Evaluation results
         :rtype: Dict[str, Any]
         """
@@ -180,24 +231,36 @@ class CriticAgent(PromptyEvaluatorBase[Dict[str, Union[str, List[str]]]]):
         #                                                                                         'text': 'Thanks for asking! I’m just a bunch of code, but I’m here and ready to help you. How are you doing?'}]}],
         #  'tool_definitions': []}
         # Filter conversations if belongs to a specific agent
-        if agent_id and conversation["response"][0]["assistant_id"] != agent_id:
-            logger.info(f"Skipping conversation {thread_id} for agent {agent_id}.")
-            return None
-
-
-        evaluators_to_run = asyncio.run(self._select_evaluators(conversation))
-        evaluator_instances = {name: self.evaluator_instances[name] for name in evaluators_to_run["evaluators"]}
+        try:
+            # This needs converter changes
+            if agent_id and conversation["response"][0]["assistant_id"] != agent_id:
+                logger.info(f"Skipping conversation {thread_id} for agent {agent_id}.")
+                return None
+        except Exception as e:
+            pass
+        result, additional_details = {}, {}
+        if evaluators_to_run is None:
+            # Fix error: asyncio.run cannot be called from a running event loop
+            if not asyncio.get_event_loop().is_running():
+                # If not running in an event loop, run the selection synchronously
+                evaluation_selection_results = asyncio.run(self._select_evaluators(conversation))
+            else:
+                evaluation_selection_results = asyncio.get_event_loop().run_until_complete(
+                    self._select_evaluators(conversation))
+            evaluators_to_run = evaluation_selection_results.get("evaluators", self._DEFAULT_AGENT_EVALUATORS)
+            print(
+                f"Selected evaluators: {evaluators_to_run} for thread {thread_id}. Reason: {evaluation_selection_results.get('justification', 'No justification provided')}")
+            additional_details["justification"] = evaluation_selection_results.get("justification", "")
+            additional_details["distinct_assessments"] = evaluation_selection_results.get("distinct_assessments", "")
+        evaluator_instances = {name: self.evaluator_instances[name] for name in evaluators_to_run}
         conversation_results = self._run_evaluators_on_conversation(
             evaluator_instances, conversation
         )
-        return {
-            "thread_id": thread_id,
-            "results": conversation_results,
-            "justification": evaluators_to_run.get("justification", ""),
-            "distinct_assessments": evaluators_to_run.get("distinct_assessments", {})
-        }
+        result["thread_id"] = thread_id
+        additional_details["results"] = conversation_results
+        return result
 
-    def _fetch_agent_threads(self, project_client: Any, agent_id: str) -> List:
+    def _fetch_agent_threads(self, project_client: Any, agent_id: str, max_threads: int = -1) -> List[str]:
         """
         Fetch conversation data for an agent from Azure AI Project.
         This implements the pattern from the Azure AI samples for agent evaluation.
@@ -217,10 +280,13 @@ class CriticAgent(PromptyEvaluatorBase[Dict[str, Union[str, List[str]]]]):
             thread_ids = []
             # threads = ["thread_oDhHDz6HgjTqSLE8FVJy6Ord"]
             for thread in threads:
-
-                print(thread)
+                # print(thread)
+                if max_threads == 0:
+                    break
                 thread_ids.append(thread.id)
+                max_threads -= 1
                 # Convert to evaluation format
+            print(f"Fetched {len(thread_ids)} threads for agent {agent_id}.")
             return thread_ids
 
         except Exception as e:
@@ -293,6 +359,7 @@ class CriticAgent(PromptyEvaluatorBase[Dict[str, Union[str, List[str]]]]):
                             tool_definitions=tool_definitions
                         )
                     else:
+                        logger.info("No tool calls found, skipping ToolCallAccuracy evaluation.")
                         continue
                 elif name == "TaskAdherence":
                     future = executor.submit(
