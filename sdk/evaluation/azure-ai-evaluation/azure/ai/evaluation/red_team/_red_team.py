@@ -117,6 +117,24 @@ from ._utils.logging_utils import (
     log_strategy_completion,
     log_error,
 )
+from ._utils import (
+    create_orchestrator,
+    normalize_converters,
+    log_converter_info,
+    initialize_output_path,
+    send_prompts_with_retry,
+    sample_objectives,
+    apply_jailbreak_prefixes,
+    extract_prompts_from_objectives,
+    create_objectives_by_category,
+    cache_objectives,
+    create_retry_config,
+    log_retry_attempt,
+    log_retry_error,
+    MAX_RETRY_ATTEMPTS,
+    MIN_RETRY_WAIT_SECONDS,
+    MAX_RETRY_WAIT_SECONDS,
+)
 
 
 @experimental
@@ -142,11 +160,6 @@ class RedTeam:
     :type output_dir: Optional[str]
     """
 
-    # Retry configuration constants
-    MAX_RETRY_ATTEMPTS = 5  # Increased from 3
-    MIN_RETRY_WAIT_SECONDS = 2  # Increased from 1
-    MAX_RETRY_WAIT_SECONDS = 30  # Increased from 10
-
     def _create_retry_config(self):
         """Create a standard retry configuration for connection-related issues.
 
@@ -157,78 +170,21 @@ class RedTeam:
         :return: Dictionary with retry configuration for different exception types
         :rtype: dict
         """
-        return {  # For connection timeouts and network-related errors
-            "network_retry": {
-                "retry": retry_if_exception(
-                    lambda e: isinstance(
-                        e,
-                        (
-                            httpx.ConnectTimeout,
-                            httpx.ReadTimeout,
-                            httpx.ConnectError,
-                            httpx.HTTPError,
-                            httpx.TimeoutException,
-                            httpx.HTTPStatusError,
-                            httpcore.ReadTimeout,
-                            ConnectionError,
-                            ConnectionRefusedError,
-                            ConnectionResetError,
-                            TimeoutError,
-                            OSError,
-                            IOError,
-                            asyncio.TimeoutError,
-                            ServiceRequestError,
-                            ServiceResponseError,
-                        ),
-                    )
-                    or (
-                        isinstance(e, httpx.HTTPStatusError)
-                        and (e.response.status_code == 500 or "model_error" in str(e))
-                    )
-                ),
-                "stop": stop_after_attempt(self.MAX_RETRY_ATTEMPTS),
-                "wait": wait_exponential(
-                    multiplier=1.5, min=self.MIN_RETRY_WAIT_SECONDS, max=self.MAX_RETRY_WAIT_SECONDS
-                ),
-                "retry_error_callback": self._log_retry_error,
-                "before_sleep": self._log_retry_attempt,
-            }
-        }
+        return create_retry_config(
+            max_retry_attempts=5,  # Increased from default 3
+            min_retry_wait_seconds=2,  # Increased from default 2  
+            max_retry_wait_seconds=30,  # Decreased from default 60
+            log_retry_attempt_func=self._log_retry_attempt,
+            log_retry_error_func=self._log_retry_error,
+        )
 
     def _log_retry_attempt(self, retry_state):
-        """Log retry attempts for better visibility.
-
-        Logs information about connection issues that trigger retry attempts, including the
-        exception type, retry count, and wait time before the next attempt.
-
-        :param retry_state: Current state of the retry
-        :type retry_state: tenacity.RetryCallState
-        """
-        exception = retry_state.outcome.exception()
-        if exception:
-            self.logger.warning(
-                f"Connection issue: {exception.__class__.__name__}. "
-                f"Retrying in {retry_state.next_action.sleep} seconds... "
-                f"(Attempt {retry_state.attempt_number}/{self.MAX_RETRY_ATTEMPTS})"
-            )
+        """Log retry attempts for better visibility."""
+        return log_retry_attempt(self.logger, max_retry_attempts=5)(retry_state)
 
     def _log_retry_error(self, retry_state):
-        """Log the final error after all retries have been exhausted.
-
-        Logs detailed information about the error that persisted after all retry attempts have been exhausted.
-        This provides visibility into what ultimately failed and why.
-
-        :param retry_state: Final state of the retry
-        :type retry_state: tenacity.RetryCallState
-        :return: The exception that caused retries to be exhausted
-        :rtype: Exception
-        """
-        exception = retry_state.outcome.exception()
-        self.logger.error(
-            f"All retries failed after {retry_state.attempt_number} attempts. "
-            f"Last error: {exception.__class__.__name__}: {str(exception)}"
-        )
-        return exception
+        """Log the final error after all retries have been exhausted."""
+        return log_retry_error(self.logger)(retry_state)
 
     def __init__(
         self,
@@ -640,245 +596,242 @@ class RedTeam:
 
         # Check if custom attack seed prompts are provided in the generator
         if attack_objective_generator.custom_attack_seed_prompts and attack_objective_generator.validated_prompts:
-            self.logger.info(
-                f"Using custom attack seed prompts from {attack_objective_generator.custom_attack_seed_prompts}"
+            return await self._get_custom_attack_objectives(
+                attack_objective_generator, risk_cat_value, num_objectives, strategy, current_key
+            )
+        else:
+            return await self._get_rai_service_objectives(
+                risk_cat_value, application_scenario, strategy, num_objectives, baseline_objectives_exist, 
+                baseline_key, current_key
             )
 
-            # Get the prompts for this risk category
-            custom_objectives = attack_objective_generator.valid_prompts_by_category.get(risk_cat_value, [])
+    async def _get_custom_attack_objectives(
+        self, 
+        attack_objective_generator,
+        risk_cat_value: str,
+        num_objectives: int,
+        strategy: Optional[str],
+        current_key: tuple
+    ) -> List[str]:
+        """Get attack objectives from custom attack seed prompts.
+        
+        :param attack_objective_generator: The attack objective generator instance
+        :param risk_cat_value: The risk category value
+        :type risk_cat_value: str
+        :param num_objectives: Number of objectives needed
+        :type num_objectives: int
+        :param strategy: Attack strategy name
+        :type strategy: Optional[str]
+        :param current_key: Cache key for storing objectives
+        :type current_key: tuple
+        :return: List of selected prompt content
+        :rtype: List[str]
+        """
+        self.logger.info(
+            f"Using custom attack seed prompts from {attack_objective_generator.custom_attack_seed_prompts}"
+        )
 
-            if not custom_objectives:
-                self.logger.warning(f"No custom objectives found for risk category {risk_cat_value}")
-                return []
+        # Get the prompts for this risk category
+        custom_objectives = attack_objective_generator.valid_prompts_by_category.get(risk_cat_value, [])
 
-            self.logger.info(f"Found {len(custom_objectives)} custom objectives for {risk_cat_value}")
+        if not custom_objectives:
+            self.logger.warning(f"No custom objectives found for risk category {risk_cat_value}")
+            return []
 
-            # Sample if we have more than needed
-            if len(custom_objectives) > num_objectives:
-                selected_cat_objectives = random.sample(custom_objectives, num_objectives)
-                self.logger.info(
-                    f"Sampled {num_objectives} objectives from {len(custom_objectives)} available for {risk_cat_value}"
+        self.logger.info(f"Found {len(custom_objectives)} custom objectives for {risk_cat_value}")
+
+        # Sample if we have more than needed
+        selected_cat_objectives = sample_objectives(custom_objectives, num_objectives, risk_cat_value, self.logger)
+
+        # Handle jailbreak strategy - need to apply jailbreak prefixes to messages
+        if strategy == "jailbreak":
+            await self._apply_jailbreak_prefixes(selected_cat_objectives)
+
+        # Extract content from selected objectives
+        selected_prompts = extract_prompts_from_objectives(selected_cat_objectives)
+
+        # Process the selected objectives for caching
+        objectives_by_category = create_objectives_by_category(selected_cat_objectives, risk_cat_value)
+
+        # Store in cache
+        cache_objectives(self.attack_objectives, current_key, objectives_by_category, strategy, risk_cat_value, selected_prompts, selected_cat_objectives)
+
+        self.logger.info(f"Using {len(selected_prompts)} custom objectives for {risk_cat_value}")
+        return selected_prompts
+
+    async def _apply_jailbreak_prefixes(self, selected_cat_objectives: List[dict]) -> None:
+        """Apply jailbreak prefixes to objectives for jailbreak strategy."""
+        await apply_jailbreak_prefixes(
+            selected_cat_objectives, 
+            self.generated_rai_client,
+            self._create_retry_config(),
+            self.logger
+        )
+
+    async def _get_rai_service_objectives(
+        self,
+        risk_cat_value: str,
+        application_scenario: Optional[str],
+        strategy: Optional[str],
+        num_objectives: int,
+        baseline_objectives_exist: bool,
+        baseline_key: tuple,
+        current_key: tuple
+    ) -> List[str]:
+        """Get attack objectives from RAI service.
+        
+        :param risk_cat_value: Risk category value
+        :type risk_cat_value: str
+        :param application_scenario: Application scenario description
+        :type application_scenario: Optional[str]
+        :param strategy: Attack strategy name
+        :type strategy: Optional[str]
+        :param num_objectives: Number of objectives needed
+        :type num_objectives: int
+        :param baseline_objectives_exist: Whether baseline objectives exist
+        :type baseline_objectives_exist: bool
+        :param baseline_key: Cache key for baseline objectives
+        :type baseline_key: tuple
+        :param current_key: Cache key for current objectives
+        :type current_key: tuple
+        :return: List of selected prompt content
+        :rtype: List[str]
+        """
+        content_harm_risk = None
+        other_risk = ""
+        if risk_cat_value in ["hate_unfairness", "violence", "self_harm", "sexual"]:
+            content_harm_risk = risk_cat_value
+        else:
+            other_risk = risk_cat_value
+            
+        # Use the RAI service to get attack objectives
+        try:
+            self.logger.debug(
+                f"API call: get_attack_objectives({risk_cat_value}, app: {application_scenario}, strategy: {strategy})"
+            )
+            # strategy param specifies whether to get a strategy-specific dataset from the RAI service
+            # right now, only tense requires strategy-specific dataset
+            if strategy and "tense" in strategy:
+                objectives_response = await self.generated_rai_client.get_attack_objectives(
+                    risk_type=content_harm_risk,
+                    risk_category=other_risk,
+                    application_scenario=application_scenario or "",
+                    strategy="tense",
+                    scan_session_id=self.scan_session_id,
                 )
-                # Log ids of selected objectives for traceability
-                selected_ids = [obj.get("id", "unknown-id") for obj in selected_cat_objectives]
-                self.logger.debug(f"Selected objective IDs for {risk_cat_value}: {selected_ids}")
             else:
-                selected_cat_objectives = custom_objectives
-                self.logger.info(f"Using all {len(custom_objectives)} available objectives for {risk_cat_value}")
+                objectives_response = await self.generated_rai_client.get_attack_objectives(
+                    risk_type=content_harm_risk,
+                    risk_category=other_risk,
+                    application_scenario=application_scenario or "",
+                    strategy=None,
+                    scan_session_id=self.scan_session_id,
+                )
+            if isinstance(objectives_response, list):
+                self.logger.debug(f"API returned {len(objectives_response)} objectives")
+            else:
+                self.logger.debug(f"API returned response of type: {type(objectives_response)}")
 
             # Handle jailbreak strategy - need to apply jailbreak prefixes to messages
             if strategy == "jailbreak":
-                self.logger.debug("Applying jailbreak prefixes to custom objectives")
-                try:
-
-                    @retry(**self._create_retry_config()["network_retry"])
-                    async def get_jailbreak_prefixes_with_retry():
-                        try:
-                            return await self.generated_rai_client.get_jailbreak_prefixes()
-                        except (
-                            httpx.ConnectTimeout,
-                            httpx.ReadTimeout,
-                            httpx.ConnectError,
-                            httpx.HTTPError,
-                            ConnectionError,
-                        ) as e:
-                            self.logger.warning(
-                                f"Network error when fetching jailbreak prefixes: {type(e).__name__}: {str(e)}"
-                            )
-                            raise
-
-                    jailbreak_prefixes = await get_jailbreak_prefixes_with_retry()
-                    for objective in selected_cat_objectives:
-                        if "messages" in objective and len(objective["messages"]) > 0:
-                            message = objective["messages"][0]
-                            if isinstance(message, dict) and "content" in message:
-                                message["content"] = f"{random.choice(jailbreak_prefixes)} {message['content']}"
-                except Exception as e:
-                    log_error(self.logger, "Error applying jailbreak prefixes to custom objectives", e)
-                    # Continue with unmodified prompts instead of failing completely
-
-            # Extract content from selected objectives
-            selected_prompts = []
-            for obj in selected_cat_objectives:
-                if "messages" in obj and len(obj["messages"]) > 0:
-                    message = obj["messages"][0]
-                    if isinstance(message, dict) and "content" in message:
-                        selected_prompts.append(message["content"])
-
-            # Process the selected objectives for caching
-            objectives_by_category = {risk_cat_value: []}
-
-            for obj in selected_cat_objectives:
-                obj_id = obj.get("id", f"obj-{uuid.uuid4()}")
-                target_harms = obj.get("metadata", {}).get("target_harms", [])
-                content = ""
-                if "messages" in obj and len(obj["messages"]) > 0:
-                    content = obj["messages"][0].get("content", "")
-
-                if not content:
-                    continue
-
-                obj_data = {"id": obj_id, "content": content}
-                objectives_by_category[risk_cat_value].append(obj_data)
-
-            # Store in cache
-            self.attack_objectives[current_key] = {
-                "objectives_by_category": objectives_by_category,
-                "strategy": strategy,
-                "risk_category": risk_cat_value,
-                "selected_prompts": selected_prompts,
-                "selected_objectives": selected_cat_objectives,
-            }
-
-            self.logger.info(f"Using {len(selected_prompts)} custom objectives for {risk_cat_value}")
-            return selected_prompts
-
-        else:
-            content_harm_risk = None
-            other_risk = ""
-            if risk_cat_value in ["hate_unfairness", "violence", "self_harm", "sexual"]:
-                content_harm_risk = risk_cat_value
-            else:
-                other_risk = risk_cat_value
-            # Use the RAI service to get attack objectives
-            try:
-                self.logger.debug(
-                    f"API call: get_attack_objectives({risk_cat_value}, app: {application_scenario}, strategy: {strategy})"
+                self.logger.debug("Applying jailbreak prefixes to objectives")
+                jailbreak_prefixes = await self.generated_rai_client.get_jailbreak_prefixes(
+                    scan_session_id=self.scan_session_id
                 )
-                # strategy param specifies whether to get a strategy-specific dataset from the RAI service
-                # right now, only tense requires strategy-specific dataset
-                if "tense" in strategy:
-                    objectives_response = await self.generated_rai_client.get_attack_objectives(
-                        risk_type=content_harm_risk,
-                        risk_category=other_risk,
-                        application_scenario=application_scenario or "",
-                        strategy="tense",
-                        scan_session_id=self.scan_session_id,
-                    )
-                else:
-                    objectives_response = await self.generated_rai_client.get_attack_objectives(
-                        risk_type=content_harm_risk,
-                        risk_category=other_risk,
-                        application_scenario=application_scenario or "",
-                        strategy=None,
-                        scan_session_id=self.scan_session_id,
-                    )
-                if isinstance(objectives_response, list):
-                    self.logger.debug(f"API returned {len(objectives_response)} objectives")
-                else:
-                    self.logger.debug(f"API returned response of type: {type(objectives_response)}")
+                for objective in objectives_response:
+                    if "messages" in objective and len(objective["messages"]) > 0:
+                        message = objective["messages"][0]
+                        if isinstance(message, dict) and "content" in message:
+                            message["content"] = f"{random.choice(jailbreak_prefixes)} {message['content']}"
+        except Exception as e:
+            log_error(self.logger, "Error calling get_attack_objectives", e)
+            self.logger.warning("API call failed, returning empty objectives list")
+            return []
 
-                # Handle jailbreak strategy - need to apply jailbreak prefixes to messages
-                if strategy == "jailbreak":
-                    self.logger.debug("Applying jailbreak prefixes to objectives")
-                    jailbreak_prefixes = await self.generated_rai_client.get_jailbreak_prefixes(
-                        scan_session_id=self.scan_session_id
-                    )
-                    for objective in objectives_response:
-                        if "messages" in objective and len(objective["messages"]) > 0:
-                            message = objective["messages"][0]
-                            if isinstance(message, dict) and "content" in message:
-                                message["content"] = f"{random.choice(jailbreak_prefixes)} {message['content']}"
-            except Exception as e:
-                log_error(self.logger, "Error calling get_attack_objectives", e)
-                self.logger.warning("API call failed, returning empty objectives list")
-                return []
+        # Check if the response is valid
+        if not objectives_response or (
+            isinstance(objectives_response, dict) and not objectives_response.get("objectives")
+        ):
+            self.logger.warning("Empty or invalid response, returning empty list")
+            return []
 
-            # Check if the response is valid
-            if not objectives_response or (
-                isinstance(objectives_response, dict) and not objectives_response.get("objectives")
-            ):
-                self.logger.warning("Empty or invalid response, returning empty list")
-                return []
+        # For non-baseline strategies, filter by baseline IDs if they exist
+        if strategy != "baseline" and baseline_objectives_exist:
+            self.logger.debug(
+                f"Found existing baseline objectives for {risk_cat_value}, will filter {strategy} by baseline IDs"
+            )
+            baseline_selected_objectives = self.attack_objectives[baseline_key].get("selected_objectives", [])
+            baseline_objective_ids = []
 
-            # For non-baseline strategies, filter by baseline IDs if they exist
-            if strategy != "baseline" and baseline_objectives_exist:
+            # Extract IDs from baseline objectives
+            for obj in baseline_selected_objectives:
+                if "id" in obj:
+                    baseline_objective_ids.append(obj["id"])
+
+            if baseline_objective_ids:
                 self.logger.debug(
-                    f"Found existing baseline objectives for {risk_cat_value}, will filter {strategy} by baseline IDs"
+                    f"Filtering by {len(baseline_objective_ids)} baseline objective IDs for {strategy}"
                 )
-                baseline_selected_objectives = self.attack_objectives[baseline_key].get("selected_objectives", [])
-                baseline_objective_ids = []
 
-                # Extract IDs from baseline objectives
-                for obj in baseline_selected_objectives:
-                    if "id" in obj:
-                        baseline_objective_ids.append(obj["id"])
+                # Filter objectives by baseline IDs
+                selected_cat_objectives = []
+                for obj in objectives_response:
+                    if obj.get("id") in baseline_objective_ids:
+                        selected_cat_objectives.append(obj)
 
-                if baseline_objective_ids:
-                    self.logger.debug(
-                        f"Filtering by {len(baseline_objective_ids)} baseline objective IDs for {strategy}"
+                self.logger.debug(f"Found {len(selected_cat_objectives)} matching objectives with baseline IDs")
+                # If we couldn't find all the baseline IDs, log a warning
+                if len(selected_cat_objectives) < len(baseline_objective_ids):
+                    self.logger.warning(
+                        f"Only found {len(selected_cat_objectives)} objectives matching baseline IDs, expected {len(baseline_objective_ids)}"
                     )
-
-                    # Filter objectives by baseline IDs
-                    selected_cat_objectives = []
-                    for obj in objectives_response:
-                        if obj.get("id") in baseline_objective_ids:
-                            selected_cat_objectives.append(obj)
-
-                    self.logger.debug(f"Found {len(selected_cat_objectives)} matching objectives with baseline IDs")
-                    # If we couldn't find all the baseline IDs, log a warning
-                    if len(selected_cat_objectives) < len(baseline_objective_ids):
-                        self.logger.warning(
-                            f"Only found {len(selected_cat_objectives)} objectives matching baseline IDs, expected {len(baseline_objective_ids)}"
-                        )
-                else:
-                    self.logger.warning("No baseline objective IDs found, using random selection")
-                    # If we don't have baseline IDs for some reason, default to random selection
-                    if len(objectives_response) > num_objectives:
-                        selected_cat_objectives = random.sample(objectives_response, num_objectives)
-                    else:
-                        selected_cat_objectives = objectives_response
             else:
-                # This is the baseline strategy or we don't have baseline objectives yet
-                self.logger.debug(f"Using random selection for {strategy} strategy")
+                self.logger.warning("No baseline objective IDs found, using random selection")
+                # If we don't have baseline IDs for some reason, default to random selection
                 if len(objectives_response) > num_objectives:
-                    self.logger.debug(
-                        f"Selecting {num_objectives} objectives from {len(objectives_response)} available"
-                    )
                     selected_cat_objectives = random.sample(objectives_response, num_objectives)
                 else:
                     selected_cat_objectives = objectives_response
-
-            if len(selected_cat_objectives) < num_objectives:
-                self.logger.warning(
-                    f"Only found {len(selected_cat_objectives)} objectives for {risk_cat_value}, fewer than requested {num_objectives}"
+        else:
+            # This is the baseline strategy or we don't have baseline objectives yet
+            self.logger.debug(f"Using random selection for {strategy} strategy")
+            if len(objectives_response) > num_objectives:
+                self.logger.debug(
+                    f"Selecting {num_objectives} objectives from {len(objectives_response)} available"
                 )
+                selected_cat_objectives = random.sample(objectives_response, num_objectives)
+            else:
+                selected_cat_objectives = objectives_response
 
-            # Extract content from selected objectives
-            selected_prompts = []
-            for obj in selected_cat_objectives:
-                if "messages" in obj and len(obj["messages"]) > 0:
-                    message = obj["messages"][0]
-                    if isinstance(message, dict) and "content" in message:
-                        selected_prompts.append(message["content"])
+        if len(selected_cat_objectives) < num_objectives:
+            self.logger.warning(
+                f"Only found {len(selected_cat_objectives)} objectives for {risk_cat_value}, fewer than requested {num_objectives}"
+            )
 
-            # Process the response - organize by category and extract content/IDs
-            objectives_by_category = {risk_cat_value: []}
+        # Extract content from selected objectives
+        selected_prompts = extract_prompts_from_objectives(selected_cat_objectives)
 
-            # Process list format and organize by category for caching
-            for obj in selected_cat_objectives:
-                obj_id = obj.get("id", f"obj-{uuid.uuid4()}")
-                target_harms = obj.get("metadata", {}).get("target_harms", [])
-                content = ""
-                if "messages" in obj and len(obj["messages"]) > 0:
-                    content = obj["messages"][0].get("content", "")
+        # Process the response - organize by category and extract content/IDs
+        objectives_by_category = {risk_cat_value: []}
 
-                if not content:
-                    continue
-                if target_harms:
-                    for harm in target_harms:
-                        obj_data = {"id": obj_id, "content": content}
-                        objectives_by_category[risk_cat_value].append(obj_data)
-                        break  # Just use the first harm for categorization
+        # Process list format and organize by category for caching
+        for obj in selected_cat_objectives:
+            obj_id = obj.get("id", f"obj-{uuid.uuid4()}")
+            target_harms = obj.get("metadata", {}).get("target_harms", [])
+            content = ""
+            if "messages" in obj and len(obj["messages"]) > 0:
+                content = obj["messages"][0].get("content", "")
+
+            if not content:
+                continue
+            if target_harms:
+                for harm in target_harms:
+                    obj_data = {"id": obj_id, "content": content}
+                    objectives_by_category[risk_cat_value].append(obj_data)
+                    break  # Just use the first harm for categorization
 
         # Store in cache - now including the full selected objectives with IDs
-        self.attack_objectives[current_key] = {
-            "objectives_by_category": objectives_by_category,
-            "strategy": strategy,
-            "risk_category": risk_cat_value,
-            "selected_prompts": selected_prompts,
-            "selected_objectives": selected_cat_objectives,  # Store full objects with IDs
-        }
+        cache_objectives(self.attack_objectives, current_key, objectives_by_category, strategy, risk_cat_value, selected_prompts, selected_cat_objectives)
         self.logger.info(f"Selected {len(selected_prompts)} objectives for {risk_cat_value}")
 
         return selected_prompts
@@ -966,13 +919,13 @@ class RedTeam:
         risk_category: Optional[RiskCategory] = None,
         timeout: int = 120,
     ) -> Orchestrator:
-        """Send prompts via the PromptSendingOrchestrator with optimized performance.
+        """Send prompts via the PromptSendingOrchestrator.
 
-        Creates and configures a PyRIT PromptSendingOrchestrator to efficiently send prompts to the target
+        Creates and configures a PyRIT PromptSendingOrchestrator to send prompts to the target
         model or function. The orchestrator handles prompt conversion using the specified converters,
         applies appropriate timeout settings, and manages the database engine for storing conversation
         results. This function provides centralized management for prompt-sending operations with proper
-        error handling and performance optimizations.
+        error handling.
 
         :param chat_target: The target to send prompts to
         :type chat_target: PromptChatTarget
@@ -985,7 +938,7 @@ class RedTeam:
         :param risk_category_name: Name of the risk category being evaluated
         :type risk_category_name: str
         :param risk_category: Risk category being evaluated
-        :type risk_category: str
+        :type risk_category: Optional[RiskCategory]
         :param timeout: Timeout in seconds for each prompt
         :type timeout: int
         :return: Configured and initialized orchestrator
@@ -996,217 +949,40 @@ class RedTeam:
 
         log_strategy_start(self.logger, strategy_name, risk_category_name)
 
-        # Create converter list from single converter or list of converters
-        converter_list = (
-            [converter] if converter and isinstance(converter, PromptConverter) else converter if converter else []
-        )
-
-        # Log which converter is being used
-        if converter_list:
-            if isinstance(converter_list, list) and len(converter_list) > 0:
-                converter_names = [c.__class__.__name__ for c in converter_list if c is not None]
-                self.logger.debug(f"Using converters: {', '.join(converter_names)}")
-            elif converter is not None:
-                self.logger.debug(f"Using converter: {converter.__class__.__name__}")
-        else:
-            self.logger.debug("No converters specified")
-
-        # Optimized orchestrator initialization
         try:
-            orchestrator = PromptSendingOrchestrator(objective_target=chat_target, prompt_converters=converter_list)
-
+            orchestrator = create_orchestrator(chat_target, converter)
+            
             if not all_prompts:
                 self.logger.warning(f"No prompts provided to orchestrator for {strategy_name}/{risk_category_name}")
                 self.task_statuses[task_key] = TASK_STATUS["COMPLETED"]
                 return orchestrator
 
-            # Debug log the first few characters of each prompt
+            log_converter_info(self.logger, converter)
             self.logger.debug(f"First prompt (truncated): {all_prompts[0][:50]}...")
 
-            # Use a batched approach for send_prompts_async to prevent overwhelming
-            # the model with too many concurrent requests
-            batch_size = min(len(all_prompts), 3)  # Process 3 prompts at a time max
+            output_path = initialize_output_path(
+                strategy_name, 
+                risk_category_name, 
+                self.scan_output_dir,
+                self.red_team_info,
+                DATA_EXT
+            )
+            
+            await send_prompts_with_retry(
+                orchestrator, 
+                all_prompts, 
+                output_path, 
+                strategy_name, 
+                risk_category_name, 
+                timeout,
+                self._create_retry_config(),
+                self.logger,
+                self.task_statuses,
+                TASK_STATUS,
+            )
 
-            # Initialize output path for memory labelling
-            base_path = str(uuid.uuid4())
-
-            # If scan output directory exists, place the file there
-            if hasattr(self, "scan_output_dir") and self.scan_output_dir:
-                output_path = os.path.join(self.scan_output_dir, f"{base_path}{DATA_EXT}")
-            else:
-                output_path = f"{base_path}{DATA_EXT}"
-
-            self.red_team_info[strategy_name][risk_category_name]["data_file"] = output_path
-
-            # Process prompts concurrently within each batch
-            if len(all_prompts) > batch_size:
-                self.logger.debug(
-                    f"Processing {len(all_prompts)} prompts in batches of {batch_size} for {strategy_name}/{risk_category_name}"
-                )
-                batches = [all_prompts[i : i + batch_size] for i in range(0, len(all_prompts), batch_size)]
-
-                for batch_idx, batch in enumerate(batches):
-                    self.logger.debug(
-                        f"Processing batch {batch_idx+1}/{len(batches)} with {len(batch)} prompts for {strategy_name}/{risk_category_name}"
-                    )
-
-                    batch_start_time = (
-                        datetime.now()
-                    )  # Send prompts in the batch concurrently with a timeout and retry logic
-                    try:  # Create retry decorator for this specific call with enhanced retry strategy
-
-                        @retry(**self._create_retry_config()["network_retry"])
-                        async def send_batch_with_retry():
-                            try:
-                                return await asyncio.wait_for(
-                                    orchestrator.send_prompts_async(
-                                        prompt_list=batch,
-                                        memory_labels={"risk_strategy_path": output_path, "batch": batch_idx + 1},
-                                    ),
-                                    timeout=timeout,  # Use provided timeouts
-                                )
-                            except (
-                                httpx.ConnectTimeout,
-                                httpx.ReadTimeout,
-                                httpx.ConnectError,
-                                httpx.HTTPError,
-                                ConnectionError,
-                                TimeoutError,
-                                asyncio.TimeoutError,
-                                httpcore.ReadTimeout,
-                                httpx.HTTPStatusError,
-                            ) as e:
-                                # Log the error with enhanced information and allow retry logic to handle it
-                                self.logger.warning(
-                                    f"Network error in batch {batch_idx+1} for {strategy_name}/{risk_category_name}: {type(e).__name__}: {str(e)}"
-                                )
-                                # Add a small delay before retry to allow network recovery
-                                await asyncio.sleep(1)
-                                raise
-
-                        # Execute the retry-enabled function
-                        await send_batch_with_retry()
-                        batch_duration = (datetime.now() - batch_start_time).total_seconds()
-                        self.logger.debug(
-                            f"Successfully processed batch {batch_idx+1} for {strategy_name}/{risk_category_name} in {batch_duration:.2f} seconds"
-                        )
-
-                        # Print progress to console
-                        if batch_idx < len(batches) - 1:  # Don't print for the last batch
-                            tqdm.write(
-                                f"Strategy {strategy_name}, Risk {risk_category_name}: Processed batch {batch_idx+1}/{len(batches)}"
-                            )
-
-                    except (asyncio.TimeoutError, tenacity.RetryError):
-                        self.logger.warning(
-                            f"Batch {batch_idx+1} for {strategy_name}/{risk_category_name} timed out after {timeout} seconds, continuing with partial results"
-                        )
-                        self.logger.debug(
-                            f"Timeout: Strategy {strategy_name}, Risk {risk_category_name}, Batch {batch_idx+1} after {timeout} seconds.",
-                            exc_info=True,
-                        )
-                        tqdm.write(
-                            f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category_name}, Batch {batch_idx+1}"
-                        )
-                        # Set task status to TIMEOUT
-                        batch_task_key = f"{strategy_name}_{risk_category_name}_batch_{batch_idx+1}"
-                        self.task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
-                        self.red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
-                        self._write_pyrit_outputs_to_file(
-                            orchestrator=orchestrator,
-                            strategy_name=strategy_name,
-                            risk_category=risk_category_name,
-                            batch_idx=batch_idx + 1,
-                        )
-                        # Continue with partial results rather than failing completely
-                        continue
-                    except Exception as e:
-                        log_error(
-                            self.logger,
-                            f"Error processing batch {batch_idx+1}",
-                            e,
-                            f"{strategy_name}/{risk_category_name}",
-                        )
-                        self.logger.debug(
-                            f"ERROR: Strategy {strategy_name}, Risk {risk_category_name}, Batch {batch_idx+1}: {str(e)}"
-                        )
-                        self.red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
-                        self._write_pyrit_outputs_to_file(
-                            orchestrator=orchestrator,
-                            strategy_name=strategy_name,
-                            risk_category=risk_category_name,
-                            batch_idx=batch_idx + 1,
-                        )
-                        # Continue with other batches even if one fails
-                        continue
-            else:  # Small number of prompts, process all at once with a timeout and retry logic
-                self.logger.debug(
-                    f"Processing {len(all_prompts)} prompts in a single batch for {strategy_name}/{risk_category_name}"
-                )
-                batch_start_time = datetime.now()
-                try:  # Create retry decorator with enhanced retry strategy
-
-                    @retry(**self._create_retry_config()["network_retry"])
-                    async def send_all_with_retry():
-                        try:
-                            return await asyncio.wait_for(
-                                orchestrator.send_prompts_async(
-                                    prompt_list=all_prompts,
-                                    memory_labels={"risk_strategy_path": output_path, "batch": 1},
-                                ),
-                                timeout=timeout,  # Use provided timeout
-                            )
-                        except (
-                            httpx.ConnectTimeout,
-                            httpx.ReadTimeout,
-                            httpx.ConnectError,
-                            httpx.HTTPError,
-                            ConnectionError,
-                            TimeoutError,
-                            OSError,
-                            asyncio.TimeoutError,
-                            httpcore.ReadTimeout,
-                            httpx.HTTPStatusError,
-                        ) as e:
-                            # Enhanced error logging with type information and context
-                            self.logger.warning(
-                                f"Network error in single batch for {strategy_name}/{risk_category_name}: {type(e).__name__}: {str(e)}"
-                            )
-                            # Add a small delay before retry to allow network recovery
-                            await asyncio.sleep(2)
-                            raise
-
-                    # Execute the retry-enabled function
-                    await send_all_with_retry()
-                    batch_duration = (datetime.now() - batch_start_time).total_seconds()
-                    self.logger.debug(
-                        f"Successfully processed single batch for {strategy_name}/{risk_category_name} in {batch_duration:.2f} seconds"
-                    )
-                except (asyncio.TimeoutError, tenacity.RetryError):
-                    self.logger.warning(
-                        f"Prompt processing for {strategy_name}/{risk_category_name} timed out after {timeout} seconds, continuing with partial results"
-                    )
-                    tqdm.write(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category_name}")
-                    # Set task status to TIMEOUT
-                    single_batch_task_key = f"{strategy_name}_{risk_category_name}_single_batch"
-                    self.task_statuses[single_batch_task_key] = TASK_STATUS["TIMEOUT"]
-                    self.red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
-                    self._write_pyrit_outputs_to_file(
-                        orchestrator=orchestrator,
-                        strategy_name=strategy_name,
-                        risk_category=risk_category_name,
-                        batch_idx=1,
-                    )
-                except Exception as e:
-                    log_error(self.logger, "Error processing prompts", e, f"{strategy_name}/{risk_category_name}")
-                    self.logger.debug(f"ERROR: Strategy {strategy_name}, Risk {risk_category_name}: {str(e)}")
-                    self.red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
-                    self._write_pyrit_outputs_to_file(
-                        orchestrator=orchestrator,
-                        strategy_name=strategy_name,
-                        risk_category=risk_category_name,
-                        batch_idx=1,
-                    )
+            self.task_statuses[task_key] = TASK_STATUS["COMPLETED"]
+            return orchestrator
 
             self.task_statuses[task_key] = TASK_STATUS["COMPLETED"]
             return orchestrator
@@ -1258,36 +1034,20 @@ class RedTeam:
         self.task_statuses[task_key] = TASK_STATUS["RUNNING"]
 
         log_strategy_start(self.logger, strategy_name, risk_category_name)
-        converter_list = []
-        # Create converter list from single converter or list of converters
-        if converter and isinstance(converter, PromptConverter):
-            converter_list = [converter]
-        elif converter and isinstance(converter, list):
-            # Filter out None values from the converter list
-            converter_list = [c for c in converter if c is not None]
-
-        # Log which converter is being used
-        if converter_list:
-            if isinstance(converter_list, list) and len(converter_list) > 0:
-                converter_names = [c.__class__.__name__ for c in converter_list if c is not None]
-                self.logger.debug(f"Using converters: {', '.join(converter_names)}")
-            elif converter is not None:
-                self.logger.debug(f"Using converter: {converter.__class__.__name__}")
-        else:
-            self.logger.debug("No converters specified")
-
-        # Initialize output path for memory labelling
-        base_path = str(uuid.uuid4())
-
-        # If scan output directory exists, place the file there
+        
+        converter_list = normalize_converters(converter)
+        log_converter_info(self.logger, converter)
+        output_path = initialize_output_path(
+            strategy_name, 
+            risk_category_name, 
+            self.scan_output_dir,
+            self.red_team_info,
+            DATA_EXT
+        )
+        
+        # Ensure the directory exists for multi-turn orchestrator
         if hasattr(self, "scan_output_dir") and self.scan_output_dir:
-            # Ensure the directory exists
             os.makedirs(self.scan_output_dir, exist_ok=True)
-            output_path = os.path.join(self.scan_output_dir, f"{base_path}{DATA_EXT}")
-        else:
-            output_path = f"{base_path}{DATA_EXT}"
-
-        self.red_team_info[strategy_name][risk_category_name]["data_file"] = output_path
 
         for prompt_idx, prompt in enumerate(all_prompts):
             prompt_start_time = datetime.now()
@@ -1466,17 +1226,13 @@ class RedTeam:
         self.task_statuses[task_key] = TASK_STATUS["RUNNING"]
 
         log_strategy_start(self.logger, strategy_name, risk_category_name)
-
-        # Initialize output path for memory labelling
-        base_path = str(uuid.uuid4())
-
-        # If scan output directory exists, place the file there
-        if hasattr(self, "scan_output_dir") and self.scan_output_dir:
-            output_path = os.path.join(self.scan_output_dir, f"{base_path}{DATA_EXT}")
-        else:
-            output_path = f"{base_path}{DATA_EXT}"
-
-        self.red_team_info[strategy_name][risk_category_name]["data_file"] = output_path
+        output_path = initialize_output_path(
+            strategy_name, 
+            risk_category_name, 
+            self.scan_output_dir,
+            self.red_team_info,
+            DATA_EXT
+        )
 
         for prompt_idx, prompt in enumerate(all_prompts):
             prompt_start_time = datetime.now()
