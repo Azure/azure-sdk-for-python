@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0b13 (Unreleased)
+
+### Breaking changes
+
+* Updated evaluator ids for AOAI graders.
+
 ## 1.0.0b12 (2025-06-23)
 
 ### Breaking changes

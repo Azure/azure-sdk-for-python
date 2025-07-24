@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -13,7 +14,6 @@ if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
 from ._operations import Operations  # type: ignore
-from ._offerings_operations import OfferingsOperations  # type: ignore
 from ._admin_keys_operations import AdminKeysOperations  # type: ignore
 from ._query_keys_operations import QueryKeysOperations  # type: ignore
 from ._services_operations import ServicesOperations  # type: ignore
@@ -30,7 +30,6 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "Operations",
-    "OfferingsOperations",
     "AdminKeysOperations",
     "QueryKeysOperations",
     "ServicesOperations",
