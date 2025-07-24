@@ -136,6 +136,16 @@ function Install-Standalone-Tool (
 
     $tag = "${Package}_${Version}"
 
+    # Check for pinned version for azsdk package
+    if (!$Version -or $Version -eq "*") {
+        $pinnedVersionFile = Join-Path $PSScriptRoot ".." ".." "mcp" "target_version.txt"
+        if (Test-Path $pinnedVersionFile) {
+            $Version = (Get-Content $pinnedVersionFile -Raw).Trim()
+            $tag = "${Package}_${Version}"
+        }
+    }
+
+    # No pinned version found get latest
     if (!$Version -or $Version -eq "*") {
         Write-Host "Attempting to find latest version for package '$Package'"
         $releasesUrl = "https://api.github.com/repos/$Repository/releases"
