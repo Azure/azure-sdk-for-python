@@ -395,7 +395,7 @@ def main(generate_input, generate_output):
                 _LOGGER.warning(f"Fail to generate changelog for {package_name} in {readme_or_tsp}: {str(e)}")
 
             # Generate ApiView
-            if run_in_pipeline:
+            if data.get("runMode") in ["spec-pull-request"]:
                 apiview_start_time = time.time()
                 try:
                     package_path = Path(sdk_folder, folder_name, package_name)

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.authorization import AuthorizationManagementClient
 
 """
@@ -29,12 +31,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.role_definitions.get_by_id(
-        role_id="roleDefinitionId",
+    response = client.role_definitions.get(
+        scope="scope",
+        role_definition_id="roleDefinitionId",
     )
     print(response)
 
 
-# x-ms-original-file: specification/authorization/resource-manager/Microsoft.Authorization/stable/2022-04-01/examples/GetRoleDefinitionById.json
+# x-ms-original-file: specification/authorization/resource-manager/Microsoft.Authorization/preview/2022-05-01-preview/examples/GetRoleDefinitionById.json
 if __name__ == "__main__":
     main()

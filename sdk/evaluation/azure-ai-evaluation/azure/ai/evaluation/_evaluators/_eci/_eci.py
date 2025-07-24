@@ -59,14 +59,13 @@ class ECIEvaluator(RaiServiceEvaluatorBase):
         self,
         credential,
         azure_ai_project,
-        *,
-        _evaluate_query: bool = False,
+        **kwargs,
     ):
         super().__init__(
             eval_metric=_InternalEvaluationMetrics.ECI,
             azure_ai_project=azure_ai_project,
             credential=credential,
-            _evaluate_query=_evaluate_query,
+            **kwargs,
         )
 
     @overload
