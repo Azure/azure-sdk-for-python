@@ -13,8 +13,8 @@ from azure.core.pipeline import policies
 from .._version import VERSION
 
 
-class CertificateClientConfiguration:  # pylint: disable=too-many-instance-attributes
-    """Configuration for CertificateClient.
+class ConfidentialLedgerCertificateClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+    """Configuration for ConfidentialLedgerCertificateClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -32,7 +32,7 @@ class CertificateClientConfiguration:  # pylint: disable=too-many-instance-attri
 
         self.endpoint = endpoint
         self.api_version = api_version
-        kwargs.setdefault("sdk_moniker", "confidentialledger-certificates/{}".format(VERSION))
+        kwargs.setdefault("sdk_moniker", "confidentialledger-certificate/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 

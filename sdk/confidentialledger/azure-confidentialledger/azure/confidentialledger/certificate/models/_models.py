@@ -19,7 +19,7 @@ class ConfidentialLedgerError(_Model):
     """An error response from Confidential Ledger.
 
     :ivar error: An error response from Confidential Ledger.
-    :vartype error: ~azure.confidentialledger.certificates.models.ConfidentialLedgerErrorBody
+    :vartype error: ~azure.confidentialledger.certificate.models.ConfidentialLedgerErrorBody
     """
 
     error: Optional["_models.ConfidentialLedgerErrorBody"] = rest_field(visibility=["read"])

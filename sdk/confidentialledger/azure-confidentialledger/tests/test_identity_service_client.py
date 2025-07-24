@@ -1,6 +1,6 @@
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
-from azure.confidentialledger import (
+from azure.confidentialledger.certificate import (
     ConfidentialLedgerCertificateClient,
 )
 

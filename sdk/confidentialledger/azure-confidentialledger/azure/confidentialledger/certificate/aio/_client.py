@@ -15,11 +15,11 @@ from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._utils.serialization import Deserializer, Serializer
-from ._configuration import CertificateClientConfiguration
-from ._operations import CertificateClientOperationsMixin
+from ._configuration import ConfidentialLedgerCertificateClientConfiguration
+from ._operations import ConfidentialLedgerCertificateClientOperationsMixin
 
 
-class CertificateClient(CertificateClientOperationsMixin):
+class ConfidentialLedgerCertificateClient(ConfidentialLedgerCertificateClientOperationsMixin):
     """The Confidential Ledger Certificate endpoint is used to retrieve the TLS certificate
     required for connecting to a Confidential Ledger.
 
@@ -35,7 +35,7 @@ class CertificateClient(CertificateClientOperationsMixin):
         self, *, endpoint: str = "https://identity.confidential-ledger.core.azure.com", **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}"
-        self._config = CertificateClientConfiguration(endpoint=endpoint, **kwargs)
+        self._config = ConfidentialLedgerCertificateClientConfiguration(endpoint=endpoint, **kwargs)
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:

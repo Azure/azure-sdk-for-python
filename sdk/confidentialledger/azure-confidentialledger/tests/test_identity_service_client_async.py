@@ -1,7 +1,7 @@
 from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
 
-from azure.confidentialledger.aio import (
+from azure.confidentialledger.certificate.aio import (
     ConfidentialLedgerCertificateClient,
 )
 

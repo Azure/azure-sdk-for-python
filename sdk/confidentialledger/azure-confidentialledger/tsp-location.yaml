@@ -1,4 +1,4 @@
-directory: specification/confidentialledger/data-plane/ConfidentialLedger
+directory: specification/confidentialledger/data-plane/ConfidentialLedgerCertificates
 commit: <replace with your value>
 repo: <replace with your value>
 additionalDirectories: 

@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,7 +8,7 @@
 from collections.abc import MutableMapping
 from typing import Any, Callable, Dict, Optional, TypeVar
 
-from azure.core import AsyncPipelineClient
+from azure.core import PipelineClient
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -21,25 +20,55 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.rest import AsyncHttpResponse, HttpRequest
-from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models
-from ..._operations._operations import build_certificate_get_ledger_identity_request
-from ..._utils.model_base import _deserialize, _failsafe_deserialize
-from ..._utils.utils import ClientMixinABC
-from .._configuration import CertificateClientConfiguration
+from .. import models as _models
+from .._configuration import ConfidentialLedgerCertificateClientConfiguration
+from .._utils.model_base import _deserialize, _failsafe_deserialize
+from .._utils.serialization import Serializer
+from .._utils.utils import ClientMixinABC
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 
 
-class CertificateClientOperationsMixin(
-    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], CertificateClientConfiguration]
+def build_confidential_ledger_certificate_get_ledger_identity_request(  # pylint: disable=name-too-long
+    ledger_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/ledgerIdentity/{ledgerId}"
+    path_format_arguments = {
+        "ledgerId": _SERIALIZER.url("ledger_id", ledger_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+class ConfidentialLedgerCertificateClientOperationsMixin(  # pylint: disable=name-too-long
+    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], ConfidentialLedgerCertificateClientConfiguration]
 ):
 
-    @distributed_trace_async
-    async def get_ledger_identity(self, ledger_id: str, **kwargs: Any) -> _models.LedgerIdentityInformation:
+    @distributed_trace
+    def get_ledger_identity(self, ledger_id: str, **kwargs: Any) -> _models.LedgerIdentityInformation:
         """Gets identity information for a Confidential Ledger instance.
 
         Gets identity information for a Confidential Ledger instance.
@@ -48,7 +77,7 @@ class CertificateClientOperationsMixin(
         :type ledger_id: str
         :return: LedgerIdentityInformation. The LedgerIdentityInformation is compatible with
          MutableMapping
-        :rtype: ~azure.confidentialledger.certificates.models.LedgerIdentityInformation
+        :rtype: ~azure.confidentialledger.certificate.models.LedgerIdentityInformation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -64,7 +93,7 @@ class CertificateClientOperationsMixin(
 
         cls: ClsType[_models.LedgerIdentityInformation] = kwargs.pop("cls", None)
 
-        _request = build_certificate_get_ledger_identity_request(
+        _request = build_confidential_ledger_certificate_get_ledger_identity_request(
             ledger_id=ledger_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -76,7 +105,7 @@ class CertificateClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -85,7 +114,7 @@ class CertificateClientOperationsMixin(
         if response.status_code not in [200]:
             if _stream:
                 try:
-                    await response.read()  # Load the body in memory and close the socket
+                    response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
