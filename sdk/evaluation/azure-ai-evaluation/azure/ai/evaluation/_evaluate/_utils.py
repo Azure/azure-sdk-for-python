@@ -191,6 +191,7 @@ def _log_metrics_and_instance_results_onedp(
         upload_run_response = client.start_evaluation_run(
             evaluation=EvaluationUpload(
                 display_name=evaluation_name,
+                properties=properties,
             )
         )
 
