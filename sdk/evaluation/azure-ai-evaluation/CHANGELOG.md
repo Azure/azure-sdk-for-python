@@ -7,6 +7,8 @@
 
 ### Features Added
 
+- Added support for user-supplied tags in the `evaluate` function. Tags are key-value pairs that can be used for experiment tracking, A/B testing, filtering, and organizing evaluation runs. The function accepts a `tags` parameter (dictionary with up to 50 tags, each key and value must be strings with max 250 characters). Tags are automatically propagated through the evaluation pipeline and logged to both MLflow and OneDP tracking systems. A default tag `mlflow.user=azure-ai-evaluation` is automatically added unless overridden by user-supplied tags.
+
 ### Bugs Fixed
 
 - Fixed red team scan `output_path` issue where individual evaluation results were overwriting each other instead of being preserved as separate files. Individual evaluations now create unique files while the user's `output_path` is reserved for final aggregated results.

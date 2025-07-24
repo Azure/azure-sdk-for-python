@@ -67,6 +67,13 @@ class EvaluationEvaluateSamples(object):
                     },
                 },
             },
+            # Example of using tags for FDP (Fundamental Data Protection) compliance
+            tags={
+                "compliance": "fdp_compliant",
+                "data_classification": "restricted",
+                "governance": "enterprise_policy",
+                "environment": "secure_evaluation"
+            }
         )
 
         # [END evaluate_method]
@@ -111,7 +118,7 @@ class EvaluationEvaluateSamples(object):
         import os
         from azure.identity import DefaultAzureCredential
         from azure.ai.evaluation import ContentSafetyEvaluator
-
+        
         azure_ai_project = os.environ.get(
             "AZURE_AI_PROJECT_URL"
         )  # https://{resource_name}.services.ai.azure.com/api/projects/{project_name}

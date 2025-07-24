@@ -24,7 +24,7 @@ import os
 from dotenv import load_dotenv
 import pandas as pd
 from azure.ai.evaluation import evaluate, AzureOpenAIScoreModelGrader
-from azure.ai.evaluation import AzureOpenAIModelConfiguration
+from azure.ai.evaluation import AzureOpenAIModelConfiguration, AzureAIProject
 
 # Load environment variables
 load_dotenv()
@@ -195,10 +195,24 @@ def demonstrate_score_model_grader():
         # 3. Run evaluation with the score model grader
         print("\n🚀 Running evaluation with score model grader...")
 
+        # Use Azure AI project configuration for portal tracking
+        azure_ai_project = AzureAIProject(
+            subscription_id=os.environ.get("AZURE_SUBSCRIPTION_ID") or "",
+            resource_group_name=os.environ.get("AZURE_RESOURCE_GROUP_NAME") or "",
+            project_name=os.environ.get("AZURE_PROJECT_NAME") or "",
+        )
+
         result = evaluate(
             data=data_file,
             evaluators={"conversation_quality": conversation_quality_grader},
-            azure_ai_project=os.environ.get("AZURE_AI_PROJECT_ENDPOINT"),
+            azure_ai_project=azure_ai_project,
+            tags={
+                "grader_type": "score_model",
+                "model": "gpt-4o-mini",
+                "evaluation_focus": "conversation_quality",
+                "sample_size": "demo",
+                "automation_level": "full"
+            }
         )
 
         # 4. Display results
