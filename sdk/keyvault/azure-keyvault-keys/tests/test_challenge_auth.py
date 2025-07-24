@@ -36,6 +36,7 @@ only_default_version = get_decorator(api_versions=[DEFAULT_VERSION])
 
 TOKEN_TYPES = [AccessToken, AccessTokenInfo]
 
+
 class TestChallengeAuth(KeyVaultTestCase, KeysTestCase):
     @pytest.mark.parametrize("api_version,is_hsm", only_default_version)
     @KeysClientPreparer()
@@ -125,7 +126,6 @@ def test_enforces_tls():
         pipeline.run(HttpRequest("GET", url))
 
 
-
 def test_challenge_cache():
     url_a = get_random_url()
     challenge_a = HttpChallenge(url_a, "Bearer authorization=authority A, resource=resource A")
@@ -148,9 +148,7 @@ def test_challenge_parsing():
     tenant = "tenant"
     authority = f"https://login.authority.net/{tenant}"
     resource = "https://challenge.resource"
-    challenge = HttpChallenge(
-        "https://request.uri", challenge=f"Bearer authorization={authority}, resource={resource}"
-    )
+    challenge = HttpChallenge("https://request.uri", challenge=f"Bearer authorization={authority}, resource={resource}")
 
     assert challenge.get_authorization_server() == authority
     assert challenge.get_resource() == resource
@@ -548,8 +546,8 @@ def test_verify_challenge_resource_matches(verify_challenge_resource, token_type
             mock_response(
                 status_code=401, headers={"WWW-Authenticate": f'Bearer authorization="{url}", resource={resource}'}
             ),
-            mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}})
-        ]
+            mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}}),
+        ],
     )
     transport_2 = validating_transport(
         requests=[Request(), Request(required_headers={"Authorization": f"Bearer {token}"})],
@@ -557,8 +555,8 @@ def test_verify_challenge_resource_matches(verify_challenge_resource, token_type
             mock_response(
                 status_code=401, headers={"WWW-Authenticate": f'Bearer authorization="{url}", resource={resource}'}
             ),
-            mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}})
-        ]
+            mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}}),
+        ],
     )
 
     client = KeyClient(url, credential, transport=transport, verify_challenge_resource=verify_challenge_resource)
@@ -603,8 +601,8 @@ def test_verify_challenge_resource_valid(verify_challenge_resource, token_type):
             mock_response(
                 status_code=401, headers={"WWW-Authenticate": f'Bearer authorization="{url}", resource={resource}'}
             ),
-            mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}})
-        ]
+            mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}}),
+        ],
     )
 
     client = KeyClient(url, credential, transport=transport, verify_challenge_resource=verify_challenge_resource)
