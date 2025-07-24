@@ -340,7 +340,7 @@ def _get_url_for_http_request(attributes: Attributes) -> Optional[str]:
                 )
     return url
 
-def _get_DJB2_sample_score(trace_id_hex: str, sampler_type) -> float:
+def _get_DJB2_sample_score(trace_id_hex: str) -> float:
     # This algorithm uses 32bit integers
     hash_value = Int32(_SAMPLING_HASH)
     for char in trace_id_hex:
@@ -351,9 +351,6 @@ def _get_DJB2_sample_score(trace_id_hex: str, sampler_type) -> float:
     else:
         hash_value = abs(hash_value)
 
-    if sampler_type == "rate_limited":
-        # divide by _INTEGER_MAX for value between 0 and 1, then multiply by 100 for percentage
-        return 100.0 * (float(hash_value) / _INTEGER_MAX)
     # divide by _INTEGER_MAX for value between 0 and 1 for sampling score
     return float(hash_value) / _INTEGER_MAX
 
@@ -376,29 +373,30 @@ def parent_context_sampling(
     parent_span = get_current_span(parent_context)
     parent_span_context = parent_span.get_span_context()
 
-    if parent_span_context.is_valid and not parent_span_context.is_remote:
-        if not parent_span.is_recording():
-            # Parent was dropped, drop this child too
-            new_attributes = {} if attributes is None else dict(attributes)
-            new_attributes[_SAMPLE_RATE_KEY] = 0.0
+    if parent_context is not None:
+        if parent_span_context.is_valid and not parent_span_context.is_remote:
+            if not parent_span.is_recording():
+                # Parent was dropped, drop this child too
+                new_attributes = {} if attributes is None else dict(attributes)
+                new_attributes[_SAMPLE_RATE_KEY] = 0.0
 
-            return SamplingResult(
-                Decision.DROP,
-                new_attributes,
-                _get_parent_trace_state(parent_context),
-            )
+                return SamplingResult(
+                    Decision.DROP,
+                    new_attributes,
+                    _get_parent_trace_state(parent_context),
+                )
 
-        parent_attributes = getattr(parent_span, 'attributes', {})
-        parent_sample_rate = parent_attributes.get(_SAMPLE_RATE_KEY)
+            parent_attributes = getattr(parent_span, 'attributes', {})
+            parent_sample_rate = parent_attributes.get(_SAMPLE_RATE_KEY)
 
-        if parent_sample_rate is not None:
-            # Honor parent's sampling rate
-            new_attributes = {} if attributes is None else dict(attributes)
-            new_attributes[_SAMPLE_RATE_KEY] = parent_sample_rate
+            if parent_sample_rate is not None:
+                # Honor parent's sampling rate
+                new_attributes = {} if attributes is None else dict(attributes)
+                new_attributes[_SAMPLE_RATE_KEY] = parent_sample_rate
 
-            return SamplingResult(
-                Decision.RECORD_AND_SAMPLE,
-                new_attributes,
-                _get_parent_trace_state(parent_context),
-            )
-    return None
+                return SamplingResult(
+                    Decision.RECORD_AND_SAMPLE,
+                    new_attributes,
+                    _get_parent_trace_state(parent_context),
+                )
+        return None

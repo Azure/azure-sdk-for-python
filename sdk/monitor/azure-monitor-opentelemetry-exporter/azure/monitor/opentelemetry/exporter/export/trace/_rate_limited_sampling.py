@@ -104,7 +104,7 @@ class RateLimitedSampler(Sampler):
                 return parent_result
 
         sampling_percentage = self._sampling_percentage_generator.get()
-        sampling_score = _get_DJB2_sample_score(format_trace_id(trace_id).lower(), "rate_limited")
+        sampling_score = _get_DJB2_sample_score(format_trace_id(trace_id).lower()) * 100.0
 
         if sampling_score < sampling_percentage:
             decision = Decision.RECORD_AND_SAMPLE
