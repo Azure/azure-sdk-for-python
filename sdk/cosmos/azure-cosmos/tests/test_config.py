@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import collections
+import logging
 import os
 import time
 import unittest
@@ -553,3 +554,16 @@ def create_range(range_min: str, range_max: str, is_min_inclusive: bool = True, 
 
 def create_feed_range_in_dict(feed_range):
     return FeedRangeInternalEpk(feed_range).to_dict()
+
+
+class MockHandler(logging.Handler):
+
+    def __init__(self):
+        super(MockHandler, self).__init__()
+        self.messages = []
+
+    def reset(self):
+        self.messages = []
+
+    def emit(self, record):
+        self.messages.append(record)
