@@ -238,26 +238,25 @@ class CriticAgent(PromptyEvaluatorBase[Dict[str, Union[str, List[str]]]]):
                 return None
         except Exception as e:
             pass
-        result, additional_details = {}, {}
+        result = {}
         if evaluators_to_run is None:
             # Fix error: asyncio.run cannot be called from a running event loop
             if not asyncio.get_event_loop().is_running():
                 # If not running in an event loop, run the selection synchronously
                 evaluation_selection_results = asyncio.run(self._select_evaluators(conversation))
             else:
-                evaluation_selection_results = asyncio.get_event_loop().run_until_complete(
-                    self._select_evaluators(conversation))
+                # If already in an event loop, run the selection asynchronously
+                evaluation_selection_results = asyncio.get_event_loop().run_until_complete(self._select_evaluators(conversation))
             evaluators_to_run = evaluation_selection_results.get("evaluators", self._DEFAULT_AGENT_EVALUATORS)
-            print(
-                f"Selected evaluators: {evaluators_to_run} for thread {thread_id}. Reason: {evaluation_selection_results.get('justification', 'No justification provided')}")
-            additional_details["justification"] = evaluation_selection_results.get("justification", "")
-            additional_details["distinct_assessments"] = evaluation_selection_results.get("distinct_assessments", "")
+            print(f"Selected evaluators: {evaluators_to_run} for thread {thread_id}")
+            result["justification"] = evaluation_selection_results.get("justification", "")
+            result["distinct_assessments"] = evaluation_selection_results.get("distinct_assessments", "")
         evaluator_instances = {name: self.evaluator_instances[name] for name in evaluators_to_run}
         conversation_results = self._run_evaluators_on_conversation(
             evaluator_instances, conversation
         )
         result["thread_id"] = thread_id
-        additional_details["results"] = conversation_results
+        result["results"] = conversation_results
         return result
 
     def _fetch_agent_threads(self, project_client: Any, agent_id: str, max_threads: int = -1) -> List[str]:
