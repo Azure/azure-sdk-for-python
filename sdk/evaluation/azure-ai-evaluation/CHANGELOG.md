@@ -13,9 +13,6 @@
 tolerance for harmful responses).
 - Enhanced threshold reporting in RedTeam results to include default threshold values when custom thresholds aren't specified, providing better transparency about the evaluation criteria used.
 
-### Features Added
-
-- Added support for Azure OpenAI Python grader via `AzureOpenAIPythonGrader` class, which serves as a wrapper around Azure Open AI Python grader configurations. This new grader object can be supplied to the main `evaluate` method as if it were a normal callable evaluator.
 
 ### Bugs Fixed
 
