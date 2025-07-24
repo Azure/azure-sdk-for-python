@@ -24,7 +24,7 @@ class TestSearchManagementPrivateLinkResourcesOperations(AzureMgmtRecordedTestCa
         response = self.client.private_link_resources.list_supported(
             resource_group_name=resource_group.name,
             search_service_name="str",
-            api_version="2025-02-01-preview",
+            api_version="2025-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

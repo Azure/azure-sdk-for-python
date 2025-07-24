@@ -45,6 +45,8 @@ It attempts to use multiple credential types in an order until it finds a workin
 
 # - AZURE_URL: The URL to the ADT in Azure
 url = os.getenv("AZURE_URL")
+if url is None:
+    raise ValueError("AZURE_URL environment variable is not set")
 
 # DefaultAzureCredential expects the following three environment variables:
 # - AZURE_TENANT_ID: The tenant ID in Azure Active Directory
