@@ -25,7 +25,7 @@ USAGE:
 import json
 import os
 from azure.ai.projects import AIProjectClient
-from azure.ai.evaluation import AIAgentConverter, ToolCallAccuracyEvaluator, AzureOpenAIModelConfiguration, RetrievalEvaluator
+from azure.ai.evaluation import AIAgentConverter, ToolCallAccuracyEvaluator, AzureOpenAIModelConfiguration, GroundednessEvaluator
 from azure.ai.agents.models import (
     FileSearchTool,
     FilePurpose,
@@ -145,3 +145,7 @@ with project_client:
     tool_call_accuracy = ToolCallAccuracyEvaluator(model_config=model_config)
     response = tool_call_accuracy(**converted_output)
     print(f"Tool call accuracy Response: {json.dumps(response, indent=4)}")
+
+    groundedness_evaluator = GroundednessEvaluator(model_config=model_config)
+    groundedness_response = groundedness_evaluator(query=converted_output["query"], context=converted_output["response"])
+    print(f"Groundedness Response: {json.dumps(groundedness_response, indent=4)}")
