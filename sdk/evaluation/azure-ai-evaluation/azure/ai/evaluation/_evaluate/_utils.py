@@ -178,7 +178,6 @@ def _log_metrics_and_instance_results_onedp(
 
         properties = {
             EvaluationRunProperties.RUN_TYPE: "eval_run",
-            EvaluationRunProperties.EVALUATION_RUN: "promptflow.BatchRun",
             EvaluationRunProperties.EVALUATION_SDK: f"azure-ai-evaluation:{VERSION}",
             "_azureml.evaluate_artifacts": json.dumps([{"path": artifact_name, "type": "table"}]),
         }
