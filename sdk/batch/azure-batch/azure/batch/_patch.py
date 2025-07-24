@@ -14,15 +14,25 @@ from typing import TYPE_CHECKING, Any, Callable, Dict, Optional, TypeVar, Union
 
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.credentials import AzureNamedKeyCredential, TokenCredential
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ODataV4Format,
+    ResourceExistsError,
+    ResourceModifiedError,
+    ResourceNotFoundError,
+)
 from azure.core.pipeline import PipelineResponse, PipelineRequest
 from azure.core.pipeline.transport import HttpResponse  # pylint: disable=C4756
 from azure.core.rest import HttpRequest
 
 from ._client import BatchClient as GenerateBatchClient
+from . import models as _models
 from ._serialization import (
     Serializer,
     TZ_UTC,
 )
+from ._utils.model_base import _failsafe_deserialize
 
 try:
     from urlparse import urlparse, parse_qs
@@ -119,6 +129,55 @@ class BatchSharedKeyAuthPolicy(SansIOHTTPPolicy):
 
         return base64.b64encode(digest).decode("utf-8")
 
+class BatchErrorFormat(ODataV4Format):
+    def __init__(self, odata_error):
+        try:
+            if odata_error:
+                super().__init__(odata_error)
+            self.message = odata_error["message"]["value"]
+            for item in odata_error["values"]:
+                self.details.append( {"code": item["key"], "message": item["value"] })
+        except KeyError:
+            super().__init__(odata_error)
+class BatchExceptionPolicy(SansIOHTTPPolicy):
+    
+    def __init__(self):
+        super().__init__()
+
+    def send(self, request):
+        """Mutate the request."""
+
+        return self.next.send(request)
+
+    def on_response(self, request: PipelineRequest, response: PipelineResponse):
+        req = request.http_request
+        res = response.http_response
+
+        if not (res.status_code >= 200 and res.status_code < 300):
+            raise_error = HttpResponseError
+            error = _failsafe_deserialize(_models.BatchError, res.json())
+            print("HELLO!!!!!!!!: \n", error)
+
+            # for 412 status code error handling
+            if_match = req.headers.get("If-Match")
+            if_none_match = req.headers.get("If-None-Match")
+
+            if if_match == "*":
+                raise_error = ResourceNotFoundError
+            elif if_match is not None:
+                raise_error = ResourceModifiedError
+            elif if_none_match == "*":
+                raise_error = ResourceNotFoundError
+            elif res.status_code == 401:
+                raise_error = ClientAuthenticationError
+            elif res.status_code == 404:
+                raise_error = ResourceNotFoundError
+            elif res.status_code == 409:
+                raise_error = ResourceExistsError
+            elif res.status_code == 304:
+                raise_error = ResourceModifiedError
+
+            raise raise_error(response=res, model=error, error_format=BatchErrorFormat)
 
 class BatchClient(GenerateBatchClient):
     """BatchClient.
@@ -137,10 +196,13 @@ class BatchClient(GenerateBatchClient):
     """
 
     def __init__(self, endpoint: str, credential: Union[AzureNamedKeyCredential, TokenCredential], **kwargs):
+        per_call_policies = kwargs.pop("per_call_policies", [])
+        per_call_policies.append(BatchExceptionPolicy())
         super().__init__(
             endpoint=endpoint,
             credential=credential,  # type: ignore
             authentication_policy=kwargs.pop("authentication_policy", self._format_shared_key_credential(credential)),
+            per_call_policies=per_call_policies,
             **kwargs
         )
 
