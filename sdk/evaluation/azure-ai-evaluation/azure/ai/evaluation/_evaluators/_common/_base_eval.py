@@ -224,14 +224,39 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                 messages = messages[-2:]
 
             for each_turn in messages:
-                role = each_turn["role"]
-                if role == "user":
-                    queries.append(each_turn)
-                elif role == "assistant":
-                    responses.append(each_turn)
-            # TODO complain if len(queries) != len(responses)?
+                if "role" in each_turn and "content" in each_turn:
+                    content = each_turn["content"]
+                    if not isinstance(content, str):
+                        continue  # Skip non-string content
+                    # Allow empty content for user messages (needed for GroundednessProEvaluator compatibility)
+                    # but skip empty assistant responses as they provide no evaluable content
+                    if each_turn["role"] == "user":
+                        queries.append(each_turn)
+                    elif each_turn["role"] == "assistant":
+                        if content.strip():  # Only skip empty assistant responses
+                            responses.append(each_turn)
+
+            # Handle mismatched queries and responses gracefully
             eval_inputs = []
-            for query, response in zip(queries, responses):
+
+            # If no queries or responses, return empty
+            if not queries or not responses:
+                return []
+
+            # Pair queries with responses - handle different scenarios
+            # Note: This uses simple sequential pairing for edge cases. In mismatched scenarios,
+            # this may not represent perfect conversational flow (e.g., multiple assistant responses
+            # might form a single complete answer), but provides predictable graceful degradation.
+            if len(queries) == len(responses):
+                pairs = list(zip(queries, responses))
+            elif len(queries) < len(responses):
+                # More responses than queries: pair each query with corresponding response by index
+                pairs = list(zip(queries, responses[: len(queries)]))
+            else:
+                # More queries than responses: pair available responses with corresponding queries by index  
+                pairs = list(zip(queries[: len(responses)], responses))
+
+            for query, response in pairs:
                 context = {}
                 if include_context:
                     query_context = query.get("context", None)
@@ -253,6 +278,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                 if include_ground_truth:
                     eval_input["ground_truth"] = response.get("ground_truth", "")
                 eval_inputs.append(eval_input)
+
             return eval_inputs
 
         return converter
@@ -281,33 +307,51 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                 messages = messages[-2:]
 
             for each_turn in messages:
-                role = each_turn["role"]
-                if role == "user":
-                    user_messages.append(each_turn)
-                elif role == "assistant":
-                    assistant_messages.append(each_turn)
-                elif role == "system":
-                    system_messages.append(each_turn)
+                if "role" in each_turn and "content" in each_turn:
+                    if each_turn["role"] == "user":
+                        user_messages.append(each_turn)
+                    elif each_turn["role"] == "assistant":
+                        assistant_messages.append(each_turn)
+                    elif each_turn["role"] == "system":
+                        system_messages.append(each_turn)
 
-            # validation
-            if len(user_messages) != len(assistant_messages):
-                raise EvaluationException(
-                    message="Mismatched number of user and assistant messages.",
-                    internal_message=("Mismatched number of user and assistant messages."),
-                )
-            if len(assistant_messages) > 1:
-                raise EvaluationException(
-                    message="Conversation can have only one assistant message.",
-                    internal_message=("Conversation can have only one assistant message."),
-                )
+            # Handle edge cases gracefully instead of strict validation
             eval_conv_inputs = []
-            for user_msg, assist_msg in zip(user_messages, assistant_messages):
-                conv_messages = []
-                if len(system_messages) == 1:
-                    conv_messages.append(system_messages[0])
-                conv_messages.append(user_msg)
-                conv_messages.append(assist_msg)
-                eval_conv_inputs.append({"conversation": Conversation(messages=conv_messages)})
+
+            # Case 1: No user messages - nothing to evaluate
+            if not user_messages:
+                return []
+
+            # Case 2: No assistant messages - can't evaluate without responses
+            if not assistant_messages:
+                return []
+
+            # Case 3: Handle mismatched user/assistant pairs gracefully
+            # Strategy: Create pairs by taking the next available assistant message for each user message
+            user_idx = 0
+            assistant_idx = 0
+
+            while user_idx < len(user_messages) and assistant_idx < len(assistant_messages):
+                # Create conversation messages for this pair
+                conversation_messages = []
+
+                # Add system messages if present
+                if system_messages:
+                    conversation_messages.extend(system_messages)
+
+                # Add the user and assistant messages
+                conversation_messages.append(user_messages[user_idx])
+                conversation_messages.append(assistant_messages[assistant_idx])
+
+                # Create a conversation object using the Conversation class
+                conversation_obj = Conversation(messages=conversation_messages)
+
+                # Add to result
+                eval_conv_inputs.append({"conversation": conversation_obj})
+
+                user_idx += 1
+                assistant_idx += 1
+
             return eval_conv_inputs
 
         return multi_modal_converter
