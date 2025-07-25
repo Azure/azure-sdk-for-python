@@ -30,7 +30,7 @@ class VoiceLiveClient(_VoiceLiveClientOperationsMixin):  # pylint: disable=clien
     """
 
     def __init__(
-        self, credential: AzureKeyCredential, *, endpoint: str = "wss://api.voicelive.com/v1", **kwargs: Any
+        self, *, credential: AzureKeyCredential, endpoint: str, **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}"
         self._config = VoiceLiveClientConfiguration(credential=credential, endpoint=endpoint, **kwargs)

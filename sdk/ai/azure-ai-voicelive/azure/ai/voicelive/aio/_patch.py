@@ -17,51 +17,37 @@ from urllib.parse import urlparse, urlunparse, urlencode, parse_qs
 
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
-
 from ._client import VoiceLiveClient as VoiceLiveClientGenerated
 from ..models import VoiceLiveClientEvent, VoiceLiveServerEvent, VoiceLiveRequestSession
+from .._patch import VoiceLiveConnectionError, VoiceLiveConnectionClosed
+
 
 __all__: List[str] = [
-    "AsyncVoiceLiveClient",
+    "VoiceLiveClient",
     "WebsocketConnectionOptions",
     "VoiceLiveConnectionError",
     "VoiceLiveConnectionClosed",
-    "AsyncVoiceLiveConnection",
-    "AsyncVoiceLiveSessionResource",
-    "AsyncVoiceLiveResponseResource",
-    "AsyncVoiceLiveInputAudioBufferResource",
-    "AsyncVoiceLiveOutputAudioBufferResource",
-    "AsyncVoiceLiveConversationResource",
-    "AsyncVoiceLiveConversationItemResource",
-    "AsyncVoiceLiveTranscriptionSessionResource",
+    "VoiceLiveConnection",
+    "VoiceLiveSessionResource",
+    "VoiceLiveResponseResource",
+    "VoiceLiveInputAudioBufferResource",
+    "VoiceLiveOutputAudioBufferResource",
+    "VoiceLiveConversationResource",
+    "VoiceLiveConversationItemResource",
+    "VoiceLiveTranscriptionSessionResource",
 ]  # Add all objects you want publicly available to users at this package level
 
 log = logging.getLogger(__name__)
 
 
-class VoiceLiveConnectionError(Exception):
-    """Base exception for VoiceLive WebSocket connection errors."""
-
-    pass
-
-
-class VoiceLiveConnectionClosed(VoiceLiveConnectionError):
-    """Exception raised when a WebSocket connection is closed."""
-
-    def __init__(self, code: int, reason: str) -> None:
-        self.code = code
-        self.reason = reason
-        super().__init__(f"WebSocket connection closed with code {code}: {reason}")
-
-
-class AsyncVoiceLiveSessionResource:
+class VoiceLiveSessionResource:
     """Resource for session management."""
 
-    def __init__(self, connection: "AsyncVoiceLiveConnection") -> None:
+    def __init__(self, connection: "VoiceLiveConnection") -> None:
         """Initialize a session resource.
 
         :param connection: The VoiceLiveConnection to use.
-        :type connection: ~azure.ai.voicelive.aio.AsyncVoiceLiveConnection
+        :type connection: ~azure.ai.voicelive.aio.VoiceLiveConnection
         """
         self._connection = connection
 
@@ -85,14 +71,14 @@ class AsyncVoiceLiveSessionResource:
         await self._connection.send(event)
 
 
-class AsyncVoiceLiveResponseResource:
+class VoiceLiveResponseResource:
     """Resource for response management."""
 
-    def __init__(self, connection: "AsyncVoiceLiveConnection") -> None:
+    def __init__(self, connection: "VoiceLiveConnection") -> None:
         """Initialize a response resource.
 
         :param connection: The VoiceLiveConnection to use.
-        :type connection: ~azure.ai.voicelive.aio.AsyncVoiceLiveConnection
+        :type connection: ~azure.ai.voicelive.aio.VoiceLiveConnection
         """
         self._connection = connection
 
@@ -136,14 +122,14 @@ class AsyncVoiceLiveResponseResource:
         await self._connection.send(event)
 
 
-class AsyncVoiceLiveInputAudioBufferResource:
+class VoiceLiveInputAudioBufferResource:
     """Resource for input audio buffer management."""
 
-    def __init__(self, connection: "AsyncVoiceLiveConnection") -> None:
+    def __init__(self, connection: "VoiceLiveConnection") -> None:
         """Initialize an input audio buffer resource.
 
         :param connection: The VoiceLiveConnection to use.
-        :type connection: ~azure.ai.voicelive.aio.AsyncVoiceLiveConnection
+        :type connection: ~azure.ai.voicelive.aio.VoiceLiveConnection
         """
         self._connection = connection
 
@@ -196,14 +182,14 @@ class AsyncVoiceLiveInputAudioBufferResource:
         await self._connection.send(event)
 
 
-class AsyncVoiceLiveOutputAudioBufferResource:
+class VoiceLiveOutputAudioBufferResource:
     """Resource for output audio buffer management."""
 
-    def __init__(self, connection: "AsyncVoiceLiveConnection") -> None:
+    def __init__(self, connection: "VoiceLiveConnection") -> None:
         """Initialize an output audio buffer resource.
 
         :param connection: The VoiceLiveConnection to use.
-        :type connection: ~azure.ai.voicelive.aio.AsyncVoiceLiveConnection
+        :type connection: ~azure.ai.voicelive.aio.VoiceLiveConnection
         """
         self._connection = connection
 
@@ -223,14 +209,14 @@ class AsyncVoiceLiveOutputAudioBufferResource:
         await self._connection.send(event)
 
 
-class AsyncVoiceLiveConversationItemResource:
+class VoiceLiveConversationItemResource:
     """Resource for conversation item management."""
 
-    def __init__(self, connection: "AsyncVoiceLiveConnection") -> None:
+    def __init__(self, connection: "VoiceLiveConnection") -> None:
         """Initialize a conversation item resource.
 
         :param connection: The VoiceLiveConnection to use.
-        :type connection: ~azure.ai.voicelive.aio.AsyncVoiceLiveConnection
+        :type connection: ~azure.ai.voicelive.aio.VoiceLiveConnection
         """
         self._connection = connection
 
@@ -317,27 +303,27 @@ class AsyncVoiceLiveConversationItemResource:
         await self._connection.send(event)
 
 
-class AsyncVoiceLiveConversationResource:
+class VoiceLiveConversationResource:
     """Resource for conversation management."""
 
-    def __init__(self, connection: "AsyncVoiceLiveConnection") -> None:
+    def __init__(self, connection: "VoiceLiveConnection") -> None:
         """Initialize a conversation resource.
 
         :param connection: The VoiceLiveConnection to use.
-        :type connection: ~azure.ai.voicelive.aio.AsyncVoiceLiveConnection
+        :type connection: ~azure.ai.voicelive.aio.VoiceLiveConnection
         """
         self._connection = connection
-        self.item = AsyncVoiceLiveConversationItemResource(connection)
+        self.item = VoiceLiveConversationItemResource(connection)
 
 
-class AsyncVoiceLiveTranscriptionSessionResource:
+class VoiceLiveTranscriptionSessionResource:
     """Resource for transcription session management."""
 
-    def __init__(self, connection: "AsyncVoiceLiveConnection") -> None:
+    def __init__(self, connection: "VoiceLiveConnection") -> None:
         """Initialize a transcription session resource.
 
         :param connection: The VoiceLiveConnection to use.
-        :type connection: ~azure.ai.voicelive.aio.AsyncVoiceLiveConnection
+        :type connection: ~azure.ai.voicelive.aio.VoiceLiveConnection
         """
         self._connection = connection
 
@@ -356,11 +342,11 @@ class AsyncVoiceLiveTranscriptionSessionResource:
         await self._connection.send(event)
 
 
-class AsyncVoiceLiveConnection:
+class VoiceLiveConnection:
     """Represents an async live WebSocket connection to the Voice Live API."""
 
     def __init__(self, session: aiohttp.ClientSession, connection: aiohttp.ClientWebSocketResponse) -> None:
-        """Initialize an AsyncVoiceLiveConnection.
+        """Initialize an VoiceLiveConnection.
 
         :param session: The aiohttp ClientSession.
         :type session: aiohttp.ClientSession
@@ -371,12 +357,12 @@ class AsyncVoiceLiveConnection:
         self._connection = connection
 
         # Add all resource attributes
-        self.session = AsyncVoiceLiveSessionResource(self)
-        self.response = AsyncVoiceLiveResponseResource(self)
-        self.input_audio_buffer = AsyncVoiceLiveInputAudioBufferResource(self)
-        self.conversation = AsyncVoiceLiveConversationResource(self)
-        self.output_audio_buffer = AsyncVoiceLiveOutputAudioBufferResource(self)
-        self.transcription_session = AsyncVoiceLiveTranscriptionSessionResource(self)
+        self.session = VoiceLiveSessionResource(self)
+        self.response = VoiceLiveResponseResource(self)
+        self.input_audio_buffer = VoiceLiveInputAudioBufferResource(self)
+        self.conversation = VoiceLiveConversationResource(self)
+        self.output_audio_buffer = VoiceLiveOutputAudioBufferResource(self)
+        self.transcription_session = VoiceLiveTranscriptionSessionResource(self)
 
     async def __aiter__(self) -> AsyncIterator[VoiceLiveServerEvent]:
         """Yield typed events until the connection is closed.
@@ -490,18 +476,18 @@ class WebsocketConnectionOptions(TypedDict, total=False):
     autoping: Optional[bool]  # Whether to automatically respond to pings
 
 
-class AsyncVoiceLiveConnectionManager:
+class VoiceLiveConnectionManager:
     """Async manager for VoiceLive WebSocket connections."""
 
     def __init__(
         self,
         *,
-        client: "AsyncVoiceLiveClient",
+        client: "VoiceLiveClient",
         model: str,
         api_version: str = "2025-05-01-preview",
         extra_query: Dict[str, Any],
         extra_headers: Dict[str, Any],
-        websocket_connection_options: Dict[str, Any],
+        connection_options: WebsocketConnectionOptions = {},
     ) -> None:
         self.__client = client
         self.__model = model
@@ -510,13 +496,13 @@ class AsyncVoiceLiveConnectionManager:
         self.__session = None
         self.__extra_query = extra_query
         self.__extra_headers = extra_headers
-        self.__websocket_connection_options = self._map_websocket_options(websocket_connection_options)
+        self.__connection_options = self._map_websocket_options(connection_options)
 
-    def _map_websocket_options(self, options: Dict[str, Any]) -> Dict[str, Any]:
+    def _map_websocket_options(self, options: WebsocketConnectionOptions) -> Dict[str, Any]:
         """Map websockets options to aiohttp options.
 
         :param options: The original websockets options.
-        :type options: Dict[str, Any]
+        :type options: WebsocketConnectionOptions
         :return: Mapped aiohttp options.
         :rtype: Dict[str, Any]
         """
@@ -541,11 +527,11 @@ class AsyncVoiceLiveConnectionManager:
 
         return mapped_options
 
-    async def __aenter__(self) -> AsyncVoiceLiveConnection:
+    async def __aenter__(self) -> VoiceLiveConnection:
         """Create and return an async WebSocket connection.
 
-        :return: A AsyncVoiceLiveConnection instance.
-        :rtype: ~azure.ai.voicelive.aio.AsyncVoiceLiveConnection
+        :return: A VoiceLiveConnection instance.
+        :rtype: ~azure.ai.voicelive.aio.VoiceLiveConnection
         :raises ImportError: If the aiohttp package is not installed.
         :raises VoiceLiveConnectionError: If the connection cannot be established.
         """
@@ -553,8 +539,8 @@ class AsyncVoiceLiveConnectionManager:
             url = self._prepare_url()
             log.debug("Connecting to %s", url)
 
-            self.__websocket_connection_options.setdefault("max_msg_size", 10 * 1024 * 1024)  # Default to 10MB
-            self.__websocket_connection_options.setdefault("heartbeat", 30)  # Default heartbeat interval
+            self.__connection_options.setdefault("max_msg_size", 10 * 1024 * 1024)  # Default to 10MB
+            self.__connection_options.setdefault("heartbeat", 30)  # Default heartbeat interval
 
             # Set proxy
             if self.__client._config.proxy_policy:
@@ -563,13 +549,13 @@ class AsyncVoiceLiveConnectionManager:
             else:
                 log.debug("No proxy configured")    
             
-            if "proxy" in self.__websocket_connection_options:
-                log.debug("Using proxy in websocket options: %s", self.__websocket_connection_options["proxy"])
+            if "proxy" in self.__connection_options:
+                log.debug("Using proxy in websocket options: %s", self.__connection_options["proxy"])
             else:
                 log.debug("No proxy configured in websocket options")
                             
-            if self.__websocket_connection_options:
-                log.debug("Connection options: %s", self.__websocket_connection_options)
+            if self.__connection_options:
+                log.debug("Connection options: %s", self.__connection_options)
 
             # Get auth headers
             auth_headers = await self.__client._get_auth_headers()
@@ -580,10 +566,10 @@ class AsyncVoiceLiveConnectionManager:
 
             try:
                 self.__connection_obj = await self.__session.ws_connect(
-                    str(url), headers=headers, **self.__websocket_connection_options
+                    str(url), headers=headers, **self.__connection_options
                 )
 
-                self.__connection = AsyncVoiceLiveConnection(self.__session, self.__connection_obj)
+                self.__connection = VoiceLiveConnection(self.__session, self.__connection_obj)
                 return self.__connection
             except aiohttp.ClientError as e:
                 await self.__session.close()
@@ -639,17 +625,17 @@ class AsyncVoiceLiveConnectionManager:
             await self.__connection.close()
 
 
-class AsyncVoiceLiveClient(VoiceLiveClientGenerated):
+class VoiceLiveClient(VoiceLiveClientGenerated):
     """Async client for VoiceLive API with WebSocket support."""
 
     def __init__(
         self,
-        credential: Union[AzureKeyCredential, TokenCredential],
         *,
-        endpoint: str = "wss://api.voicelive.com/v1",
+        credential: Union[AzureKeyCredential, TokenCredential],
+        endpoint: str,
         **kwargs: Any,
     ) -> None:
-        """Initialize the AsyncVoiceLiveClient.
+        """Initialize the VoiceLiveClient.
 
         :param credential: The credential to use for authentication.
         :type credential: Union[~azure.core.credentials.AzureKeyCredential, ~azure.core.credentials.TokenCredential]
@@ -658,7 +644,7 @@ class AsyncVoiceLiveClient(VoiceLiveClientGenerated):
         :param kwargs: Additional keyword arguments to pass to the client.
         :type kwargs: Any
         """
-        super().__init__(credential, endpoint=endpoint, **kwargs)
+        super().__init__(credential=credential, endpoint=endpoint, **kwargs)
         self._config.credential = credential
 
         # Create auth policy for token credentials
@@ -685,10 +671,10 @@ class AsyncVoiceLiveClient(VoiceLiveClientGenerated):
         *,
         model: str,
         api_version: str = "2025-05-01-preview",
-        extra_query: Dict[str, Any] = {},
-        extra_headers: Dict[str, Any] = {},
-        websocket_connection_options: Dict[str, Any] = {},
-    ) -> AsyncVoiceLiveConnectionManager:
+        query: Dict[str, Any] = {},
+        headers: Dict[str, Any] = {},
+        connection_options: WebsocketConnectionOptions = {},
+    ) -> VoiceLiveConnectionManager:
         """Connect to the VoiceLive API via WebSocket.
 
         :param model: The model to use for the connection.
@@ -697,18 +683,18 @@ class AsyncVoiceLiveClient(VoiceLiveClientGenerated):
         :type extra_query: Dict[str, Any]
         :param extra_headers: Additional headers to include in the WebSocket handshake.
         :type extra_headers: Dict[str, Any]
-        :param websocket_connection_options: Options for the WebSocket connection.
-        :type websocket_connection_options: Dict[str, Any]
+        :param connection_options: Options for the WebSocket connection.
+        :type connection_options: WebsocketConnectionOptions
         :return: A connection manager that can be used as a context manager.
-        :rtype: ~azure.ai.voicelive.aio.AsyncVoiceLiveConnectionManager
+        :rtype: ~azure.ai.voicelive.aio.VoiceLiveConnectionManager
         """
-        return AsyncVoiceLiveConnectionManager(
+        return VoiceLiveConnectionManager(
             client=self,
             model=model,
             api_version=api_version,
-            extra_query=extra_query,
-            extra_headers=extra_headers,
-            websocket_connection_options=websocket_connection_options,
+            extra_query=query,
+            extra_headers=headers,
+            connection_options=connection_options,
         )
 
 

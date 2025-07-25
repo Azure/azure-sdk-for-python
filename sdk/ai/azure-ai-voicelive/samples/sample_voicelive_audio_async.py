@@ -43,7 +43,7 @@ except ImportError:
 
 from azure.core.credentials import AzureKeyCredential
 from azure.identity.aio import DefaultAzureCredential
-from azure.ai.voicelive.aio import AsyncVoiceLiveClient
+from azure.ai.voicelive.aio import VoiceLiveClient
 from azure.ai.voicelive.models import VoiceLiveServerEventSessionUpdated, VoiceLiveRequestSession
 
 
@@ -223,7 +223,7 @@ async def main():
     
     try:
         # Initialize the client
-        client = AsyncVoiceLiveClient(
+        client = VoiceLiveClient(
             credential=credential,
             endpoint=args.endpoint,
         )
@@ -233,7 +233,7 @@ async def main():
         async with client.connect(
             model=args.model,
             api_version=args.api_version,
-            websocket_connection_options={
+            connection_options={
                 "max_size": 10 * 1024 * 1024,  # 10 MB
                 "ping_interval": 20,  # 20 seconds
                 "ping_timeout": 20,  # 20 seconds

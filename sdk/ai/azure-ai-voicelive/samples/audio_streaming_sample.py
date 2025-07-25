@@ -86,7 +86,7 @@ def main():
     try:
         # Connect to the WebSocket API
         with client.connect(
-            model=model, extra_query={"language": "en-US"}, websocket_connection_options=ws_options
+            model=model, extra_query={"language": "en-US"}, connection_options=ws_options
         ) as connection:
             # Start a session
             connection.send(

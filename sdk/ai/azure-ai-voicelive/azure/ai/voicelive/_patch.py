@@ -462,7 +462,7 @@ class VoiceLiveConnectionManager:
         api_version: str = "2024-10-01",
         extra_query: Dict[str, Any],
         extra_headers: Dict[str, Any],
-        websocket_connection_options: Dict[str, Any],
+        connection_options: WebsocketConnectionOptions = {},
     ) -> None:
         self.__client = client
         self.__model = model
@@ -470,7 +470,7 @@ class VoiceLiveConnectionManager:
         self.__connection = None
         self.__extra_query = extra_query
         self.__extra_headers = extra_headers
-        self.__websocket_connection_options = websocket_connection_options
+        self.__connection_options = connection_options
 
     def __enter__(self) -> VoiceLiveConnection:
         """Create and return a WebSocket connection.
@@ -490,8 +490,8 @@ class VoiceLiveConnectionManager:
             url = self._prepare_url()
             log.debug("Connecting to %s", url)
 
-            if self.__websocket_connection_options:
-                log.debug("Connection options: %s", self.__websocket_connection_options)
+            if self.__connection_options:
+                log.debug("Connection options: %s", self.__connection_options)
 
             # Get auth headers
             # TODO: Support tokens.
@@ -501,7 +501,7 @@ class VoiceLiveConnectionManager:
             connection = connect(
                 url,
                 additional_headers=headers,
-                **self.__websocket_connection_options,
+                **self.__connection_options,
             )
 
             self.__connection = VoiceLiveConnection(connection)
@@ -564,10 +564,10 @@ class VoiceLiveClient(VoiceLiveClientGenerated):
         self,
         *,
         model: str,
-        api_version: str = "2024-10-01",
-        extra_query: Dict[str, Any] = {},
-        extra_headers: Dict[str, Any] = {},
-        websocket_connection_options: Dict[str, Any] = {},
+        api_version: str = "2025-05-01-preview",
+        query: Dict[str, Any] = {},
+        headers: Dict[str, Any] = {},
+        connection_options: WebsocketConnectionOptions  = {},
     ) -> VoiceLiveConnectionManager:
         """Connect to the VoiceLive API via WebSocket.
 
@@ -577,8 +577,8 @@ class VoiceLiveClient(VoiceLiveClientGenerated):
         :type extra_query: Dict[str, Any]
         :param extra_headers: Additional headers to include in the WebSocket handshake.
         :type extra_headers: Dict[str, Any]
-        :param websocket_connection_options: Options for the WebSocket connection.
-        :type websocket_connection_options: Dict[str, Any]
+        :param connection_options: Options for the WebSocket connection.
+        :type connection_options: WebsocketConnectionOptions
         :return: A connection manager that can be used as a context manager.
         :rtype: ~azure.ai.voicelive.VoiceLiveConnectionManager
         """
@@ -586,9 +586,9 @@ class VoiceLiveClient(VoiceLiveClientGenerated):
             client=self,
             model=model,
             api_version=api_version,
-            extra_query=extra_query,
-            extra_headers=extra_headers,
-            websocket_connection_options=websocket_connection_options,
+            extra_query=query,
+            extra_headers=headers,
+            connection_options=connection_options,
         )
 
 

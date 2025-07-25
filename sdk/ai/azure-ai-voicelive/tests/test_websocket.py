@@ -69,7 +69,7 @@ class TestVoiceLiveWebSocket(unittest.TestCase):
             mock_loop.return_value.run_until_complete.return_value = (MagicMock(), mock_connection)
 
             # Use the options
-            with self.client.connect(model="test-model", websocket_connection_options=ws_options) as connection:
+            with self.client.connect(model="test-model", connection_options=ws_options) as connection:
                 # Verify options were passed to connect
                 mock_ws_connect.assert_called_once()
                 connect_args = mock_ws_connect.call_args

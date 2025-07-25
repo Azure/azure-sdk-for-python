@@ -59,7 +59,7 @@ except ImportError:
 # Azure VoiceLive SDK imports
 from azure.core.credentials import AzureKeyCredential
 from azure.identity.aio import DefaultAzureCredential
-from azure.ai.voicelive.aio import AsyncVoiceLiveClient
+from azure.ai.voicelive.aio import VoiceLiveClient
 from azure.ai.voicelive.models import (
     VoiceLiveServerEventSessionUpdated,
     VoiceLiveServerEventInputAudioBufferSpeechStarted,
@@ -320,7 +320,7 @@ class AudioProcessor:
 class BasicVoiceAssistant:
     """Basic voice assistant implementing the VoiceLive SDK patterns."""
     
-    def __init__(self, client: AsyncVoiceLiveClient, model: str, voice: str, instructions: str):
+    def __init__(self, client: VoiceLiveClient, model: str, voice: str, instructions: str):
         self.client = client
         self.model = model
         self.voice = voice
@@ -338,7 +338,7 @@ class BasicVoiceAssistant:
             # Connect to VoiceLive WebSocket API
             async with self.client.connect(
                 model=self.model,
-                websocket_connection_options={
+                connection_options={
                     "max_size": 10 * 1024 * 1024,  # 10 MB
                     "ping_interval": 20,  # 20 seconds
                     "ping_timeout": 20,  # 20 seconds
@@ -567,9 +567,9 @@ async def main():
             logger.info("Using API key credential")
         
         # Initialize VoiceLive client
-        client = AsyncVoiceLiveClient(
+        client = VoiceLiveClient(
             credential=credential,
-            endpoint=args.endpoint
+            endpoint=args.endpoint,
         )
         
         # Create and start voice assistant

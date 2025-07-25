@@ -41,7 +41,7 @@ def main():
         # Connect to the VoiceLive WebSocket API with error handling
         with client.connect(
             model="gpt-4o-realtime-preview",
-            websocket_connection_options={"max_size": 10 * 1024 * 1024},  # 10MB max message size
+            connection_options={"max_size": 10 * 1024 * 1024},  # 10MB max message size
         ) as connection:
             # Demonstrate sequential session updates with different configurations
 

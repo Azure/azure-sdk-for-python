@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=useless-super-delegation
 
-from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Tuple, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import (
@@ -335,70 +335,22 @@ class LogProbProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Point2D(_Model):
-    """A 2D point with x and y coordinates.
-
-    :ivar x: Required.
-    :vartype x: int
-    :ivar y: Required.
-    :vartype y: int
-    """
-
-    x: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
-    y: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        x: int,
-        y: int,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class VideoCrop(_Model):
-    """Defines a video crop rectangle.
-
-    :ivar top_left: Top-left corner of the crop region. Required.
-    :vartype top_left: ~azure.ai.voicelive.models.Point2D
-    :ivar bottom_right: Bottom-right corner of the crop region. Required.
-    :vartype bottom_right: ~azure.ai.voicelive.models.Point2D
+    """
+    Defines a video crop rectangle using top-left and bottom-right coordinates.
     """
 
-    top_left: "_models.Point2D" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Top-left corner of the crop region. Required."""
-    bottom_right: "_models.Point2D" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Bottom-right corner of the crop region. Required."""
+    top_left: Tuple[int, int]
+    """Top-left corner of the crop region. Must be non-negative coordinates."""
 
-    @overload
-    def __init__(
-        self,
-        *,
-        top_left: "_models.Point2D",
-        bottom_right: "_models.Point2D",
-    ) -> None: ...
+    bottom_right: Tuple[int, int]
+    """Bottom-right corner of the crop region. Must be non-negative coordinates."""
 
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
+    @classmethod
+    def check_positive(cls, value: Tuple[int, int]) -> Tuple[int, int]:
+        if value[0] < 0 or value[1] < 0:
+            raise ValueError("Coordinates must be non-negative integers")
+        return value
 
 
 class VideoParams(_Model):
@@ -2568,12 +2520,12 @@ class VoiceLiveServerEventError(VoiceLiveServerEvent, discriminator="error"):
     :ivar type: The event type, must be ``error``. Required.
     :vartype type: str or ~azure.ai.voicelive.models.ERROR
     :ivar error: Details of the error. Required.
-    :vartype error: ~azure.ai.voicelive.models.VoiceLiveServerEventErrorError
+    :vartype error: ~azure.ai.voicelive.models.VoiceLiveServerEventErrorDetails
     """
 
     type: Literal[VoiceLiveServerEventType.ERROR] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The event type, must be ``error``. Required."""
-    error: "_models.VoiceLiveServerEventErrorError" = rest_field(
+    error: "_models.VoiceLiveServerEventErrorDetails" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Details of the error. Required."""
@@ -2582,7 +2534,7 @@ class VoiceLiveServerEventError(VoiceLiveServerEvent, discriminator="error"):
     def __init__(
         self,
         *,
-        error: "_models.VoiceLiveServerEventErrorError",
+        error: "_models.VoiceLiveServerEventErrorDetails",
         event_id: Optional[str] = None,
     ) -> None: ...
 
@@ -2597,8 +2549,8 @@ class VoiceLiveServerEventError(VoiceLiveServerEvent, discriminator="error"):
         super().__init__(*args, type=VoiceLiveServerEventType.ERROR, **kwargs)
 
 
-class VoiceLiveServerEventErrorError(_Model):
-    """VoiceLiveServerEventErrorError.
+class VoiceLiveServerEventErrorDetails(_Model):
+    """VoiceLiveServerEventErrorDetails.
 
     :ivar type: The type of error (e.g., "invalid_request_error", "server_error"). Required.
     :vartype type: str
