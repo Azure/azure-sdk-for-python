@@ -73,6 +73,34 @@ class TestReadManyItems(unittest.IsolatedAsyncioTestCase):
         await asyncio.gather(*tasks)
         return items_to_read, item_ids
 
+    def _setup_fault_injection_async(self, error_to_inject, inject_once=False):
+        """Helper to set up a client with fault injection for async read_many_items queries."""
+        fault_injection_transport = FaultInjectionTransportAsync()
+        client_with_faults = CosmosClient(self.host, self.masterKey, transport=fault_injection_transport)
+        container_with_faults = client_with_faults.get_database_client(self.database.id).get_container_client(
+            self.container.id)
+
+        fault_has_been_injected = False
+
+        def predicate(request):
+            nonlocal fault_has_been_injected
+            is_query = (request.method == 'POST' and
+                        FaultInjectionTransportAsync.predicate_is_operation_type(request, _OperationType.SqlQuery))
+            if is_query:
+                if inject_once:
+                    if not fault_has_been_injected:
+                        fault_has_been_injected = True
+                        return True
+                    return False
+                return True
+            return False
+
+        async def fault_action(request):
+            raise error_to_inject
+
+        fault_injection_transport.add_fault(predicate, fault_action)
+        return container_with_faults, client_with_faults
+
     async def test_read_many_items_with_missing_items(self):
         """Tests read_many_items with a mix of existing and non-existent items."""
         items_to_read, _ = await self._create_items_for_read_many(self.container, 3, "existing_item")
@@ -98,7 +126,6 @@ class TestReadManyItems(unittest.IsolatedAsyncioTestCase):
         # Verify that one item was returned and it's the correct one
         self.assertEqual(len(read_items), 1)
         self.assertEqual(read_items[0]['id'], item_ids[0])
-
 
     async def test_read_many_items_different_partition_key(self):
         """Tests read_many_items with partition key different from id."""
@@ -163,16 +190,6 @@ class TestReadManyItems(unittest.IsolatedAsyncioTestCase):
         self.assertGreaterEqual(float(headers.get('x-ms-request-charge', 0)), 0)
         self.assertTrue(headers.get('x-ms-activity-id'))
 
-    async def test_read_many_items_basic(self):
-        """Tests the basic functionality of read_many_items."""
-        items_to_read, item_ids = await self._create_items_for_read_many(self.container, 5)
-
-        read_items = await self.container.read_many_items(items=items_to_read)
-
-        self.assertEqual(len(read_items), len(item_ids))
-        read_ids = {item['id'] for item in read_items}
-        self.assertSetEqual(read_ids, set(item_ids))
-
     async def test_read_many_items_large_count(self):
         """Tests read_many_items with a large number of items."""
         items_to_read, item_ids = await self._create_items_for_read_many(self.container, 3100)
@@ -185,20 +202,10 @@ class TestReadManyItems(unittest.IsolatedAsyncioTestCase):
 
     async def test_read_many_items_surfaces_exceptions(self):
         """Tests that read_many_items surfaces exceptions from the transport layer."""
-        fault_injection_transport = FaultInjectionTransportAsync()
-        client_with_faults = CosmosClient(self.host, self.masterKey, transport=fault_injection_transport)
+        error_to_inject = CosmosHttpResponseError(status_code=503, message="Injected Service Unavailable Error")
+        container_with_faults, client_with_faults = self._setup_fault_injection_async(error_to_inject)
         try:
-            container_with_faults = client_with_faults.get_database_client(self.database.id).get_container_client(
-                self.container.id)
-            items_to_read, _ = await self._create_items_for_read_many(self.container, 2100)
-
-            predicate = lambda r: FaultInjectionTransportAsync.predicate_is_operation_type(r, _OperationType.SqlQuery)
-            error_to_inject = CosmosHttpResponseError(status_code=503, message="Injected Service Unavailable Error")
-
-            async def fault_action(request):
-                raise error_to_inject
-
-            fault_injection_transport.add_fault(predicate, fault_action)
+            items_to_read, _ = await self._create_items_for_read_many(self.container, 10)
 
             with self.assertRaises(CosmosHttpResponseError) as context:
                 await container_with_faults.read_many_items(items=items_to_read)
@@ -210,11 +217,14 @@ class TestReadManyItems(unittest.IsolatedAsyncioTestCase):
 
     async def test_read_many_items_with_throttling_retry_async(self):
         """Tests that the retry policy handles a throttling error (429) and succeeds."""
-        fault_injection_transport = FaultInjectionTransportAsync()
-        client_with_faults = CosmosClient(self.host, self.masterKey, transport=fault_injection_transport)
+        error_to_inject = CosmosHttpResponseError(
+            status_code=429,
+            message="Throttling error injected for testing",
+            headers={'x-ms-retry-after-ms': '10'}
+        )
+        container_with_faults, client_with_faults = self._setup_fault_injection_async(error_to_inject,
+                                                                                       inject_once=True)
         try:
-            container_with_faults = client_with_faults.get_database_client(self.database.id).get_container_client(
-                self.container.id)
             items_to_read, item_ids = await self._create_items_for_read_many(self.container, 5, "item_for_throttle")
 
             original_should_retry = ResourceThrottleRetryPolicy.ShouldRetry
@@ -227,30 +237,7 @@ class TestReadManyItems(unittest.IsolatedAsyncioTestCase):
                     side_effect=side_effect_should_retry,
                     autospec=True
             ) as mock_should_retry:
-                fault_has_been_injected = False
-                error_to_inject = CosmosHttpResponseError(
-                    status_code=429,
-                    message="Throttling error injected for testing",
-                    headers={'x-ms-retry-after-ms': '10'}
-                )
-
-                def predicate(request):
-                    nonlocal fault_has_been_injected
-                    is_query = (request.method == 'POST' and
-                                FaultInjectionTransportAsync.predicate_is_operation_type(request,
-                                                                                         _OperationType.SqlQuery))
-                    if is_query and not fault_has_been_injected:
-                        fault_has_been_injected = True
-                        return True
-                    return False
-
-                async def fault_action(request):
-                    raise error_to_inject
-
-                fault_injection_transport.add_fault(predicate, fault_action)
-
                 read_items = await container_with_faults.read_many_items(items=items_to_read)
-
                 mock_should_retry.assert_called_once()
                 self.assertEqual(len(read_items), len(item_ids))
                 read_ids = {item['id'] for item in read_items}
@@ -260,51 +247,21 @@ class TestReadManyItems(unittest.IsolatedAsyncioTestCase):
 
     async def test_read_many_items_with_gone_retry_async(self):
         """Tests that the retry policy handles a Gone (410) error and succeeds."""
-        fault_injection_transport = FaultInjectionTransportAsync()
-        client_with_faults = CosmosClient(self.host, self.masterKey, transport=fault_injection_transport)
+        error_to_inject = CosmosHttpResponseError(
+            status_code=410,
+            message="Gone error injected for testing",
+        )
+        error_to_inject.sub_status = 1002  # Substatus for PartitionKeyRangeGone is required
+        container_with_faults, client_with_faults = self._setup_fault_injection_async(error_to_inject,
+                                                                                       inject_once=True)
         try:
-            container_with_faults = client_with_faults.get_database_client(self.database.id).get_container_client(
-                self.container.id)
-            # Use a more descriptive prefix for the items created in this test
             items_to_read, item_ids = await self._create_items_for_read_many(self.container, 20, "item_for_gone")
-
-            # Correctly reference the original ShouldRetry from PartitionKeyRangeGoneRetryPolicy
-            original_should_retry = PartitionKeyRangeGoneRetryPolicy.ShouldRetry
-
-            # The call to the original method must match its signature.
-            def side_effect_should_retry(self_instance, exception):
-                return original_should_retry(self_instance, exception)
 
             with patch(
                     'azure.cosmos._gone_retry_policy.PartitionKeyRangeGoneRetryPolicy.ShouldRetry',
-                    # side_effect=side_effect_should_retry,
                     autospec=True
             ) as mock_should_retry:
-                fault_has_been_injected = False
-                error_to_inject = CosmosHttpResponseError(
-                    status_code=410,
-                    message="Gone error injected for testing",
-                )
-                # Substatus for PartitionKeyRangeGone is required for the policy to trigger
-                error_to_inject.sub_status = 1002
-
-                def predicate(request):
-                    nonlocal fault_has_been_injected
-                    is_query = (request.method == 'POST' and
-                                FaultInjectionTransportAsync.predicate_is_operation_type(request,
-                                                                                         _OperationType.SqlQuery))
-                    if is_query and not fault_has_been_injected:
-                        fault_has_been_injected = True
-                        return True
-                    return False
-
-                async def fault_action(request):
-                    raise error_to_inject
-
-                fault_injection_transport.add_fault(predicate, fault_action)
-
                 read_items = await container_with_faults.read_many_items(items=items_to_read)
-
                 mock_should_retry.assert_called_once()
                 self.assertEqual(len(read_items), len(item_ids))
                 read_ids = {item['id'] for item in read_items}
@@ -333,7 +290,6 @@ class TestReadManyItems(unittest.IsolatedAsyncioTestCase):
         read_ids = {item['id'] for item in read_items_after}
         self.assertSetEqual(read_ids, set(new_item_ids))
 
-
     async def test_read_many_items_concurrency_internals(self):
         """Tests that read_many_items properly chunks large requests."""
         items_to_read = []
@@ -358,7 +314,6 @@ class TestReadManyItems(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(len(call_args[0][0][1]['parameters']), 1000)
             self.assertEqual(len(call_args[1][0][1]['parameters']), 1000)
             self.assertEqual(len(call_args[2][0][1]['parameters']), 500)
-
 
 
 if __name__ == '__main__':

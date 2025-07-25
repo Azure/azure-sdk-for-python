@@ -51,6 +51,7 @@ from azure.core.pipeline.policies import (
 from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos.aio._global_partition_endpoint_manager_circuit_breaker_async import (
     _GlobalPartitionEndpointManagerForCircuitBreakerAsync)
+from ._read_many_items_helper_async import ReadManyItemsHelper
 
 from .. import _base as base
 from .._base import _build_properties_cache
@@ -58,7 +59,7 @@ from .. import documents
 from .._change_feed.aio.change_feed_iterable import ChangeFeedIterable
 from .._change_feed.change_feed_state import ChangeFeedState
 from .._query_builder import _QueryBuilder
-from .._read_many_items_helper import ReadManyItemsHelper
+
 from .._routing import routing_range
 from ..documents import ConnectionPolicy, DatabaseAccount
 from .._constants import _Constants as Constants

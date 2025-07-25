@@ -64,6 +64,7 @@ from ._constants import _Constants as Constants
 from ._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from ._cosmos_responses import CosmosDict, CosmosList
 from ._range_partition_resolver import RangePartitionResolver
+from ._read_many_items_helper import ReadManyItemsHelperSync
 from ._request_object import RequestObject
 from ._retry_utility import ConnectionRetryPolicy
 from ._routing import routing_map_provider, routing_range
@@ -1036,6 +1037,40 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         permission_id = base.GetResourceIdOrFullNameFromLink(permission_link)
         self.DeleteResource(path, http_constants.ResourceType.Permission, permission_id, None, options,
                             **kwargs)
+
+    def ReadManyItems(
+            self,
+            collection_link: str,
+            items: List[Tuple[str, PartitionKeyType]],
+            options: Optional[Mapping[str, Any]] = None,
+            **kwargs: Any
+     ) -> CosmosList:
+        """Reads many items.
+
+        :param str collection_link: The link to the document collection.
+        :param items: A list of tuples, where each tuple contains an item's ID and partition key.
+        :type items: List[Tuple[str, PartitionKeyType]]
+        :param dict options: The request options for the request.
+        :return: The list of read items.
+        :rtype: CosmosList
+        """
+        if options is None:
+            options = {}
+        if not items:
+            return CosmosList([], response_headers=CaseInsensitiveDict())
+
+        partition_key_definition = self._get_partition_key_definition(collection_link, options)
+        if not partition_key_definition:
+            raise ValueError("Could not find partition key definition for collection.")
+
+        helper = ReadManyItemsHelperSync(
+            client=self,
+            collection_link=collection_link,
+            items=items,
+            options=options,
+            partition_key_definition=partition_key_definition,
+            **kwargs)
+        return helper.read_many_items()
 
     def ReadItems(
         self,

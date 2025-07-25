@@ -30,6 +30,7 @@ from azure.core import MatchConditions
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.cosmos._change_feed.change_feed_utils import add_args_to_kwargs, validate_kwargs
+from . import exceptions
 
 from ._base import (
     build_options,
@@ -294,6 +295,68 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self._get_properties_with_options(request_options)
         request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
         return self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
+
+    @distributed_trace
+    def read_many_items(
+            self,
+            items: List[Tuple[str, PartitionKeyType]],
+            *,
+            consistency_level: Optional[str] = None,
+            session_token: Optional[str] = None,
+            initial_headers: Optional[Dict[str, str]] = None,
+            excluded_locations: Optional[List[str]] = None,
+            **kwargs: Any
+    ) -> CosmosList[Dict[str, Any]]:
+        """Reads multiple items from the container.
+
+        This method is a batched point-read operation. It is more efficient than
+        issuing multiple individual point reads.
+
+        :param items: A list of tuples, where each tuple contains an item's ID and partition key.
+        :type items: List[Tuple[str, PartitionKeyType]]
+        :keyword str consistency_level: The consistency level to use for the request.
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The read-many operation failed.
+        :returns: A CosmosList containing the retrieved items. Items that were not found are omitted from the list.
+        :rtype: ~azure.cosmos.CosmosList[Dict[str, Any]]
+        """
+
+        if session_token is not None:
+            kwargs['session_token'] = session_token
+        if initial_headers is not None:
+            kwargs['initial_headers'] = initial_headers
+        if consistency_level is not None:
+            kwargs['consistencyLevel'] = consistency_level
+        if excluded_locations is not None:
+            kwargs['excludedLocations'] = excluded_locations
+
+        # Optimization: If only one item, use point read
+        if len(items) == 1:
+            item_id, partition_key = items[0]
+            if item_id is None or partition_key is None:
+                raise ValueError("Each item must have an 'id' and a partition key value.")
+            try:
+                result = self.read_item(item=item_id, partition_key=partition_key, **kwargs)
+                return CosmosList([result], response_headers=self.client_connection.last_response_headers)
+            except exceptions.CosmosResourceNotFoundError:
+                return CosmosList([], response_headers=self.client_connection.last_response_headers)
+
+        query_options = build_options(kwargs)
+        self._get_properties_with_options(query_options)
+        query_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        query_options["enableCrossPartitionQuery"] = True
+
+        item_tuples = [(item_id, self._set_partition_key(pk)) for item_id, pk in items]
+
+        return self.client_connection.ReadManyItems(
+            collection_link=self.container_link,
+            items=item_tuples,
+            options=query_options,
+            **kwargs)
+
+
 
     @distributed_trace
     def read_all_items(  # pylint:disable=docstring-missing-param
