@@ -560,30 +560,32 @@ class Extent(_Model):
 
     Represents the spatial and temporal extent of a STAC collection.
 
-    :ivar spatial:
-     `https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#spatial-extent-object
-     <https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#spatial-extent-object>`_
+    :ivar spatial: Spatial extent defined by bounding boxes.
 
-     Spatial extent defined by bounding boxes. Required.
+     See the `STAC Collection Spec
+     <https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#spatial-extent-object>`_.
+     Required.
     :vartype spatial: ~azure.planetarycomputer.models.SpatialExtent
-    :ivar temporal:
-     `https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#temporal-extent-object
-     <https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#temporal-extent-object>`_
+    :ivar temporal: Temporal extent defined by time intervals.
 
-     Temporal extent defined by time intervals. Required.
+     See the `STAC Collection Spec
+     <https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#spatial-extent-object>`_.
+     Required.
     :vartype temporal: ~azure.planetarycomputer.models.TimeInterval
     """
 
     spatial: "_models.SpatialExtent" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """`https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#spatial-extent-object
-     <https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#spatial-extent-object>`_
+    """Spatial extent defined by bounding boxes.
      
-     Spatial extent defined by bounding boxes. Required."""
+     See the `STAC Collection Spec
+     <https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#spatial-extent-object>`_.
+     Required."""
     temporal: "_models.TimeInterval" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """`https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#temporal-extent-object
-     <https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#temporal-extent-object>`_
+    """Temporal extent defined by time intervals.
      
-     Temporal extent defined by time intervals. Required."""
+     See the `STAC Collection Spec
+     <https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#spatial-extent-object>`_.
+     Required."""
 
     @overload
     def __init__(
@@ -698,11 +700,10 @@ class GeoJsonStatisticsItemCollectionResponse(_Model):
     :vartype stac_extensions: list[str]
     :ivar links: Related links for the item collection.
     :vartype links: list[~azure.planetarycomputer.models.Link]
-    :ivar context:
-     `https://github.com/radiantearth/stac-api-spec/tree/master/extensions/context#context-extension-specification
-     <https://github.com/radiantearth/stac-api-spec/tree/master/extensions/context#context-extension-specification>`_
+    :ivar context: Pagination context for the response
 
-     Pagination context for the response.
+     See the `STAC Context Extension
+     <https://github.com/radiantearth/stac-api-spec/tree/master/extensions/context#context-extension-specification>`_.
     :vartype context: ~azure.planetarycomputer.models.ContextExtension
     """
 
@@ -737,10 +738,10 @@ class GeoJsonStatisticsItemCollectionResponse(_Model):
     context: Optional["_models.ContextExtension"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """`https://github.com/radiantearth/stac-api-spec/tree/master/extensions/context#context-extension-specification
-     <https://github.com/radiantearth/stac-api-spec/tree/master/extensions/context#context-extension-specification>`_
+    """Pagination context for the response
      
-     Pagination context for the response."""
+     See the `STAC Context Extension
+     <https://github.com/radiantearth/stac-api-spec/tree/master/extensions/context#context-extension-specification>`_."""
 
     @overload
     def __init__(
@@ -1019,7 +1020,7 @@ class IngestionDefinition(_Model):
     :vartype import_type: str or ~azure.planetarycomputer.models.IngestionType
     :ivar display_name: Ingestion name.
     :vartype display_name: str
-    :ivar source_catalog_url: Source catalog URL. *Required for StaticCatalog ingestion type.
+    :ivar source_catalog_url: Source catalog URL. Required for StaticCatalog ingestion type.
     :vartype source_catalog_url: str
     :ivar skip_existing_items: Skip processing existing items in the catalog.
     :vartype skip_existing_items: bool
@@ -1042,7 +1043,7 @@ class IngestionDefinition(_Model):
     source_catalog_url: Optional[str] = rest_field(
         name="sourceCatalogUrl", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Source catalog URL. *Required for StaticCatalog ingestion type."""
+    """Source catalog URL. Required for StaticCatalog ingestion type."""
     skip_existing_items: Optional[bool] = rest_field(
         name="skipExistingItems", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2863,9 +2864,9 @@ class RenderOption(_Model):
      "vt-polygon", and "vt-line".
     :vartype type: str or ~azure.planetarycomputer.models.RenderOptionType
     :ivar options: A URL query-string encoded string of TiTiler rendering options. Valid only for
-     ``raster-tile`` types.  See 'Query Parameters':
-     `https://developmentseed.org/titiler/endpoints/cog/#description
-     <https://developmentseed.org/titiler/endpoints/cog/#description>`_.
+     ``raster-tile`` types.
+
+     See `Query Parameters <https://developmentseed.org/titiler/endpoints/cog/#description>`_.
     :vartype options: str
     :ivar vector_options: Options for rendering vector tiles. Valid only for ``vt-polygon``  and
      ``vt-line``
@@ -2894,9 +2895,9 @@ class RenderOption(_Model):
      \"vt-polygon\", and \"vt-line\"."""
     options: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A URL query-string encoded string of TiTiler rendering options. Valid only for
-     ``raster-tile`` types.  See 'Query Parameters':
-     `https://developmentseed.org/titiler/endpoints/cog/#description
-     <https://developmentseed.org/titiler/endpoints/cog/#description>`_."""
+     ``raster-tile`` types.
+     
+     See `Query Parameters <https://developmentseed.org/titiler/endpoints/cog/#description>`_."""
     vector_options: Optional["_models.RenderOptionVectorOptions"] = rest_field(
         name="vectorOptions", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3239,25 +3240,21 @@ class SearchPostRequest(_Model):
     :vartype sign: str or ~azure.planetarycomputer.models.SignType
     :ivar duration: URL signature duration in seconds.
     :vartype duration: int
-    :ivar query: `https://github.com/stac-api-extensions/query
-     <https://github.com/stac-api-extensions/query>`_
+    :ivar query: STAC Query
 
-     Query.
+     See the `STAC Query Extension <https://github.com/stac-api-extensions/query>`_.
     :vartype query: ~azure.planetarycomputer.models.StacQuery
-    :ivar sort_by: `https://github.com/stac-api-extensions/sort
-     <https://github.com/stac-api-extensions/sort>`_
+    :ivar sort_by: Sort criteria for the search results.
 
-     Sort criteria for the search results.
+     See the `STAC Sort Extension <https://github.com/stac-api-extensions/sort>`_.
     :vartype sort_by: list[~azure.planetarycomputer.models.SortExtension]
-    :ivar fields: `https://github.com/stac-api-extensions/fields
-     <https://github.com/stac-api-extensions/fields>`_
+    :ivar fields: Specifies which fields to include or exclude in the STAC search results.
 
-     Specifies which fields to include or exclude in the response.
+     See the `STAC Fields Extension <https://github.com/stac-api-extensions/fields>`_.
     :vartype fields: list[~azure.planetarycomputer.models.SearchPostRequestFields]
-    :ivar filter: `https://github.com/stac-api-extensions/filter
-     <https://github.com/stac-api-extensions/filter>`_
+    :ivar filter: CQL2 Filter
 
-     Filter.
+     See the `STAC Filter Extension <https://github.com/stac-api-extensions/filter>`_.
     :vartype filter: ~azure.planetarycomputer.models.CqlFilter
     :ivar filter_crs: Coordinate reference system for the filter.
     :vartype filter_crs: str
@@ -3291,27 +3288,25 @@ class SearchPostRequest(_Model):
     duration: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """URL signature duration in seconds."""
     query: Optional["_models.StacQuery"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """`https://github.com/stac-api-extensions/query <https://github.com/stac-api-extensions/query>`_
+    """STAC Query
      
-     Query."""
+     See the `STAC Query Extension <https://github.com/stac-api-extensions/query>`_."""
     sort_by: Optional[List["_models.SortExtension"]] = rest_field(
         name="sortby", visibility=["read", "create", "update", "delete", "query"]
     )
-    """`https://github.com/stac-api-extensions/sort <https://github.com/stac-api-extensions/sort>`_
+    """Sort criteria for the search results.
      
-     Sort criteria for the search results."""
+     See the `STAC Sort Extension <https://github.com/stac-api-extensions/sort>`_."""
     fields: Optional[List["_models.SearchPostRequestFields"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """`https://github.com/stac-api-extensions/fields
-     <https://github.com/stac-api-extensions/fields>`_
+    """Specifies which fields to include or exclude in the STAC search results.
      
-     Specifies which fields to include or exclude in the response."""
+     See the `STAC Fields Extension <https://github.com/stac-api-extensions/fields>`_."""
     filter: Optional["_models.CqlFilter"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """`https://github.com/stac-api-extensions/filter
-     <https://github.com/stac-api-extensions/filter>`_
+    """CQL2 Filter
      
-     Filter."""
+     See the `STAC Filter Extension <https://github.com/stac-api-extensions/filter>`_."""
     filter_crs: Optional[str] = rest_field(
         name="filter-crs", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3503,11 +3498,10 @@ class StacCollection(_Model):
     :vartype keywords: list[str]
     :ivar providers: Organizations or individuals who provide the collection data.
     :vartype providers: list[~azure.planetarycomputer.models.Provider]
-    :ivar summaries:
-     `https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#summaries
-     <https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#summaries>`_
+    :ivar summaries: Summaries
 
-     Summaries.
+     See the `STAC Collection Spec
+     <https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#spatial-extent-object>`_.
     :vartype summaries: ~azure.planetarycomputer.models.StacCollectionSummaries
     """
 
@@ -3554,10 +3548,10 @@ class StacCollection(_Model):
     summaries: Optional["_models.StacCollectionSummaries"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """`https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#summaries
-     <https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#summaries>`_
+    """Summaries
      
-     Summaries."""
+     See the `STAC Collection Spec
+     <https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#spatial-extent-object>`_."""
 
     @overload
     def __init__(
@@ -4348,26 +4342,22 @@ class TitilerCoreModelsResponsesPoint(_Model):
 class TitilerPgstacModelInfo(_Model):
     """Information about a registered STAC search query.
 
-    :ivar search: PgSTAC Search entry.
+    :ivar search: Details of the saved search query
 
-     ref:
-     `https://github.com/stac-utils/pgstac/blob/3499daa2bfa700ae7bb07503795c169bf2ebafc7/sql/004_search.sql#L907-L915
-     <https://github.com/stac-utils/pgstac/blob/3499daa2bfa700ae7bb07503795c169bf2ebafc7/sql/004_search.sql#L907-L915>`_
-
-     Details of the saved search query. Required.
+     See the `PgSTAC Search table definition
+     <https://github.com/stac-utils/pgstac/blob/3499daa2bfa700ae7bb07503795c169bf2ebafc7/sql/004_search.sql#L907-L915>`_.
+     Required.
     :vartype search: ~azure.planetarycomputer.models.PgStacSearch
     :ivar links: Related links for the search query.
     :vartype links: list[~azure.planetarycomputer.models.Link]
     """
 
     search: "_models.PgStacSearch" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """PgSTAC Search entry.
+    """Details of the saved search query
      
-     ref:
-     `https://github.com/stac-utils/pgstac/blob/3499daa2bfa700ae7bb07503795c169bf2ebafc7/sql/004_search.sql#L907-L915
-     <https://github.com/stac-utils/pgstac/blob/3499daa2bfa700ae7bb07503795c169bf2ebafc7/sql/004_search.sql#L907-L915>`_
-     
-     Details of the saved search query. Required."""
+     See the `PgSTAC Search table definition
+     <https://github.com/stac-utils/pgstac/blob/3499daa2bfa700ae7bb07503795c169bf2ebafc7/sql/004_search.sql#L907-L915>`_.
+     Required."""
     links: Optional[List["_models.Link"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Related links for the search query."""
 

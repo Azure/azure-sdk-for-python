@@ -570,10 +570,7 @@ class ItemCollectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class LegendConfigType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Legend type to make,
-     one of: ``continuous``,
-     ``classmap``,
-     ``interval`` or ``none``
+    """Legend type to make, one of: ``continuous``, ``classmap``, ``interval`` or ``none``
     (note, ``none`` is a string literal).Defines the legend configuration types for data
     visualization.
     """

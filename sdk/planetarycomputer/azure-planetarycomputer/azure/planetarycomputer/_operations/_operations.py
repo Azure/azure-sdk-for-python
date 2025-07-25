@@ -14903,7 +14903,6 @@ class _StacClientOperationsMixin(  # pylint: disable=too-many-public-methods
          * **Item**: A GeoJSON Feature that represents a single spatiotemporal asset.
          It includes metadata such as geometry, datetime, and links to related assets.
          Example: A satellite image with its metadata.
-
          * **ItemCollection**: A GeoJSON FeatureCollection that contains multiple Items.
          It is used to group multiple related Items together, such as a collection of satellite images.
 
@@ -14935,7 +14934,6 @@ class _StacClientOperationsMixin(  # pylint: disable=too-many-public-methods
          * **Item**: A GeoJSON Feature that represents a single spatiotemporal asset.
          It includes metadata such as geometry, datetime, and links to related assets.
          Example: A satellite image with its metadata.
-
          * **ItemCollection**: A GeoJSON FeatureCollection that contains multiple Items.
          It is used to group multiple related Items together, such as a collection of satellite images.
 
@@ -14967,7 +14965,6 @@ class _StacClientOperationsMixin(  # pylint: disable=too-many-public-methods
          * **Item**: A GeoJSON Feature that represents a single spatiotemporal asset.
          It includes metadata such as geometry, datetime, and links to related assets.
          Example: A satellite image with its metadata.
-
          * **ItemCollection**: A GeoJSON FeatureCollection that contains multiple Items.
          It is used to group multiple related Items together, such as a collection of satellite images.
 
@@ -14999,7 +14996,6 @@ class _StacClientOperationsMixin(  # pylint: disable=too-many-public-methods
          * **Item**: A GeoJSON Feature that represents a single spatiotemporal asset.
          It includes metadata such as geometry, datetime, and links to related assets.
          Example: A satellite image with its metadata.
-
          * **ItemCollection**: A GeoJSON FeatureCollection that contains multiple Items.
          It is used to group multiple related Items together, such as a collection of satellite images.
 
