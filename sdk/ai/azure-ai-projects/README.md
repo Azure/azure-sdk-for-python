@@ -317,6 +317,14 @@ project_client.indexes.delete(name=index_name, version=index_version)
 
 <!-- END SNIPPET -->
 
+## Tracing
+
+The AI Projects client library can be configured to emit OpenTelemetry traces for all its REST API calls. These can be viewed in the "Tracing" tab in your AI Foundry Project page, once you add an Application Insights resource and configured your application appropriately. Agent operations (via the `.agents` property) can also be instrumented, as well as OpenAI client library operations (client created by calling `get_openai_client()` method). For local debugging purposes, traces can also be omitted to the console. For more information see:
+
+* [Trace AI applications using OpenAI SDK](https://learn.microsoft.com/azure/ai-foundry/how-to/develop/trace-application)
+* Chat-completion samples with console or Azure Monitor tracing enabled. See `samples\inference\azure-openai` folder.
+* The Tracing section in the [README.md file of the azure-ai-agents package](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/README.md#tracing).
+
 ## Troubleshooting
 
 ### Exceptions

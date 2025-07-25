@@ -17,7 +17,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects openai azure-monitor-opentelemetry opentelemetry-instrumentation-openai-v2 httpx
+    pip install azure-ai-projects openai httpx azure-monitor-opentelemetry opentelemetry-instrumentation-openai-v2
 
     Set these environment variables with your own values:
     1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
