@@ -4,6 +4,7 @@
 
 ### Features Added
 - Added RateLimited Sampler Config changes
+  ([#41976](https://github.com/Azure/azure-sdk-for-python/pull/41976))
 
 ### Breaking Changes
 
