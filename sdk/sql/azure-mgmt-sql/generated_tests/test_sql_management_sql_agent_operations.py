@@ -24,7 +24,7 @@ class TestSqlManagementSqlAgentOperations(AzureMgmtRecordedTestCase):
         response = self.client.sql_agent.get(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2020-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestSqlManagementSqlAgentOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             parameters={"id": "str", "name": "str", "state": "str", "type": "str"},
-            api_version="2024-05-01-preview",
+            api_version="2020-11-01-preview",
         )
 
         # please add some check logic here by yourself

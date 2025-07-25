@@ -25,7 +25,7 @@ class TestSqlManagementManagedServerDnsAliasesOperationsAsync(AzureMgmtRecordedT
         response = self.client.managed_server_dns_aliases.list_by_managed_instance(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2021-11-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestSqlManagementManagedServerDnsAliasesOperationsAsync(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             dns_alias_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2021-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -53,7 +53,7 @@ class TestSqlManagementManagedServerDnsAliasesOperationsAsync(AzureMgmtRecordedT
                 managed_instance_name="str",
                 dns_alias_name="str",
                 parameters={"createDnsRecord": True},
-                api_version="2024-05-01-preview",
+                api_version="2021-11-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -68,7 +68,7 @@ class TestSqlManagementManagedServerDnsAliasesOperationsAsync(AzureMgmtRecordedT
                 resource_group_name=resource_group.name,
                 managed_instance_name="str",
                 dns_alias_name="str",
-                api_version="2024-05-01-preview",
+                api_version="2021-11-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -84,7 +84,7 @@ class TestSqlManagementManagedServerDnsAliasesOperationsAsync(AzureMgmtRecordedT
                 managed_instance_name="str",
                 dns_alias_name="str",
                 parameters={"oldManagedServerDnsAliasResourceId": "str"},
-                api_version="2024-05-01-preview",
+                api_version="2021-11-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

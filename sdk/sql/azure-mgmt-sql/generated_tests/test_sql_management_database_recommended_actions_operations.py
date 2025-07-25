@@ -26,7 +26,7 @@ class TestSqlManagementDatabaseRecommendedActionsOperations(AzureMgmtRecordedTes
             server_name="str",
             database_name="str",
             advisor_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2020-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -41,7 +41,7 @@ class TestSqlManagementDatabaseRecommendedActionsOperations(AzureMgmtRecordedTes
             database_name="str",
             advisor_name="str",
             recommended_action_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2020-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -68,7 +68,7 @@ class TestSqlManagementDatabaseRecommendedActionsOperations(AzureMgmtRecordedTes
                         "unit": "str",
                     }
                 ],
-                "executeActionDuration": "1 day, 0:00:00",
+                "executeActionDuration": "str",
                 "executeActionInitiatedBy": "str",
                 "executeActionInitiatedTime": "2020-02-20 00:00:00",
                 "executeActionStartTime": "2020-02-20 00:00:00",
@@ -92,7 +92,7 @@ class TestSqlManagementDatabaseRecommendedActionsOperations(AzureMgmtRecordedTes
                     }
                 ],
                 "recommendationReason": "str",
-                "revertActionDuration": "1 day, 0:00:00",
+                "revertActionDuration": "str",
                 "revertActionInitiatedBy": "str",
                 "revertActionInitiatedTime": "2020-02-20 00:00:00",
                 "revertActionStartTime": "2020-02-20 00:00:00",
@@ -110,7 +110,7 @@ class TestSqlManagementDatabaseRecommendedActionsOperations(AzureMgmtRecordedTes
                 "type": "str",
                 "validSince": "2020-02-20 00:00:00",
             },
-            api_version="2024-05-01-preview",
+            api_version="2020-11-01-preview",
         )
 
         # please add some check logic here by yourself

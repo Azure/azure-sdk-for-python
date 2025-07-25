@@ -24,7 +24,7 @@ class TestSqlManagementRestorableDroppedDatabasesOperations(AzureMgmtRecordedTes
         response = self.client.restorable_dropped_databases.list_by_server(
             resource_group_name=resource_group.name,
             server_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2022-08-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestSqlManagementRestorableDroppedDatabasesOperations(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             server_name="str",
             restorable_dropped_database_id="str",
-            api_version="2024-05-01-preview",
+            api_version="2022-08-01-preview",
         )
 
         # please add some check logic here by yourself
