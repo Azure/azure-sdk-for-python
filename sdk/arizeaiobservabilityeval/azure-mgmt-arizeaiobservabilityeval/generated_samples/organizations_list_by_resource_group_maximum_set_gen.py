@@ -31,7 +31,7 @@ def main():
     )
 
     response = client.organizations.list_by_resource_group(
-        resource_group_name="rgopenapi",
+        resource_group_name="yashika-rg-arize",
     )
     for item in response:
         print(item)
