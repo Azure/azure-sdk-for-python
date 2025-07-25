@@ -12,20 +12,23 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
-from ._client import AttestationClient  # type: ignore
-from ._version import VERSION
+from ._operations import PolicyOperations  # type: ignore
+from ._operations import PolicyCertificatesOperations  # type: ignore
+from ._operations import AttestationOperations  # type: ignore
+from ._operations import TcbBaselinesOperations  # type: ignore
+from ._operations import SigningCertificatesOperations  # type: ignore
+from ._operations import MetadataConfigurationOperations  # type: ignore
 
-__version__ = VERSION
-
-try:
-    from ._patch import __all__ as _patch_all
-    from ._patch import *
-except ImportError:
-    _patch_all = []
+from ._patch import __all__ as _patch_all
+from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 __all__ = [
-    'AttestationClient',
+    'PolicyOperations',
+    'PolicyCertificatesOperations',
+    'AttestationOperations',
+    'TcbBaselinesOperations',
+    'SigningCertificatesOperations',
+    'MetadataConfigurationOperations',
 ]
 __all__.extend([p for p in _patch_all if p not in __all__]) # pyright: ignore
-
 _patch_sdk()
