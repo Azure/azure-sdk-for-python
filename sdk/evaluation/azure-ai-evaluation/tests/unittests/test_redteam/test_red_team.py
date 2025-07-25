@@ -1395,6 +1395,7 @@ class TestRedTeamResult:
                 {"role": "assistant", "content": "Test response"},
             ],
             "risk_assessment": {"violence": {"severity_label": "high", "reason": "Test reason"}},
+            "attack_success_threshold": None,
         }
 
         result = RedTeamResult(attack_details=[mock_conversation])
@@ -1421,6 +1422,7 @@ class TestRedTeamResult:
                 {"role": "assistant", "content": "Test response"},
             ],
             "risk_assessment": {"violence": {"severity_label": "high", "reason": "Test reason"}},
+            "attack_success_threshold": None,
         }
 
         result = RedTeamResult(attack_details=[mock_conversation])
@@ -1476,3 +1478,115 @@ class TestRedTeamOrchestratorSelection:
             ValueError, match="MultiTurn and Crescendo strategies are not supported in composed attacks."
         ):
             red_team_instance._get_orchestrator_for_attack_strategy([AttackStrategy.Crescendo, AttackStrategy.Base64])
+
+
+@pytest.mark.unittest
+class TestRedTeamAttackSuccessThresholds:
+    """Test attack success threshold functionality in RedTeam."""
+
+    def test_configure_attack_success_thresholds_with_dict(self, red_team):
+        """Test configuring attack success thresholds with a dictionary."""
+        # Create a dictionary of thresholds
+        thresholds = {RiskCategory.HateUnfairness: 3, RiskCategory.Violence: 4, RiskCategory.Sexual: 2}
+
+        # Call the method
+        configured_thresholds = red_team._configure_attack_success_thresholds(thresholds)
+
+        # Verify the configured thresholds
+        assert configured_thresholds[RiskCategory.HateUnfairness.value] == 3
+        assert configured_thresholds[RiskCategory.Violence.value] == 4
+        assert configured_thresholds[RiskCategory.Sexual.value] == 2
+
+    def test_configure_attack_success_thresholds_none(self, red_team):
+        """Test configuring attack success thresholds with None."""
+        # Call the method with None
+        configured_thresholds = red_team._configure_attack_success_thresholds(None)
+
+        # Verify the result is an empty dict
+        assert configured_thresholds == {}
+
+    def test_configure_attack_success_thresholds_invalid_type(self, red_team):
+        """Test configuring attack success thresholds with an invalid type."""
+        # Call the method with an invalid type (should raise ValueError)
+        with pytest.raises(ValueError):
+            red_team._configure_attack_success_thresholds(5)
+
+        # Also test with a list (should raise ValueError)
+        with pytest.raises(ValueError):
+            red_team._configure_attack_success_thresholds([1, 2, 3])
+
+    def test_configure_attack_success_thresholds_invalid_values(self, red_team):
+        """Test configuring attack success thresholds with invalid threshold values."""
+        # Test with a value below 0
+        with pytest.raises(ValueError):
+            red_team._configure_attack_success_thresholds({RiskCategory.Violence: -1})
+
+        # Test with a value above 7
+        with pytest.raises(ValueError):
+            red_team._configure_attack_success_thresholds({RiskCategory.Violence: 8})
+
+        # Test with a non-integer value
+        with pytest.raises(ValueError):
+            red_team._configure_attack_success_thresholds({RiskCategory.Violence: 3.5})
+
+    def test_get_attack_success_with_thresholds(self, red_team):
+        """Test _get_attack_success with configured thresholds."""
+        # Set up thresholds for testing
+        red_team.attack_success_thresholds = {"violence": 3}
+
+        # Test with direct boolean value
+        assert red_team._get_attack_success(True, "violence") is True
+        assert red_team._get_attack_success(False, "violence") is False
+
+        # Test with pass/fail strings - "fail" means attack succeeded, "pass" means attack failed
+        assert red_team._get_attack_success("fail", "violence") is True
+        assert red_team._get_attack_success("pass", "violence") is False
+
+        # Test with other string values using the formatting utils
+        with patch("azure.ai.evaluation.red_team._utils.formatting_utils.get_attack_success", return_value=True):
+            assert red_team._get_attack_success("some_other_string", "violence") is True
+
+        with patch("azure.ai.evaluation.red_team._utils.formatting_utils.get_attack_success", return_value=False):
+            assert red_team._get_attack_success("another_string", "violence") is False
+
+        # Test with numeric values using the formatting utils
+        with patch("azure.ai.evaluation.red_team._utils.formatting_utils.get_attack_success", return_value=True):
+            assert red_team._get_attack_success(4, "violence") is True
+
+        with patch("azure.ai.evaluation.red_team._utils.formatting_utils.get_attack_success", return_value=False):
+            assert red_team._get_attack_success(2, "violence") is False
+
+    def test_format_thresholds_for_output(self, red_team):
+        """Test _format_thresholds_for_output method."""
+        # Configure thresholds - as a dictionary with risk category keys for the test
+        # In practice, this dictionary will be created by the _configure_attack_success_thresholds method
+        # which converts risk categories to string values
+        red_team.attack_success_thresholds = {"violence": 3, "hate_unfairness": 4, "sexual": 2}
+
+        # Call the method
+        formatted = red_team._format_thresholds_for_output()
+
+        # Verify the formatted output - should be a direct mapping now, not nested under "per_category"
+        assert "violence" in formatted
+        assert formatted["violence"] == 3
+        assert "hate_unfairness" in formatted
+        assert formatted["hate_unfairness"] == 4
+        assert "sexual" in formatted
+        assert formatted["sexual"] == 2
+
+        # Test with empty thresholds and no risk categories
+        red_team.attack_success_thresholds = {}
+
+        # Save original risk_categories
+        original_risk_categories = getattr(red_team, "risk_categories", None)
+
+        # Remove risk_categories attribute to prevent default thresholds
+        if hasattr(red_team, "risk_categories"):
+            delattr(red_team, "risk_categories")
+
+        formatted = red_team._format_thresholds_for_output()
+        assert formatted == {}
+
+        # Restore original risk_categories
+        if original_risk_categories is not None:
+            red_team.risk_categories = original_risk_categories
