@@ -101,6 +101,7 @@ class Message(BaseModel):
     createdAt: Optional[Union[datetime.datetime, int]] = None  # SystemMessage wouldn't have this
     run_id: Optional[str] = None
     tool_call_id: Optional[str] = None  # see ToolMessage
+    assistant_id: Optional[str] = None  # see AssistantMessage
     role: str
     content: Union[str, List[dict]]
 
@@ -176,6 +177,10 @@ class AssistantMessage(Message):
 
     run_id: str
     role: str = _AGENT
+    # Todo: Changes to converter needs to be discussed.
+    # Currently there is no way to filter conversations by agent_id
+    # However ThreadMessage (azure.ai.agent._models) object already supports agent_id but it is not used in the converter.
+    assistant_id: Optional[str] = None  # Optional ID for the assistant, if applicable
 
 
 class SKAssistantMessage(Message):
@@ -406,7 +411,8 @@ def convert_message(msg: dict) -> Message:
     elif role == "user":
         return UserMessage(content=msg["content"], createdAt=msg["createdAt"])
     elif role == "assistant":
-        return AssistantMessage(run_id=str(msg["run_id"]), content=msg["content"], createdAt=msg["createdAt"])
+        return AssistantMessage(run_id=str(msg["run_id"]), content=msg["content"], createdAt=msg["createdAt"],
+                                assistant_id=msg.get("assistant_id", None))
     elif role == "tool":
         return ToolMessage(
             run_id=str(msg["run_id"]),
