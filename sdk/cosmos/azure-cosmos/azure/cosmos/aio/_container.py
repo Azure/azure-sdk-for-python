@@ -35,6 +35,7 @@ from azure.cosmos._change_feed.change_feed_utils import validate_kwargs
 
 from ._cosmos_client_connection_async import CosmosClientConnection
 from ._scripts import ScriptsProxy
+from .. import exceptions
 from .. import _utils as utils
 from .._base import (
     build_options as _build_options,
@@ -50,6 +51,7 @@ from .._constants import _Constants as Constants
 from .._routing.routing_range import Range
 from .._session_token_helpers import get_latest_session_token
 from ..offer import ThroughputProperties
+from .._retry_utility import ConnectionRetryPolicy
 from ..partition_key import (
     NonePartitionKeyValue,
     _return_undefined_or_empty_partition_key,
@@ -57,7 +59,7 @@ from ..partition_key import (
     _Undefined,
     _get_partition_key_from_partition_key_definition
 )
-
+# Add this import at the top of the file
 __all__ = ("ContainerProxy",)
 
 # pylint: disable=protected-access, too-many-lines
@@ -434,6 +436,68 @@ class ContainerProxy:
             collection_link=self.container_link, feed_options=feed_options, response_hook=response_hook, **kwargs
         )
         return items
+
+    @distributed_trace_async
+    async def read_many_items(
+            self,
+            items: List[Tuple[str, PartitionKeyType]],
+            *,
+            consistency_level: Optional[str] = None,
+            session_token: Optional[str] = None,
+            initial_headers: Optional[Dict[str, str]] = None,
+            excluded_locations: Optional[List[str]] = None,
+            **kwargs: Any
+    ) -> CosmosList[Dict[str, Any]]:
+        """Reads multiple items from the container.
+
+        This method is a batched point-read operation. It is more efficient than
+        issuing multiple individual point reads.
+
+        :param items: A list of tuples, where each tuple contains an item's ID and partition key.
+        :type items: List[Tuple[str, PartitionKeyType]]
+        :keyword str consistency_level: The consistency level to use for the request.
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The read-many operation failed.
+        :returns: A CosmosList containing the retrieved items. Items that were not found are omitted from the list.
+        :rtype: ~azure.cosmos.CosmosList[Dict[str, Any]]
+        """
+
+
+        if session_token is not None:
+            kwargs['session_token'] = session_token
+        if initial_headers is not None:
+            kwargs['initial_headers'] = initial_headers
+        if consistency_level is not None:
+            kwargs['consistencyLevel'] = consistency_level
+        if excluded_locations is not None:
+            kwargs['excludedLocations'] = excluded_locations
+
+        # Optimization: If only one item, use point read
+        if len(items) == 1:
+            item_id, partition_key = items[0]
+            if item_id is None or partition_key is None:
+                raise ValueError("Each item must have an 'id' and a partition key value.")
+            try:
+                result = await self.read_item(item=item_id, partition_key=partition_key, **kwargs)
+                return CosmosList([result], response_headers=self.client_connection.last_response_headers)
+            except exceptions.CosmosResourceNotFoundError:
+                return CosmosList([], response_headers=self.client_connection.last_response_headers)
+
+        kwargs["containerProperties"] = self._get_properties_with_options
+        query_options = _build_options(kwargs)
+        await self._get_properties_with_options(query_options)
+        query_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        query_options["enableCrossPartitionQuery"] = True
+
+        item_tuples = [(item_id, await self._set_partition_key(pk)) for item_id, pk in items]
+
+        return await self.client_connection.ReadManyItems(
+            collection_link=self.container_link,
+            items=item_tuples,
+            options= query_options,
+            **kwargs)
 
     @overload
     def query_items(

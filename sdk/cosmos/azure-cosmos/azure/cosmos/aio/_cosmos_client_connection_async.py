@@ -23,6 +23,7 @@
 
 """Document client class for the Azure Cosmos database service.
 """
+import asyncio
 import os
 from urllib.parse import urlparse
 import uuid
@@ -50,12 +51,14 @@ from azure.core.pipeline.policies import (
 from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos.aio._global_partition_endpoint_manager_circuit_breaker_async import (
     _GlobalPartitionEndpointManagerForCircuitBreakerAsync)
+from ._read_many_items_helper_async import ReadManyItemsHelper
 
 from .. import _base as base
 from .._base import _build_properties_cache
 from .. import documents
 from .._change_feed.aio.change_feed_iterable import ChangeFeedIterable
 from .._change_feed.change_feed_state import ChangeFeedState
+from .._query_builder import _QueryBuilder
 from .._change_feed.feed_range_internal import FeedRangeInternalEpk
 from .._routing import routing_range
 from ..documents import ConnectionPolicy, DatabaseAccount
@@ -2225,6 +2228,44 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         return AsyncItemPaged(
             self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
         )
+
+
+
+    async def ReadManyItems(
+            self,
+            collection_link: str,
+            items: List[Tuple[str, PartitionKeyType]],
+            options: Optional[Mapping[str, Any]] = None,
+            **kwargs: Any
+     ) -> CosmosList:
+        """Reads many items.
+
+        :param str collection_link: The link to the document collection.
+        :param items: A list of tuples, where each tuple contains an item's ID and partition key.
+        :type items: List[Tuple[str, PartitionKeyType]]
+        :param dict options: The request options for the request.
+        :return: The list of read items.
+        :rtype: CosmosList
+        """
+        if options is None:
+            options = {}
+        if not items:
+            return CosmosList([], response_headers=CaseInsensitiveDict())
+
+        partition_key_definition = await self._get_partition_key_definition(collection_link, options)
+        if not partition_key_definition:
+            raise ValueError("Could not find partition key definition for collection.")
+
+        helper = ReadManyItemsHelper(
+            client=self,
+            collection_link=collection_link,
+            items=items,
+            options=options,
+            partition_key_definition=partition_key_definition,
+            **kwargs)
+        return await helper.read_many_items()
+
+
 
     def ReadItems(
         self,
