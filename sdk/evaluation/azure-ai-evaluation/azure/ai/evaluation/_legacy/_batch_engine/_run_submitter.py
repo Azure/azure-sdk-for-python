@@ -155,7 +155,7 @@ class RunSubmitter:
             # system metrics
             system_metrics = {}
             if batch_result:
-                system_metrics.update(dataclasses.asdict(batch_result.tokens))  # token related
+                # system_metrics.update(dataclasses.asdict(batch_result.tokens))  # token related
                 system_metrics.update(
                     {
                         # "duration": batch_result.duration.total_seconds(),
