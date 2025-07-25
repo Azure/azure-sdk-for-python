@@ -2,19 +2,29 @@ param location string
 param environmentName string
 param defaultNamePrefix string
 param defaultName string
-param tenantId string
-param azdTags object
 param principalId string
+param tenantId string
 
 resource userassignedidentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-07-31-preview' = {
+  tags: {
+    'azd-env-name': environmentName
+  }
   location: location
-  tags: azdTags
   name: defaultName
 }
 
 
 
 resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024-05-01' = {
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${userassignedidentity.id}': {}
+    }
+  }
+  tags: {
+    'azd-env-name': environmentName
+  }
   name: defaultName
   sku: {
     name: 'Standard'
@@ -29,13 +39,6 @@ resource configurationstore 'Microsoft.AppConfiguration/configurationStores@2024
     publicNetworkAccess: 'Enabled'
   }
   location: location
-  tags: azdTags
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${userassignedidentity.id}': {}
-    }
-  }
 }
 
 output AZURE_APPCONFIG_ID string = configurationstore.id
@@ -45,6 +48,9 @@ output AZURE_APPCONFIG_ENDPOINT string = configurationstore.properties.endpoint
 
 
 resource vault 'Microsoft.KeyVault/vaults@2024-12-01-preview' = {
+  tags: {
+    'azd-env-name': environmentName
+  }
   name: defaultName
   properties: {
     sku: {
@@ -57,7 +63,6 @@ resource vault 'Microsoft.KeyVault/vaults@2024-12-01-preview' = {
     enableRbacAuthorization: true
   }
   location: location
-  tags: azdTags
 }
 
 output AZURE_KEYVAULT_ID_R string = vault.id

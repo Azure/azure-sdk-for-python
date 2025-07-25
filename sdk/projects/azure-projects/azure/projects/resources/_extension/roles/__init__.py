@@ -14,7 +14,7 @@ from ...._bicep.expressions import Output, ResourceSymbol, RoleDefinition, Param
 from ....resources.resourcegroup import ResourceGroup
 
 if TYPE_CHECKING:
-    from .types import RoleAssignmentResource
+    from ._types import RoleAssignmentResource
 
 
 _DEFAULT_ROLE_ASSIGNMENT: "RoleAssignmentResource" = {}
@@ -37,7 +37,7 @@ class RoleAssignment(Resource, Generic[RoleAssignmentResourceType]):
 
     @property
     def version(self) -> str:
-        from .types import VERSION
+        from ._types import VERSION
 
         return VERSION
 
