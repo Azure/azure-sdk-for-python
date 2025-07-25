@@ -13,6 +13,7 @@
 * Fixed bug where container cache was not being properly updated resulting in unnecessary extra requests. See [PR 42143](https://github.com/Azure/azure-sdk-for-python/pull/42143).
 
 #### Other Changes
+* Changed to include client id in headers for all requests. See [PR 42104](https://github.com/Azure/azure-sdk-for-python/pull/42104).
 
 ### 4.14.0b1 (2025-07-14)
 

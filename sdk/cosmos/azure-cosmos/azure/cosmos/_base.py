@@ -265,6 +265,8 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
 
     if client_id is not None:
         headers[http_constants.HttpHeaders.ClientId] = client_id
+    elif cosmos_client_connection and cosmos_client_connection.client_id:
+        headers[http_constants.HttpHeaders.ClientId] = cosmos_client_connection.client_id
 
     if options.get("enableScriptLogging"):
         headers[http_constants.HttpHeaders.EnableScriptLogging] = options["enableScriptLogging"]
