@@ -25,7 +25,7 @@ class TestSearchManagementAdminKeysOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.admin_keys.get(
             resource_group_name=resource_group.name,
             search_service_name="str",
-            api_version="2025-02-01-preview",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestSearchManagementAdminKeysOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             search_service_name="str",
             key_kind="str",
-            api_version="2025-02-01-preview",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself

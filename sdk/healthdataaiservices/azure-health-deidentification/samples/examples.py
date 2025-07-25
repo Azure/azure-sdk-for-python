@@ -4,7 +4,7 @@ from azure.identity import DefaultAzureCredential
 import os
 
 
-endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
+endpoint = os.environ["HEALTHDATAAISERVICES_DEID_SERVICE_ENDPOINT"]
 credential = DefaultAzureCredential()
 client = DeidentificationClient(endpoint, credential)
 # [END create_client]

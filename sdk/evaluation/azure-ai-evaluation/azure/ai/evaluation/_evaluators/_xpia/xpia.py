@@ -69,17 +69,20 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
 
     id = "azureml://registries/azureml/models/Indirect-Attack-Evaluator/versions/3"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
+    _OPTIONAL_PARAMS = ["query"]
 
     @override
     def __init__(
         self,
         credential,
         azure_ai_project,
+        **kwargs,
     ):
         super().__init__(
             eval_metric=EvaluationMetrics.XPIA,
             azure_ai_project=azure_ai_project,
             credential=credential,
+            **kwargs,
         )
 
     @overload
