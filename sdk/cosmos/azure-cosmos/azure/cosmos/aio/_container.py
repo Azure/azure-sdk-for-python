@@ -57,7 +57,6 @@ from ..partition_key import (
     _get_partition_key_from_partition_key_definition
 )
 # Add this import at the top of the file
-from .._retry_utility import ConnectionRetryPolicy
 __all__ = ("ContainerProxy",)
 
 # pylint: disable=protected-access, too-many-lines
