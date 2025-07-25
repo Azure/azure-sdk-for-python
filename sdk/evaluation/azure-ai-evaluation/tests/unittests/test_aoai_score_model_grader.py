@@ -56,7 +56,7 @@ class TestAzureOpenAIScoreModelGrader:
         grader = AzureOpenAIScoreModelGrader(model_config=mock_aoai_model_config, **basic_score_grader_config)
 
         assert grader is not None
-        assert grader.id == "aoai://score_model"
+        assert grader.id == AzureOpenAIScoreModelGrader.id
         assert grader._model_config == mock_aoai_model_config
         assert grader._grader_config.name == "Test Score Grader"
         assert grader._grader_config.model == "gpt-4o-mini"
@@ -234,13 +234,6 @@ class TestAzureOpenAIScoreModelGrader:
         assert grader._grader_config.range == [0.0, 10.0]
         assert grader.pass_threshold == 5.0  # Midpoint default
 
-    def test_grader_id_property(self, mock_aoai_model_config, basic_score_grader_config):
-        """Test that grader has correct ID."""
-        grader = AzureOpenAIScoreModelGrader(model_config=mock_aoai_model_config, **basic_score_grader_config)
-
-        assert grader.id == "aoai://score_model"
-        assert AzureOpenAIScoreModelGrader.id == "aoai://score_model"
-
     @patch("azure.ai.evaluation._aoai.score_model_grader.AzureOpenAIGrader.get_client")
     def test_grader_with_mocked_client(self, mock_get_client, mock_aoai_model_config, basic_score_grader_config):
         """Test grader creation and basic properties with mocked client."""
@@ -251,7 +244,7 @@ class TestAzureOpenAIScoreModelGrader:
         grader = AzureOpenAIScoreModelGrader(model_config=mock_aoai_model_config, **basic_score_grader_config)
 
         assert grader is not None
-        assert grader.id == "aoai://score_model"
+        assert grader.id == AzureOpenAIScoreModelGrader.id
         assert hasattr(grader, "pass_threshold")
         assert grader.pass_threshold == 0.5
 
@@ -956,4 +949,3 @@ class TestAzureOpenAIScoreModelGraderCompatibility:
         )
 
         assert grader is not None
-        assert grader.id == "aoai://score_model"

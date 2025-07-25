@@ -14,7 +14,7 @@ USAGE:
     python deidentify_text_redact.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT - the service URL endpoint for a de-identification service.
+    1) HEALTHDATAAISERVICES_DEID_SERVICE_ENDPOINT - the service URL endpoint for a de-identification service.
 """
 
 
@@ -29,7 +29,7 @@ def deidentify_text_redact():
     from azure.identity import DefaultAzureCredential
     import os
 
-    endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
+    endpoint = os.environ["HEALTHDATAAISERVICES_DEID_SERVICE_ENDPOINT"]
     credential = DefaultAzureCredential()
     client = DeidentificationClient(endpoint, credential)
 

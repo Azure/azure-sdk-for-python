@@ -14,7 +14,7 @@ USAGE:
     python deidentify_text_redact_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT - the service URL endpoint for a de-identification service.
+    1) HEALTHDATAAISERVICES_DEID_SERVICE_ENDPOINT - the service URL endpoint for a de-identification service.
 """
 
 
@@ -30,7 +30,7 @@ import os
 
 
 async def deidentify_text_redact_async():
-    endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
+    endpoint = os.environ["HEALTHDATAAISERVICES_DEID_SERVICE_ENDPOINT"]
     credential = DefaultAzureCredential()
     client = DeidentificationClient(endpoint, credential)
 

@@ -3,15 +3,18 @@
 # ---------------------------------------------------------
 import os
 import math
+import logging
 from typing import Dict, Union, List, Optional
 
 from typing_extensions import overload, override
 
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
-from azure.ai.evaluation._common.utils import parse_quality_evaluator_reason_score
+from ..._common.utils import reformat_conversation_history, reformat_agent_response, reformat_tool_definitions
 from azure.ai.evaluation._model_configurations import Message
 from azure.ai.evaluation._common._experimental import experimental
+
+logger = logging.getLogger(__name__)
 
 
 @experimental
@@ -140,20 +143,23 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 category=ErrorCategory.MISSING_FIELD,
                 target=ErrorTarget.TASK_ADHERENCE_EVALUATOR,
             )
-
+        eval_input["query"] = reformat_conversation_history(eval_input["query"], logger, include_system_messages=True)
+        eval_input["response"] = reformat_agent_response(eval_input["response"], logger, include_tool_messages=True)
+        if "tool_definitions" in eval_input and eval_input["tool_definitions"] is not None:
+            eval_input["tool_definitions"] = reformat_tool_definitions(eval_input["tool_definitions"], logger)
         llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
-
-        score = math.nan
-        if llm_output:
-            score, reason = parse_quality_evaluator_reason_score(llm_output, valid_score_range="[1-5]")
-
+        if isinstance(llm_output, dict):
+            score = float(llm_output.get("score", math.nan))
             score_result = "pass" if score >= self.threshold else "fail"
-
+            reason = llm_output.get("explanation", "")
             return {
                 f"{self._result_key}": score,
                 f"{self._result_key}_result": score_result,
                 f"{self._result_key}_threshold": self.threshold,
                 f"{self._result_key}_reason": reason,
+                # Uncomment the following line in the next iteration after UI contracts are validated.
+                # f"{self._result_key}_additional_details": llm_output
             }
-
+        if logger:
+            logger.warning("LLM output is not a dictionary, returning NaN for the score.")
         return {self._result_key: math.nan}

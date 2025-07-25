@@ -8,8 +8,8 @@ try:
     from ._attack_objective_generator import RiskCategory
     from ._red_team_result import RedTeamResult
 except ImportError:
-    print(
-        "[INFO] Could not import Pyrit. Please install the dependency with `pip install azure-ai-evaluation[redteam]`."
+    raise ImportError(
+        "Could not import Pyrit. Please install the dependency with `pip install azure-ai-evaluation[redteam]`."
     )
 
 

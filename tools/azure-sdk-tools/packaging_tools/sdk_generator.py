@@ -222,7 +222,7 @@ def main(generate_input, generate_output):
     with open(generate_input, "r") as reader:
         data = json.load(reader)
 
-    spec_folder = data["specFolder"]
+    spec_folder = data.get("specFolder", "")
     sdk_folder = "."
     result = {}
     python_tag = data.get("python_tag")
@@ -236,7 +236,8 @@ def main(generate_input, generate_output):
         try:
             code_generation_start_time = time.time()
             if input_type == "relatedTypeSpecProjectFolder":
-                del_outdated_generated_files(str(Path(spec_folder, readme_or_tsp)))
+                if run_in_pipeline:
+                    del_outdated_generated_files(str(Path(spec_folder, readme_or_tsp)))
                 config = gen_typespec(
                     readme_or_tsp,
                     spec_folder,
@@ -394,7 +395,7 @@ def main(generate_input, generate_output):
                 _LOGGER.warning(f"Fail to generate changelog for {package_name} in {readme_or_tsp}: {str(e)}")
 
             # Generate ApiView
-            if run_in_pipeline:
+            if data.get("runMode") in ["spec-pull-request"]:
                 apiview_start_time = time.time()
                 try:
                     package_path = Path(sdk_folder, folder_name, package_name)

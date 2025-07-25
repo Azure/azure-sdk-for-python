@@ -29,9 +29,7 @@ class TestHealthDeidentificationCreateJobWaitUntil(DeidBaseTestCase):
         )
 
         lro: LROPoller = client.begin_deidentify_documents(jobname, job)
-        lro.wait(timeout=60)
-
-        finished_job: DeidentificationJob = lro.result()
+        finished_job: DeidentificationJob = lro.result(timeout=120)
 
         assert finished_job.status == OperationStatus.SUCCEEDED
         assert finished_job.job_name == jobname

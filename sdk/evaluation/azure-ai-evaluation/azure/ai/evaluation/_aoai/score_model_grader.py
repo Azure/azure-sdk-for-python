@@ -47,7 +47,7 @@ class AzureOpenAIScoreModelGrader(AzureOpenAIGrader):
     :type kwargs: Any
     """
 
-    id = "aoai://score_model"
+    id = "azureai://built-in/evaluators/azure-openai/score_model_grader"
 
     def __init__(
         self,
@@ -84,6 +84,7 @@ class AzureOpenAIScoreModelGrader(AzureOpenAIGrader):
             grader_kwargs["range"] = range
         if sampling_params is not None:
             grader_kwargs["sampling_params"] = sampling_params
+        grader_kwargs["pass_threshold"] = self.pass_threshold
 
         grader = ScoreModelGrader(**grader_kwargs)
 
