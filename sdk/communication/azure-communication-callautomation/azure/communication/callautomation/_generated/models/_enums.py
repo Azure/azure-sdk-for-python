@@ -63,6 +63,7 @@ class CommunicationIdentifierModelKind(str, Enum, metaclass=CaseInsensitiveEnumM
     PHONE_NUMBER = "phoneNumber"
     MICROSOFT_TEAMS_USER = "microsoftTeamsUser"
     MICROSOFT_TEAMS_APP = "microsoftTeamsApp"
+    TEAMS_EXTENSION_USER = "teamsExtensionUser"
 
 
 class DtmfTone(str, Enum, metaclass=CaseInsensitiveEnumMeta):

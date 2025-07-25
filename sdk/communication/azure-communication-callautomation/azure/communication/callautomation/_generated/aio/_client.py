@@ -37,7 +37,7 @@ class AzureCommunicationCallAutomationService(_AzureCommunicationCallAutomationS
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential
-    :keyword api_version: Api Version. Default value is "2025-05-15". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2025-06-15". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
