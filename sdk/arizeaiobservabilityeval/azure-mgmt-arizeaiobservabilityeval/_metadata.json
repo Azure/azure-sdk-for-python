@@ -1,6 +1,7 @@
 {
-  "commit": "532b1b8f4efdb960efce95c6694164303d79a3fc",
+  "apiVersion": "2024-10-01",
+  "commit": "f33e3300c8185c17fed347868b1ad216c84ff913",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/liftrarize/ArizeAi.ObservabilityEval.Management",
-  "@azure-tools/typespec-python": "0.44.1"
+  "emitterVersion": "0.47.0"
 }
