@@ -5,6 +5,7 @@
 import dataclasses
 import inspect
 import sys
+import traceback
 
 from concurrent.futures import Executor
 from datetime import datetime, timezone
@@ -212,7 +213,24 @@ class RunSubmitter:
 
         if run.status == RunStatus.FAILED or run.status == RunStatus.CANCELED:
             if run.status == RunStatus.FAILED:
-                error_message = storage.load_exception().get("message", "Run fails with unknown error.")
+                # Get the first error message from the results, or use a default one
+                if run.result and run.result.error:
+                    error_message = "".join(
+                        traceback.format_exception(
+                            type(run.result.error), run.result.error, run.result.error.__traceback__
+                        )
+                    )
+                elif run.result and run.result.details:
+                    err = next((r.error for r in run.result.details if r.error), None)
+                    if err and err.exception:
+                        error_message = "".join(
+                            traceback.format_exception(type(err.exception), err.exception, err.exception.__traceback__)
+                        )
+                    elif err and err.details:
+                        error_message = err.details
+
+                if not error_message:
+                    error_message = "Run fails with unknown error."
             else:
                 error_message = "Run is canceled."
             if raise_on_error:
