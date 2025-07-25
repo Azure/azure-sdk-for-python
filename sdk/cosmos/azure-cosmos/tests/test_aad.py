@@ -3,6 +3,7 @@
 
 import base64
 import json
+import os
 import time
 import unittest
 from io import StringIO
@@ -117,6 +118,33 @@ class TestAAD(unittest.TestCase):
             assert e.status_code == 403
             print("403 error assertion success")
 
+    def test_aad_scope_override(self):
+        override_scope = "https://my.custom.scope/.default"
+        os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"] = override_scope
+
+        scopes_captured = []
+        original_get_token = CosmosEmulatorCredential.get_token
+
+        def capturing_get_token(self, *scopes, **kwargs):
+            scopes_captured.extend(scopes)
+            return original_get_token(self, *scopes, **kwargs)
+
+        CosmosEmulatorCredential.get_token = capturing_get_token
+
+        try:
+            credential = CosmosEmulatorCredential()
+            client = cosmos_client.CosmosClient(self.host, credential)
+            db = client.get_database_client(self.configs.TEST_DATABASE_ID)
+            container = db.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
+            container.create_item(get_test_item(1))
+            assert override_scope in scopes_captured
+        finally:
+            CosmosEmulatorCredential.get_token = original_get_token
+            del os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"]
+            try:
+                container.delete_item(item='Item_1', partition_key='pk')
+            except Exception:
+                pass
 
 if __name__ == "__main__":
     unittest.main()
