@@ -350,18 +350,6 @@ class SessionContainer(object):
                     id_to_sessionlsn[id_] = sessionToken
         return id_to_sessionlsn
 
-    def _format_session_token(self, pk_range, token_dict):
-        session_token_list = []
-        parents = pk_range[0].get('parents').copy()
-        parents.append(pk_range[0]['id'])
-        for parent in parents:
-            vector_session_token = token_dict.get(parent)
-            if vector_session_token is not None:
-                session_token = "{0}:{1}".format(parent, vector_session_token.session_token)
-                session_token_list.append(session_token)
-        session_token = ",".join(session_token_list)
-        return session_token
-
     def _resolve_partition_local_session_token(self, pk_range, token_dict):
         parent_session_token = None
         parents = pk_range[0].get('parents').copy()

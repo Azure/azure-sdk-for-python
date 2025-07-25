@@ -3108,8 +3108,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         """
 
         # if this request was made with consistency level as session, then update the session
-        if response_result is None or response_headers is None:
+        if response_headers is None:
             return
+        # deal with delete requests
+        if response_result is None:
+            response_result = {}
 
         is_session_consistency = False
         if http_constants.HttpHeaders.ConsistencyLevel in request_headers:

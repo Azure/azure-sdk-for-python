@@ -330,7 +330,8 @@ def _is_session_token_request(
     is_session_consistency = consistency_level == documents.ConsistencyLevel.Session
 
     # Verify that it is not a metadata request, and that it is either a read request, batch request, or an account
-    # configured to use multiple write regions
+    # configured to use multiple write regions. Batch requests are special-cased because they can contain both read and
+    # write operations, and we want to use session consistency for the read operations.
     return (is_session_consistency is True and cosmos_client_connection.session is not None
             and not IsMasterResource(request_object.resource_type)
             and (documents._OperationType.IsReadOnlyOperation(request_object.operation_type)
