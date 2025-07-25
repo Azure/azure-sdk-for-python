@@ -32,5 +32,6 @@ jobs:
           python -m pip install -r eng/ci_tools.txt
 
       - name: Install azsdk mcp server
+        shell: pwsh
         run: |
           ./eng/common/mcp/azure-sdk-mcp.ps1 -InstallDirectory $HOME/bin
