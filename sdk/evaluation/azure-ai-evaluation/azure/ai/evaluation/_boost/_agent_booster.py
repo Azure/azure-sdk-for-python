@@ -3,6 +3,7 @@ from typing import Callable, List, Dict, Any, Optional, Union
 import json
 import os
 import tempfile
+from datetime import datetime
 
 from azure.ai.projects import AIProjectClient
 
@@ -36,6 +37,14 @@ class _AgentBooster:
     2. AI analyzes evaluation results and generates targeted improvements
     3. Human reviews and approves final changes (optional)
 
+    Data File Format:
+    The refine() method expects a JSONL file where each line contains a JSON object with a "query" field:
+    ```
+    {"query": "What is the weather like today?"}
+    {"query": "How do I reset my password?"}
+    {"query": "Tell me about your capabilities"}
+    ```
+
     Example usage:
     ```python
     booster = _AgentBooster(
@@ -43,7 +52,11 @@ class _AgentBooster:
         model_config=config,
         agent_id="agent_123",
         improvement_intent="Make responses more concise and technical",
+        output_dir="/path/to/output",  # Optional: defaults to temp directory
     )
+    
+    # Run refinement with a JSONL file containing queries
+    results = booster.refine("queries.jsonl")
     ```
     """
 
@@ -56,6 +69,7 @@ class _AgentBooster:
         sample_size: int = 10,
         max_iterations: int = 3,
         improvement_intent: Optional[str] = None,
+        output_dir: Optional[str] = None,
         # improvement_threshold: float = 0.1,
         # early_stopping: bool = True,
         verbose: bool = False,
@@ -77,6 +91,11 @@ class _AgentBooster:
             max_iterations=max_iterations,
             improvement_intent=improvement_intent,
         )
+
+        # Set output directory for refinement history
+        self._output_dir = output_dir or tempfile.gettempdir()
+        if not os.path.exists(self._output_dir):
+            os.makedirs(self._output_dir, exist_ok=True)
 
         # Initialize critique generator and prompt improver with client factory
         self._openai_client = self._get_client()
@@ -119,15 +138,68 @@ class _AgentBooster:
         except Exception as e:
             raise ValueError(f"Invalid model configuration: {e}")
 
+    def _generate_refinement_history_filename(self) -> str:
+        """Generate a unique filename for refinement history with timestamp.
+        
+        :return: Full path to the refinement history file.
+        :rtype: str
+        """
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        agent_id_safe = self._agent.id.replace("/", "_").replace(":", "_")
+        filename = f"refinement_history_{agent_id_safe}_{timestamp}.json"
+        return os.path.join(self._output_dir, filename)
+
+    def _save_refinement_history(self, custom_filename: Optional[str] = None) -> str:
+        """Save refinement history to a JSON file.
+        
+        :param custom_filename: Optional custom filename. If None, generates timestamp-based name.
+        :type custom_filename: Optional[str]
+        :return: Path to the saved file.
+        :rtype: str
+        """
+        if custom_filename:
+            output_path = os.path.join(self._output_dir, custom_filename)
+        else:
+            output_path = self._generate_refinement_history_filename()
+        
+        # Ensure directory exists
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        
+        # Save the file
+        with open(output_path, "w") as f:
+            json.dump(self.refinement_history, f, indent=2)
+        
+        if self._verbose:
+            print(f"Refinement history saved to: {output_path}")
+        
+        return output_path
+
     def refine(
         self,
         data_file: str,
         max_iterations: Optional[int] = None,
+        output_filename: Optional[str] = None,
         # improvement_threshold: Optional[float] = None,
         # early_stopping: Optional[bool] = None,
     ) -> Dict:
         """
         Run the complete iterative refinement process.
+        
+        The refinement history will be saved to a unique timestamped JSON file.
+        
+        :param data_file: Path to the JSONL file containing queries for refinement.
+            Each line should be a valid JSON object with a "query" field containing the user query string.
+            Example format:
+            {"query": "What is the weather like today?"}
+            {"query": "How do I reset my password?"}
+            {"query": "Tell me about your capabilities"}
+        :type data_file: str
+        :param max_iterations: Maximum number of refinement iterations. If None, uses config value.
+        :type max_iterations: Optional[int]
+        :param output_filename: Optional custom filename for the refinement history.
+        :type output_filename: Optional[str]
+        :return: Dictionary containing refinement results and history file path.
+        :rtype: Dict
         """
         # Use config values or method parameters
         max_iterations = max_iterations or self._config["max_iterations"]
@@ -188,20 +260,18 @@ class _AgentBooster:
                 }
             )
 
-        # Save refinement history
-        with open("refinement_history.json", "w") as f:
-            json.dump(self.refinement_history, f, indent=2)
+        # Save refinement history using the robust atomic write method
+        history_file_path = self._save_refinement_history(output_filename)
 
         if self._verbose:
-            print(
-                "Refinement process completed. History saved to refinement_history.json"
-            )
+            print(f"Refinement process completed. History saved to {history_file_path}")
 
         return {
             "final_prompt_config": current_prompt_config,
             "refinement_history": self.refinement_history,
             "best_iteration": self.best_iteration,
             "best_scores": self.best_scores,
+            "history_file_path": history_file_path,
         }
 
     def boost(self, iteration_result: EvaluationResult) -> _PromptConfiguration:
@@ -225,7 +295,15 @@ class _AgentBooster:
         return new_prompt_config
 
     def _load_queries(self, data_file: str) -> List[str]:
-        """Load queries from the provided data file as a jsonl file.
+        """Load queries from the provided data file as a JSONL file.
+
+        Expected file format: Each line should contain a JSON object with a "query" field.
+        Example content:
+        {"query": "What is the weather like today?"}
+        {"query": "How do I reset my password?"}
+        {"query": "Tell me about your capabilities"}
+        
+        Lines that cannot be parsed as JSON will be skipped with a warning if verbose mode is enabled.
 
         :param data_file: Path to the JSONL file containing queries.
         :type data_file: str
@@ -316,34 +394,6 @@ class _AgentBooster:
         if self._verbose:
             evaluator_names = [e.__name__ for e in evaluators]
             print(f"Set custom evaluators: {evaluator_names}")
-
-    def reset_to_default_evaluators(self):
-        """Reset to use default evaluators (IntentResolutionEvaluator, ToolCallAccuracyEvaluator)."""
-        self._config["evaluators"] = None
-        if self._verbose:
-            print("Reset to default evaluators")
-
-    def add_to_default_evaluators(self, evaluator_class):
-        """Add a custom evaluator to the default evaluators.
-
-        :param evaluator_class: Evaluator class that follows the Azure AI evaluation interface.
-        :type evaluator_class: type
-        """
-        # Get default evaluators and add the custom one
-        from azure.ai.evaluation import (
-            IntentResolutionEvaluator,
-            ToolCallAccuracyEvaluator,
-        )
-
-        default_evaluators = [IntentResolutionEvaluator, ToolCallAccuracyEvaluator]
-
-        if self._config["evaluators"] is None:
-            self._config["evaluators"] = default_evaluators.copy()
-
-        if evaluator_class not in self._config["evaluators"]:
-            self._config["evaluators"].append(evaluator_class)
-            if self._verbose:
-                print(f"Added custom evaluator to defaults: {evaluator_class.__name__}")
 
     def _get_default_evaluators(self) -> Dict:
         """Get default evaluators for evaluation.
