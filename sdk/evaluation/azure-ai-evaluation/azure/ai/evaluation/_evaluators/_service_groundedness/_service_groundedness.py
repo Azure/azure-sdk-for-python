@@ -68,6 +68,7 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
 
     id = "azureml://registries/azureml/models/Groundedness-Pro-Evaluator/versions/1"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
+    _OPTIONAL_PARAMS = ["query"]
 
     @override
     def __init__(

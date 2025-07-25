@@ -23,6 +23,8 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _TYPE_MAP,
     DropCode,
     DropCodeType,
+    RetryCode,
+    RetryCodeType,
     _TRACE,
 )
 
@@ -352,6 +354,174 @@ class TestCustomerStatsbeat(unittest.TestCase):
         for telemetry_type, drop_code_data in metrics._counters.total_item_drop_count.items():
             for drop_code in drop_code_data.keys():
                 drop_code_types.add(type(drop_code).__name__)
+        
+        # Additional assertion to verify aggregation works
+        multi_count_categories = [cat for cat, count in category_totals.items() if count > 1]
+
+    def test_retry_items_count(self):
+        """Test retry item counting with both RetryCode enums and integer status codes."""
+        retried_items = 0
+
+        metrics = self.mock_options.metrics
+        metrics._counters.total_item_retry_count.clear()
+
+        exporter = AzureMonitorTraceExporter(connection_string=self.mock_options.connection_string)
+
+        def patched_transmit(self_exporter, envelopes):
+            self.mock_options.transmit_called[0] = True
+
+            for envelope in envelopes:
+                if not hasattr(envelope, "data") or not envelope.data:
+                    continue
+
+                envelope_name = "Microsoft.ApplicationInsights." + envelope.data.base_type
+                telemetry_type = _BASE_TYPE_MAP.get(envelope_name, _UNKNOWN)
+                
+                should_retry = random.choice([True, False])
+                if should_retry:
+                    nonlocal retried_items
+                    
+                    retry_type = random.choice(["http_status", "client_timeout", "unknown"])
+                    
+                    if retry_type == "http_status":
+                        # HTTP status codes that would trigger retries
+                        status_codes = [429, 503, 500, 502, 504]
+                        status_code = random.choice(status_codes)
+                        
+                        failure_count = random.randint(1, 3)
+                        retried_items += failure_count
+                        
+                        metrics.count_retry_items(failure_count, telemetry_type, status_code, None)
+                    elif retry_type == "client_timeout":
+                        timeout_messages = [
+                            "Connection timed out after 30 seconds",
+                            "Request timed out after 60 seconds",
+                            "Operation timed out",
+                            "Socket timeout occurred"
+                        ]
+                        
+                        exception_message = random.choice(timeout_messages)
+                        
+                        # Simulate multiple retries for the same timeout type
+                        failure_count = random.randint(1, 4)
+                        retried_items += failure_count
+                        
+                        metrics.count_retry_items(failure_count, telemetry_type, RetryCode.CLIENT_TIMEOUT, exception_message)
+                    else:
+                        # Unknown retry reasons
+                        unknown_messages = [
+                            "Unknown network error",
+                            "Unexpected retry condition",
+                            "Network instability detected",
+                            "Connection reset by peer"
+                        ]
+                        
+                        exception_message = random.choice(unknown_messages)
+                        
+                        failure_count = random.randint(1, 3)
+                        retried_items += failure_count
+                        
+                        metrics.count_retry_items(failure_count, telemetry_type, RetryCode.CLIENT_EXCEPTION, exception_message)
+                    
+                    continue
+
+            return ExportResult.SUCCESS
+
+        exporter._transmit = types.MethodType(patched_transmit, exporter)
+
+        resource = Resource.create({"service.name": "retry-test", "service.instance.id": "test-instance"})
+        trace_provider = TracerProvider(resource=resource)
+        
+        processor = SimpleSpanProcessor(exporter)
+        trace_provider.add_span_processor(processor)
+
+        tracer = trace_provider.get_tracer(__name__)
+
+        total_items = random.randint(15, 25)  # Increased to get more aggregation
+
+        for i in range(total_items):
+            span_type = random.choice(["client", "server"])
+            
+            if span_type == "client":
+                # Client spans generate RemoteDependencyData
+                with tracer.start_as_current_span(
+                    name=f"dependency-{i}",
+                    kind=trace.SpanKind.CLIENT,
+                    attributes={
+                        "db.system": "mysql",
+                        "db.name": "test_db",
+                        "db.operation": "query",
+                        "net.peer.name": "test-db-server",
+                        "net.peer.port": 3306,
+                    }
+                ) as span:
+                    span.set_status(trace.Status(trace.StatusCode.OK))
+                    time.sleep(0.01)
+            else:
+                # Server spans generate RequestData  
+                with tracer.start_as_current_span(
+                    name=f"GET /api/endpoint-{i}",
+                    kind=trace.SpanKind.SERVER,
+                    attributes={
+                        "http.method": "GET",
+                        "http.url": f"https://example.com/api/endpoint-{i}",
+                        "http.route": f"/api/endpoint-{i}",
+                        "http.status_code": 200,
+                        "http.scheme": "https",
+                        "http.host": "example.com",
+                    }
+                ) as span:
+                    span.set_status(trace.Status(trace.StatusCode.OK))
+                    time.sleep(0.01)
+
+        trace_provider.force_flush()
+        
+        self.metrics_instance = metrics
+        
+        self.assertTrue(self.mock_options.transmit_called[0], "Exporter _transmit method was not called")
+
+        # Enhanced counting and verification logic
+        actual_retried_count = 0
+        category_totals = {}
+        http_status_totals = {}
+        client_timeout_totals = {}
+        unknown_retry_totals = {}
+        
+        for telemetry_type, retry_code_data in metrics._counters.total_item_retry_count.items():
+            for retry_code, reason_map in retry_code_data.items():
+                if isinstance(reason_map, dict):
+                    for reason, count in reason_map.items():
+                        actual_retried_count += count
+                        category_totals[reason] = category_totals.get(reason, 0) + count
+                        
+                        # Separate HTTP status codes from client exceptions
+                        if isinstance(retry_code, int):
+                            http_status_totals[reason] = http_status_totals.get(reason, 0) + count
+                        elif retry_code == RetryCode.CLIENT_TIMEOUT:
+                            client_timeout_totals[reason] = client_timeout_totals.get(reason, 0) + count
+                        elif retry_code == RetryCode.CLIENT_EXCEPTION:
+                            unknown_retry_totals[reason] = unknown_retry_totals.get(reason, 0) + count
+                else:
+                    actual_retried_count += reason_map
+
+        # Main assertion
+        self.assertEqual(
+            actual_retried_count,
+            retried_items,
+            f"Expected {retried_items} retried items, got {actual_retried_count}. "
+            f"HTTP Status retries: {len(http_status_totals)}, Client Timeout retries: {len(client_timeout_totals)}, "
+            f"Unknown retries: {len(unknown_retry_totals)}"
+        )
+        
+        # Verify aggregation occurred
+        self.assertGreater(len(http_status_totals) + len(client_timeout_totals) + len(unknown_retry_totals), 0, 
+                          "At least one type of retry should have occurred")
+        
+        # Verify that both integer and enum retry codes are being stored properly
+        retry_code_types = set()
+        for telemetry_type, retry_code_data in metrics._counters.total_item_retry_count.items():
+            for retry_code in retry_code_data.keys():
+                retry_code_types.add(type(retry_code).__name__)
         
         # Additional assertion to verify aggregation works
         multi_count_categories = [cat for cat, count in category_totals.items() if count > 1]

@@ -379,7 +379,7 @@ evaluation_response: Evaluation = project_client.evaluations.create(
     evaluation,
     headers={
         "model-endpoint": model_endpoint,
-        "api-key": model_api_key,
+        "model-api-key": model_api_key,
     },
 )
 print(evaluation_response)

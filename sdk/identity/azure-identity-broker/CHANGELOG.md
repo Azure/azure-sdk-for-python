@@ -1,14 +1,20 @@
 # Release History
 
-## 1.3.0b2 (Unreleased)
+## 1.3.0b3 (Unreleased)
 
 ### Features Added
-
-- Added broker support for Linux and WSL.
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+### Other Changes
+
+## 1.3.0b2 (2025-07-17)
+
+### Features Added
+
+- Added broker support for Linux and WSL.
 
 ### Other Changes
 

@@ -15,6 +15,7 @@
 from os import environ
 from unittest import TestCase
 from unittest.mock import patch
+from logging import Formatter
 
 from opentelemetry.sdk.environment_variables import (
     OTEL_EXPERIMENTAL_RESOURCE_DETECTORS,
@@ -26,6 +27,7 @@ from opentelemetry.instrumentation.environment_variables import (
 from azure.monitor.opentelemetry._utils.configurations import (
     _get_configurations,
 )
+from azure.monitor.opentelemetry._constants import LOGGER_NAME_ENV_ARG, LOGGING_FORMAT_ENV_ARG
 from azure.monitor.opentelemetry._constants import (
     RATE_LIMITED_SAMPLER,
     FIXED_PERCENTAGE_SAMPLER,
@@ -36,7 +38,7 @@ from opentelemetry.environment_variables import (
     OTEL_TRACES_EXPORTER,
 )
 from opentelemetry.sdk.environment_variables import OTEL_EXPERIMENTAL_RESOURCE_DETECTORS
-from opentelemetry.sdk.resources import Resource, Attributes
+from opentelemetry.sdk.resources import Resource
 
 from azure.monitor.opentelemetry._version import VERSION
 
@@ -267,6 +269,115 @@ class TestConfigurations(TestCase):
                 "urllib3": {"enabled": True},
             },
         )
+
+    @patch.dict(
+        "os.environ",
+        {
+            LOGGER_NAME_ENV_ARG: "test_env_logger",
+        },
+        clear=True,
+    )
+    def test_get_configurations_logger_name_env_var(self):
+        configurations = _get_configurations()
+
+        self.assertEqual(configurations["logger_name"], "test_env_logger")
+
+    @patch.dict(
+        "os.environ",
+        {
+            LOGGER_NAME_ENV_ARG: "test_env_logger",
+        },
+        clear=True,
+    )
+    def test_get_configurations_logger_name_param_overrides_env_var(self):
+        configurations = _get_configurations(logger_name="test_param_logger")
+
+        self.assertEqual(configurations["logger_name"], "test_param_logger")
+
+    @patch.dict(
+        "os.environ",
+        {
+            LOGGING_FORMAT_ENV_ARG: "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        },
+        clear=True,
+    )
+    def test_get_configurations_logging_format_env_var(self):
+        configurations = _get_configurations()
+
+        formatter = configurations["logging_formatter"]
+        self.assertIsNotNone(formatter)
+        self.assertIsInstance(formatter, Formatter)
+        # Test that the formatter works correctly with a sample log record
+        import logging
+        record = logging.LogRecord(
+            name="test_logger",
+            level=logging.INFO,
+            pathname="test.py",
+            lineno=1,
+            msg="test message",
+            args=(),
+            exc_info=None,
+        )
+        # Type assertion for mypy
+        assert isinstance(formatter, Formatter)
+        formatted = formatter.format(record)
+        self.assertIn("test_logger", formatted)
+        self.assertIn("INFO", formatted)
+        self.assertIn("test message", formatted)
+
+    @patch.dict(
+        "os.environ",
+        {
+            LOGGING_FORMAT_ENV_ARG: "invalid format %(nonexistent)z",
+        },
+        clear=True,
+    )
+    @patch("azure.monitor.opentelemetry._utils.configurations._logger")
+    def test_get_configurations_logging_format_env_var_invalid_format(self, mock_logger):
+        configurations = _get_configurations()
+
+        # Should be None when format is invalid
+        self.assertIsNone(configurations.get("logging_formatter"))
+        # Should log a warning
+        mock_logger.warning.assert_called_once()
+        call_args = mock_logger.warning.call_args[0]
+        self.assertIn("Exception occurred when creating logging Formatter", call_args[0])
+        self.assertIn("invalid format %(nonexistent)z", call_args[1])
+
+    @patch.dict(
+        "os.environ",
+        {
+            LOGGING_FORMAT_ENV_ARG: "%(asctime)s - %(message)s",
+        },
+        clear=True,
+    )
+    def test_get_configurations_logging_format_param_overrides_env_var(self):
+        from logging import Formatter
+        custom_formatter = Formatter("%(levelname)s: %(message)s")
+        configurations = _get_configurations(logging_formatter=custom_formatter)
+
+        # Parameter should override environment variable
+        self.assertEqual(configurations["logging_formatter"], custom_formatter)
+
+    @patch.dict(
+        "os.environ",
+        {
+            LOGGING_FORMAT_ENV_ARG: "%(asctime)s - %(message)s",
+        },
+        clear=True,
+    )
+    def test_get_configurations_logging_format_invalid_param_uses_env_var(self):
+        configurations = _get_configurations(logging_formatter="not_a_formatter")
+
+        # Invalid parameter should be set to None, but env var should still be used
+        self.assertIsNone(configurations["logging_formatter"])
+
+    @patch.dict("os.environ", {}, clear=True)
+    def test_get_configurations_logging_format_no_env_var(self):
+        configurations = _get_configurations()
+
+        # Should not have logging_formatter key when no env var is set
+        self.assertNotIn("logging_formatter", configurations)
     @patch.dict(
         "os.environ",
         {

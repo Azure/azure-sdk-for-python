@@ -54,6 +54,16 @@ from azure.ai.evaluation._user_agent import UserAgentSingleton
 @pytest.mark.usefixtures("recording_injection", "recorded_test")
 @pytest.mark.localtest
 class TestBuiltInEvaluators:
+    @pytest.fixture
+    def sanitized_model_config(self, model_config: AzureOpenAIModelConfiguration) -> AzureOpenAIModelConfiguration:
+
+        if model_config["azure_endpoint"] != "https://Sanitized.api.cognitive.microsoft.com":
+            return model_config
+
+        return AzureOpenAIModelConfiguration(
+            **{**model_config, "azure_endpoint": "https://Sanitized.openai.azure.com/"},
+        )
+
     def test_math_evaluator_bleu_score(self):
         eval_fn = BleuScoreEvaluator()
         score = eval_fn(
@@ -111,8 +121,8 @@ class TestBuiltInEvaluators:
         assert 0 <= score["rouge_recall"] <= 1
         assert 0 <= score["rouge_f1_score"] <= 1
 
-    def test_quality_evaluator_fluency(self, model_config, simple_conversation):
-        eval_fn = FluencyEvaluator(model_config)
+    def test_quality_evaluator_fluency(self, sanitized_model_config, simple_conversation):
+        eval_fn = FluencyEvaluator(sanitized_model_config)
         score = eval_fn(
             response="The capital of Japan is Tokyo.",
         )
@@ -128,8 +138,8 @@ class TestBuiltInEvaluators:
         assert score2["evaluation_per_turn"]["fluency_reason"][0]
         assert score2["evaluation_per_turn"]["fluency_reason"][1]
 
-    def test_quality_evaluator_coherence(self, model_config, simple_conversation):
-        eval_fn = CoherenceEvaluator(model_config)
+    def test_quality_evaluator_coherence(self, sanitized_model_config, simple_conversation):
+        eval_fn = CoherenceEvaluator(sanitized_model_config)
         score = eval_fn(
             query="What is the capital of Japan?",
             response="The capital of Japan is Tokyo.",
@@ -146,8 +156,8 @@ class TestBuiltInEvaluators:
         assert score2["evaluation_per_turn"]["coherence_reason"][0]
         assert score2["evaluation_per_turn"]["coherence_reason"][1]
 
-    def test_quality_evaluator_similarity(self, model_config):
-        eval_fn = SimilarityEvaluator(model_config)
+    def test_quality_evaluator_similarity(self, sanitized_model_config):
+        eval_fn = SimilarityEvaluator(sanitized_model_config)
         score = eval_fn(
             query="What is the capital of Japan?",
             response="The capital of Japan is Tokyo.",
@@ -156,8 +166,8 @@ class TestBuiltInEvaluators:
         assert score is not None
         assert score["similarity"] > 1.0
 
-    def test_quality_evaluator_groundedness(self, model_config, simple_conversation):
-        eval_fn = GroundednessEvaluator(model_config)
+    def test_quality_evaluator_groundedness(self, sanitized_model_config, simple_conversation):
+        eval_fn = GroundednessEvaluator(sanitized_model_config)
         score = eval_fn(
             response="The capital of Japan is Tokyo.",
             context="Tokyo is Japan's capital.",
@@ -174,8 +184,8 @@ class TestBuiltInEvaluators:
         assert score2["evaluation_per_turn"]["groundedness_reason"][0]
         assert score2["evaluation_per_turn"]["groundedness_reason"][1]
 
-    def test_quality_evaluator_groundedness_with_query(self, model_config, simple_conversation):
-        eval_fn = GroundednessEvaluator(model_config)
+    def test_quality_evaluator_groundedness_with_query(self, sanitized_model_config, simple_conversation):
+        eval_fn = GroundednessEvaluator(sanitized_model_config)
         score = eval_fn(
             query="What is the capital of Japan?",
             response="The capital of Japan is Tokyo.",
@@ -185,8 +195,8 @@ class TestBuiltInEvaluators:
         assert score["groundedness"] > 1.0
         assert score["groundedness_reason"]
 
-    def test_quality_evaluator_relevance(self, model_config, simple_conversation):
-        eval_fn = RelevanceEvaluator(model_config)
+    def test_quality_evaluator_relevance(self, sanitized_model_config, simple_conversation):
+        eval_fn = RelevanceEvaluator(sanitized_model_config)
         score = eval_fn(
             query="What is the capital of Japan?",
             response="The capital of Japan is Tokyo.",
@@ -209,16 +219,16 @@ class TestBuiltInEvaluators:
         assert score is not None
         assert score["f1_score"] > 0.0
 
-    def test_quality_evaluator_prompt_based_with_dict_input(self, model_config):
-        eval_fn = FluencyEvaluator(model_config)
+    def test_quality_evaluator_prompt_based_with_dict_input(self, sanitized_model_config):
+        eval_fn = FluencyEvaluator(sanitized_model_config)
         score = eval_fn(
             response={"bar": 2},
         )
         assert score is not None
         assert score["fluency"] > 0.0
 
-    def test_quality_evaluator_retrieval(self, model_config, simple_conversation):
-        eval_fn = RetrievalEvaluator(model_config)
+    def test_quality_evaluator_retrieval(self, sanitized_model_config, simple_conversation):
+        eval_fn = RetrievalEvaluator(sanitized_model_config)
         score = eval_fn(
             query="What is the value of 2 + 2?",
             context="2 + 3 = 5",
@@ -460,8 +470,8 @@ class TestBuiltInEvaluators:
         ), "hate_unfairness_reason must not be None or empty."
 
     @pytest.mark.parametrize("parallel", [False, True])
-    def test_composite_evaluator_qa(self, model_config, parallel):
-        qa_eval = QAEvaluator(model_config, _parallel=parallel)
+    def test_composite_evaluator_qa(self, sanitized_model_config, parallel):
+        qa_eval = QAEvaluator(sanitized_model_config, _parallel=parallel)
         score = qa_eval(
             query="Tokyo is the capital of which country?",
             response="Japan",
@@ -497,8 +507,8 @@ class TestBuiltInEvaluators:
         assert score["similarity"] == score["gpt_similarity"] > 0.0
         assert score["f1_score"] > 0.0
 
-    def test_composite_evaluator_qa_for_nans(self, model_config):
-        qa_eval = QAEvaluator(model_config)
+    def test_composite_evaluator_qa_for_nans(self, sanitized_model_config):
+        qa_eval = QAEvaluator(sanitized_model_config)
         # Test Q/A below would cause NaNs in the evaluation metrics before the fix.
         score = qa_eval(query="This's the color?", response="Black", ground_truth="gray", context="gray")
 

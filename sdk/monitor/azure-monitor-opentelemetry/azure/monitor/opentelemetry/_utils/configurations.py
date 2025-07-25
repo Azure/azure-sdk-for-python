@@ -35,7 +35,9 @@ from azure.monitor.opentelemetry._constants import (
     ENABLE_LIVE_METRICS_ARG,
     INSTRUMENTATION_OPTIONS_ARG,
     LOGGER_NAME_ARG,
+    LOGGER_NAME_ENV_ARG,
     LOGGING_FORMATTER_ARG,
+    LOGGING_FORMAT_ENV_ARG,
     RESOURCE_ARG,
     SAMPLING_RATIO_ARG,
     SAMPLING_TRACES_PER_SECOND_ARG,
@@ -104,14 +106,29 @@ def _default_disable_tracing(configurations):
 
 
 def _default_logger_name(configurations):
-    configurations.setdefault(LOGGER_NAME_ARG, "")
-
+    if LOGGER_NAME_ARG in configurations:
+        return
+    if LOGGER_NAME_ENV_ARG in environ:
+        configurations[LOGGER_NAME_ARG] = environ[LOGGER_NAME_ENV_ARG]
+    else:
+        configurations.setdefault(LOGGER_NAME_ARG, "")
 
 def _default_logging_formatter(configurations):
     formatter = configurations.get(LOGGING_FORMATTER_ARG)
-    if not isinstance(formatter, Formatter):
-        configurations[LOGGING_FORMATTER_ARG] = None
-
+    if formatter:
+        if not isinstance(formatter, Formatter):
+            configurations[LOGGING_FORMATTER_ARG] = None
+            return
+    elif LOGGING_FORMAT_ENV_ARG in environ:
+        try:
+            configurations[LOGGING_FORMATTER_ARG] = Formatter(environ[LOGGING_FORMAT_ENV_ARG])
+        except Exception as ex:  # pylint: disable=broad-exception-caught
+            _logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
+                "Exception occurred when creating logging Formatter from format: %s, %s.",
+                environ[LOGGING_FORMAT_ENV_ARG],
+                ex,
+            )
+            configurations[LOGGING_FORMATTER_ARG] = None
 
 def _default_resource(configurations):
     environ.setdefault(OTEL_EXPERIMENTAL_RESOURCE_DETECTORS, ",".join(_SUPPORTED_RESOURCE_DETECTORS))

@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from functools import cached_property
 from logging import getLogger, Formatter
-from typing import Dict, List, cast
+from typing import Dict, List, Optional, cast
 
 from opentelemetry.instrumentation.instrumentor import (  # type: ignore
     BaseInstrumentor,
@@ -204,7 +204,7 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
         logger_provider.add_log_record_processor(log_record_processor)
         set_logger_provider(logger_provider)
         logger_name: str = configurations[LOGGER_NAME_ARG]  # type: ignore
-        logging_formatter: Formatter = configurations[LOGGING_FORMATTER_ARG]  # type: ignore
+        logging_formatter: Optional[Formatter] = configurations.get(LOGGING_FORMATTER_ARG)  # type: ignore
         logger = getLogger(logger_name)
         # Only add OpenTelemetry LoggingHandler if logger does not already have the handler
         # This is to prevent most duplicate logging telemetry
@@ -332,7 +332,6 @@ def _setup_additional_azure_sdk_instrumentations(configurations: Dict[str, Confi
 
     instrumentors = [
         ("azure.ai.inference.tracing", "AIInferenceInstrumentor"),
-        ("azure.ai.projects.telemetry.agents", "AIAgentsInstrumentor"),
         ("azure.ai.agents.telemetry", "AIAgentsInstrumentor"),
     ]
 

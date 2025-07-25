@@ -217,3 +217,5 @@ resource batchRole 'Microsoft.Authorization/roleAssignments@2020-10-01-preview' 
 output HEALTHDATAAISERVICES_DEID_SERVICE_ENDPOINT string = testDeidService.properties.serviceUrl
 output HEALTHDATAAISERVICES_STORAGE_ACCOUNT_NAME string = storageAccount.name
 output HEALTHDATAAISERVICES_STORAGE_CONTAINER_NAME string = container.name
+#disable-next-line no-hardcoded-env-urls
+output HEALTHDATAAISERVICES_STORAGE_ACCOUNT_LOCATION string = 'https://${storageAccount.name}.blob.core.windows.net/${container.name}'

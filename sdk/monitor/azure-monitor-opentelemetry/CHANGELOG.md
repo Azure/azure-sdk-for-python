@@ -1,6 +1,6 @@
 # Release History
 
-## 1.6.11 (Unreleased)
+## 1.6.13 (Unreleased)
 
 ### Features Added
 - Added RateLimited Sampler Config changes
@@ -10,6 +10,20 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.6.12 (2025-07-21)
+
+### Bugs Fixed
+
+- Fix logging formatter breaking change
+    ([#42122](https://github.com/Azure/azure-sdk-for-python/pull/42122))
+
+## 1.6.11 (2025-07-17)
+
+### Features Added
+
+- Add configuring of logging format and logger name via environment variables
+    ([#42035](https://github.com/Azure/azure-sdk-for-python/pull/42035))
 
 ## 1.6.10 (2025-05-30)
 

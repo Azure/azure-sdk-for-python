@@ -67,6 +67,7 @@ class SelfHarmEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
 
     id = "azureml://registries/azureml/models/Self-Harm-Related-Content-Evaluator/versions/3"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
+    _OPTIONAL_PARAMS = ["query"]
 
     @override
     def __init__(
@@ -75,6 +76,7 @@ class SelfHarmEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
         azure_ai_project,
         *,
         threshold: int = 3,
+        **kwargs,
     ):
         super().__init__(
             eval_metric=EvaluationMetrics.SELF_HARM,
@@ -83,6 +85,7 @@ class SelfHarmEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             conversation_aggregation_type=_AggregationType.MAX,
             threshold=threshold,
             _higher_is_better=False,
+            **kwargs,
         )
 
     @overload
