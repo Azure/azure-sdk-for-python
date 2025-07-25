@@ -27,6 +27,7 @@ import asyncio
 import os
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
+from azure.ai.projects.models import ModelDeployment
 
 
 async def main() -> None:
@@ -55,6 +56,17 @@ async def main() -> None:
             print(f"Get a single deployment named `{model_deployment_name}`:")
             deployment = await project_client.deployments.get(model_deployment_name)
             print(deployment)
+
+            # At the moment, the only deployment type supported is ModelDeployment
+            if isinstance(deployment, ModelDeployment):
+                print(f"Type: {deployment.type}")
+                print(f"Name: {deployment.name}")
+                print(f"Model Name: {deployment.model_name}")
+                print(f"Model Version: {deployment.model_version}")
+                print(f"Model Publisher: {deployment.model_publisher}")
+                print(f"Capabilities: {deployment.capabilities}")
+                print(f"SKU: {deployment.sku}")
+                print(f"Connection Name: {deployment.connection_name}")
 
 
 if __name__ == "__main__":

@@ -80,10 +80,10 @@ async def main() -> None:
             print(dataset)
 
             print(f"Get credentials of an existing Dataset version `{dataset_version_1}`:")
-            asset_credential = await project_client.datasets.get_credentials(
+            dataset_credential = await project_client.datasets.get_credentials(
                 name=dataset_name, version=dataset_version_1
             )
-            print(asset_credential)
+            print(dataset_credential)
 
             print("List latest versions of all Datasets:")
             async for dataset in project_client.datasets.list():

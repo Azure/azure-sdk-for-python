@@ -16,14 +16,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import AIProjectClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
-from .operations import (
-    ConnectionsOperations,
-    DatasetsOperations,
-    DeploymentsOperations,
-    EvaluationsOperations,
-    IndexesOperations,
-    RedTeamsOperations,
-)
+from .operations import ConnectionsOperations, DatasetsOperations, DeploymentsOperations, IndexesOperations
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -34,16 +27,12 @@ class AIProjectClient:
 
     :ivar connections: ConnectionsOperations operations
     :vartype connections: azure.ai.projects.operations.ConnectionsOperations
-    :ivar evaluations: EvaluationsOperations operations
-    :vartype evaluations: azure.ai.projects.operations.EvaluationsOperations
     :ivar datasets: DatasetsOperations operations
     :vartype datasets: azure.ai.projects.operations.DatasetsOperations
     :ivar indexes: IndexesOperations operations
     :vartype indexes: azure.ai.projects.operations.IndexesOperations
     :ivar deployments: DeploymentsOperations operations
     :vartype deployments: azure.ai.projects.operations.DeploymentsOperations
-    :ivar red_teams: RedTeamsOperations operations
-    :vartype red_teams: azure.ai.projects.operations.RedTeamsOperations
     :param endpoint: Project endpoint. In the form
      "https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/_project"
      if your Foundry Hub has only one Project, or to use the default Project in your Hub. Or in the
@@ -54,9 +43,8 @@ class AIProjectClient:
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2025-05-15-preview". Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: The API version to use for this operation. Default value is "v1". Note
+     that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -87,11 +75,9 @@ class AIProjectClient:
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
         self.connections = ConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.evaluations = EvaluationsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.red_teams = RedTeamsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

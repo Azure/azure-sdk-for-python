@@ -6,11 +6,11 @@
 
 """
 DESCRIPTION:
-    Given an AIProjectClient, this sample demonstrates how to get an authenticated 
-    AzureOpenAI client from the openai package, and perform one chat completion operation.
+    Given an AIProjectClient, this sample demonstrates how to get an authenticated
+    AzureOpenAI client from the openai package, and perform one `responses` operation.
 
 USAGE:
-    python sample_chat_completions_with_azure_openai_client.py
+    python sample_responses_with_azure_openai_client.py
 
     Before running the sample:
 
@@ -24,7 +24,8 @@ USAGE:
        in the Management Center of your AI Foundry project. Required.
 
     Update the Azure OpenAI api-version as needed (see `api_version=` below). Values can be found here:
-    https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs
+    https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs. Note that `responses` operations
+    are only supported in the preview API version at the moment.
 """
 
 import os
@@ -39,40 +40,28 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
 
     with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
 
-        # [START aoai_sample]
         print(
-            "Get an authenticated Azure OpenAI client for the parent AI Services resource, and perform a chat completion operation:"
+            "Get an authenticated Azure OpenAI client for the parent AI Services resource, and perform a 'responses' operation:"
         )
-        with project_client.inference.get_azure_openai_client(api_version="2024-10-21") as client:
+        with project_client.get_openai_client(api_version="2025-04-01-preview") as client:
 
-            response = client.chat.completions.create(
+            response = client.responses.create(
                 model=model_deployment_name,
-                messages=[
-                    {
-                        "role": "user",
-                        "content": "How many feet are in a mile?",
-                    },
-                ],
+                input="How many feet are in a mile?",
             )
 
-            print(response.choices[0].message.content)
+            print(response.output_text)
 
         print(
-            "Get an authenticated Azure OpenAI client for a connected Azure OpenAI service, and perform a chat completion operation:"
+            "Get an authenticated Azure OpenAI client for a connected Azure OpenAI service, and perform a 'responses' operation:"
         )
-        with project_client.inference.get_azure_openai_client(
-            api_version="2024-10-21", connection_name=connection_name
+        with project_client.get_openai_client(
+            api_version="2025-04-01-preview", connection_name=connection_name
         ) as client:
 
-            response = client.chat.completions.create(
+            response = client.responses.create(
                 model=model_deployment_name,
-                messages=[
-                    {
-                        "role": "user",
-                        "content": "How many feet are in a mile?",
-                    },
-                ],
+                input="How many feet are in a mile?",
             )
 
-            print(response.choices[0].message.content)
-        # [END aoai_sample]
+            print(response.output_text)

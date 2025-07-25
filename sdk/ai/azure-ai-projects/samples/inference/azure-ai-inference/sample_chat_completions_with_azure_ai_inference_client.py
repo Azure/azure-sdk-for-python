@@ -6,13 +6,13 @@
 
 """
 DESCRIPTION:
-    Given an AI Foundry Project endpoint, this sample demonstrates how to get an authenticated 
+    Given an AI Foundry Project endpoint, this sample demonstrates how to get an authenticated
     ChatCompletionsClient from the azure.ai.inference package and perform one chat completion
-    operation. It also shows how to turn on local tracing.
-    For more information on the azure.ai.inference package see https://pypi.org/project/azure-ai-inference/.
+    operation. For more information on the azure.ai.inference package see
+    https://pypi.org/project/azure-ai-inference/.
 
 USAGE:
-    python sample_chat_completions_with_azure_ai_inference_client_and_console_tracing.py
+    python sample_chat_completions_with_azure_ai_inference_client.py
 
     Before running the sample:
 
@@ -22,31 +22,13 @@ USAGE:
     1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
        Azure AI Foundry project.
     2) MODEL_DEPLOYMENT_NAME - The AI model deployment name, as found in your AI Foundry project.
-
-ALTERNATIVE USAGE:
-    If you want to export telemetry to OTLP endpoint (such as Aspire dashboard
-    https://learn.microsoft.com/dotnet/aspire/fundamentals/dashboard/standalone?tabs=bash)
-    instead of to the console, also install:
-
-    pip install opentelemetry-exporter-otlp-proto-grpc
-
-    And also define:
-    3) OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT - Optional. Set to `true` to trace the content of chat
-       messages, which may contain personal data. False by default.
 """
 
 import os
-import sys
 from urllib.parse import urlparse
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects import enable_telemetry
 from azure.ai.inference import ChatCompletionsClient
 from azure.ai.inference.models import UserMessage
-
-# Enable console tracing.
-# or, if you have local OTLP endpoint running, change it to
-# enable_telemetry(destination="http://localhost:4317")
-enable_telemetry(destination=sys.stdout)
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
