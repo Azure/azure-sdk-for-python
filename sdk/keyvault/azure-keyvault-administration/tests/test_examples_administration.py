@@ -2,12 +2,14 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import os
 import time
+import uuid
 
 import pytest
 from azure.keyvault.administration import KeyVaultDataAction, KeyVaultPermission, KeyVaultRoleScope, KeyVaultSetting, KeyVaultSettingType
 from azure.keyvault.administration._internal.client_base import DEFAULT_VERSION
-from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
+from devtools_testutils import add_general_regex_sanitizer, recorded_by_proxy, set_bodiless_matcher
 
 from _shared.test_case import KeyVaultTestCase
 from _test_case import KeyVaultBackupClientPreparer, KeyVaultAccessControlClientPreparer, KeyVaultSettingsClientPreparer, get_decorator
@@ -20,11 +22,16 @@ class TestExamplesTests(KeyVaultTestCase):
     def create_key_client(self, vault_uri, **kwargs):
         from azure.keyvault.keys import KeyClient
         credential = self.get_credential(KeyClient)
-        return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs )
+        return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs)
+
+    def get_replayable_uuid(self, replay_value):
+        if self.is_live:
+            value = str(uuid.uuid4())
+            return value
+        return replay_value
 
     def get_service_principal_id(self):
         """Helper method to get a service principal ID for testing"""
-        import os
         replay_value = "service-principal-id"
         if self.is_live:
             value = os.environ.get("CLIENT_OBJECTID")
@@ -122,7 +129,9 @@ class TestExamplesTests(KeyVaultTestCase):
         # Get the first available role definition for the example
         first_definition = role_definitions[0]
         definition_id = first_definition.id
-        
+        name = self.get_replayable_uuid("some-uuid")
+        add_general_regex_sanitizer(function_scoped=True, regex=name, value="some-uuid")
+
         # Get a service principal ID for testing
         principal_id = self.get_service_principal_id()
 
@@ -131,7 +140,8 @@ class TestExamplesTests(KeyVaultTestCase):
         role_assignment = access_control_client.create_role_assignment(
             scope=KeyVaultRoleScope.GLOBAL,
             definition_id=definition_id,
-            principal_id=principal_id
+            principal_id=principal_id,
+            name=name,
         )
         
         print(f"Created role assignment: {role_assignment.name}")
@@ -173,15 +183,18 @@ class TestExamplesTests(KeyVaultTestCase):
     def test_example_role_definitions(self, client, **kwargs):
         set_bodiless_matcher()
         access_control_client = client
+        definition_name = self.get_replayable_uuid("definition-name")
+        add_general_regex_sanitizer(function_scoped=True, regex=definition_name, value="definition-name")
 
         # [START set_role_definition]
         # Create or update a custom role definition
         permissions = [KeyVaultPermission(data_actions=[KeyVaultDataAction.READ_HSM_KEY])]
         role_definition = access_control_client.set_role_definition(
             scope=KeyVaultRoleScope.GLOBAL,
+            name=definition_name,
             role_name="Custom Key Reader",
             description="Can read HSM keys",
-            permissions=permissions
+            permissions=permissions,
         )
         
         print(f"Created role definition: {role_definition.name}")
