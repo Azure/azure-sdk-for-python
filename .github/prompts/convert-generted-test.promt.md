@@ -225,6 +225,8 @@ class TestXxxOperations(AzureMgmtRecordedTestCase):
 - Run command in virtual environment
 - Follow this guideline Step by Step.
 - ONLY change according to error message for live test result.
+- DO use ARM template instead of SDK API to create resource
+- DO NOT add new SDK call in test case
 
 
 
