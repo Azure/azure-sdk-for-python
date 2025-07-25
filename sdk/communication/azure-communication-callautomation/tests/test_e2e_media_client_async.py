@@ -35,14 +35,13 @@ from azure.servicebus.aio import ServiceBusClient
 
 from callautomation_test_case_async import CallAutomationRecordedTestCaseAsync
 
-@pytest.mark.asyncio
 class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
 
     @recorded_by_proxy_async
     async def test_play_media_in_a_call(self):
-        caller = self.identity_client.create_user()
+        caller = await self.identity_client.create_user()
         print(f"Caller User ID: {caller.raw_id}")
-        target = self.identity_client.create_user()
+        target = await self.identity_client.create_user()
         print(f"Target User ID: {target.raw_id}")
         unique_id, call_connection, _ = await self.establish_callconnection_voip(caller, target)
         print(f"unique_id: {unique_id}")
@@ -75,9 +74,9 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
     @pytest.mark.skip(reason="Known issues - Bug 3949487: [GA4] [Python] [SDK] [Async] Get Participant fails with authentication error HMAC-SHA256, Bug 4182867: [SDK] Hmac Validation with ':' (GetParticipant) mismatch")
     @recorded_by_proxy_async
     async def test_add_and_mute_participant_in_a_call(self):
-        caller = self.identity_client.create_user()
-        target = self.identity_client.create_user()
-        new_user = self.identity_client.create_user()  # Await here!
+        caller = await self.identity_client.create_user()
+        target = await self.identity_client.create_user()
+        new_user = await self.identity_client.create_user()
         participant_to_add = identifier_from_raw_id(new_user.raw_id)
         unique_id, call_connection, _ = await self.establish_callconnection_voip(caller, target)
 
@@ -118,9 +117,9 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
     @pytest.mark.skip(reason="Known issues - Bug 3949487: [GA4] [Python] [SDK] [Async] Get Participant fails with authentication error HMAC-SHA256, Bug 4182867: [SDK] Hmac Validation with ':' (GetParticipant) mismatch")
     @recorded_by_proxy_async
     async def test_add_and_hold_unhold_participant_in_a_call(self):
-        caller = self.identity_client.create_user()
-        target = self.identity_client.create_user()
-        participant_to_add = identifier_from_raw_id(self.identity_client.create_user().raw_id)
+        caller = await self.identity_client.create_user()
+        target = await self.identity_client.create_user()
+        participant_to_add = identifier_from_raw_id((await self.identity_client.create_user()).raw_id)
         unique_id, call_connection, _ = await self.establish_callconnection_voip(caller, target)
 
         connected_event = self.check_for_event(
@@ -167,8 +166,8 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
 
     @recorded_by_proxy_async
     async def test_start_stop_media_streaming_in_a_call(self):
-        caller = self.identity_client.create_user()
-        target = self.identity_client.create_user()
+        caller = await self.identity_client.create_user()
+        target = await self.identity_client.create_user()
 
         media_streaming_options = MediaStreamingOptions(
             transport_url=self.transport_url,
@@ -226,8 +225,8 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
 
     @recorded_by_proxy_async
     async def test_start_stop_transcription_in_call(self):
-        caller = self.identity_client.create_user()
-        target = self.identity_client.create_user()
+        caller = await self.identity_client.create_user()
+        target = await self.identity_client.create_user()
 
         transcription_options = TranscriptionOptions(
             transport_url=self.transport_url,
@@ -290,8 +289,8 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
 
     @recorded_by_proxy_async
     async def test_play_multiple_file_sources_with_play_media_all(self):
-        caller = self.identity_client.create_user()
-        target = self.identity_client.create_user()
+        caller = await self.identity_client.create_user()
+        target = await self.identity_client.create_user()
         unique_id, call_connection, _ = await self.establish_callconnection_voip(caller, target)
 
         connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
@@ -321,8 +320,8 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
 
     @recorded_by_proxy_async
     async def test_play_multiple_file_sources_with_play_media(self):
-        caller = self.identity_client.create_user()
-        target = self.identity_client.create_user()
+        caller = await self.identity_client.create_user()
+        target = await self.identity_client.create_user()
         unique_id, call_connection, _ = await self.establish_callconnection_voip(caller, target)
 
         connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
@@ -353,8 +352,8 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
 
     @recorded_by_proxy_async
     async def test_play_multiple_file_sources_with_operationcallbackurl_with_play_media_all(self):
-        caller = self.identity_client.create_user()
-        target = self.identity_client.create_user()
+        caller = await self.identity_client.create_user()
+        target = await self.identity_client.create_user()
         unique_id, call_connection, _ = await self.establish_callconnection_voip(caller, target)
 
         connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
@@ -387,8 +386,8 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
 
     @recorded_by_proxy_async
     async def test_play_multiple_file_sources_with_operationcallbackurl_with_play_media(self):
-        caller = self.identity_client.create_user()
-        target = self.identity_client.create_user()
+        caller = await self.identity_client.create_user()
+        target = await self.identity_client.create_user()
         unique_id, call_connection, _ = await self.establish_callconnection_voip(caller, target)
 
         connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
@@ -422,8 +421,8 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
 
     @recorded_by_proxy_async
     async def test_play_multiple_text_sources_with_play_media(self):
-        caller = self.identity_client.create_user()
-        target = self.identity_client.create_user()
+        caller = await self.identity_client.create_user()
+        target = await self.identity_client.create_user()
         unique_id, call_connection, _ = await self.establish_callconnection_voip(caller, target, cognitive_service_enabled=True)
 
         connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
@@ -454,8 +453,8 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
 
     @recorded_by_proxy_async
     async def test_play_multiple_text_sources_with_play_media_all(self):
-        caller = self.identity_client.create_user()
-        target = self.identity_client.create_user()
+        caller = await self.identity_client.create_user()
+        target = await self.identity_client.create_user()
         unique_id, call_connection, _ = await self.establish_callconnection_voip(caller, target, cognitive_service_enabled=True)
 
         connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
@@ -485,8 +484,8 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
 
     @recorded_by_proxy_async
     async def test_play_combined_file_and_text_sources_with_play_media(self):
-        caller = self.identity_client.create_user()
-        target = self.identity_client.create_user()
+        caller = await self.identity_client.create_user()
+        target = await self.identity_client.create_user()
         unique_id, call_connection, _ = await self.establish_callconnection_voip(caller, target, cognitive_service_enabled=True)
 
         connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
@@ -516,8 +515,8 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
 
     @recorded_by_proxy_async
     async def test_play_combined_file_and_text_sources_with_play_media_all(self):
-        caller = self.identity_client.create_user()
-        target = self.identity_client.create_user()
+        caller = await self.identity_client.create_user()
+        target = await self.identity_client.create_user()
         unique_id, call_connection, _ = await self.establish_callconnection_voip(caller, target, cognitive_service_enabled=True)
 
         connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
@@ -546,8 +545,8 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
 
     @recorded_by_proxy_async
     async def test_play_with_invalid_file_sources_with_play_media_all(self):
-        caller = self.identity_client.create_user()
-        target = self.identity_client.create_user()
+        caller = await self.identity_client.create_user()
+        target = await self.identity_client.create_user()
         unique_id, call_connection, _ = await self.establish_callconnection_voip(caller, target)
 
         connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
@@ -573,8 +572,8 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
 
     @recorded_by_proxy_async
     async def test_play_with_invalid_and_valid_file_sources_with_play_media_all(self):
-        caller = self.identity_client.create_user()
-        target = self.identity_client.create_user()
+        caller = await self.identity_client.create_user()
+        target = await self.identity_client.create_user()
         unique_id, call_connection, _ = await self.establish_callconnection_voip(caller, target)
 
         connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
@@ -600,8 +599,8 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
 
     @recorded_by_proxy_async
     async def test_play_with_invalid_file_sources_with_play_media(self):
-        caller = self.identity_client.create_user()
-        target = self.identity_client.create_user()
+        caller = await self.identity_client.create_user()
+        target = await self.identity_client.create_user()
         unique_id, call_connection, _ = await self.establish_callconnection_voip(caller, target)
 
         connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
@@ -628,8 +627,8 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
 
     @recorded_by_proxy_async
     async def test_play_with_invalid_and_valid_file_sources_with_play_media(self):
-        caller = self.identity_client.create_user()
-        target = self.identity_client.create_user()
+        caller = await self.identity_client.create_user()
+        target = await self.identity_client.create_user()
         unique_id, call_connection, _ = await self.establish_callconnection_voip(caller, target)
 
         connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
