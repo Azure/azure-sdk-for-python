@@ -7,7 +7,13 @@ from azure.ai.evaluation._model_configurations import (
 
 
 class _PromptConfiguration(TypedDict):
-    """Configuration for prompt settings."""
+    """Configuration for prompt settings used in foundry agents.
+    
+    Attributes:
+        system_prompt: The system-level prompt that defines the agent's behavior and instructions.
+        tools: List of tool definitions available to the agent, where each tool is represented 
+               as a dictionary containing tool metadata and configuration.
+    """
 
     system_prompt: str
     tools: List[Dict[str, Any]]

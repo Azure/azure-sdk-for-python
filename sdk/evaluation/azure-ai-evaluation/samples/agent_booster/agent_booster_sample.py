@@ -6,6 +6,7 @@ from azure.ai.evaluation import AzureOpenAIModelConfiguration
 
 import os
 import dotenv
+
 dotenv.load_dotenv()
 
 
@@ -28,6 +29,7 @@ def example_with_default_evaluators():
         verbose=True,
     )
     return booster
+
 
 booster = example_with_default_evaluators()
 

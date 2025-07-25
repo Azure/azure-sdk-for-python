@@ -54,7 +54,7 @@ class _AgentBooster:
         improvement_intent="Make responses more concise and technical",
         output_dir="/path/to/output",  # Optional: defaults to temp directory
     )
-    
+
     # Run refinement with a JSONL file containing queries
     results = booster.refine("queries.jsonl")
     ```
@@ -140,7 +140,7 @@ class _AgentBooster:
 
     def _generate_refinement_history_filename(self) -> str:
         """Generate a unique filename for refinement history with timestamp.
-        
+
         :return: Full path to the refinement history file.
         :rtype: str
         """
@@ -151,7 +151,7 @@ class _AgentBooster:
 
     def _save_refinement_history(self, custom_filename: Optional[str] = None) -> str:
         """Save refinement history to a JSON file.
-        
+
         :param custom_filename: Optional custom filename. If None, generates timestamp-based name.
         :type custom_filename: Optional[str]
         :return: Path to the saved file.
@@ -161,17 +161,17 @@ class _AgentBooster:
             output_path = os.path.join(self._output_dir, custom_filename)
         else:
             output_path = self._generate_refinement_history_filename()
-        
+
         # Ensure directory exists
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
-        
+
         # Save the file
         with open(output_path, "w") as f:
             json.dump(self.refinement_history, f, indent=2)
-        
+
         if self._verbose:
             print(f"Refinement history saved to: {output_path}")
-        
+
         return output_path
 
     def refine(
@@ -184,9 +184,9 @@ class _AgentBooster:
     ) -> Dict:
         """
         Run the complete iterative refinement process.
-        
+
         The refinement history will be saved to a unique timestamped JSON file.
-        
+
         :param data_file: Path to the JSONL file containing queries for refinement.
             Each line should be a valid JSON object with a "query" field containing the user query string.
             Example format:
@@ -302,7 +302,7 @@ class _AgentBooster:
         {"query": "What is the weather like today?"}
         {"query": "How do I reset my password?"}
         {"query": "Tell me about your capabilities"}
-        
+
         Lines that cannot be parsed as JSON will be skipped with a warning if verbose mode is enabled.
 
         :param data_file: Path to the JSONL file containing queries.
@@ -521,7 +521,7 @@ class _AgentBooster:
             case_id = f"case_{i}"
             case = _EvaluationCase.from_row(row, case_id)
 
-            if case.scores:  # Only add cases with scores
+            if case.metrics:  # Only add cases with scores
                 cases.append(case)
 
         return cases
