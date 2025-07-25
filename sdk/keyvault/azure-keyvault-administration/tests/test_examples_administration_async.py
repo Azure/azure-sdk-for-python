@@ -21,7 +21,16 @@ class TestExamplesTests(KeyVaultTestCase):
     def create_key_client(self, vault_uri, **kwargs):
         from azure.keyvault.keys.aio import KeyClient
         credential = self.get_credential(KeyClient, is_async=True)
-        return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs )
+        return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs)
+
+    def get_service_principal_id(self):
+        """Helper method to get a service principal ID for testing"""
+        import os
+        replay_value = "service-principal-id"
+        if self.is_live:
+            value = os.environ.get("CLIENT_OBJECTID")
+            return value or replay_value
+        return replay_value
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_version", only_default)
@@ -108,17 +117,16 @@ class TestExamplesTests(KeyVaultTestCase):
 
         # [START list_role_definitions]
         # List all role definitions
-        role_definitions = access_control_client.list_role_definitions(KeyVaultRoleScope.GLOBAL)
-        
-        # Collect first definition for use in assignment creation
-        first_definition = None
-        async for definition in role_definitions:
+        role_definitions = []
+        paged_response = access_control_client.list_role_definitions(KeyVaultRoleScope.GLOBAL)
+
+        async for definition in paged_response:
             print(f"Role definition: {definition.name}")
-            if first_definition is None:
-                first_definition = definition
+            role_definitions.append(definition)
         # [END list_role_definitions]
 
         # Get the first available role definition for the example
+        first_definition = role_definitions[0]
         definition_id = first_definition.id
         
         # Get a service principal ID for testing
@@ -164,15 +172,6 @@ class TestExamplesTests(KeyVaultTestCase):
         
         print("Role assignment deleted")
         # [END delete_role_assignment]
-
-    def get_service_principal_id(self):
-        """Helper method to get a service principal ID for testing"""
-        import os
-        replay_value = "service-principal-id"
-        if self.is_live:
-            value = os.environ.get("MANAGED_IDENTITY_CLIENT_ID")
-            return value or replay_value
-        return replay_value
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_version", only_default)

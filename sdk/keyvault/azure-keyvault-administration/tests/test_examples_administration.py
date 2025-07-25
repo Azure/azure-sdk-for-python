@@ -22,6 +22,15 @@ class TestExamplesTests(KeyVaultTestCase):
         credential = self.get_credential(KeyClient)
         return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs )
 
+    def get_service_principal_id(self):
+        """Helper method to get a service principal ID for testing"""
+        import os
+        replay_value = "service-principal-id"
+        if self.is_live:
+            value = os.environ.get("CLIENT_OBJECTID")
+            return value or replay_value
+        return replay_value
+
     @pytest.mark.parametrize("api_version", only_default)
     @KeyVaultBackupClientPreparer()
     @recorded_by_proxy
@@ -104,14 +113,14 @@ class TestExamplesTests(KeyVaultTestCase):
 
         # [START list_role_definitions]
         # List all role definitions
-        role_definitions = access_control_client.list_role_definitions(KeyVaultRoleScope.GLOBAL)
+        role_definitions = [d for d in access_control_client.list_role_definitions(KeyVaultRoleScope.GLOBAL)]
         
         for definition in role_definitions:
             print(f"Role definition: {definition.name}")
         # [END list_role_definitions]
 
         # Get the first available role definition for the example
-        first_definition = next(iter(role_definitions))
+        first_definition = role_definitions[0]
         definition_id = first_definition.id
         
         # Get a service principal ID for testing
@@ -157,15 +166,6 @@ class TestExamplesTests(KeyVaultTestCase):
         
         print("Role assignment deleted")
         # [END delete_role_assignment]
-
-    def get_service_principal_id(self):
-        """Helper method to get a service principal ID for testing"""
-        import os
-        replay_value = "service-principal-id"
-        if self.is_live:
-            value = os.environ.get("MANAGED_IDENTITY_CLIENT_ID")
-            return value or replay_value
-        return replay_value
 
     @pytest.mark.parametrize("api_version", only_default)
     @KeyVaultAccessControlClientPreparer()
