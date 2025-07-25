@@ -55,7 +55,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
         print(deployment)
 
         # At the moment, the only deployment type supported is ModelDeployment
-        if type(deployment) is ModelDeployment:
+        if isinstance(deployment, ModelDeployment):
             print(f"Type: {deployment.type}")
             print(f"Name: {deployment.name}")
             print(f"Model Name: {deployment.model_name}")
