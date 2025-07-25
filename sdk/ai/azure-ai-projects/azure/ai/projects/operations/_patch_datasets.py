@@ -17,7 +17,6 @@ from azure.storage.blob import ContainerClient
 from azure.core.tracing.decorator import distributed_trace
 from ._operations import DatasetsOperations as DatasetsOperationsGenerated
 from ..models._models import (
-    DatasetVersion,
     FileDatasetVersion,
     FolderDatasetVersion,
     PendingUploadConfiguration,

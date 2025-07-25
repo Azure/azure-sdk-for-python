@@ -18,7 +18,6 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._operations import DatasetsOperations as DatasetsOperationsGenerated
 from ...models._models import (
-    DatasetVersion,
     FileDatasetVersion,
     FolderDatasetVersion,
     PendingUploadConfiguration,
