@@ -28,6 +28,8 @@ class _Sha2HashAlgorithm(HashAlgorithm):
     _algorithm_cls: Union[Type[hashes.SHA256], Type[hashes.SHA384], Type[hashes.SHA512], None] = None
 
     def create_digest(self):
+        if self._algorithm_cls is None:
+            raise ValueError("Algorithm class not set")
         return _Sha2DigestTransform(self._algorithm_cls())  # pylint:disable=not-callable
 
 
