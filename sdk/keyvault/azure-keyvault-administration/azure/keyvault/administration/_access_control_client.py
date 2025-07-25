@@ -63,6 +63,14 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
 
         :returns: The created role assignment.
         :rtype: ~azure.keyvault.administration.KeyVaultRoleAssignment
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_administration.py
+                :start-after: [START create_role_assignment]
+                :end-before: [END create_role_assignment]
+                :language: python
+                :caption: Create a role assignment
+                :dedent: 8
         """
         assignment_name = name or uuid4()
 
@@ -93,6 +101,14 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
 
         :returns: None
         :rtype: None
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_administration.py
+                :start-after: [START delete_role_assignment]
+                :end-before: [END delete_role_assignment]
+                :language: python
+                :caption: Delete a role assignment
+                :dedent: 8
         """
         try:
             self._client.role_assignments.delete(
@@ -115,6 +131,14 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
 
         :returns: The fetched role assignment.
         :rtype: ~azure.keyvault.administration.KeyVaultRoleAssignment
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_administration.py
+                :start-after: [START get_role_assignment]
+                :end-before: [END get_role_assignment]
+                :language: python
+                :caption: Get a role assignment
+                :dedent: 8
         """
         assignment = self._client.role_assignments.get(
             scope=scope, role_assignment_name=str(name), **kwargs
@@ -133,6 +157,14 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
 
         :returns: A paged response containing the role assignments for the specified scope.
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.administration.KeyVaultRoleAssignment]
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_administration.py
+                :start-after: [START list_role_assignments]
+                :end-before: [END list_role_assignments]
+                :language: python
+                :caption: List role assignments for a scope
+                :dedent: 8
         """
         return self._client.role_assignments.list_for_scope(
             scope=scope,
@@ -178,6 +210,14 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
 
         :returns: The created or updated role definition
         :rtype: ~azure.keyvault.administration.KeyVaultRoleDefinition
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_administration.py
+                :start-after: [START set_role_definition]
+                :end-before: [END set_role_definition]
+                :language: python
+                :caption: Create or update a custom role definition
+                :dedent: 8
         """
         role_permissions = [
             Permission(
@@ -219,6 +259,14 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
 
         :returns: The fetched role definition.
         :rtype: ~azure.keyvault.administration.KeyVaultRoleDefinition
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_administration.py
+                :start-after: [START get_role_definition]
+                :end-before: [END get_role_definition]
+                :language: python
+                :caption: Get a role definition
+                :dedent: 8
         """
         definition = self._client.role_definitions.get(
             scope=scope, role_definition_name=str(name), **kwargs
@@ -239,6 +287,14 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
 
         :returns: None
         :rtype: None
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_administration.py
+                :start-after: [START delete_role_definition]
+                :end-before: [END delete_role_definition]
+                :language: python
+                :caption: Delete a custom role definition
+                :dedent: 8
         """
         try:
             self._client.role_definitions.delete(
@@ -259,6 +315,14 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
 
         :returns: A paged response containing the role definitions for the specified scope.
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.administration.KeyVaultRoleDefinition]
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_administration.py
+                :start-after: [START list_role_definitions]
+                :end-before: [END list_role_definitions]
+                :language: python
+                :caption: List role definitions for a scope
+                :dedent: 8
         """
         return self._client.role_definitions.list(
             scope=scope,
