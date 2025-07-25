@@ -119,6 +119,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
                               preferred_locations=[REGION_1, REGION_2],
                               multiple_write_locations=True,
                               transport=custom_transport, **kwargs)
+        await client.__aenter__()
         db = client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(container_id)
         return {"client": client, "db": db, "col": container}

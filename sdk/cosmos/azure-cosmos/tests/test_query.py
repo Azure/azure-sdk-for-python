@@ -493,6 +493,20 @@ class TestQuery(unittest.TestCase):
 
         self.assertListEqual(list(query_results), [None])
 
+    def test_value_max_query_results(self):
+        container = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
+        container.upsert_item(
+            {"id": str(uuid.uuid4()), "isComplete": True, "version": 3, "lookupVersion": "console_version"})
+        container.upsert_item(
+            {"id": str(uuid.uuid4()), "isComplete": True, "version": 2, "lookupVersion": "console_version"})
+        query = "Select value max(c.version) FROM c where c.isComplete = true and c.lookupVersion = @lookupVersion"
+        query_results = container.query_items(query, parameters=[
+            {"name": "@lookupVersion", "value": "console_version"}  # cspell:disable-line
+        ], enable_cross_partition_query=True)
+        item_list = list(query_results)
+        assert len(item_list) == 1
+        assert item_list[0] == 3
+
     def test_continuation_token_size_limit_query(self):
         container = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
         for i in range(1, 1000):

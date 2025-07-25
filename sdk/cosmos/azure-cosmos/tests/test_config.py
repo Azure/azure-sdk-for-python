@@ -4,6 +4,7 @@
 import collections
 import logging
 import os
+import random
 import time
 import unittest
 import uuid
@@ -15,7 +16,7 @@ from azure.cosmos._retry_utility import _has_database_account_header, _has_read_
 from azure.cosmos._routing.routing_range import Range
 from azure.cosmos.cosmos_client import CosmosClient
 from azure.cosmos.exceptions import CosmosHttpResponseError
-from azure.cosmos.http_constants import StatusCodes
+from azure.cosmos.http_constants import StatusCodes, HttpHeaders
 from azure.cosmos.partition_key import (PartitionKey, _PartitionKeyKind, _PartitionKeyVersion, _Undefined,
                                         NonePartitionKeyValue)
 from azure.cosmos import (ContainerProxy, DatabaseProxy, documents, exceptions,
@@ -31,8 +32,8 @@ try:
 except:
     print("no urllib3")
 
-SPLIT_TIMEOUT = 60*25 # timeout test at 25 minutes
-SLEEP_TIME = 60 # sleep for 1 minutes
+SPLIT_TIMEOUT = 60*10  # timeout test at 10 minutes
+SLEEP_TIME = 30  # sleep for 30 seconds
 
 class TestConfig(object):
     local_host = 'https://localhost:8081/'
@@ -63,12 +64,12 @@ class TestConfig(object):
     THROUGHPUT_FOR_2_PARTITIONS = 12000
     THROUGHPUT_FOR_1_PARTITION = 400
 
-    TEST_DATABASE_ID = os.getenv('COSMOS_TEST_DATABASE_ID', "Python SDK Test Database " + str(uuid.uuid4()))
+    TEST_DATABASE_ID = os.getenv('COSMOS_TEST_DATABASE_ID', "PythonSDKTestDatabase-" + str(uuid.uuid4()))
 
-    TEST_SINGLE_PARTITION_CONTAINER_ID = "Single Partition Test Container " + str(uuid.uuid4())
-    TEST_MULTI_PARTITION_CONTAINER_ID = "Multi Partition Test Container " + str(uuid.uuid4())
-    TEST_SINGLE_PARTITION_PREFIX_PK_CONTAINER_ID = "Single Partition With Prefix PK Test Container " + str(uuid.uuid4())
-    TEST_MULTI_PARTITION_PREFIX_PK_CONTAINER_ID = "Multi Partition With Prefix PK Test Container " + str(uuid.uuid4())
+    TEST_SINGLE_PARTITION_CONTAINER_ID = "SinglePartitionTestContainer-" + str(uuid.uuid4())
+    TEST_MULTI_PARTITION_CONTAINER_ID = "MultiPartitionTestContainer-" + str(uuid.uuid4())
+    TEST_SINGLE_PARTITION_PREFIX_PK_CONTAINER_ID = "SinglePartitionWithPrefixPKTestContainer-" + str(uuid.uuid4())
+    TEST_MULTI_PARTITION_PREFIX_PK_CONTAINER_ID = "MultiPartitionWithPrefixPKTestContainer-" + str(uuid.uuid4())
 
     TEST_CONTAINER_PARTITION_KEY = "pk"
     TEST_CONTAINER_PREFIX_PARTITION_KEY = ["pk1", "pk2"]
@@ -219,7 +220,7 @@ class TestConfig(object):
         while True:
             offer = container.get_throughput()
             if offer.properties['content'].get('isOfferReplacePending', False):
-                if time.time() - start_time > SPLIT_TIMEOUT:  # timeout test at 25 minutes
+                if time.time() - start_time > SPLIT_TIMEOUT:  # timeout test at 10 minutes
                     raise unittest.SkipTest("Partition split didn't complete in time")
                 else:
                     print("Waiting for split to complete")
@@ -240,7 +241,7 @@ class TestConfig(object):
         while True:
             offer = await container.get_throughput()
             if offer.properties['content'].get('isOfferReplacePending', False):
-                if time.time() - start_time > SPLIT_TIMEOUT:  # timeout test at 25 minutes
+                if time.time() - start_time > SPLIT_TIMEOUT:  # timeout test at 10 minutes
                     raise unittest.SkipTest("Partition split didn't complete in time")
                 else:
                     print("Waiting for split to complete")
@@ -296,6 +297,32 @@ def get_full_text_policy(path):
         ]
     }
 
+def get_test_item():
+    test_item = {
+        'id': 'Item_' + str(uuid.uuid4()),
+        'test_object': True,
+        'lastName': 'Smith',
+        'attr1': random.randint(0, 10)
+    }
+    return test_item
+
+def pre_split_hook(response):
+    request_headers = response.http_request.headers
+    session_token = request_headers.get('x-ms-session-token')
+    assert len(session_token) <= 20
+    assert session_token.startswith('0')
+    assert session_token.count(':') == 1
+    assert session_token.count(',') == 0
+
+def post_split_hook(response):
+    request_headers = response.http_request.headers
+    session_token = request_headers.get('x-ms-session-token')
+    assert len(session_token) > 30
+    assert len(session_token) < 60 # should only be 0-1 or 0-2, not 0-1-2
+    assert session_token.startswith('0') is False
+    assert session_token.count(':') == 2
+    assert session_token.count(',') == 1
+
 class ResponseHookCaller:
     def __init__(self):
         self.count = 0
@@ -326,6 +353,14 @@ class FakeHttpResponse:
 
     def body(self):
         return None
+
+def no_token_response_hook(raw_response):
+    request_headers = raw_response.http_request.headers
+    assert request_headers.get(HttpHeaders.SessionToken) is None
+
+def token_response_hook(raw_response):
+    request_headers = raw_response.http_request.headers
+    assert request_headers.get(HttpHeaders.SessionToken) is not None
 
 
 class MockConnectionRetryPolicy(RetryPolicy):
