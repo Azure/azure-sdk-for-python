@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, AsyncIterable, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -54,7 +54,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class KeyVaultClientOperationsMixin(
+class _KeyVaultClientOperationsMixin(
     ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], KeyVaultClientConfiguration]
 ):
 
@@ -537,7 +537,7 @@ class KeyVaultClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_secrets(self, *, maxresults: Optional[int] = None, **kwargs: Any) -> AsyncIterable["_models.SecretItem"]:
+    def get_secrets(self, *, maxresults: Optional[int] = None, **kwargs: Any) -> AsyncItemPaged["_models.SecretItem"]:
         """List secrets in a specified key vault.
 
         The Get Secrets operation is applicable to the entire vault. However, only the base secret
@@ -631,7 +631,7 @@ class KeyVaultClientOperationsMixin(
     @distributed_trace
     def get_secret_versions(
         self, secret_name: str, *, maxresults: Optional[int] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.SecretItem"]:
+    ) -> AsyncItemPaged["_models.SecretItem"]:
         """List all versions of the specified secret.
 
         The full secret identifier and attributes are provided in the response. No values are returned
@@ -727,7 +727,7 @@ class KeyVaultClientOperationsMixin(
     @distributed_trace
     def get_deleted_secrets(
         self, *, maxresults: Optional[int] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.DeletedSecretItem"]:
+    ) -> AsyncItemPaged["_models.DeletedSecretItem"]:
         """Lists deleted secrets for the specified vault.
 
         The Get Deleted Secrets operation returns the secrets that have been deleted for a vault

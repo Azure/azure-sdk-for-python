@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -12,7 +13,7 @@ import os
 # 2. azure-keyvault-keys and azure-identity libraries (pip install these)
 #
 # 3. Set environment variable VAULT_URL with the URL of your key vault
-#    
+#
 # 4. Set up your environment to use azure-identity's DefaultAzureCredential. For more information about how to configure
 #    the DefaultAzureCredential, refer to https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
 #
@@ -70,9 +71,7 @@ print(f"Key with name '{rsa_key.name}' was found.")
 # associated with a key previously stored within Key Vault.
 print("\n.. Update a Key by name")
 expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)
-updated_ec_key = client.update_key_properties(
-    ec_key.name, ec_key.properties.version, expires_on=expires, enabled=False
-)
+updated_ec_key = client.update_key_properties(ec_key.name, ec_key.properties.version, expires_on=expires, enabled=False)
 print(f"Key with name '{updated_ec_key.name}' was updated on date '{updated_ec_key.properties.updated_on}'")
 print(f"Key with name '{updated_ec_key.name}' was updated to expire on '{updated_ec_key.properties.expires_on}'")
 

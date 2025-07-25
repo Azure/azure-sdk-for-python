@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -312,7 +313,7 @@ class CertificateProperties(object):
     def preserve_order(self) -> Optional[bool]:
         """Whether the certificate order should be preserved.
 
-        :returns: Specifies whether the certificate chain preserves its original order. The default value is False, 
+        :returns: Specifies whether the certificate chain preserves its original order. The default value is False,
             which sets the leaf certificate at index 0.
         :rtype: bool or None
         """
