@@ -1,5 +1,22 @@
 # Release History
 
+## 3.0.0 (2025-07-25)
+
+### Features Added
+
+  - Enum `Minute` added member `fromhex`
+  - Enum `Minute` added member `hex`
+
+### Breaking Changes
+
+  - Deleted or renamed enum value `Minute.bit_count`
+  - Deleted or renamed enum value `Minute.bit_length`
+  - Deleted or renamed enum value `Minute.denominator`
+  - Deleted or renamed enum value `Minute.from_bytes`
+  - Deleted or renamed enum value `Minute.numerator`
+  - Deleted or renamed enum value `Minute.to_bytes`
+  - Deleted or renamed model `UploadLimit`
+
 ## 2.1.0 (2024-06-17)
 
 ### Features Added

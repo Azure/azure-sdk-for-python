@@ -1,5 +1,5 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -10,10 +10,9 @@
 import datetime
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -23,7 +22,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -52,10 +51,10 @@ class Resource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
 class ProxyResource(Resource):
@@ -65,7 +64,7 @@ class ProxyResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -78,7 +77,7 @@ class ProxyResource(Resource):
     """
 
 
-class Agent(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class Agent(ProxyResource):
     """The Agent resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -86,7 +85,7 @@ class Agent(ProxyResource):  # pylint: disable=too-many-instance-attributes
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -197,19 +196,19 @@ class Agent(ProxyResource):  # pylint: disable=too-many-instance-attributes
         """
         super().__init__(**kwargs)
         self.description = description
-        self.agent_version = None
+        self.agent_version: Optional[str] = None
         self.arc_resource_id = arc_resource_id
         self.arc_vm_uuid = arc_vm_uuid
-        self.agent_status = None
-        self.last_status_update = None
-        self.local_ip_address = None
-        self.memory_in_mb = None
-        self.number_of_cores = None
-        self.uptime_in_seconds = None
-        self.time_zone = None
+        self.agent_status: Optional[Union[str, "_models.AgentStatus"]] = None
+        self.last_status_update: Optional[datetime.datetime] = None
+        self.local_ip_address: Optional[str] = None
+        self.memory_in_mb: Optional[int] = None
+        self.number_of_cores: Optional[int] = None
+        self.uptime_in_seconds: Optional[int] = None
+        self.time_zone: Optional[str] = None
         self.upload_limit_schedule = upload_limit_schedule
-        self.error_details = None
-        self.provisioning_state = None
+        self.error_details: Optional["_models.AgentPropertiesErrorDetails"] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class AgentList(_serialization.Model):
@@ -217,16 +216,16 @@ class AgentList(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value:
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The Agent items on this page. Required.
     :vartype value: list[~azure.mgmt.storagemover.models.Agent]
-    :ivar next_link: Request URL that can be used to query next page of containers. Returned when
-     total number of requested containers exceed maximum page size.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
     _validation = {
-        "value": {"readonly": True},
-        "next_link": {"readonly": True},
+        "value": {"required": True, "readonly": True},
     }
 
     _attribute_map = {
@@ -234,11 +233,14 @@ class AgentList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[List["_models.Agent"]] = None
+        self.next_link = next_link
 
 
 class AgentPropertiesErrorDetails(_serialization.Model):
@@ -424,7 +426,7 @@ class EndpointBaseProperties(_serialization.Model):
         super().__init__(**kwargs)
         self.endpoint_type: Optional[str] = None
         self.description = description
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class AzureStorageBlobContainerEndpointProperties(EndpointBaseProperties):  # pylint: disable=name-too-long
@@ -660,7 +662,7 @@ class Endpoint(ProxyResource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -726,16 +728,16 @@ class EndpointList(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value:
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The Endpoint items on this page. Required.
     :vartype value: list[~azure.mgmt.storagemover.models.Endpoint]
-    :ivar next_link: Request URL that can be used to query next page of containers. Returned when
-     total number of requested containers exceed maximum page size.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
     _validation = {
-        "value": {"readonly": True},
-        "next_link": {"readonly": True},
+        "value": {"required": True, "readonly": True},
     }
 
     _attribute_map = {
@@ -743,11 +745,14 @@ class EndpointList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[List["_models.Endpoint"]] = None
+        self.next_link = next_link
 
 
 class ErrorAdditionalInfo(_serialization.Model):
@@ -774,8 +779,8 @@ class ErrorAdditionalInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None
-        self.info = None
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
 
 
 class ErrorDetail(_serialization.Model):
@@ -814,11 +819,11 @@ class ErrorDetail(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = None
-        self.additional_info = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[List["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -842,7 +847,7 @@ class ErrorResponse(_serialization.Model):
         self.error = error
 
 
-class JobDefinition(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class JobDefinition(ProxyResource):
     """The Job Definition resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -850,7 +855,7 @@ class JobDefinition(ProxyResource):  # pylint: disable=too-many-instance-attribu
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -966,17 +971,17 @@ class JobDefinition(ProxyResource):  # pylint: disable=too-many-instance-attribu
         self.description = description
         self.copy_mode = copy_mode
         self.source_name = source_name
-        self.source_resource_id = None
+        self.source_resource_id: Optional[str] = None
         self.source_subpath = source_subpath
         self.target_name = target_name
-        self.target_resource_id = None
+        self.target_resource_id: Optional[str] = None
         self.target_subpath = target_subpath
-        self.latest_job_run_name = None
-        self.latest_job_run_resource_id = None
-        self.latest_job_run_status = None
+        self.latest_job_run_name: Optional[str] = None
+        self.latest_job_run_resource_id: Optional[str] = None
+        self.latest_job_run_status: Optional[Union[str, "_models.JobRunStatus"]] = None
         self.agent_name = agent_name
-        self.agent_resource_id = None
-        self.provisioning_state = None
+        self.agent_resource_id: Optional[str] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class JobDefinitionList(_serialization.Model):
@@ -984,16 +989,16 @@ class JobDefinitionList(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value:
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The JobDefinition items on this page. Required.
     :vartype value: list[~azure.mgmt.storagemover.models.JobDefinition]
-    :ivar next_link: Request URL that can be used to query next page of containers. Returned when
-     total number of requested containers exceed maximum page size.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
     _validation = {
-        "value": {"readonly": True},
-        "next_link": {"readonly": True},
+        "value": {"required": True, "readonly": True},
     }
 
     _attribute_map = {
@@ -1001,11 +1006,14 @@ class JobDefinitionList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[List["_models.JobDefinition"]] = None
+        self.next_link = next_link
 
 
 class JobDefinitionUpdateParameters(_serialization.Model):
@@ -1047,13 +1055,13 @@ class JobDefinitionUpdateParameters(_serialization.Model):
         self.agent_name = agent_name
 
 
-class JobRun(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class JobRun(ProxyResource):
     """The Job Run resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1119,17 +1127,17 @@ class JobRun(ProxyResource):  # pylint: disable=too-many-instance-attributes
     :vartype source_resource_id: str
     :ivar source_properties: Copy of source Endpoint resource's properties at time of Job Run
      creation.
-    :vartype source_properties: JSON
+    :vartype source_properties: any
     :ivar target_name: Name of target Endpoint resource. This resource may no longer exist.
     :vartype target_name: str
     :ivar target_resource_id: Fully qualified resource id of of Endpoint. This id may no longer
      exist.
     :vartype target_resource_id: str
     :ivar target_properties: Copy of Endpoint resource's properties at time of Job Run creation.
-    :vartype target_properties: JSON
+    :vartype target_properties: any
     :ivar job_definition_properties: Copy of parent Job Definition's properties at time of Job Run
      creation.
-    :vartype job_definition_properties: JSON
+    :vartype job_definition_properties: any
     :ivar error: Error details.
     :vartype error: ~azure.mgmt.storagemover.models.JobRunError
     :ivar provisioning_state: The provisioning state of this resource. Known values are:
@@ -1210,34 +1218,34 @@ class JobRun(ProxyResource):  # pylint: disable=too-many-instance-attributes
     def __init__(self, **kwargs: Any) -> None:  # pylint: disable=too-many-locals
         """ """
         super().__init__(**kwargs)
-        self.status = None
-        self.scan_status = None
-        self.agent_name = None
-        self.agent_resource_id = None
-        self.execution_start_time = None
-        self.execution_end_time = None
-        self.last_status_update = None
-        self.items_scanned = None
-        self.items_excluded = None
-        self.items_unsupported = None
-        self.items_no_transfer_needed = None
-        self.items_failed = None
-        self.items_transferred = None
-        self.bytes_scanned = None
-        self.bytes_excluded = None
-        self.bytes_unsupported = None
-        self.bytes_no_transfer_needed = None
-        self.bytes_failed = None
-        self.bytes_transferred = None
-        self.source_name = None
-        self.source_resource_id = None
-        self.source_properties = None
-        self.target_name = None
-        self.target_resource_id = None
-        self.target_properties = None
-        self.job_definition_properties = None
-        self.error = None
-        self.provisioning_state = None
+        self.status: Optional[Union[str, "_models.JobRunStatus"]] = None
+        self.scan_status: Optional[Union[str, "_models.JobRunScanStatus"]] = None
+        self.agent_name: Optional[str] = None
+        self.agent_resource_id: Optional[str] = None
+        self.execution_start_time: Optional[datetime.datetime] = None
+        self.execution_end_time: Optional[datetime.datetime] = None
+        self.last_status_update: Optional[datetime.datetime] = None
+        self.items_scanned: Optional[int] = None
+        self.items_excluded: Optional[int] = None
+        self.items_unsupported: Optional[int] = None
+        self.items_no_transfer_needed: Optional[int] = None
+        self.items_failed: Optional[int] = None
+        self.items_transferred: Optional[int] = None
+        self.bytes_scanned: Optional[int] = None
+        self.bytes_excluded: Optional[int] = None
+        self.bytes_unsupported: Optional[int] = None
+        self.bytes_no_transfer_needed: Optional[int] = None
+        self.bytes_failed: Optional[int] = None
+        self.bytes_transferred: Optional[int] = None
+        self.source_name: Optional[str] = None
+        self.source_resource_id: Optional[str] = None
+        self.source_properties: Optional[Any] = None
+        self.target_name: Optional[str] = None
+        self.target_resource_id: Optional[str] = None
+        self.target_properties: Optional[Any] = None
+        self.job_definition_properties: Optional[Any] = None
+        self.error: Optional["_models.JobRunError"] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class JobRunError(_serialization.Model):
@@ -1279,16 +1287,16 @@ class JobRunList(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value:
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The JobRun items on this page. Required.
     :vartype value: list[~azure.mgmt.storagemover.models.JobRun]
-    :ivar next_link: Request URL that can be used to query next page of containers. Returned when
-     total number of requested containers exceed maximum page size.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
     _validation = {
-        "value": {"readonly": True},
-        "next_link": {"readonly": True},
+        "value": {"required": True, "readonly": True},
     }
 
     _attribute_map = {
@@ -1296,11 +1304,14 @@ class JobRunList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[List["_models.JobRun"]] = None
+        self.next_link = next_link
 
 
 class JobRunResourceId(_serialization.Model):
@@ -1323,7 +1334,7 @@ class JobRunResourceId(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.job_run_resource_id = None
+        self.job_run_resource_id: Optional[str] = None
 
 
 class NfsMountEndpointProperties(EndpointBaseProperties):
@@ -1465,11 +1476,11 @@ class Operation(_serialization.Model):
         :paramtype display: ~azure.mgmt.storagemover.models.OperationDisplay
         """
         super().__init__(**kwargs)
-        self.name = None
-        self.is_data_action = None
+        self.name: Optional[str] = None
+        self.is_data_action: Optional[bool] = None
         self.display = display
-        self.origin = None
-        self.action_type = None
+        self.origin: Optional[Union[str, "_models.Origin"]] = None
+        self.action_type: Optional[Union[str, "_models.ActionType"]] = None
 
 
 class OperationDisplay(_serialization.Model):
@@ -1508,10 +1519,10 @@ class OperationDisplay(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.provider = None
-        self.resource = None
-        self.operation = None
-        self.description = None
+        self.provider: Optional[str] = None
+        self.resource: Optional[str] = None
+        self.operation: Optional[str] = None
+        self.description: Optional[str] = None
 
 
 class OperationListResult(_serialization.Model):
@@ -1539,8 +1550,8 @@ class OperationListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[List["_models.Operation"]] = None
+        self.next_link: Optional[str] = None
 
 
 class Project(ProxyResource):
@@ -1549,7 +1560,7 @@ class Project(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1590,7 +1601,7 @@ class Project(ProxyResource):
         """
         super().__init__(**kwargs)
         self.description = description
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class ProjectList(_serialization.Model):
@@ -1598,16 +1609,16 @@ class ProjectList(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value:
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The Project items on this page. Required.
     :vartype value: list[~azure.mgmt.storagemover.models.Project]
-    :ivar next_link: Request URL that can be used to query next page of containers. Returned when
-     total number of requested containers exceed maximum page size.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
     _validation = {
-        "value": {"readonly": True},
-        "next_link": {"readonly": True},
+        "value": {"required": True, "readonly": True},
     }
 
     _attribute_map = {
@@ -1615,11 +1626,14 @@ class ProjectList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[List["_models.Project"]] = None
+        self.next_link = next_link
 
 
 class ProjectUpdateParameters(_serialization.Model):
@@ -1799,7 +1813,7 @@ class TrackedResource(Resource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1853,7 +1867,7 @@ class StorageMover(TrackedResource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1907,7 +1921,7 @@ class StorageMover(TrackedResource):
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.description = description
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class StorageMoverList(_serialization.Model):
@@ -1915,16 +1929,16 @@ class StorageMoverList(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value:
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The StorageMover items on this page. Required.
     :vartype value: list[~azure.mgmt.storagemover.models.StorageMover]
-    :ivar next_link: Request URL that can be used to query next page of containers. Returned when
-     total number of requested containers exceed maximum page size.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
     _validation = {
-        "value": {"readonly": True},
-        "next_link": {"readonly": True},
+        "value": {"required": True, "readonly": True},
     }
 
     _attribute_map = {
@@ -1932,11 +1946,14 @@ class StorageMoverList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[List["_models.StorageMover"]] = None
+        self.next_link = next_link
 
 
 class StorageMoverUpdateParameters(_serialization.Model):
@@ -2042,7 +2059,7 @@ class Time(_serialization.Model):
     :vartype hour: int
     :ivar minute: The minute element of the time. Allowed values are 0 and 30. If not specified,
      its value defaults to 0. Known values are: 0 and 30.
-    :vartype minute: int or ~azure.mgmt.storagemover.models.Minute
+    :vartype minute: float or ~azure.mgmt.storagemover.models.Minute
     """
 
     _validation = {
@@ -2051,10 +2068,10 @@ class Time(_serialization.Model):
 
     _attribute_map = {
         "hour": {"key": "hour", "type": "int"},
-        "minute": {"key": "minute", "type": "int"},
+        "minute": {"key": "minute", "type": "float"},
     }
 
-    def __init__(self, *, hour: int, minute: Union[int, "_models.Minute"] = 0, **kwargs: Any) -> None:
+    def __init__(self, *, hour: int, minute: Union[float, "_models.Minute"] = 0, **kwargs: Any) -> None:
         """
         :keyword hour: The hour element of the time. Allowed values range from 0 (start of the selected
          day) to 24 (end of the selected day). Hour value 24 cannot be combined with any other minute
@@ -2062,45 +2079,11 @@ class Time(_serialization.Model):
         :paramtype hour: int
         :keyword minute: The minute element of the time. Allowed values are 0 and 30. If not specified,
          its value defaults to 0. Known values are: 0 and 30.
-        :paramtype minute: int or ~azure.mgmt.storagemover.models.Minute
+        :paramtype minute: float or ~azure.mgmt.storagemover.models.Minute
         """
         super().__init__(**kwargs)
         self.hour = hour
         self.minute = minute
-
-
-class UploadLimit(_serialization.Model):
-    """The WAN-link upload limit.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar limit_in_mbps: The WAN-link upload bandwidth (maximum data transfer rate) in megabits per
-     second. Value of 0 indicates no throughput is allowed and any running migration job is
-     effectively paused for the duration of this recurrence. Only data plane operations are governed
-     by this limit. Control plane operations ensure seamless functionality. The agent may exceed
-     this limit with control messages, if necessary. Required.
-    :vartype limit_in_mbps: int
-    """
-
-    _validation = {
-        "limit_in_mbps": {"required": True, "maximum": 2147483647, "minimum": 0},
-    }
-
-    _attribute_map = {
-        "limit_in_mbps": {"key": "limitInMbps", "type": "int"},
-    }
-
-    def __init__(self, *, limit_in_mbps: int, **kwargs: Any) -> None:
-        """
-        :keyword limit_in_mbps: The WAN-link upload bandwidth (maximum data transfer rate) in megabits
-         per second. Value of 0 indicates no throughput is allowed and any running migration job is
-         effectively paused for the duration of this recurrence. Only data plane operations are governed
-         by this limit. Control plane operations ensure seamless functionality. The agent may exceed
-         this limit with control messages, if necessary. Required.
-        :paramtype limit_in_mbps: int
-        """
-        super().__init__(**kwargs)
-        self.limit_in_mbps = limit_in_mbps
 
 
 class UploadLimitSchedule(_serialization.Model):
@@ -2179,18 +2162,12 @@ class WeeklyRecurrence(Recurrence):
         self.days = days
 
 
-class UploadLimitWeeklyRecurrence(WeeklyRecurrence, UploadLimit):
+class UploadLimitWeeklyRecurrence(WeeklyRecurrence):
     """The weekly recurrence of the WAN-link upload limit schedule. The start time must be earlier in
     the day than the end time. The recurrence must not span across multiple days.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar limit_in_mbps: The WAN-link upload bandwidth (maximum data transfer rate) in megabits per
-     second. Value of 0 indicates no throughput is allowed and any running migration job is
-     effectively paused for the duration of this recurrence. Only data plane operations are governed
-     by this limit. Control plane operations ensure seamless functionality. The agent may exceed
-     this limit with control messages, if necessary. Required.
-    :vartype limit_in_mbps: int
     :ivar start_time: The start time of the schedule recurrence. Full hour and 30-minute intervals
      are supported. Required.
     :vartype start_time: ~azure.mgmt.storagemover.models.Time
@@ -2200,38 +2177,38 @@ class UploadLimitWeeklyRecurrence(WeeklyRecurrence, UploadLimit):
     :ivar days: The set of days of week for the schedule recurrence. A day must not be specified
      more than once in a recurrence. Required.
     :vartype days: list[str or ~azure.mgmt.storagemover.models.DayOfWeek]
+    :ivar limit_in_mbps: The WAN-link upload bandwidth (maximum data transfer rate) in megabits per
+     second. Value of 0 indicates no throughput is allowed and any running migration job is
+     effectively paused for the duration of this recurrence. Only data plane operations are governed
+     by this limit. Control plane operations ensure seamless functionality. The agent may exceed
+     this limit with control messages, if necessary. Required.
+    :vartype limit_in_mbps: int
     """
 
     _validation = {
-        "limit_in_mbps": {"required": True, "maximum": 2147483647, "minimum": 0},
         "start_time": {"required": True},
         "end_time": {"required": True},
         "days": {"required": True},
+        "limit_in_mbps": {"required": True, "maximum": 2147483647},
     }
 
     _attribute_map = {
-        "limit_in_mbps": {"key": "limitInMbps", "type": "int"},
         "start_time": {"key": "startTime", "type": "Time"},
         "end_time": {"key": "endTime", "type": "Time"},
         "days": {"key": "days", "type": "[str]"},
+        "limit_in_mbps": {"key": "limitInMbps", "type": "int"},
     }
 
     def __init__(
         self,
         *,
-        limit_in_mbps: int,
         start_time: "_models.Time",
         end_time: "_models.Time",
         days: List[Union[str, "_models.DayOfWeek"]],
+        limit_in_mbps: int,
         **kwargs: Any
     ) -> None:
         """
-        :keyword limit_in_mbps: The WAN-link upload bandwidth (maximum data transfer rate) in megabits
-         per second. Value of 0 indicates no throughput is allowed and any running migration job is
-         effectively paused for the duration of this recurrence. Only data plane operations are governed
-         by this limit. Control plane operations ensure seamless functionality. The agent may exceed
-         this limit with control messages, if necessary. Required.
-        :paramtype limit_in_mbps: int
         :keyword start_time: The start time of the schedule recurrence. Full hour and 30-minute
          intervals are supported. Required.
         :paramtype start_time: ~azure.mgmt.storagemover.models.Time
@@ -2241,9 +2218,12 @@ class UploadLimitWeeklyRecurrence(WeeklyRecurrence, UploadLimit):
         :keyword days: The set of days of week for the schedule recurrence. A day must not be specified
          more than once in a recurrence. Required.
         :paramtype days: list[str or ~azure.mgmt.storagemover.models.DayOfWeek]
+        :keyword limit_in_mbps: The WAN-link upload bandwidth (maximum data transfer rate) in megabits
+         per second. Value of 0 indicates no throughput is allowed and any running migration job is
+         effectively paused for the duration of this recurrence. Only data plane operations are governed
+         by this limit. Control plane operations ensure seamless functionality. The agent may exceed
+         this limit with control messages, if necessary. Required.
+        :paramtype limit_in_mbps: int
         """
-        super().__init__(start_time=start_time, end_time=end_time, days=days, limit_in_mbps=limit_in_mbps, **kwargs)
+        super().__init__(start_time=start_time, end_time=end_time, days=days, **kwargs)
         self.limit_in_mbps = limit_in_mbps
-        self.start_time = start_time
-        self.end_time = end_time
-        self.days = days

@@ -92,7 +92,7 @@ class JobRunStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PAUSED_BY_BANDWIDTH_MANAGEMENT = "PausedByBandwidthManagement"
 
 
-class Minute(int, Enum, metaclass=CaseInsensitiveEnumMeta):
+class Minute(float, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The minute element of the time. Allowed values are 0 and 30. If not specified, its value
     defaults to 0.
     """
