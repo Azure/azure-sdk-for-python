@@ -27,11 +27,10 @@ from azure.planetarycomputer import StacItemTilerClient
 def main():
     client = StacCollectionConfigurationClient(
         credential=DefaultAzureCredential(),
+        collection_id="COLLECTION_ID",
     )
 
     response = client.get_part_with_dimensions(
-        collection_id="naip",
-        item_id="naip_1m_2019_3857",
         minx="0",
         miny="0",
         maxx="0",

@@ -27,10 +27,10 @@ from azure.planetarycomputer import IngestionClient
 def main():
     client = StacCollectionConfigurationClient(
         credential=DefaultAzureCredential(),
+        collection_id="COLLECTION_ID",
     )
 
     response = client.create_ingestion(
-        collection_id="collectionId",
         definition={
             "importType": "StaticCatalog",
             "keepOriginalAssets": False,

@@ -16,9 +16,7 @@ class TestSharedAccessSignature(SharedAccessSignatureClientTestBase):
     @recorded_by_proxy
     def test_get_token(self, sharedaccesssignature_endpoint):
         client = self.create_client(endpoint=sharedaccesssignature_endpoint)
-        response = client.get_token(
-            collection_id="str",
-        )
+        response = client.get_token()
 
         # please add some check logic here by yourself
         # ...

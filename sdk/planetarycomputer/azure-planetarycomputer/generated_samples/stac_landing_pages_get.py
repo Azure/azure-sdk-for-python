@@ -27,6 +27,7 @@ from azure.planetarycomputer import StacClient
 def main():
     client = StacCollectionConfigurationClient(
         credential=DefaultAzureCredential(),
+        collection_id="COLLECTION_ID",
     )
 
     response = client.get_stac_landing_pages()

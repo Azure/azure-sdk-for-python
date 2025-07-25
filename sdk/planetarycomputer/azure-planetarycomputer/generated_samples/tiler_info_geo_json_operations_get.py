@@ -27,12 +27,10 @@ from azure.planetarycomputer import StacItemTilerClient
 def main():
     client = StacCollectionConfigurationClient(
         credential=DefaultAzureCredential(),
+        collection_id="COLLECTION_ID",
     )
 
-    response = client.get_info_geo_json(
-        collection_id="{{collectionId}}",
-        item_id="{{itemId}}",
-    )
+    response = client.get_info_geo_json()
     print(response)
 
 

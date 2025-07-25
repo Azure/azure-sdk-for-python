@@ -17,10 +17,7 @@ class TestStacItemTilerAsync(StacItemTilerClientTestBaseAsync):
     @recorded_by_proxy_async
     async def test_get_bounds(self, stacitemtiler_endpoint):
         client = self.create_async_client(endpoint=stacitemtiler_endpoint)
-        response = await client.get_bounds(
-            collection_id="str",
-            item_id="str",
-        )
+        response = await client.get_bounds()
 
         # please add some check logic here by yourself
         # ...
@@ -29,10 +26,7 @@ class TestStacItemTilerAsync(StacItemTilerClientTestBaseAsync):
     @recorded_by_proxy_async
     async def test_get_info(self, stacitemtiler_endpoint):
         client = self.create_async_client(endpoint=stacitemtiler_endpoint)
-        response = await client.get_info(
-            collection_id="str",
-            item_id="str",
-        )
+        response = await client.get_info()
 
         # please add some check logic here by yourself
         # ...
@@ -41,10 +35,7 @@ class TestStacItemTilerAsync(StacItemTilerClientTestBaseAsync):
     @recorded_by_proxy_async
     async def test_get_info_geo_json(self, stacitemtiler_endpoint):
         client = self.create_async_client(endpoint=stacitemtiler_endpoint)
-        response = await client.get_info_geo_json(
-            collection_id="str",
-            item_id="str",
-        )
+        response = await client.get_info_geo_json()
 
         # please add some check logic here by yourself
         # ...
@@ -53,10 +44,7 @@ class TestStacItemTilerAsync(StacItemTilerClientTestBaseAsync):
     @recorded_by_proxy_async
     async def test_get_available_assets(self, stacitemtiler_endpoint):
         client = self.create_async_client(endpoint=stacitemtiler_endpoint)
-        response = await client.get_available_assets(
-            collection_id="str",
-            item_id="str",
-        )
+        response = await client.get_available_assets()
 
         # please add some check logic here by yourself
         # ...
@@ -65,10 +53,7 @@ class TestStacItemTilerAsync(StacItemTilerClientTestBaseAsync):
     @recorded_by_proxy_async
     async def test_get_asset_statistics(self, stacitemtiler_endpoint):
         client = self.create_async_client(endpoint=stacitemtiler_endpoint)
-        response = await client.get_asset_statistics(
-            collection_id="str",
-            item_id="str",
-        )
+        response = await client.get_asset_statistics()
 
         # please add some check logic here by yourself
         # ...
@@ -77,10 +62,7 @@ class TestStacItemTilerAsync(StacItemTilerClientTestBaseAsync):
     @recorded_by_proxy_async
     async def test_get_statistics(self, stacitemtiler_endpoint):
         client = self.create_async_client(endpoint=stacitemtiler_endpoint)
-        response = await client.get_statistics(
-            collection_id="str",
-            item_id="str",
-        )
+        response = await client.get_statistics()
 
         # please add some check logic here by yourself
         # ...
@@ -90,8 +72,6 @@ class TestStacItemTilerAsync(StacItemTilerClientTestBaseAsync):
     async def test_get_geo_json_statistics(self, stacitemtiler_endpoint):
         client = self.create_async_client(endpoint=stacitemtiler_endpoint)
         response = await client.get_geo_json_statistics(
-            collection_id="str",
-            item_id="str",
             body={
                 "features": [
                     {
@@ -188,8 +168,6 @@ class TestStacItemTilerAsync(StacItemTilerClientTestBaseAsync):
     async def test_get_tile(self, stacitemtiler_endpoint):
         client = self.create_async_client(endpoint=stacitemtiler_endpoint)
         response = await client.get_tile(
-            collection_id="str",
-            item_id="str",
             z=0.0,
             x=0.0,
             y=0.0,
@@ -205,8 +183,6 @@ class TestStacItemTilerAsync(StacItemTilerClientTestBaseAsync):
     async def test_get_tile_with_matrix_set(self, stacitemtiler_endpoint):
         client = self.create_async_client(endpoint=stacitemtiler_endpoint)
         response = await client.get_tile_with_matrix_set(
-            collection_id="str",
-            item_id="str",
             tile_matrix_set_id="str",
             z=0.0,
             x=0.0,
@@ -222,10 +198,7 @@ class TestStacItemTilerAsync(StacItemTilerClientTestBaseAsync):
     @recorded_by_proxy_async
     async def test_get_tile_json(self, stacitemtiler_endpoint):
         client = self.create_async_client(endpoint=stacitemtiler_endpoint)
-        response = await client.get_tile_json(
-            collection_id="str",
-            item_id="str",
-        )
+        response = await client.get_tile_json()
 
         # please add some check logic here by yourself
         # ...
@@ -235,8 +208,6 @@ class TestStacItemTilerAsync(StacItemTilerClientTestBaseAsync):
     async def test_get_tile_json_with_matrix_set(self, stacitemtiler_endpoint):
         client = self.create_async_client(endpoint=stacitemtiler_endpoint)
         response = await client.get_tile_json_with_matrix_set(
-            collection_id="str",
-            item_id="str",
             tile_matrix_set_id="str",
         )
 
@@ -247,10 +218,7 @@ class TestStacItemTilerAsync(StacItemTilerClientTestBaseAsync):
     @recorded_by_proxy_async
     async def test_get_wmts_capabilities(self, stacitemtiler_endpoint):
         client = self.create_async_client(endpoint=stacitemtiler_endpoint)
-        response = await client.get_wmts_capabilities(
-            collection_id="str",
-            item_id="str",
-        )
+        response = await client.get_wmts_capabilities()
 
         # please add some check logic here by yourself
         # ...
@@ -260,8 +228,6 @@ class TestStacItemTilerAsync(StacItemTilerClientTestBaseAsync):
     async def test_get_wmts_capabilities_with_matrix_set(self, stacitemtiler_endpoint):
         client = self.create_async_client(endpoint=stacitemtiler_endpoint)
         response = await client.get_wmts_capabilities_with_matrix_set(
-            collection_id="str",
-            item_id="str",
             tile_matrix_set_id="str",
         )
 
@@ -273,8 +239,6 @@ class TestStacItemTilerAsync(StacItemTilerClientTestBaseAsync):
     async def test_get_point(self, stacitemtiler_endpoint):
         client = self.create_async_client(endpoint=stacitemtiler_endpoint)
         response = await client.get_point(
-            collection_id="str",
-            item_id="str",
             lon=0.0,
             lat=0.0,
         )
@@ -287,8 +251,6 @@ class TestStacItemTilerAsync(StacItemTilerClientTestBaseAsync):
     async def test_get_preview_with_format(self, stacitemtiler_endpoint):
         client = self.create_async_client(endpoint=stacitemtiler_endpoint)
         response = await client.get_preview_with_format(
-            collection_id="str",
-            item_id="str",
             format="str",
         )
 
@@ -299,10 +261,7 @@ class TestStacItemTilerAsync(StacItemTilerClientTestBaseAsync):
     @recorded_by_proxy_async
     async def test_get_preview(self, stacitemtiler_endpoint):
         client = self.create_async_client(endpoint=stacitemtiler_endpoint)
-        response = await client.get_preview(
-            collection_id="str",
-            item_id="str",
-        )
+        response = await client.get_preview()
 
         # please add some check logic here by yourself
         # ...
@@ -312,8 +271,6 @@ class TestStacItemTilerAsync(StacItemTilerClientTestBaseAsync):
     async def test_get_part_with_dimensions(self, stacitemtiler_endpoint):
         client = self.create_async_client(endpoint=stacitemtiler_endpoint)
         response = await client.get_part_with_dimensions(
-            collection_id="str",
-            item_id="str",
             minx=0.0,
             miny=0.0,
             maxx=0.0,
@@ -331,8 +288,6 @@ class TestStacItemTilerAsync(StacItemTilerClientTestBaseAsync):
     async def test_get_part(self, stacitemtiler_endpoint):
         client = self.create_async_client(endpoint=stacitemtiler_endpoint)
         response = await client.get_part(
-            collection_id="str",
-            item_id="str",
             minx=0.0,
             miny=0.0,
             maxx=0.0,
@@ -348,8 +303,6 @@ class TestStacItemTilerAsync(StacItemTilerClientTestBaseAsync):
     async def test_crop_geo_json_with_dimensions(self, stacitemtiler_endpoint):
         client = self.create_async_client(endpoint=stacitemtiler_endpoint)
         response = await client.crop_geo_json_with_dimensions(
-            collection_id="str",
-            item_id="str",
             width=0.0,
             height=0.0,
             format="str",
@@ -423,8 +376,6 @@ class TestStacItemTilerAsync(StacItemTilerClientTestBaseAsync):
     async def test_crop_geo_json(self, stacitemtiler_endpoint):
         client = self.create_async_client(endpoint=stacitemtiler_endpoint)
         response = await client.crop_geo_json(
-            collection_id="str",
-            item_id="str",
             format="str",
             body={"coordinates": [0.0], "type": "LineString", "bbox": [0.0]},
         )

@@ -24,6 +24,8 @@ class StacCollectionConfigurationClientConfiguration:  # pylint: disable=too-man
 
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
+    :param collection_id: The ID of the STAC collection. Required.
+    :type collection_id: str
     :param endpoint: Service host. Default value is
      "https://contoso-catalog.gwhqfdeddydpareu.uksouth.geocatalog.spatio.azure.com".
     :type endpoint: str
@@ -36,6 +38,7 @@ class StacCollectionConfigurationClientConfiguration:  # pylint: disable=too-man
     def __init__(
         self,
         credential: "TokenCredential",
+        collection_id: str,
         endpoint: str = "https://contoso-catalog.gwhqfdeddydpareu.uksouth.geocatalog.spatio.azure.com",
         **kwargs: Any
     ) -> None:
@@ -43,8 +46,11 @@ class StacCollectionConfigurationClientConfiguration:  # pylint: disable=too-man
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
+        if collection_id is None:
+            raise ValueError("Parameter 'collection_id' must not be None.")
 
         self.credential = credential
+        self.collection_id = collection_id
         self.endpoint = endpoint
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://geocatalog.spatio.azure.com/.default"])
@@ -180,6 +186,10 @@ class StacItemTilerClientConfiguration:  # pylint: disable=too-many-instance-att
 
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
+    :param collection_id: The ID of the STAC collection. Required.
+    :type collection_id: str
+    :param item_id: The ID of the STAC item. Required.
+    :type item_id: str
     :param endpoint: Service host. Default value is
      "https://contoso-catalog.gwhqfdeddydpareu.uksouth.geocatalog.spatio.azure.com".
     :type endpoint: str
@@ -192,6 +202,8 @@ class StacItemTilerClientConfiguration:  # pylint: disable=too-many-instance-att
     def __init__(
         self,
         credential: "TokenCredential",
+        collection_id: str,
+        item_id: str,
         endpoint: str = "https://contoso-catalog.gwhqfdeddydpareu.uksouth.geocatalog.spatio.azure.com",
         **kwargs: Any
     ) -> None:
@@ -199,8 +211,14 @@ class StacItemTilerClientConfiguration:  # pylint: disable=too-many-instance-att
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
+        if collection_id is None:
+            raise ValueError("Parameter 'collection_id' must not be None.")
+        if item_id is None:
+            raise ValueError("Parameter 'item_id' must not be None.")
 
         self.credential = credential
+        self.collection_id = collection_id
+        self.item_id = item_id
         self.endpoint = endpoint
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://geocatalog.spatio.azure.com/.default"])
@@ -388,6 +406,8 @@ class SharedAccessSignatureClientConfiguration:  # pylint: disable=too-many-inst
 
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
+    :param collection_id: The ID of the STAC collection. Required.
+    :type collection_id: str
     :param endpoint: Service host. Default value is
      "https://contoso-catalog.gwhqfdeddydpareu.uksouth.geocatalog.spatio.azure.com".
     :type endpoint: str
@@ -400,6 +420,7 @@ class SharedAccessSignatureClientConfiguration:  # pylint: disable=too-many-inst
     def __init__(
         self,
         credential: "TokenCredential",
+        collection_id: str,
         endpoint: str = "https://contoso-catalog.gwhqfdeddydpareu.uksouth.geocatalog.spatio.azure.com",
         **kwargs: Any
     ) -> None:
@@ -407,8 +428,11 @@ class SharedAccessSignatureClientConfiguration:  # pylint: disable=too-many-inst
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
+        if collection_id is None:
+            raise ValueError("Parameter 'collection_id' must not be None.")
 
         self.credential = credential
+        self.collection_id = collection_id
         self.endpoint = endpoint
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://geocatalog.spatio.azure.com/.default"])
@@ -440,6 +464,8 @@ class IngestionClientConfiguration:  # pylint: disable=too-many-instance-attribu
 
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
+    :param collection_id: The ID of the STAC collection. Required.
+    :type collection_id: str
     :param endpoint: Service host. Default value is
      "https://contoso-catalog.gwhqfdeddydpareu.uksouth.geocatalog.spatio.azure.com".
     :type endpoint: str
@@ -452,6 +478,7 @@ class IngestionClientConfiguration:  # pylint: disable=too-many-instance-attribu
     def __init__(
         self,
         credential: "TokenCredential",
+        collection_id: str,
         endpoint: str = "https://contoso-catalog.gwhqfdeddydpareu.uksouth.geocatalog.spatio.azure.com",
         **kwargs: Any
     ) -> None:
@@ -459,8 +486,11 @@ class IngestionClientConfiguration:  # pylint: disable=too-many-instance-attribu
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
+        if collection_id is None:
+            raise ValueError("Parameter 'collection_id' must not be None.")
 
         self.credential = credential
+        self.collection_id = collection_id
         self.endpoint = endpoint
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://geocatalog.spatio.azure.com/.default"])

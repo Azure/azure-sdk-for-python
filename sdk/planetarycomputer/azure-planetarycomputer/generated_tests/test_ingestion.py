@@ -16,9 +16,7 @@ class TestIngestion(IngestionClientTestBase):
     @recorded_by_proxy
     def test_get_ingestions(self, ingestion_endpoint):
         client = self.create_client(endpoint=ingestion_endpoint)
-        response = client.get_ingestions(
-            collection_id="str",
-        )
+        response = client.get_ingestions()
 
         # please add some check logic here by yourself
         # ...
@@ -28,7 +26,6 @@ class TestIngestion(IngestionClientTestBase):
     def test_get_ingestion(self, ingestion_endpoint):
         client = self.create_client(endpoint=ingestion_endpoint)
         response = client.get_ingestion(
-            collection_id="str",
             ingestion_id="str",
         )
 
@@ -40,7 +37,6 @@ class TestIngestion(IngestionClientTestBase):
     def test_create_ingestion(self, ingestion_endpoint):
         client = self.create_client(endpoint=ingestion_endpoint)
         response = client.create_ingestion(
-            collection_id="str",
             definition={
                 "creationTime": "2020-02-20 00:00:00",
                 "id": "str",
@@ -61,7 +57,6 @@ class TestIngestion(IngestionClientTestBase):
     def test_update_ingestion(self, ingestion_endpoint):
         client = self.create_client(endpoint=ingestion_endpoint)
         response = client.update_ingestion(
-            collection_id="str",
             ingestion_id="str",
             definition={
                 "creationTime": "2020-02-20 00:00:00",
@@ -83,7 +78,6 @@ class TestIngestion(IngestionClientTestBase):
     def test_begin_delete_ingestion(self, ingestion_endpoint):
         client = self.create_client(endpoint=ingestion_endpoint)
         response = client.begin_delete_ingestion(
-            collection_id="str",
             ingestion_id="str",
         ).result()  # call '.result()' to poll until service return final result
 
@@ -95,7 +89,6 @@ class TestIngestion(IngestionClientTestBase):
     def test_get_ingestion_runs(self, ingestion_endpoint):
         client = self.create_client(endpoint=ingestion_endpoint)
         response = client.get_ingestion_runs(
-            collection_id="str",
             ingestion_id="str",
         )
 
@@ -107,7 +100,6 @@ class TestIngestion(IngestionClientTestBase):
     def test_get_ingestion_run(self, ingestion_endpoint):
         client = self.create_client(endpoint=ingestion_endpoint)
         response = client.get_ingestion_run(
-            collection_id="str",
             ingestion_id="str",
             run_id="str",
         )
@@ -120,7 +112,6 @@ class TestIngestion(IngestionClientTestBase):
     def test_create_ingestion_run(self, ingestion_endpoint):
         client = self.create_client(endpoint=ingestion_endpoint)
         response = client.create_ingestion_run(
-            collection_id="str",
             ingestion_id="str",
         )
 

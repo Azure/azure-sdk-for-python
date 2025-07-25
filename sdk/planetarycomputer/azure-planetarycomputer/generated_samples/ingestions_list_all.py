@@ -27,11 +27,10 @@ from azure.planetarycomputer import IngestionClient
 def main():
     client = StacCollectionConfigurationClient(
         credential=DefaultAzureCredential(),
+        collection_id="COLLECTION_ID",
     )
 
-    response = client.get_ingestions(
-        collection_id="collectionId",
-    )
+    response = client.get_ingestions()
     print(response)
 
 

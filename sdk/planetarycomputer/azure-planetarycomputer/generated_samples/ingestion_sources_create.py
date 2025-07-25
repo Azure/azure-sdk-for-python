@@ -28,6 +28,7 @@ from azure.planetarycomputer import IngestionClient
 def main():
     client = StacCollectionConfigurationClient(
         credential=DefaultAzureCredential(),
+        collection_id="COLLECTION_ID",
     )
 
     response = client.create_ingestion_source(

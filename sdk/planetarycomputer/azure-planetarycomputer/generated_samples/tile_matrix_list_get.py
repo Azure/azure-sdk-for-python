@@ -27,6 +27,7 @@ from azure.planetarycomputer import TileMatrixSetsClient
 def main():
     client = StacCollectionConfigurationClient(
         credential=DefaultAzureCredential(),
+        collection_id="COLLECTION_ID",
     )
 
     response = client.get_matrix_list()

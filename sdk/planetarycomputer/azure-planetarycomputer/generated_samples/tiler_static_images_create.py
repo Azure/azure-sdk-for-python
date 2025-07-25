@@ -27,6 +27,7 @@ from azure.planetarycomputer import ImageExportsClient
 def main():
     client = StacCollectionConfigurationClient(
         credential=DefaultAzureCredential(),
+        collection_id="COLLECTION_ID",
     )
 
     response = client.create_static_image(

@@ -27,10 +27,10 @@ from azure.planetarycomputer import StacCollectionConfigurationClient
 def main():
     client = StacCollectionConfigurationClient(
         credential=DefaultAzureCredential(),
+        collection_id="COLLECTION_ID",
     )
 
     client.delete_collection_asset(
-        collection_id="c1007ec2-3ddc-4335-9edd-b1c26b1b4c92",
         asset_id="a1007ec2-3ddc-4335-9edd-b1c26b1b4c92",
     )
 

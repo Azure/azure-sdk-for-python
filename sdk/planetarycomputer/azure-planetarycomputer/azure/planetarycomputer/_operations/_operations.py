@@ -84,7 +84,7 @@ def build_stac_collection_configuration_create_collection_asset_request(  # pyli
 
 
 def build_stac_collection_configuration_create_or_replace_collection_asset_request(  # pylint: disable=name-too-long
-    collection_id: str, asset_id: str, **kwargs: Any
+    asset_id: str, collection_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -111,7 +111,7 @@ def build_stac_collection_configuration_create_or_replace_collection_asset_reque
 
 
 def build_stac_collection_configuration_delete_collection_asset_request(  # pylint: disable=name-too-long
-    collection_id: str, asset_id: str, **kwargs: Any
+    asset_id: str, collection_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -246,7 +246,7 @@ def build_stac_collection_configuration_add_mosaic_request(  # pylint: disable=n
 
 
 def build_stac_collection_configuration_get_mosaic_request(  # pylint: disable=name-too-long
-    collection_id: str, mosaic_id: str, **kwargs: Any
+    mosaic_id: str, collection_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -273,7 +273,7 @@ def build_stac_collection_configuration_get_mosaic_request(  # pylint: disable=n
 
 
 def build_stac_collection_configuration_create_or_replace_mosaic_request(  # pylint: disable=name-too-long
-    collection_id: str, mosaic_id: str, **kwargs: Any
+    mosaic_id: str, collection_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -303,7 +303,7 @@ def build_stac_collection_configuration_create_or_replace_mosaic_request(  # pyl
 
 
 def build_stac_collection_configuration_delete_mosaic_request(  # pylint: disable=name-too-long
-    collection_id: str, mosaic_id: str, **kwargs: Any
+    mosaic_id: str, collection_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -385,7 +385,7 @@ def build_stac_collection_configuration_create_render_option_request(  # pylint:
 
 
 def build_stac_collection_configuration_get_render_option_request(  # pylint: disable=name-too-long
-    collection_id: str, render_option_id: str, **kwargs: Any
+    render_option_id: str, collection_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -412,7 +412,7 @@ def build_stac_collection_configuration_get_render_option_request(  # pylint: di
 
 
 def build_stac_collection_configuration_create_or_replace_render_option_request(  # pylint: disable=name-too-long
-    collection_id: str, render_option_id: str, **kwargs: Any
+    render_option_id: str, collection_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -442,7 +442,7 @@ def build_stac_collection_configuration_create_or_replace_render_option_request(
 
 
 def build_stac_collection_configuration_delete_render_option_request(  # pylint: disable=name-too-long
-    collection_id: str, render_option_id: str, **kwargs: Any
+    render_option_id: str, collection_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -655,7 +655,7 @@ def build_stac_collection_configuration_create_queryables_request(  # pylint: di
 
 
 def build_stac_collection_configuration_create_or_replace_queryable_request(  # pylint: disable=name-too-long
-    collection_id: str, queryable_name: str, **kwargs: Any
+    queryable_name: str, collection_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -685,7 +685,7 @@ def build_stac_collection_configuration_create_or_replace_queryable_request(  # 
 
 
 def build_stac_collection_configuration_delete_queryable_request(  # pylint: disable=name-too-long
-    collection_id: str, queryable_name: str, **kwargs: Any
+    queryable_name: str, collection_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1149,13 +1149,13 @@ def build_stac_item_tiler_get_geo_json_statistics_request(  # pylint: disable=na
 
 
 def build_stac_item_tiler_get_tile_request(
-    collection_id: str,
-    item_id: str,
     z: float,
     x: float,
     y: float,
     scale: float,
     format: str,
+    collection_id: str,
+    item_id: str,
     *,
     assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
@@ -1244,14 +1244,14 @@ def build_stac_item_tiler_get_tile_request(
 
 
 def build_stac_item_tiler_get_tile_with_matrix_set_request(  # pylint: disable=name-too-long
-    collection_id: str,
-    item_id: str,
     tile_matrix_set_id: str,
     z: float,
     x: float,
     y: float,
     scale: float,
     format: str,
+    collection_id: str,
+    item_id: str,
     *,
     assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
@@ -1428,9 +1428,9 @@ def build_stac_item_tiler_get_tile_json_request(  # pylint: disable=name-too-lon
 
 
 def build_stac_item_tiler_get_tile_json_with_matrix_set_request(  # pylint: disable=name-too-long
+    tile_matrix_set_id: str,
     collection_id: str,
     item_id: str,
-    tile_matrix_set_id: str,
     *,
     assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
@@ -1607,9 +1607,9 @@ def build_stac_item_tiler_get_wmts_capabilities_request(  # pylint: disable=name
 
 
 def build_stac_item_tiler_get_wmts_capabilities_with_matrix_set_request(  # pylint: disable=name-too-long
+    tile_matrix_set_id: str,
     collection_id: str,
     item_id: str,
-    tile_matrix_set_id: str,
     *,
     assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
@@ -1696,10 +1696,10 @@ def build_stac_item_tiler_get_wmts_capabilities_with_matrix_set_request(  # pyli
 
 
 def build_stac_item_tiler_get_point_request(
-    collection_id: str,
-    item_id: str,
     lon: float,
     lat: float,
+    collection_id: str,
+    item_id: str,
     *,
     assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
@@ -1754,9 +1754,9 @@ def build_stac_item_tiler_get_point_request(
 
 
 def build_stac_item_tiler_get_preview_with_format_request(  # pylint: disable=name-too-long
+    format: str,
     collection_id: str,
     item_id: str,
-    format: str,
     *,
     assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
@@ -1929,8 +1929,6 @@ def build_stac_item_tiler_get_preview_request(  # pylint: disable=name-too-long
 
 
 def build_stac_item_tiler_get_part_with_dimensions_request(  # pylint: disable=name-too-long
-    collection_id: str,
-    item_id: str,
     minx: float,
     miny: float,
     maxx: float,
@@ -1938,6 +1936,8 @@ def build_stac_item_tiler_get_part_with_dimensions_request(  # pylint: disable=n
     width: float,
     height: float,
     format: str,
+    collection_id: str,
+    item_id: str,
     *,
     assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
@@ -2025,13 +2025,13 @@ def build_stac_item_tiler_get_part_with_dimensions_request(  # pylint: disable=n
 
 
 def build_stac_item_tiler_get_part_request(
-    collection_id: str,
-    item_id: str,
     minx: float,
     miny: float,
     maxx: float,
     maxy: float,
     format: str,
+    collection_id: str,
+    item_id: str,
     *,
     assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
@@ -2123,11 +2123,11 @@ def build_stac_item_tiler_get_part_request(
 
 
 def build_stac_item_tiler_crop_geo_json_with_dimensions_request(  # pylint: disable=name-too-long
-    collection_id: str,
-    item_id: str,
     width: float,
     height: float,
     format: str,
+    collection_id: str,
+    item_id: str,
     *,
     assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
@@ -2211,9 +2211,9 @@ def build_stac_item_tiler_crop_geo_json_with_dimensions_request(  # pylint: disa
 
 
 def build_stac_item_tiler_crop_geo_json_request(  # pylint: disable=name-too-long
+    format: str,
     collection_id: str,
     item_id: str,
-    format: str,
     *,
     assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
@@ -3268,7 +3268,7 @@ def build_ingestion_get_ingestions_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_get_ingestion_request(collection_id: str, ingestion_id: str, **kwargs: Any) -> HttpRequest:
+def build_ingestion_get_ingestion_request(ingestion_id: str, collection_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -3320,7 +3320,7 @@ def build_ingestion_create_ingestion_request(collection_id: str, **kwargs: Any) 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_update_ingestion_request(collection_id: str, ingestion_id: str, **kwargs: Any) -> HttpRequest:
+def build_ingestion_update_ingestion_request(ingestion_id: str, collection_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -3348,7 +3348,7 @@ def build_ingestion_update_ingestion_request(collection_id: str, ingestion_id: s
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_delete_ingestion_request(collection_id: str, ingestion_id: str, **kwargs: Any) -> HttpRequest:
+def build_ingestion_delete_ingestion_request(ingestion_id: str, collection_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -3374,7 +3374,7 @@ def build_ingestion_delete_ingestion_request(collection_id: str, ingestion_id: s
 
 
 def build_ingestion_get_ingestion_runs_request(  # pylint: disable=name-too-long
-    collection_id: str, ingestion_id: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+    ingestion_id: str, collection_id: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -3405,7 +3405,7 @@ def build_ingestion_get_ingestion_runs_request(  # pylint: disable=name-too-long
 
 
 def build_ingestion_get_ingestion_run_request(  # pylint: disable=name-too-long
-    collection_id: str, ingestion_id: str, run_id: str, **kwargs: Any
+    ingestion_id: str, run_id: str, collection_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -3433,7 +3433,7 @@ def build_ingestion_get_ingestion_run_request(  # pylint: disable=name-too-long
 
 
 def build_ingestion_create_ingestion_run_request(  # pylint: disable=name-too-long
-    collection_id: str, ingestion_id: str, **kwargs: Any
+    ingestion_id: str, collection_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -3610,8 +3610,8 @@ def build_ingestion_get_operations_request(
     *,
     top: Optional[int] = None,
     skip: Optional[int] = None,
-    collection_id: Optional[str] = None,
     status: Optional[Union[str, _models.OperationStatus]] = None,
+    collection_id: Optional[str] = None,
     **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4139,9 +4139,7 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
 ):
 
     @overload
-    def create_collection_asset(
-        self, collection_id: str, body: _models.FormContent, **kwargs: Any
-    ) -> _models.StacCollection:
+    def create_collection_asset(self, body: _models.FormContent, **kwargs: Any) -> _models.StacCollection:
         """Create Collection Asset.
 
         Create a new asset in the Collection metadata and write the associated
@@ -4157,8 +4155,6 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         Returns:
         A Response object containing the newly created asset.
 
-        :param collection_id: STAC Collection ID. Required.
-        :type collection_id: str
         :param body: Multi-part form data. Required.
         :type body: ~azure.planetarycomputer.models.FormContent
         :return: StacCollection. The StacCollection is compatible with MutableMapping
@@ -4167,7 +4163,7 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         """
 
     @overload
-    def create_collection_asset(self, collection_id: str, body: JSON, **kwargs: Any) -> _models.StacCollection:
+    def create_collection_asset(self, body: JSON, **kwargs: Any) -> _models.StacCollection:
         """Create Collection Asset.
 
         Create a new asset in the Collection metadata and write the associated
@@ -4183,8 +4179,6 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         Returns:
         A Response object containing the newly created asset.
 
-        :param collection_id: STAC Collection ID. Required.
-        :type collection_id: str
         :param body: Multi-part form data. Required.
         :type body: JSON
         :return: StacCollection. The StacCollection is compatible with MutableMapping
@@ -4193,9 +4187,7 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         """
 
     @distributed_trace
-    def create_collection_asset(
-        self, collection_id: str, body: Union[_models.FormContent, JSON], **kwargs: Any
-    ) -> _models.StacCollection:
+    def create_collection_asset(self, body: Union[_models.FormContent, JSON], **kwargs: Any) -> _models.StacCollection:
         """Create Collection Asset.
 
         Create a new asset in the Collection metadata and write the associated
@@ -4211,8 +4203,6 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         Returns:
         A Response object containing the newly created asset.
 
-        :param collection_id: STAC Collection ID. Required.
-        :type collection_id: str
         :param body: Multi-part form data. Is either a FormContent type or a JSON type. Required.
         :type body: ~azure.planetarycomputer.models.FormContent or JSON
         :return: StacCollection. The StacCollection is compatible with MutableMapping
@@ -4238,7 +4228,7 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         _files, _data = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
         _request = build_stac_collection_configuration_create_collection_asset_request(
-            collection_id=collection_id,
+            collection_id=self._config.collection_id,
             api_version=self._config.api_version,
             files=_files,
             data=_data,
@@ -4278,7 +4268,7 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
 
     @overload
     def create_or_replace_collection_asset(
-        self, collection_id: str, asset_id: str, body: _models.FormContent, **kwargs: Any
+        self, asset_id: str, body: _models.FormContent, **kwargs: Any
     ) -> _models.StacCollection:
         """Update Collection Asset.
 
@@ -4295,8 +4285,6 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         Returns:
         A Response object containing the updated asset.
 
-        :param collection_id: STAC Collection ID. Required.
-        :type collection_id: str
         :param asset_id: STAC Asset ID. Required.
         :type asset_id: str
         :param body: Multi-part form data. Required.
@@ -4307,9 +4295,7 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         """
 
     @overload
-    def create_or_replace_collection_asset(
-        self, collection_id: str, asset_id: str, body: JSON, **kwargs: Any
-    ) -> _models.StacCollection:
+    def create_or_replace_collection_asset(self, asset_id: str, body: JSON, **kwargs: Any) -> _models.StacCollection:
         """Update Collection Asset.
 
         Update an existing asset in a given collection.
@@ -4325,8 +4311,6 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         Returns:
         A Response object containing the updated asset.
 
-        :param collection_id: STAC Collection ID. Required.
-        :type collection_id: str
         :param asset_id: STAC Asset ID. Required.
         :type asset_id: str
         :param body: Multi-part form data. Required.
@@ -4338,7 +4322,7 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
 
     @distributed_trace
     def create_or_replace_collection_asset(
-        self, collection_id: str, asset_id: str, body: Union[_models.FormContent, JSON], **kwargs: Any
+        self, asset_id: str, body: Union[_models.FormContent, JSON], **kwargs: Any
     ) -> _models.StacCollection:
         """Update Collection Asset.
 
@@ -4355,8 +4339,6 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         Returns:
         A Response object containing the updated asset.
 
-        :param collection_id: STAC Collection ID. Required.
-        :type collection_id: str
         :param asset_id: STAC Asset ID. Required.
         :type asset_id: str
         :param body: Multi-part form data. Is either a FormContent type or a JSON type. Required.
@@ -4384,8 +4366,8 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         _files, _data = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
         _request = build_stac_collection_configuration_create_or_replace_collection_asset_request(
-            collection_id=collection_id,
             asset_id=asset_id,
+            collection_id=self._config.collection_id,
             api_version=self._config.api_version,
             files=_files,
             data=_data,
@@ -4425,7 +4407,7 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
 
     @distributed_trace
     def delete_collection_asset(  # pylint: disable=inconsistent-return-statements
-        self, collection_id: str, asset_id: str, **kwargs: Any
+        self, asset_id: str, **kwargs: Any
     ) -> None:
         """Delete Collection Asset.
 
@@ -4439,8 +4421,6 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         Returns:
         A Response object indicating the success of the deletion.
 
-        :param collection_id: STAC Collection ID. Required.
-        :type collection_id: str
         :param asset_id: STAC Asset ID. Required.
         :type asset_id: str
         :return: None
@@ -4461,8 +4441,8 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_stac_collection_configuration_delete_collection_asset_request(
-            collection_id=collection_id,
             asset_id=asset_id,
+            collection_id=self._config.collection_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4487,7 +4467,7 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def get_collection_thumbnail(self, collection_id: str, **kwargs: Any) -> Optional[Iterator[bytes]]:
+    def get_collection_thumbnail(self, **kwargs: Any) -> Optional[Iterator[bytes]]:
         """Get Collection Thumbnail.
 
         Get thumbnail for given collection.
@@ -4499,8 +4479,6 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         Returns:
         thumbnail image.
 
-        :param collection_id: STAC Collection ID. Required.
-        :type collection_id: str
         :return: Iterator[bytes] or None
         :rtype: Iterator[bytes] or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4519,7 +4497,7 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         cls: ClsType[Optional[Iterator[bytes]]] = kwargs.pop("cls", None)
 
         _request = build_stac_collection_configuration_get_collection_thumbnail_request(
-            collection_id=collection_id,
+            collection_id=self._config.collection_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4564,13 +4542,11 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_collection_config(self, collection_id: str, **kwargs: Any) -> _models.UserCollectionSettings:
+    def get_collection_config(self, **kwargs: Any) -> _models.UserCollectionSettings:
         """Get Config.
 
         Get the complete user configuration for a given collection.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :return: UserCollectionSettings. The UserCollectionSettings is compatible with MutableMapping
         :rtype: ~azure.planetarycomputer.models.UserCollectionSettings
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4589,7 +4565,7 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         cls: ClsType[_models.UserCollectionSettings] = kwargs.pop("cls", None)
 
         _request = build_stac_collection_configuration_get_collection_config_request(
-            collection_id=collection_id,
+            collection_id=self._config.collection_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4626,13 +4602,11 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_all_mosaics(self, collection_id: str, **kwargs: Any) -> Optional[List[_models.Mosaic]]:
+    def get_all_mosaics(self, **kwargs: Any) -> Optional[List[_models.Mosaic]]:
         """Get Collection Mosaics.
 
         Get the mosaic definitions for a given collection.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :return: list of Mosaic or None
         :rtype: list[~azure.planetarycomputer.models.Mosaic] or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4651,7 +4625,7 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         cls: ClsType[Optional[List[_models.Mosaic]]] = kwargs.pop("cls", None)
 
         _request = build_stac_collection_configuration_get_all_mosaics_request(
-            collection_id=collection_id,
+            collection_id=self._config.collection_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4691,14 +4665,12 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
 
     @overload
     def add_mosaic(
-        self, collection_id: str, body: _models.Mosaic, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _models.Mosaic, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Mosaic:
         """Add Collection Mosaic.
 
         Add a mosaic definition to a given collection.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param body: Mosaic definition to be created or updated. Required.
         :type body: ~azure.planetarycomputer.models.Mosaic
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -4710,15 +4682,11 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         """
 
     @overload
-    def add_mosaic(
-        self, collection_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Mosaic:
+    def add_mosaic(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Mosaic:
         """Add Collection Mosaic.
 
         Add a mosaic definition to a given collection.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param body: Mosaic definition to be created or updated. Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -4730,15 +4698,11 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         """
 
     @overload
-    def add_mosaic(
-        self, collection_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Mosaic:
+    def add_mosaic(self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> _models.Mosaic:
         """Add Collection Mosaic.
 
         Add a mosaic definition to a given collection.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param body: Mosaic definition to be created or updated. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -4750,15 +4714,11 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         """
 
     @distributed_trace
-    def add_mosaic(
-        self, collection_id: str, body: Union[_models.Mosaic, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.Mosaic:
+    def add_mosaic(self, body: Union[_models.Mosaic, JSON, IO[bytes]], **kwargs: Any) -> _models.Mosaic:
         """Add Collection Mosaic.
 
         Add a mosaic definition to a given collection.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param body: Mosaic definition to be created or updated. Is one of the following types: Mosaic,
          JSON, IO[bytes] Required.
         :type body: ~azure.planetarycomputer.models.Mosaic or JSON or IO[bytes]
@@ -4788,7 +4748,7 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_stac_collection_configuration_add_mosaic_request(
-            collection_id=collection_id,
+            collection_id=self._config.collection_id,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4827,13 +4787,11 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_mosaic(self, collection_id: str, mosaic_id: str, **kwargs: Any) -> _models.Mosaic:
+    def get_mosaic(self, mosaic_id: str, **kwargs: Any) -> _models.Mosaic:
         """Get Collection Mosaic.
 
         Get a mosaic definition from a given collection.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param mosaic_id: Unique identifier for the mosaic configuration. Required.
         :type mosaic_id: str
         :return: Mosaic. The Mosaic is compatible with MutableMapping
@@ -4854,8 +4812,8 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         cls: ClsType[_models.Mosaic] = kwargs.pop("cls", None)
 
         _request = build_stac_collection_configuration_get_mosaic_request(
-            collection_id=collection_id,
             mosaic_id=mosaic_id,
+            collection_id=self._config.collection_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4893,20 +4851,12 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
 
     @overload
     def create_or_replace_mosaic(
-        self,
-        collection_id: str,
-        mosaic_id: str,
-        body: _models.Mosaic,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
+        self, mosaic_id: str, body: _models.Mosaic, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Mosaic:
         """Update Collection Mosaic.
 
         Update a mosaic definition from a given collection.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param mosaic_id: Unique identifier for the mosaic configuration. Required.
         :type mosaic_id: str
         :param body: Mosaic definition to be created or updated. Required.
@@ -4921,14 +4871,12 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
 
     @overload
     def create_or_replace_mosaic(
-        self, collection_id: str, mosaic_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, mosaic_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Mosaic:
         """Update Collection Mosaic.
 
         Update a mosaic definition from a given collection.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param mosaic_id: Unique identifier for the mosaic configuration. Required.
         :type mosaic_id: str
         :param body: Mosaic definition to be created or updated. Required.
@@ -4943,20 +4891,12 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
 
     @overload
     def create_or_replace_mosaic(
-        self,
-        collection_id: str,
-        mosaic_id: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
+        self, mosaic_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Mosaic:
         """Update Collection Mosaic.
 
         Update a mosaic definition from a given collection.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param mosaic_id: Unique identifier for the mosaic configuration. Required.
         :type mosaic_id: str
         :param body: Mosaic definition to be created or updated. Required.
@@ -4971,14 +4911,12 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
 
     @distributed_trace
     def create_or_replace_mosaic(
-        self, collection_id: str, mosaic_id: str, body: Union[_models.Mosaic, JSON, IO[bytes]], **kwargs: Any
+        self, mosaic_id: str, body: Union[_models.Mosaic, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.Mosaic:
         """Update Collection Mosaic.
 
         Update a mosaic definition from a given collection.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param mosaic_id: Unique identifier for the mosaic configuration. Required.
         :type mosaic_id: str
         :param body: Mosaic definition to be created or updated. Is one of the following types: Mosaic,
@@ -5010,8 +4948,8 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_stac_collection_configuration_create_or_replace_mosaic_request(
-            collection_id=collection_id,
             mosaic_id=mosaic_id,
+            collection_id=self._config.collection_id,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -5050,15 +4988,11 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         return deserialized  # type: ignore
 
     @distributed_trace
-    def delete_mosaic(  # pylint: disable=inconsistent-return-statements
-        self, collection_id: str, mosaic_id: str, **kwargs: Any
-    ) -> None:
+    def delete_mosaic(self, mosaic_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Delete Collection Mosaic.
 
         Delete a mosaic definition from a given collection.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param mosaic_id: Unique identifier for the mosaic configuration. Required.
         :type mosaic_id: str
         :return: None
@@ -5079,8 +5013,8 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_stac_collection_configuration_delete_mosaic_request(
-            collection_id=collection_id,
             mosaic_id=mosaic_id,
+            collection_id=self._config.collection_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5105,13 +5039,11 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def get_all_render_options(self, collection_id: str, **kwargs: Any) -> Optional[List[_models.RenderOption]]:
+    def get_all_render_options(self, **kwargs: Any) -> Optional[List[_models.RenderOption]]:
         """Get Collection Render Options.
 
         Get all render options for a given collection.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :return: list of RenderOption or None
         :rtype: list[~azure.planetarycomputer.models.RenderOption] or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5130,7 +5062,7 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         cls: ClsType[Optional[List[_models.RenderOption]]] = kwargs.pop("cls", None)
 
         _request = build_stac_collection_configuration_get_all_render_options_request(
-            collection_id=collection_id,
+            collection_id=self._config.collection_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5170,14 +5102,12 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
 
     @overload
     def create_render_option(
-        self, collection_id: str, body: _models.RenderOption, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _models.RenderOption, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.RenderOption:
         """Add Collection Render Option.
 
         Add a render option for a given collection.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param body: Render option configuration to be created or updated. Required.
         :type body: ~azure.planetarycomputer.models.RenderOption
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -5190,14 +5120,12 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
 
     @overload
     def create_render_option(
-        self, collection_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.RenderOption:
         """Add Collection Render Option.
 
         Add a render option for a given collection.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param body: Render option configuration to be created or updated. Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -5210,14 +5138,12 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
 
     @overload
     def create_render_option(
-        self, collection_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.RenderOption:
         """Add Collection Render Option.
 
         Add a render option for a given collection.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param body: Render option configuration to be created or updated. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -5230,14 +5156,12 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
 
     @distributed_trace
     def create_render_option(
-        self, collection_id: str, body: Union[_models.RenderOption, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.RenderOption, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.RenderOption:
         """Add Collection Render Option.
 
         Add a render option for a given collection.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param body: Render option configuration to be created or updated. Is one of the following
          types: RenderOption, JSON, IO[bytes] Required.
         :type body: ~azure.planetarycomputer.models.RenderOption or JSON or IO[bytes]
@@ -5267,7 +5191,7 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_stac_collection_configuration_create_render_option_request(
-            collection_id=collection_id,
+            collection_id=self._config.collection_id,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -5306,13 +5230,11 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_render_option(self, collection_id: str, render_option_id: str, **kwargs: Any) -> List[_models.RenderOption]:
+    def get_render_option(self, render_option_id: str, **kwargs: Any) -> List[_models.RenderOption]:
         """Get Collection Render Option.
 
         Get a render option for a given collection.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param render_option_id: Unique identifier for the render option. Required.
         :type render_option_id: str
         :return: list of RenderOption
@@ -5333,8 +5255,8 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         cls: ClsType[List[_models.RenderOption]] = kwargs.pop("cls", None)
 
         _request = build_stac_collection_configuration_get_render_option_request(
-            collection_id=collection_id,
             render_option_id=render_option_id,
+            collection_id=self._config.collection_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5373,7 +5295,6 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
     @overload
     def create_or_replace_render_option(
         self,
-        collection_id: str,
         render_option_id: str,
         body: _models.RenderOption,
         *,
@@ -5384,8 +5305,6 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
 
         Update a render option for a given collection.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param render_option_id: Unique identifier for the render option. Required.
         :type render_option_id: str
         :param body: Render option configuration to be created or updated. Required.
@@ -5400,20 +5319,12 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
 
     @overload
     def create_or_replace_render_option(
-        self,
-        collection_id: str,
-        render_option_id: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
+        self, render_option_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.RenderOption:
         """Update Collection Render Option.
 
         Update a render option for a given collection.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param render_option_id: Unique identifier for the render option. Required.
         :type render_option_id: str
         :param body: Render option configuration to be created or updated. Required.
@@ -5428,20 +5339,12 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
 
     @overload
     def create_or_replace_render_option(
-        self,
-        collection_id: str,
-        render_option_id: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
+        self, render_option_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.RenderOption:
         """Update Collection Render Option.
 
         Update a render option for a given collection.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param render_option_id: Unique identifier for the render option. Required.
         :type render_option_id: str
         :param body: Render option configuration to be created or updated. Required.
@@ -5456,18 +5359,12 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
 
     @distributed_trace
     def create_or_replace_render_option(
-        self,
-        collection_id: str,
-        render_option_id: str,
-        body: Union[_models.RenderOption, JSON, IO[bytes]],
-        **kwargs: Any,
+        self, render_option_id: str, body: Union[_models.RenderOption, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.RenderOption:
         """Update Collection Render Option.
 
         Update a render option for a given collection.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param render_option_id: Unique identifier for the render option. Required.
         :type render_option_id: str
         :param body: Render option configuration to be created or updated. Is one of the following
@@ -5499,8 +5396,8 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_stac_collection_configuration_create_or_replace_render_option_request(
-            collection_id=collection_id,
             render_option_id=render_option_id,
+            collection_id=self._config.collection_id,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -5540,14 +5437,12 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
 
     @distributed_trace
     def delete_render_option(  # pylint: disable=inconsistent-return-statements
-        self, collection_id: str, render_option_id: str, **kwargs: Any
+        self, render_option_id: str, **kwargs: Any
     ) -> None:
         """Delete Collection Render Option.
 
         Delete a render option for a given collection.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param render_option_id: Unique identifier for the render option. Required.
         :type render_option_id: str
         :return: None
@@ -5568,8 +5463,8 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_stac_collection_configuration_delete_render_option_request(
-            collection_id=collection_id,
             render_option_id=render_option_id,
+            collection_id=self._config.collection_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5594,13 +5489,11 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def get_tile_settings(self, collection_id: str, **kwargs: Any) -> _models.TileSettings:
+    def get_tile_settings(self, **kwargs: Any) -> _models.TileSettings:
         """Get Collection Tile Settings.
 
         Get the tile settings for a given collection.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :return: TileSettings. The TileSettings is compatible with MutableMapping
         :rtype: ~azure.planetarycomputer.models.TileSettings
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5619,7 +5512,7 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         cls: ClsType[_models.TileSettings] = kwargs.pop("cls", None)
 
         _request = build_stac_collection_configuration_get_tile_settings_request(
-            collection_id=collection_id,
+            collection_id=self._config.collection_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5657,14 +5550,12 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
 
     @overload
     def replace_tile_settings(
-        self, collection_id: str, body: _models.TileSettings, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _models.TileSettings, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.TileSettings:
         """Update Collection Tile Settings.
 
         Update the tile settings for a given collection.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param body: Tile settings configuration to be updated. Required.
         :type body: ~azure.planetarycomputer.models.TileSettings
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -5677,14 +5568,12 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
 
     @overload
     def replace_tile_settings(
-        self, collection_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.TileSettings:
         """Update Collection Tile Settings.
 
         Update the tile settings for a given collection.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param body: Tile settings configuration to be updated. Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -5697,14 +5586,12 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
 
     @overload
     def replace_tile_settings(
-        self, collection_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.TileSettings:
         """Update Collection Tile Settings.
 
         Update the tile settings for a given collection.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param body: Tile settings configuration to be updated. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -5717,14 +5604,12 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
 
     @distributed_trace
     def replace_tile_settings(
-        self, collection_id: str, body: Union[_models.TileSettings, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.TileSettings, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.TileSettings:
         """Update Collection Tile Settings.
 
         Update the tile settings for a given collection.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param body: Tile settings configuration to be updated. Is one of the following types:
          TileSettings, JSON, IO[bytes] Required.
         :type body: ~azure.planetarycomputer.models.TileSettings or JSON or IO[bytes]
@@ -5754,7 +5639,7 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_stac_collection_configuration_replace_tile_settings_request(
-            collection_id=collection_id,
+            collection_id=self._config.collection_id,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -5793,7 +5678,7 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_partition_type(self, collection_id: str, **kwargs: Any) -> _models.PartitionType:
+    def get_partition_type(self, **kwargs: Any) -> _models.PartitionType:
         """Get Partitiontype.
 
         Get the partitiontype for a GeoCatalog Collection.
@@ -5804,8 +5689,6 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         Returns:
         The partitiontype for the collection.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :return: PartitionType. The PartitionType is compatible with MutableMapping
         :rtype: ~azure.planetarycomputer.models.PartitionType
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5824,7 +5707,7 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         cls: ClsType[_models.PartitionType] = kwargs.pop("cls", None)
 
         _request = build_stac_collection_configuration_get_partition_type_request(
-            collection_id=collection_id,
+            collection_id=self._config.collection_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5862,7 +5745,7 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
 
     @overload
     def replace_partition_type(
-        self, collection_id: str, body: _models.PartitionType, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _models.PartitionType, *, content_type: str = "application/json", **kwargs: Any
     ) -> Optional[_models.PartitionType]:
         """Create Partitiontype.
 
@@ -5881,8 +5764,6 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         Returns:
         None.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param body: Partition type configuration determining how items are partitioned in storage.
          Required.
         :type body: ~azure.planetarycomputer.models.PartitionType
@@ -5896,7 +5777,7 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
 
     @overload
     def replace_partition_type(
-        self, collection_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> Optional[_models.PartitionType]:
         """Create Partitiontype.
 
@@ -5915,8 +5796,6 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         Returns:
         None.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param body: Partition type configuration determining how items are partitioned in storage.
          Required.
         :type body: JSON
@@ -5930,7 +5809,7 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
 
     @overload
     def replace_partition_type(
-        self, collection_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> Optional[_models.PartitionType]:
         """Create Partitiontype.
 
@@ -5949,8 +5828,6 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         Returns:
         None.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param body: Partition type configuration determining how items are partitioned in storage.
          Required.
         :type body: IO[bytes]
@@ -5964,7 +5841,7 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
 
     @distributed_trace
     def replace_partition_type(
-        self, collection_id: str, body: Union[_models.PartitionType, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.PartitionType, JSON, IO[bytes]], **kwargs: Any
     ) -> Optional[_models.PartitionType]:
         """Create Partitiontype.
 
@@ -5983,8 +5860,6 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         Returns:
         None.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param body: Partition type configuration determining how items are partitioned in storage. Is
          one of the following types: PartitionType, JSON, IO[bytes] Required.
         :type body: ~azure.planetarycomputer.models.PartitionType or JSON or IO[bytes]
@@ -6014,7 +5889,7 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_stac_collection_configuration_replace_partition_type_request(
-            collection_id=collection_id,
+            collection_id=self._config.collection_id,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6116,13 +5991,11 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_all_queryables_by_collection(self, collection_id: str, **kwargs: Any) -> Optional[_models.JsonSchema]:
+    def get_all_queryables_by_collection(self, **kwargs: Any) -> Optional[_models.JsonSchema]:
         """Collection Queryables.
 
         Endpoint.
 
-        :param collection_id: Collection ID. Required.
-        :type collection_id: str
         :return: JsonSchema or None. The JsonSchema is compatible with MutableMapping
         :rtype: ~azure.planetarycomputer.models.JsonSchema or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6141,7 +6014,7 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         cls: ClsType[Optional[_models.JsonSchema]] = kwargs.pop("cls", None)
 
         _request = build_stac_collection_configuration_get_all_queryables_by_collection_request(
-            collection_id=collection_id,
+            collection_id=self._config.collection_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6181,19 +6054,12 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
 
     @overload
     def create_queryables(
-        self,
-        collection_id: str,
-        body: List[_models.QueryableDefinition],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
+        self, body: List[_models.QueryableDefinition], *, content_type: str = "application/json", **kwargs: Any
     ) -> Optional[List[_models.QueryableDefinition]]:
         """Set Collection Queryables.
 
         Set queryables for a collection given a list of queryable definitions.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param body: Request queryable definition body. Required.
         :type body: list[~azure.planetarycomputer.models.QueryableDefinition]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -6206,14 +6072,12 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
 
     @overload
     def create_queryables(
-        self, collection_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> Optional[List[_models.QueryableDefinition]]:
         """Set Collection Queryables.
 
         Set queryables for a collection given a list of queryable definitions.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param body: Request queryable definition body. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -6226,14 +6090,12 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
 
     @distributed_trace
     def create_queryables(
-        self, collection_id: str, body: Union[List[_models.QueryableDefinition], IO[bytes]], **kwargs: Any
+        self, body: Union[List[_models.QueryableDefinition], IO[bytes]], **kwargs: Any
     ) -> Optional[List[_models.QueryableDefinition]]:
         """Set Collection Queryables.
 
         Set queryables for a collection given a list of queryable definitions.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param body: Request queryable definition body. Is either a [QueryableDefinition] type or a
          IO[bytes] type. Required.
         :type body: list[~azure.planetarycomputer.models.QueryableDefinition] or IO[bytes]
@@ -6263,7 +6125,7 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_stac_collection_configuration_create_queryables_request(
-            collection_id=collection_id,
+            collection_id=self._config.collection_id,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6306,7 +6168,6 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
     @overload
     def create_or_replace_queryable(
         self,
-        collection_id: str,
         queryable_name: str,
         body: _models.QueryableDefinition,
         *,
@@ -6318,8 +6179,6 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         Updates a queryable given a queryable definition and
         corresponding collection id.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param queryable_name: Name of the queryable property to operate on. Required.
         :type queryable_name: str
         :param body: Request queryable definition body. Required.
@@ -6334,21 +6193,13 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
 
     @overload
     def create_or_replace_queryable(
-        self,
-        collection_id: str,
-        queryable_name: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
+        self, queryable_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.QueryableDefinition:
         """Update Collection Queryables.
 
         Updates a queryable given a queryable definition and
         corresponding collection id.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param queryable_name: Name of the queryable property to operate on. Required.
         :type queryable_name: str
         :param body: Request queryable definition body. Required.
@@ -6363,21 +6214,13 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
 
     @overload
     def create_or_replace_queryable(
-        self,
-        collection_id: str,
-        queryable_name: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
+        self, queryable_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.QueryableDefinition:
         """Update Collection Queryables.
 
         Updates a queryable given a queryable definition and
         corresponding collection id.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param queryable_name: Name of the queryable property to operate on. Required.
         :type queryable_name: str
         :param body: Request queryable definition body. Required.
@@ -6392,19 +6235,13 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
 
     @distributed_trace
     def create_or_replace_queryable(
-        self,
-        collection_id: str,
-        queryable_name: str,
-        body: Union[_models.QueryableDefinition, JSON, IO[bytes]],
-        **kwargs: Any,
+        self, queryable_name: str, body: Union[_models.QueryableDefinition, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.QueryableDefinition:
         """Update Collection Queryables.
 
         Updates a queryable given a queryable definition and
         corresponding collection id.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param queryable_name: Name of the queryable property to operate on. Required.
         :type queryable_name: str
         :param body: Request queryable definition body. Is one of the following types:
@@ -6436,8 +6273,8 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_stac_collection_configuration_create_or_replace_queryable_request(
-            collection_id=collection_id,
             queryable_name=queryable_name,
+            collection_id=self._config.collection_id,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6477,14 +6314,12 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
 
     @distributed_trace
     def delete_queryable(  # pylint: disable=inconsistent-return-statements
-        self, collection_id: str, queryable_name: str, **kwargs: Any
+        self, queryable_name: str, **kwargs: Any
     ) -> None:
         """Delete Queryables.
 
         Delete queryables by name for specified collection.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
         :param queryable_name: Name of the queryable property to operate on. Required.
         :type queryable_name: str
         :return: None
@@ -6505,8 +6340,8 @@ class _StacCollectionConfigurationClientOperationsMixin(  # pylint: disable=too-
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_stac_collection_configuration_delete_queryable_request(
-            collection_id=collection_id,
             queryable_name=queryable_name,
+            collection_id=self._config.collection_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6938,15 +6773,11 @@ class _StacItemTilerClientOperationsMixin(
 ):
 
     @distributed_trace
-    def get_bounds(self, collection_id: str, item_id: str, **kwargs: Any) -> _models.BoundsResponse:
+    def get_bounds(self, **kwargs: Any) -> _models.BoundsResponse:
         """Bounds.
 
         Return all Bounds.
 
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
         :return: BoundsResponse. The BoundsResponse is compatible with MutableMapping
         :rtype: ~azure.planetarycomputer.models.BoundsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6965,8 +6796,8 @@ class _StacItemTilerClientOperationsMixin(
         cls: ClsType[_models.BoundsResponse] = kwargs.pop("cls", None)
 
         _request = build_stac_item_tiler_get_bounds_request(
-            collection_id=collection_id,
-            item_id=item_id,
+            collection_id=self._config.collection_id,
+            item_id=self._config.item_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -7003,17 +6834,11 @@ class _StacItemTilerClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_info(
-        self, collection_id: str, item_id: str, *, assets: Optional[List[str]] = None, **kwargs: Any
-    ) -> _models.InfoOperationResponse:
+    def get_info(self, *, assets: Optional[List[str]] = None, **kwargs: Any) -> _models.InfoOperationResponse:
         """Info.
 
         Return dataset's basic info.
 
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
         :keyword assets: Asset's names. Default value is None.
         :paramtype assets: list[str]
         :return: InfoOperationResponse. The InfoOperationResponse is compatible with MutableMapping
@@ -7034,8 +6859,8 @@ class _StacItemTilerClientOperationsMixin(
         cls: ClsType[_models.InfoOperationResponse] = kwargs.pop("cls", None)
 
         _request = build_stac_item_tiler_get_info_request(
-            collection_id=collection_id,
-            item_id=item_id,
+            collection_id=self._config.collection_id,
+            item_id=self._config.item_id,
             assets=assets,
             api_version=self._config.api_version,
             headers=_headers,
@@ -7074,21 +6899,16 @@ class _StacItemTilerClientOperationsMixin(
 
     @distributed_trace
     def get_info_geo_json(
-        self, collection_id: str, item_id: str, *, assets: Optional[List[str]] = None, **kwargs: Any
-    ) -> _models.FeaturePolygonDictStrRioTilerModelsInfo:
+        self, *, assets: Optional[List[str]] = None, **kwargs: Any
+    ) -> _models.TilerInfoGeoJsonFeature:
         """Info Geojson.
 
         Return Info Geojson.
 
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
         :keyword assets: Asset's names. Default value is None.
         :paramtype assets: list[str]
-        :return: FeaturePolygonDictStrRioTilerModelsInfo. The FeaturePolygonDictStrRioTilerModelsInfo
-         is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.FeaturePolygonDictStrRioTilerModelsInfo
+        :return: TilerInfoGeoJsonFeature. The TilerInfoGeoJsonFeature is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.TilerInfoGeoJsonFeature
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -7102,11 +6922,11 @@ class _StacItemTilerClientOperationsMixin(
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.FeaturePolygonDictStrRioTilerModelsInfo] = kwargs.pop("cls", None)
+        cls: ClsType[_models.TilerInfoGeoJsonFeature] = kwargs.pop("cls", None)
 
         _request = build_stac_item_tiler_get_info_geo_json_request(
-            collection_id=collection_id,
-            item_id=item_id,
+            collection_id=self._config.collection_id,
+            item_id=self._config.item_id,
             assets=assets,
             api_version=self._config.api_version,
             headers=_headers,
@@ -7136,7 +6956,7 @@ class _StacItemTilerClientOperationsMixin(
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.FeaturePolygonDictStrRioTilerModelsInfo, response.json())
+            deserialized = _deserialize(_models.TilerInfoGeoJsonFeature, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -7144,15 +6964,11 @@ class _StacItemTilerClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_available_assets(self, collection_id: str, item_id: str, **kwargs: Any) -> Optional[List[str]]:
+    def get_available_assets(self, **kwargs: Any) -> Optional[List[str]]:
         """Available Assets.
 
         Return a list of supported assets.
 
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
         :return: list of str or None
         :rtype: list[str] or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7171,8 +6987,8 @@ class _StacItemTilerClientOperationsMixin(
         cls: ClsType[Optional[List[str]]] = kwargs.pop("cls", None)
 
         _request = build_stac_item_tiler_get_available_assets_request(
-            collection_id=collection_id,
-            item_id=item_id,
+            collection_id=self._config.collection_id,
+            item_id=self._config.item_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -7213,8 +7029,6 @@ class _StacItemTilerClientOperationsMixin(
     @distributed_trace
     def get_asset_statistics(
         self,
-        collection_id: str,
-        item_id: str,
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
@@ -7235,10 +7049,6 @@ class _StacItemTilerClientOperationsMixin(
 
         Per Asset statistics.
 
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
         :keyword assets: Asset's names. Default value is None.
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
@@ -7305,8 +7115,8 @@ class _StacItemTilerClientOperationsMixin(
         cls: ClsType[_models.AssetStatisticsResponse] = kwargs.pop("cls", None)
 
         _request = build_stac_item_tiler_get_asset_statistics_request(
-            collection_id=collection_id,
-            item_id=item_id,
+            collection_id=self._config.collection_id,
+            item_id=self._config.item_id,
             assets=assets,
             expression=expression,
             asset_bidx=asset_bidx,
@@ -7358,8 +7168,6 @@ class _StacItemTilerClientOperationsMixin(
     @distributed_trace
     def get_statistics(
         self,
-        collection_id: str,
-        item_id: str,
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
@@ -7380,10 +7188,6 @@ class _StacItemTilerClientOperationsMixin(
 
         Merged assets statistics.
 
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
         :keyword assets: Asset's names. Default value is None.
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
@@ -7450,8 +7254,8 @@ class _StacItemTilerClientOperationsMixin(
         cls: ClsType[_models.StatisticsResponse] = kwargs.pop("cls", None)
 
         _request = build_stac_item_tiler_get_statistics_request(
-            collection_id=collection_id,
-            item_id=item_id,
+            collection_id=self._config.collection_id,
+            item_id=self._config.item_id,
             assets=assets,
             expression=expression,
             asset_bidx=asset_bidx,
@@ -7503,8 +7307,6 @@ class _StacItemTilerClientOperationsMixin(
     @overload
     def get_geo_json_statistics(
         self,
-        collection_id: str,
-        item_id: str,
         body: _models.ItemCollection,
         *,
         assets: Optional[List[str]] = None,
@@ -7528,10 +7330,6 @@ class _StacItemTilerClientOperationsMixin(
 
         Get Statistics from a geojson feature or featureCollection.
 
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
         :param body: Request GeoJson body. Required.
         :type body: ~azure.planetarycomputer.models.ItemCollection
         :keyword assets: Asset's names. Default value is None.
@@ -7597,8 +7395,6 @@ class _StacItemTilerClientOperationsMixin(
     @overload
     def get_geo_json_statistics(
         self,
-        collection_id: str,
-        item_id: str,
         body: JSON,
         *,
         assets: Optional[List[str]] = None,
@@ -7622,10 +7418,6 @@ class _StacItemTilerClientOperationsMixin(
 
         Get Statistics from a geojson feature or featureCollection.
 
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
         :param body: Request GeoJson body. Required.
         :type body: JSON
         :keyword assets: Asset's names. Default value is None.
@@ -7691,8 +7483,6 @@ class _StacItemTilerClientOperationsMixin(
     @overload
     def get_geo_json_statistics(
         self,
-        collection_id: str,
-        item_id: str,
         body: IO[bytes],
         *,
         assets: Optional[List[str]] = None,
@@ -7716,10 +7506,6 @@ class _StacItemTilerClientOperationsMixin(
 
         Get Statistics from a geojson feature or featureCollection.
 
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
         :param body: Request GeoJson body. Required.
         :type body: IO[bytes]
         :keyword assets: Asset's names. Default value is None.
@@ -7785,8 +7571,6 @@ class _StacItemTilerClientOperationsMixin(
     @distributed_trace
     def get_geo_json_statistics(
         self,
-        collection_id: str,
-        item_id: str,
         body: Union[_models.ItemCollection, JSON, IO[bytes]],
         *,
         assets: Optional[List[str]] = None,
@@ -7809,10 +7593,6 @@ class _StacItemTilerClientOperationsMixin(
 
         Get Statistics from a geojson feature or featureCollection.
 
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
         :param body: Request GeoJson body. Is one of the following types: ItemCollection, JSON,
          IO[bytes] Required.
         :type body: ~azure.planetarycomputer.models.ItemCollection or JSON or IO[bytes]
@@ -7894,8 +7674,8 @@ class _StacItemTilerClientOperationsMixin(
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_stac_item_tiler_get_geo_json_statistics_request(
-            collection_id=collection_id,
-            item_id=item_id,
+            collection_id=self._config.collection_id,
+            item_id=self._config.item_id,
             assets=assets,
             expression=expression,
             asset_bidx=asset_bidx,
@@ -7950,8 +7730,6 @@ class _StacItemTilerClientOperationsMixin(
     @distributed_trace
     def get_tile(
         self,
-        collection_id: str,
-        item_id: str,
         z: float,
         x: float,
         y: float,
@@ -7982,10 +7760,6 @@ class _StacItemTilerClientOperationsMixin(
 
         Create map tile from a dataset.
 
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
         :param z: Identifier (Z) selecting one of the scales defined in the TileMatrixSet and
          representing the scaleDenominator the tile. Required.
         :type z: float
@@ -8098,13 +7872,13 @@ class _StacItemTilerClientOperationsMixin(
         cls: ClsType[Optional[Iterator[bytes]]] = kwargs.pop("cls", None)
 
         _request = build_stac_item_tiler_get_tile_request(
-            collection_id=collection_id,
-            item_id=item_id,
             z=z,
             x=x,
             y=y,
             scale=scale,
             format=format,
+            collection_id=self._config.collection_id,
+            item_id=self._config.item_id,
             assets=assets,
             expression=expression,
             asset_bidx=asset_bidx,
@@ -8169,8 +7943,6 @@ class _StacItemTilerClientOperationsMixin(
     @distributed_trace
     def get_tile_with_matrix_set(
         self,
-        collection_id: str,
-        item_id: str,
         tile_matrix_set_id: str,
         z: float,
         x: float,
@@ -8201,10 +7973,6 @@ class _StacItemTilerClientOperationsMixin(
 
         Create map tile from a dataset.
 
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
         :param tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported. Required.
         :type tile_matrix_set_id: str
         :param z: Identifier (Z) selecting one of the scales defined in the TileMatrixSet and
@@ -8312,14 +8080,14 @@ class _StacItemTilerClientOperationsMixin(
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_stac_item_tiler_get_tile_with_matrix_set_request(
-            collection_id=collection_id,
-            item_id=item_id,
             tile_matrix_set_id=tile_matrix_set_id,
             z=z,
             x=x,
             y=y,
             scale=scale,
             format=format,
+            collection_id=self._config.collection_id,
+            item_id=self._config.item_id,
             assets=assets,
             expression=expression,
             asset_bidx=asset_bidx,
@@ -8381,8 +8149,6 @@ class _StacItemTilerClientOperationsMixin(
     @distributed_trace
     def get_tile_json(
         self,
-        collection_id: str,
-        item_id: str,
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
@@ -8410,10 +8176,6 @@ class _StacItemTilerClientOperationsMixin(
 
         Return Tilejson.
 
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
         :keyword assets: Asset's names. Default value is None.
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
@@ -8518,8 +8280,8 @@ class _StacItemTilerClientOperationsMixin(
         cls: ClsType[_models.TileJsonResponse] = kwargs.pop("cls", None)
 
         _request = build_stac_item_tiler_get_tile_json_request(
-            collection_id=collection_id,
-            item_id=item_id,
+            collection_id=self._config.collection_id,
+            item_id=self._config.item_id,
             assets=assets,
             expression=expression,
             asset_bidx=asset_bidx,
@@ -8578,8 +8340,6 @@ class _StacItemTilerClientOperationsMixin(
     @distributed_trace
     def get_tile_json_with_matrix_set(
         self,
-        collection_id: str,
-        item_id: str,
         tile_matrix_set_id: str,
         *,
         assets: Optional[List[str]] = None,
@@ -8607,10 +8367,6 @@ class _StacItemTilerClientOperationsMixin(
 
         Return the Tilejson Tilematrixsetid As a path.
 
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
         :param tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported. Required.
         :type tile_matrix_set_id: str
         :keyword assets: Asset's names. Default value is None.
@@ -8710,9 +8466,9 @@ class _StacItemTilerClientOperationsMixin(
         cls: ClsType[_models.TileJsonResponse] = kwargs.pop("cls", None)
 
         _request = build_stac_item_tiler_get_tile_json_with_matrix_set_request(
-            collection_id=collection_id,
-            item_id=item_id,
             tile_matrix_set_id=tile_matrix_set_id,
+            collection_id=self._config.collection_id,
+            item_id=self._config.item_id,
             assets=assets,
             expression=expression,
             asset_bidx=asset_bidx,
@@ -8770,8 +8526,6 @@ class _StacItemTilerClientOperationsMixin(
     @distributed_trace
     def get_wmts_capabilities(
         self,
-        collection_id: str,
-        item_id: str,
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
@@ -8799,10 +8553,6 @@ class _StacItemTilerClientOperationsMixin(
 
         OGC WMTS endpoint.
 
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
         :keyword assets: Asset's names. Default value is None.
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
@@ -8905,8 +8655,8 @@ class _StacItemTilerClientOperationsMixin(
         cls: ClsType[Optional[str]] = kwargs.pop("cls", None)
 
         _request = build_stac_item_tiler_get_wmts_capabilities_request(
-            collection_id=collection_id,
-            item_id=item_id,
+            collection_id=self._config.collection_id,
+            item_id=self._config.item_id,
             assets=assets,
             expression=expression,
             asset_bidx=asset_bidx,
@@ -8970,8 +8720,6 @@ class _StacItemTilerClientOperationsMixin(
     @distributed_trace
     def get_wmts_capabilities_with_matrix_set(
         self,
-        collection_id: str,
-        item_id: str,
         tile_matrix_set_id: str,
         *,
         assets: Optional[List[str]] = None,
@@ -8999,10 +8747,6 @@ class _StacItemTilerClientOperationsMixin(
 
         OGC WMTS endpoint.
 
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
         :param tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported. Required.
         :type tile_matrix_set_id: str
         :keyword assets: Asset's names. Default value is None.
@@ -9100,9 +8844,9 @@ class _StacItemTilerClientOperationsMixin(
         cls: ClsType[str] = kwargs.pop("cls", None)
 
         _request = build_stac_item_tiler_get_wmts_capabilities_with_matrix_set_request(
-            collection_id=collection_id,
-            item_id=item_id,
             tile_matrix_set_id=tile_matrix_set_id,
+            collection_id=self._config.collection_id,
+            item_id=self._config.item_id,
             assets=assets,
             expression=expression,
             asset_bidx=asset_bidx,
@@ -9163,8 +8907,6 @@ class _StacItemTilerClientOperationsMixin(
     @distributed_trace
     def get_point(
         self,
-        collection_id: str,
-        item_id: str,
         lon: float,
         lat: float,
         *,
@@ -9182,10 +8924,6 @@ class _StacItemTilerClientOperationsMixin(
 
         Get Point value for a dataset.
 
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
         :param lon: Longitude. Required.
         :type lon: float
         :param lat: Latitude. Required.
@@ -9227,10 +8965,10 @@ class _StacItemTilerClientOperationsMixin(
         cls: ClsType[_models.TitilerCoreModelsResponsesPoint] = kwargs.pop("cls", None)
 
         _request = build_stac_item_tiler_get_point_request(
-            collection_id=collection_id,
-            item_id=item_id,
             lon=lon,
             lat=lat,
+            collection_id=self._config.collection_id,
+            item_id=self._config.item_id,
             assets=assets,
             expression=expression,
             asset_bidx=asset_bidx,
@@ -9277,8 +9015,6 @@ class _StacItemTilerClientOperationsMixin(
     @distributed_trace
     def get_preview_with_format(
         self,
-        collection_id: str,
-        item_id: str,
         format: str,
         *,
         assets: Optional[List[str]] = None,
@@ -9305,10 +9041,6 @@ class _StacItemTilerClientOperationsMixin(
 
         Create preview of a dataset.
 
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
         :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
         :type format: str
         :keyword assets: Asset's names. Default value is None.
@@ -9400,9 +9132,9 @@ class _StacItemTilerClientOperationsMixin(
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_stac_item_tiler_get_preview_with_format_request(
-            collection_id=collection_id,
-            item_id=item_id,
             format=format,
+            collection_id=self._config.collection_id,
+            item_id=self._config.item_id,
             assets=assets,
             expression=expression,
             asset_bidx=asset_bidx,
@@ -9465,8 +9197,6 @@ class _StacItemTilerClientOperationsMixin(
     @distributed_trace
     def get_preview(
         self,
-        collection_id: str,
-        item_id: str,
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
@@ -9493,10 +9223,6 @@ class _StacItemTilerClientOperationsMixin(
 
         Create preview of a dataset.
 
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
         :keyword assets: Asset's names. Default value is None.
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
@@ -9589,8 +9315,8 @@ class _StacItemTilerClientOperationsMixin(
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_stac_item_tiler_get_preview_request(
-            collection_id=collection_id,
-            item_id=item_id,
+            collection_id=self._config.collection_id,
+            item_id=self._config.item_id,
             assets=assets,
             expression=expression,
             asset_bidx=asset_bidx,
@@ -9654,8 +9380,6 @@ class _StacItemTilerClientOperationsMixin(
     @distributed_trace
     def get_part_with_dimensions(
         self,
-        collection_id: str,
-        item_id: str,
         minx: float,
         miny: float,
         maxx: float,
@@ -9687,10 +9411,6 @@ class _StacItemTilerClientOperationsMixin(
 
         Create image from part of a dataset.
 
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
         :param minx: Bounding box min X. Required.
         :type minx: float
         :param miny: Bounding box min Y. Required.
@@ -9793,8 +9513,6 @@ class _StacItemTilerClientOperationsMixin(
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_stac_item_tiler_get_part_with_dimensions_request(
-            collection_id=collection_id,
-            item_id=item_id,
             minx=minx,
             miny=miny,
             maxx=maxx,
@@ -9802,6 +9520,8 @@ class _StacItemTilerClientOperationsMixin(
             width=width,
             height=height,
             format=format,
+            collection_id=self._config.collection_id,
+            item_id=self._config.item_id,
             assets=assets,
             expression=expression,
             asset_bidx=asset_bidx,
@@ -9863,8 +9583,6 @@ class _StacItemTilerClientOperationsMixin(
     @distributed_trace
     def get_part(
         self,
-        collection_id: str,
-        item_id: str,
         minx: float,
         miny: float,
         maxx: float,
@@ -9896,10 +9614,6 @@ class _StacItemTilerClientOperationsMixin(
 
         Create image from part of a dataset.
 
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
         :param minx: Bounding box min X. Required.
         :type minx: float
         :param miny: Bounding box min Y. Required.
@@ -10002,13 +9716,13 @@ class _StacItemTilerClientOperationsMixin(
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_stac_item_tiler_get_part_request(
-            collection_id=collection_id,
-            item_id=item_id,
             minx=minx,
             miny=miny,
             maxx=maxx,
             maxy=maxy,
             format=format,
+            collection_id=self._config.collection_id,
+            item_id=self._config.item_id,
             assets=assets,
             expression=expression,
             asset_bidx=asset_bidx,
@@ -10072,8 +9786,6 @@ class _StacItemTilerClientOperationsMixin(
     @overload
     def crop_geo_json_with_dimensions(
         self,
-        collection_id: str,
-        item_id: str,
         width: float,
         height: float,
         format: str,
@@ -10102,10 +9814,6 @@ class _StacItemTilerClientOperationsMixin(
 
         Create image from a geojson feature.
 
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
         :param width: Width in pixels for the output image. Required.
         :type width: float
         :param height: Height in pixels for the output image. Required.
@@ -10193,8 +9901,6 @@ class _StacItemTilerClientOperationsMixin(
     @overload
     def crop_geo_json_with_dimensions(
         self,
-        collection_id: str,
-        item_id: str,
         width: float,
         height: float,
         format: str,
@@ -10223,10 +9929,6 @@ class _StacItemTilerClientOperationsMixin(
 
         Create image from a geojson feature.
 
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
         :param width: Width in pixels for the output image. Required.
         :type width: float
         :param height: Height in pixels for the output image. Required.
@@ -10314,8 +10016,6 @@ class _StacItemTilerClientOperationsMixin(
     @overload
     def crop_geo_json_with_dimensions(
         self,
-        collection_id: str,
-        item_id: str,
         width: float,
         height: float,
         format: str,
@@ -10344,10 +10044,6 @@ class _StacItemTilerClientOperationsMixin(
 
         Create image from a geojson feature.
 
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
         :param width: Width in pixels for the output image. Required.
         :type width: float
         :param height: Height in pixels for the output image. Required.
@@ -10435,8 +10131,6 @@ class _StacItemTilerClientOperationsMixin(
     @distributed_trace
     def crop_geo_json_with_dimensions(
         self,
-        collection_id: str,
-        item_id: str,
         width: float,
         height: float,
         format: str,
@@ -10464,10 +10158,6 @@ class _StacItemTilerClientOperationsMixin(
 
         Create image from a geojson feature.
 
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
         :param width: Width in pixels for the output image. Required.
         :type width: float
         :param height: Height in pixels for the output image. Required.
@@ -10571,11 +10261,11 @@ class _StacItemTilerClientOperationsMixin(
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_stac_item_tiler_crop_geo_json_with_dimensions_request(
-            collection_id=collection_id,
-            item_id=item_id,
             width=width,
             height=height,
             format=format,
+            collection_id=self._config.collection_id,
+            item_id=self._config.item_id,
             assets=assets,
             expression=expression,
             asset_bidx=asset_bidx,
@@ -10638,8 +10328,6 @@ class _StacItemTilerClientOperationsMixin(
     @overload
     def crop_geo_json(
         self,
-        collection_id: str,
-        item_id: str,
         format: str,
         body: _models.Geometry,
         *,
@@ -10668,10 +10356,6 @@ class _StacItemTilerClientOperationsMixin(
 
         Create image from a geojson feature.
 
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
         :param format: Output format for the tile or image (e.g., png, jpeg, webp) (default: "png").
          Required.
         :type format: str
@@ -10760,8 +10444,6 @@ class _StacItemTilerClientOperationsMixin(
     @overload
     def crop_geo_json(
         self,
-        collection_id: str,
-        item_id: str,
         format: str,
         body: JSON,
         *,
@@ -10790,10 +10472,6 @@ class _StacItemTilerClientOperationsMixin(
 
         Create image from a geojson feature.
 
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
         :param format: Output format for the tile or image (e.g., png, jpeg, webp) (default: "png").
          Required.
         :type format: str
@@ -10882,8 +10560,6 @@ class _StacItemTilerClientOperationsMixin(
     @overload
     def crop_geo_json(
         self,
-        collection_id: str,
-        item_id: str,
         format: str,
         body: IO[bytes],
         *,
@@ -10912,10 +10588,6 @@ class _StacItemTilerClientOperationsMixin(
 
         Create image from a geojson feature.
 
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
         :param format: Output format for the tile or image (e.g., png, jpeg, webp) (default: "png").
          Required.
         :type format: str
@@ -11004,8 +10676,6 @@ class _StacItemTilerClientOperationsMixin(
     @distributed_trace
     def crop_geo_json(
         self,
-        collection_id: str,
-        item_id: str,
         format: str,
         body: Union[_models.Geometry, JSON, IO[bytes]],
         *,
@@ -11033,10 +10703,6 @@ class _StacItemTilerClientOperationsMixin(
 
         Create image from a geojson feature.
 
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
         :param format: Output format for the tile or image (e.g., png, jpeg, webp) (default: "png").
          Required.
         :type format: str
@@ -11141,9 +10807,9 @@ class _StacItemTilerClientOperationsMixin(
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_stac_item_tiler_crop_geo_json_request(
-            collection_id=collection_id,
-            item_id=item_id,
             format=format,
+            collection_id=self._config.collection_id,
+            item_id=self._config.item_id,
             assets=assets,
             expression=expression,
             asset_bidx=asset_bidx,
@@ -13344,7 +13010,7 @@ class _SharedAccessSignatureClientOperationsMixin(
 ):
 
     @distributed_trace
-    def get_token(self, collection_id: str, *, duration: Optional[int] = None, **kwargs: Any) -> _models.SasToken:
+    def get_token(self, *, duration: Optional[int] = None, **kwargs: Any) -> _models.SasToken:
         """generate a SAS Token for the given Azure Blob storage account and container.
 
         Generate a `SAS Token
@@ -13352,8 +13018,6 @@ class _SharedAccessSignatureClientOperationsMixin(
         for the given storage account and container. The storage account and container
         must be associated with a Planetary Computer dataset indexed by the STAC API.
 
-        :param collection_id: Collection Id. Required.
-        :type collection_id: str
         :keyword duration: Duration. Default value is None.
         :paramtype duration: int
         :return: SasToken. The SasToken is compatible with MutableMapping
@@ -13374,7 +13038,7 @@ class _SharedAccessSignatureClientOperationsMixin(
         cls: ClsType[_models.SasToken] = kwargs.pop("cls", None)
 
         _request = build_shared_access_signature_get_token_request(
-            collection_id=collection_id,
+            collection_id=self._config.collection_id,
             duration=duration,
             api_version=self._config.api_version,
             headers=_headers,
@@ -13539,12 +13203,10 @@ class _IngestionClientOperationsMixin(
 
     @distributed_trace
     def get_ingestions(
-        self, collection_id: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+        self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> _models.IngestionDefinitionsPagedResponse:
         """Get ingestions of a catalog.
 
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
         :keyword top: The number of items to return. Default value is None.
         :paramtype top: int
         :keyword skip: The number of items to skip. Default value is None.
@@ -13568,7 +13230,7 @@ class _IngestionClientOperationsMixin(
         cls: ClsType[_models.IngestionDefinitionsPagedResponse] = kwargs.pop("cls", None)
 
         _request = build_ingestion_get_ingestions_request(
-            collection_id=collection_id,
+            collection_id=self._config.collection_id,
             top=top,
             skip=skip,
             api_version=self._config.api_version,
@@ -13607,11 +13269,9 @@ class _IngestionClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_ingestion(self, collection_id: str, ingestion_id: str, **kwargs: Any) -> _models.IngestionDefinition:
+    def get_ingestion(self, ingestion_id: str, **kwargs: Any) -> _models.IngestionDefinition:
         """Get the definition of an ingestion.
 
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
         :param ingestion_id: Ingestion id. Required.
         :type ingestion_id: str
         :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
@@ -13632,8 +13292,8 @@ class _IngestionClientOperationsMixin(
         cls: ClsType[_models.IngestionDefinition] = kwargs.pop("cls", None)
 
         _request = build_ingestion_get_ingestion_request(
-            collection_id=collection_id,
             ingestion_id=ingestion_id,
+            collection_id=self._config.collection_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -13671,17 +13331,10 @@ class _IngestionClientOperationsMixin(
 
     @overload
     def create_ingestion(
-        self,
-        collection_id: str,
-        definition: _models.IngestionDefinition,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any,
+        self, definition: _models.IngestionDefinition, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.IngestionDefinition:
         """Create a new ingestion.
 
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
         :param definition: Definition of the ingestion. Required.
         :type definition: ~azure.planetarycomputer.models.IngestionDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -13694,12 +13347,10 @@ class _IngestionClientOperationsMixin(
 
     @overload
     def create_ingestion(
-        self, collection_id: str, definition: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, definition: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.IngestionDefinition:
         """Create a new ingestion.
 
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
         :param definition: Definition of the ingestion. Required.
         :type definition: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -13712,12 +13363,10 @@ class _IngestionClientOperationsMixin(
 
     @overload
     def create_ingestion(
-        self, collection_id: str, definition: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, definition: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.IngestionDefinition:
         """Create a new ingestion.
 
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
         :param definition: Definition of the ingestion. Required.
         :type definition: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -13730,12 +13379,10 @@ class _IngestionClientOperationsMixin(
 
     @distributed_trace
     def create_ingestion(
-        self, collection_id: str, definition: Union[_models.IngestionDefinition, JSON, IO[bytes]], **kwargs: Any
+        self, definition: Union[_models.IngestionDefinition, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.IngestionDefinition:
         """Create a new ingestion.
 
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
         :param definition: Definition of the ingestion. Is one of the following types:
          IngestionDefinition, JSON, IO[bytes] Required.
         :type definition: ~azure.planetarycomputer.models.IngestionDefinition or JSON or IO[bytes]
@@ -13765,7 +13412,7 @@ class _IngestionClientOperationsMixin(
             _content = json.dumps(definition, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_ingestion_create_ingestion_request(
-            collection_id=collection_id,
+            collection_id=self._config.collection_id,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -13809,7 +13456,6 @@ class _IngestionClientOperationsMixin(
     @overload
     def update_ingestion(
         self,
-        collection_id: str,
         ingestion_id: str,
         definition: _models.IngestionDefinition,
         *,
@@ -13818,8 +13464,6 @@ class _IngestionClientOperationsMixin(
     ) -> _models.IngestionDefinition:
         """Update an existing ingestion.
 
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
         :param ingestion_id: Ingestion id. Required.
         :type ingestion_id: str
         :param definition: Ingestion properties to update. Required.
@@ -13834,18 +13478,10 @@ class _IngestionClientOperationsMixin(
 
     @overload
     def update_ingestion(
-        self,
-        collection_id: str,
-        ingestion_id: str,
-        definition: JSON,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any,
+        self, ingestion_id: str, definition: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.IngestionDefinition:
         """Update an existing ingestion.
 
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
         :param ingestion_id: Ingestion id. Required.
         :type ingestion_id: str
         :param definition: Ingestion properties to update. Required.
@@ -13861,7 +13497,6 @@ class _IngestionClientOperationsMixin(
     @overload
     def update_ingestion(
         self,
-        collection_id: str,
         ingestion_id: str,
         definition: IO[bytes],
         *,
@@ -13870,8 +13505,6 @@ class _IngestionClientOperationsMixin(
     ) -> _models.IngestionDefinition:
         """Update an existing ingestion.
 
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
         :param ingestion_id: Ingestion id. Required.
         :type ingestion_id: str
         :param definition: Ingestion properties to update. Required.
@@ -13886,16 +13519,10 @@ class _IngestionClientOperationsMixin(
 
     @distributed_trace
     def update_ingestion(
-        self,
-        collection_id: str,
-        ingestion_id: str,
-        definition: Union[_models.IngestionDefinition, JSON, IO[bytes]],
-        **kwargs: Any,
+        self, ingestion_id: str, definition: Union[_models.IngestionDefinition, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.IngestionDefinition:
         """Update an existing ingestion.
 
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
         :param ingestion_id: Ingestion id. Required.
         :type ingestion_id: str
         :param definition: Ingestion properties to update. Is one of the following types:
@@ -13927,8 +13554,8 @@ class _IngestionClientOperationsMixin(
             _content = json.dumps(definition, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_ingestion_update_ingestion_request(
-            collection_id=collection_id,
             ingestion_id=ingestion_id,
+            collection_id=self._config.collection_id,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -13966,7 +13593,7 @@ class _IngestionClientOperationsMixin(
 
         return deserialized  # type: ignore
 
-    def _delete_ingestion_initial(self, collection_id: str, ingestion_id: str, **kwargs: Any) -> Iterator[bytes]:
+    def _delete_ingestion_initial(self, ingestion_id: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -13981,8 +13608,8 @@ class _IngestionClientOperationsMixin(
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_ingestion_delete_ingestion_request(
-            collection_id=collection_id,
             ingestion_id=ingestion_id,
+            collection_id=self._config.collection_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -14019,12 +13646,10 @@ class _IngestionClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace
-    def begin_delete_ingestion(self, collection_id: str, ingestion_id: str, **kwargs: Any) -> LROPoller[None]:
+    def begin_delete_ingestion(self, ingestion_id: str, **kwargs: Any) -> LROPoller[None]:
         """Delete an ingestion from a catalog. All runs of the ingestion will be deleted. Ingestion must
         not have any runs in progress or queued.
 
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
         :param ingestion_id: Ingestion id. Required.
         :type ingestion_id: str
         :return: An instance of LROPoller that returns None
@@ -14040,12 +13665,7 @@ class _IngestionClientOperationsMixin(
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._delete_ingestion_initial(
-                collection_id=collection_id,
-                ingestion_id=ingestion_id,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs,
+                ingestion_id=ingestion_id, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -14077,18 +13697,10 @@ class _IngestionClientOperationsMixin(
 
     @distributed_trace
     def get_ingestion_runs(
-        self,
-        collection_id: str,
-        ingestion_id: str,
-        *,
-        top: Optional[int] = None,
-        skip: Optional[int] = None,
-        **kwargs: Any,
+        self, ingestion_id: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> _models.IngestionRunsPagedResponse:
         """Get the runs of an ingestion.
 
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
         :param ingestion_id: Ingestion id. Required.
         :type ingestion_id: str
         :keyword top: The number of items to return. Default value is None.
@@ -14114,8 +13726,8 @@ class _IngestionClientOperationsMixin(
         cls: ClsType[_models.IngestionRunsPagedResponse] = kwargs.pop("cls", None)
 
         _request = build_ingestion_get_ingestion_runs_request(
-            collection_id=collection_id,
             ingestion_id=ingestion_id,
+            collection_id=self._config.collection_id,
             top=top,
             skip=skip,
             api_version=self._config.api_version,
@@ -14154,13 +13766,9 @@ class _IngestionClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_ingestion_run(
-        self, collection_id: str, ingestion_id: str, run_id: str, **kwargs: Any
-    ) -> _models.IngestionRun:
+    def get_ingestion_run(self, ingestion_id: str, run_id: str, **kwargs: Any) -> _models.IngestionRun:
         """Get a run of an ingestion.
 
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
         :param ingestion_id: Ingestion id. Required.
         :type ingestion_id: str
         :param run_id: Run id. Required.
@@ -14183,9 +13791,9 @@ class _IngestionClientOperationsMixin(
         cls: ClsType[_models.IngestionRun] = kwargs.pop("cls", None)
 
         _request = build_ingestion_get_ingestion_run_request(
-            collection_id=collection_id,
             ingestion_id=ingestion_id,
             run_id=run_id,
+            collection_id=self._config.collection_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -14222,11 +13830,9 @@ class _IngestionClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace
-    def create_ingestion_run(self, collection_id: str, ingestion_id: str, **kwargs: Any) -> _models.IngestionRun:
+    def create_ingestion_run(self, ingestion_id: str, **kwargs: Any) -> _models.IngestionRun:
         """Create a new run of an ingestion.
 
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
         :param ingestion_id: Ingestion id. Required.
         :type ingestion_id: str
         :return: IngestionRun. The IngestionRun is compatible with MutableMapping
@@ -14247,8 +13853,8 @@ class _IngestionClientOperationsMixin(
         cls: ClsType[_models.IngestionRun] = kwargs.pop("cls", None)
 
         _request = build_ingestion_create_ingestion_run_request(
-            collection_id=collection_id,
             ingestion_id=ingestion_id,
+            collection_id=self._config.collection_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -14785,7 +14391,6 @@ class _IngestionClientOperationsMixin(
         *,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        collection_id: Optional[str] = None,
         status: Optional[Union[str, _models.OperationStatus]] = None,
         **kwargs: Any,
     ) -> _models.OperationsPagedResponse:
@@ -14795,8 +14400,6 @@ class _IngestionClientOperationsMixin(
         :paramtype top: int
         :keyword skip: The number of items to skip. Default value is None.
         :paramtype skip: int
-        :keyword collection_id: Operation id used to filter the results. Default value is None.
-        :paramtype collection_id: str
         :keyword status: Operation status used to filter the results. Known values are: "Pending",
          "Running", "Succeeded", "Canceled", "Canceling", and "Failed". Default value is None.
         :paramtype status: str or ~azure.planetarycomputer.models.OperationStatus
@@ -14820,8 +14423,8 @@ class _IngestionClientOperationsMixin(
         _request = build_ingestion_get_operations_request(
             top=top,
             skip=skip,
-            collection_id=collection_id,
             status=status,
+            collection_id=self._config.collection_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,

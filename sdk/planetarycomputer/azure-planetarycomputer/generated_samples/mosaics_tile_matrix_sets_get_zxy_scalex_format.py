@@ -27,6 +27,7 @@ from azure.planetarycomputer import MosaicTilerClient
 def main():
     client = StacCollectionConfigurationClient(
         credential=DefaultAzureCredential(),
+        collection_id="COLLECTION_ID",
     )
 
     response = client.get_tile_with_matrix_set(

@@ -27,12 +27,10 @@ from azure.planetarycomputer import StacItemTilerClient
 def main():
     client = StacCollectionConfigurationClient(
         credential=DefaultAzureCredential(),
+        collection_id="COLLECTION_ID",
     )
 
-    response = client.get_wmts_capabilities(
-        collection_id="collectionId-0df36a74d7ed",
-        item_id="item-0df36a74d7ed",
-    )
+    response = client.get_wmts_capabilities()
     print(response)
 
 

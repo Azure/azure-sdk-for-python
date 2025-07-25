@@ -49,6 +49,8 @@ class StacCollectionConfigurationClient(_StacCollectionConfigurationClientOperat
 
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :param collection_id: The ID of the STAC collection. Required.
+    :type collection_id: str
     :keyword endpoint: Service host. Default value is
      "https://contoso-catalog.gwhqfdeddydpareu.uksouth.geocatalog.spatio.azure.com".
     :paramtype endpoint: str
@@ -61,13 +63,14 @@ class StacCollectionConfigurationClient(_StacCollectionConfigurationClientOperat
     def __init__(
         self,
         credential: "AsyncTokenCredential",
+        collection_id: str,
         *,
         endpoint: str = "https://contoso-catalog.gwhqfdeddydpareu.uksouth.geocatalog.spatio.azure.com",
         **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}"
         self._config = StacCollectionConfigurationClientConfiguration(
-            credential=credential, endpoint=endpoint, **kwargs
+            credential=credential, collection_id=collection_id, endpoint=endpoint, **kwargs
         )
 
         _policies = kwargs.pop("policies", None)
@@ -309,6 +312,10 @@ class StacItemTilerClient(_StacItemTilerClientOperationsMixin):
 
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :param collection_id: The ID of the STAC collection. Required.
+    :type collection_id: str
+    :param item_id: The ID of the STAC item. Required.
+    :type item_id: str
     :keyword endpoint: Service host. Default value is
      "https://contoso-catalog.gwhqfdeddydpareu.uksouth.geocatalog.spatio.azure.com".
     :paramtype endpoint: str
@@ -321,12 +328,16 @@ class StacItemTilerClient(_StacItemTilerClientOperationsMixin):
     def __init__(
         self,
         credential: "AsyncTokenCredential",
+        collection_id: str,
+        item_id: str,
         *,
         endpoint: str = "https://contoso-catalog.gwhqfdeddydpareu.uksouth.geocatalog.spatio.azure.com",
         **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}"
-        self._config = StacItemTilerClientConfiguration(credential=credential, endpoint=endpoint, **kwargs)
+        self._config = StacItemTilerClientConfiguration(
+            credential=credential, collection_id=collection_id, item_id=item_id, endpoint=endpoint, **kwargs
+        )
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:
@@ -653,6 +664,8 @@ class SharedAccessSignatureClient(_SharedAccessSignatureClientOperationsMixin):
 
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :param collection_id: The ID of the STAC collection. Required.
+    :type collection_id: str
     :keyword endpoint: Service host. Default value is
      "https://contoso-catalog.gwhqfdeddydpareu.uksouth.geocatalog.spatio.azure.com".
     :paramtype endpoint: str
@@ -665,12 +678,15 @@ class SharedAccessSignatureClient(_SharedAccessSignatureClientOperationsMixin):
     def __init__(
         self,
         credential: "AsyncTokenCredential",
+        collection_id: str,
         *,
         endpoint: str = "https://contoso-catalog.gwhqfdeddydpareu.uksouth.geocatalog.spatio.azure.com",
         **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}"
-        self._config = SharedAccessSignatureClientConfiguration(credential=credential, endpoint=endpoint, **kwargs)
+        self._config = SharedAccessSignatureClientConfiguration(
+            credential=credential, collection_id=collection_id, endpoint=endpoint, **kwargs
+        )
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:
@@ -739,6 +755,8 @@ class IngestionClient(_IngestionClientOperationsMixin):
 
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :param collection_id: The ID of the STAC collection. Required.
+    :type collection_id: str
     :keyword endpoint: Service host. Default value is
      "https://contoso-catalog.gwhqfdeddydpareu.uksouth.geocatalog.spatio.azure.com".
     :paramtype endpoint: str
@@ -753,12 +771,15 @@ class IngestionClient(_IngestionClientOperationsMixin):
     def __init__(
         self,
         credential: "AsyncTokenCredential",
+        collection_id: str,
         *,
         endpoint: str = "https://contoso-catalog.gwhqfdeddydpareu.uksouth.geocatalog.spatio.azure.com",
         **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}"
-        self._config = IngestionClientConfiguration(credential=credential, endpoint=endpoint, **kwargs)
+        self._config = IngestionClientConfiguration(
+            credential=credential, collection_id=collection_id, endpoint=endpoint, **kwargs
+        )
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:

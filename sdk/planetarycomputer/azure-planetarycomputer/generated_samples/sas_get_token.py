@@ -27,11 +27,10 @@ from azure.planetarycomputer import SharedAccessSignatureClient
 def main():
     client = StacCollectionConfigurationClient(
         credential=DefaultAzureCredential(),
+        collection_id="COLLECTION_ID",
     )
 
-    response = client.get_token(
-        collection_id="weather-sample",
-    )
+    response = client.get_token()
     print(response)
 
 

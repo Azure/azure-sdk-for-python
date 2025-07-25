@@ -17,9 +17,7 @@ class TestSharedAccessSignatureAsync(SharedAccessSignatureClientTestBaseAsync):
     @recorded_by_proxy_async
     async def test_get_token(self, sharedaccesssignature_endpoint):
         client = self.create_async_client(endpoint=sharedaccesssignature_endpoint)
-        response = await client.get_token(
-            collection_id="str",
-        )
+        response = await client.get_token()
 
         # please add some check logic here by yourself
         # ...

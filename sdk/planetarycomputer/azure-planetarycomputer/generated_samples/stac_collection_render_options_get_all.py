@@ -27,11 +27,10 @@ from azure.planetarycomputer import StacCollectionConfigurationClient
 def main():
     client = StacCollectionConfigurationClient(
         credential=DefaultAzureCredential(),
+        collection_id="COLLECTION_ID",
     )
 
-    response = client.get_all_render_options(
-        collection_id="sentinel-2-l2a-tutorial-7",
-    )
+    response = client.get_all_render_options()
     print(response)
 
 

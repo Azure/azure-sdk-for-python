@@ -27,6 +27,7 @@ from azure.planetarycomputer import StacClient
 def main():
     client = StacCollectionConfigurationClient(
         credential=DefaultAzureCredential(),
+        collection_id="COLLECTION_ID",
     )
 
     client.begin_update_item(

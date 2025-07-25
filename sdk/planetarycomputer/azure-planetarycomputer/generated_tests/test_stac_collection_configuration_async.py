@@ -18,7 +18,6 @@ class TestStacCollectionConfigurationAsync(StacCollectionConfigurationClientTest
     async def test_create_collection_asset(self, staccollectionconfiguration_endpoint):
         client = self.create_async_client(endpoint=staccollectionconfiguration_endpoint)
         response = await client.create_collection_asset(
-            collection_id="str",
             body={
                 "data": {"description": "str", "key": "str", "roles": ["str"], "title": "str", "type": "str"},
                 "file": "filetype",
@@ -33,7 +32,6 @@ class TestStacCollectionConfigurationAsync(StacCollectionConfigurationClientTest
     async def test_create_or_replace_collection_asset(self, staccollectionconfiguration_endpoint):
         client = self.create_async_client(endpoint=staccollectionconfiguration_endpoint)
         response = await client.create_or_replace_collection_asset(
-            collection_id="str",
             asset_id="str",
             body={
                 "data": {"description": "str", "key": "str", "roles": ["str"], "title": "str", "type": "str"},
@@ -49,7 +47,6 @@ class TestStacCollectionConfigurationAsync(StacCollectionConfigurationClientTest
     async def test_delete_collection_asset(self, staccollectionconfiguration_endpoint):
         client = self.create_async_client(endpoint=staccollectionconfiguration_endpoint)
         response = await client.delete_collection_asset(
-            collection_id="str",
             asset_id="str",
         )
 
@@ -60,9 +57,7 @@ class TestStacCollectionConfigurationAsync(StacCollectionConfigurationClientTest
     @recorded_by_proxy_async
     async def test_get_collection_thumbnail(self, staccollectionconfiguration_endpoint):
         client = self.create_async_client(endpoint=staccollectionconfiguration_endpoint)
-        response = await client.get_collection_thumbnail(
-            collection_id="str",
-        )
+        response = await client.get_collection_thumbnail()
 
         # please add some check logic here by yourself
         # ...
@@ -71,9 +66,7 @@ class TestStacCollectionConfigurationAsync(StacCollectionConfigurationClientTest
     @recorded_by_proxy_async
     async def test_get_collection_config(self, staccollectionconfiguration_endpoint):
         client = self.create_async_client(endpoint=staccollectionconfiguration_endpoint)
-        response = await client.get_collection_config(
-            collection_id="str",
-        )
+        response = await client.get_collection_config()
 
         # please add some check logic here by yourself
         # ...
@@ -82,9 +75,7 @@ class TestStacCollectionConfigurationAsync(StacCollectionConfigurationClientTest
     @recorded_by_proxy_async
     async def test_get_all_mosaics(self, staccollectionconfiguration_endpoint):
         client = self.create_async_client(endpoint=staccollectionconfiguration_endpoint)
-        response = await client.get_all_mosaics(
-            collection_id="str",
-        )
+        response = await client.get_all_mosaics()
 
         # please add some check logic here by yourself
         # ...
@@ -94,7 +85,6 @@ class TestStacCollectionConfigurationAsync(StacCollectionConfigurationClientTest
     async def test_add_mosaic(self, staccollectionconfiguration_endpoint):
         client = self.create_async_client(endpoint=staccollectionconfiguration_endpoint)
         response = await client.add_mosaic(
-            collection_id="str",
             body={"cql": [{}], "id": "str", "name": "str", "description": "str"},
         )
 
@@ -106,7 +96,6 @@ class TestStacCollectionConfigurationAsync(StacCollectionConfigurationClientTest
     async def test_get_mosaic(self, staccollectionconfiguration_endpoint):
         client = self.create_async_client(endpoint=staccollectionconfiguration_endpoint)
         response = await client.get_mosaic(
-            collection_id="str",
             mosaic_id="str",
         )
 
@@ -118,7 +107,6 @@ class TestStacCollectionConfigurationAsync(StacCollectionConfigurationClientTest
     async def test_create_or_replace_mosaic(self, staccollectionconfiguration_endpoint):
         client = self.create_async_client(endpoint=staccollectionconfiguration_endpoint)
         response = await client.create_or_replace_mosaic(
-            collection_id="str",
             mosaic_id="str",
             body={"cql": [{}], "id": "str", "name": "str", "description": "str"},
         )
@@ -131,7 +119,6 @@ class TestStacCollectionConfigurationAsync(StacCollectionConfigurationClientTest
     async def test_delete_mosaic(self, staccollectionconfiguration_endpoint):
         client = self.create_async_client(endpoint=staccollectionconfiguration_endpoint)
         response = await client.delete_mosaic(
-            collection_id="str",
             mosaic_id="str",
         )
 
@@ -142,9 +129,7 @@ class TestStacCollectionConfigurationAsync(StacCollectionConfigurationClientTest
     @recorded_by_proxy_async
     async def test_get_all_render_options(self, staccollectionconfiguration_endpoint):
         client = self.create_async_client(endpoint=staccollectionconfiguration_endpoint)
-        response = await client.get_all_render_options(
-            collection_id="str",
-        )
+        response = await client.get_all_render_options()
 
         # please add some check logic here by yourself
         # ...
@@ -154,7 +139,6 @@ class TestStacCollectionConfigurationAsync(StacCollectionConfigurationClientTest
     async def test_create_render_option(self, staccollectionconfiguration_endpoint):
         client = self.create_async_client(endpoint=staccollectionconfiguration_endpoint)
         response = await client.create_render_option(
-            collection_id="str",
             body={
                 "id": "str",
                 "name": "str",
@@ -183,7 +167,6 @@ class TestStacCollectionConfigurationAsync(StacCollectionConfigurationClientTest
     async def test_get_render_option(self, staccollectionconfiguration_endpoint):
         client = self.create_async_client(endpoint=staccollectionconfiguration_endpoint)
         response = await client.get_render_option(
-            collection_id="str",
             render_option_id="str",
         )
 
@@ -195,7 +178,6 @@ class TestStacCollectionConfigurationAsync(StacCollectionConfigurationClientTest
     async def test_create_or_replace_render_option(self, staccollectionconfiguration_endpoint):
         client = self.create_async_client(endpoint=staccollectionconfiguration_endpoint)
         response = await client.create_or_replace_render_option(
-            collection_id="str",
             render_option_id="str",
             body={
                 "id": "str",
@@ -225,7 +207,6 @@ class TestStacCollectionConfigurationAsync(StacCollectionConfigurationClientTest
     async def test_delete_render_option(self, staccollectionconfiguration_endpoint):
         client = self.create_async_client(endpoint=staccollectionconfiguration_endpoint)
         response = await client.delete_render_option(
-            collection_id="str",
             render_option_id="str",
         )
 
@@ -236,9 +217,7 @@ class TestStacCollectionConfigurationAsync(StacCollectionConfigurationClientTest
     @recorded_by_proxy_async
     async def test_get_tile_settings(self, staccollectionconfiguration_endpoint):
         client = self.create_async_client(endpoint=staccollectionconfiguration_endpoint)
-        response = await client.get_tile_settings(
-            collection_id="str",
-        )
+        response = await client.get_tile_settings()
 
         # please add some check logic here by yourself
         # ...
@@ -248,7 +227,6 @@ class TestStacCollectionConfigurationAsync(StacCollectionConfigurationClientTest
     async def test_replace_tile_settings(self, staccollectionconfiguration_endpoint):
         client = self.create_async_client(endpoint=staccollectionconfiguration_endpoint)
         response = await client.replace_tile_settings(
-            collection_id="str",
             body={"maxItemsPerTile": 0, "minZoom": 0, "defaultLocation": {"coordinates": [0.0], "zoom": 0}},
         )
 
@@ -259,9 +237,7 @@ class TestStacCollectionConfigurationAsync(StacCollectionConfigurationClientTest
     @recorded_by_proxy_async
     async def test_get_partition_type(self, staccollectionconfiguration_endpoint):
         client = self.create_async_client(endpoint=staccollectionconfiguration_endpoint)
-        response = await client.get_partition_type(
-            collection_id="str",
-        )
+        response = await client.get_partition_type()
 
         # please add some check logic here by yourself
         # ...
@@ -271,7 +247,6 @@ class TestStacCollectionConfigurationAsync(StacCollectionConfigurationClientTest
     async def test_replace_partition_type(self, staccollectionconfiguration_endpoint):
         client = self.create_async_client(endpoint=staccollectionconfiguration_endpoint)
         response = await client.replace_partition_type(
-            collection_id="str",
             body={"scheme": "str"},
         )
 
@@ -291,9 +266,7 @@ class TestStacCollectionConfigurationAsync(StacCollectionConfigurationClientTest
     @recorded_by_proxy_async
     async def test_get_all_queryables_by_collection(self, staccollectionconfiguration_endpoint):
         client = self.create_async_client(endpoint=staccollectionconfiguration_endpoint)
-        response = await client.get_all_queryables_by_collection(
-            collection_id="str",
-        )
+        response = await client.get_all_queryables_by_collection()
 
         # please add some check logic here by yourself
         # ...
@@ -303,7 +276,6 @@ class TestStacCollectionConfigurationAsync(StacCollectionConfigurationClientTest
     async def test_create_queryables(self, staccollectionconfiguration_endpoint):
         client = self.create_async_client(endpoint=staccollectionconfiguration_endpoint)
         response = await client.create_queryables(
-            collection_id="str",
             body=[
                 {
                     "definition": {"create_index": bool, "data_type": "str", "description": "str"},
@@ -322,7 +294,6 @@ class TestStacCollectionConfigurationAsync(StacCollectionConfigurationClientTest
     async def test_create_or_replace_queryable(self, staccollectionconfiguration_endpoint):
         client = self.create_async_client(endpoint=staccollectionconfiguration_endpoint)
         response = await client.create_or_replace_queryable(
-            collection_id="str",
             queryable_name="str",
             body={
                 "definition": {"create_index": bool, "data_type": "str", "description": "str"},
@@ -340,7 +311,6 @@ class TestStacCollectionConfigurationAsync(StacCollectionConfigurationClientTest
     async def test_delete_queryable(self, staccollectionconfiguration_endpoint):
         client = self.create_async_client(endpoint=staccollectionconfiguration_endpoint)
         response = await client.delete_queryable(
-            collection_id="str",
             queryable_name="str",
         )
 

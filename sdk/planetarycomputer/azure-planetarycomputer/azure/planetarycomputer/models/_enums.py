@@ -462,13 +462,6 @@ class ColorMapNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Reversed YlOrRd colormap"""
 
 
-class FeaturePolygonDictStrRioTilerModelsInfoType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type identifying Feature Polygon objects containing rio-tiler model information."""
-
-    FEATURE = "Feature"
-    """Standard GeoJSON Feature type identifier"""
-
-
 class FeatureType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type identifier for GeoJSON Feature objects."""
 

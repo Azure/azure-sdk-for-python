@@ -27,11 +27,10 @@ from azure.planetarycomputer import StacCollectionConfigurationClient
 def main():
     client = StacCollectionConfigurationClient(
         credential=DefaultAzureCredential(),
+        collection_id="COLLECTION_ID",
     )
 
-    response = client.get_partition_type(
-        collection_id="naip",
-    )
+    response = client.get_partition_type()
     print(response)
 
 

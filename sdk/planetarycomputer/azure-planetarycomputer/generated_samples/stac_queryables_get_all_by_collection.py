@@ -27,11 +27,10 @@ from azure.planetarycomputer import StacCollectionConfigurationClient
 def main():
     client = StacCollectionConfigurationClient(
         credential=DefaultAzureCredential(),
+        collection_id="COLLECTION_ID",
     )
 
-    response = client.get_all_queryables_by_collection(
-        collection_id="c1007ec2-3ddc-4335-9edd-b1c26b1b4c92",
-    )
+    response = client.get_all_queryables_by_collection()
     print(response)
 
 

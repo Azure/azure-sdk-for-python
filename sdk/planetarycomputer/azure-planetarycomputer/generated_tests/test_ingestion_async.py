@@ -17,9 +17,7 @@ class TestIngestionAsync(IngestionClientTestBaseAsync):
     @recorded_by_proxy_async
     async def test_get_ingestions(self, ingestion_endpoint):
         client = self.create_async_client(endpoint=ingestion_endpoint)
-        response = await client.get_ingestions(
-            collection_id="str",
-        )
+        response = await client.get_ingestions()
 
         # please add some check logic here by yourself
         # ...
@@ -29,7 +27,6 @@ class TestIngestionAsync(IngestionClientTestBaseAsync):
     async def test_get_ingestion(self, ingestion_endpoint):
         client = self.create_async_client(endpoint=ingestion_endpoint)
         response = await client.get_ingestion(
-            collection_id="str",
             ingestion_id="str",
         )
 
@@ -41,7 +38,6 @@ class TestIngestionAsync(IngestionClientTestBaseAsync):
     async def test_create_ingestion(self, ingestion_endpoint):
         client = self.create_async_client(endpoint=ingestion_endpoint)
         response = await client.create_ingestion(
-            collection_id="str",
             definition={
                 "creationTime": "2020-02-20 00:00:00",
                 "id": "str",
@@ -62,7 +58,6 @@ class TestIngestionAsync(IngestionClientTestBaseAsync):
     async def test_update_ingestion(self, ingestion_endpoint):
         client = self.create_async_client(endpoint=ingestion_endpoint)
         response = await client.update_ingestion(
-            collection_id="str",
             ingestion_id="str",
             definition={
                 "creationTime": "2020-02-20 00:00:00",
@@ -85,7 +80,6 @@ class TestIngestionAsync(IngestionClientTestBaseAsync):
         client = self.create_async_client(endpoint=ingestion_endpoint)
         response = await (
             await client.begin_delete_ingestion(
-                collection_id="str",
                 ingestion_id="str",
             )
         ).result()  # call '.result()' to poll until service return final result
@@ -98,7 +92,6 @@ class TestIngestionAsync(IngestionClientTestBaseAsync):
     async def test_get_ingestion_runs(self, ingestion_endpoint):
         client = self.create_async_client(endpoint=ingestion_endpoint)
         response = await client.get_ingestion_runs(
-            collection_id="str",
             ingestion_id="str",
         )
 
@@ -110,7 +103,6 @@ class TestIngestionAsync(IngestionClientTestBaseAsync):
     async def test_get_ingestion_run(self, ingestion_endpoint):
         client = self.create_async_client(endpoint=ingestion_endpoint)
         response = await client.get_ingestion_run(
-            collection_id="str",
             ingestion_id="str",
             run_id="str",
         )
@@ -123,7 +115,6 @@ class TestIngestionAsync(IngestionClientTestBaseAsync):
     async def test_create_ingestion_run(self, ingestion_endpoint):
         client = self.create_async_client(endpoint=ingestion_endpoint)
         response = await client.create_ingestion_run(
-            collection_id="str",
             ingestion_id="str",
         )
 

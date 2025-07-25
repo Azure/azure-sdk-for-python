@@ -27,6 +27,7 @@ from azure.planetarycomputer import SharedAccessSignatureClient
 def main():
     client = StacCollectionConfigurationClient(
         credential=DefaultAzureCredential(),
+        collection_id="COLLECTION_ID",
     )
 
     client.revoke_token()

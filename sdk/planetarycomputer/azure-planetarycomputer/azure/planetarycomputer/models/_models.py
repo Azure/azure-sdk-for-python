@@ -640,57 +640,6 @@ class FeatureCollections(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FeaturePolygonDictStrRioTilerModelsInfo(_Model):
-    """GeoJSON Feature object containing rio-tiler model information.
-
-    :ivar type: GeoJSON type identifier. Required. "Feature"
-    :vartype type: str or
-     ~azure.planetarycomputer.models.FeaturePolygonDictStrRioTilerModelsInfoType
-    :ivar geometry: Geometry object defining the feature's shape. Required.
-    :vartype geometry: ~azure.planetarycomputer.models.Geometry
-    :ivar properties: Properties. Required.
-    :vartype properties: dict[str, ~azure.planetarycomputer.models.TilerInfo]
-    :ivar id: Unique identifier for the feature.
-    :vartype id: str
-    :ivar bbox: Bounding box coordinates for the feature.
-    :vartype bbox: float
-    """
-
-    type: Union[str, "_models.FeaturePolygonDictStrRioTilerModelsInfoType"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """GeoJSON type identifier. Required. \"Feature\""""
-    geometry: "_models.Geometry" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Geometry object defining the feature's shape. Required."""
-    properties: Dict[str, "_models.TilerInfo"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Properties. Required."""
-    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Unique identifier for the feature."""
-    bbox: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Bounding box coordinates for the feature."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: Union[str, "_models.FeaturePolygonDictStrRioTilerModelsInfoType"],
-        geometry: "_models.Geometry",
-        properties: Dict[str, "_models.TilerInfo"],
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        bbox: Optional[float] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class FormContent(_Model):
     """FormContent model for file upload.
 
@@ -1636,8 +1585,8 @@ class ItemProperties(_Model):
     :vartype title: str
     :ivar description: Detailed description of the item.
     :vartype description: str
-    :ivar datetime: Datetime the asset represents in RFC 3339 format. Required.
-    :vartype datetime: str
+    :ivar date_time: Datetime the asset represents in RFC 3339 format. Required.
+    :vartype date_time: str
     :ivar start_datetime: Start time of the item observation period.
     :vartype start_datetime: ~datetime.datetime
     :ivar end_datetime: End time of the item observation period.
@@ -1670,7 +1619,7 @@ class ItemProperties(_Model):
     """Human-readable title for the item."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Detailed description of the item."""
-    datetime: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    date_time: str = rest_field(name="datetime", visibility=["read", "create", "update", "delete", "query"])
     """Datetime the asset represents in RFC 3339 format. Required."""
     start_datetime: Optional[datetime.datetime] = rest_field(
         visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
@@ -1685,7 +1634,7 @@ class ItemProperties(_Model):
     def __init__(
         self,
         *,
-        datetime: str,
+        date_time: str,
         platform: Optional[str] = None,
         instruments: Optional[List[str]] = None,
         constellation: Optional[str] = None,
@@ -4215,6 +4164,54 @@ class TilerInfo(_Model):
         colormap: Optional[Dict[str, List[str]]] = None,
         minzoom: Optional[int] = None,
         maxzoom: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TilerInfoGeoJsonFeature(_Model):
+    """GeoJSON Feature object containing rio-tiler model information.
+
+    :ivar type: GeoJSON type identifier. Required. "Feature"
+    :vartype type: str or ~azure.planetarycomputer.models.FeatureType
+    :ivar geometry: Geometry object defining the feature's shape. Required.
+    :vartype geometry: ~azure.planetarycomputer.models.Geometry
+    :ivar properties: Properties. Required.
+    :vartype properties: dict[str, ~azure.planetarycomputer.models.TilerInfo]
+    :ivar id: Unique identifier for the feature.
+    :vartype id: str
+    :ivar bbox: Bounding box coordinates for the feature.
+    :vartype bbox: float
+    """
+
+    type: Union[str, "_models.FeatureType"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """GeoJSON type identifier. Required. \"Feature\""""
+    geometry: "_models.Geometry" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Geometry object defining the feature's shape. Required."""
+    properties: Dict[str, "_models.TilerInfo"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Properties. Required."""
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Unique identifier for the feature."""
+    bbox: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Bounding box coordinates for the feature."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.FeatureType"],
+        geometry: "_models.Geometry",
+        properties: Dict[str, "_models.TilerInfo"],
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        bbox: Optional[float] = None,
     ) -> None: ...
 
     @overload

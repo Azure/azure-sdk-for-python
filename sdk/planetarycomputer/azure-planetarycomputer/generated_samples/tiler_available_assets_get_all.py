@@ -27,12 +27,10 @@ from azure.planetarycomputer import StacItemTilerClient
 def main():
     client = StacCollectionConfigurationClient(
         credential=DefaultAzureCredential(),
+        collection_id="COLLECTION_ID",
     )
 
-    response = client.get_available_assets(
-        collection_id="c1007ec2-3ddc-4335-9edd-b1c26b1b4c92",
-        item_id="c1007ec2-3ddc-4335-9edd-b1c26b1b4c92",
-    )
+    response = client.get_available_assets()
     print(response)
 
 
