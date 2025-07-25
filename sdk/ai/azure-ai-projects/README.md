@@ -185,6 +185,17 @@ for deployment in project_client.deployments.list(model_name=model_name):
 print(f"Get a single deployment named `{model_deployment_name}`:")
 deployment = project_client.deployments.get(model_deployment_name)
 print(deployment)
+      
+# At the moment, the only deployment type supported is ModelDeployment
+if type(deployment) is ModelDeployment:
+    print(f"Type: {deployment.type}")
+    print(f"Name: {deployment.name}")
+    print(f"Model Name: {deployment.model_name}")
+    print(f"Model Version: {deployment.model_version}")
+    print(f"Model Publisher: {deployment.model_publisher}")
+    print(f"Capabilities: {deployment.capabilities}")
+    print(f"SKU: {deployment.sku}")
+    print(f"Connection Name: {deployment.connection_name}")
 ```
 
 <!-- END SNIPPET -->
