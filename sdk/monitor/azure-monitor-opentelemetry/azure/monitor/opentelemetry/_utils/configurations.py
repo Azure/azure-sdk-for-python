@@ -139,53 +139,66 @@ def _default_resource(configurations):
 
 
 def _default_sampling_ratio(configurations):
-    default = 1.0
+    default_value = 1.0
+    sampler_type = environ.get(OTEL_TRACES_SAMPLER)
+    sampler_arg = environ.get(OTEL_TRACES_SAMPLER_ARG)
 
-    if environ.get(OTEL_TRACES_SAMPLER_ARG) is not None:
-        try:
-            if float(environ[OTEL_TRACES_SAMPLER_ARG]) < 0:
-                _logger.error("Invalid value for OTEL_TRACES_SAMPLER_ARG. It should be a non-negative number.")
-        except ValueError:
-            pass
-    else:
+    # Early exit if no sampler argument is provided - always set default sampling_ratio
+    if sampler_arg is None:
         _logger.error("OTEL_TRACES_SAMPLER_ARG is not set.")
+        configurations[SAMPLING_RATIO_ARG] = default_value
+        return
 
-    # Check if rate-limited sampler is configured
-    if environ.get(OTEL_TRACES_SAMPLER) == RATE_LIMITED_SAMPLER:
+    # Handle rate-limited sampler
+    if sampler_type == RATE_LIMITED_SAMPLER:
         try:
-            default = float(environ[OTEL_TRACES_SAMPLER_ARG])
-            _logger.info(f"Using rate limited sampler: {default} traces per second")
+            sampler_value = float(sampler_arg)
+            if sampler_value < 0:
+                _logger.error("Invalid value for OTEL_TRACES_SAMPLER_ARG. It should be a non-negative number.")
+                sampler_value = default_value
+            else:
+                _logger.info("Using rate limited sampler: %s traces per second", sampler_value)
+            configurations[SAMPLING_TRACES_PER_SECOND_ARG] = sampler_value
         except ValueError as e:
             _logger.error(  # pylint: disable=C
                 _INVALID_TRACES_PER_SECOND_MESSAGE,
                 OTEL_TRACES_SAMPLER_ARG,
-                default,
+                default_value,
                 e,
             )
-        configurations[SAMPLING_TRACES_PER_SECOND_ARG] = default
-    elif environ.get(OTEL_TRACES_SAMPLER) == FIXED_PERCENTAGE_SAMPLER:
+            configurations[SAMPLING_TRACES_PER_SECOND_ARG] = default_value
+
+    # Handle fixed percentage sampler
+    elif sampler_type == FIXED_PERCENTAGE_SAMPLER:
         try:
-            default = float(environ[OTEL_TRACES_SAMPLER_ARG])
-            _logger.info(f"Using sampling ratio: {default}")
+            sampler_value = float(sampler_arg)
+            if sampler_value < 0:
+                _logger.error("Invalid value for OTEL_TRACES_SAMPLER_ARG. It should be a non-negative number.")
+                sampler_value = default_value
+            else:
+                _logger.info("Using sampling ratio: %s", sampler_value)
+            configurations[SAMPLING_RATIO_ARG] = sampler_value
         except ValueError as e:
             _logger.error(  # pylint: disable=C
                 _INVALID_FLOAT_MESSAGE,
                 OTEL_TRACES_SAMPLER_ARG,
-                default,
+                default_value,
                 e,
             )
-        configurations[SAMPLING_RATIO_ARG] = default
+            configurations[SAMPLING_RATIO_ARG] = default_value
+
+    # Handle all other cases (no sampler type specified or unsupported sampler type)
     else:
-        # Default behavior - always set sampling_ratio
-        configurations[SAMPLING_RATIO_ARG] = default
-        _logger.error(  # pylint: disable=C
-            "Invalid argument for the sampler to be used for tracing. "
-            "Supported values are %s and %s. Defaulting to %s: %s",
-            RATE_LIMITED_SAMPLER,
-            FIXED_PERCENTAGE_SAMPLER,
-            OTEL_TRACES_SAMPLER,
-            OTEL_TRACES_SAMPLER_ARG,
-        )
+        configurations[SAMPLING_RATIO_ARG] = default_value
+        if sampler_type is not None:
+            _logger.error(  # pylint: disable=C
+                "Invalid argument for the sampler to be used for tracing. "
+                "Supported values are %s and %s. Defaulting to %s: %s",
+                RATE_LIMITED_SAMPLER,
+                FIXED_PERCENTAGE_SAMPLER,
+                OTEL_TRACES_SAMPLER,
+                OTEL_TRACES_SAMPLER_ARG,
+            )
 
 def _default_instrumentation_options(configurations):
     otel_disabled_instrumentations = _get_otel_disabled_instrumentations()

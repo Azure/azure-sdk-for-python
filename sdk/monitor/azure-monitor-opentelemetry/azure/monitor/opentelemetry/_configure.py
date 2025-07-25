@@ -138,7 +138,10 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
     if SAMPLING_TRACES_PER_SECOND_ARG in configurations:
         sampling_traces_per_second = configurations[SAMPLING_TRACES_PER_SECOND_ARG]
         tracer_provider = TracerProvider(
-            sampler=RateLimitedSampler(sampling_traces_per_second=cast(float, sampling_traces_per_second)), resource=resource
+            sampler=RateLimitedSampler(
+                sampling_traces_per_second=cast(float, sampling_traces_per_second)
+            ),
+            resource=resource
         )
     else:
         sampling_ratio = configurations[SAMPLING_RATIO_ARG]
