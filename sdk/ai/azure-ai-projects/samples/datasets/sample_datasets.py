@@ -92,3 +92,4 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
         project_client.datasets.delete(name=dataset_name, version=dataset_version_1)
         project_client.datasets.delete(name=dataset_name, version=dataset_version_2)
         # [END dataset_sample]
+
