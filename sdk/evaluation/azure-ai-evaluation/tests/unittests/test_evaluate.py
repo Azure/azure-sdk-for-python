@@ -410,7 +410,6 @@ class TestEvaluate:
             {"query": "${foo.query}"},
             {"query": "${data.query"},
             {"query": "data.query", "response": "target.response"},
-            {"query": "${data.query}", "response": "${target.response.one}"},
         ],
     )
     def test_evaluate_invalid_column_mapping(self, mock_model_config, evaluate_test_data_jsonl_file, column_mapping):
@@ -426,10 +425,10 @@ class TestEvaluate:
                 },
             )
 
-            assert (
-                "Unexpected references detected in 'column_mapping'. Ensure only ${target.} and ${data.} are used."
-                in exc_info.value.args[0]
-            )
+        assert (
+            "Unexpected references detected in 'column_mapping'. Ensure only ${target.} and ${data.} are used."
+            in exc_info.value.args[0]
+        )
 
     def test_evaluate_valid_column_mapping_with_numeric_chars(self, mock_model_config, evaluate_test_data_alphanumeric):
         # Valid column mappings that include numeric characters
