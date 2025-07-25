@@ -57,7 +57,7 @@ from ._attack_objective_generator import RiskCategory, _InternalRiskCategory, _A
 from ._utils._rai_service_target import AzureRAIServiceTarget
 from ._utils._rai_service_true_false_scorer import AzureRAIServiceTrueFalseScorer
 from ._utils._rai_service_eval_chat_target import RAIServiceEvalChatTarget
-from ._utils.metric_mapping import get_annotation_task_from_risk_category
+from ._utils.metric_mapping import get_annotation_task_from_risk_category, get_attack_objective_from_risk_category
 
 # PyRIT imports
 from pyrit.common import initialize_pyrit, DUCK_DB
@@ -235,7 +235,7 @@ class RedTeam:
         azure_ai_project: Union[dict, str],
         credential,
         *,
-        risk_categories: Optional[List[RiskCategory]] = None,
+        risk_categories: Optional[List[Union[RiskCategory, _InternalRiskCategory]]] = None,
         num_objectives: int = 10,
         application_scenario: Optional[str] = None,
         custom_attack_seed_prompts: Optional[str] = None,
@@ -598,7 +598,7 @@ class RedTeam:
 
     async def _get_attack_objectives(
         self,
-        risk_category: Optional[RiskCategory] = None,  # Now accepting a single risk category
+        risk_category: Optional[Union[RiskCategory, _InternalRiskCategory]] = None,
         application_scenario: Optional[str] = None,
         strategy: Optional[str] = None,
     ) -> List[str]:
@@ -611,7 +611,7 @@ class RedTeam:
         across different strategies for the same risk category.
 
         :param risk_category: The specific risk category to get objectives for
-        :type risk_category: Optional[RiskCategory]
+        :type risk_category: Optional[Union[RiskCategory, _InternalRiskCategory]]
         :param application_scenario: Optional description of the application scenario for context
         :type application_scenario: Optional[str]
         :param strategy: Optional attack strategy to get specific objectives for
@@ -631,7 +631,7 @@ class RedTeam:
                 return []
 
         # Convert risk category to lowercase for consistent caching
-        risk_cat_value = risk_category.value.lower()
+        risk_cat_value = get_attack_objective_from_risk_category(risk_category).lower()
         num_objectives = attack_objective_generator.num_objectives
 
         log_subsection_header(self.logger, f"Getting attack objectives for {risk_cat_value}, strategy: {strategy}")
@@ -901,7 +901,7 @@ class RedTeam:
         return selected_prompts
 
     # Replace with utility function
-    def _message_to_dict(self, message: ChatMessage):
+    def _message_to_dict(self, message: ChatMessage, context: str = None):
         """Convert a PyRIT ChatMessage object to a dictionary representation.
 
         Transforms a ChatMessage object into a standardized dictionary format that can be
@@ -910,12 +910,14 @@ class RedTeam:
 
         :param message: The PyRIT ChatMessage to convert
         :type message: ChatMessage
+        :param context: Optional context to include in the dictionary
+        :type context: str
         :return: Dictionary representation of the message
         :rtype: dict
         """
         from ._utils.formatting_utils import message_to_dict
 
-        return message_to_dict(message)
+        return message_to_dict(message, context)
 
     # Replace with utility function
     def _get_strategy_name(self, attack_strategy: Union[AttackStrategy, List[AttackStrategy]]) -> str:
@@ -980,7 +982,7 @@ class RedTeam:
         *,
         strategy_name: str = "unknown",
         risk_category_name: str = "unknown",
-        risk_category: Optional[RiskCategory] = None,
+        risk_category: Optional[Union[RiskCategory, _InternalRiskCategory]] = None,
         timeout: int = 120,
     ) -> Orchestrator:
         """Send prompts via the PromptSendingOrchestrator with optimized performance.
@@ -1002,7 +1004,7 @@ class RedTeam:
         :param risk_category_name: Name of the risk category being evaluated
         :type risk_category_name: str
         :param risk_category: Risk category being evaluated
-        :type risk_category: str
+        :type risk_category: Union[RiskCategory, _InternalRiskCategory]
         :param timeout: Timeout in seconds for each prompt
         :type timeout: int
         :return: Configured and initialized orchestrator
@@ -1241,7 +1243,7 @@ class RedTeam:
         *,
         strategy_name: str = "unknown",
         risk_category_name: str = "unknown",
-        risk_category: Optional[RiskCategory] = None,
+        risk_category: Optional[Union[RiskCategory, _InternalRiskCategory]] = None,
         timeout: int = 120,
     ) -> Orchestrator:
         """Send prompts via the RedTeamingOrchestrator, the simplest form of MultiTurnOrchestrator, with optimized performance.
@@ -1448,7 +1450,7 @@ class RedTeam:
         *,
         strategy_name: str = "unknown",
         risk_category_name: str = "unknown",
-        risk_category: Optional[RiskCategory] = None,
+        risk_category: Optional[Union[RiskCategory, _InternalRiskCategory]] = None,
         timeout: int = 120,
     ) -> Orchestrator:
         """Send prompts via the CrescendoOrchestrator with optimized performance.
@@ -1667,7 +1669,7 @@ class RedTeam:
         prompts_request_pieces = memory.get_prompt_request_pieces(labels=memory_label)
 
         conversations = [
-            [item.to_chat_message() for item in group]
+            [(item.to_chat_message(), self.prompt_to_context.get(item.original_value, "")) for item in group]
             for conv_id, group in itertools.groupby(prompts_request_pieces, key=lambda x: x.conversation_id)
         ]
         # Check if we should overwrite existing file with more conversations
@@ -1693,7 +1695,7 @@ class RedTeam:
                             json.dumps(
                                 {
                                     "conversation": {
-                                        "messages": [self._message_to_dict(message) for message in conversation]
+                                        "messages": [self._message_to_dict(message[0], message[1]) for message in conversation]
                                     }
                                 }
                             )
@@ -1717,12 +1719,12 @@ class RedTeam:
             json_lines = ""
 
             for conversation in conversations:  # each conversation is a List[ChatMessage]
-                if conversation[0].role == "system":
+                if conversation[0][0].role == "system":
                     # Skip system messages in the output
                     continue
                 json_lines += (
                     json.dumps(
-                        {"conversation": {"messages": [self._message_to_dict(message) for message in conversation]}}
+                        {"conversation": {"messages": [self._message_to_dict(message[0], message[1]) for message in conversation]}}
                     )
                     + "\n"
                 )
@@ -2322,7 +2324,7 @@ class RedTeam:
         return format_scorecard(redteam_result)
 
     async def _evaluate_conversation(
-        self, conversation: Dict, metric_name: str, strategy_name: str, risk_category: RiskCategory, idx: int
+        self, conversation: Dict, metric_name: str, strategy_name: str, risk_category: Union[RiskCategory, _InternalRiskCategory], idx: int
     ) -> None:
         """Evaluate a single conversation using the specified metric and risk category.
 
@@ -2337,7 +2339,7 @@ class RedTeam:
         :param strategy_name: Name of the attack strategy used in the conversation
         :type strategy_name: str
         :param risk_category: Risk category to evaluate against
-        :type risk_category: RiskCategory
+        :type risk_category: Union[RiskCategory, _InternalRiskCategory]
         :param idx: Index of the conversation for tracking purposes
         :type idx: int
         :return: None
@@ -2350,8 +2352,7 @@ class RedTeam:
         # Extract all assistant messages for evaluation
         assistant_messages = [msg["content"] for msg in messages if msg.get("role") == "assistant"]
 
-        # Extract user messages to find the original prompt for context lookup
-        user_messages = [msg["content"] for msg in messages if msg.get("role") == "user"]
+        context = [msg["context"] for msg in messages if msg.get("role") == "user"]
 
         if assistant_messages:
             # Create query-response pair with empty query and all assistant messages
@@ -2360,17 +2361,9 @@ class RedTeam:
                 "response": " ".join(assistant_messages),  # Join all assistant messages
             }
 
-            # Try to find context from the original prompt
-            # Look for the first user message that matches a stored prompt
-            context = None
-            for user_msg in user_messages:
-                if user_msg in self.prompt_to_context:
-                    context = self.prompt_to_context[user_msg]
-                    break
-
             # Add context to query_response if found
-            if context is not None:
-                query_response["context"] = context
+            if context[0] is not None:
+                query_response["context"] = context[0]
             try:
                 self.logger.debug(
                     f"Evaluating conversation {idx+1} for {risk_category.value}/{strategy_name}"
@@ -2459,7 +2452,7 @@ class RedTeam:
     async def _evaluate(
         self,
         data_path: Union[str, os.PathLike],
-        risk_category: RiskCategory,
+        risk_category: Union[RiskCategory, _InternalRiskCategory],
         strategy: Union[AttackStrategy, List[AttackStrategy]],
         scan_name: Optional[str] = None,
         output_path: Optional[Union[str, os.PathLike]] = None,
@@ -2475,7 +2468,7 @@ class RedTeam:
         :param data_path: Path to the input data containing red team conversations
         :type data_path: Union[str, os.PathLike]
         :param risk_category: Risk category to evaluate against
-        :type risk_category: RiskCategory
+        :type risk_category: Union[RiskCategory, _InternalRiskCategory]
         :param strategy: Attack strategy or strategies used to generate the data
         :type strategy: Union[AttackStrategy, List[AttackStrategy]]
         :param scan_name: Optional name for the evaluation
@@ -2581,7 +2574,7 @@ class RedTeam:
     async def _process_attack(
         self,
         strategy: Union[AttackStrategy, List[AttackStrategy]],
-        risk_category: RiskCategory,
+        risk_category: Union[RiskCategory, _InternalRiskCategory],
         all_prompts: List[str],
         progress_bar: tqdm,
         progress_bar_lock: asyncio.Lock,
@@ -2601,7 +2594,7 @@ class RedTeam:
         :param strategy: The attack strategy to use
         :type strategy: Union[AttackStrategy, List[AttackStrategy]]
         :param risk_category: The risk category to evaluate
-        :type risk_category: RiskCategory
+        :type risk_category: Union[RiskCategory, _InternalRiskCategory]
         :param all_prompts: List of prompts to use for the scan
         :type all_prompts: List[str]
         :param progress_bar: Progress bar to update
@@ -2951,6 +2944,12 @@ class RedTeam:
             )
             print("⚠️ Warning: MultiTurn and Crescendo strategies are not compatible with multiple attack strategies.")
             raise ValueError("MultiTurn and Crescendo strategies are not compatible with multiple attack strategies.")
+        if AttackStrategy.Tense in flattened_attack_strategies and (RiskCategory.XPIA in self.risk_categories or RiskCategory.UngroundedAttributes in self.risk_categories):
+            self.logger.warning(
+                "Tense strategy is not compatible with XPIA or UngroundedAttributes risk categories. Skipping Tense strategy."
+            )
+            tqdm.write("⚠️ Warning: Tense strategy is not compatible with XPIA or UngroundedAttributes risk categories. Skipping Tense strategy.")
+            raise ValueError("Tense strategy is not compatible with XPIA or UngroundedAttributes risk categories.")
 
         # Calculate total tasks: #risk_categories * #converters
         self.total_tasks = len(self.risk_categories) * len(flattened_attack_strategies)

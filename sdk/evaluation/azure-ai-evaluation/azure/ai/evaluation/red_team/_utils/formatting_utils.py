@@ -6,23 +6,26 @@ import json
 import pandas as pd
 import math
 from datetime import datetime
-from typing import Dict, List, Union, Any, Optional, cast
+from typing import Dict, List, Tuple, Union, Any, Optional, cast
 from .._attack_strategy import AttackStrategy
 from .._red_team_result import RedTeamResult
 from pyrit.models import ChatMessage
 
 
-def message_to_dict(message: ChatMessage) -> Dict[str, str]:
-    """Convert a ChatMessage to dictionary format.
+def message_to_dict(message: ChatMessage, context: str = None) -> Dict[str, str]:
+    """Convert a ChatMessage and context to dictionary format.
 
     :param message: The chat message to convert
     :type message: ChatMessage
+    :param context: Additional context to include in the dictionary
+    :type context: str
     :return: Dictionary representation with role and content
     :rtype: Dict[str, str]
     """
     return {
         "role": message.role,
         "content": message.content,
+        "context": context
     }
 
 
@@ -117,7 +120,7 @@ def format_scorecard(redteam_result: RedTeamResult) -> str:
     separator = "-" * 132
     output.append(separator)
     output.append(
-        f"{'Risk Category':<18}| {'Baseline ASR':<14} | {'Easy-Complexity Attacks ASR':<28} | {'Moderate-Complexity Attacks ASR':<30} | {'Difficult-Complexity Attacks ASR':<30}"
+        f"{'Risk Category':<21}| {'Baseline ASR':<14} | {'Easy-Complexity Attacks ASR':<28} | {'Moderate-Complexity Attacks ASR':<30} | {'Difficult-Complexity Attacks ASR':<30}"
     )
     output.append(separator)
 
@@ -134,7 +137,7 @@ def format_scorecard(redteam_result: RedTeamResult) -> str:
         moderate = "N/A" if is_none_or_nan(moderate_val) else f"{moderate_val}%"
         difficult = "N/A" if is_none_or_nan(difficult_val) else f"{difficult_val}%"
 
-        output.append(f"{risk_category:<18}| {baseline:<14} | {easy:<28} | {moderate:<31} | {difficult:<30}")
+        output.append(f"{risk_category:<21}| {baseline:<14} | {easy:<28} | {moderate:<31} | {difficult:<30}")
 
     return "\n".join(output)
 
