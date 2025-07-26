@@ -198,6 +198,13 @@ class EvaluationThresholdSamples(object):
         f1_evaluator(response="Lyon is the capital of France.", ground_truth="Paris is the capital of France.")
         # [END threshold_f1_score_evaluator]
 
+        # [START threshold_mmlu_score_evaluator]
+        from azure.ai.evaluation import MMLUEvaluator
+
+        mmlu_evaluator = MMLUEvaluator(threshold=0.6)
+        mmlu_evaluator(response="ANSWER: F", ground_truth="{\"answer\": \"F\", \"subject\": \"business\", \"category\": \"other\"}")
+        # [END threshold_mmlu_score_evaluator]
+
         # [START threshold_fluency_evaluator]
         import os
         from azure.ai.evaluation import FluencyEvaluator

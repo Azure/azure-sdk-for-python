@@ -7,6 +7,7 @@ from unittest.mock import MagicMock, patch
 
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._evaluators._bleu._bleu import BleuScoreEvaluator
+from azure.ai.evaluation._evaluators._mmlu._mmlu import MMLUEvaluator
 from azure.ai.evaluation._evaluators._rouge._rouge import RougeScoreEvaluator, RougeType
 from azure.ai.evaluation._evaluators._gleu._gleu import GleuScoreEvaluator
 from azure.ai.evaluation._evaluators._meteor._meteor import MeteorScoreEvaluator
@@ -42,6 +43,32 @@ class TestBasicThresholdBehavior:
 
         # Verify pass/fail based on threshold comparison
         assert mock_result["bleu_result"] == EVALUATION_PASS_FAIL_MAPPING[should_pass]
+
+    @pytest.mark.parametrize("threshold,score,should_pass", [(0.5, 0.8, True), (0.7, 0.5, False)])
+    @patch("azure.ai.evaluation._evaluators._mmlu._mmlu.MMLUEvaluator.__call__")
+    def test_mmlu_threshold(self, mock_call, threshold, score, should_pass):
+        """Test threshold behavior in MMLUEvaluator."""
+        # Create the evaluator
+        evaluator = MMLUEvaluator(threshold=threshold)
+
+        # Create a result dictionary with the expected values
+        result = {
+            "mmlu_score": score,
+            "mmlu_result": EVALUATION_PASS_FAIL_MAPPING[should_pass],
+            "mmlu_threshold": threshold,
+        }
+
+        # Configure mock to return our result
+        mock_call.return_value = result
+
+        # Because we're mocking the __call__ method directly, we need to call the mock
+        mock_result = mock_call(ground_truth="reference", response="candidate")
+
+        # Verify threshold is correctly included in output
+        assert mock_result["mmlu_threshold"] == threshold
+
+        # Verify pass/fail based on threshold comparison
+        assert mock_result["mmlu_result"] == EVALUATION_PASS_FAIL_MAPPING[should_pass]
 
     @pytest.mark.parametrize("threshold,score,should_pass", [(0.5, 0.7, True), (0.7, 0.6, False)])
     @patch("azure.ai.evaluation._evaluators._gleu._gleu.GleuScoreEvaluator.__call__")
@@ -233,6 +260,20 @@ class TestActualThresholdBehavior:
         assert result["bleu_score"] > 0.1
         assert result["bleu_result"] == "pass"
         assert result["bleu_threshold"] == 0.1
+
+    def test_mmlu_score_decimal_threshold_behavior(self):
+        """Test that MMLUEvaluator correctly handles decimal scores for threshold comparison."""
+        evaluator = MMLUEvaluator(threshold=0.1)
+
+        result = evaluator(
+            response="ANSWER: F",
+            ground_truth="{\"answer\": \"F\", \"subject\": \"business\", \"category\": \"other\"}"
+        )
+
+        # The score should be > 0.1 and result should be "pass"
+        assert result["mmlu_score"] > 0.1
+        assert result["mmlu_result"] == "pass"
+        assert result["mmlu_threshold"] == 0.1
 
     def test_meteor_score_threshold_boundary_cases(self):
         """Test MeteorScoreEvaluator threshold boundary cases."""
