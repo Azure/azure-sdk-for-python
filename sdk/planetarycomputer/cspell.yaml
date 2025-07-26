@@ -42,7 +42,7 @@ words:
   - viirs # Visible Infrared Imaging Radiometer Suite
 
   # Geographic coordinate systems and projections
-  - Antarctica  # LINZAntarticaMapTilegrid Tile matrix set
+  - Antartica  # LINZAntarticaMapTilegrid Tile matrix set
   - ETRS  # European Terrestrial Reference System
   - LAEA  # Lambert Azimuthal Equal Area
   - LAEAQUAD # Lambert Azimuthal Equal Area Quadrant

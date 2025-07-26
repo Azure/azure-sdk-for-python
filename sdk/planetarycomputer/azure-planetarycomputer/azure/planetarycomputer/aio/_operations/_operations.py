@@ -10917,12 +10917,11 @@ class _StacClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
          Represents a STAC Item or ItemCollection as defined by the STAC 1.0.0 standard.
 
-
-
-         * **Item**: A GeoJSON Feature that represents a single spatiotemporal asset.
+         **Item**: A GeoJSON Feature that represents a single spatiotemporal asset.
          It includes metadata such as geometry, datetime, and links to related assets.
          Example: A satellite image with its metadata.
-         * **ItemCollection**: A GeoJSON FeatureCollection that contains multiple Items.
+
+         **ItemCollection**: A GeoJSON FeatureCollection that contains multiple Items.
          It is used to group multiple related Items together, such as a collection of satellite images.
 
          This union allows the request body to accept either a single Item or a collection of Items.
@@ -10948,12 +10947,11 @@ class _StacClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
          Represents a STAC Item or ItemCollection as defined by the STAC 1.0.0 standard.
 
-
-
-         * **Item**: A GeoJSON Feature that represents a single spatiotemporal asset.
+         **Item**: A GeoJSON Feature that represents a single spatiotemporal asset.
          It includes metadata such as geometry, datetime, and links to related assets.
          Example: A satellite image with its metadata.
-         * **ItemCollection**: A GeoJSON FeatureCollection that contains multiple Items.
+
+         **ItemCollection**: A GeoJSON FeatureCollection that contains multiple Items.
          It is used to group multiple related Items together, such as a collection of satellite images.
 
          This union allows the request body to accept either a single Item or a collection of Items.
@@ -10979,12 +10977,11 @@ class _StacClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
          Represents a STAC Item or ItemCollection as defined by the STAC 1.0.0 standard.
 
-
-
-         * **Item**: A GeoJSON Feature that represents a single spatiotemporal asset.
+         **Item**: A GeoJSON Feature that represents a single spatiotemporal asset.
          It includes metadata such as geometry, datetime, and links to related assets.
          Example: A satellite image with its metadata.
-         * **ItemCollection**: A GeoJSON FeatureCollection that contains multiple Items.
+
+         **ItemCollection**: A GeoJSON FeatureCollection that contains multiple Items.
          It is used to group multiple related Items together, such as a collection of satellite images.
 
          This union allows the request body to accept either a single Item or a collection of Items.
@@ -11010,12 +11007,11 @@ class _StacClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
          Represents a STAC Item or ItemCollection as defined by the STAC 1.0.0 standard.
 
-
-
-         * **Item**: A GeoJSON Feature that represents a single spatiotemporal asset.
+         **Item**: A GeoJSON Feature that represents a single spatiotemporal asset.
          It includes metadata such as geometry, datetime, and links to related assets.
          Example: A satellite image with its metadata.
-         * **ItemCollection**: A GeoJSON FeatureCollection that contains multiple Items.
+
+         **ItemCollection**: A GeoJSON FeatureCollection that contains multiple Items.
          It is used to group multiple related Items together, such as a collection of satellite images.
 
          This union allows the request body to accept either a single Item or a collection of Items. Is
