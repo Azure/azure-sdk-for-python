@@ -26,6 +26,7 @@ from typing import (
     Dict,
     Final,
     Generator,
+    List,
     Mapping,
     MutableMapping,
     Optional,
@@ -41,7 +42,7 @@ from ._utils import DEFAULTS_KEY, get_int_env_var, get_value_from_path, is_async
 from ._status import BatchStatus
 from ._result import BatchResult, BatchRunDetails, BatchRunError, TokenMetrics
 from ._run_storage import AbstractRunStorage, NoOpRunStorage
-from .._common._logging import log_progress, NodeLogManager
+from .._common._logging import log_progress, logger, NodeLogManager
 from ..._exceptions import ErrorBlame
 from ._exceptions import (
     BatchEngineCanceledError,
@@ -262,10 +263,12 @@ class BatchEngine:
                     end_time=None,
                     tokens=TokenMetrics(0, 0, 0),
                     error=BatchRunError("The line run is not completed.", None),
+                    index=i,
                 )
             )
             for i in range(len(batch_inputs))
         ]
+        self.handle_line_failures(result_details)
 
         for line_result in result_details:
             # Indicate the worst status of the batch run. This works because
@@ -279,9 +282,15 @@ class BatchEngine:
                 metrics.total_tokens += line_result.tokens.total_tokens
 
         if failed_lines and not error:
-            error = BatchEngineRunFailedError(
-                str(floor(failed_lines / len(batch_inputs) * 100)) + f"% of the batch run failed."
+            error_message = f"{floor(failed_lines / len(batch_inputs) * 100)}% of the batch run failed."
+            first_exception: Optional[Exception] = next(
+                (result for result in result_details if result.error and result.error.exception),
+                None,
             )
+            if first_exception is not None:
+                error_message += f" {first_exception}"
+
+            error = BatchEngineRunFailedError(error_message)
 
         return BatchResult(
             status=status,
@@ -355,6 +364,7 @@ class BatchEngine:
                 end_time=None,
                 tokens=TokenMetrics(0, 0, 0),
                 error=None,
+                index=index,
             )
 
             try:
@@ -398,6 +408,24 @@ class BatchEngine:
                 details.end_time = datetime.now(timezone.utc)
 
         return index, details
+
+    @staticmethod
+    def handle_line_failures(run_infos: List[BatchRunDetails], raise_on_line_failure: bool = False):
+        """Handle line failures in batch run"""
+        failed_run_infos: List[BatchRunDetails] = [r for r in run_infos if r.status == BatchStatus.Failed]
+        failed_msg: Optional[str] = None
+        if len(failed_run_infos) > 0:
+            failed_indexes = ",".join([str(r.index) for r in failed_run_infos])
+            first_fail_exception: str = failed_run_infos[0].error.details
+            if raise_on_line_failure:
+                failed_msg = "Flow run failed due to the error: " + first_fail_exception
+                raise Exception(failed_msg)
+
+            failed_msg = (
+                f"{len(failed_run_infos)}/{len(run_infos)} flow run failed, indexes: [{failed_indexes}],"
+                f" exception of index {failed_run_infos[0].index}: {first_fail_exception}"
+            )
+            logger.error(failed_msg)
 
     def _persist_run_info(self, line_results: Sequence[BatchRunDetails]):
         # TODO ralphe: implement?
