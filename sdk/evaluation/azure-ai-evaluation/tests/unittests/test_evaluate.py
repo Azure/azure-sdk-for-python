@@ -855,20 +855,20 @@ class TestEvaluate:
             return sum(values) + 1
 
         os.environ["AI_EVALS_BATCH_USE_ASYNC"] = use_async
-        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators, _use_pf_client=True)
         counting_eval._set_conversation_aggregation_type(_AggregationType.MIN)
-        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators, _use_pf_client=True)
         counting_eval._set_conversation_aggregation_type(_AggregationType.SUM)
-        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators, _use_pf_client=True)
         counting_eval._set_conversation_aggregation_type(_AggregationType.MAX)
-        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators, _use_pf_client=True)
         if use_async == "true":
             counting_eval._set_conversation_aggregator(custom_aggregator)
-            _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+            _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators, _use_pf_client=True)
         else:
             with pytest.raises(EvaluationException) as exc_info:
                 counting_eval._set_conversation_aggregator(custom_aggregator)
-                _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+                _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators, _use_pf_client=True)
             assert "TestEvaluate.test_aggregation_serialization.<locals>.custom_aggregator" in exc_info.value.args[0]
 
     def test_unsupported_file_inputs(self, mock_model_config, unsupported_file_type):
