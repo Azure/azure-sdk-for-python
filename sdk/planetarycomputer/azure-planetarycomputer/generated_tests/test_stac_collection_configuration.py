@@ -275,14 +275,7 @@ class TestStacCollectionConfiguration(StacCollectionConfigurationClientTestBase)
     def test_create_queryables(self, staccollectionconfiguration_endpoint):
         client = self.create_client(endpoint=staccollectionconfiguration_endpoint)
         response = client.create_queryables(
-            body=[
-                {
-                    "definition": {"create_index": bool, "data_type": "str", "description": "str"},
-                    "name": "str",
-                    "create_index": bool,
-                    "data_type": "str",
-                }
-            ],
+            body=[{"definition": {}, "name": "str", "create_index": bool, "data_type": "str"}],
         )
 
         # please add some check logic here by yourself
@@ -294,12 +287,7 @@ class TestStacCollectionConfiguration(StacCollectionConfigurationClientTestBase)
         client = self.create_client(endpoint=staccollectionconfiguration_endpoint)
         response = client.create_or_replace_queryable(
             queryable_name="str",
-            body={
-                "definition": {"create_index": bool, "data_type": "str", "description": "str"},
-                "name": "str",
-                "create_index": bool,
-                "data_type": "str",
-            },
+            body={"definition": {}, "name": "str", "create_index": bool, "data_type": "str"},
         )
 
         # please add some check logic here by yourself

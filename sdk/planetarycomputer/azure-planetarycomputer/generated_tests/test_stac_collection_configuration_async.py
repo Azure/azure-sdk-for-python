@@ -276,14 +276,7 @@ class TestStacCollectionConfigurationAsync(StacCollectionConfigurationClientTest
     async def test_create_queryables(self, staccollectionconfiguration_endpoint):
         client = self.create_async_client(endpoint=staccollectionconfiguration_endpoint)
         response = await client.create_queryables(
-            body=[
-                {
-                    "definition": {"create_index": bool, "data_type": "str", "description": "str"},
-                    "name": "str",
-                    "create_index": bool,
-                    "data_type": "str",
-                }
-            ],
+            body=[{"definition": {}, "name": "str", "create_index": bool, "data_type": "str"}],
         )
 
         # please add some check logic here by yourself
@@ -295,12 +288,7 @@ class TestStacCollectionConfigurationAsync(StacCollectionConfigurationClientTest
         client = self.create_async_client(endpoint=staccollectionconfiguration_endpoint)
         response = await client.create_or_replace_queryable(
             queryable_name="str",
-            body={
-                "definition": {"create_index": bool, "data_type": "str", "description": "str"},
-                "name": "str",
-                "create_index": bool,
-                "data_type": "str",
-            },
+            body={"definition": {}, "name": "str", "create_index": bool, "data_type": "str"},
         )
 
         # please add some check logic here by yourself

@@ -2777,45 +2777,7 @@ class QueryableDefinition(_Model):
 
 
 class QueryableDefinitionType(_Model):
-    """QueryableDefinitionType.
-
-    :ivar create_index: Whether to create a database index for this property.
-    :vartype create_index: bool
-    :ivar data_type: Data type of the queryable property. Known values are: "string", "number",
-     "boolean", "timestamp", and "date".
-    :vartype data_type: str or ~azure.planetarycomputer.models.QueryableDefinitionDataType
-    :ivar description: Description.
-    :vartype description: str
-    """
-
-    create_index: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Whether to create a database index for this property."""
-    data_type: Optional[Union[str, "_models.QueryableDefinitionDataType"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Data type of the queryable property. Known values are: \"string\", \"number\", \"boolean\",
-     \"timestamp\", and \"date\"."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Description."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        create_index: Optional[bool] = None,
-        data_type: Optional[Union[str, "_models.QueryableDefinitionDataType"]] = None,
-        description: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
+    """QueryableDefinitionType."""
 
 
 class RegisterResponse(_Model):
@@ -3229,8 +3191,8 @@ class SearchPostRequest(_Model):
     :vartype bbox: list[float]
     :ivar intersects: GeoJSON geometry for spatial filtering.
     :vartype intersects: ~azure.planetarycomputer.models.Geometry
-    :ivar datetime: Temporal filter in RFC 3339 format, can be a single time or range.
-    :vartype datetime: str
+    :ivar date_time: Temporal filter in RFC 3339 format, can be a single time or range.
+    :vartype date_time: str
     :ivar limit: Maximum number of results to return.
     :vartype limit: int
     :ivar conf: Conf
@@ -3274,7 +3236,7 @@ class SearchPostRequest(_Model):
     """Bounding box for spatial filtering in format [west, south, east, north]."""
     intersects: Optional["_models.Geometry"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """GeoJSON geometry for spatial filtering."""
-    datetime: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    date_time: Optional[str] = rest_field(name="datetime", visibility=["read", "create", "update", "delete", "query"])
     """Temporal filter in RFC 3339 format, can be a single time or range."""
     limit: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Maximum number of results to return."""
@@ -3328,7 +3290,7 @@ class SearchPostRequest(_Model):
         ids: Optional[List[str]] = None,
         bbox: Optional[List[float]] = None,
         intersects: Optional["_models.Geometry"] = None,
-        datetime: Optional[str] = None,
+        date_time: Optional[str] = None,
         limit: Optional[int] = None,
         conf: Optional[Dict[str, Any]] = None,
         sign: Optional[Union[str, "_models.SignType"]] = None,
