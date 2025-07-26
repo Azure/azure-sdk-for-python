@@ -700,6 +700,7 @@ class TestEvaluate:
                 "no": NoInputEval(),
             },
             _use_pf_client=False,
+            _use_run_submitter_client=False,
         )  # type: ignore
 
         first_row = results["rows"][0]
@@ -715,6 +716,7 @@ class TestEvaluate:
                     "non": NonOptionalEval(),
                 },
                 _use_pf_client=False,
+                _use_run_submitter_client=False,
             )  # type: ignore
 
         expected_message = "Some evaluators are missing required inputs:\n" "- non: ['response']\n"
@@ -725,6 +727,7 @@ class TestEvaluate:
             data=questions_file,
             evaluators={"half": HalfOptionalEval(), "opt": OptionalEval(), "no": NoInputEval()},
             _use_pf_client=False,
+            _use_run_submitter_client=False,
         )  # type: ignore
 
         first_row_2 = only_question_results["rows"][0]
@@ -741,6 +744,7 @@ class TestEvaluate:
             target=_new_answer_target,
             evaluators={"echo": EchoEval()},
             _use_pf_client=False,
+            _use_run_submitter_client=False,
         )  # type: ignore
 
         assert target_answer_results["rows"][0]["outputs.echo.echo_query"] == "How long is flight from Earth to LV-426?"
@@ -753,6 +757,7 @@ class TestEvaluate:
             target=_question_override_target,
             evaluators={"echo": EchoEval()},
             _use_pf_client=False,
+            _use_run_submitter_client=False,
         )  # type: ignore
 
         assert question_override_results["rows"][0]["outputs.echo.echo_query"] == "new query"
@@ -764,6 +769,7 @@ class TestEvaluate:
             target=_question_answer_override_target,
             evaluators={"echo": EchoEval()},
             _use_pf_client=False,
+            _use_run_submitter_client=False,
         )  # type: ignore
         assert double_override_results["rows"][0]["outputs.echo.echo_query"] == "new query"
         assert double_override_results["rows"][0]["outputs.echo.echo_response"] == "new response"
