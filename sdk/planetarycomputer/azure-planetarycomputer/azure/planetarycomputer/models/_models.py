@@ -1117,7 +1117,8 @@ class IngestionRun(_Model):
 
     :ivar id: Run id. Required.
     :vartype id: str
-    :ivar parent_run_id: Run id which this run is associated to becase has been retried or rerun.
+    :ivar parent_run_id: Run id which this run is associated to because it has been retried or
+     rerun.
     :vartype parent_run_id: str
     :ivar operation: Operation. Required.
     :vartype operation: ~azure.planetarycomputer.models.IngestionRunOperation
@@ -1136,7 +1137,7 @@ class IngestionRun(_Model):
     parent_run_id: Optional[str] = rest_field(
         name="parentRunId", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Run id which this run is associated to becase has been retried or rerun."""
+    """Run id which this run is associated to because it has been retried or rerun."""
     operation: "_models.IngestionRunOperation" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Operation. Required."""
     creation_time: datetime.datetime = rest_field(
