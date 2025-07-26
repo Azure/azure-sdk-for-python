@@ -31,8 +31,8 @@ def main():
     )
 
     response = client.organizations.get(
-        resource_group_name="rgopenapi",
-        organizationname="test-organization-1",
+        resource_group_name="yashika-rg-arize",
+        organizationname="test-org-1",
     )
     print(response)
 
