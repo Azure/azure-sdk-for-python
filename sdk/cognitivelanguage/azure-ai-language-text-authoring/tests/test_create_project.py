@@ -10,9 +10,9 @@ from azure.core.credentials import AzureKeyCredential
 
 TextPreparer = functools.partial(
     PowerShellPreparer,
-    "text",
-    conversations_endpoint="fake_resource.servicebus.windows.net/",
-    conversations_key="fake_key",
+    "authoring",
+    authoring_endpoint="fake_resource.servicebus.windows.net/",
+    authoring_key="fake_key",
 )
 
 
@@ -30,8 +30,8 @@ class TestText(AzureRecordedTestCase):
 class TestTextCase(TestText):
     @TextPreparer()
     @recorded_by_proxy
-    def test_create_project(self, conversations_endpoint, conversations_key):
-        client = self.create_client(conversations_endpoint, conversations_key)
+    def test_create_project(self, authoring_endpoint, authoring_key):
+        client = self.create_client(authoring_endpoint, authoring_key)
 
         # Access the project operation group 
         project_client = client.text_authoring_project
