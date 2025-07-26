@@ -31,8 +31,8 @@ def main():
     )
 
     client.organizations.begin_delete(
-        resource_group_name="rgopenapi",
-        organizationname="test-organization-1",
+        resource_group_name="yashika-rg-arize",
+        organizationname="test-org-1",
     ).result()
 
 
