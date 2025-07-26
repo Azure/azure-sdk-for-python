@@ -1,0 +1,6 @@
+{
+    "CrossLanguagePackageId": "MonitorQueryLogs",
+    "CrossLanguageDefinitionId": {
+        "azure.monitor.query.models._ColumnType": "MonitorQueryLogs.ColumnDataType"
+    }
+}
