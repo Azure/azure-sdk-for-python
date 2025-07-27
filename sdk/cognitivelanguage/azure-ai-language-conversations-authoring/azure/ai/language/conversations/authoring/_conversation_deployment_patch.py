@@ -62,3 +62,5 @@ class ConversationAuthoringDeployment:
         return self._operations.get_deployment_status(
             self._project_name, self._deployment_name, job_id, **kwargs
         )
+    
+__all__ = ["ConversationAuthoringDeployment"]
