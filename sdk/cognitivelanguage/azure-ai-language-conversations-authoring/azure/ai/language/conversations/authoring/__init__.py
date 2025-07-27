@@ -16,6 +16,7 @@ from ._client import AuthoringClient  # type: ignore
 from ._conversation_project_patch import ConversationAuthoringProject
 from ._conversation_deployment_patch import ConversationAuthoringDeployment
 from ._conversation_exportedModel_patch import ConversationAuthoringExportedModel
+from ._conversation_trainedModel_patch import ConversationAuthoringTrainedModel
 from ._version import VERSION
 
 __version__ = VERSION
@@ -30,7 +31,8 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "ConversationAuthoringProject",
     "ConversationAuthoringDeployment",
-    "ConversationAuthoringExportedModel"
+    "ConversationAuthoringExportedModel",
+    "ConversationAuthoringTrainedModel"
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 

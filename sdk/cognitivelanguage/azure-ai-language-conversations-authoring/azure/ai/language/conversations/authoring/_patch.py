@@ -12,6 +12,7 @@ from ._client import AuthoringClient as AuthoringClientGenerated
 from ._conversation_project_patch import ConversationAuthoringProject
 from ._conversation_deployment_patch import ConversationAuthoringDeployment
 from ._conversation_exportedModel_patch import ConversationAuthoringExportedModel
+from ._conversation_trainedModel_patch import ConversationAuthoringTrainedModel
 
 class ConversationAuthoringClient(AuthoringClientGenerated):
     def get_project(self, project_name: str) -> ConversationAuthoringProject:
@@ -22,6 +23,13 @@ class ConversationAuthoringClient(AuthoringClientGenerated):
 
     def get_exported_model_client(self, project_name: str, exported_model_name: str) -> ConversationAuthoringExportedModel:
         return ConversationAuthoringExportedModel(self.conversation_authoring_exported_model, project_name, exported_model_name)
+
+    def get_trained_model(self, project_name: str, trained_model_label: str) -> ConversationAuthoringTrainedModel:
+        return ConversationAuthoringTrainedModel(
+            self.conversation_authoring_trained_model,
+            project_name,
+            trained_model_label
+        )
 
 def patch_sdk():
     """Do not remove from this file.
