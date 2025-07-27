@@ -3,7 +3,7 @@ import functools
 import pytest
 
 from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, recorded_by_proxy
-from azure.ai.language.conversations.authoring import ConversationAnalysisAuthoringClient
+from azure.ai.language.conversations.authoring import ConversationAuthoringClient
 from azure.ai.language.conversations.authoring.models import (
     ConversationAuthoringCreateProjectDetails,
     ConversationAuthoringProjectMetadata,
@@ -25,7 +25,7 @@ class TestConversations(AzureRecordedTestCase):
     # Start with any helper functions you might need, for example a client creation method:
     def create_client(self, endpoint, key):
         credential = AzureKeyCredential(key)
-        client = ConversationAnalysisAuthoringClient(endpoint, credential)
+        client = ConversationAuthoringClient(endpoint, credential)
         return client
 
     ...
