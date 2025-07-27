@@ -8,9 +8,32 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import List
+from ._models import (
+    ConversationAuthoringCreateProjectDetails as ConversationAuthoringCreateProjectDetailsGenerated,
+    ConversationAuthoringProjectSettings,
+    ConversationAuthoringProjectKind,
+)
+from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
+class ConversationAuthoringCreateProjectDetails(ConversationAuthoringCreateProjectDetailsGenerated):
 
-__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
+    @overload
+    def __init__(
+        self,
+        *,
+        project_kind: Union[str, "ConversationAuthoringProjectKind"],
+        language: str,
+        settings: Optional["ConversationAuthoringProjectSettings"] = None,
+        storage_input_container_name: Optional[str] = None,
+        multilingual: Optional[bool] = None,
+        description: Optional[str] = None,
+    ) -> None: ...
 
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        kwargs.setdefault("project_name", "")  # provide dummy value
+        super().__init__(*args, **kwargs)
 
 def patch_sdk():
     """Do not remove from this file.
@@ -19,3 +42,5 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+
+__all__ = ["ConversationAuthoringCreateProjectDetails"]

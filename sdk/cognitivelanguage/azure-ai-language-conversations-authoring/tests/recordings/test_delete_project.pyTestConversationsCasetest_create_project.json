@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/MyPythonProject0723?api-version=2025-05-15-preview",
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/MyPythonProject0727?api-version=2025-05-15-preview",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -15,20 +15,20 @@
       "StatusCode": 202,
       "ResponseHeaders": {
         "Access-Control-Expose-Headers": "*",
-        "apim-request-id": "d0765671-a16a-4cbe-8ef9-9305bcfe0deb",
+        "apim-request-id": "b0871690-f91d-4d70-b7b2-6c74443dcdd7",
         "Content-Length": "0",
-        "Date": "Sun, 27 Jul 2025 00:23:46 GMT",
-        "operation-location": "fake_resource.servicebus.windows.net/language/authoring/analyze-conversations/projects/global/deletion-jobs/4b6d281c-0078-4897-8a76-be5c54772624_638891712000000000?api-version=2025-05-15-preview",
-        "request-id": "d0765671-a16a-4cbe-8ef9-9305bcfe0deb",
+        "Date": "Sun, 27 Jul 2025 07:22:50 GMT",
+        "operation-location": "fake_resource.servicebus.windows.net/language/authoring/analyze-conversations/projects/global/deletion-jobs/d08c901d-36f7-4fce-bb58-a315953f907f_638891712000000000?api-version=2025-05-15-preview",
+        "request-id": "b0871690-f91d-4d70-b7b2-6c74443dcdd7",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "175",
+        "x-envoy-upstream-service-time": "327",
         "x-ms-region": "East US"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/global/deletion-jobs/4b6d281c-0078-4897-8a76-be5c54772624_638891712000000000?api-version=2025-05-15-preview",
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/global/deletion-jobs/d08c901d-36f7-4fce-bb58-a315953f907f_638891712000000000?api-version=2025-05-15-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -41,21 +41,21 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Access-Control-Expose-Headers": "*",
-        "apim-request-id": "2314e610-c8e3-46aa-aa9e-ca1b8812a1c1",
+        "apim-request-id": "72aab8b7-6df2-4a56-a283-fb4551e1b6a6",
         "Content-Length": "218",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sun, 27 Jul 2025 00:23:47 GMT",
-        "request-id": "2314e610-c8e3-46aa-aa9e-ca1b8812a1c1",
+        "Date": "Sun, 27 Jul 2025 07:22:50 GMT",
+        "request-id": "72aab8b7-6df2-4a56-a283-fb4551e1b6a6",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "197",
+        "x-envoy-upstream-service-time": "293",
         "x-ms-region": "East US"
       },
       "ResponseBody": {
-        "jobId": "4b6d281c-0078-4897-8a76-be5c54772624_638891712000000000",
-        "createdDateTime": "2025-07-27T00:23:46Z",
-        "lastUpdatedDateTime": "2025-07-27T00:23:46Z",
-        "expirationDateTime": "2025-08-03T00:23:46Z",
+        "jobId": "d08c901d-36f7-4fce-bb58-a315953f907f_638891712000000000",
+        "createdDateTime": "2025-07-27T07:22:50Z",
+        "lastUpdatedDateTime": "2025-07-27T07:22:50Z",
+        "expirationDateTime": "2025-08-03T07:22:50Z",
         "status": "succeeded"
       }
     }

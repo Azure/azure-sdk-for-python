@@ -1,45 +1,45 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/MyPythonProject0723?api-version=2025-05-15-preview",
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/MyPythonProject0727?api-version=2025-05-15-preview",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "150",
+        "Content-Length": "173",
         "Content-Type": "application/merge-patch+json",
         "Ocp-Apim-Subscription-Key": "Sanitized",
         "User-Agent": "azsdk-python-ai-language-conversations-authoring/1.0.0b1 Python/3.13.5 (Windows-11-10.0.26100-SP0)"
       },
       "RequestBody": {
         "projectKind": "Conversation",
-        "projectName": "MyPythonProject0723",
         "language": "en-us",
         "multilingual": true,
-        "description": "Project description"
+        "description": "Project created for testing via Python SDK",
+        "projectName": "MyPythonProject0727"
       },
       "StatusCode": 201,
       "ResponseHeaders": {
         "Access-Control-Expose-Headers": "*",
-        "apim-request-id": "fd3e51f8-9053-4c84-9ea8-9e3af0ca21a8",
-        "Content-Length": "228",
+        "apim-request-id": "41f21e85-a458-47ed-be4a-6e3dd9504b05",
+        "Content-Length": "251",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 24 Jul 2025 22:15:01 GMT",
+        "Date": "Sun, 27 Jul 2025 07:09:14 GMT",
         "Location": "https://example.com",
-        "request-id": "fd3e51f8-9053-4c84-9ea8-9e3af0ca21a8",
+        "request-id": "41f21e85-a458-47ed-be4a-6e3dd9504b05",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "357",
+        "x-envoy-upstream-service-time": "490",
         "x-ms-region": "East US"
       },
       "ResponseBody": {
-        "createdDateTime": "2025-07-24T22:15:02Z",
-        "lastModifiedDateTime": "2025-07-24T22:15:02Z",
+        "createdDateTime": "2025-07-27T07:09:15Z",
+        "lastModifiedDateTime": "2025-07-27T07:09:15Z",
         "projectKind": "Conversation",
-        "projectName": "MyPythonProject0723",
+        "projectName": "MyPythonProject0727",
         "multilingual": true,
-        "description": "Project description",
+        "description": "Project created for testing via Python SDK",
         "language": "en-us"
       }
     }

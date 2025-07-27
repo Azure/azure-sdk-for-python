@@ -3,7 +3,7 @@ import functools
 import pytest
 
 from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, recorded_by_proxy
-from azure.ai.language.conversations.authoring import AuthoringClient
+from azure.ai.language.conversations.authoring import ConversationAnalysisAuthoringClient
 from azure.ai.language.conversations.authoring.models import ConversationAuthoringCreateProjectDetails
 from azure.core.polling import LROPoller
 from azure.core.credentials import AzureKeyCredential
@@ -21,7 +21,7 @@ class TestConversations(AzureRecordedTestCase):
     # Start with any helper functions you might need, for example a client creation method:
     def create_client(self, endpoint, key):
         credential = AzureKeyCredential(key)
-        client = AuthoringClient(endpoint, credential)
+        client = ConversationAnalysisAuthoringClient(endpoint, credential)
         return client
 
     ...
@@ -33,7 +33,7 @@ class TestConversationsCase(TestConversations):
     def test_create_project(self, authoring_endpoint, authoring_key):
         client = self.create_client(authoring_endpoint, authoring_key)
 
-        project = client.get_project("MyPythonProject0723")
+        project = client.get_project("MyPythonProject0727")
 
         poller = project.begin_delete_project()
 

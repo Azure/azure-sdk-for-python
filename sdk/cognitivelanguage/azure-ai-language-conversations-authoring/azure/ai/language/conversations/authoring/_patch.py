@@ -10,9 +10,8 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import List
 from ._client import AuthoringClient as AuthoringClientGenerated
 from ._conversation_project_patch import ConversationAuthoringProject
-from .operations import ConversationAuthoringProjectOperations
 
-class AuthoringClient(AuthoringClientGenerated):
+class ConversationAnalysisAuthoringClient(AuthoringClientGenerated):
     def get_project(self, project_name: str) -> ConversationAuthoringProject:
         return ConversationAuthoringProject(self.conversation_authoring_project, project_name)
 
@@ -24,4 +23,4 @@ def patch_sdk():
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
 
-__all__ = ["AuthoringClient"]
+__all__ = ["ConversationAnalysisAuthoringClient"]
