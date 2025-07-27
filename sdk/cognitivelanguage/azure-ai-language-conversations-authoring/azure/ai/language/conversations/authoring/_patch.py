@@ -11,6 +11,7 @@ from typing import List
 from ._client import AuthoringClient as AuthoringClientGenerated
 from ._conversation_project_patch import ConversationAuthoringProject
 from ._conversation_deployment_patch import ConversationAuthoringDeployment
+from ._conversation_exportedModel_patch import ConversationAuthoringExportedModel
 
 class ConversationAuthoringClient(AuthoringClientGenerated):
     def get_project(self, project_name: str) -> ConversationAuthoringProject:
@@ -18,6 +19,9 @@ class ConversationAuthoringClient(AuthoringClientGenerated):
 
     def get_deployment(self, project_name: str, deployment_name: str) -> ConversationAuthoringDeployment:
         return ConversationAuthoringDeployment(self.conversation_authoring_deployment, project_name, deployment_name)
+
+    def get_exported_model_client(self, project_name: str, exported_model_name: str) -> ConversationAuthoringExportedModel:
+        return ConversationAuthoringExportedModel(self.conversation_authoring_exported_model, project_name, exported_model_name)
 
 def patch_sdk():
     """Do not remove from this file.
