@@ -1,5 +1,5 @@
 from .operations import ConversationAuthoringProjectOperations
-from .models import _models
+import models as _models
 from azure.core.polling import LROPoller
 from typing import Any, Callable, Dict, IO, Iterator, List, Optional, TypeVar, Union, cast, overload
 from collections.abc import MutableMapping
@@ -92,4 +92,184 @@ class ConversationAuthoringProject:
             project_name=self._project_name,
             job_id=job_id,
             **kwargs
+        )
+    
+    def begin_export(
+        self,
+        *,
+        asset_kind: Optional[str] = ...,
+        exported_project_format: Optional[Union[str, _models.ConversationAuthoringExportedProjectFormat]] = ...,
+        string_index_type: Union[str, _models.StringIndexType],
+        trained_model_label: Optional[str] = ...,
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        return self._operations.begin_export(
+            project_name=self._project_name,
+            asset_kind=asset_kind,
+            exported_project_format=exported_project_format,
+            string_index_type=string_index_type,
+            trained_model_label=trained_model_label,
+            **kwargs
+        )
+
+    def begin_import_method(
+        self,
+        body: Union[
+            _models.ConversationAuthoringExportedProject,
+            JSON,
+            IO[bytes]
+        ],
+        *,
+        exported_project_format: Optional[Union[str, _models.ConversationAuthoringExportedProjectFormat]] = ...,
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        return self._operations.begin_import_method(
+            project_name=self._project_name,
+            body=body,
+            exported_project_format=exported_project_format,
+            **kwargs
+        )
+
+    def begin_swap_deployments(
+        self,
+        body: Union[
+            _models.ConversationAuthoringSwapDeploymentsDetails,
+            JSON,
+            IO[bytes]
+        ],
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        return self._operations.begin_swap_deployments(
+            project_name=self._project_name,
+            body=body,
+            **kwargs
+        )
+
+    def begin_train(
+        self,
+        body: Union[
+            _models.ConversationAuthoringTrainingJobDetails,
+            JSON,
+            IO[bytes]
+        ],
+        **kwargs: Any
+    ) -> LROPoller[_models.ConversationAuthoringTrainingJobResult]:
+        return self._operations.begin_train(
+            project_name=self._project_name,
+            body=body,
+            **kwargs
+        )
+    
+    def begin_unassign_deployment_resources(
+        self,
+        body: Union[
+            _models.ConversationAuthoringUnassignDeploymentResourcesDetails,
+            JSON,
+            IO[bytes],
+        ],
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        return self._operations.begin_unassign_deployment_resources(
+            project_name=self._project_name,
+            body=body,
+            **kwargs,
+        )
+
+
+    def get_assign_deployment_resources_status(
+        self,
+        job_id: str,
+        **kwargs: Any
+    ) -> _models.ConversationAuthoringDeploymentResourcesState:
+        return self._operations.get_assign_deployment_resources_status(
+            project_name=self._project_name,
+            job_id=job_id,
+            **kwargs,
+        )
+
+
+    def get_copy_project_status(
+        self,
+        job_id: str,
+        **kwargs: Any
+    ) -> _models.ConversationAuthoringCopyProjectState:
+        return self._operations.get_copy_project_status(
+            project_name=self._project_name,
+            job_id=job_id,
+            **kwargs,
+        )
+    
+    def get_export_status(
+        self,
+        job_id: str,
+        **kwargs: Any
+    ) -> _models.ConversationAuthoringExportProjectState:
+        return self._operations.get_export_status(
+            project_name=self._project_name,
+            job_id=job_id,
+            **kwargs,
+        )
+
+    def get_import_status(
+        self,
+        job_id: str,
+        **kwargs: Any
+    ) -> _models.ConversationAuthoringImportProjectState:
+        return self._operations.get_import_status(
+            project_name=self._project_name,
+            job_id=job_id,
+            **kwargs,
+        )
+
+    def get_project(
+        self,
+        **kwargs: Any
+    ) -> _models.ConversationAuthoringProjectMetadata:
+        return self._operations.get_project(
+            project_name=self._project_name,
+            **kwargs,
+        )
+
+    def get_project_deletion_status(
+        self,
+        job_id: str,
+        **kwargs: Any
+    ) -> _models.ConversationAuthoringProjectDeletionState:
+        return self._operations.get_project_deletion_status(
+            project_name=self._project_name,
+            job_id=job_id,
+            **kwargs,
+        )
+
+    def get_swap_deployments_status(
+        self,
+        job_id: str,
+        **kwargs: Any
+    ) -> _models.ConversationAuthoringSwapDeploymentsState:
+        return self._operations.get_swap_deployments_status(
+            project_name=self._project_name,
+            job_id=job_id,
+            **kwargs,
+        )
+    
+    def get_training_status(
+        self,
+        job_id: str,
+        **kwargs: Any
+    ) -> _models.ConversationAuthoringTrainingState:
+        return self._operations.get_training_status(
+            project_name=self._project_name,
+            job_id=job_id,
+            **kwargs,
+        )
+
+    def get_unassign_deployment_resources_status(
+        self,
+        job_id: str,
+        **kwargs: Any
+    ) -> _models.ConversationAuthoringDeploymentResourcesState:
+        return self._operations.get_unassign_deployment_resources_status(
+            project_name=self._project_name,
+            job_id=job_id,
+            **kwargs,
         )
