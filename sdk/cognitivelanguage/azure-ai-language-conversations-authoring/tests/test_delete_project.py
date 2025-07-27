@@ -5,7 +5,7 @@ import pytest
 from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, recorded_by_proxy
 from azure.ai.language.conversations.authoring import AuthoringClient
 from azure.ai.language.conversations.authoring.models import ConversationAuthoringCreateProjectDetails
-
+from azure.core.polling import LROPoller
 from azure.core.credentials import AzureKeyCredential
 
 ConversationsPreparer = functools.partial(
@@ -33,21 +33,12 @@ class TestConversationsCase(TestConversations):
     def test_create_project(self, authoring_endpoint, authoring_key):
         client = self.create_client(authoring_endpoint, authoring_key)
 
-        # Access the project operation group separately
-        project_client = client.conversation_authoring_project
+        project = client.get_project("MyPythonProject0723")
 
-        # Define project name and creation details
-        project_name = "MyPythonProject0723"
-        project_data = ConversationAuthoringCreateProjectDetails(
-            project_kind="Conversation",
-            project_name=project_name,
-            language="en-us",
-            multilingual=True,
-            description="Project description",
-        )
+        poller = project.begin_delete_project()
 
-        # Create the project
-        response = project_client.create_project(project_name=project_name, body=project_data)
+        assert isinstance(poller, LROPoller)
 
-        # Print confirmation
-        print(f"Project created: {response.project_name}, Kind: {response.project_kind}, Language: {response.language}")
+        # Wait for deletion to complete
+        result = poller.result()
+        assert result is None  # Delete returns no content

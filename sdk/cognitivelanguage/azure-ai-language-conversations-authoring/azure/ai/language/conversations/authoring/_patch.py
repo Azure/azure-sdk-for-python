@@ -8,9 +8,13 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import List
+from ._client import AuthoringClient as AuthoringClientGenerated
+from ._conversation_project_patch import ConversationAuthoringProject
+from .operations import ConversationAuthoringProjectOperations
 
-__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
-
+class AuthoringClient(AuthoringClientGenerated):
+    def get_project(self, project_name: str) -> ConversationAuthoringProject:
+        return ConversationAuthoringProject(self.conversation_authoring_project, project_name)
 
 def patch_sdk():
     """Do not remove from this file.
@@ -19,3 +23,5 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+
+__all__ = ["AuthoringClient"]
