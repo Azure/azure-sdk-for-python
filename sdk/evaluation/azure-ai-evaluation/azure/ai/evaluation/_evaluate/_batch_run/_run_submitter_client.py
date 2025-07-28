@@ -158,7 +158,7 @@ class RunSubmitterClient:
             "duration": str(run.duration),
             "completed_lines": total_lines - failed_lines,
             "failed_lines": failed_lines,
-            # "log_path": "",
+            "log_path": None,
         }
 
     @staticmethod
