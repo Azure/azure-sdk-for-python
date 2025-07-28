@@ -9,7 +9,7 @@
 
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from ... import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -35,7 +35,7 @@ class AccessUri(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.access_sas = None
+        self.access_sas: Optional[str] = None
 
 
 class ApiError(_serialization.Model):
@@ -220,7 +220,7 @@ class CreationData(_serialization.Model):
         self.gallery_image_reference = gallery_image_reference
         self.source_uri = source_uri
         self.source_resource_id = source_resource_id
-        self.source_unique_id = None
+        self.source_unique_id: Optional[str] = None
         self.upload_size_bytes = upload_size_bytes
 
 
@@ -266,9 +266,9 @@ class Resource(_serialization.Model):
         :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.location = location
         self.tags = tags
 
@@ -487,27 +487,27 @@ class Disk(Resource):
         :paramtype disk_access_id: str
         """
         super().__init__(location=location, tags=tags, **kwargs)
-        self.managed_by = None
-        self.managed_by_extended = None
+        self.managed_by: Optional[str] = None
+        self.managed_by_extended: Optional[List[str]] = None
         self.sku = sku
         self.zones = zones
-        self.time_created = None
+        self.time_created: Optional[datetime.datetime] = None
         self.os_type = os_type
         self.hyper_v_generation = hyper_v_generation
         self.creation_data = creation_data
         self.disk_size_gb = disk_size_gb
-        self.disk_size_bytes = None
-        self.unique_id = None
+        self.disk_size_bytes: Optional[int] = None
+        self.unique_id: Optional[str] = None
         self.encryption_settings_collection = encryption_settings_collection
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
         self.disk_iops_read_write = disk_iops_read_write
         self.disk_m_bps_read_write = disk_m_bps_read_write
         self.disk_iops_read_only = disk_iops_read_only
         self.disk_m_bps_read_only = disk_m_bps_read_only
-        self.disk_state = None
+        self.disk_state: Optional[Union[str, "_models.DiskState"]] = None
         self.encryption = encryption
         self.max_shares = max_shares
-        self.share_info = None
+        self.share_info: Optional[List["_models.ShareInfoElement"]] = None
         self.network_access_policy = network_access_policy
         self.disk_access_id = disk_access_id
 
@@ -571,9 +571,9 @@ class DiskAccess(Resource):
         :paramtype tags: dict[str, str]
         """
         super().__init__(location=location, tags=tags, **kwargs)
-        self.private_endpoint_connections = None
-        self.provisioning_state = None
-        self.time_created = None
+        self.private_endpoint_connections: Optional[List["_models.PrivateEndpointConnection"]] = None
+        self.provisioning_state: Optional[str] = None
+        self.time_created: Optional[datetime.datetime] = None
 
 
 class DiskAccessList(_serialization.Model):
@@ -715,8 +715,8 @@ class DiskEncryptionSet(Resource):
         self.identity = identity
         self.encryption_type = encryption_type
         self.active_key = active_key
-        self.previous_keys = None
-        self.provisioning_state = None
+        self.previous_keys: Optional[List["_models.KeyVaultAndKeyReference"]] = None
+        self.provisioning_state: Optional[str] = None
 
 
 class DiskEncryptionSetList(_serialization.Model):
@@ -863,7 +863,7 @@ class DiskSku(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.name = name
-        self.tier = None
+        self.tier: Optional[str] = None
 
 
 class DiskUpdate(_serialization.Model):
@@ -1089,8 +1089,8 @@ class EncryptionSetIdentity(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.type = type
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
 
 
 class EncryptionSettingsCollection(_serialization.Model):
@@ -1371,7 +1371,7 @@ class PrivateEndpoint(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
+        self.id: Optional[str] = None
 
 
 class PrivateEndpointConnection(_serialization.Model):
@@ -1432,12 +1432,12 @@ class PrivateEndpointConnection(_serialization.Model):
          ~azure.mgmt.compute.v2020_05_01.models.PrivateLinkServiceConnectionState
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.PrivateEndpointConnectionProvisioningState"]] = None
 
 
 class PrivateLinkResource(_serialization.Model):
@@ -1482,11 +1482,11 @@ class PrivateLinkResource(_serialization.Model):
         :paramtype required_zone_names: list[str]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.group_id = None
-        self.required_members = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.group_id: Optional[str] = None
+        self.required_members: Optional[List[str]] = None
         self.required_zone_names = required_zone_names
 
 
@@ -1576,7 +1576,7 @@ class ShareInfoElement(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.vm_uri = None
+        self.vm_uri: Optional[str] = None
 
 
 class Snapshot(Resource):
@@ -1733,17 +1733,17 @@ class Snapshot(Resource):
         :paramtype disk_access_id: str
         """
         super().__init__(location=location, tags=tags, **kwargs)
-        self.managed_by = None
+        self.managed_by: Optional[str] = None
         self.sku = sku
-        self.time_created = None
+        self.time_created: Optional[datetime.datetime] = None
         self.os_type = os_type
         self.hyper_v_generation = hyper_v_generation
         self.creation_data = creation_data
         self.disk_size_gb = disk_size_gb
-        self.disk_size_bytes = None
-        self.unique_id = None
+        self.disk_size_bytes: Optional[int] = None
+        self.unique_id: Optional[str] = None
         self.encryption_settings_collection = encryption_settings_collection
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
         self.incremental = incremental
         self.encryption = encryption
         self.network_access_policy = network_access_policy
@@ -1814,7 +1814,7 @@ class SnapshotSku(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.name = name
-        self.tier = None
+        self.tier: Optional[str] = None
 
 
 class SnapshotUpdate(_serialization.Model):
