@@ -9,10 +9,10 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import List
 from ._client import AuthoringClient as AuthoringClientGenerated
-from ._Text_project_patch import TextAuthoringProject
-from ._Text_deployment_patch import TextAuthoringDeployment
-from ._Text_exportedModel_patch import TextAuthoringExportedModel
-from ._Text_trainedModel_patch import TextAuthoringTrainedModel
+from ._text_project_patch import TextAuthoringProject
+from ._text_deployment_patch import TextAuthoringDeployment
+from ._text_exportedModel_patch import TextAuthoringExportedModel
+from ._text_trainedModel_patch import TextAuthoringTrainedModel
 
 class TextAuthoringClient(AuthoringClientGenerated):
     def get_project_client(self, project_name: str) -> TextAuthoringProject:

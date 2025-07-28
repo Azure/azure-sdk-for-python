@@ -134,6 +134,8 @@ class TextAuthoringProject:
         body: Union[_models.TextAuthoringCreateProjectDetails, IO[bytes], Any],
         **kwargs: Any
     ) -> _models.TextAuthoringProjectMetadata:
+        if isinstance(body, _models.TextAuthoringCreateProjectDetails):
+            body.project_name = self._project_name
         return self._operations.create_project(
             project_name=self._project_name,
             body=body,

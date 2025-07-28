@@ -4,8 +4,12 @@ from urllib import response
 import pytest
 
 from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, recorded_by_proxy
-from azure.ai.language.text.authoring import AuthoringClient
-from azure.ai.language.text.authoring.models import TextAuthoringCreateProjectDetails
+from azure.ai.language.text.authoring import TextAuthoringClient
+from azure.ai.language.text.authoring.models import (
+    TextAuthoringCreateProjectDetails,
+    TextAuthoringProjectMetadata,
+    TextAuthoringProjectKind
+)
 from azure.core.credentials import AzureKeyCredential
 
 TextPreparer = functools.partial(
@@ -21,7 +25,7 @@ class TestText(AzureRecordedTestCase):
     # Start with any helper functions you might need, for example a client creation method:
     def create_client(self, endpoint, key):
         credential = AzureKeyCredential(key)
-        client = AuthoringClient(endpoint, credential)
+        client = TextAuthoringClient(endpoint, credential)
         return client
 
     ...
@@ -32,23 +36,22 @@ class TestTextCase(TestText):
     def test_create_project(self, authoring_endpoint, authoring_key):
         client = self.create_client(authoring_endpoint, authoring_key)
 
-        # Access the project operation group
-        project_client = client.text_authoring_project
-
-        # Define project name and creation parameters
-
-        project_name = "MyPythonTextProject0724"
-        project_data = TextAuthoringCreateProjectDetails(
-            project_kind="customMultiLabelClassification",
+        project_name = "MyTextPythonProject0728"
+        project_client = client.get_project_client(project_name)
+        
+        # Create the project body
+        body = TextAuthoringCreateProjectDetails(
+            project_kind=TextAuthoringProjectKind.CUSTOM_MULTI_LABEL_CLASSIFICATION,
             language="en",
             storage_input_container_name="multi-class-example",
-            project_name=project_name,
             multilingual=True,
             description="Project description for a Custom Entity Recognition project",
         )
 
         # Create the project
-        response = project_client.create_project(project_name=project_name, body=project_data)
+        result = project_client.create_project(body=body)
 
-        # Print confirmation
-        print(f"Project created: {response.project_name}, Kind: {response.project_kind}, Language: {response.language}")
+        # Assert
+        assert isinstance(result, TextAuthoringProjectMetadata)
+        assert result.project_name == project_name
+        print(f"Created project: {result.project_name}, language: {result.language}, kind: {result.project_kind}")
