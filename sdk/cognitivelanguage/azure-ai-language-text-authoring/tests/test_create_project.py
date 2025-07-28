@@ -4,8 +4,8 @@ from urllib import response
 import pytest
 
 from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, recorded_by_proxy
-from azure.ai.language.text.authoring import AuthoringClient 
-from azure.ai.language.text.authoring.models import TextAuthoringCreateProjectDetails 
+from azure.ai.language.text.authoring import AuthoringClient
+from azure.ai.language.text.authoring.models import TextAuthoringCreateProjectDetails
 from azure.core.credentials import AzureKeyCredential
 
 TextPreparer = functools.partial(
@@ -33,26 +33,23 @@ class TestTextCase(TestText):
     def test_create_project(self, authoring_endpoint, authoring_key):
         client = self.create_client(authoring_endpoint, authoring_key)
 
-        # Access the project operation group 
+        # Access the project operation group
         project_client = client.text_authoring_project
 
-        # Define project name and creation parameters 
+        # Define project name and creation parameters
 
-        project_name = "MyPythonTextProject0724" 
-        project_data = TextAuthoringCreateProjectDetails( 
-            project_kind="customMultiLabelClassification", 
-            language="en", 
-            storage_input_container_name="test-data", 
+        project_name = "MyPythonTextProject0724"
+        project_data = TextAuthoringCreateProjectDetails(
+            project_kind="customMultiLabelClassification",
+            language="en",
+            storage_input_container_name="test-data",
             project_name=project_name,
             multilingual=True,
-            description="Project description for a Custom Entity Recognition project"
+            description="Project description for a Custom Entity Recognition project",
         )
 
-        # Create the project 
-        response = project_client.create_project( 
-            project_name=project_name, 
-            body=project_data 
-        ) 
+        # Create the project
+        response = project_client.create_project(project_name=project_name, body=project_data)
 
-        # Print confirmation 
-        print(f"Project created: {response.project_name}, Kind: {response.project_kind}, Language: {response.language}") 
+        # Print confirmation
+        print(f"Project created: {response.project_name}, Kind: {response.project_kind}, Language: {response.language}")
