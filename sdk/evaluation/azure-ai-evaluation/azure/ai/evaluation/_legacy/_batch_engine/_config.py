@@ -32,6 +32,9 @@ class BatchEngineConfig:
     default_num_results: int = 100
     """The default number of results to return if you don't ask for all results."""
 
+    raise_on_error: bool = True
+    """Whether to raise an error if an evaluation fails."""
+
     def __post_init__(self):
         if self.logger is None:
             raise ValueError("logger cannot be None")

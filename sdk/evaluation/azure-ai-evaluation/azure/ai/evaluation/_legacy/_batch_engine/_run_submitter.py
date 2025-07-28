@@ -80,7 +80,7 @@ class RunSubmitter:
             # unnecessary Flow loading code was removed here. Instead do direct calls to _submit_bulk_run
             await self._submit_bulk_run(run=run, local_storage=local_storage, **kwargs)
 
-        self.stream_run(run=run, storage=local_storage, raise_on_error=True)
+        self.stream_run(run=run, storage=local_storage, raise_on_error=self._config.raise_on_error)
         return run
 
     async def _submit_bulk_run(self, run: Run, local_storage: AbstractRunStorage, **kwargs) -> None:

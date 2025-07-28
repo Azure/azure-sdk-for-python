@@ -30,7 +30,7 @@ MISSING_VALUE: Final[int] = sys.maxsize
 
 
 class RunSubmitterClient:
-    def __init__(self, *, config: Optional[BatchEngineConfig] = None) -> None:
+    def __init__(self, *, raise_on_errors: bool = False, config: Optional[BatchEngineConfig] = None) -> None:
         if config:
             self._config = config
         else:
@@ -42,6 +42,8 @@ class RunSubmitterClient:
                 self._config.line_timeout_seconds = val
             if (val := get_int("PF_WORKER_COUNT", MISSING_VALUE)) != MISSING_VALUE:
                 self._config.max_concurrency = val
+
+        self._config.raise_on_error = raise_on_errors
 
         self._thread_pool = ThreadPoolExecutorWithContext(
             thread_name_prefix="evaluators_thread", max_workers=self._config.max_concurrency
