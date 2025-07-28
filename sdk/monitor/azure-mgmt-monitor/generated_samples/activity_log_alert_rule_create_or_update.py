@@ -16,7 +16,7 @@ from azure.mgmt.monitor import MonitorManagementClient
     pip install azure-identity
     pip install azure-mgmt-monitor
 # USAGE
-    python create_or_update_scheduled_query_rule_log_to_metric_action.py
+    python activity_log_alert_rule_create_or_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,24 +28,29 @@ from azure.mgmt.monitor import MonitorManagementClient
 def main():
     client = MonitorManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="af52d502-a447-4bc6-8cb7-4780fbb00490",
+        subscription_id="187f412d-1758-44d9-b052-169e2564721d",
     )
 
-    response = client.scheduled_query_rules.create_or_update(
-        resource_group_name="alertsweu",
-        rule_name="logtometricfoo",
-        parameters={
-            "location": "West Europe",
+    response = client.activity_log_alerts.create_or_update(
+        resource_group_name="MyResourceGroup",
+        activity_log_alert_name="SampleActivityLogAlertRule",
+        activity_log_alert_rule={
+            "location": "Global",
             "properties": {
-                "action": {
-                    "criteria": [{"dimensions": [], "metricName": "Average_% Idle Time"}],
-                    "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.LogToMetricAction",
+                "actions": {
+                    "actionGroups": [
+                        {
+                            "actionGroupId": "/subscriptions/187f412d-1758-44d9-b052-169e2564721d/resourceGroups/MyResourceGroup/providers/Microsoft.Insights/actionGroups/SampleActionGroup",
+                            "webhookProperties": {"sampleWebhookProperty": "SamplePropertyValue"},
+                        }
+                    ]
                 },
-                "description": "log to metric description",
-                "enabled": "true",
-                "source": {
-                    "dataSourceId": "/subscriptions/af52d502-a447-4bc6-8cb7-4780fbb00490/resourceGroups/alertsweu/providers/Microsoft.OperationalInsights/workspaces/alertsweu"
+                "condition": {
+                    "allOf": [{"equals": "Administrative", "field": "category"}, {"equals": "Error", "field": "level"}]
                 },
+                "description": "Description of sample Activity Log Alert rule.",
+                "enabled": True,
+                "scopes": ["/subscriptions/187f412d-1758-44d9-b052-169e2564721d"],
             },
             "tags": {},
         },
@@ -53,6 +58,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/stable/2018-04-16/examples/createOrUpdateScheduledQueryRule-LogToMetricAction.json
+# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/stable/2020-10-01/examples/ActivityLogAlertRule_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

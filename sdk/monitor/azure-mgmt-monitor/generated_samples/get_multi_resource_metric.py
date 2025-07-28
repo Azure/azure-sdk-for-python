@@ -16,7 +16,7 @@ from azure.mgmt.monitor import MonitorManagementClient
     pip install azure-identity
     pip install azure-mgmt-monitor
 # USAGE
-    python get_test_notifications.py
+    python get_multi_resource_metric.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,15 +28,15 @@ from azure.mgmt.monitor import MonitorManagementClient
 def main():
     client = MonitorManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="187f412d-1758-44d9-b052-169e2564721d",
+        subscription_id="92d2a2d8-b514-432d-8cc9-a5f9272630d5",
     )
 
-    response = client.action_groups.get_test_notifications(
-        notification_id="11000222191287",
+    response = client.metrics.list_at_subscription_scope(
+        region="westus2",
     )
     print(response)
 
 
-# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/stable/2022-06-01/examples/getTestNotifications.json
+# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/stable/2024-02-01/examples/GetMultiResourceMetric.json
 if __name__ == "__main__":
     main()

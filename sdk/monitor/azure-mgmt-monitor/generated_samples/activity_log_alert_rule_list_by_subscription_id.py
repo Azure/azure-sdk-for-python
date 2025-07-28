@@ -16,7 +16,7 @@ from azure.mgmt.monitor import MonitorManagementClient
     pip install azure-identity
     pip install azure-mgmt-monitor
 # USAGE
-    python list_action_groups.py
+    python activity_log_alert_rule_list_by_subscription_id.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,11 +31,11 @@ def main():
         subscription_id="187f412d-1758-44d9-b052-169e2564721d",
     )
 
-    response = client.action_groups.list_by_subscription_id()
+    response = client.activity_log_alerts.list_by_subscription_id()
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/stable/2023-01-01/examples/listActionGroups.json
+# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/stable/2020-10-01/examples/ActivityLogAlertRule_ListBySubscriptionId.json
 if __name__ == "__main__":
     main()
