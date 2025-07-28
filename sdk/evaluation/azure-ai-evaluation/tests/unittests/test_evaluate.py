@@ -1170,7 +1170,7 @@ class TestTagsInLoggingFunctions:
         # Verify that update_evaluation_run was called WITHOUT tags (not redundant)
         mock_client.update_evaluation_run.assert_called_once()
         update_call_args = mock_client.update_evaluation_run.call_args[1]["evaluation"]
-        assert not hasattr(update_call_args, "tags") or update_call_args.tags is None
+        assert getattr(update_call_args, "tags", None) is None
         assert update_call_args.status == "Completed"
 
         # Verify return value
