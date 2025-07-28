@@ -259,7 +259,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
             initial_headers: Optional[Dict[str, str]] = None,
             throughput_bucket: Optional[int] = None,
-            return_headers: Optional[bool] = False,
+            return_properties: Optional[bool] = False,
             **kwargs: Any
     ) -> DatabaseProxy:
         ...
@@ -272,7 +272,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
             initial_headers: Optional[Dict[str, str]] = None,
             throughput_bucket: Optional[int] = None,
-            return_headers: Optional[bool] = True,
+            return_properties: Optional[bool] = True,
             **kwargs: Any
     ) -> CosmosDict:
         ...
@@ -285,7 +285,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
         initial_headers: Optional[Dict[str, str]] = None,
         throughput_bucket: Optional[int] = None,
-        return_headers: Optional[bool] = False,
+        return_properties: Optional[bool] = False,
         **kwargs: Any
     ) -> Union[DatabaseProxy, CosmosDict]:
         """
@@ -294,7 +294,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :param str id: ID (name) of the database to create.
         :keyword offer_throughput: The provisioned throughput for this offer.
         :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
-        :param return_headers: Specifies function to return either a DatabaserProxy or a CosmosDict instance.
+        :param return_properties: Specifies function to return either a DatabaserProxy or a CosmosDict instance.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :keyword int throughput_bucket: The desired throughput bucket for the client
@@ -339,7 +339,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
         result = await self.client_connection.CreateDatabase(database={"id": id}, options=request_options, **kwargs)
-        if not return_headers:
+        if not return_properties:
             return DatabaseProxy(self.client_connection, id=result["id"], properties=result, header=result.get_response_headers())
         else:
             return result
@@ -352,7 +352,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
         initial_headers: Optional[Dict[str, str]] = None,
         throughput_bucket: Optional[int] = None,
-        return_headers: Optional[bool] = False,
+        return_properties: Optional[bool] = False,
         **kwargs: Any
     ) -> DatabaseProxy:
         ...
@@ -365,7 +365,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
             initial_headers: Optional[Dict[str, str]] = None,
             throughput_bucket: Optional[int] = None,
-            return_headers: Optional[bool] = True,
+            return_properties: Optional[bool] = True,
             **kwargs: Any
     ) -> CosmosDict:
         ...
@@ -378,7 +378,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
         initial_headers: Optional[Dict[str, str]] = None,
         throughput_bucket: Optional[int] = None,
-        return_headers: Optional[bool] = False,
+        return_properties: Optional[bool] = False,
         **kwargs: Any
     ) -> Union[DatabaseProxy, CosmosDict]:
 
@@ -394,7 +394,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :param str id: ID (name) of the database to read or create.
         :keyword offer_throughput: The provisioned throughput for this offer.
         :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
-        :param return_headers: Specifies function to return either a DatabaserProxy or a CosmosDict instance.
+        :param return_properties: Specifies function to return either a DatabaserProxy or a CosmosDict instance.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :keyword int throughput_bucket: The desired throughput bucket for the client
@@ -428,7 +428,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         try:
             database_proxy = self.get_database_client(id)
             headers = await database_proxy.read(**kwargs)
-            if not return_headers:
+            if not return_properties:
                 return database_proxy
             else:
                 return headers
@@ -436,7 +436,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             return await self.create_database(
                 id,
                 offer_throughput=offer_throughput,
-                return_headers=return_headers,
+                return_properties=return_properties,
                 **kwargs
             )
 
