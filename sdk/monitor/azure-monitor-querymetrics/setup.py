@@ -13,7 +13,7 @@ from setuptools import setup, find_packages
 
 
 PACKAGE_NAME = "azure-monitor-querymetrics"
-PACKAGE_PPRINT_NAME = "Azure Monitor Querymetrics"
+PACKAGE_PPRINT_NAME = "Azure Monitor Query Metrics"
 PACKAGE_NAMESPACE = "azure.monitor.querymetrics"
 
 # a.b.c => a/b/c
@@ -47,6 +47,7 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
