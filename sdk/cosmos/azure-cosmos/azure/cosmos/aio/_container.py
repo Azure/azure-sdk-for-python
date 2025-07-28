@@ -59,7 +59,6 @@ from ..partition_key import (
     _Undefined,
     _get_partition_key_from_partition_key_definition
 )
-# Add this import at the top of the file
 __all__ = ("ContainerProxy",)
 
 # pylint: disable=protected-access, too-many-lines
@@ -481,19 +480,18 @@ class ContainerProxy:
                 raise ValueError("Each item must have an 'id' and a partition key value.")
             try:
                 result = await self.read_item(item=item_id, partition_key=partition_key, **kwargs)
-                return CosmosList([result], response_headers=self.client_connection.last_response_headers)
-            except exceptions.CosmosResourceNotFoundError:
-                return CosmosList([], response_headers=self.client_connection.last_response_headers)
+                return CosmosList([result], response_headers=result.get_response_headers())
+            except exceptions.CosmosResourceNotFoundError as e:
+                return CosmosList([], response_headers=e.headers)
 
         kwargs["containerProperties"] = self._get_properties_with_options
         query_options = _build_options(kwargs)
         await self._get_properties_with_options(query_options)
-        query_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
         query_options["enableCrossPartitionQuery"] = True
 
         item_tuples = [(item_id, await self._set_partition_key(pk)) for item_id, pk in items]
 
-        return await self.client_connection.ReadManyItems(
+        return await self.client_connection.read_many_items(
             collection_link=self.container_link,
             items=item_tuples,
             options= query_options,

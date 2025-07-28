@@ -8,8 +8,10 @@ import unittest
 import uuid
 from unittest.mock import patch
 import pytest
+from azure.core.utils import CaseInsensitiveDict
+
 import test_config
-from azure.cosmos import PartitionKey
+from azure.cosmos import PartitionKey, CosmosDict
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos.documents import _OperationType
 from azure.cosmos.exceptions import CosmosHttpResponseError
@@ -101,7 +103,7 @@ class TestReadManyItems(unittest.IsolatedAsyncioTestCase):
         fault_injection_transport.add_fault(predicate, fault_action)
         return container_with_faults, client_with_faults
 
-    async def test_read_many_items_with_missing_items(self):
+    async def test_read_many_items_with_missing_items_async(self):
         """Tests read_many_items with a mix of existing and non-existent items."""
         items_to_read, _ = await self._create_items_for_read_many(self.container, 3, "existing_item")
 
@@ -116,7 +118,7 @@ class TestReadManyItems(unittest.IsolatedAsyncioTestCase):
         expected_ids = {item_tuple[0] for item_tuple in items_to_read if "existing" in item_tuple[0]}
         self.assertSetEqual(returned_ids, expected_ids)
 
-    async def test_read_many_items_single_item(self):
+    async def test_read_many_items_single_item_async(self):
         # Create one item using the helper. This also creates the item in the container.
         items_to_read, item_ids = await self._create_items_for_read_many(self.container, 1)
 
@@ -127,7 +129,27 @@ class TestReadManyItems(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(read_items), 1)
         self.assertEqual(read_items[0]['id'], item_ids[0])
 
-    async def test_read_many_items_different_partition_key(self):
+    async def test_read_many_single_item_uses_point_read_async(self):
+        """Test that for a single item, read_many_items uses the read_item optimization."""
+        with patch.object(self.container, 'read_item', autospec=True) as mock_read_item:
+            # Mock the return value of read_item to be a CosmosDict with headers
+            mock_headers = CaseInsensitiveDict({'x-ms-request-charge': '1.23'})
+            mock_read_item.return_value = CosmosDict(
+                {"id": "item1", "_rid": "some_rid"},
+                response_headers=mock_headers
+            )
+
+            items_to_read = [("item1", "pk1")]
+            result = await self.container.read_many_items(items=items_to_read)
+
+            # Verify that read_item was awaited exactly once with the correct arguments
+            mock_read_item.assert_awaited_once_with(item="item1", partition_key="pk1")
+
+            # Verify the result contains the item and headers
+            self.assertEqual(len(result), 1)
+            self.assertEqual(result[0]['id'], 'item1')
+
+    async def test_read_many_items_different_partition_key_async(self):
         """Tests read_many_items with partition key different from id."""
         container_pk = await self.database.create_container(
             id='read_many_pk_container_' + str(uuid.uuid4()),
@@ -151,7 +173,35 @@ class TestReadManyItems(unittest.IsolatedAsyncioTestCase):
         finally:
             await self.database.delete_container(container_pk)
 
-    async def test_read_many_items_hierarchical_partition_key(self):
+    async def test_read_many_items_fails_with_incomplete_hierarchical_pk_async(self):
+        """Tests that read_many_items raises ValueError for an incomplete hierarchical partition key."""
+        container_hpk = await self.database.create_container(
+            id='read_many_hpk_incomplete_container_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path=["/tenantId", "/userId"], kind="MultiHash")
+        )
+        try:
+            items_to_read = []
+            # Create a valid item
+            doc_id = f"item_valid_{uuid.uuid4()}"
+            tenant_id = "tenant1"
+            user_id = "user1"
+            await container_hpk.create_item({'id': doc_id, 'tenantId': tenant_id, 'userId': user_id})
+            items_to_read.append((doc_id, [tenant_id, user_id]))
+
+            # Add an item with an incomplete partition key
+            incomplete_pk_item_id = f"item_incomplete_{uuid.uuid4()}"
+            items_to_read.append((incomplete_pk_item_id, ["tenant_only"]))
+
+            # The operation should fail with a ValueError
+            with self.assertRaises(ValueError) as context:
+                await container_hpk.read_many_items(items=items_to_read)
+
+            self.assertIn("Number of components in partition key value (1) does not match definition (2)",
+                          str(context.exception))
+        finally:
+            await self.database.delete_container(container_hpk)
+
+    async def test_read_many_items_hierarchical_partition_key_async(self):
         """Tests read_many_items with hierarchical partition key."""
         container_hpk = await self.database.create_container(
             id='read_many_hpk_container_' + str(uuid.uuid4()),
@@ -176,7 +226,7 @@ class TestReadManyItems(unittest.IsolatedAsyncioTestCase):
         finally:
             await self.database.delete_container(container_hpk)
 
-    async def test_headers_being_returned(self):
+    async def test_headers_being_returned_async(self):
         """Tests that response headers are available."""
         items_to_read, item_ids = await self._create_items_for_read_many(self.container, 5)
 
@@ -190,7 +240,7 @@ class TestReadManyItems(unittest.IsolatedAsyncioTestCase):
         self.assertGreaterEqual(float(headers.get('x-ms-request-charge', 0)), 0)
         self.assertTrue(headers.get('x-ms-activity-id'))
 
-    async def test_read_many_items_large_count(self):
+    async def test_read_many_items_large_count_async(self):
         """Tests read_many_items with a large number of items."""
         items_to_read, item_ids = await self._create_items_for_read_many(self.container, 3100)
 
@@ -200,7 +250,7 @@ class TestReadManyItems(unittest.IsolatedAsyncioTestCase):
         read_ids = {item['id'] for item in read_items}
         self.assertSetEqual(read_ids, set(item_ids))
 
-    async def test_read_many_items_surfaces_exceptions(self):
+    async def test_read_many_items_surfaces_exceptions_async(self):
         """Tests that read_many_items surfaces exceptions from the transport layer."""
         error_to_inject = CosmosHttpResponseError(status_code=503, message="Injected Service Unavailable Error")
         container_with_faults, client_with_faults = self._setup_fault_injection_async(error_to_inject)
@@ -269,7 +319,7 @@ class TestReadManyItems(unittest.IsolatedAsyncioTestCase):
         finally:
             await client_with_faults.close()
 
-    async def test_read_many_after_container_recreation(self):
+    async def test_read_many_after_container_recreation_async(self):
         """Tests read_many_items after a container is deleted and recreated."""
         container_id = self.container.id
         initial_items_to_read, initial_item_ids = await self._create_items_for_read_many(self.container, 3, "initial")
@@ -290,7 +340,7 @@ class TestReadManyItems(unittest.IsolatedAsyncioTestCase):
         read_ids = {item['id'] for item in read_items_after}
         self.assertSetEqual(read_ids, set(new_item_ids))
 
-    async def test_read_many_items_concurrency_internals(self):
+    async def test_read_many_items_concurrency_internals_async(self):
         """Tests that read_many_items properly chunks large requests."""
         items_to_read = []
         for i in range(2500):

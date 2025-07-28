@@ -4,7 +4,6 @@ from typing import Dict, List, Tuple, Any, Union, Mapping, Optional
 from azure.cosmos import _base
 from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos._query_builder import _QueryBuilder
-# from azure.cosmos.aio._cosmos_client_connection_async import PartitionKeyType
 from azure.cosmos.partition_key import _Undefined, _Empty, NonePartitionKeyValue, _get_partition_key_from_partition_key_definition
 from azure.cosmos import CosmosList
 import logging
@@ -64,39 +63,33 @@ class ReadManyItemsHelper:
             collection_link: str,
             partition_key_definition: Dict[str, Any]
     ) -> Dict[str, List[Tuple[str, "PartitionKeyType"]]]:
-        """Group items by their partition key range ID."""
-        # Get collection resource ID
+        """Groups items by their partition key range ID efficiently."""
         collection_rid = _base.GetResourceIdOrFullNameFromLink(collection_link)
-        # Create partition key object from definition
         partition_key = _get_partition_key_from_partition_key_definition(partition_key_definition)
-        # Dictionary to group items by partition key range ID
         items_by_partition: Dict[str, List[Tuple[str, "PartitionKeyType"]]] = {}
 
-        # Process each item and group by physical partition
-        for item_id, partition_key_value in items:
-            try:
-                # Get the EPK range for the given partition key value
-                epk_range = partition_key._get_epk_range_for_partition_key(partition_key_value)
+        # Group items by logical partition key first to avoid redundant range lookups
+        items_by_pk_value: Dict[Any, List[Tuple[str, "PartitionKeyType"]]] = {}
+        for item_id, pk_value in items:
+            # Convert list to tuple to use as a dictionary key, as lists are unhashable
+            key = tuple(pk_value) if isinstance(pk_value, list) else pk_value
+            if key not in items_by_pk_value:
+                items_by_pk_value[key] = []
+            items_by_pk_value[key].append((item_id, pk_value))
 
-                # Get overlapping ranges for this EPK range
-                overlapping_ranges = await self.client._routing_map_provider.get_overlapping_ranges(
-                    collection_rid,
-                    [epk_range]
-                )
-
-                # Use the first overlapping range (there should be exactly one for a point lookup)
-                if overlapping_ranges:
-                    range_id = overlapping_ranges[0]["id"]
-
-                    # Group items by the partition key range ID
-                    if range_id not in items_by_partition:
-                        items_by_partition[range_id] = []
-                    items_by_partition[range_id].append((item_id, partition_key_value))
-
-            except Exception as e:
-                # Log the error but skip the item
-                self.logger.warning(f"Failed to process item {item_id}:{partition_key_value} - {e}")
-                continue  # Skip this item entirely
+        # Now, resolve the range ID once per unique logical partition key
+        for _, pk_items in items_by_pk_value.items():
+            # All items in this list share the same partition key value. Get it from the first item.
+            pk_value = pk_items[0][1]
+            epk_range = partition_key._get_epk_range_for_partition_key(pk_value)
+            overlapping_ranges = await self.client._routing_map_provider.get_overlapping_ranges(
+                collection_rid, [epk_range]
+            )
+            if overlapping_ranges:
+                range_id = overlapping_ranges[0]["id"]
+                if range_id not in items_by_partition:
+                    items_by_partition[range_id] = []
+                items_by_partition[range_id].extend(pk_items)
 
         return items_by_partition
 

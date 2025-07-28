@@ -4,11 +4,13 @@
 
 #### Features Added
 * Added feed range support in `query_items`. See [PR 41722](https://github.com/Azure/azure-sdk-for-python/pull/41722).
-
+* Added read_many_items API to provide an efficient method for retrieving multiple items in a single request. See [PR 42167](https://github.com/Azure/azure-sdk-for-python/pull/42167).
 #### Breaking Changes
 
 #### Bugs Fixed
 * Fixed bug where container cache was not being properly updated resulting in unnecessary extra requests. See [PR 42143](https://github.com/Azure/azure-sdk-for-python/pull/42143).
+* Fixed bug where the code was incorrectly comparing status_code to a sub-status constant. See [PR 42167](https://github.com/Azure/azure-sdk-for-python/pull/42167).
+* Fixed bug where exceptions were being swallowed in the synchronous flow. See [PR 42167](https://github.com/Azure/azure-sdk-for-python/pull/42167).
 
 #### Other Changes
 * Changed to include client id in headers for all requests. See [PR 42104](https://github.com/Azure/azure-sdk-for-python/pull/42104).

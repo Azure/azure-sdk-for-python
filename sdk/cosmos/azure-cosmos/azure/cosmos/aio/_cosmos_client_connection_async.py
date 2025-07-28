@@ -2231,7 +2231,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
 
 
-    async def ReadManyItems(
+    async def read_many_items(
             self,
             collection_link: str,
             items: List[Tuple[str, PartitionKeyType]],

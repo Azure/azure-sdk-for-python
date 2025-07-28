@@ -295,7 +295,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def read_many_items(
             self,
-            items: List[Tuple[str, PartitionKeyType]],
+            items: List[Tuple[str, _PartitionKeyType]],
             *,
             consistency_level: Optional[str] = None,
             session_token: Optional[str] = None,
@@ -335,18 +335,17 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 raise ValueError("Each item must have an 'id' and a partition key value.")
             try:
                 result = self.read_item(item=item_id, partition_key=partition_key, **kwargs)
-                return CosmosList([result], response_headers=self.client_connection.last_response_headers)
-            except exceptions.CosmosResourceNotFoundError:
-                return CosmosList([], response_headers=self.client_connection.last_response_headers)
+                return CosmosList([result], response_headers=result.get_response_headers())
+            except exceptions.CosmosResourceNotFoundError as e:
+                return CosmosList([], response_headers=e.headers)
 
         query_options = build_options(kwargs)
         self._get_properties_with_options(query_options)
-        query_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
         query_options["enableCrossPartitionQuery"] = True
 
         item_tuples = [(item_id, self._set_partition_key(pk)) for item_id, pk in items]
 
-        return self.client_connection.ReadManyItems(
+        return self.client_connection.read_many_items(
             collection_link=self.container_link,
             items=item_tuples,
             options=query_options,

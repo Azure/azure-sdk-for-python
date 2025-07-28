@@ -1036,10 +1036,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self.DeleteResource(path, http_constants.ResourceType.Permission, permission_id, None, options,
                             **kwargs)
 
-    def ReadManyItems(
+    def read_many_items(
             self,
             collection_link: str,
-            items: List[Tuple[str, PartitionKeyType]],
+            items: List[Tuple[str, _PartitionKeyType]],
             options: Optional[Mapping[str, Any]] = None,
             **kwargs: Any
      ) -> CosmosList:

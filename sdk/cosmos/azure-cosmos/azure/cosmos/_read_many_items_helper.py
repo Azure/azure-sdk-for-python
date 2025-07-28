@@ -83,19 +83,16 @@ class ReadManyItemsHelperSync:
         for _, pk_items in items_by_pk_value.items():
             # All items in this list share the same partition key value. Get it from the first item.
             pk_value = pk_items[0][1]
-            try:
-                epk_range = partition_key._get_epk_range_for_partition_key(pk_value)
-                overlapping_ranges = self.client._routing_map_provider.get_overlapping_ranges(
-                    collection_rid, [epk_range]
-                )
-                if overlapping_ranges:
-                    range_id = overlapping_ranges[0]["id"]
-                    if range_id not in items_by_partition:
-                        items_by_partition[range_id] = []
-                    items_by_partition[range_id].extend(pk_items)
-            except Exception as e:
-                self.logger.warning(f"Failed to resolve partition key range for PK '{pk_value}': {e}")
-                continue
+            epk_range = partition_key._get_epk_range_for_partition_key(pk_value)
+            overlapping_ranges = self.client._routing_map_provider.get_overlapping_ranges(
+                collection_rid, [epk_range]
+            )
+            if overlapping_ranges:
+                range_id = overlapping_ranges[0]["id"]
+                if range_id not in items_by_partition:
+                    items_by_partition[range_id] = []
+                items_by_partition[range_id].extend(pk_items)
+
         return items_by_partition
 
     def _execute_query_chunk_worker(

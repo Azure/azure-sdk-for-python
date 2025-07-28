@@ -1,22 +1,23 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
+import asyncio
 import time
 import unittest
 import uuid
 import pytest
-from azure.cosmos import PartitionKey, exceptions
+from azure.cosmos.aio import CosmosClient, DatabaseProxy
 import test_config
-import azure.cosmos.cosmos_client as cosmos_client
-
+from azure.cosmos import PartitionKey
+from azure.cosmos.exceptions import CosmosHttpResponseError
 
 @pytest.mark.cosmosSplit
-class TestReadManyItemsPartitionSplitScenariosSync(unittest.TestCase):
-    """Tests the behavior of read_many_items in scenarios involving partition splits (sync)."""
+class TestReadManyItemsPartitionSplitScenarios(unittest.IsolatedAsyncioTestCase):
+    """Tests the behavior of read_many_items in scenarios involving partition splits."""
 
     configs = test_config.TestConfig
     host = configs.host
     masterKey = configs.masterKey
-    client: cosmos_client = None
+    client: CosmosClient = None
     database = None
     container = None
 
@@ -29,25 +30,27 @@ class TestReadManyItemsPartitionSplitScenariosSync(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-    def setUp(self):
-        self.client = cosmos_client.CosmosClient(self.host, self.masterKey)
+    async def asyncSetUp(self):
+        self.client = CosmosClient(self.host, self.masterKey)
         self.database = self.client.get_database_client(self.configs.TEST_DATABASE_ID)
-        self.container = self.database.create_container(
+        self.container = await self.database.create_container(
             id='read_many_container_' + str(uuid.uuid4()),
             partition_key=PartitionKey(path="/id")
         )
 
-    def tearDown(self):
+    async def asyncTearDown(self):
         """Clean up async resources after each test."""
         if self.container:
             try:
-                self.database.delete_container(self.container)
-            except exceptions.CosmosHttpResponseError as e:
+                await self.database.delete_container(self.container)
+            except CosmosHttpResponseError as e:
                 # Container may have been deleted by the test itself
                 if e.status_code != 404:
                     raise
+        if self.client:
+            await self.client.close()
 
-    def test_read_many_items_with_partition_split(self):
+    async def test_read_many_items_with_partition_split_async(self):
         """Tests that read_many_items works correctly after a partition split."""
         # 1. Create 100 items to read
         items_to_read = []
@@ -55,21 +58,21 @@ class TestReadManyItemsPartitionSplitScenariosSync(unittest.TestCase):
         for i in range(5):
             doc_id = f"item_split_{i}_{uuid.uuid4()}"
             item_ids.append(doc_id)
-            self.container.create_item({'id': doc_id, 'data': i})
+            await self.container.create_item({'id': doc_id, 'data': i})
             items_to_read.append((doc_id, doc_id))
 
         # 2. Initial read_many_items call before the split
         print("Performing initial read_many_items call...")
-        initial_read_items = self.container.read_many_items(items=items_to_read)
+        initial_read_items = await self.container.read_many_items(items=items_to_read)
         self.assertEqual(len(initial_read_items), len(items_to_read))
         print("Initial call successful.")
 
         # 3. Trigger a partition split
-        test_config.TestConfig.trigger_split(self.container, 11000)
+        await test_config.TestConfig.trigger_split_async(self.container, 11000)
 
         # 4. Call read_many_items again after the split
         print("Performing post-split read_many_items call...")
-        final_read_items = self.container.read_many_items(items=items_to_read)
+        final_read_items = await self.container.read_many_items(items=items_to_read)
 
         # 5. Verify the results
         self.assertEqual(len(final_read_items), len(items_to_read))

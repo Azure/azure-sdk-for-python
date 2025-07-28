@@ -8,12 +8,15 @@ import pytest
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 import test_config
-from azure.cosmos import PartitionKey
+from azure.cosmos import PartitionKey, CosmosDict
 from _fault_injection_transport import FaultInjectionTransport
 from azure.cosmos._gone_retry_policy import PartitionKeyRangeGoneRetryPolicy
 from azure.cosmos._resource_throttle_retry_policy import ResourceThrottleRetryPolicy
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.documents import _OperationType
+from azure.core.utils import CaseInsensitiveDict
+
+from azure.cosmos.partition_key import NonePartitionKeyValue
 
 
 @pytest.mark.cosmosEmulator
@@ -101,7 +104,6 @@ class TestReadManyItems(unittest.TestCase):
         # Add 2 non-existent items
         items_to_read.append(("non_existent_item1" + str(uuid.uuid4()), "non_existent_pk1"))
         items_to_read.append(("non_existent_item2" + str(uuid.uuid4()), "non_existent_pk2"))
-
         read_items = self.container.read_many_items(items=items_to_read)
 
         self.assertEqual(len(read_items), 3)
@@ -119,6 +121,26 @@ class TestReadManyItems(unittest.TestCase):
         # Verify that one item was returned and it's the correct one
         self.assertEqual(len(read_items), 1)
         self.assertEqual(read_items[0]['id'], item_ids[0])
+
+    def test_read_many_single_item_uses_point_read(self):
+        """Test that for a single item, read_many_items uses the read_item optimization."""
+        with unittest.mock.patch.object(self.container, 'read_item', autospec=True) as mock_read_item:
+            # Mock the return value of read_item to be a CosmosDict with headers
+            mock_headers = CaseInsensitiveDict({'x-ms-request-charge': '1.23'})
+            mock_read_item.return_value = CosmosDict(
+                {"id": "item1", "_rid": "some_rid"},
+                response_headers = mock_headers
+            )
+
+            items_to_read = [("item1", "pk1")]
+            result = self.container.read_many_items(items=items_to_read)
+
+            # Verify that read_item was called exactly once with the correct arguments
+            mock_read_item.assert_called_once_with(item="item1", partition_key="pk1")
+
+            # Verify the result contains the item and headers
+            self.assertEqual(len(result), 1)
+            self.assertEqual(result[0]['id'], 'item1')
 
     def test_read_many_items_different_partition_key(self):
         """Tests read_many_items with partition key different from id."""
@@ -143,6 +165,35 @@ class TestReadManyItems(unittest.TestCase):
             self.assertSetEqual(read_ids, set(item_ids))
         finally:
             self.database.delete_container(container_pk)
+
+
+    def test_read_many_items_fails_with_incomplete_hierarchical_pk(self):
+        """Tests that read_many_items raises ValueError for an incomplete hierarchical partition key."""
+        container_hpk = self.database.create_container(
+            id='read_many_hpk_incomplete_container_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path=["/tenantId", "/userId"], kind="MultiHash")
+        )
+        try:
+            items_to_read = []
+            # Create a valid item
+            doc_id = f"item_valid_{uuid.uuid4()}"
+            tenant_id = "tenant1"
+            user_id = "user1"
+            container_hpk.create_item({'id': doc_id, 'tenantId': tenant_id, 'userId': user_id})
+            items_to_read.append((doc_id, [tenant_id, user_id]))
+
+            # Add an item with an incomplete partition key
+            incomplete_pk_item_id = f"item_incomplete_{uuid.uuid4()}"
+            items_to_read.append((incomplete_pk_item_id, ["tenant_only"]))
+
+            # The operation should fail with a ValueError
+            with self.assertRaises(ValueError) as context:
+                container_hpk.read_many_items(items=items_to_read)
+
+            self.assertIn("Number of components in partition key value (1) does not match definition (2)",
+                          str(context.exception))
+        finally:
+            self.database.delete_container(container_hpk)
 
     def test_read_many_items_hierarchical_partition_key(self):
         """Tests read_many_items with hierarchical partition key."""
