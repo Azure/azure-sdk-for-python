@@ -7,7 +7,7 @@ from .operations import ConversationAuthoringTrainedModelOperations
 
 JSON = MutableMapping[str, Any]
 
-class ConversationAuthoringTrainedModel:
+class ConversationAuthoringTrainedModelClient:
     def __init__(self, operations: ConversationAuthoringTrainedModelOperations, project_name: str, trained_model_label: str):
         self._operations = operations
         self._project_name = project_name
@@ -104,4 +104,4 @@ class ConversationAuthoringTrainedModel:
             **kwargs
         )
     
-__all__ = ["ConversationAuthoringTrainedModel"]
+__all__ = ["ConversationAuthoringTrainedModelClient"]

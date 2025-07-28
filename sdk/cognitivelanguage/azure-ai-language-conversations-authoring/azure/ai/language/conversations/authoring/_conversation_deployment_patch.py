@@ -6,7 +6,7 @@ from collections.abc import MutableMapping
 
 JSON = MutableMapping[str, Any]
 
-class ConversationAuthoringDeployment:
+class ConversationAuthoringDeploymentClient:
     def __init__(self, operations: ConversationAuthoringDeploymentOperations, project_name: str, deployment_name: str):
         self._operations = operations
         self._project_name = project_name
@@ -63,4 +63,4 @@ class ConversationAuthoringDeployment:
             self._project_name, self._deployment_name, job_id, **kwargs
         )
     
-__all__ = ["ConversationAuthoringDeployment"]
+__all__ = ["ConversationAuthoringDeploymentClient"]

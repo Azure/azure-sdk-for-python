@@ -13,10 +13,10 @@ if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
 from ._client import AuthoringClient  # type: ignore
-from ._conversation_project_patch import ConversationAuthoringProject
-from ._conversation_deployment_patch import ConversationAuthoringDeployment
-from ._conversation_exportedModel_patch import ConversationAuthoringExportedModel
-from ._conversation_trainedModel_patch import ConversationAuthoringTrainedModel
+from ._conversation_project_patch import ConversationAuthoringProjectClient
+from ._conversation_deployment_patch import ConversationAuthoringDeploymentClient
+from ._conversation_exportedModel_patch import ConversationAuthoringExportedModelClient
+from ._conversation_trainedModel_patch import ConversationAuthoringTrainedModelClient
 from ._version import VERSION
 
 __version__ = VERSION
@@ -29,10 +29,10 @@ except ImportError:
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "ConversationAuthoringProject",
-    "ConversationAuthoringDeployment",
-    "ConversationAuthoringExportedModel",
-    "ConversationAuthoringTrainedModel"
+    "ConversationAuthoringProjectClient",
+    "ConversationAuthoringDeploymentClient",
+    "ConversationAuthoringExportedModelClient",
+    "ConversationAuthoringTrainedModelClient"
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 
