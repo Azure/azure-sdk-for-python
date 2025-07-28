@@ -122,17 +122,15 @@ do
         Write-Host "Git push failed with LASTEXITCODE=$($LASTEXITCODE) Need to fetch and rebase: attempt number=$($tryNumber)"
 
         Write-Host "git fetch $RemoteName $PRBranchName"
-        # Full fetch will fail when the repo is in a sparse-checkout state, and single branch fetch is faster anyway.
+        # Disable sparse checkout to ensure we can fetch the branch.
+        git config core.sparseCheckout false
+        # Single branch fetch is sufficient.
         git fetch $RemoteName $PRBranchName
+        git config core.sparseCheckout true
         if ($LASTEXITCODE -ne 0)
         {
-            Write-Host "Single branch fetch failed, trying full fetch"
-            git fetch $RemoteName --unshallow
-            if ($LASTEXITCODE -ne 0)
-            {
-                Write-Error "Unable to fetch remote LASTEXITCODE=$($LASTEXITCODE), see command output above."
-                exit $LASTEXITCODE
-            }
+            Write-Error "Unable to fetch remote LASTEXITCODE=$($LASTEXITCODE), see command output above."
+            exit $LASTEXITCODE
         }
 
         try
