@@ -16,17 +16,17 @@ from ._Text_trainedModel_patch import TextAuthoringTrainedModel
 
 class TextAuthoringClient(AuthoringClientGenerated):
     def get_project_client(self, project_name: str) -> TextAuthoringProject:
-        return TextAuthoringProject(self.conversation_authoring_project, project_name)
+        return TextAuthoringProject(self.text_authoring_project, project_name)
 
     def get_deployment_client(self, project_name: str, deployment_name: str) -> TextAuthoringDeployment:
-        return TextAuthoringDeployment(self.conversation_authoring_deployment, project_name, deployment_name)
+        return TextAuthoringDeployment(self.text_authoring_deployment, project_name, deployment_name)
 
     def get_exported_model_client(self, project_name: str, exported_model_name: str) -> TextAuthoringExportedModel:
-        return TextAuthoringExportedModel(self.conversation_authoring_exported_model, project_name, exported_model_name)
+        return TextAuthoringExportedModel(self.text_authoring_exported_model, project_name, exported_model_name)
 
     def get_trained_model_client(self, project_name: str, trained_model_label: str) -> TextAuthoringTrainedModel:
         return TextAuthoringTrainedModel(
-            self.conversation_authoring_trained_model,
+            self.text_authoring_trained_model,
             project_name,
             trained_model_label
         )
