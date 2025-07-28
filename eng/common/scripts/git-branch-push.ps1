@@ -126,8 +126,13 @@ do
         git fetch $RemoteName $PRBranchName
         if ($LASTEXITCODE -ne 0)
         {
-            Write-Error "Unable to fetch remote LASTEXITCODE=$($LASTEXITCODE), see command output above."
-            exit $LASTEXITCODE
+            Write-Host "Single branch fetch failed, trying full fetch"
+            git fetch $RemoteName --unshallow
+            if ($LASTEXITCODE -ne 0)
+            {
+                Write-Error "Unable to fetch remote LASTEXITCODE=$($LASTEXITCODE), see command output above."
+                exit $LASTEXITCODE
+            }
         }
 
         try
