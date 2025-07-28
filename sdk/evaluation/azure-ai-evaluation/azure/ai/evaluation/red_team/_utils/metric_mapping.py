@@ -54,6 +54,7 @@ def get_annotation_task_from_risk_category(risk_category: Union[RiskCategory, _I
     """
     return RISK_CATEGORY_ANNOTATION_TASK_MAP.get(risk_category, Tasks.CONTENT_HARM)
 
+
 def get_attack_objective_from_risk_category(risk_category: Union[RiskCategory, _InternalRiskCategory]) -> str:
     """Get the attack objective string for a given risk category.
 

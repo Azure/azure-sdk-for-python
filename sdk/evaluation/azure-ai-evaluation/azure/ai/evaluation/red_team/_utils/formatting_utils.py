@@ -22,11 +22,7 @@ def message_to_dict(message: ChatMessage, context: str = None) -> Dict[str, str]
     :return: Dictionary representation with role and content
     :rtype: Dict[str, str]
     """
-    return {
-        "role": message.role,
-        "content": message.content,
-        "context": context
-    }
+    return {"role": message.role, "content": message.content, "context": context}
 
 
 def get_strategy_name(attack_strategy: Union[AttackStrategy, List[AttackStrategy]]) -> str:
