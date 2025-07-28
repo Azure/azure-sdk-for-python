@@ -26,7 +26,6 @@ class TestText(AzureRecordedTestCase):
 
     ...
 
-
 class TestTextCase(TestText):
     @TextPreparer()
     @recorded_by_proxy
@@ -42,7 +41,7 @@ class TestTextCase(TestText):
         project_data = TextAuthoringCreateProjectDetails(
             project_kind="customMultiLabelClassification",
             language="en",
-            storage_input_container_name="test-data",
+            storage_input_container_name="multi-class-example",
             project_name=project_name,
             multilingual=True,
             description="Project description for a Custom Entity Recognition project",
