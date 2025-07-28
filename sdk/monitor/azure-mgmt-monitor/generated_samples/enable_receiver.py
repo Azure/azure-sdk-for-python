@@ -38,6 +38,6 @@ def main():
     )
 
 
-# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/stable/2022-06-01/examples/enableReceiver.json
+# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/stable/2023-01-01/examples/enableReceiver.json
 if __name__ == "__main__":
     main()

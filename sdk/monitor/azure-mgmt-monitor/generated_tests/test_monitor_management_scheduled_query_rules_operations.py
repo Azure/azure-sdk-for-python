@@ -20,33 +20,22 @@ class TestMonitorManagementScheduledQueryRulesOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_scheduled_query_rules_create_or_update(self, resource_group):
-        response = self.client.scheduled_query_rules.create_or_update(
-            resource_group_name=resource_group.name,
-            rule_name="str",
-            parameters={
-                "action": "action",
-                "location": "str",
-                "source": {"dataSourceId": "str", "authorizedResources": ["str"], "query": "str", "queryType": "str"},
-                "autoMitigate": False,
-                "createdWithApiVersion": "str",
-                "description": "str",
-                "displayName": "str",
-                "enabled": "str",
-                "etag": "str",
-                "id": "str",
-                "isLegacyLogAnalyticsRule": bool,
-                "kind": "str",
-                "lastUpdatedTime": "2020-02-20 00:00:00",
-                "name": "str",
-                "provisioningState": "str",
-                "schedule": {"frequencyInMinutes": 0, "timeWindowInMinutes": 0},
-                "tags": {"str": "str"},
-                "type": "str",
-            },
-            api_version="2018-04-16",
+    def test_scheduled_query_rules_list_by_subscription(self, resource_group):
+        response = self.client.scheduled_query_rules.list_by_subscription(
+            api_version="2023-12-01",
         )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
 
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_scheduled_query_rules_list_by_resource_group(self, resource_group):
+        response = self.client.scheduled_query_rules.list_by_resource_group(
+            resource_group_name=resource_group.name,
+            api_version="2023-12-01",
+        )
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
@@ -56,7 +45,79 @@ class TestMonitorManagementScheduledQueryRulesOperations(AzureMgmtRecordedTestCa
         response = self.client.scheduled_query_rules.get(
             resource_group_name=resource_group.name,
             rule_name="str",
-            api_version="2018-04-16",
+            api_version="2023-12-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_scheduled_query_rules_create_or_update(self, resource_group):
+        response = self.client.scheduled_query_rules.create_or_update(
+            resource_group_name=resource_group.name,
+            rule_name="str",
+            parameters={
+                "location": "str",
+                "actions": {
+                    "actionGroups": ["str"],
+                    "actionProperties": {"str": "str"},
+                    "customProperties": {"str": "str"},
+                },
+                "autoMitigate": bool,
+                "checkWorkspaceAlertsStorageConfigured": bool,
+                "createdWithApiVersion": "str",
+                "criteria": {
+                    "allOf": [
+                        {
+                            "dimensions": [{"name": "str", "operator": "str", "values": ["str"]}],
+                            "failingPeriods": {"minFailingPeriodsToAlert": 1, "numberOfEvaluationPeriods": 1},
+                            "metricMeasureColumn": "str",
+                            "metricName": "str",
+                            "operator": "str",
+                            "query": "str",
+                            "resourceIdColumn": "str",
+                            "threshold": 0.0,
+                            "timeAggregation": "str",
+                        }
+                    ]
+                },
+                "description": "str",
+                "displayName": "str",
+                "enabled": bool,
+                "etag": "str",
+                "evaluationFrequency": "1 day, 0:00:00",
+                "id": "str",
+                "identity": {
+                    "type": "str",
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
+                "isLegacyLogAnalyticsRule": bool,
+                "isWorkspaceAlertsStorageConfigured": bool,
+                "kind": "str",
+                "muteActionsDuration": "1 day, 0:00:00",
+                "name": "str",
+                "overrideQueryTimeRange": "1 day, 0:00:00",
+                "resolveConfiguration": {"autoResolved": bool, "timeToResolve": "1 day, 0:00:00"},
+                "scopes": ["str"],
+                "severity": 0,
+                "skipQueryValidation": bool,
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
+                "tags": {"str": "str"},
+                "targetResourceTypes": ["str"],
+                "type": "str",
+                "windowSize": "1 day, 0:00:00",
+            },
+            api_version="2023-12-01",
         )
 
         # please add some check logic here by yourself
@@ -68,8 +129,53 @@ class TestMonitorManagementScheduledQueryRulesOperations(AzureMgmtRecordedTestCa
         response = self.client.scheduled_query_rules.update(
             resource_group_name=resource_group.name,
             rule_name="str",
-            parameters={"enabled": "str", "tags": {"str": "str"}},
-            api_version="2018-04-16",
+            parameters={
+                "actions": {
+                    "actionGroups": ["str"],
+                    "actionProperties": {"str": "str"},
+                    "customProperties": {"str": "str"},
+                },
+                "autoMitigate": bool,
+                "checkWorkspaceAlertsStorageConfigured": bool,
+                "createdWithApiVersion": "str",
+                "criteria": {
+                    "allOf": [
+                        {
+                            "dimensions": [{"name": "str", "operator": "str", "values": ["str"]}],
+                            "failingPeriods": {"minFailingPeriodsToAlert": 1, "numberOfEvaluationPeriods": 1},
+                            "metricMeasureColumn": "str",
+                            "metricName": "str",
+                            "operator": "str",
+                            "query": "str",
+                            "resourceIdColumn": "str",
+                            "threshold": 0.0,
+                            "timeAggregation": "str",
+                        }
+                    ]
+                },
+                "description": "str",
+                "displayName": "str",
+                "enabled": bool,
+                "evaluationFrequency": "1 day, 0:00:00",
+                "identity": {
+                    "type": "str",
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
+                "isLegacyLogAnalyticsRule": bool,
+                "isWorkspaceAlertsStorageConfigured": bool,
+                "muteActionsDuration": "1 day, 0:00:00",
+                "overrideQueryTimeRange": "1 day, 0:00:00",
+                "resolveConfiguration": {"autoResolved": bool, "timeToResolve": "1 day, 0:00:00"},
+                "scopes": ["str"],
+                "severity": 0,
+                "skipQueryValidation": bool,
+                "tags": {"str": "str"},
+                "targetResourceTypes": ["str"],
+                "windowSize": "1 day, 0:00:00",
+            },
+            api_version="2023-12-01",
         )
 
         # please add some check logic here by yourself
@@ -81,29 +187,8 @@ class TestMonitorManagementScheduledQueryRulesOperations(AzureMgmtRecordedTestCa
         response = self.client.scheduled_query_rules.delete(
             resource_group_name=resource_group.name,
             rule_name="str",
-            api_version="2018-04-16",
+            api_version="2023-12-01",
         )
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_scheduled_query_rules_list_by_subscription(self, resource_group):
-        response = self.client.scheduled_query_rules.list_by_subscription(
-            api_version="2018-04-16",
-        )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_scheduled_query_rules_list_by_resource_group(self, resource_group):
-        response = self.client.scheduled_query_rules.list_by_resource_group(
-            resource_group_name=resource_group.name,
-            api_version="2018-04-16",
-        )
-        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

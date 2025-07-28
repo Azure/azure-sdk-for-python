@@ -39,7 +39,7 @@ def build_list_request(resource_uri: str, *, start_time: Optional[str] = None, *
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -98,7 +98,7 @@ class MetricNamespacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-12-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
         cls: ClsType[_models.MetricNamespaceCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {

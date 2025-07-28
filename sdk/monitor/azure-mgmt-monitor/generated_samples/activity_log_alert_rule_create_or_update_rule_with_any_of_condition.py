@@ -16,7 +16,7 @@ from azure.mgmt.monitor import MonitorManagementClient
     pip install azure-identity
     pip install azure-mgmt-monitor
 # USAGE
-    python create_or_update_activity_log_alert.py
+    python activity_log_alert_rule_create_or_update_rule_with_any_of_condition.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -32,23 +32,31 @@ def main():
     )
 
     response = client.activity_log_alerts.create_or_update(
-        resource_group_name="Default-ActivityLogAlerts",
-        activity_log_alert_name="SampleActivityLogAlert",
-        activity_log_alert={
+        resource_group_name="MyResourceGroup",
+        activity_log_alert_name="SampleActivityLogAlertRuleWithAnyOfCondition",
+        activity_log_alert_rule={
             "location": "Global",
             "properties": {
                 "actions": {
                     "actionGroups": [
                         {
-                            "actionGroupId": "/subscriptions/187f412d-1758-44d9-b052-169e2564721d/resourceGroups/Default-ActionGroups/providers/microsoft.insights/actionGroups/SampleActionGroup",
-                            "webhookProperties": {"sampleWebhookProperty": "samplePropertyValue"},
+                            "actionGroupId": "/subscriptions/187f412d-1758-44d9-b052-169e2564721d/resourceGroups/MyResourceGroup/providers/Microsoft.Insights/actionGroups/SampleActionGroup",
+                            "webhookProperties": {"sampleWebhookProperty": "SamplePropertyValue"},
                         }
                     ]
                 },
                 "condition": {
-                    "allOf": [{"equals": "Administrative", "field": "Category"}, {"equals": "Error", "field": "Level"}]
+                    "allOf": [
+                        {"equals": "ServiceHealth", "field": "category"},
+                        {
+                            "anyOf": [
+                                {"equals": "Incident", "field": "properties.incidentType"},
+                                {"equals": "Maintenance", "field": "properties.incidentType"},
+                            ]
+                        },
+                    ]
                 },
-                "description": "Sample activity log alert description",
+                "description": "Description of sample Activity Log Alert rule with 'anyOf' condition.",
                 "enabled": True,
                 "scopes": ["subscriptions/187f412d-1758-44d9-b052-169e2564721d"],
             },
@@ -58,6 +66,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/stable/2017-04-01/examples/createOrUpdateActivityLogAlert.json
+# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/stable/2020-10-01/examples/ActivityLogAlertRule_CreateOrUpdateRuleWithAnyOfCondition.json
 if __name__ == "__main__":
     main()

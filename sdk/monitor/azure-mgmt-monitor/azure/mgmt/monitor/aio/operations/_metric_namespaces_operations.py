@@ -70,7 +70,7 @@ class MetricNamespacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-12-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
         cls: ClsType[_models.MetricNamespaceCollection] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {

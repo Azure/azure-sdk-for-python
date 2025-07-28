@@ -16,7 +16,7 @@ from azure.mgmt.monitor import MonitorManagementClient
     pip install azure-identity
     pip install azure-mgmt-monitor
 # USAGE
-    python get_scheduled_query_rules.py
+    python get_multi_resource_metric_definitions.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,16 +28,16 @@ from azure.mgmt.monitor import MonitorManagementClient
 def main():
     client = MonitorManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="b67f7fec-69fc-4974-9099-a26bd6ffeda3",
+        subscription_id="92d2a2d8-b514-432d-8cc9-a5f9272630d5",
     )
 
-    response = client.scheduled_query_rules.get(
-        resource_group_name="Rac46PostSwapRG",
-        rule_name="logalertfoo",
+    response = client.metric_definitions.list_at_subscription_scope(
+        region="westus2",
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/stable/2018-04-16/examples/getScheduledQueryRules.json
+# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/stable/2024-02-01/examples/GetMultiResourceMetricDefinitions.json
 if __name__ == "__main__":
     main()

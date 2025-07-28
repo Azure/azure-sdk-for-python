@@ -16,7 +16,7 @@ from azure.mgmt.monitor import MonitorManagementClient
     pip install azure-identity
     pip install azure-mgmt-monitor
 # USAGE
-    python get_activity_log_alert.py
+    python get_scheduled_query_rule.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,16 +28,16 @@ from azure.mgmt.monitor import MonitorManagementClient
 def main():
     client = MonitorManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="187f412d-1758-44d9-b052-169e2564721d",
+        subscription_id="dd4bfc94-a096-412b-9c43-4bd13e35afbc",
     )
 
-    response = client.activity_log_alerts.get(
-        resource_group_name="Default-ActivityLogAlerts",
-        activity_log_alert_name="SampleActivityLogAlert",
+    response = client.scheduled_query_rules.get(
+        resource_group_name="QueryResourceGroupName",
+        rule_name="perf",
     )
     print(response)
 
 
-# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/stable/2017-04-01/examples/getActivityLogAlert.json
+# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/stable/2023-12-01/examples/getScheduledQueryRule.json
 if __name__ == "__main__":
     main()
