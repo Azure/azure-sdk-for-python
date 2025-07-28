@@ -43,7 +43,7 @@ from ._status import BatchStatus
 from ._result import BatchResult, BatchRunDetails, BatchRunError, TokenMetrics
 from ._run_storage import AbstractRunStorage, NoOpRunStorage
 from .._common._logging import log_progress, logger, NodeLogManager
-from ..._exceptions import ErrorBlame
+from ..._exceptions import ErrorBlame, EvaluationException
 from ._exceptions import (
     BatchEngineCanceledError,
     BatchEngineError,
@@ -118,6 +118,8 @@ class BatchEngine:
             id = id or str(uuid4())
             result: BatchResult = await self._exec_in_task(id, batch_inputs, start_time)
             return result
+        except EvaluationException:
+            raise
         except Exception as ex:
             raise BatchEngineError(
                 "Unexpected error while running the batch run.", blame=ErrorBlame.SYSTEM_ERROR
