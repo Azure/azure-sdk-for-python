@@ -210,5 +210,5 @@ class TestRedTeamLanguageSupport:
             # Verify that get_attack_objectives was called with French language and tense strategy
             mock_rai_client.get_attack_objectives.assert_called_once()
             call_args = mock_rai_client.get_attack_objectives.call_args
-            assert call_args.kwargs["language"] == "fr"  # French language code
+            assert call_args.kwargs["language"] == SupportedLanguages.French.value  # French language code
             assert call_args.kwargs["strategy"] == "tense"
