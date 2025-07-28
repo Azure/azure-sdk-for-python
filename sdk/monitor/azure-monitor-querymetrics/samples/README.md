@@ -29,7 +29,7 @@ For examples on authenticating with the Azure Monitor service, see [sample_authe
 
 ## Setup
 
-1. Install the latest version of the Azure Monitor Query library:
+1. Install the latest version of the Azure Monitor Query Metrics library:
 
   ```bash
   pip install azure-monitor-querymetrics
@@ -37,10 +37,10 @@ For examples on authenticating with the Azure Monitor service, see [sample_authe
 
 2. Clone or download this sample repository.
 3. Open the *samples* folder in Visual Studio Code or your IDE of choice.
-4. To run most of this samples, you need `azure-identity` and `pandas`. Although, those dependencies are optional and can be replaced.
+4. To run the samples, you need `azure-identity`.
 
   ```bash
-  pip install azure-identity pandas
+  pip install azure-identity
   ```
 
 5. To run the async samples, you need an asynchronous HTTP framework like `aiohttp`:
