@@ -21,6 +21,7 @@
 
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
+import threading
 import warnings
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Sequence, Union, Tuple, Mapping, cast, overload, Iterable, Callable
@@ -94,6 +95,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self.id = id
         self.container_link = "{}/colls/{}".format(database_link, self.id)
         self.client_connection = client_connection
+        self.container_cache_lock = threading.Lock()
         self._is_system_key: Optional[bool] = None
         self._scripts: Optional[ScriptsProxy] = None
         if properties:
@@ -112,7 +114,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     def _get_properties(self, **kwargs: Any) -> Dict[str, Any]:
         if self.container_link not in self.__get_client_container_caches():
-            self.read(**kwargs)
+            with self.container_cache_lock:
+                if self.container_link not in self.__get_client_container_caches():
+                    self.read(**kwargs)
         return self.__get_client_container_caches()[self.container_link]
 
     @property

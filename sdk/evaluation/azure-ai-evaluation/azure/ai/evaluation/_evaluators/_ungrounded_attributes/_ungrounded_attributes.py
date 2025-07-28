@@ -67,14 +67,17 @@ class UngroundedAttributesEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         self,
         credential,
         azure_ai_project,
-        *,
-        _evaluate_query: bool = True,
+        **kwargs,
     ):
+        # Set default for evaluate_query if not provided
+        if "evaluate_query" not in kwargs:
+            kwargs["evaluate_query"] = True
+
         super().__init__(
             eval_metric=EvaluationMetrics.UNGROUNDED_ATTRIBUTES,
             azure_ai_project=azure_ai_project,
             credential=credential,
-            _evaluate_query=_evaluate_query,
+            **kwargs,
         )
 
     @overload

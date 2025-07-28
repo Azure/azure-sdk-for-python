@@ -19,17 +19,6 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Actions are for internal-only APIs."""
 
 
-class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specify which action user wants to be performed on the resources."""
-
-    START = "Start"
-    """Perform a start action on the specified resources"""
-    DEALLOCATE = "Deallocate"
-    """Perform a deallocate action on the specified resources"""
-    HIBERNATE = "Hibernate"
-    """Perform hibernate and deallocate on the specified resources"""
-
-
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of entity that created the resource."""
 
@@ -218,6 +207,17 @@ class ResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Resources defined are Virtual Machines"""
     VIRTUAL_MACHINE_SCALE_SET = "VirtualMachineScaleSet"
     """Resources defined are Virtual Machines Scale Sets"""
+
+
+class ScheduledActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specify which action user wants to be performed on the resources."""
+
+    START = "Start"
+    """Perform a start action on the specified resources"""
+    DEALLOCATE = "Deallocate"
+    """Perform a deallocate action on the specified resources"""
+    HIBERNATE = "Hibernate"
+    """Perform hibernate and deallocate on the specified resources"""
 
 
 class WeekDay(str, Enum, metaclass=CaseInsensitiveEnumMeta):

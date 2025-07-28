@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed an issue where CAE (Continuous Access Evaluation) caches were not properly used by `AuthorizationCodeCredential` and the asynchronous `OnBehalfOfCredential`. ([#42145](https://github.com/Azure/azure-sdk-for-python/pull/42145))
+
 ### Other Changes
 
 ## 1.24.0b1 (2025-07-17)

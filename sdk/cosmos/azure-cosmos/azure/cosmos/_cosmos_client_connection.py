@@ -2823,7 +2823,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             options = {}
 
         initial_headers = initial_headers or self.default_headers
-        headers = base.GetHeaders(self, initial_headers, "get", path, id, typ, documents._OperationType.Read, options)
+        headers = base.GetHeaders(self, initial_headers, "get", path, id, typ, documents._OperationType.Read,
+                                  options)
         # Read will use ReadEndpoint since it uses GET operation
         request_params = RequestObject(typ, documents._OperationType.Read, headers)
         request_params.set_excluded_location_from_options(options)

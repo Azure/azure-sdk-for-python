@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.compute.aio import ComputeManagementClient
+from azure.mgmt.compute.v2024_11_01.aio import ComputeManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -18,6 +18,39 @@ AZURE_LOCATION = "eastus"
 class TestComputeManagementDedicatedHostGroupsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(ComputeManagementClient, is_async=True)
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_dedicated_host_groups_list_by_subscription(self, resource_group):
+        response = self.client.dedicated_host_groups.list_by_subscription(
+            api_version="2024-11-01",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_dedicated_host_groups_list_by_resource_group(self, resource_group):
+        response = self.client.dedicated_host_groups.list_by_resource_group(
+            resource_group_name=resource_group.name,
+            api_version="2024-11-01",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_dedicated_host_groups_get(self, resource_group):
+        response = await self.client.dedicated_host_groups.get(
+            resource_group_name=resource_group.name,
+            host_group_name="str",
+            api_version="2024-11-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
@@ -51,6 +84,14 @@ class TestComputeManagementDedicatedHostGroupsOperationsAsync(AzureMgmtRecordedT
                 "name": "str",
                 "platformFaultDomainCount": 0,
                 "supportAutomaticPlacement": bool,
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
                 "tags": {"str": "str"},
                 "type": "str",
                 "zones": ["str"],
@@ -108,38 +149,5 @@ class TestComputeManagementDedicatedHostGroupsOperationsAsync(AzureMgmtRecordedT
             api_version="2024-11-01",
         )
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_dedicated_host_groups_get(self, resource_group):
-        response = await self.client.dedicated_host_groups.get(
-            resource_group_name=resource_group.name,
-            host_group_name="str",
-            api_version="2024-11-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_dedicated_host_groups_list_by_resource_group(self, resource_group):
-        response = self.client.dedicated_host_groups.list_by_resource_group(
-            resource_group_name=resource_group.name,
-            api_version="2024-11-01",
-        )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_dedicated_host_groups_list_by_subscription(self, resource_group):
-        response = self.client.dedicated_host_groups.list_by_subscription(
-            api_version="2024-11-01",
-        )
-        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
