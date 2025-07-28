@@ -1,5 +1,5 @@
 from .operations import ConversationAuthoringDeploymentOperations
-import models as _models
+from . import models as _models
 from azure.core.polling import LROPoller
 from typing import Any, Callable, Dict, IO, Iterator, List, Optional, TypeVar, Union, cast, overload
 from collections.abc import MutableMapping

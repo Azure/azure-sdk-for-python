@@ -2,7 +2,7 @@ from typing import Any, IO, Optional, Union
 from collections.abc import MutableMapping
 from azure.core.polling import LROPoller
 from azure.core.paging import ItemPaged
-import models as _models
+from . import models as _models
 from .operations import ConversationAuthoringTrainedModelOperations
 
 JSON = MutableMapping[str, Any]
