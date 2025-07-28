@@ -1763,6 +1763,13 @@
       ]
     },
     {
+      "filename": "sdk/confidentialledger/azure-confidentialledger/**",
+      "words": [
+        "mrenclave",
+        "MRENCLAVE"
+      ]
+    },
+    {
       "filename": "sdk/confidentialledger/azure-confidentialledger/azure/confidentialledger/_operations/*.py",
       "words": [
         "mrenclave",
@@ -1780,8 +1787,7 @@
         "wday",
         "mday",
         "deseralize",
-        "astimezone",
-        "mrenclave"
+        "astimezone"
       ]
     },
     {
