@@ -38,6 +38,7 @@ from typing import (
 )
 from uuid import uuid4
 
+from ._config import BatchEngineConfig
 from ._utils import DEFAULTS_KEY, get_int_env_var, get_value_from_path, is_async_callable
 from ._status import BatchStatus
 from ._result import BatchResult, BatchRunDetails, BatchRunError, TokenMetrics
@@ -69,30 +70,25 @@ class BatchEngine:
         self,
         func: Callable,
         *,
+        config: BatchEngineConfig,
         storage: Optional[AbstractRunStorage] = None,
-        batch_timeout_sec: Optional[int] = None,
-        line_timeout_sec: Optional[int] = None,
-        max_worker_count: Optional[int] = None,
         executor: Optional[Executor] = None,
     ):
         """Create a new batch engine instance
 
         :param Callable func: The function to run the flow
+        :param BatchEngineConfig config: The configuration for the batch engine
         :param Optional[AbstractRunStorage] storage: The storage to store execution results
-        :param Optional[int] batch_timeout_sec: The timeout of batch run in seconds
-        :param Optional[int] line_timeout_sec: The timeout of each line in seconds
-        :param Optional[int] max_worker_count: The concurrency limit of batch run
         :param Optional[Executor] executor: The executor to run the flow (if needed)
         """
 
         self._func: Callable = func
+        self._config: BatchEngineConfig = config
         self._storage: AbstractRunStorage = storage or NoOpRunStorage()
 
-        # TODO ralphe: Consume these from the batch context/config instead of from
-        #              kwargs or (even worse) environment variables
-        self._batch_timeout_sec = batch_timeout_sec or get_int_env_var("PF_BATCH_TIMEOUT_SEC")
-        self._line_timeout_sec = line_timeout_sec or get_int_env_var("PF_LINE_TIMEOUT_SEC", 600)
-        self._max_worker_count = max_worker_count or get_int_env_var("PF_WORKER_COUNT") or MAX_WORKER_COUNT
+        self._batch_timeout_sec = self._config.batch_timeout_seconds
+        self._line_timeout_sec = self._config.line_timeout_seconds
+        self._max_worker_count = self._config.max_concurrency
 
         self._executor: Optional[Executor] = executor
         self._is_canceled: bool = False

@@ -19,7 +19,7 @@ class BatchEngineConfig:
     batch_timeout_seconds: int = PF_BATCH_TIMEOUT_SEC_DEFAULT
     """The maximum amount of time to wait for all evaluations in the batch to complete."""
 
-    run_timeout_seconds: int = 600
+    line_timeout_seconds: int = 600
     """The maximum amount of time to wait for an evaluation to run against a single entry
     in the data input to complete."""
 
@@ -37,8 +37,8 @@ class BatchEngineConfig:
             raise ValueError("logger cannot be None")
         if self.batch_timeout_seconds <= 0:
             raise ValueError("batch_timeout_seconds must be greater than 0")
-        if self.run_timeout_seconds <= 0:
-            raise ValueError("run_timeout_seconds must be greater than 0")
+        if self.line_timeout_seconds <= 0:
+            raise ValueError("line_timeout_seconds must be greater than 0")
         if self.max_concurrency <= 0:
             raise ValueError("max_concurrency must be greater than 0")
         if self.default_num_results <= 0:

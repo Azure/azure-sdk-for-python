@@ -121,10 +121,8 @@ class RunSubmitter:
         try:
             batch_engine = BatchEngine(
                 run.dynamic_callable,
+                config=self._config,
                 storage=local_storage,
-                batch_timeout_sec=self._config.batch_timeout_seconds,
-                line_timeout_sec=self._config.run_timeout_seconds,
-                max_worker_count=self._config.max_concurrency,
                 executor=self._executor,
             )
 

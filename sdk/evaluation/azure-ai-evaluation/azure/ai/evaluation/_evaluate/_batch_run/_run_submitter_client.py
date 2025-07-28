@@ -20,14 +20,29 @@ from ..._legacy._adapters._constants import LINE_NUMBER
 from ..._legacy._adapters.types import AttrDict
 from ..._legacy._common._thread_pool_executor_with_context import ThreadPoolExecutorWithContext
 from ..._evaluate._utils import _has_aggregator
-from ..._constants import Prefixes
+from ..._constants import Prefixes, PF_BATCH_TIMEOUT_SEC
 
-LOGGER = logging.getLogger(__name__)
+from .._utils import get_int_env_var as get_int
+
+
+LOGGER = logging.getLogger("run")
+MISSING_VALUE: Final[int] = sys.maxsize
 
 
 class RunSubmitterClient:
-    def __init__(self, config: Optional[BatchEngineConfig] = None) -> None:
-        self._config = config or BatchEngineConfig(LOGGER, use_async=True)
+    def __init__(self, *, config: Optional[BatchEngineConfig] = None) -> None:
+        if config:
+            self._config = config
+        else:
+            # Generate default config and apply any overrides to the configuration from environment variables
+            self._config = BatchEngineConfig(LOGGER, use_async=True)
+            if (val := get_int(PF_BATCH_TIMEOUT_SEC, MISSING_VALUE)) != MISSING_VALUE:
+                self._config.batch_timeout_seconds = val
+            if (val := get_int("PF_LINE_TIMEOUT_SEC", MISSING_VALUE)) != MISSING_VALUE:
+                self._config.line_timeout_seconds = val
+            if (val := get_int("PF_WORKER_COUNT", MISSING_VALUE)) != MISSING_VALUE:
+                self._config.max_concurrency = val
+
         self._thread_pool = ThreadPoolExecutorWithContext(
             thread_name_prefix="evaluators_thread", max_workers=self._config.max_concurrency
         )
