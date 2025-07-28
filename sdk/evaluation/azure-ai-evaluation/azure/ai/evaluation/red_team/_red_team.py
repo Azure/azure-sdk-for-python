@@ -3275,16 +3275,16 @@ class RedTeam:
                 raise ValueError(
                     "MultiTurn and Crescendo strategies are not compatible with multiple attack strategies."
                 )
-        if AttackStrategy.Tense in flattened_attack_strategies and (RiskCategory.XPIA in self.risk_categories or RiskCategory.UngroundedAttributes in self.risk_categories):
-            self.logger.warning(
-                "Tense strategy is not compatible with XPIA or UngroundedAttributes risk categories. Skipping Tense strategy."
-            )
-            print(
-                "⚠️ Warning: Tense strategy is not compatible with XPIA or UngroundedAttributes risk categories. Skipping Tense strategy."
-            )
-            raise ValueError(
-                "Tense strategy is not compatible with XPIA or UngroundedAttributes risk categories."
-            )
+            if AttackStrategy.Tense in flattened_attack_strategies and (RiskCategory.XPIA in self.risk_categories or RiskCategory.UngroundedAttributes in self.risk_categories):
+                self.logger.warning(
+                    "Tense strategy is not compatible with XPIA or UngroundedAttributes risk categories. Skipping Tense strategy."
+                )
+                print(
+                    "⚠️ Warning: Tense strategy is not compatible with XPIA or UngroundedAttributes risk categories. Skipping Tense strategy."
+                )
+                raise ValueError(
+                    "Tense strategy is not compatible with XPIA or UngroundedAttributes risk categories."
+                )
 
             # Calculate total tasks: #risk_categories * #converters
             self.total_tasks = len(self.risk_categories) * len(flattened_attack_strategies)
