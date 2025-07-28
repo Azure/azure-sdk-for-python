@@ -8,6 +8,9 @@
 
 ### Bugs Fixed
 
+- Update min version of OpenTelemetry. Remove Python 3.8 support.
+    ([#xxxxx](https://github.com/Azure/azure-sdk-for-python/pull/xxxxx))
+
 ### Other Changes
 
 ## 1.0.0b40 (2025-07-17)
