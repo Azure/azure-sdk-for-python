@@ -32,7 +32,7 @@ For examples on authenticating with the Azure Monitor service, see [sample_authe
 1. Install the latest version of the Azure Monitor Query library:
 
   ```bash
-  pip install azure-monitor-query
+  pip install azure-monitor-querymetrics
   ```
 
 2. Clone or download this sample repository.
