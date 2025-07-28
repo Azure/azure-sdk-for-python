@@ -1250,43 +1250,38 @@ class TestTagsInLoggingFunctions:
         start_call_args = mock_client.start_evaluation_run.call_args[1]["evaluation"]
         assert start_call_args.tags == {}
 
-    def test_log_metrics_and_instance_results_onedp_no_redundant_tags(self):
+    @patch("azure.ai.evaluation._azure._token_manager.AzureMLTokenManager")
+    @patch("azure.ai.evaluation._common.EvaluationServiceOneDPClient")
+    def test_log_metrics_and_instance_results_onedp_no_redundant_tags(self, mock_client_class, mock_token_manager):
         """Test that tags are not redundantly set in update_evaluation_run."""
         from azure.ai.evaluation._evaluate._utils import _log_metrics_and_instance_results_onedp
-        import inspect
 
-        # Get the source code of the function
-        source = inspect.getsource(_log_metrics_and_instance_results_onedp)
+        # Mock the client and its methods
+        mock_client = mock_client_class.return_value
+        mock_client.create_evaluation_result.return_value = type("MockResponse", (), {"id": "eval-result-123"})()
+        mock_client.start_evaluation_run.return_value = type("MockResponse", (), {"id": "run-123"})()
+        mock_client.update_evaluation_run.return_value = type(
+            "MockResponse", (), {"properties": {"AiStudioEvaluationUri": "https://test-uri"}}
+        )()
 
-        # Count occurrences of "tags=tags" in update_evaluation_run call
-        lines = source.split("\n")
-        update_section = []
-        in_update_section = False
+        # Mock data for the test
+        metrics = {"accuracy": 0.95}
+        instance_results = pd.DataFrame([{"input": "test", "output": "result"}])
+        tags = {"tag1": "value1", "tag2": "value2"}
 
-        for line in lines:
-            if "update_evaluation_run(" in line:
-                in_update_section = True
-            if in_update_section:
-                update_section.append(line)
-                if line.strip().endswith(")") and "update_evaluation_run" in "".join(update_section):
-                    break
+        # Call the function under test
+        _log_metrics_and_instance_results_onedp(
+            metrics=metrics,
+            instance_results=instance_results,
+            project_url="https://test-project.cognitiveservices.azure.com/",
+            evaluation_name="test-evaluation",
+            name_map={},
+            tags=tags,
+        )
 
-        update_code = "\n".join(update_section)
-
-        # Verify that tags=tags is NOT in the update_evaluation_run call
-        assert "tags=tags" not in update_code, "Tags should not be redundantly set in update_evaluation_run"
-
-        # Verify that tags=tags IS in the start_evaluation_run call
-        start_section = []
-        in_start_section = False
-
-        for line in lines:
-            if "start_evaluation_run(" in line:
-                in_start_section = True
-            if in_start_section:
-                start_section.append(line)
-                if line.strip().endswith(")") and "start_evaluation_run" in "".join(start_section):
-                    break
-
-        start_code = "\n".join(start_section)
-        assert "tags=tags" in start_code, "Tags should be set in start_evaluation_run"
+        # Verify that update_evaluation_run was called without redundant tags
+        mock_client.update_evaluation_run.assert_called_once()
+        call_args = mock_client.update_evaluation_run.call_args[1]["evaluation"]
+        assert (
+            not hasattr(call_args, "tags") or call_args.tags is None
+        ), "Tags should not be redundantly set in update_evaluation_run"
