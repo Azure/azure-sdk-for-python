@@ -154,7 +154,7 @@ class TestRedTeamLanguageSupport:
             # Verify that get_attack_objectives was called with Spanish language
             mock_rai_client.get_attack_objectives.assert_called_once()
             call_args = mock_rai_client.get_attack_objectives.call_args
-            self._assert_language_code(call_args.kwargs["language"], SupportedLanguages.Spanish)
+            assert call_args.kwargs["language"] == SupportedLanguages.Spanish.value
 
     @pytest.mark.asyncio
     async def test_get_attack_objectives_tense_strategy_passes_language(self, mock_azure_ai_project, mock_credential):
