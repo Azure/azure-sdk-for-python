@@ -282,7 +282,7 @@ class BatchEngine:
         if failed_lines and not error:
             error_message = f"{floor(failed_lines / len(batch_inputs) * 100)}% of the batch run failed."
             first_exception: Optional[Exception] = next(
-                (result for result in result_details if result.error and result.error.exception),
+                (result.error.exception for result in result_details if result.error and result.error.exception),
                 None,
             )
             if first_exception is not None:
