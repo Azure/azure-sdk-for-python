@@ -35,8 +35,8 @@ from ._rai_content_filters_operations import RaiContentFiltersOperations  # type
 from ._network_security_perimeter_configurations_operations import NetworkSecurityPerimeterConfigurationsOperations  # type: ignore
 from ._defender_for_ai_settings_operations import DefenderForAISettingsOperations  # type: ignore
 from ._projects_operations import ProjectsOperations  # type: ignore
-from ._account_connection_operations import AccountConnectionOperations  # type: ignore
-from ._project_connection_operations import ProjectConnectionOperations  # type: ignore
+from ._account_connections_operations import AccountConnectionsOperations  # type: ignore
+from ._project_connections_operations import ProjectConnectionsOperations  # type: ignore
 from ._account_capability_hosts_operations import AccountCapabilityHostsOperations  # type: ignore
 from ._project_capability_hosts_operations import ProjectCapabilityHostsOperations  # type: ignore
 
@@ -67,8 +67,8 @@ __all__ = [
     "NetworkSecurityPerimeterConfigurationsOperations",
     "DefenderForAISettingsOperations",
     "ProjectsOperations",
-    "AccountConnectionOperations",
-    "ProjectConnectionOperations",
+    "AccountConnectionsOperations",
+    "ProjectConnectionsOperations",
     "AccountCapabilityHostsOperations",
     "ProjectCapabilityHostsOperations",
 ]

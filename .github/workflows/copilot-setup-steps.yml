@@ -12,21 +12,26 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
           cache: 'pip'
-      
+
       - name: Create and activate virtual environment
         run: |
           python -m venv .venv
           source .venv/bin/activate
           echo "VIRTUAL_ENV=$(pwd)/.venv" >> $GITHUB_ENV
           echo "$(pwd)/.venv/bin" >> $GITHUB_PATH
-      
+
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
           python -m pip install -r eng/ci_tools.txt
+
+      - name: Install azsdk mcp server
+        shell: pwsh
+        run: |
+          ./eng/common/mcp/azure-sdk-mcp.ps1 -InstallDirectory $HOME/bin

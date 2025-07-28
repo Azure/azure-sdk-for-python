@@ -37,6 +37,7 @@ from azure.core import MatchConditions
 from . import documents
 from . import http_constants
 from . import _runtime_constants
+from ._constants import _Constants as Constants
 from .auth import _get_authorization_header
 from .offer import ThroughputProperties
 from .partition_key import _Empty, _Undefined
@@ -62,6 +63,7 @@ _COMMON_OPTIONS = {
     'query_version': 'queryVersion',
     'priority': 'priorityLevel',
     'no_response': 'responsePayloadOnWriteDisabled',
+    'retry_write': Constants.Kwargs.RETRY_WRITE,
     'max_item_count': 'maxItemCount',
     'throughput_bucket': 'throughputBucket',
     'excluded_locations': 'excludedLocations'
@@ -289,6 +291,8 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
 
     if client_id is not None:
         headers[http_constants.HttpHeaders.ClientId] = client_id
+    elif cosmos_client_connection and cosmos_client_connection.client_id:
+        headers[http_constants.HttpHeaders.ClientId] = cosmos_client_connection.client_id
 
     if options.get("enableScriptLogging"):
         headers[http_constants.HttpHeaders.EnableScriptLogging] = options["enableScriptLogging"]

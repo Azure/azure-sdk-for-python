@@ -54,14 +54,13 @@ from samples.utils.user_functions import fetch_current_datetime
 # Import AzureLogicAppTool and the function factory from user_logic_apps
 from utils.user_logic_apps import AzureLogicAppTool, create_send_email_function
 
-# [START register_logic_app]
-
 # Create the agents client
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
 )
 
+# [START register_logic_app]
 # Extract subscription and resource group from the project scope
 subscription_id = os.environ["SUBSCRIPTION_ID"]
 resource_group = os.environ["resource_group_name"]

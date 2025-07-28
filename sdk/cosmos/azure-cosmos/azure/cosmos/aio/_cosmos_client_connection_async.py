@@ -56,6 +56,7 @@ from .._base import _build_properties_cache
 from .. import documents
 from .._change_feed.aio.change_feed_iterable import ChangeFeedIterable
 from .._change_feed.change_feed_state import ChangeFeedState
+from .._change_feed.feed_range_internal import FeedRangeInternalEpk
 from .._routing import routing_range
 from ..documents import ConnectionPolicy, DatabaseAccount
 from .._constants import _Constants as Constants
@@ -71,9 +72,11 @@ from .. import _session
 from .. import _utils
 from ..partition_key import (
     _Undefined,
+    _PartitionKeyKind,
+    _SequentialPartitionKeyType,
     _return_undefined_or_empty_partition_key,
     NonePartitionKeyValue, _Empty,
-    _get_partition_key_from_partition_key_definition
+    _build_partition_key_from_properties,
 )
 from ._auth_policy_async import AsyncCosmosBearerTokenCredentialPolicy
 from .._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
@@ -788,6 +791,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         request_params = _request_object.RequestObject(typ, documents._OperationType.Create, headers)
         request_params.set_excluded_location_from_options(options)
+        request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
         result, last_response_headers = await self.__Post(path, request_params, body, headers, **kwargs)
         self.last_response_headers = last_response_headers
 
@@ -929,6 +933,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Upsert will use WriteEndpoint since it uses POST operation
         request_params = _request_object.RequestObject(typ, documents._OperationType.Upsert, headers)
         request_params.set_excluded_location_from_options(options)
+        request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
         result, last_response_headers = await self.__Post(path, request_params, body, headers, **kwargs)
         self.last_response_headers = last_response_headers
         # update session for write request
@@ -1494,6 +1499,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Patch will use WriteEndpoint since it uses PUT operation
         request_params = _request_object.RequestObject(typ, documents._OperationType.Patch, headers)
         request_params.set_excluded_location_from_options(options)
+        request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
         request_data = {}
         if options.get("filterPredicate"):
             request_data["condition"] = options.get("filterPredicate")
@@ -1600,6 +1606,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Replace will use WriteEndpoint since it uses PUT operation
         request_params = _request_object.RequestObject(typ, documents._OperationType.Replace, headers)
         request_params.set_excluded_location_from_options(options)
+        request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
         result, last_response_headers = await self.__Put(path, request_params, resource, headers, **kwargs)
         self.last_response_headers = last_response_headers
 
@@ -1925,6 +1932,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Delete will use WriteEndpoint since it uses DELETE operation
         request_params = _request_object.RequestObject(typ, documents._OperationType.Delete, headers)
         request_params.set_excluded_location_from_options(options)
+        request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
         result, last_response_headers = await self.__Delete(path, request_params, headers, **kwargs)
         self.last_response_headers = last_response_headers
 
@@ -2897,10 +2905,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 return []
 
         initial_headers = self.default_headers.copy()
-        cont_prop_func = kwargs.pop("containerProperties", None)
-        cont_prop = None
-        if cont_prop_func:
-            cont_prop = await cont_prop_func(options) # get properties with feed options
+        container_property_func = kwargs.pop("containerProperties", None)
+        container_property = None
+        if container_property_func:
+            container_property = await container_property_func(options) # get properties with feed options
 
         # Copy to make sure that default_headers won't be changed.
         if query is None:
@@ -2950,22 +2958,22 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         request_params = _request_object.RequestObject(typ, documents._OperationType.SqlQuery, req_headers)
         request_params.set_excluded_location_from_options(options)
 
-        # check if query has prefix partition key
-        partition_key_value = options.get("partitionKey", None)
-        is_prefix_partition_query = False
-        partition_key_obj = None
-        if cont_prop and partition_key_value is not None:
-            partition_key_definition = cont_prop["partitionKey"]
-            partition_key_obj = _get_partition_key_from_partition_key_definition(partition_key_definition)
-            is_prefix_partition_query = partition_key_obj._is_prefix_partition_key(partition_key_value)
+        # Check if the over lapping ranges can be populated
+        feed_range_epk = None
+        if "feed_range" in kwargs:
+            feed_range = kwargs.pop("feed_range")
+            feed_range_epk = FeedRangeInternalEpk.from_json(feed_range).get_normalized_range()
+        elif options.get("partitionKey") is not None and container_property is not None:
+            # check if query has prefix partition key
+            partition_key_value = options["partitionKey"]
+            partition_key_obj = _build_partition_key_from_properties(container_property)
+            if partition_key_obj._is_prefix_partition_key(partition_key_value):
+                req_headers.pop(http_constants.HttpHeaders.PartitionKey, None)
+                partition_key_value = cast(_SequentialPartitionKeyType, partition_key_value)
+                feed_range_epk = partition_key_obj._get_epk_range_for_prefix_partition_key(partition_key_value)
 
-        if is_prefix_partition_query and partition_key_obj:
-            # here get the overlapping ranges
-            req_headers.pop(http_constants.HttpHeaders.PartitionKey, None)
-            feed_range_epk = partition_key_obj._get_epk_range_for_prefix_partition_key(
-                partition_key_value)  # cspell:disable-line
-            over_lapping_ranges = await self._routing_map_provider.get_overlapping_ranges(id_,
-                                                                                          [feed_range_epk],
+        if feed_range_epk is not None:
+            over_lapping_ranges = await self._routing_map_provider.get_overlapping_ranges(id_, [feed_range_epk],
                                                                                           options)
             results: Dict[str, Any] = {}
             # For each over lapping range we will take a sub range of the feed range EPK that overlaps with the over
@@ -3180,7 +3188,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
     # Extracts the partition key from the document using the partitionKey definition
     def _ExtractPartitionKey(self, partitionKeyDefinition, document):
-        if partitionKeyDefinition["kind"] == "MultiHash":
+        if partitionKeyDefinition["kind"] == _PartitionKeyKind.MULTI_HASH:
             ret = []
             for partition_key_level in partitionKeyDefinition.get("paths"):
                 # Parses the paths into a list of token each representing a property
