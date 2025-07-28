@@ -9,23 +9,23 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import List
 from ._client import AuthoringClient as AuthoringClientGenerated
-from ._text_project_patch import TextAuthoringProject
-from ._text_deployment_patch import TextAuthoringDeployment
-from ._text_exportedModel_patch import TextAuthoringExportedModel
-from ._text_trainedModel_patch import TextAuthoringTrainedModel
+from ._text_project_patch import TextAuthoringProjectClient
+from ._text_deployment_patch import TextAuthoringDeploymentClient
+from ._text_exportedModel_patch import TextAuthoringExportedModelClient
+from ._text_trainedModel_patch import TextAuthoringTrainedModelClient
 
 class TextAuthoringClient(AuthoringClientGenerated):
-    def get_project_client(self, project_name: str) -> TextAuthoringProject:
-        return TextAuthoringProject(self.text_authoring_project, project_name)
+    def get_project_client(self, project_name: str) -> TextAuthoringProjectClient:
+        return TextAuthoringProjectClient(self.text_authoring_project, project_name)
 
-    def get_deployment_client(self, project_name: str, deployment_name: str) -> TextAuthoringDeployment:
-        return TextAuthoringDeployment(self.text_authoring_deployment, project_name, deployment_name)
+    def get_deployment_client(self, project_name: str, deployment_name: str) -> TextAuthoringDeploymentClient:
+        return TextAuthoringDeploymentClient(self.text_authoring_deployment, project_name, deployment_name)
 
-    def get_exported_model_client(self, project_name: str, exported_model_name: str) -> TextAuthoringExportedModel:
-        return TextAuthoringExportedModel(self.text_authoring_exported_model, project_name, exported_model_name)
+    def get_exported_model_client(self, project_name: str, exported_model_name: str) -> TextAuthoringExportedModelClient:
+        return TextAuthoringExportedModelClient(self.text_authoring_exported_model, project_name, exported_model_name)
 
-    def get_trained_model_client(self, project_name: str, trained_model_label: str) -> TextAuthoringTrainedModel:
-        return TextAuthoringTrainedModel(
+    def get_trained_model_client(self, project_name: str, trained_model_label: str) -> TextAuthoringTrainedModelClient:
+        return TextAuthoringTrainedModelClient(
             self.text_authoring_trained_model,
             project_name,
             trained_model_label

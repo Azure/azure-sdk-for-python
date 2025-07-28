@@ -6,7 +6,7 @@ from collections.abc import MutableMapping
 
 JSON = MutableMapping[str, Any]
 
-class TextAuthoringDeployment:
+class TextAuthoringDeploymentClient:
     def __init__(self, operations: TextAuthoringDeploymentOperations, project_name: str, deployment_name: str):
         self._operations = operations
         self._project_name = project_name
