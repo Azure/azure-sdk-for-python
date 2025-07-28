@@ -200,6 +200,7 @@ class RunSubmitter:
             return
 
         file_handler = sys.stdout
+        error_message: Optional[str] = None
         try:
             printed = 0
             available_logs = storage.logger.get_logs()
