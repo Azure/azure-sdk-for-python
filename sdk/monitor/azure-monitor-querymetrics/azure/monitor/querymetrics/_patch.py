@@ -51,6 +51,24 @@ class MetricsClient(GeneratedClient):
     :keyword api_version: The API version to use for this operation. Default value is "2024-02-01".
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sample_authentication.py
+            :start-after: [START create_metrics_client]
+            :end-before: [END create_metrics_client]
+            :language: python
+            :dedent: 4
+            :caption: Creating the MetricsClient with a credential.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sample_authentication.py
+            :start-after: [START create_metrics_client_sovereign_cloud]
+            :end-before: [END create_metrics_client_sovereign_cloud]
+            :language: python
+            :dedent: 4
+            :caption: Creating the MetricsClient for use with a sovereign cloud (i.e. non-public cloud).
     """
 
     def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
@@ -140,6 +158,14 @@ class MetricsClient(GeneratedClient):
         :return: A list of MetricsQueryResult objects.
         :rtype: list[~azure.monitor.querymetrics.MetricsQueryResult]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_metrics_query.py
+                :start-after: [START send_metrics_batch_query]
+                :end-before: [END send_metrics_batch_query]
+                :language: python
+                :caption: Get a response for a batch metrics query.
         """
         if not resource_ids:
             raise ValueError("'resource_ids' must be provided and must not be empty.")
