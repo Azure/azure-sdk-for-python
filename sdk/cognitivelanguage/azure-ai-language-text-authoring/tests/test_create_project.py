@@ -19,7 +19,6 @@ TextPreparer = functools.partial(
     authoring_key="fake_key",
 )
 
-
 class TestText(AzureRecordedTestCase):
 
     # Start with any helper functions you might need, for example a client creation method:
@@ -45,7 +44,7 @@ class TestTextCase(TestText):
             language="en",
             storage_input_container_name="multi-class-example",
             multilingual=True,
-            description="Project description for a Custom Entity Recognition project",
+            description="Project description for a Custom Multi Label Classification project",
         )
 
         # Create the project
