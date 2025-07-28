@@ -1,14 +1,19 @@
 # Azure Monitor Query Metrics client library for Python
 
-The Azure Monitor Query Metrics client library is used to execute read-only queries against [Azure Monitor][azure_monitor_overview]'s metrics data platform:
+The Azure Monitor Query Metrics client library enables you to perform read-only queries against [Azure Monitor][azure_monitor_overview]'s metrics data platform. It is designed for retrieving numerical metrics from Azure resources, supporting scenarios such as monitoring, alerting, and troubleshooting.
 
-- [Metrics](https://learn.microsoft.com/azure/azure-monitor/essentials/data-platform-metrics) - Collects numeric data from monitored resources into a time series database. Metrics are numerical values that are collected at regular intervals and describe some aspect of a system at a particular time. Metrics are lightweight and capable of supporting near real-time scenarios, making them useful for alerting and fast detection of issues.
+- [Metrics](https://learn.microsoft.com/azure/azure-monitor/essentials/data-platform-metrics): Numeric data collected from resources at regular intervals, stored as time series. Metrics provide insights into resource health and performance, and are optimized for near real-time analysis.
+
+This library interacts with the Azure Monitor Metrics Data Plane API, allowing you to query metrics for multiple resources in a single request. For details on batch querying, see [Batch API migration guide](https://learn.microsoft.com/azure/azure-monitor/metrics/migrate-to-batch-api?tabs=individual-response).
 
 **Resources:**
 
-<!-- TODO: Add PyPI, Conda, Ref Docs, Samples links-->
+<!-- TODO: Add Conda-->
 - [Source code][source]
+- [Package (PyPI)][package]
+- [API reference documentation][python-querymetrics-ref-docs]
 - [Service documentation][azure_monitor_overview]
+- [Samples][samples]
 - [Change log][changelog]
 
 ## Getting started
@@ -238,8 +243,10 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_subscription]: https://azure.microsoft.com/free/python/
 [changelog]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-querymetrics/CHANGELOG.md
 [metric_namespaces]: https://learn.microsoft.com/azure/azure-monitor/reference/supported-metrics/metrics-index#supported-metrics-and-log-categories-by-resource-type
+[package]: https://aka.ms/azsdk-python-monitor-querymetrics-pypi
 [pip]: https://pypi.org/project/pip/
 [python_logging]: https://docs.python.org/3/library/logging.html
+[python-querymetrics-ref-docs]: https://aka.ms/azsdk/python/querymetrics/docs
 [samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-querymetrics/samples
 [source]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-querymetrics/
 [troubleshooting_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-querymetrics/TROUBLESHOOTING.md
