@@ -15,16 +15,16 @@ from ._conversation_exportedModel_patch import ConversationAuthoringExportedMode
 from ._conversation_trainedModel_patch import ConversationAuthoringTrainedModel
 
 class ConversationAuthoringClient(AuthoringClientGenerated):
-    def get_project(self, project_name: str) -> ConversationAuthoringProject:
+    def get_project_client(self, project_name: str) -> ConversationAuthoringProject:
         return ConversationAuthoringProject(self.conversation_authoring_project, project_name)
 
-    def get_deployment(self, project_name: str, deployment_name: str) -> ConversationAuthoringDeployment:
+    def get_deployment_client(self, project_name: str, deployment_name: str) -> ConversationAuthoringDeployment:
         return ConversationAuthoringDeployment(self.conversation_authoring_deployment, project_name, deployment_name)
 
     def get_exported_model_client(self, project_name: str, exported_model_name: str) -> ConversationAuthoringExportedModel:
         return ConversationAuthoringExportedModel(self.conversation_authoring_exported_model, project_name, exported_model_name)
 
-    def get_trained_model(self, project_name: str, trained_model_label: str) -> ConversationAuthoringTrainedModel:
+    def get_trained_model_client(self, project_name: str, trained_model_label: str) -> ConversationAuthoringTrainedModel:
         return ConversationAuthoringTrainedModel(
             self.conversation_authoring_trained_model,
             project_name,

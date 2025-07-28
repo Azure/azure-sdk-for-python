@@ -19,7 +19,6 @@ ConversationsPreparer = functools.partial(
     authoring_key="fake_key",
 )
 
-
 class TestConversations(AzureRecordedTestCase):
 
     # Start with any helper functions you might need, for example a client creation method:
@@ -37,7 +36,7 @@ class TestConversationsCase(TestConversations):
     def test_create_project(self, authoring_endpoint, authoring_key):
         client = self.create_client(authoring_endpoint, authoring_key)
         project_name = "MyPythonProject0727"
-        project_client = client.get_project(project_name)
+        project_client = client.get_project_client(project_name)
 
         # Create the project body
         body = ConversationAuthoringCreateProjectDetails(

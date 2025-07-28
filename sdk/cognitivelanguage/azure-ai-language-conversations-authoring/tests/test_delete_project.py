@@ -33,7 +33,7 @@ class TestConversationsCase(TestConversations):
     def test_create_project(self, authoring_endpoint, authoring_key):
         client = self.create_client(authoring_endpoint, authoring_key)
 
-        project = client.get_project("MyPythonProject0727")
+        project = client.get_project_client("MyPythonProject0727")
 
         poller = project.begin_delete_project()
 

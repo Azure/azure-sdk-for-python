@@ -4,6 +4,9 @@ import pytest
 
 from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, recorded_by_proxy
 from azure.ai.language.conversations.authoring import ConversationAuthoringClient
+from azure.ai.language.conversations.authoring.models import (
+    ConversationAuthoringExportedModelDetails
+)
 
 from azure.core.credentials import AzureKeyCredential
 
@@ -13,7 +16,6 @@ ConversationsPreparer = functools.partial(
     authoring_endpoint="fake_resource.servicebus.windows.net/",
     authoring_key="fake_key",
 )
-
 
 class TestConversations(AzureRecordedTestCase):
 
@@ -29,16 +31,19 @@ class TestConversations(AzureRecordedTestCase):
 class TestConversationsCase(TestConversations):
     @ConversationsPreparer()
     @recorded_by_proxy
-    def test_delete_deployment(self, authoring_endpoint, authoring_key):
+    def test_begin_create_or_update_exported_model(self, authoring_endpoint, authoring_key):
         client = self.create_client(authoring_endpoint, authoring_key)
-        project_name = "EmailAppEnglish"
-        deployment_name = "assignedDeployment"
-        deployment_client = client.get_deployment_client(project_name, deployment_name)
 
-        # Act
-        poller = deployment_client.begin_delete_deployment()
+        project_name = "Test-data-labels"
+        exported_model_name = "model-label"
+        exported_model_client = client.get_exported_model_client(project_name, exported_model_name)
+
+        body = ConversationAuthoringExportedModelDetails(
+            trained_model_label="MyModel"
+        )
+
+        poller = exported_model_client.begin_create_or_update_exported_model(body=body)
         result = poller.result()
 
-        # Assert
-        assert result is None
-        print(f"Deleted deployment: {deployment_name} from project: {project_name}")
+        assert result is None  # Since return type is LROPoller[None]
+        assert poller.done()

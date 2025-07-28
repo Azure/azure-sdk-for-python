@@ -37,7 +37,7 @@ class TestConversationsCase(TestConversations):
         
         project_name = "EmailAppEnglish"
         deployment_name = "deployment1"
-        deployment_client = client.get_deployment(project_name, deployment_name)
+        deployment_client = client.get_deployment_client(project_name, deployment_name)
 
         # Prepare request body
         body = ConversationAuthoringCreateDeploymentDetails(trained_model_label="ModelWithDG")
