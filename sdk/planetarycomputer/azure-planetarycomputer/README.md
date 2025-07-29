@@ -340,11 +340,11 @@ additional questions or comments.
 <!-- LINKS -->
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/planetarycomputer/azure-planetarycomputer/azure/planetarycomputer
 [pc_pypi]: https://pypi.org/project/azure-planetarycomputer/
-[pc_ref_docs]: https://learn.microsoft.com/en-us/rest/api/planetarycomputer/
-[pc_product_docs]: https://learn.microsoft.com/en-us/azure/planetary-computer/
+[pc_ref_docs]: https://learn.microsoft.com/rest/api/planetarycomputer/
+[pc_product_docs]: https://learn.microsoft.com/azure/planetary-computer/
 [pc_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/planetarycomputer/azure-planetarycomputer/samples
 
-[azure_sub]: https://azure.microsoft.com/free/
+[azure_sub]: https://azure.microsoft.com
 [register_aad_app]: https://learn.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
 
 [azure_sdk_python_default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
