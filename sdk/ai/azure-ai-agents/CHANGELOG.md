@@ -6,7 +6,7 @@
 
 ### Bugs Fixed
 - `AgentsResponseFormatOption`, `MessageInputContent`, `MessageAttachmentToolDefinition`, `AgentsToolChoiceOption` are now public.
-- Fixed `create_agents` to execute with body as a keyword parameter.
+- Fixed `update_agents` to execute with body as a keyword parameter.
   
 ### Sample updates
 
