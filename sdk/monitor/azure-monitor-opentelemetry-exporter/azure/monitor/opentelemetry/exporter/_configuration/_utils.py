@@ -55,7 +55,6 @@ def make_onesettings_request(url: str, query_dict: Optional[Dict[str, str]] = No
         logger.warning("Unexpected error while fetching configuration: %s", str(ex))
         return OneSettingsResponse()
 
-
 def _parse_onesettings_response(response) -> OneSettingsResponse:
     """Parse a OneSettings HTTP response into a structured response object.
     
@@ -96,7 +95,7 @@ def _parse_onesettings_response(response) -> OneSettingsResponse:
                 decoded_string = response.content.decode("utf-8")
                 config = json.loads(decoded_string)
                 settings = config.get("settings", {})
-                if settings:
+                if settings and settings.get(_ONE_SETTINGS_CHANGE_VERSION_KEY) is not None:
                    version = int(settings.get(_ONE_SETTINGS_CHANGE_VERSION_KEY))
             except (UnicodeDecodeError, json.JSONDecodeError) as ex:
                 logger.warning("Failed to decode OneSettings response content: %s", str(ex))

@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import logging
 import threading
 from azure.monitor.opentelemetry.exporter._configuration import _update_configuration_and_get_refresh_interval

@@ -9,7 +9,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _ONE_SETTINGS_PYTHON_KEY,
     _ONE_SETTINGS_CHANGE_URL,
 )
-from azure.monitor.opentelemetry.exporter._configuration._util import make_onesettings_request
+from azure.monitor.opentelemetry.exporter._configuration._utils import make_onesettings_request
 
 # Set up logger
 logger = logging.getLogger(__name__)
@@ -25,8 +25,7 @@ class _ConfigurationManager:
     _settings_lock = Lock()
     _version_lock = Lock()
     _etag = None
-    # _refresh_interval = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
-    _refresh_interval = 5
+    _refresh_interval = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
     _settings_cache: Dict[str, str] = {}
     _version_cache = 0
     
