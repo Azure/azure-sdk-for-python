@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 import pytest
 from devtools_testutils.aio import recorded_by_proxy_async
-from testpreparer import WebPubSubPreparer
-from testpreparer_async import WebPubSubClientTestBaseAsync
+from .testpreparer import WebPubSubPreparer
+from .testpreparer_async import WebPubSubClientTestBaseAsync
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")

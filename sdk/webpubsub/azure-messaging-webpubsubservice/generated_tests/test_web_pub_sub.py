@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 import pytest
 from devtools_testutils import recorded_by_proxy
-from testpreparer import WebPubSubClientTestBase, WebPubSubPreparer
+from .testpreparer import WebPubSubClientTestBase, WebPubSubPreparer
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
