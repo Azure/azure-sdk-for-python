@@ -3933,8 +3933,7 @@ class TileMatrixSetBoundingBox(_Model):
     :vartype lower_left: list[str]
     :ivar upper_right: Upper-right corner coordinates [x, y] of bounding box. Required.
     :vartype upper_right: list[str]
-    :ivar crs: Coordinate reference system identifier (e.g.,
-     `https://www.opengis.net/def/crs/EPSG/0/3857 <https://www.opengis.net/def/crs/EPSG/0/3857>`_).
+    :ivar crs: Coordinate reference system identifier.
     :vartype crs: str
     :ivar ordered_axes: Explicit axis order for the CRS coordinates (e.g., ['x', 'y']).
     :vartype ordered_axes: list[str]
@@ -3945,8 +3944,7 @@ class TileMatrixSetBoundingBox(_Model):
     upper_right: List[str] = rest_field(name="upperRight", visibility=["read", "create", "update", "delete", "query"])
     """Upper-right corner coordinates [x, y] of bounding box. Required."""
     crs: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Coordinate reference system identifier (e.g., `https://www.opengis.net/def/crs/EPSG/0/3857
-     <https://www.opengis.net/def/crs/EPSG/0/3857>`_)."""
+    """Coordinate reference system identifier."""
     ordered_axes: Optional[List[str]] = rest_field(
         name="orderedAxes", visibility=["read", "create", "update", "delete", "query"]
     )
