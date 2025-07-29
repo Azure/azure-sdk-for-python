@@ -75,6 +75,16 @@ class TestConfig(object):
     TEST_CONTAINER_PREFIX_PARTITION_KEY = ["pk1", "pk2"]
     TEST_CONTAINER_PREFIX_PARTITION_KEY_PATH = ['/pk1', '/pk2']
 
+    WRITE_LOCATION = ""
+    READ_LOCATION = ""
+
+    @classmethod
+    def get_account_info(cls, client: CosmosClient):
+        account_info = client.get_database_account()
+        cls.WRITE_LOCATION = account_info.WritableLocations[0]
+        if len(account_info.ReadableLocations) > 1:
+            cls.READ_LOCATION = account_info.ReadableLocations[1]
+
     @classmethod
     def create_database_if_not_exist(cls, client):
         # type: (CosmosClient) -> DatabaseProxy
