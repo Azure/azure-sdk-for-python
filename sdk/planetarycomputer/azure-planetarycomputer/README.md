@@ -15,7 +15,6 @@ Key capabilities include:
 | [Package (PyPI)][pc_pypi]
 | [API reference documentation][pc_ref_docs]
 | [Product documentation][pc_product_docs]
-| [Samples][pc_samples]
 
 ## Getting started
 
@@ -315,7 +314,7 @@ The azure-core [reference documentation][azure_core_ref_docs] describes availabl
 
 ### More sample code
 
-See the [Sample README][pc_samples] for several code snippets illustrating common patterns used in the Planetary Computer Python API.
+See the `samples` directory for several code snippets illustrating common patterns used in the Planetary Computer Python API.
 
 ### Additional documentation
 
@@ -341,8 +340,8 @@ additional questions or comments.
 <!-- LINKS -->
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/planetarycomputer/azure-planetarycomputer/azure/planetarycomputer
 [pc_pypi]: https://pypi.org/project/azure-planetarycomputer/
-[pc_ref_docs]: https://docs.microsoft.com/python/api/azure-planetarycomputer/
-[pc_product_docs]: https://learn.microsoft.com/azure/orbital/planetary-computer/
+[pc_ref_docs]: https://learn.microsoft.com/en-us/rest/api/planetarycomputer/
+[pc_product_docs]: https://learn.microsoft.com/en-us/azure/planetary-computer/
 [pc_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/planetarycomputer/azure-planetarycomputer/samples
 
 [azure_sub]: https://azure.microsoft.com/free/
