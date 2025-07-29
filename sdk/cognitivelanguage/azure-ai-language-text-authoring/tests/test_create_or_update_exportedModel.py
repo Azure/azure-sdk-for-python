@@ -33,12 +33,12 @@ class TestTextCase(TestText):
     def test_begin_create_or_update_exported_model(self, authoring_endpoint, authoring_key):
         client = self.create_client(authoring_endpoint, authoring_key)
 
-        project_name = "multi-class-project"
+        project_name = "Example-ner-project"
         exported_model_name = "exportedModel"
         exported_model_client = client.get_exported_model_client(project_name, exported_model_name)
 
         body = TextAuthoringExportedModelDetails(
-            trained_model_label="model1"
+            trained_model_label="m1"
         )
 
         poller = exported_model_client.begin_create_or_update_exported_model(body=body)
