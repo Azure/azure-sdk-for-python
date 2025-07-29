@@ -115,7 +115,10 @@ class AzureCliCredential:
           receive an access token.
         """
         if claims and claims.strip():
-            raise CredentialUnavailableError(f"Failed to get token. Run az login --claims-challenge {claims}")
+            login_cmd = f"az login --claims-challenge {claims}"
+            if scopes:
+                login_cmd += f" --scope {scopes[0]}"
+            raise CredentialUnavailableError(f"Failed to get token. Run {login_cmd}")
 
         options: TokenRequestOptions = {}
         if tenant_id:
@@ -147,7 +150,10 @@ class AzureCliCredential:
         """
         claims_value = options.get("claims") if options else None
         if claims_value and claims_value.strip():
-            raise CredentialUnavailableError(f"Failed to get token. Run az login --claims-challenge {claims_value}")
+            login_cmd = f"az login --claims-challenge {claims_value}"
+            if scopes:
+                login_cmd += f" --scope {scopes[0]}"
+            raise CredentialUnavailableError(f"Failed to get token. Run {login_cmd}")
         return self._get_token_base(*scopes, options=options)
 
     def _get_token_base(

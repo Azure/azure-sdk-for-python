@@ -402,7 +402,7 @@ def test_claims_challenge_raises_error(get_token_method):
     """The credential should raise CredentialUnavailableError when claims challenge is provided"""
 
     claims = "test-claims-challenge"
-    expected_message = f"Failed to get token. Run az login --claims-challenge {claims}"
+    expected_message = f"Failed to get token. Run az login --claims-challenge {claims} --scope scope"
 
     if get_token_method == "get_token":
         with pytest.raises(CredentialUnavailableError, match=re.escape(expected_message)):
@@ -410,6 +410,21 @@ def test_claims_challenge_raises_error(get_token_method):
     else:  # get_token_info
         with pytest.raises(CredentialUnavailableError, match=re.escape(expected_message)):
             AzureCliCredential().get_token_info("scope", options={"claims": claims})
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_claims_challenge_without_scopes(get_token_method):
+    """The credential should raise CredentialUnavailableError with appropriate message even when no scopes provided"""
+
+    claims = "test-claims-challenge"
+    expected_message = f"Failed to get token. Run az login --claims-challenge {claims}"
+
+    if get_token_method == "get_token":
+        with pytest.raises(CredentialUnavailableError, match=re.escape(expected_message)):
+            AzureCliCredential().get_token(claims=claims)  # No scopes provided
+    else:  # get_token_info
+        with pytest.raises(CredentialUnavailableError, match=re.escape(expected_message)):
+            AzureCliCredential().get_token_info(options={"claims": claims})  # No scopes provided
 
 
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)

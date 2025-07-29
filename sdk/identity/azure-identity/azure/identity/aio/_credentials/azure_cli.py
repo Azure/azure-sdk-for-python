@@ -106,7 +106,10 @@ class AzureCliCredential(AsyncContextManager):
           receive an access token.
         """
         if claims and claims.strip():
-            raise CredentialUnavailableError(f"Failed to get token. Run az login --claims-challenge {claims}")
+            login_cmd = f"az login --claims-challenge {claims}"
+            if scopes:
+                login_cmd += f" --scope {scopes[0]}"
+            raise CredentialUnavailableError(f"Failed to get token. Run {login_cmd}")
 
         # only ProactorEventLoop supports subprocesses on Windows (and it isn't the default loop on Python < 3.8)
         if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
@@ -142,7 +145,10 @@ class AzureCliCredential(AsyncContextManager):
         """
         claims_value = options.get("claims") if options else None
         if claims_value and claims_value.strip():
-            raise CredentialUnavailableError(f"Failed to get token. Run az login --claims-challenge {claims_value}")
+            login_cmd = f"az login --claims-challenge {claims_value}"
+            if scopes:
+                login_cmd += f" --scope {scopes[0]}"
+            raise CredentialUnavailableError(f"Failed to get token. Run {login_cmd}")
         # only ProactorEventLoop supports subprocesses on Windows (and it isn't the default loop on Python < 3.8)
         if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
             return _SyncAzureCliCredential().get_token_info(*scopes, options=options)
