@@ -351,7 +351,7 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
         return
 
     @recorded_by_proxy_async
-    async def test_play_multiple_file_sources_with_operationcallbackurl_with_play_media_all(self):
+    async def test_play_multiple_file_sources_with_opcallbackurl_with_play_media_all(self):
         caller = await self.identity_client.create_user()
         target = await self.identity_client.create_user()
         unique_id, call_connection, _ = await self.establish_callconnection_voip(caller, target)
