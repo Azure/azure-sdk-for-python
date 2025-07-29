@@ -142,8 +142,14 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                     message="Could not find ThroughputProperties for container " + link,
                     sub_status_code=SubStatusCodes.THROUGHPUT_OFFER_NOT_FOUND)
                 response_headers = result[1] if len(result) > 1 else {}
+                logger_attributes = {
+                    "duration": time.time() - start_time,
+                    "verb": request.method,
+                    "status_code": e_offer.status_code,
+                    "sub_status_code": e_offer.sub_status_code,
+                }
                 _log_diagnostics_error(client._enable_diagnostics_logging, request, response_headers, e_offer,
-                                           {}, global_endpoint_manager, logger=logger)
+                                           logger_attributes, global_endpoint_manager, logger=logger)
                 raise e_offer
             return result
         except exceptions.CosmosHttpResponseError as e:

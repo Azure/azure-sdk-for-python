@@ -75,10 +75,7 @@ def _populate_logger_attributes(  # type: ignore[attr-defined, union-attr]
     """
     if not logger_attributes:
         logger_attributes = {}
-    if response_headers:
-        logger_attributes["duration"] = float(
-            str(response_headers.get(HttpHeaders.RequestDurationMs))) if ("duration" not in logger_attributes) else \
-            logger_attributes["duration"]
+
     if request:
         logger_attributes["activity_id"] = request.headers.get(HttpHeaders.ActivityId, "")
         logger_attributes["verb"] = request.method
@@ -184,10 +181,10 @@ def _get_client_settings(global_endpoint_manager: Optional[_GlobalEndpointManage
             client_account_read_regions = location_cache.account_read_locations
             client_account_write_regions = location_cache.account_write_locations
     logger_str = "Client Settings: \n"
-    client_settings = {"Client Preferred Regions": client_preferred_regions,
-                       "Client Excluded Regions": client_excluded_regions,
-                       "Client Account Read Regions": client_account_read_regions,
-                       "Client Account Write Regions": client_account_write_regions}
+    client_settings = {"Preferred Regions": client_preferred_regions,
+                       "Excluded Regions": client_excluded_regions,
+                       "Account Read Regions": client_account_read_regions,
+                       "Account Write Regions": client_account_write_regions}
     if client_settings and isinstance(client_settings, dict):
         logger_str += ''.join([f"\t{k}: {v}\n" for k, v in client_settings.items()])
     return logger_str
