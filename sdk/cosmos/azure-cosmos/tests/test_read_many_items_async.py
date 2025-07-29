@@ -17,7 +17,7 @@ from azure.cosmos.documents import _OperationType
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from _fault_injection_transport_async import FaultInjectionTransportAsync
 from azure.cosmos._resource_throttle_retry_policy import ResourceThrottleRetryPolicy
-from azure.cosmos._gone_retry_policy import PartitionKeyRangeGoneRetryPolicy
+
 
 
 @pytest.mark.cosmosEmulator
@@ -226,8 +226,72 @@ class TestReadManyItems(unittest.IsolatedAsyncioTestCase):
         finally:
             await self.database.delete_container(container_hpk)
 
-    async def test_headers_being_returned_async(self):
-        """Tests that response headers are available."""
+    async def test_read_many_failure_preserves_headers_async(self):
+        """Tests that if a query fails, the exception contains the headers from the failed request."""
+        # 1. Define headers and the error to inject
+        failed_headers = CaseInsensitiveDict({
+            'x-ms-request-charge': '12.34',
+            'x-ms-activity-id': 'a-fake-activity-id',
+            'x-ms-session-token': 'session-token-for-failure'
+        })
+
+        # CosmosHttpResponseError populates the headers attribute from the response object passed during initialization
+        # So we need to create a mock response object with the headers we want to inject.
+        mock_response = type('MockResponse', (), {
+            'headers': failed_headers,
+            'reason': 'Mock reason for failure',
+            'status_code': 429,
+            'request': 'mock_request'  # Add request attribute
+        })
+
+        # 3. Create the error to inject, passing the mock response
+        error_to_inject = CosmosHttpResponseError(
+            message = "Simulated query failure with headers",
+            response = mock_response()
+        )
+
+        # 2. Use the fault injection helper to get a container that will raise the error
+        container_with_faults, client_with_faults = self._setup_fault_injection_async(error_to_inject)
+        try:
+            # 3. Create items to trigger a query
+            items_to_read, _ = await self._create_items_for_read_many(self.container, 5)
+
+            # 4. Call read_many_items and assert that the correct exception is raised
+            with self.assertRaises(CosmosHttpResponseError) as context:
+                await container_with_faults.read_many_items(items=items_to_read)
+
+            # 5. Verify the exception contains the injected headers
+            exc = context.exception
+            self.assertEqual(exc.status_code, 429)
+            self.assertIsNotNone(exc.headers)
+            self.assertEqual(exc.headers.get('x-ms-request-charge'), '12.34')
+            self.assertEqual(exc.headers.get('x-ms-activity-id'), 'a-fake-activity-id')
+            self.assertEqual(exc.headers.get('x-ms-session-token'), 'session-token-for-failure')
+
+        finally:
+            # 6. Clean up the client with fault injection
+            await client_with_faults.close()
+
+
+    async def test_read_many_items_with_no_results_preserve_headers_async(self):
+        """Tests read_many_items with only non-existent items, expecting an empty result."""
+        items_to_read = [
+            ("non_existent_item_1_" + str(uuid.uuid4()), "non_existent_pk_1"),
+            ("non_existent_item_2_" + str(uuid.uuid4()), "non_existent_pk_2")
+        ]
+
+        # Call read_many_items with the list of non-existent items.
+        read_items = await self.container.read_many_items(items=items_to_read)
+        headers = read_items.get_response_headers()
+        # Verify that the result is an empty list.
+        self.assertEqual(len(read_items), 0)
+        self.assertListEqual(list(headers.keys()), ['x-ms-request-charge'])
+        # Verify the request charge is a positive value.
+        self.assertGreater(float(headers.get('x-ms-request-charge')), 0)
+
+    async def test_headers_being_returned_on_success_async(self):
+        """Tests that on success, only the aggregated request charge header is returned."""
+        # Create enough items to trigger at least two query chunks.
         items_to_read, item_ids = await self._create_items_for_read_many(self.container, 5)
 
         read_items = await self.container.read_many_items(items=items_to_read)
@@ -235,10 +299,12 @@ class TestReadManyItems(unittest.IsolatedAsyncioTestCase):
 
         self.assertEqual(len(read_items), len(item_ids))
         self.assertIsNotNone(headers)
-        self.assertIn('x-ms-request-charge', headers)
-        self.assertIn('x-ms-activity-id', headers)
-        self.assertGreaterEqual(float(headers.get('x-ms-request-charge', 0)), 0)
-        self.assertTrue(headers.get('x-ms-activity-id'))
+
+        # On success, only the aggregated request charge should be returned.
+        self.assertListEqual(list(headers.keys()), ['x-ms-request-charge'])
+        # Verify the request charge is a positive value.
+        self.assertGreater(float(headers.get('x-ms-request-charge')), 0)
+
 
     async def test_read_many_items_large_count_async(self):
         """Tests read_many_items with a large number of items."""
@@ -348,14 +414,20 @@ class TestReadManyItems(unittest.IsolatedAsyncioTestCase):
             items_to_read.append((doc_id, doc_id))
 
         with patch.object(self.container.client_connection, 'QueryItems') as mock_query:
-            class MockAsyncIterator:
+            # The mock now needs to return an object with a .by_page() method,
+            # which in turn returns an async iterator.
+            class MockPageIterator:
                 def __aiter__(self):
                     return self
 
                 async def __anext__(self):
                     raise StopAsyncIteration
 
-            mock_query.return_value = MockAsyncIterator()
+            class MockQueryIterator:
+                def by_page(self, **kwargs):
+                    return MockPageIterator()
+
+            mock_query.return_value = MockQueryIterator()
 
             await self.container.read_many_items(items=items_to_read)
 

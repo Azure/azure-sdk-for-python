@@ -1,23 +1,16 @@
 import unittest
 import uuid
-from unittest import SkipTest
 from unittest.mock import patch
-
 import pytest
-
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 import test_config
 from azure.cosmos import PartitionKey, CosmosDict
 from _fault_injection_transport import FaultInjectionTransport
-from azure.cosmos._gone_retry_policy import PartitionKeyRangeGoneRetryPolicy
 from azure.cosmos._resource_throttle_retry_policy import ResourceThrottleRetryPolicy
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.documents import _OperationType
 from azure.core.utils import CaseInsensitiveDict
-
-from azure.cosmos.partition_key import NonePartitionKeyValue
-
 
 @pytest.mark.cosmosEmulator
 class TestReadManyItems(unittest.TestCase):
@@ -220,8 +213,24 @@ class TestReadManyItems(unittest.TestCase):
         finally:
             self.database.delete_container(container_hpk)
 
-    def test_headers_being_returned(self):
-        """Tests that response headers are available."""
+    def test_read_many_items_with_no_results_preserve_headers(self):
+        """Tests read_many_items with only non-existent items, expecting an empty result."""
+        items_to_read = [
+            ("non_existent_item_1_" + str(uuid.uuid4()), "non_existent_pk_1"),
+            ("non_existent_item_2_" + str(uuid.uuid4()), "non_existent_pk_2")
+        ]
+
+        # Call read_many_items with the list of non-existent items.
+        read_items = self.container.read_many_items(items=items_to_read)
+        headers = read_items.get_response_headers()
+        # Verify that the result is an empty list.
+        self.assertEqual(len(read_items), 0)
+        self.assertListEqual(list(headers.keys()), ['x-ms-request-charge'])
+        # Verify the request charge is a positive value.
+        self.assertGreater(float(headers.get('x-ms-request-charge')), 0)
+
+    def test_headers_being_returned_on_success(self):
+        """Tests that on success, only the aggregated request charge header is returned."""
         items_to_read, item_ids = self._create_items_for_read_many(self.container, 5)
 
         read_items = self.container.read_many_items(items=items_to_read)
@@ -229,12 +238,12 @@ class TestReadManyItems(unittest.TestCase):
 
         self.assertEqual(len(read_items), len(item_ids))
         self.assertIsNotNone(headers)
-        self.assertIn('x-ms-request-charge', headers)
-        self.assertIn('x-ms-activity-id', headers)
-        self.assertGreaterEqual(float(headers.get('x-ms-request-charge', 0)), 0)
-        self.assertTrue(headers.get('x-ms-activity-id'))
 
-    @SkipTest
+        # On success, only the aggregated request charge should be returned.
+        self.assertListEqual(list(headers.keys()), ['x-ms-request-charge'])
+        # Verify the request charge is a positive value.
+        self.assertGreater(float(headers.get('x-ms-request-charge')), 0)
+
     def test_read_many_items_large_count(self):
         """Tests read_many_items with a large number of items."""
         items_to_read, item_ids = self._create_items_for_read_many(self.container, 3100)
@@ -256,6 +265,47 @@ class TestReadManyItems(unittest.TestCase):
 
         self.assertEqual(context.exception.status_code, 503)
         self.assertIn("Injected Service Unavailable Error", str(context.exception))
+
+    def test_read_many_failure_preserves_headers(self):
+        """Tests that if a query fails, the exception contains the headers from the failed request."""
+        # 1. Define headers and the error to inject
+        failed_headers = {
+            'x-ms-request-charge': '12.34',
+            'x-ms-activity-id': 'a-fake-activity-id',
+            'x-ms-session-token': 'session-token-for-failure'
+        }
+
+        # 2. Create a mock response object with the headers we want to inject.
+        mock_response = type('MockResponse', (), {
+            'headers': failed_headers,
+            'reason': 'Mock reason for failure',
+            'status_code': 429,
+            'request': 'mock_request'
+        })
+
+        # 3. Create the error to inject, passing the mock response
+        error_to_inject = CosmosHttpResponseError(
+            message="Simulated query failure with headers",
+            response=mock_response()
+        )
+
+        # 4. Use the fault injection helper to get a container that will raise the error
+        container_with_faults = self._setup_fault_injection(error_to_inject)
+
+        # 5. Create items to trigger a query
+        items_to_read, _ = self._create_items_for_read_many(self.container, 5)
+
+        # 6. Call read_many_items and assert that the correct exception is raised
+        with self.assertRaises(CosmosHttpResponseError) as context:
+            container_with_faults.read_many_items(items=items_to_read)
+
+        # 7. Verify the exception contains the injected headers
+        exc = context.exception
+        self.assertEqual(exc.status_code, 429)
+        self.assertIsNotNone(exc.headers)
+        self.assertEqual(exc.headers.get('x-ms-request-charge'), '12.34')
+        self.assertEqual(exc.headers.get('x-ms-activity-id'), 'a-fake-activity-id')
+        self.assertEqual(exc.headers.get('x-ms-session-token'), 'session-token-for-failure')
 
     def test_read_many_items_with_throttling_retry(self):
         """Tests that the retry policy handles a throttling error (429) and succeeds."""

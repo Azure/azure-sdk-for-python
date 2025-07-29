@@ -44,7 +44,7 @@ class ReadManyItemsHelperSync:
             return CosmosList([], response_headers=CaseInsensitiveDict())
 
         results: List[Dict[str, Any]] = []
-        all_headers = CaseInsensitiveDict()
+        total_request_charge = 0.0
 
         with ThreadPoolExecutor(max_workers=self.max_concurrency) as executor:
             futures = []
@@ -54,15 +54,18 @@ class ReadManyItemsHelperSync:
                     futures.append(executor.submit(self._execute_query_chunk_worker, partition_id, chunk))
             try:
                 for future in as_completed(futures):
-                    chunk_results, chunk_headers = future.result()
+                    chunk_results, chunk_ru_charge = future.result()
                     results.extend(chunk_results)
-                    all_headers.update(chunk_headers)
+                    total_request_charge += chunk_ru_charge
             except Exception:
                 # On failure, shutdown the executor to cancel pending futures and re-raise
                 executor.shutdown(wait=False, cancel_futures=True)
                 raise
 
-        return CosmosList(results, response_headers=all_headers)
+        final_headers = CaseInsensitiveDict()
+        final_headers['x-ms-request-charge'] = str(total_request_charge)
+
+        return CosmosList(results, response_headers=final_headers)
 
     def _partition_items_by_range(self) -> Dict[str, List[Tuple[str, "PartitionKeyType"]]]:
         """Groups items by their partition key range ID efficiently."""
@@ -97,8 +100,18 @@ class ReadManyItemsHelperSync:
 
     def _execute_query_chunk_worker(
             self, partition_id: str, chunk_partition_items: List[Tuple[str, "PartitionKeyType"]]
-    ) -> Tuple[List[Dict[str, Any]], CaseInsensitiveDict]:
+    ) -> Tuple[List[Dict[str, Any]], float]:
         """Synchronous worker to build and execute a query for a chunk of items."""
+        captured_headers = {}
+
+        # Define the response hook function
+        def response_hook(hook_headers, _):
+            captured_headers.update(hook_headers)
+
+        # Copy the kwargs and add the response hook
+        request_kwargs = self.kwargs.copy()
+        request_kwargs['response_hook'] = response_hook
+
         if _QueryBuilder.is_id_partition_key_query(chunk_partition_items, self.partition_key_definition):
             query_obj = _QueryBuilder.build_id_in_query(chunk_partition_items)
         elif _QueryBuilder.is_single_logical_partition_query(chunk_partition_items):
@@ -108,8 +121,18 @@ class ReadManyItemsHelperSync:
             query_obj = _QueryBuilder.build_parameterized_query_for_items(
                 {partition_id: chunk_partition_items}, self.partition_key_definition)
 
-        query_iterator = self.client.QueryItems(self.collection_link, query_obj, self.options)
-
+        # Execute query with the response hook
+        query_iterator = self.client.QueryItems(self.collection_link, query_obj, self.options, **request_kwargs)
         results = list(query_iterator)
-        headers = CaseInsensitiveDict(self.client.last_response_headers)
-        return results, headers
+
+        # Process the captured headers
+        total_ru_charge = 0.0
+        headers = CaseInsensitiveDict(captured_headers)
+        charge = headers.get('x-ms-request-charge')
+        if charge:
+            try:
+                total_ru_charge = float(charge)
+            except (ValueError, TypeError):
+                self.logger.warning(f"Invalid request charge format: {charge}")
+
+        return results, total_ru_charge

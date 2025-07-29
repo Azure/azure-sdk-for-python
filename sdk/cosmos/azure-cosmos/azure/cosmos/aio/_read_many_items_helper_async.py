@@ -106,7 +106,6 @@ class ReadManyItemsHelper:
                 query_chunks.append({partition_id: chunk})
         return query_chunks
 
-
     async def execute_queries_concurrently(
             self,
             query_chunks: List[Dict[str, List[Tuple[str, "PartitionKeyType"]]]],
@@ -124,6 +123,9 @@ class ReadManyItemsHelper:
 
         async def execute_chunk_query(partition_id, chunk_partition_items):
             async with semaphore:
+                captured_headers = {}
+                request_kwargs = kwargs.copy()
+                request_kwargs['response_hook'] = lambda hook_headers, _: captured_headers.update(hook_headers)
                 # Optimization for when the partition key is the item's ID.
                 # This allows for a highly efficient query using an IN clause on the ID field.
                 if _QueryBuilder.is_id_partition_key_query(chunk_partition_items, partition_key_definition):
@@ -138,14 +140,22 @@ class ReadManyItemsHelper:
                         {partition_id: chunk_partition_items},
                         partition_key_definition)
 
-                query_results = self.client.QueryItems(collection_link, query_obj, options, **kwargs)
-                individual_chunk_results = [item async for item in query_results]
+                query_results_iterator = self.client.QueryItems(collection_link, query_obj, options, **request_kwargs)
+                page_iterator = query_results_iterator.by_page()
 
-                last_headers = CaseInsensitiveDict()
-                if hasattr(self.client, 'last_response_headers'):
-                    last_headers.update(self.client.last_response_headers)
+                # Use nested async for in the list comprehension
+                individual_chunk_results = [item async for page in page_iterator async for item in page]
 
-                return individual_chunk_results, last_headers
+                total_ru_charge = 0.0
+                headers = CaseInsensitiveDict(captured_headers)
+                charge = headers.get('x-ms-request-charge')
+                if charge:
+                    try:
+                        total_ru_charge = float(charge)
+                    except (ValueError, TypeError):
+                        self.logger.warning(f"Invalid request charge format: {charge}")
+
+                return individual_chunk_results, total_ru_charge
 
         chunk_tasks = [
             asyncio.create_task(execute_chunk_query(partition_id, items))
@@ -163,10 +173,11 @@ class ReadManyItemsHelper:
             # Wait for tasks to cancel and then re-raise the original exception
             await asyncio.gather(*chunk_tasks, return_exceptions=True)
             raise
-        else:
-            # This block executes only on successful completion of the try block.
-            all_results = [item for res, _ in chunk_results for item in res]
-            combined_headers = CaseInsensitiveDict()
-            for _, headers in chunk_results:
-                combined_headers.update(headers)
-            return all_results, combined_headers
+
+        all_results = [item for res, _ in chunk_results for item in res]
+        total_request_charge = sum(ru for _, ru in chunk_results)
+
+        final_headers = CaseInsensitiveDict()
+        final_headers['x-ms-request-charge'] = str(total_request_charge)
+
+        return all_results, final_headers
