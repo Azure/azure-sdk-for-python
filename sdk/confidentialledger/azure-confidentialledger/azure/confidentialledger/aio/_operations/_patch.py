@@ -153,9 +153,6 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         :type entry: ~azure.confidentialledger.models.LedgerEntry
         :keyword collection_id: The collection id. Default value is None.
         :paramtype collection_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
         :return: AsyncLROPoller[TransactionStatus]. The TransactionStatus is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.confidentialledger.models.TransactionStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
