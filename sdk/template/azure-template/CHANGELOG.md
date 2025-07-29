@@ -2,7 +2,7 @@
 
 [comment]: # (Change log guidance: https://azure.github.io/azure-sdk/policies_releases.html#changelog-guidance)
 
-## 0.0.18b3 (Unreleased)
+## 0.0.18b3 (2025-01-29)
 
 ### Features Added
 
