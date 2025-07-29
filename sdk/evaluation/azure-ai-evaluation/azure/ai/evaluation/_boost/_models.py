@@ -7,7 +7,7 @@ class _EvaluationCase:
     """Represents a single evaluation case with metrics."""
 
     case_id: str
-    metrics: Dict[str, float]
+    metrics: Dict[str, Any]
     conversation: List[Dict[str, Any]]
 
     @classmethod
@@ -18,11 +18,15 @@ class _EvaluationCase:
         return cls(case_id=case_id, metrics=metrics, conversation=conversation)
 
     @staticmethod
-    def _extract_metrics(row: Dict) -> Dict[str, float]:
-        """Extract numeric metrics from evaluation row."""
+    def _extract_metrics(row: Dict) -> Dict[str, Any]:
+        """Extract evaluation metrics and reasons from evaluation row.
+        
+        Extracts all outputs from evaluators, including numeric scores,
+        pass/fail results, thresholds, and reasoning explanations.
+        """
         metrics = {}
         for key, value in row.items():
-            if key.startswith("outputs.") and isinstance(value, (int, float)):
+            if key.startswith("outputs."):
                 metric_name = key.replace("outputs.", "")
-                metrics[metric_name] = float(value)
+                metrics[metric_name] = value
         return metrics

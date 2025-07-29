@@ -122,7 +122,7 @@ Provide a synthesized meta-critique that captures the key insights:
         """
 
         score_summary = "\n".join(
-            f"- {metric}: {score:.2f}" for metric, score in case.metrics.items()
+            f"- {metric}: {value}" for metric, value in case.metrics.items()
         )
 
         tools_summary = ""

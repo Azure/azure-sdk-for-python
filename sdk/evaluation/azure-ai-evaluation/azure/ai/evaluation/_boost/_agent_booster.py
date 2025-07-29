@@ -16,6 +16,7 @@ from azure.ai.evaluation import (
 from azure.ai.evaluation._converters._ai_services import AIAgentConverter
 from azure.ai.evaluation._constants import DEFAULT_AOAI_API_VERSION, experimental
 from azure.ai.evaluation._user_agent import UserAgentSingleton
+from azure.ai.evaluation._aoai.aoai_grader import AzureOpenAIGrader
 
 from openai import AzureOpenAI, OpenAI
 
@@ -65,7 +66,7 @@ class _AgentBooster:
         project_client: AIProjectClient,
         model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
         agent_id: str,
-        evaluators: Optional[List[Callable]] = None,
+        evaluators: Optional[Dict[str, Union[Callable, AzureOpenAIGrader]]] = None,
         sample_size: int = 10,
         max_iterations: int = 3,
         improvement_intent: Optional[str] = None,
@@ -86,11 +87,13 @@ class _AgentBooster:
 
         self._config: _AgentBoosterConfig = _AgentBoosterConfig(
             model_config=self._model_config,
-            evaluators=evaluators,
             sample_size=sample_size,
             max_iterations=max_iterations,
             improvement_intent=improvement_intent,
         )
+
+        # Set evaluators, defaulting to built-in ones if not provided
+        self._evaluators = evaluators or self._get_default_evaluators()
 
         # Set output directory for refinement history
         self._output_dir = output_dir or tempfile.gettempdir()
@@ -370,31 +373,6 @@ class _AgentBooster:
 
         return temp_file.name
 
-    def add_evaluator(self, evaluator_class):
-        """Add a custom evaluator to the configuration.
-
-        :param evaluator_class: Evaluator class that follows the Azure AI evaluation interface.
-        :type evaluator_class: type
-        """
-        if self._config["evaluators"] is None:
-            self._config["evaluators"] = []
-
-        if evaluator_class not in self._config["evaluators"]:
-            self._config["evaluators"].append(evaluator_class)
-            if self._verbose:
-                print(f"Added custom evaluator: {evaluator_class.__name__}")
-
-    def set_evaluators(self, evaluators: List):
-        """Set custom evaluators, replacing any existing ones.
-
-        :param evaluators: List of evaluator classes that follow the Azure AI evaluation interface.
-        :type evaluators: List
-        """
-        self._config["evaluators"] = evaluators
-        if self._verbose:
-            evaluator_names = [e.__name__ for e in evaluators]
-            print(f"Set custom evaluators: {evaluator_names}")
-
     def _get_default_evaluators(self) -> Dict:
         """Get default evaluators for evaluation.
 
@@ -416,28 +394,6 @@ class _AgentBooster:
             for evaluator in default_evaluators
         }
 
-    def _get_evaluators(self) -> Dict:
-        """Get evaluators to use for evaluation (custom or default).
-
-        :return: Dictionary of evaluator names to evaluator instances.
-        :rtype: Dict
-        """
-        if self._config["evaluators"]:
-            # Use custom evaluators
-            evaluators = {
-                evaluator.__name__: evaluator(model_config=self._model_config)
-                for evaluator in self._config["evaluators"]
-            }
-            if self._verbose:
-                print(f"Using custom evaluators: {list(evaluators.keys())}")
-            return evaluators
-        else:
-            # Use default evaluators
-            evaluators = self._get_default_evaluators()
-            if self._verbose:
-                print(f"Using default evaluators: {list(evaluators.keys())}")
-            return evaluators
-
     def _evaluate_responses(self, response_file_path: str):
         """Evaluate the generated responses using the provided evaluators.
 
@@ -449,10 +405,8 @@ class _AgentBooster:
         if not os.path.exists(response_file_path):
             raise FileNotFoundError(f"Response file not found: {response_file_path}")
 
-        evaluators = self._get_evaluators()
-
         # Run evaluations
-        results = evaluate(data=response_file_path, evaluators=evaluators)
+        results = evaluate(data=response_file_path, evaluators=self._evaluators)
 
         return results
 
