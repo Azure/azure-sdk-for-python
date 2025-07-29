@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Update to latest OpenTelemetry version after 'instruments-any' fix. Remove Python 3.8 support.
+- Update to latest OpenTelemetry version after instrumentation breaking change fix. Remove Python 3.8 support.
     ([#42247](https://github.com/Azure/azure-sdk-for-python/pull/42247))
 
 ### Breaking Changes
