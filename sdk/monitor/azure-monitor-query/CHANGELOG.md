@@ -7,8 +7,9 @@
 ### Breaking Changes
 
 - `MetricsClient` and `MetricsQueryClient` have been removed from the `azure-monitor-query` package. This is part of the migration to split logs and metrics functionality into separate packages.  ([#42205](https://github.com/Azure/azure-sdk-for-python/pull/42205))
-  - The `MetricsClient` has been moved to the new `azure-monitor-querymetrics`
+  - The `MetricsClient` has been moved to the new `azure-monitor-querymetrics` package.
   - Functionality provided by `MetricsQueryClient` can be access through the `azure-mgmt-monitor` package.
+  - For more details, see the [migration guide](https://aka.ms/azsdk/python/monitor/query/migration).
 
 ### Bugs Fixed
 
