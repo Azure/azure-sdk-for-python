@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines,too-many-locals,too-many-branches,too-many-statements
+# pylint: disable=line-too-long,useless-suppression,too-many-lines,too-many-locals,too-many-branches,too-many-statements,file-needs-copyright-header
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
