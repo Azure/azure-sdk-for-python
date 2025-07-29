@@ -475,3 +475,40 @@ async def test_empty_claims_does_not_raise_error(get_token_method):
                 # Test with whitespace-only claims in options
                 token = await AzureCliCredential().get_token_info("scope", options={"claims": "   "})
                 assert token.token == "access-token"
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+@pytest.mark.asyncio
+async def test_claims_challenge_with_tenant(get_token_method):
+    """The credential should include tenant in the error message when claims and tenant are provided"""
+
+    claims = "test-claims-challenge"
+    tenant_id = "test-tenant-id"
+    
+    if get_token_method == "get_token":
+        # Test with get_token - tenant passed via get_token parameter (should appear in options)
+        expected_message = f"Failed to get token. Run az login --claims-challenge {claims} --tenant {tenant_id} --scope scope"
+        with pytest.raises(CredentialUnavailableError, match=re.escape(expected_message)):
+            await AzureCliCredential().get_token("scope", claims=claims, tenant_id=tenant_id)
+    else:  # get_token_info
+        # Test with get_token_info - tenant passed via options
+        expected_message = f"Failed to get token. Run az login --claims-challenge {claims} --tenant {tenant_id} --scope scope"
+        with pytest.raises(CredentialUnavailableError, match=re.escape(expected_message)):
+            await AzureCliCredential().get_token_info("scope", options={"claims": claims, "tenant_id": tenant_id})
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+@pytest.mark.asyncio
+async def test_claims_challenge_with_tenant_without_scopes(get_token_method):
+    """The credential should include tenant in error message when claims and tenant are provided but no scopes"""
+
+    claims = "test-claims-challenge"
+    tenant_id = "test-tenant-id"
+    expected_message = f"Failed to get token. Run az login --claims-challenge {claims} --tenant {tenant_id}"
+    
+    if get_token_method == "get_token":
+        with pytest.raises(CredentialUnavailableError, match=re.escape(expected_message)):
+            await AzureCliCredential().get_token(claims=claims, tenant_id=tenant_id)  # No scopes provided
+    else:  # get_token_info
+        with pytest.raises(CredentialUnavailableError, match=re.escape(expected_message)):
+            await AzureCliCredential().get_token_info(options={"claims": claims, "tenant_id": tenant_id})  # No scopes provided
