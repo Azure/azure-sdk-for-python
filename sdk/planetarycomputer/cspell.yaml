@@ -31,6 +31,7 @@ words:
   - ylgnbu
   - ylorbr
   - ylorrd
+  - yarg
 
   # Satellite and remote sensing datasets/platforms
   - alos  # Advanced Land Observing Satellite
@@ -57,6 +58,7 @@ words:
   - colorinterp # Color interpretation
   - drcog     # Data provider/organization
   - dtype     # Data type
+  - inma      # Planetary Computey IngestionManagement Service
   - jsons     # JSON objects (plural)
   - lanczos   # Lanczos resampling algorithm
   - lulc      # Land Use/Land Cover
@@ -75,9 +77,9 @@ words:
   - sinc      # Sinc interpolation function
   - stac      # SpatioTemporal Asset Catalog
   - staccollectionconfiguration # STAC collection configuration
+  - stacforge # STAC development organization/tool
   - Tilematrixsetid # Tile matrix set identifier
   - Titiler   # Tile server application
   - unscale   # Remove scaling transformation
   - widthx    # Width in X direction
   - wmts      # Web Map Tile Service
-  - yarg      # Color map name
