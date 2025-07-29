@@ -1,16 +1,26 @@
 # Release History
 
-## 1.4.2 (Unreleased)
+## 2.0.0 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
+
+- `MetricsClient` and `MetricsQueryClient` have been removed from the `azure-monitor-query` package. This is part of the migration to split logs and metrics functionality into separate packages.  ([#42205](https://github.com/Azure/azure-sdk-for-python/pull/42205))
+  - The `MetricsClient` has been moved to the new `azure-monitor-querymetrics` package.
+  - Functionality provided by `MetricsQueryClient` can be access through the `azure-mgmt-monitor` package.
+  - For more details, see the [migration guide](https://aka.ms/azsdk/python/monitor/query/migration).
 
 ### Bugs Fixed
 
 - Fixed an issue where the package version in operation user agent strings was always set to "unknown" instead of the actual package version. ([#39866](https://github.com/Azure/azure-sdk-for-python/pull/39866))
 
 ### Other Changes
+
+- Bump minimum dependencies:
+  - `azure-core` to `>=1.30.0`
+  - `isodate` to `>=0.6.1`
+  - `typing-extensions` to `>=4.6.0`
 
 ## 1.4.1 (2025-01-14)
 
