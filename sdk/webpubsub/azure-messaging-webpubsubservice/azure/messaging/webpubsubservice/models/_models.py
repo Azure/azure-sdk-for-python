@@ -77,10 +77,14 @@ class ClientTokenResponse(_Model):
 class GroupMember(_Model):
     """Group member.
 
+    :ivar connect_id: Connection Id. Required.
+    :vartype connect_id: str
     :ivar user_id: User Id.
     :vartype user_id: str
     """
 
+    connect_id: str = rest_field(name="connectId", visibility=["read", "create", "update", "delete", "query"])
+    """Connection Id. Required."""
     user_id: Optional[str] = rest_field(name="userId", visibility=["read", "create", "update", "delete", "query"])
     """User Id."""
 
@@ -88,6 +92,7 @@ class GroupMember(_Model):
     def __init__(
         self,
         *,
+        connect_id: str,
         user_id: Optional[str] = None,
     ) -> None: ...
 
