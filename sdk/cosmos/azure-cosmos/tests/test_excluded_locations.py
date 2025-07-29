@@ -48,8 +48,8 @@ TEST_ITEM = {'id': ITEM_ID}
 TEST_ITEM.update(PARTITION_KEY_ITEMS)
 
 L0 = "Default"
-L1 = "West US 3"
-L2 = "West US"
+L1 = test_config.TestConfig.WRITE_LOCATION
+L2 = test_config.TestConfig.READ_LOCATION
 L3 = "East US 2"
 
 CLIENT_ONLY_TEST_DATA = [
