@@ -20,26 +20,13 @@ class TestSqlManagementBackupShortTermRetentionPoliciesOperations(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_backup_short_term_retention_policies_list_by_database(self, resource_group):
-        response = self.client.backup_short_term_retention_policies.list_by_database(
-            resource_group_name=resource_group.name,
-            server_name="str",
-            database_name="str",
-            api_version="2024-05-01-preview",
-        )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
     def test_backup_short_term_retention_policies_get(self, resource_group):
         response = self.client.backup_short_term_retention_policies.get(
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
             policy_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2021-02-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -54,7 +41,7 @@ class TestSqlManagementBackupShortTermRetentionPoliciesOperations(AzureMgmtRecor
             database_name="str",
             policy_name="str",
             parameters={"diffBackupIntervalInHours": 0, "id": "str", "name": "str", "retentionDays": 0, "type": "str"},
-            api_version="2024-05-01-preview",
+            api_version="2021-02-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -69,8 +56,21 @@ class TestSqlManagementBackupShortTermRetentionPoliciesOperations(AzureMgmtRecor
             database_name="str",
             policy_name="str",
             parameters={"diffBackupIntervalInHours": 0, "id": "str", "name": "str", "retentionDays": 0, "type": "str"},
-            api_version="2024-05-01-preview",
+            api_version="2021-02-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_backup_short_term_retention_policies_list_by_database(self, resource_group):
+        response = self.client.backup_short_term_retention_policies.list_by_database(
+            resource_group_name=resource_group.name,
+            server_name="str",
+            database_name="str",
+            api_version="2021-02-01-preview",
+        )
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

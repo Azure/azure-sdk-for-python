@@ -25,7 +25,7 @@ class TestSqlManagementSynapseLinkWorkspacesOperations(AzureMgmtRecordedTestCase
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2022-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
