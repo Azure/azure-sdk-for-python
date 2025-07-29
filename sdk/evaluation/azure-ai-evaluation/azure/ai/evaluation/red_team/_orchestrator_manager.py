@@ -1,0 +1,698 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+"""
+Orchestrator management module for Red Team Agent.
+
+This module handles PyRIT orchestrator initialization, execution, and management
+for different attack strategies including single-turn, multi-turn, and crescendo attacks.
+"""
+
+import asyncio
+import math
+import os
+import uuid
+from datetime import datetime
+from typing import Dict, List, Optional, Union, Callable
+from tqdm import tqdm
+
+# PyRIT imports
+from pyrit.orchestrator.single_turn.prompt_sending_orchestrator import PromptSendingOrchestrator
+from pyrit.orchestrator.multi_turn.red_teaming_orchestrator import RedTeamingOrchestrator
+from pyrit.orchestrator.multi_turn.crescendo_orchestrator import CrescendoOrchestrator
+from pyrit.orchestrator import Orchestrator
+from pyrit.prompt_converter import PromptConverter
+from pyrit.prompt_target import PromptChatTarget
+
+# Retry imports
+import httpx
+import httpcore
+import tenacity
+from tenacity import retry
+
+# Local imports
+from ._attack_strategy import AttackStrategy
+from ._attack_objective_generator import RiskCategory
+from ._utils._rai_service_target import AzureRAIServiceTarget
+from ._utils._rai_service_true_false_scorer import AzureRAIServiceTrueFalseScorer
+from ._utils._rai_service_eval_chat_target import RAIServiceEvalChatTarget
+from ._utils.constants import DATA_EXT, TASK_STATUS
+from ._utils.logging_utils import log_strategy_start, log_error
+
+
+class OrchestratorManager:
+    """Manages PyRIT orchestrators for different attack strategies."""
+    
+    def __init__(self, logger, generated_rai_client, credential, azure_ai_project, one_dp_project, 
+                 retry_config, scan_output_dir=None):
+        """Initialize the orchestrator manager.
+        
+        :param logger: Logger instance for logging
+        :param generated_rai_client: RAI client for service interactions
+        :param credential: Authentication credential
+        :param azure_ai_project: Azure AI project configuration
+        :param one_dp_project: Whether this is a OneDP project
+        :param retry_config: Retry configuration for network errors
+        :param scan_output_dir: Directory for scan outputs
+        """
+        self.logger = logger
+        self.generated_rai_client = generated_rai_client
+        self.credential = credential
+        self.azure_ai_project = azure_ai_project
+        self._one_dp_project = one_dp_project
+        self.retry_config = retry_config
+        self.scan_output_dir = scan_output_dir
+        
+    def get_orchestrator_for_attack_strategy(
+        self, attack_strategy: Union[AttackStrategy, List[AttackStrategy]]
+    ) -> Callable:
+        """Get appropriate orchestrator function for the specified attack strategy.
+
+        :param attack_strategy: Attack strategy to get orchestrator for
+        :type attack_strategy: Union[AttackStrategy, List[AttackStrategy]]
+        :return: Callable orchestrator function
+        :rtype: Callable
+        """
+        if isinstance(attack_strategy, list):
+            if AttackStrategy.MultiTurn in attack_strategy or AttackStrategy.Crescendo in attack_strategy:
+                self.logger.error("MultiTurn and Crescendo strategies are not supported in composed attacks.")
+                raise ValueError("MultiTurn and Crescendo strategies are not supported in composed attacks.")
+        elif AttackStrategy.MultiTurn == attack_strategy:
+            return self._multi_turn_orchestrator
+        elif AttackStrategy.Crescendo == attack_strategy:
+            return self._crescendo_orchestrator
+        return self._prompt_sending_orchestrator
+
+    async def _prompt_sending_orchestrator(
+        self,
+        chat_target: PromptChatTarget,
+        all_prompts: List[str],
+        converter: Union[PromptConverter, List[PromptConverter]],
+        *,
+        strategy_name: str = "unknown",
+        risk_category_name: str = "unknown",
+        risk_category: Optional[RiskCategory] = None,
+        timeout: int = 120,
+        red_team_info: Dict = None,
+        task_statuses: Dict = None,
+    ) -> Orchestrator:
+        """Send prompts via the PromptSendingOrchestrator with optimized performance.
+
+        :param chat_target: The target to send prompts to
+        :type chat_target: PromptChatTarget
+        :param all_prompts: List of prompts to process and send
+        :type all_prompts: List[str]
+        :param converter: Prompt converter or list of converters to transform prompts
+        :type converter: Union[PromptConverter, List[PromptConverter]]
+        :param strategy_name: Name of the attack strategy being used
+        :type strategy_name: str
+        :param risk_category_name: Name of the risk category being evaluated
+        :type risk_category_name: str
+        :param risk_category: Risk category being evaluated
+        :type risk_category: Optional[RiskCategory]
+        :param timeout: Timeout in seconds for each prompt
+        :type timeout: int
+        :param red_team_info: Dictionary to store file paths and results
+        :type red_team_info: Dict
+        :param task_statuses: Dictionary to track task statuses
+        :type task_statuses: Dict
+        :return: Configured and initialized orchestrator
+        :rtype: Orchestrator
+        """
+        task_key = f"{strategy_name}_{risk_category_name}_orchestrator"
+        if task_statuses:
+            task_statuses[task_key] = TASK_STATUS["RUNNING"]
+
+        log_strategy_start(self.logger, strategy_name, risk_category_name)
+
+        # Create converter list from single converter or list of converters
+        converter_list = (
+            [converter] if converter and isinstance(converter, PromptConverter) else converter if converter else []
+        )
+
+        # Log which converter is being used
+        if converter_list:
+            if isinstance(converter_list, list) and len(converter_list) > 0:
+                converter_names = [c.__class__.__name__ for c in converter_list if c is not None]
+                self.logger.debug(f"Using converters: {', '.join(converter_names)}")
+            elif converter is not None:
+                self.logger.debug(f"Using converter: {converter.__class__.__name__}")
+        else:
+            self.logger.debug("No converters specified")
+
+        # Optimized orchestrator initialization
+        try:
+            orchestrator = PromptSendingOrchestrator(objective_target=chat_target, prompt_converters=converter_list)
+
+            if not all_prompts:
+                self.logger.warning(f"No prompts provided to orchestrator for {strategy_name}/{risk_category_name}")
+                if task_statuses:
+                    task_statuses[task_key] = TASK_STATUS["COMPLETED"]
+                return orchestrator
+
+            # Debug log the first few characters of each prompt
+            self.logger.debug(f"First prompt (truncated): {all_prompts[0][:50]}...")
+
+            # Use a batched approach for send_prompts_async to prevent overwhelming
+            # the model with too many concurrent requests
+            batch_size = min(len(all_prompts), 3)  # Process 3 prompts at a time max
+
+            # Initialize output path for memory labelling
+            base_path = str(uuid.uuid4())
+
+            # If scan output directory exists, place the file there
+            if self.scan_output_dir:
+                output_path = os.path.join(self.scan_output_dir, f"{base_path}{DATA_EXT}")
+            else:
+                output_path = f"{base_path}{DATA_EXT}"
+
+            if red_team_info:
+                red_team_info[strategy_name][risk_category_name]["data_file"] = output_path
+
+            # Process prompts concurrently within each batch
+            if len(all_prompts) > batch_size:
+                self.logger.debug(
+                    f"Processing {len(all_prompts)} prompts in batches of {batch_size} for {strategy_name}/{risk_category_name}"
+                )
+                batches = [all_prompts[i : i + batch_size] for i in range(0, len(all_prompts), batch_size)]
+
+                for batch_idx, batch in enumerate(batches):
+                    self.logger.debug(
+                        f"Processing batch {batch_idx+1}/{len(batches)} with {len(batch)} prompts for {strategy_name}/{risk_category_name}"
+                    )
+
+                    batch_start_time = datetime.now()
+                    try:
+                        @retry(**self.retry_config["network_retry"])
+                        async def send_batch_with_retry():
+                            try:
+                                return await asyncio.wait_for(
+                                    orchestrator.send_prompts_async(
+                                        prompt_list=batch,
+                                        memory_labels={
+                                            "risk_strategy_path": output_path,
+                                            "batch": batch_idx + 1,
+                                        },
+                                    ),
+                                    timeout=timeout,
+                                )
+                            except (
+                                httpx.ConnectTimeout,
+                                httpx.ReadTimeout,
+                                httpx.ConnectError,
+                                httpx.HTTPError,
+                                ConnectionError,
+                                TimeoutError,
+                                asyncio.TimeoutError,
+                                httpcore.ReadTimeout,
+                                httpx.HTTPStatusError,
+                            ) as e:
+                                self.logger.warning(
+                                    f"Network error in batch {batch_idx+1} for {strategy_name}/{risk_category_name}: {type(e).__name__}: {str(e)}"
+                                )
+                                await asyncio.sleep(1)
+                                raise
+
+                        # Execute the retry-enabled function
+                        await send_batch_with_retry()
+                        batch_duration = (datetime.now() - batch_start_time).total_seconds()
+                        self.logger.debug(
+                            f"Successfully processed batch {batch_idx+1} for {strategy_name}/{risk_category_name} in {batch_duration:.2f} seconds"
+                        )
+
+                        # Print progress to console
+                        if batch_idx < len(batches) - 1:  # Don't print for the last batch
+                            tqdm.write(
+                                f"Strategy {strategy_name}, Risk {risk_category_name}: Processed batch {batch_idx+1}/{len(batches)}"
+                            )
+
+                    except (asyncio.TimeoutError, tenacity.RetryError):
+                        self.logger.warning(
+                            f"Batch {batch_idx+1} for {strategy_name}/{risk_category_name} timed out after {timeout} seconds, continuing with partial results"
+                        )
+                        tqdm.write(
+                            f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category_name}, Batch {batch_idx+1}"
+                        )
+                        # Set task status to TIMEOUT
+                        batch_task_key = f"{strategy_name}_{risk_category_name}_batch_{batch_idx+1}"
+                        if task_statuses:
+                            task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
+                            red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
+                        continue
+                    except Exception as e:
+                        log_error(
+                            self.logger,
+                            f"Error processing batch {batch_idx+1}",
+                            e,
+                            f"{strategy_name}/{risk_category_name}",
+                        )
+                        if red_team_info:
+                            red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
+                        continue
+            else:
+                # Small number of prompts, process all at once
+                self.logger.debug(
+                    f"Processing {len(all_prompts)} prompts in a single batch for {strategy_name}/{risk_category_name}"
+                )
+                batch_start_time = datetime.now()
+                try:
+                    @retry(**self.retry_config["network_retry"])
+                    async def send_all_with_retry():
+                        try:
+                            return await asyncio.wait_for(
+                                orchestrator.send_prompts_async(
+                                    prompt_list=all_prompts,
+                                    memory_labels={
+                                        "risk_strategy_path": output_path,
+                                        "batch": 1,
+                                    },
+                                ),
+                                timeout=timeout,
+                            )
+                        except (
+                            httpx.ConnectTimeout,
+                            httpx.ReadTimeout,
+                            httpx.ConnectError,
+                            httpx.HTTPError,
+                            ConnectionError,
+                            TimeoutError,
+                            OSError,
+                            asyncio.TimeoutError,
+                            httpcore.ReadTimeout,
+                            httpx.HTTPStatusError,
+                        ) as e:
+                            self.logger.warning(
+                                f"Network error in single batch for {strategy_name}/{risk_category_name}: {type(e).__name__}: {str(e)}"
+                            )
+                            await asyncio.sleep(2)
+                            raise
+
+                    # Execute the retry-enabled function
+                    await send_all_with_retry()
+                    batch_duration = (datetime.now() - batch_start_time).total_seconds()
+                    self.logger.debug(
+                        f"Successfully processed single batch for {strategy_name}/{risk_category_name} in {batch_duration:.2f} seconds"
+                    )
+                except (asyncio.TimeoutError, tenacity.RetryError):
+                    self.logger.warning(
+                        f"Prompt processing for {strategy_name}/{risk_category_name} timed out after {timeout} seconds, continuing with partial results"
+                    )
+                    tqdm.write(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category_name}")
+                    if task_statuses:
+                        single_batch_task_key = f"{strategy_name}_{risk_category_name}_single_batch"
+                        task_statuses[single_batch_task_key] = TASK_STATUS["TIMEOUT"]
+                    if red_team_info:
+                        red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
+                except Exception as e:
+                    log_error(
+                        self.logger,
+                        "Error processing prompts",
+                        e,
+                        f"{strategy_name}/{risk_category_name}",
+                    )
+                    if red_team_info:
+                        red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
+
+            if task_statuses:
+                task_statuses[task_key] = TASK_STATUS["COMPLETED"]
+            return orchestrator
+
+        except Exception as e:
+            log_error(
+                self.logger,
+                "Failed to initialize orchestrator",
+                e,
+                f"{strategy_name}/{risk_category_name}",
+            )
+            if task_statuses:
+                task_statuses[task_key] = TASK_STATUS["FAILED"]
+            raise
+
+    async def _multi_turn_orchestrator(
+        self,
+        chat_target: PromptChatTarget,
+        all_prompts: List[str],
+        converter: Union[PromptConverter, List[PromptConverter]],
+        *,
+        strategy_name: str = "unknown",
+        risk_category_name: str = "unknown",
+        risk_category: Optional[RiskCategory] = None,
+        timeout: int = 120,
+        red_team_info: Dict = None,
+        task_statuses: Dict = None,
+    ) -> Orchestrator:
+        """Send prompts via the RedTeamingOrchestrator (multi-turn orchestrator).
+
+        :param chat_target: The target to send prompts to
+        :type chat_target: PromptChatTarget
+        :param all_prompts: List of prompts to process and send
+        :type all_prompts: List[str]
+        :param converter: Prompt converter or list of converters to transform prompts
+        :type converter: Union[PromptConverter, List[PromptConverter]]
+        :param strategy_name: Name of the attack strategy being used
+        :type strategy_name: str
+        :param risk_category_name: Name of the risk category being evaluated
+        :type risk_category_name: str
+        :param risk_category: Risk category being evaluated
+        :type risk_category: Optional[RiskCategory]
+        :param timeout: Timeout in seconds for each prompt
+        :type timeout: int
+        :param red_team_info: Dictionary to store file paths and results
+        :type red_team_info: Dict
+        :param task_statuses: Dictionary to track task statuses
+        :type task_statuses: Dict
+        :return: Configured and initialized orchestrator
+        :rtype: Orchestrator
+        """
+        max_turns = 5  # Set a default max turns value
+        task_key = f"{strategy_name}_{risk_category_name}_orchestrator"
+        if task_statuses:
+            task_statuses[task_key] = TASK_STATUS["RUNNING"]
+
+        log_strategy_start(self.logger, strategy_name, risk_category_name)
+        converter_list = []
+        # Create converter list from single converter or list of converters
+        if converter and isinstance(converter, PromptConverter):
+            converter_list = [converter]
+        elif converter and isinstance(converter, list):
+            # Filter out None values from the converter list
+            converter_list = [c for c in converter if c is not None]
+
+        # Log which converter is being used
+        if converter_list:
+            if isinstance(converter_list, list) and len(converter_list) > 0:
+                converter_names = [c.__class__.__name__ for c in converter_list if c is not None]
+                self.logger.debug(f"Using converters: {', '.join(converter_names)}")
+            elif converter is not None:
+                self.logger.debug(f"Using converter: {converter.__class__.__name__}")
+        else:
+            self.logger.debug("No converters specified")
+
+        # Initialize output path for memory labelling
+        base_path = str(uuid.uuid4())
+
+        # If scan output directory exists, place the file there
+        if self.scan_output_dir:
+            # Ensure the directory exists
+            os.makedirs(self.scan_output_dir, exist_ok=True)
+            output_path = os.path.join(self.scan_output_dir, f"{base_path}{DATA_EXT}")
+        else:
+            output_path = f"{base_path}{DATA_EXT}"
+
+        if red_team_info:
+            red_team_info[strategy_name][risk_category_name]["data_file"] = output_path
+
+        for prompt_idx, prompt in enumerate(all_prompts):
+            prompt_start_time = datetime.now()
+            self.logger.debug(f"Processing prompt {prompt_idx+1}/{len(all_prompts)}")
+            try:
+                azure_rai_service_scorer = AzureRAIServiceTrueFalseScorer(
+                    client=self.generated_rai_client,
+                    api_version=None,
+                    model="gpt-4",
+                    logger=self.logger,
+                    credential=self.credential,
+                    risk_category=risk_category,
+                    azure_ai_project=self.azure_ai_project,
+                )
+
+                azure_rai_service_target = AzureRAIServiceTarget(
+                    client=self.generated_rai_client,
+                    api_version=None,
+                    model="gpt-4",
+                    prompt_template_key="orchestrators/red_teaming/text_generation.yaml",
+                    objective=prompt,
+                    logger=self.logger,
+                    is_one_dp_project=self._one_dp_project,
+                )
+
+                orchestrator = RedTeamingOrchestrator(
+                    objective_target=chat_target,
+                    adversarial_chat=azure_rai_service_target,
+                    max_turns=max_turns,
+                    prompt_converters=converter_list,
+                    objective_scorer=azure_rai_service_scorer,
+                    use_score_as_feedback=False,
+                )
+
+                # Debug log the first few characters of the current prompt
+                self.logger.debug(f"Current prompt (truncated): {prompt[:50]}...")
+
+                try:
+                    @retry(**self.retry_config["network_retry"])
+                    async def send_prompt_with_retry():
+                        try:
+                            return await asyncio.wait_for(
+                                orchestrator.run_attack_async(
+                                    objective=prompt,
+                                    memory_labels={
+                                        "risk_strategy_path": output_path,
+                                        "batch": 1,
+                                    },
+                                ),
+                                timeout=timeout,
+                            )
+                        except (
+                            httpx.ConnectTimeout,
+                            httpx.ReadTimeout,
+                            httpx.ConnectError,
+                            httpx.HTTPError,
+                            ConnectionError,
+                            TimeoutError,
+                            asyncio.TimeoutError,
+                            httpcore.ReadTimeout,
+                            httpx.HTTPStatusError,
+                        ) as e:
+                            self.logger.warning(
+                                f"Network error in prompt {prompt_idx+1} for {strategy_name}/{risk_category_name}: {type(e).__name__}: {str(e)}"
+                            )
+                            await asyncio.sleep(1)
+                            raise
+
+                    # Execute the retry-enabled function
+                    await send_prompt_with_retry()
+                    prompt_duration = (datetime.now() - prompt_start_time).total_seconds()
+                    self.logger.debug(
+                        f"Successfully processed prompt {prompt_idx+1} for {strategy_name}/{risk_category_name} in {prompt_duration:.2f} seconds"
+                    )
+
+                    # Print progress to console
+                    if prompt_idx < len(all_prompts) - 1:  # Don't print for the last prompt
+                        print(
+                            f"Strategy {strategy_name}, Risk {risk_category_name}: Processed prompt {prompt_idx+1}/{len(all_prompts)}"
+                        )
+
+                except (asyncio.TimeoutError, tenacity.RetryError):
+                    self.logger.warning(
+                        f"Batch {prompt_idx+1} for {strategy_name}/{risk_category_name} timed out after {timeout} seconds, continuing with partial results"
+                    )
+                    print(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category_name}, Batch {prompt_idx+1}")
+                    # Set task status to TIMEOUT
+                    batch_task_key = f"{strategy_name}_{risk_category_name}_prompt_{prompt_idx+1}"
+                    if task_statuses:
+                        task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
+                    if red_team_info:
+                        red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
+                    continue
+                except Exception as e:
+                    log_error(
+                        self.logger,
+                        f"Error processing prompt {prompt_idx+1}",
+                        e,
+                        f"{strategy_name}/{risk_category_name}",
+                    )
+                    if red_team_info:
+                        red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
+                    continue
+            except Exception as e:
+                log_error(
+                    self.logger,
+                    "Failed to initialize orchestrator",
+                    e,
+                    f"{strategy_name}/{risk_category_name}",
+                )
+                if task_statuses:
+                    task_statuses[task_key] = TASK_STATUS["FAILED"]
+                raise
+        if task_statuses:
+            task_statuses[task_key] = TASK_STATUS["COMPLETED"]
+        return orchestrator
+
+    async def _crescendo_orchestrator(
+        self,
+        chat_target: PromptChatTarget,
+        all_prompts: List[str],
+        converter: Union[PromptConverter, List[PromptConverter]],
+        *,
+        strategy_name: str = "unknown",
+        risk_category_name: str = "unknown",
+        risk_category: Optional[RiskCategory] = None,
+        timeout: int = 120,
+        red_team_info: Dict = None,
+        task_statuses: Dict = None,
+    ) -> Orchestrator:
+        """Send prompts via the CrescendoOrchestrator with optimized performance.
+
+        :param chat_target: The target to send prompts to
+        :type chat_target: PromptChatTarget
+        :param all_prompts: List of prompts to process and send
+        :type all_prompts: List[str]
+        :param converter: Prompt converter or list of converters to transform prompts
+        :type converter: Union[PromptConverter, List[PromptConverter]]
+        :param strategy_name: Name of the attack strategy being used
+        :type strategy_name: str
+        :param risk_category_name: Name of the risk category being evaluated
+        :type risk_category_name: str
+        :param risk_category: Risk category being evaluated
+        :type risk_category: Optional[RiskCategory]
+        :param timeout: Timeout in seconds for each prompt
+        :type timeout: int
+        :param red_team_info: Dictionary to store file paths and results
+        :type red_team_info: Dict
+        :param task_statuses: Dictionary to track task statuses
+        :type task_statuses: Dict
+        :return: Configured and initialized orchestrator
+        :rtype: Orchestrator
+        """
+        max_turns = 10  # Set a default max turns value
+        max_backtracks = 5
+        task_key = f"{strategy_name}_{risk_category_name}_orchestrator"
+        if task_statuses:
+            task_statuses[task_key] = TASK_STATUS["RUNNING"]
+
+        log_strategy_start(self.logger, strategy_name, risk_category_name)
+
+        # Initialize output path for memory labelling
+        base_path = str(uuid.uuid4())
+
+        # If scan output directory exists, place the file there
+        if self.scan_output_dir:
+            output_path = os.path.join(self.scan_output_dir, f"{base_path}{DATA_EXT}")
+        else:
+            output_path = f"{base_path}{DATA_EXT}"
+
+        if red_team_info:
+            red_team_info[strategy_name][risk_category_name]["data_file"] = output_path
+
+        for prompt_idx, prompt in enumerate(all_prompts):
+            prompt_start_time = datetime.now()
+            self.logger.debug(f"Processing prompt {prompt_idx+1}/{len(all_prompts)}")
+            try:
+                red_llm_scoring_target = RAIServiceEvalChatTarget(
+                    logger=self.logger,
+                    credential=self.credential,
+                    risk_category=risk_category,
+                    azure_ai_project=self.azure_ai_project,
+                )
+
+                azure_rai_service_target = AzureRAIServiceTarget(
+                    client=self.generated_rai_client,
+                    api_version=None,
+                    model="gpt-4",
+                    prompt_template_key="orchestrators/crescendo/crescendo_variant_1.yaml",
+                    objective=prompt,
+                    logger=self.logger,
+                    crescendo_format=True,
+                    is_one_dp_project=self._one_dp_project,
+                )
+
+                orchestrator = CrescendoOrchestrator(
+                    objective_target=chat_target,
+                    adversarial_chat=azure_rai_service_target,
+                    max_turns=max_turns,
+                    scoring_target=red_llm_scoring_target,
+                    max_backtracks=max_backtracks,
+                )
+
+                orchestrator._objective_scorer = AzureRAIServiceTrueFalseScorer(
+                    client=self.generated_rai_client,
+                    api_version=None,
+                    model="gpt-4",
+                    logger=self.logger,
+                    credential=self.credential,
+                    risk_category=risk_category,
+                    azure_ai_project=self.azure_ai_project,
+                )
+
+                # Debug log the first few characters of the current prompt
+                self.logger.debug(f"Current prompt (truncated): {prompt[:50]}...")
+
+                try:
+                    @retry(**self.retry_config["network_retry"])
+                    async def send_prompt_with_retry():
+                        try:
+                            return await asyncio.wait_for(
+                                orchestrator.run_attack_async(
+                                    objective=prompt,
+                                    memory_labels={
+                                        "risk_strategy_path": output_path,
+                                        "batch": prompt_idx + 1,
+                                    },
+                                ),
+                                timeout=timeout,
+                            )
+                        except (
+                            httpx.ConnectTimeout,
+                            httpx.ReadTimeout,
+                            httpx.ConnectError,
+                            httpx.HTTPError,
+                            ConnectionError,
+                            TimeoutError,
+                            asyncio.TimeoutError,
+                            httpcore.ReadTimeout,
+                            httpx.HTTPStatusError,
+                        ) as e:
+                            self.logger.warning(
+                                f"Network error in prompt {prompt_idx+1} for {strategy_name}/{risk_category_name}: {type(e).__name__}: {str(e)}"
+                            )
+                            await asyncio.sleep(1)
+                            raise
+
+                    # Execute the retry-enabled function
+                    await send_prompt_with_retry()
+                    prompt_duration = (datetime.now() - prompt_start_time).total_seconds()
+                    self.logger.debug(
+                        f"Successfully processed prompt {prompt_idx+1} for {strategy_name}/{risk_category_name} in {prompt_duration:.2f} seconds"
+                    )
+
+                    # Print progress to console
+                    if prompt_idx < len(all_prompts) - 1:  # Don't print for the last prompt
+                        print(
+                            f"Strategy {strategy_name}, Risk {risk_category_name}: Processed prompt {prompt_idx+1}/{len(all_prompts)}"
+                        )
+
+                except (asyncio.TimeoutError, tenacity.RetryError):
+                    self.logger.warning(
+                        f"Batch {prompt_idx+1} for {strategy_name}/{risk_category_name} timed out after {timeout} seconds, continuing with partial results"
+                    )
+                    print(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category_name}, Batch {prompt_idx+1}")
+                    # Set task status to TIMEOUT
+                    batch_task_key = f"{strategy_name}_{risk_category_name}_prompt_{prompt_idx+1}"
+                    if task_statuses:
+                        task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
+                    if red_team_info:
+                        red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
+                    continue
+                except Exception as e:
+                    log_error(
+                        self.logger,
+                        f"Error processing prompt {prompt_idx+1}",
+                        e,
+                        f"{strategy_name}/{risk_category_name}",
+                    )
+                    if red_team_info:
+                        red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
+                    continue
+            except Exception as e:
+                log_error(
+                    self.logger,
+                    "Failed to initialize orchestrator",
+                    e,
+                    f"{strategy_name}/{risk_category_name}",
+                )
+                if task_statuses:
+                    task_statuses[task_key] = TASK_STATUS["FAILED"]
+                raise
+        if task_statuses:
+            task_statuses[task_key] = TASK_STATUS["COMPLETED"]
+        return orchestrator

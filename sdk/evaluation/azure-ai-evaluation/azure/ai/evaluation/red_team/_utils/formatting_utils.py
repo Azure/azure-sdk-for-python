@@ -160,3 +160,103 @@ def list_mean_nan_safe(data_list: List[Any]) -> float:
     if not filtered_list:
         return 0.0
     return sum(filtered_list) / len(filtered_list)
+
+
+def write_pyrit_outputs_to_file(
+    orchestrator,
+    strategy_name: str,
+    risk_category: str,
+    output_path: str,
+    logger,
+    batch_idx: Optional[int] = None,
+) -> str:
+    """Write PyRIT outputs to a file with a name based on orchestrator, strategy, and risk category.
+
+    :param orchestrator: The orchestrator that generated the outputs
+    :param strategy_name: The name of the strategy used to generate the outputs
+    :type strategy_name: str
+    :param risk_category: The risk category being evaluated
+    :type risk_category: str
+    :param output_path: Path to write the output file
+    :type output_path: str
+    :param logger: Logger instance for logging
+    :param batch_idx: Optional batch index for multi-batch processing
+    :type batch_idx: Optional[int]
+    :return: Path to the output file
+    :rtype: str
+    """
+    import itertools
+    import os
+    from pathlib import Path
+    from pyrit.memory import CentralMemory
+    
+    logger.debug(f"Writing PyRIT outputs to file: {output_path}")
+    memory = CentralMemory.get_memory_instance()
+
+    memory_label = {"risk_strategy_path": output_path}
+
+    prompts_request_pieces = memory.get_prompt_request_pieces(labels=memory_label)
+
+    conversations = [
+        [item.to_chat_message() for item in group]
+        for conv_id, group in itertools.groupby(prompts_request_pieces, key=lambda x: x.conversation_id)
+    ]
+    
+    # Check if we should overwrite existing file with more conversations
+    if os.path.exists(output_path):
+        existing_line_count = 0
+        try:
+            with open(output_path, "r") as existing_file:
+                existing_line_count = sum(1 for _ in existing_file)
+
+            if len(conversations) > existing_line_count:
+                logger.debug(
+                    f"Found more prompts ({len(conversations)}) than existing file lines ({existing_line_count}). Replacing content."
+                )
+                # Convert to json lines
+                json_lines = ""
+                for conversation in conversations:
+                    if conversation[0].role == "system":
+                        # Skip system messages in the output
+                        continue
+                    json_lines += (
+                        json.dumps(
+                            {
+                                "conversation": {
+                                    "messages": [message_to_dict(message) for message in conversation]
+                                }
+                            }
+                        )
+                        + "\n"
+                    )
+                with Path(output_path).open("w") as f:
+                    f.writelines(json_lines)
+                logger.debug(
+                    f"Successfully wrote {len(conversations)-existing_line_count} new conversation(s) to {output_path}"
+                )
+            else:
+                logger.debug(
+                    f"Existing file has {existing_line_count} lines, new data has {len(conversations)} prompts. Keeping existing file."
+                )
+                return output_path
+        except Exception as e:
+            logger.warning(f"Failed to read existing file {output_path}: {str(e)}")
+    else:
+        logger.debug(f"Creating new file: {output_path}")
+        # Convert to json lines
+        json_lines = ""
+
+        for conversation in conversations:
+            if conversation[0].role == "system":
+                # Skip system messages in the output
+                continue
+            json_lines += (
+                json.dumps(
+                    {"conversation": {"messages": [message_to_dict(message) for message in conversation]}}
+                )
+                + "\n"
+            )
+        with Path(output_path).open("w") as f:
+            f.writelines(json_lines)
+        logger.debug(f"Successfully wrote {len(conversations)} conversations to {output_path}")
+    return str(output_path)
