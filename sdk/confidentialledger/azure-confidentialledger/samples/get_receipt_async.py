@@ -23,6 +23,7 @@ import sys
 import tempfile
 
 from azure.confidentialledger.aio import ConfidentialLedgerClient
+from azure.confidentialledger.models import LedgerEntry
 from azure.confidentialledger.certificate.aio import (
     ConfidentialLedgerCertificateClient,
 )
@@ -82,7 +83,7 @@ async def main():
                 try:
                     entry_contents = "Hello world!"
                     post_poller = await ledger_client.begin_create_ledger_entry(  # type: ignore[attr-defined]
-                        {"contents": entry_contents}
+                        LedgerEntry({"contents": entry_contents})
                     )
                     post_entry_result = await post_poller.result()
                     transaction_id = post_entry_result["transactionId"]
