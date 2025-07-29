@@ -142,7 +142,7 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         return AsyncLROPoller(self._client, initial_response, lambda x: x, polling_method)
 
     async def begin_create_ledger_entry(
-        self, entry: _models.LedgerEntry, *, collection_id: Optional[str] = None, **kwargs: Any
+        self, entry: Union[_models.LedgerEntry, JSON, IO[bytes]], *, collection_id: Optional[str] = None, **kwargs: Any
     ) -> AsyncLROPoller[_models.TransactionStatus]:
         """Writes a ledger entry and returns a poller to wait for it to be durably committed. The
         poller returns the result for the initial call to create the ledger entry.
@@ -150,7 +150,7 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         A collection id may optionally be specified.
 
         :param entry: Ledger entry. Required.
-        :type entry: ~azure.confidentialledger.models.LedgerEntry
+        :type entry: ~azure.confidentialledger.models.LedgerEntry or JSON or IO[bytes]
         :keyword collection_id: The collection id. Default value is None.
         :paramtype collection_id: str
         :return: AsyncLROPoller[TransactionStatus]. The TransactionStatus is compatible with MutableMapping
