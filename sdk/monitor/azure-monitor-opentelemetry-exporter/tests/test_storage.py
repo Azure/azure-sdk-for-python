@@ -14,6 +14,7 @@ from azure.monitor.opentelemetry.exporter._storage import (
 )
 from azure.monitor.opentelemetry.exporter._constants import DropCode
 from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
+from azure.monitor.opentelemetry.exporter.statsbeat._utils import _track_dropped_items
 
 TEST_FOLDER = os.path.abspath(".test.storage")
 
@@ -77,6 +78,193 @@ class TestLocalFileBlob(unittest.TestCase):
         blob = LocalFileBlob(os.path.join(TEST_FOLDER, "foobar.blob"))
         blob.delete()
         self.assertEqual(blob.lease(0.01), None)
+
+    def test_put_with_customer_statsbeat_success(self):
+        """Test that LocalFileBlob.put() doesn't track dropped items when successful"""
+        mock_statsbeat = mock.Mock()
+        test_data = [
+            {"name": "test_item1", "data": {"base_type": "RequestData"}},
+            {"name": "test_item2", "data": {"base_type": "ExceptionData"}},
+        ]
+        
+        blob = LocalFileBlob(os.path.join(TEST_FOLDER, "success_blob"), mock_statsbeat)
+        
+        # Mock the file operations to succeed
+        with mock.patch("builtins.open", mock.mock_open()):
+            with mock.patch("os.rename"):
+                with mock.patch("azure.monitor.opentelemetry.exporter._storage._track_dropped_items") as mock_track:
+                    result = blob.put(test_data)
+                    
+                    # Should return the blob object on success
+                    self.assertEqual(result, blob)
+                    # Should not track any dropped items when successful
+                    mock_track.assert_not_called()
+
+    def test_put_with_customer_statsbeat_exception_tracking(self):
+        """Test that LocalFileBlob.put() tracks dropped items when an exception occurs"""
+        mock_statsbeat = mock.Mock()
+        test_data = [
+            {"name": "test_item1", "data": {"base_type": "RequestData"}},
+            {"name": "test_item2", "data": {"base_type": "ExceptionData"}},
+        ]
+        
+        blob = LocalFileBlob(os.path.join(TEST_FOLDER, "exception_blob"), mock_statsbeat)
+        
+        # Create a test exception
+        test_exception = PermissionError("Permission denied writing to file")
+        
+        # Mock file operations to raise an exception
+        with mock.patch("builtins.open", side_effect=test_exception):
+            with mock.patch("azure.monitor.opentelemetry.exporter._storage._track_dropped_items") as mock_track:
+                result = blob.put(test_data)
+                
+                # Should return None on failure
+                self.assertIsNone(result)
+                # Should track dropped items with the exception
+                mock_track.assert_called_once_with(
+                    mock_statsbeat,
+                    test_data,
+                    DropCode.CLIENT_EXCEPTION,
+                    test_exception
+                )
+
+    def test_put_with_customer_statsbeat_os_rename_exception(self):
+        """Test that LocalFileBlob.put() tracks dropped items when os.rename fails"""
+        mock_statsbeat = mock.Mock()
+        test_data = [
+            {"name": "test_item1", "data": {"base_type": "RequestData"}},
+        ]
+        
+        blob = LocalFileBlob(os.path.join(TEST_FOLDER, "rename_exception_blob"), mock_statsbeat)
+        
+        # Create a test exception for os.rename
+        test_exception = OSError("Cross-device link")
+        
+        # Mock file write to succeed but os.rename to fail
+        with mock.patch("builtins.open", mock.mock_open()):
+            with mock.patch("os.rename", side_effect=test_exception):
+                with mock.patch("azure.monitor.opentelemetry.exporter._storage._track_dropped_items") as mock_track:
+                    result = blob.put(test_data)
+                    
+                    # Should return None on failure
+                    self.assertIsNone(result)
+                    # Should track dropped items with the rename exception
+                    mock_track.assert_called_once_with(
+                        mock_statsbeat,
+                        test_data,
+                        DropCode.CLIENT_EXCEPTION,
+                        test_exception
+                    )
+
+    def test_put_without_customer_statsbeat_exception_no_tracking(self):
+        """Test that LocalFileBlob.put() doesn't track when no customer_statsbeat_metrics provided"""
+        test_data = [
+            {"name": "test_item1", "data": {"base_type": "RequestData"}},
+        ]
+        
+        # Create blob without customer statsbeat metrics
+        blob = LocalFileBlob(os.path.join(TEST_FOLDER, "no_statsbeat_blob"))
+        
+        # Create a test exception
+        test_exception = PermissionError("Permission denied writing to file")
+        
+        # Mock file operations to raise an exception
+        with mock.patch("builtins.open", side_effect=test_exception):
+            with mock.patch("azure.monitor.opentelemetry.exporter._storage._track_dropped_items") as mock_track:
+                result = blob.put(test_data)
+                
+                # Should return None on failure
+                self.assertIsNone(result)
+                # Should not track dropped items when no customer statsbeat available
+                mock_track.assert_not_called()
+
+    def test_put_customer_statsbeat_metrics_reference_preservation(self):
+        """Test that the customer_statsbeat_metrics reference is preserved correctly"""
+        mock_statsbeat = mock.Mock()
+        test_data = [{"name": "test_item", "data": {"base_type": "RequestData"}}]
+        
+        blob = LocalFileBlob(os.path.join(TEST_FOLDER, "reference_blob"), mock_statsbeat)
+        
+        # Verify the reference is stored correctly
+        self.assertEqual(blob.customer_statsbeat_metrics, mock_statsbeat)
+        
+        # Test that the same reference is passed to _track_dropped_items
+        test_exception = IOError("File write error")
+        
+        with mock.patch("builtins.open", side_effect=test_exception):
+            with mock.patch("azure.monitor.opentelemetry.exporter._storage._track_dropped_items") as mock_track:
+                result = blob.put(test_data)
+                
+                # Should return None on failure
+                self.assertIsNone(result)
+                # Verify the exact same reference is passed
+                mock_track.assert_called_once()
+                call_args = mock_track.call_args[0]
+                self.assertIs(call_args[0], mock_statsbeat)  # Same object reference
+                self.assertEqual(call_args[1], test_data)
+                self.assertEqual(call_args[2], DropCode.CLIENT_EXCEPTION)
+                self.assertEqual(call_args[3], test_exception)
+
+    def test_put_with_different_exception_types_tracking(self):
+        """Test LocalFileBlob.put() tracks different types of exceptions correctly"""
+        mock_statsbeat = mock.Mock()
+        test_data = [{"name": "test_item", "data": {"base_type": "RequestData"}}]
+        
+        exception_test_cases = [
+            PermissionError("Permission denied"),
+            OSError("Operation not permitted"),
+            IOError("I/O operation failed"),
+            Exception("Generic exception"),
+            ValueError("Invalid value in data"),
+        ]
+        
+        for i, test_exception in enumerate(exception_test_cases):
+            with self.subTest(exception_type=type(test_exception).__name__):
+                blob = LocalFileBlob(
+                    os.path.join(TEST_FOLDER, f"exception_type_blob_{i}"), 
+                    mock_statsbeat
+                )
+                
+                # Mock file operations to raise the specific exception
+                with mock.patch("builtins.open", side_effect=test_exception):
+                    with mock.patch("azure.monitor.opentelemetry.exporter._storage._track_dropped_items") as mock_track:
+                        result = blob.put(test_data)
+                        
+                        # Should return None on failure
+                        self.assertIsNone(result)
+                        # Should track dropped items with the specific exception
+                        mock_track.assert_called_once_with(
+                            mock_statsbeat,
+                            test_data,
+                            DropCode.CLIENT_EXCEPTION,
+                            test_exception
+                        )
+
+    def test_put_with_lease_period_and_exception_tracking(self):
+        """Test that LocalFileBlob.put() tracks exceptions correctly even with lease_period"""
+        mock_statsbeat = mock.Mock()
+        test_data = [{"name": "test_item", "data": {"base_type": "RequestData"}}]
+        
+        blob = LocalFileBlob(os.path.join(TEST_FOLDER, "lease_exception_blob"), mock_statsbeat)
+        
+        test_exception = OSError("Disk full")
+        
+        # Mock file write to succeed initially, but os.rename to fail (which happens after lease processing)
+        with mock.patch("builtins.open", mock.mock_open()):
+            with mock.patch("os.rename", side_effect=test_exception):
+                with mock.patch("azure.monitor.opentelemetry.exporter._storage._track_dropped_items") as mock_track:
+                    # Test with lease_period
+                    result = blob.put(test_data, lease_period=60)
+                    
+                    # Should return None on failure
+                    self.assertIsNone(result)
+                    # Should track dropped items even when lease_period is specified
+                    mock_track.assert_called_once_with(
+                        mock_statsbeat,
+                        test_data,
+                        DropCode.CLIENT_EXCEPTION,
+                        test_exception
+                    )
 
 
 # pylint: disable=protected-access
@@ -261,14 +449,15 @@ class TestLocalFileStorage(unittest.TestCase):
         with LocalFileStorage(os.path.join(TEST_FOLDER, "write_failure_storage")) as stor:
             setattr(stor, '_customer_statsbeat_metrics', mock_statsbeat)
 
-            with mock.patch.object(LocalFileBlob, "put", return_value=(None, "Storage put failed")):
+            with mock.patch.object(LocalFileBlob, "put", return_value=None):
                 result = stor.put(test_items)
 
                 self.assertIsNone(result)
 
-                mock_statsbeat.count_dropped_items.assert_called_once_with(
-                    1, mock.ANY, DropCode.CLIENT_EXCEPTION, "Storage put failed"
-                )
+                # The customer statsbeat tracking should happen inside LocalFileBlob.put()
+                # Since we mocked it to return None, the internal tracking wouldn't happen
+                # So we verify the mocked put was called with the right parameters
+                mock_statsbeat.count_dropped_items.assert_not_called()  # Because the mock prevented internal tracking
 
     def test_dropped_items_no_statsbeat_metrics(self):
         test_items = [
@@ -323,9 +512,373 @@ class TestLocalFileStorage(unittest.TestCase):
             setattr(stor, '_customer_statsbeat_metrics', mock_statsbeat)
 
             mock_blob = mock.Mock()
-            with mock.patch.object(LocalFileBlob, "put", return_value=(mock_blob, None)):
+            with mock.patch.object(LocalFileBlob, "put", return_value=mock_blob):
                 result = stor.put(test_items)
 
                 self.assertEqual(result, mock_blob)
 
                 mock_statsbeat.count_dropped_items.assert_not_called()
+
+    def test_exception_occured_tracks_dropped_items(self):
+        """Test that when exception_occured is set, put() tracks dropped items in customer statsbeat."""
+        mock_statsbeat = mock.Mock()
+        test_items = [
+            {"name": "test_item1", "data": {"base_type": "RequestData"}},
+            {"name": "test_item2", "data": {"base_type": "ExceptionData"}},
+        ]
+        
+        # Mock the _check_and_set_folder_permissions to simulate an exception during initialization
+        test_exception = PermissionError("Permission denied for storage folder")
+        
+        with mock.patch.object(
+            LocalFileStorage, "_check_and_set_folder_permissions", return_value=True
+        ):
+            with LocalFileStorage(os.path.join(TEST_FOLDER, "exception_storage")) as stor:
+                # Manually set the exception_occured to simulate an exception that happened during initialization
+                stor.exception_occured = test_exception
+                stor._customer_statsbeat_metrics = mock_statsbeat
+                
+                # Mock _track_dropped_items to capture the call
+                with mock.patch("azure.monitor.opentelemetry.exporter._storage._track_dropped_items") as mock_track:
+                    result = stor.put(test_items)
+                    
+                    # Verify that _track_dropped_items was called at least once with our exception
+                    # Note: It might be called multiple times (once for exception_occured, and potentially 
+                    # once more if blob.put() also fails), so we check that our expected call is present
+                    expected_call = mock.call(mock_statsbeat, test_items, DropCode.CLIENT_EXCEPTION, test_exception)
+                    self.assertIn(expected_call, mock_track.call_args_list)
+                    
+                    # Verify that at least one call was made
+                    self.assertGreaterEqual(mock_track.call_count, 1)
+
+    def test_exception_occured_specific_tracking_only(self):
+        """Test the specific exception_occured tracking logic by mocking blob.put to succeed."""
+        mock_statsbeat = mock.Mock()
+        test_items = [
+            {"name": "test_item1", "data": {"base_type": "RequestData"}},
+        ]
+        
+        test_exception = PermissionError("Permission denied for storage folder")
+        
+        with mock.patch.object(
+            LocalFileStorage, "_check_and_set_folder_permissions", return_value=True
+        ):
+            with LocalFileStorage(os.path.join(TEST_FOLDER, "exception_specific_storage")) as stor:
+                stor.exception_occured = test_exception
+                stor._customer_statsbeat_metrics = mock_statsbeat
+                
+                # Mock _track_dropped_items to capture the call
+                with mock.patch("azure.monitor.opentelemetry.exporter._storage._track_dropped_items") as mock_track:
+                    result = stor.put(test_items)
+                    
+                    # Should call _track_dropped_items exactly once for exception_occured
+                    mock_track.assert_called_once_with(
+                        mock_statsbeat,
+                        test_items,
+                        DropCode.CLIENT_EXCEPTION,
+                        test_exception
+                    )
+                    
+                    # Should return None since exception_occured causes early return
+                    self.assertIsNone(result)
+                    
+                    # Verify that exception_occured is reset to None after tracking
+                    self.assertIsNone(stor.exception_occured)
+
+    def test_exception_occured_no_customer_statsbeat(self):
+        """Test that when exception_occured is set but no customer statsbeat is available, no tracking occurs."""
+        test_items = [
+            {"name": "test_item1", "data": {"base_type": "RequestData"}},
+        ]
+        
+        test_exception = OSError("Read-only filesystem")
+        
+        with mock.patch.object(
+            LocalFileStorage, "_check_and_set_folder_permissions", return_value=True
+        ):
+            with LocalFileStorage(os.path.join(TEST_FOLDER, "exception_no_statsbeat_storage")) as stor:
+                # Set exception_occured but no customer statsbeat metrics
+                stor.exception_occured = test_exception
+                self.assertIsNone(stor._customer_statsbeat_metrics)
+                
+                # Mock _track_dropped_items to ensure it's not called
+                with mock.patch("azure.monitor.opentelemetry.exporter._storage._track_dropped_items") as mock_track:
+                    result = stor.put(test_items)
+                    
+                    # Should not call _track_dropped_items when no customer statsbeat is available
+                    mock_track.assert_not_called()
+
+    def test_exception_occured_none_no_tracking(self):
+        """Test that when exception_occured is None, no exception tracking occurs."""
+        mock_statsbeat = mock.Mock()
+        test_items = [
+            {"name": "test_item1", "data": {"base_type": "RequestData"}},
+        ]
+        
+        with LocalFileStorage(os.path.join(TEST_FOLDER, "no_exception_storage")) as stor:
+            stor._customer_statsbeat_metrics = mock_statsbeat
+            # exception_occured should be None by default
+            self.assertIsNone(stor.exception_occured)
+            
+            # Mock the blob.put to return a successful result
+            mock_blob = mock.Mock()
+            with mock.patch.object(LocalFileBlob, "put", return_value=mock_blob):
+                with mock.patch("azure.monitor.opentelemetry.exporter._storage._track_dropped_items") as mock_track:
+                    result = stor.put(test_items)
+                    
+                    # Should not call _track_dropped_items for exception when exception_occured is None
+                    mock_track.assert_not_called()
+                    self.assertEqual(result, mock_blob)
+
+    def test_exception_occured_with_different_exception_types(self):
+        """Test exception tracking with different types of exceptions."""
+        mock_statsbeat = mock.Mock()
+        test_items = [{"name": "test_item", "data": {"base_type": "RequestData"}}]
+        
+        exception_test_cases = [
+            PermissionError("Permission denied"),
+            OSError("Operation not permitted"),
+            Exception("Generic exception"),
+            ValueError("Invalid value"),
+        ]
+        
+        for i, test_exception in enumerate(exception_test_cases):
+            with self.subTest(exception_type=type(test_exception).__name__):
+                storage_path = os.path.join(TEST_FOLDER, f"exception_type_storage_{i}")
+                
+                with mock.patch.object(
+                    LocalFileStorage, "_check_and_set_folder_permissions", return_value=True
+                ):
+                    with LocalFileStorage(storage_path) as stor:
+                        stor.exception_occured = test_exception
+                        stor._customer_statsbeat_metrics = mock_statsbeat
+                        
+                        with mock.patch("azure.monitor.opentelemetry.exporter._storage._track_dropped_items") as mock_track:
+                            result = stor.put(test_items)
+                            
+                            # Verify that _track_dropped_items was called with the specific exception
+                            mock_track.assert_called_once_with(
+                                mock_statsbeat,
+                                test_items,
+                                DropCode.CLIENT_EXCEPTION,
+                                test_exception
+                            )
+                            
+                            # Should return None since exception_occured causes early return
+                            self.assertIsNone(result)
+                            
+                            # Verify that exception_occured is reset after tracking
+                            self.assertIsNone(stor.exception_occured)
+                            mock_track.reset_mock()
+
+    def test_check_and_set_folder_permissions_readonly_filesystem(self):
+        """Test that OSError with errno.EROFS sets filesystem_is_readonly flag"""
+        import errno
+        
+        # Create a mock OSError with EROFS errno (readonly filesystem)
+        readonly_error = OSError("Read-only file system")
+        readonly_error.errno = errno.EROFS
+        
+        with mock.patch("os.makedirs", side_effect=readonly_error):
+            with mock.patch.object(
+                LocalFileStorage, "_maintenance_routine"
+            ), mock.patch.object(LocalFileStorage, "__exit__"):
+                stor = LocalFileStorage(os.path.join(TEST_FOLDER, "readonly_test"))
+                
+                # Should not be enabled due to readonly filesystem
+                self.assertFalse(stor._enabled)
+                # Should set readonly flag
+                self.assertTrue(stor.filesystem_is_readonly)
+                # Should not set exception_occured for readonly
+                self.assertIsNone(stor.exception_occured)
+
+    def test_check_and_set_folder_permissions_permission_error(self):
+        """Test that PermissionError (OSError subclass) sets exception_occured"""
+        permission_error = PermissionError("Permission denied")
+        
+        with mock.patch("os.makedirs", side_effect=permission_error):
+            with mock.patch.object(
+                LocalFileStorage, "_maintenance_routine"
+            ), mock.patch.object(LocalFileStorage, "__exit__"):
+                stor = LocalFileStorage(os.path.join(TEST_FOLDER, "permission_test"))
+                
+                # Should not be enabled due to permission error
+                self.assertFalse(stor._enabled)
+                # Should not set readonly flag
+                self.assertFalse(stor.filesystem_is_readonly)
+                # Should set exception_occured for permission error
+                self.assertEqual(stor.exception_occured, permission_error)
+
+    def test_check_and_set_folder_permissions_other_os_error(self):
+        """Test that other OSError types set exception_occured"""
+        import errno
+        
+        # Create a mock OSError with different errno (not EROFS)
+        other_os_error = OSError("No space left on device")
+        other_os_error.errno = errno.ENOSPC
+        
+        with mock.patch("os.makedirs", side_effect=other_os_error):
+            with mock.patch.object(
+                LocalFileStorage, "_maintenance_routine"
+            ), mock.patch.object(LocalFileStorage, "__exit__"):
+                stor = LocalFileStorage(os.path.join(TEST_FOLDER, "other_os_error_test"))
+                
+                # Should not be enabled due to OS error
+                self.assertFalse(stor._enabled)
+                # Should not set readonly flag
+                self.assertFalse(stor.filesystem_is_readonly)
+                # Should set exception_occured for other OS error
+                self.assertEqual(stor.exception_occured, other_os_error)
+
+    def test_check_and_set_folder_permissions_general_exception(self):
+        """Test that non-OSError exceptions set exception_occured"""
+        value_error = ValueError("Invalid path format")
+        
+        with mock.patch("os.makedirs", side_effect=value_error):
+            with mock.patch.object(
+                LocalFileStorage, "_maintenance_routine"
+            ), mock.patch.object(LocalFileStorage, "__exit__"):
+                stor = LocalFileStorage(os.path.join(TEST_FOLDER, "general_exception_test"))
+                
+                # Should not be enabled due to general exception
+                self.assertFalse(stor._enabled)
+                # Should not set readonly flag
+                self.assertFalse(stor.filesystem_is_readonly)
+                # Should set exception_occured for general exception
+                self.assertEqual(stor.exception_occured, value_error)
+
+    def test_check_and_set_folder_permissions_os_error_without_errno(self):
+        """Test that OSError without errno attribute sets exception_occured"""
+        # Create an OSError without errno attribute
+        os_error_no_errno = OSError("Generic OS error")
+        # Explicitly ensure no errno attribute
+        if hasattr(os_error_no_errno, 'errno'):
+            delattr(os_error_no_errno, 'errno')
+        
+        with mock.patch("os.makedirs", side_effect=os_error_no_errno):
+            with mock.patch.object(
+                LocalFileStorage, "_maintenance_routine"
+            ), mock.patch.object(LocalFileStorage, "__exit__"):
+                stor = LocalFileStorage(os.path.join(TEST_FOLDER, "no_errno_test"))
+                
+                # Should not be enabled due to OS error
+                self.assertFalse(stor._enabled)
+                # Should not set readonly flag (getattr returns None, not equal to EROFS)
+                self.assertFalse(stor.filesystem_is_readonly)
+                # Should set exception_occured for OS error without errno
+                self.assertEqual(stor.exception_occured, os_error_no_errno)
+
+    def test_check_and_set_folder_permissions_windows_icacls_failure(self):
+        """Test Windows icacls failure handling"""
+        with mock.patch("os.name", "nt"):  # Simulate Windows
+            with mock.patch("os.makedirs"):  # Don't raise error in makedirs
+                with mock.patch("subprocess.run") as mock_subprocess:
+                    # Simulate icacls failure
+                    mock_result = mock.Mock()
+                    mock_result.returncode = 1  # Non-zero return code (failure)
+                    mock_subprocess.return_value = mock_result
+                    
+                    with mock.patch.object(
+                        LocalFileStorage, "_maintenance_routine"
+                    ), mock.patch.object(LocalFileStorage, "__exit__"):
+                        with mock.patch.object(LocalFileStorage, "_get_current_user", return_value="DOMAIN\\User"):
+                            stor = LocalFileStorage(os.path.join(TEST_FOLDER, "windows_icacls_test"))
+                            
+                            # Should not be enabled due to icacls failure
+                            self.assertFalse(stor._enabled)
+                            # Should not set readonly flag (no exception thrown)
+                            self.assertFalse(stor.filesystem_is_readonly)
+                            # Should not set exception_occured (no exception thrown)
+                            self.assertIsNone(stor.exception_occured)
+
+    def test_check_and_set_folder_permissions_unix_chmod_success(self):
+        """Test Unix chmod success path"""
+        with mock.patch("os.name", "posix"):  # Simulate Unix
+            with mock.patch("os.makedirs"):  # Don't raise error in makedirs
+                with mock.patch("os.chmod"):  # Don't raise error in chmod
+                    with mock.patch.object(
+                        LocalFileStorage, "_maintenance_routine"
+                    ), mock.patch.object(LocalFileStorage, "__exit__"):
+                        stor = LocalFileStorage(os.path.join(TEST_FOLDER, "unix_success_test"))
+                        
+                        # Should be enabled due to successful chmod
+                        self.assertTrue(stor._enabled)
+                        # Should not set readonly flag
+                        self.assertFalse(stor.filesystem_is_readonly)
+                        # Should not set exception_occured
+                        self.assertIsNone(stor.exception_occured)
+
+    def test_exception_handling_categorization_integration(self):
+        """Integration test to verify exception categorization works end-to-end"""
+        import errno
+        
+        # Test data
+        test_items = [
+            {"name": "test_item1", "data": {"base_type": "RequestData"}},
+        ]
+        
+        # Test 1: Readonly filesystem error
+        readonly_error = OSError("Read-only file system")
+        readonly_error.errno = errno.EROFS
+        
+        with mock.patch("os.makedirs", side_effect=readonly_error):
+            with mock.patch.object(
+                LocalFileStorage, "_maintenance_routine"
+            ), mock.patch.object(LocalFileStorage, "__exit__"):
+                stor = LocalFileStorage(os.path.join(TEST_FOLDER, "integration_test"))
+                
+                # Should categorize as readonly and be disabled
+                self.assertTrue(stor.filesystem_is_readonly)
+                self.assertIsNone(stor.exception_occured)
+                self.assertFalse(stor._enabled)  # Storage should be disabled
+                
+                # Test put behavior - disabled storage should return CLIENT_STORAGE_DISABLED
+                # But we can test that readonly flag was properly set during initialization
+                with mock.patch.object(stor, '_customer_statsbeat_metrics') as mock_statsbeat:
+                    result = stor.put(test_items)
+                    
+                    # Should return None and track storage disabled (since _enabled=False)
+                    self.assertIsNone(result)
+                    mock_statsbeat.count_dropped_items.assert_called_once()
+                    args = mock_statsbeat.count_dropped_items.call_args[0]
+                    self.assertEqual(args[2], DropCode.CLIENT_STORAGE_DISABLED)
+        
+        # Test 2: Permission error (should go to exception_occured)
+        permission_error = PermissionError("Permission denied")
+        
+        with mock.patch("os.makedirs", side_effect=permission_error):
+            with mock.patch.object(
+                LocalFileStorage, "_maintenance_routine"
+            ), mock.patch.object(LocalFileStorage, "__exit__"):
+                stor = LocalFileStorage(os.path.join(TEST_FOLDER, "integration_test2"))
+                
+                # Should categorize as general exception and be disabled
+                self.assertFalse(stor.filesystem_is_readonly)
+                self.assertEqual(stor.exception_occured, permission_error)
+                self.assertFalse(stor._enabled)  # Storage should be disabled
+                
+        # Test 3: Successful initialization with enabled storage to test readonly handling in put()
+        with mock.patch.object(
+            LocalFileStorage, "_check_and_set_folder_permissions", return_value=True
+        ):
+            with mock.patch.object(
+                LocalFileStorage, "_maintenance_routine"
+            ), mock.patch.object(LocalFileStorage, "__exit__"):
+                stor = LocalFileStorage(os.path.join(TEST_FOLDER, "integration_test3"))
+                
+                # Should be enabled and not have readonly/exception flags
+                self.assertTrue(stor._enabled)
+                self.assertFalse(stor.filesystem_is_readonly)
+                self.assertIsNone(stor.exception_occured)
+                
+                # Now test readonly handling in put() by manually setting the flag
+                stor.filesystem_is_readonly = True
+                
+                with mock.patch.object(stor, '_customer_statsbeat_metrics') as mock_statsbeat:
+                    result = stor.put(test_items)
+                    
+                    # Should return None and track readonly drop
+                    self.assertIsNone(result)
+                    mock_statsbeat.count_dropped_items.assert_called_once()
+                    args = mock_statsbeat.count_dropped_items.call_args[0]
+                    self.assertEqual(args[2], DropCode.CLIENT_READONLY)

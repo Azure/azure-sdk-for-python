@@ -5,7 +5,7 @@ import os
 import tempfile
 import time
 from enum import Enum
-from typing import List, Optional, Any, Tuple
+from typing import List, Optional, Any
 from urllib.parse import urlparse
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
@@ -42,13 +42,11 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _REQ_THROTTLE_NAME,
     _RETRYABLE_STATUS_CODES,
     _THROTTLE_STATUS_CODES,
-    RetryCodeType,
-    RetryCode,
-    _UNKNOWN,
+    DropCode,
 )
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage
-from azure.monitor.opentelemetry.exporter._utils import _get_auth_policy, _get_telemetry_type
+from azure.monitor.opentelemetry.exporter._utils import _get_auth_policy
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     get_statsbeat_initial_success,
     get_statsbeat_shutdown,
@@ -56,7 +54,13 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     is_statsbeat_enabled,
     set_statsbeat_initial_success,
 )
-from azure.monitor.opentelemetry.exporter.statsbeat._utils import _update_requests_map
+from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
+    _update_requests_map,
+    _track_dropped_items,
+    _track_retry_items,
+    _track_successful_items,
+)
+
 
 logger = logging.getLogger(__name__)
 
@@ -195,6 +199,10 @@ class BaseExporter:
             elif result == ExportResult.SUCCESS:
                 # Try to send any cached events
                 self._transmit_from_storage()
+        else:
+            # Track items that would have been retried but are dropped since client has local storage disabled
+            if self._customer_statsbeat_metrics and self._should_collect_customer_statsbeat():
+                _track_dropped_items(self._customer_statsbeat_metrics, envelopes, DropCode.CLIENT_STORAGE_DISABLED, None)
 
     # pylint: disable=too-many-branches
     # pylint: disable=too-many-nested-blocks
@@ -233,12 +241,7 @@ class BaseExporter:
 
                     # Track successful items in customer statsbeat
                     if self._customer_statsbeat_metrics and self._should_collect_customer_statsbeat():
-                        for envelope in envelopes:
-                            telemetry_type = _get_telemetry_type(envelope)
-                            self._customer_statsbeat_metrics.count_successful_items(
-                                1,
-                                telemetry_type
-                            )
+                        _track_successful_items(self._customer_statsbeat_metrics, envelopes)
                 else:  # 206
                     reach_ingestion = True
                     resend_envelopes = []
@@ -246,17 +249,13 @@ class BaseExporter:
                         if _is_retryable_code(error.status_code):
                             resend_envelopes.append(envelopes[error.index])  # type: ignore
                             # Track retried items in customer statsbeat
-                            self._track_retry_items(resend_envelopes, error)
+                            if self._customer_statsbeat_metrics and self._should_collect_customer_statsbeat():
+                                _track_retry_items(self._customer_statsbeat_metrics, resend_envelopes, error)
                         else:
                             if not self._is_stats_exporter():
-                                # Track dropped items in customer statsbeat
-                                if self._customer_statsbeat_metrics and error.index is not None and self._should_collect_customer_statsbeat():
-                                    telemetry_type = _get_telemetry_type(envelopes[error.index])
-                                    self._customer_statsbeat_metrics.count_dropped_items(
-                                        1,
-                                        telemetry_type,
-                                        error.status_code,
-                                    )
+                                # Track dropped items in customer statsbeat, non-retryable scenario
+                                if self._customer_statsbeat_metrics and self._should_collect_customer_statsbeat():
+                                    _track_dropped_items(self._customer_statsbeat_metrics, [envelopes[error.index]], DropCode.CLIENT_EXCEPTION, error)
                                 logger.error(
                                     "Data drop %s: %s %s.",
                                     error.status_code,
@@ -267,6 +266,10 @@ class BaseExporter:
                         envelopes_to_store = [x.as_dict() for x in resend_envelopes]
                         self.storage.put(envelopes_to_store, 0)
                         self._consecutive_redirects = 0
+                    elif resend_envelopes:
+                        # Track items that would have been retried but are dropped since client has local storage disabled
+                        if self._customer_statsbeat_metrics and self._should_collect_customer_statsbeat():
+                            _track_dropped_items(self._customer_statsbeat_metrics, resend_envelopes, DropCode.CLIENT_STORAGE_DISABLED, None)
                     # Mark as not retryable because we already write to storage here
                     result = ExportResult.FAILED_NOT_RETRYABLE
             except HttpResponseError as response_error:
@@ -279,6 +282,8 @@ class BaseExporter:
                     result = ExportResult.FAILED_RETRYABLE
                     # Log error for 401: Unauthorized, 403: Forbidden to assist with customer troubleshooting
                     if not self._is_stats_exporter():
+                        if self._customer_statsbeat_metrics and self._should_collect_customer_statsbeat():
+                            _track_retry_items(self._customer_statsbeat_metrics, envelopes, response_error)
                         if response_error.status_code == 401:
                             logger.error(
                                 "Retryable server side error: %s. " \
@@ -287,6 +292,8 @@ class BaseExporter:
                                 response_error.message,
                             )
                         elif response_error.status_code == 403:
+                            if self._customer_statsbeat_metrics and self._should_collect_customer_statsbeat():
+                                _track_retry_items(self._customer_statsbeat_metrics, envelopes, response_error)
                             logger.error(
                                 "Retryable server side error: %s. " \
                                 "Your application may be configured with a token credential " \
@@ -299,6 +306,10 @@ class BaseExporter:
                     if self._should_collect_stats():
                         _update_requests_map(_REQ_THROTTLE_NAME[1], value=response_error.status_code)
                     result = ExportResult.FAILED_NOT_RETRYABLE
+
+                    if not self._is_stats_exporter():
+                        if self._customer_statsbeat_metrics and self._should_collect_customer_statsbeat():
+                            _track_dropped_items(self._customer_statsbeat_metrics, envelopes, DropCode.CLIENT_EXCEPTION, response_error)
                 elif _is_redirect_code(response_error.status_code):
                     self._consecutive_redirects = self._consecutive_redirects + 1
                     # pylint: disable=W0212
@@ -316,12 +327,17 @@ class BaseExporter:
                             result = self._transmit(envelopes)
                         else:
                             if not self._is_stats_exporter():
+                                if self._customer_statsbeat_metrics and self._should_collect_customer_statsbeat():
+                                    _track_dropped_items(self._customer_statsbeat_metrics, envelopes, DropCode.CLIENT_EXCEPTION, response_error)
                                 logger.error(
                                     "Error parsing redirect information.",
                                 )
                             result = ExportResult.FAILED_NOT_RETRYABLE
                     else:
                         if not self._is_stats_exporter():
+                            # Track dropped items in customer statsbeat, non-retryable scenario
+                            if self._customer_statsbeat_metrics and self._should_collect_customer_statsbeat():
+                                _track_dropped_items(self._customer_statsbeat_metrics, envelopes, DropCode.CLIENT_EXCEPTION, response_error)
                             logger.error(
                                 "Error sending telemetry because of circular redirects. "
                                 "Please check the integrity of your connection string."
@@ -341,14 +357,22 @@ class BaseExporter:
                             "Non-retryable server side error: %s.",
                             response_error.message,
                         )
+                        # Track dropped items in customer statsbeat, non-retryable scenario
+                        if self._customer_statsbeat_metrics and self._should_collect_customer_statsbeat():
+                            _track_dropped_items(self._customer_statsbeat_metrics, envelopes, DropCode.CLIENT_EXCEPTION, response_error)
                         if _is_invalid_code(response_error.status_code):
                             # Shutdown statsbeat on invalid code from customer endpoint
                             # Import here to avoid circular dependencies
                             from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import (
                                 shutdown_statsbeat_metrics,
                             )
+                            from azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat import (
+                                shutdown_customer_statsbeat_metrics,
+                            )
 
                             shutdown_statsbeat_metrics()
+                            # Also shutdown customer statsbeat on invalid code
+                            shutdown_customer_statsbeat_metrics()
                     result = ExportResult.FAILED_NOT_RETRYABLE
             except ServiceRequestError as request_error:
                 # Errors when we're fairly sure that the server did not receive the
@@ -357,7 +381,8 @@ class BaseExporter:
                 logger.warning("Retrying due to server request error: %s.", request_error.message)
 
                 # Track retry items in customer statsbeat for client-side exceptions
-                self._track_retry_items(envelopes, request_error)
+                if self._customer_statsbeat_metrics and self._should_collect_customer_statsbeat():
+                    _track_retry_items(self._customer_statsbeat_metrics, envelopes, request_error)
 
                 if self._should_collect_stats():
                     exc_type = request_error.exc_type
@@ -368,8 +393,9 @@ class BaseExporter:
             except Exception as ex:
                 logger.exception("Envelopes could not be exported and are not retryable: %s.", ex)  # pylint: disable=C4769
 
-                # Track retry items in customer statsbeat for general exceptions
-                self._track_retry_items(envelopes, ex)
+                # Track dropped items in customer statsbeat for general exceptions
+                if self._customer_statsbeat_metrics and self._should_collect_customer_statsbeat():
+                    _track_dropped_items(self._customer_statsbeat_metrics, envelopes, DropCode.CLIENT_EXCEPTION, ex)
 
                 if self._should_collect_stats():
                     _update_requests_map(_REQ_EXCEPTION_NAME[1], value=ex.__class__.__name__)
@@ -391,8 +417,12 @@ class BaseExporter:
                             from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import (
                                 shutdown_statsbeat_metrics,
                             )
+                            from azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat import (
+                                shutdown_customer_statsbeat_metrics,
+                            )
 
                             shutdown_statsbeat_metrics()
+                            shutdown_customer_statsbeat_metrics()
                             # pylint: disable=lost-exception
                             return ExportResult.FAILED_NOT_RETRYABLE  # pylint: disable=W0134
                 # pylint: disable=lost-exception
@@ -414,13 +444,17 @@ class BaseExporter:
 
     # check to see whether its the case of customer stats collection
     def _should_collect_customer_statsbeat(self):
+        # Import here to avoid circular dependencies
+        from azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat import get_customer_statsbeat_shutdown
+
         env_value = os.environ.get("APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW", "")
         is_customer_statsbeat_enabled = env_value.lower() == "true"
         # Don't collect customer statsbeat for instrumentation collection or customer statsbeat exporters
         return (
             is_customer_statsbeat_enabled
-            and not self._instrumentation_collection
+            and not get_customer_statsbeat_shutdown()
             and not self._is_customer_stats_exporter()
+            and not self._instrumentation_collection
         )
 
     # check to see if statsbeat is in "attempting to be initialized" state
@@ -431,41 +465,7 @@ class BaseExporter:
         return self.__class__.__name__ == "_StatsBeatExporter"
 
     def _is_customer_stats_exporter(self):
-        return self.__class__.__name__ == "_CustomerStatsBeatExporter"
-
-    def _determine_client_retry_code(self, error) -> Tuple[RetryCodeType, Optional[str]]:
-        if hasattr(error, 'status_code') and error.status_code in [401, 403, 408, 429, 500, 502, 503, 504]:
-            return (error.status_code, _UNKNOWN)
-
-        if isinstance(error, ServiceRequestError):
-            error_message = str(error.message) if error.message else ""
-        else:
-            error_message = str(error)
-
-        error_message_lower = error_message.lower()
-        if 'timeout' in error_message_lower or 'timed out' in error_message_lower:
-            return (RetryCode.CLIENT_TIMEOUT, error_message)
-        return (RetryCode.CLIENT_EXCEPTION, error_message)
-
-    def _track_retry_items(self, envelopes: List[TelemetryItem], error) -> None:
-        if self._customer_statsbeat_metrics and self._should_collect_customer_statsbeat():
-            retry_code, message = self._determine_client_retry_code(error)
-            for envelope in envelopes:
-                telemetry_type = _get_telemetry_type(envelope)
-                if isinstance(retry_code, int):
-                    self._customer_statsbeat_metrics.count_retry_items(
-                        1,
-                        telemetry_type,
-                        retry_code
-                    )
-                else:
-                    self._customer_statsbeat_metrics.count_retry_items(
-                        1,
-                        telemetry_type,
-                        retry_code,
-                        str(message)
-                    )
-
+        return getattr(self, '_is_customer_statsbeat', False)
 
 def _is_invalid_code(response_code: Optional[int]) -> bool:
     """Determine if response is a invalid response.

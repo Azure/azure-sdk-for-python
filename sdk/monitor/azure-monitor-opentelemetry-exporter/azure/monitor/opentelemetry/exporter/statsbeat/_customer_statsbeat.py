@@ -26,7 +26,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _CUSTOMER_STATSBEAT_LANGUAGE,
 )
 
-from azure.monitor.opentelemetry.exporter.statsbeat._customer_exporter import _CustomerStatsBeatExporter
+from azure.monitor.opentelemetry.exporter.export.metrics._exporter import AzureMonitorMetricExporter
 from azure.monitor.opentelemetry.exporter._utils import (
     Singleton,
     get_compute_type,
@@ -57,7 +57,9 @@ class CustomerStatsbeatMetrics(metaclass=Singleton): # pylint: disable=too-many-
             "connection_string": options.connection_string,
             "instrumentation_collection": True,  # Prevent circular dependency
         }
-        self._customer_statsbeat_exporter = _CustomerStatsBeatExporter(**exporter_config)
+
+        self._customer_statsbeat_exporter = AzureMonitorMetricExporter(**exporter_config)
+        self._customer_statsbeat_exporter._is_customer_statsbeat = True
         metric_reader_options = {
             "exporter": self._customer_statsbeat_exporter,
             "export_interval_millis": _DEFAULT_STATS_SHORT_EXPORT_INTERVAL
@@ -94,11 +96,10 @@ class CustomerStatsbeatMetrics(metaclass=Singleton): # pylint: disable=too-many-
         if not self._is_enabled or count <= 0:
             return
 
-        with _CUSTOMER_STATSBEAT_MAP_LOCK:
-            if telemetry_type in self._counters.total_item_success_count:
-                self._counters.total_item_success_count[telemetry_type] += count
-            else:
-                self._counters.total_item_success_count[telemetry_type] = count
+        if telemetry_type in self._counters.total_item_success_count:
+            self._counters.total_item_success_count[telemetry_type] += count
+        else:
+            self._counters.total_item_success_count[telemetry_type] = count
 
     def count_dropped_items(
         self, count: int, telemetry_type: str, drop_code: DropCodeType,
@@ -107,23 +108,22 @@ class CustomerStatsbeatMetrics(metaclass=Singleton): # pylint: disable=too-many-
         if not self._is_enabled or count <= 0:
             return
 
-        with _CUSTOMER_STATSBEAT_MAP_LOCK:
-            # Get or create the drop_code map for this telemetry_type
-            if telemetry_type not in self._counters.total_item_drop_count:
-                self._counters.total_item_drop_count[telemetry_type] = {}
-            drop_code_map = self._counters.total_item_drop_count[telemetry_type]
+        # Get or create the drop_code map for this telemetry_type
+        if telemetry_type not in self._counters.total_item_drop_count:
+            self._counters.total_item_drop_count[telemetry_type] = {}
+        drop_code_map = self._counters.total_item_drop_count[telemetry_type]
 
-            # Get or create the reason map for this drop_code
-            if drop_code not in drop_code_map:
-                drop_code_map[drop_code] = {}
-            reason_map = drop_code_map[drop_code]
+        # Get or create the reason map for this drop_code
+        if drop_code not in drop_code_map:
+            drop_code_map[drop_code] = {}
+        reason_map = drop_code_map[drop_code]
 
-            # Generate a low-cardinality, informative reason description
-            reason = self._get_drop_reason(drop_code, exception_message)
+        # Generate a low-cardinality, informative reason description
+        reason = self._get_drop_reason(drop_code, exception_message)
 
-            # Update the count for this reason
-            current_count = reason_map.get(reason, 0)
-            reason_map[reason] = current_count + count
+        # Update the count for this reason
+        current_count = reason_map.get(reason, 0)
+        reason_map[reason] = current_count + count
 
     def count_retry_items(
         self, count: int, telemetry_type: str, retry_code: RetryCodeType,
@@ -132,19 +132,18 @@ class CustomerStatsbeatMetrics(metaclass=Singleton): # pylint: disable=too-many-
         if not self._is_enabled or count <= 0:
             return
 
-        with _CUSTOMER_STATSBEAT_MAP_LOCK:
-            if telemetry_type not in self._counters.total_item_retry_count:
-                self._counters.total_item_retry_count[telemetry_type] = {}
-            retry_code_map = self._counters.total_item_retry_count[telemetry_type]
+        if telemetry_type not in self._counters.total_item_retry_count:
+            self._counters.total_item_retry_count[telemetry_type] = {}
+        retry_code_map = self._counters.total_item_retry_count[telemetry_type]
 
-            if retry_code not in retry_code_map:
-                retry_code_map[retry_code] = {}
-            reason_map = retry_code_map[retry_code]
+        if retry_code not in retry_code_map:
+            retry_code_map[retry_code] = {}
+        reason_map = retry_code_map[retry_code]
 
-            reason = self._get_retry_reason(retry_code, exception_message)
+        reason = self._get_retry_reason(retry_code, exception_message)
 
-            current_count = reason_map.get(reason, 0)
-            reason_map[reason] = current_count + count
+        current_count = reason_map.get(reason, 0)
+        reason_map[reason] = current_count + count
 
     def _item_success_callback(self, options: CallbackOptions) -> Iterable[Observation]: # pylint: disable=unused-argument
         if not getattr(self, "_is_enabled", False):
@@ -152,16 +151,15 @@ class CustomerStatsbeatMetrics(metaclass=Singleton): # pylint: disable=too-many-
 
         observations: List[Observation] = []
 
-        with _CUSTOMER_STATSBEAT_MAP_LOCK:
-            for telemetry_type, count in self._counters.total_item_success_count.items():
-                if count > 0:
-                    attributes = {
-                        "language": self._customer_properties.language,
-                        "version": self._customer_properties.version,
-                        "compute_type": self._customer_properties.compute_type,
-                        "telemetry_type": telemetry_type
-                    }
-                    observations.append(Observation(count, dict(attributes)))
+        for telemetry_type, count in self._counters.total_item_success_count.items():
+            if count > 0:
+                attributes = {
+                    "language": self._customer_properties.language,
+                    "version": self._customer_properties.version,
+                    "compute_type": self._customer_properties.compute_type,
+                    "telemetry_type": telemetry_type
+                }
+                observations.append(Observation(count, dict(attributes)))
 
         return observations
 
@@ -169,20 +167,19 @@ class CustomerStatsbeatMetrics(metaclass=Singleton): # pylint: disable=too-many-
         if not getattr(self, "_is_enabled", False):
             return []
         observations: List[Observation] = []
-        with _CUSTOMER_STATSBEAT_MAP_LOCK:
-            for telemetry_type, drop_code_map in self._counters.total_item_drop_count.items():
-                for drop_code, reason_map in drop_code_map.items():
-                    for reason, count in reason_map.items():
-                        if count > 0:
-                            attributes = {
-                                "language": self._customer_properties.language,
-                                "version": self._customer_properties.version,
-                                "compute_type": self._customer_properties.compute_type,
-                                "drop.code": drop_code,
-                                "drop.reason": reason,
-                                "telemetry_type": telemetry_type
-                            }
-                            observations.append(Observation(count, dict(attributes)))
+        for telemetry_type, drop_code_map in self._counters.total_item_drop_count.items():
+            for drop_code, reason_map in drop_code_map.items():
+                for reason, count in reason_map.items():
+                    if count > 0:
+                        attributes = {
+                            "language": self._customer_properties.language,
+                            "version": self._customer_properties.version,
+                            "compute_type": self._customer_properties.compute_type,
+                            "drop.code": drop_code,
+                            "drop.reason": reason,
+                            "telemetry_type": telemetry_type
+                        }
+                        observations.append(Observation(count, dict(attributes)))
 
         return observations
 
@@ -190,20 +187,19 @@ class CustomerStatsbeatMetrics(metaclass=Singleton): # pylint: disable=too-many-
         if not getattr(self, "_is_enabled", False):
             return []
         observations: List[Observation] = []
-        with _CUSTOMER_STATSBEAT_MAP_LOCK:
-            for telemetry_type, retry_code_map in self._counters.total_item_retry_count.items():
-                for retry_code, reason_map in retry_code_map.items():
-                    for reason, count in reason_map.items():
-                        if count > 0:
-                            attributes = {
-                                "language": self._customer_properties.language,
-                                "version": self._customer_properties.version,
-                                "compute_type": self._customer_properties.compute_type,
-                                "retry.code": retry_code,
-                                "retry.reason": reason,
-                                "telemetry_type": telemetry_type
-                            }
-                            observations.append(Observation(count, dict(attributes)))
+        for telemetry_type, retry_code_map in self._counters.total_item_retry_count.items():
+            for retry_code, reason_map in retry_code_map.items():
+                for reason, count in reason_map.items():
+                    if count > 0:
+                        attributes = {
+                            "language": self._customer_properties.language,
+                            "version": self._customer_properties.version,
+                            "compute_type": self._customer_properties.compute_type,
+                            "retry.code": retry_code,
+                            "retry.reason": reason,
+                            "telemetry_type": telemetry_type
+                        }
+                        observations.append(Observation(count, dict(attributes)))
 
         return observations
 
@@ -263,3 +259,27 @@ def collect_customer_statsbeat(exporter):
     exporter._customer_statsbeat_metrics = _CUSTOMER_STATSBEAT_METRICS
     if hasattr(exporter, 'storage') and exporter.storage:
         exporter.storage._customer_statsbeat_metrics = _CUSTOMER_STATSBEAT_METRICS
+
+_CUSTOMER_STATSBEAT_STATE = {
+    "SHUTDOWN": False,
+}
+_CUSTOMER_STATSBEAT_STATE_LOCK = threading.Lock()
+
+def shutdown_customer_statsbeat_metrics() -> None:
+    global _CUSTOMER_STATSBEAT_METRICS
+    shutdown_success = False
+    if _CUSTOMER_STATSBEAT_METRICS is not None:
+        with _CUSTOMER_STATSBEAT_LOCK:
+            try:
+                if _CUSTOMER_STATSBEAT_METRICS._meter_provider is not None:
+                    _CUSTOMER_STATSBEAT_METRICS._meter_provider.shutdown()
+                    _CUSTOMER_STATSBEAT_METRICS = None
+                    shutdown_success = True
+            except:  # pylint: disable=bare-except
+                pass
+        if shutdown_success:
+            with _CUSTOMER_STATSBEAT_STATE_LOCK:
+                _CUSTOMER_STATSBEAT_STATE["SHUTDOWN"] = True
+
+def get_customer_statsbeat_shutdown():
+    return _CUSTOMER_STATSBEAT_STATE["SHUTDOWN"]
