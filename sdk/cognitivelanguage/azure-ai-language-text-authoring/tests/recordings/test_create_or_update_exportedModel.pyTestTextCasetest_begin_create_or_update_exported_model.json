@@ -18,20 +18,20 @@
       "StatusCode": 202,
       "ResponseHeaders": {
         "Access-Control-Expose-Headers": "*",
-        "apim-request-id": "a0985371-2dc7-4948-a6e5-23ae9da53617",
+        "apim-request-id": "50e54fb1-4c62-40b9-b6d0-42e3b27bccb2",
         "Content-Length": "0",
-        "Date": "Mon, 28 Jul 2025 22:24:59 GMT",
-        "operation-location": "fake_resource.servicebus.windows.net/language/authoring/analyze-text/projects/Example-ner-project/exported-models/exportedModel/jobs/2fc8143f-1885-478e-b70d-b75f02a23d16_638892576000000000?api-version=2025-05-15-preview",
-        "request-id": "a0985371-2dc7-4948-a6e5-23ae9da53617",
+        "Date": "Tue, 29 Jul 2025 00:50:44 GMT",
+        "operation-location": "fake_resource.servicebus.windows.net/language/authoring/analyze-text/projects/Example-ner-project/exported-models/exportedModel/jobs/1afb7fcf-f489-4f37-933d-103ecfd6a5c5_638893440000000000?api-version=2025-05-15-preview",
+        "request-id": "50e54fb1-4c62-40b9-b6d0-42e3b27bccb2",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "83",
+        "x-envoy-upstream-service-time": "237",
         "x-ms-region": "East US"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-text/projects/Example-ner-project/exported-models/exportedModel/jobs/2fc8143f-1885-478e-b70d-b75f02a23d16_638892576000000000?api-version=2025-05-15-preview",
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-text/projects/Example-ner-project/exported-models/exportedModel/jobs/1afb7fcf-f489-4f37-933d-103ecfd6a5c5_638893440000000000?api-version=2025-05-15-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -44,26 +44,26 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Access-Control-Expose-Headers": "*",
-        "apim-request-id": "c126e724-ac81-4aef-b782-361d5a1763cc",
+        "apim-request-id": "feba2bd5-dcab-4ff0-ba2a-5d7f77ef67ef",
         "Content-Length": "219",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 28 Jul 2025 22:24:59 GMT",
-        "request-id": "c126e724-ac81-4aef-b782-361d5a1763cc",
+        "Date": "Tue, 29 Jul 2025 00:50:44 GMT",
+        "request-id": "feba2bd5-dcab-4ff0-ba2a-5d7f77ef67ef",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "41",
+        "x-envoy-upstream-service-time": "32",
         "x-ms-region": "East US"
       },
       "ResponseBody": {
-        "jobId": "2fc8143f-1885-478e-b70d-b75f02a23d16_638892576000000000",
-        "createdDateTime": "2025-07-28T22:24:59Z",
-        "lastUpdatedDateTime": "2025-07-28T22:24:59Z",
-        "expirationDateTime": "2025-08-04T22:24:59Z",
+        "jobId": "1afb7fcf-f489-4f37-933d-103ecfd6a5c5_638893440000000000",
+        "createdDateTime": "2025-07-29T00:50:44Z",
+        "lastUpdatedDateTime": "2025-07-29T00:50:44Z",
+        "expirationDateTime": "2025-08-05T00:50:44Z",
         "status": "notStarted"
       }
     },
     {
-      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-text/projects/Example-ner-project/exported-models/exportedModel/jobs/2fc8143f-1885-478e-b70d-b75f02a23d16_638892576000000000?api-version=2025-05-15-preview",
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-text/projects/Example-ner-project/exported-models/exportedModel/jobs/1afb7fcf-f489-4f37-933d-103ecfd6a5c5_638893440000000000?api-version=2025-05-15-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -76,21 +76,21 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Access-Control-Expose-Headers": "*",
-        "apim-request-id": "5cb181c7-c0bb-4b91-9290-4e84381e8836",
+        "apim-request-id": "c6959ef5-c1c1-4c04-bb7b-9b73db043b2e",
         "Content-Length": "218",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 28 Jul 2025 22:25:29 GMT",
-        "request-id": "5cb181c7-c0bb-4b91-9290-4e84381e8836",
+        "Date": "Tue, 29 Jul 2025 00:51:14 GMT",
+        "request-id": "c6959ef5-c1c1-4c04-bb7b-9b73db043b2e",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "41",
+        "x-envoy-upstream-service-time": "39",
         "x-ms-region": "East US"
       },
       "ResponseBody": {
-        "jobId": "2fc8143f-1885-478e-b70d-b75f02a23d16_638892576000000000",
-        "createdDateTime": "2025-07-28T22:24:59Z",
-        "lastUpdatedDateTime": "2025-07-28T22:25:01Z",
-        "expirationDateTime": "2025-08-04T22:24:59Z",
+        "jobId": "1afb7fcf-f489-4f37-933d-103ecfd6a5c5_638893440000000000",
+        "createdDateTime": "2025-07-29T00:50:44Z",
+        "lastUpdatedDateTime": "2025-07-29T00:50:46Z",
+        "expirationDateTime": "2025-08-05T00:50:44Z",
         "status": "succeeded"
       }
     },
@@ -108,21 +108,21 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Access-Control-Expose-Headers": "*",
-        "apim-request-id": "c920e566-d8b2-4715-b000-7c83524d7094",
+        "apim-request-id": "3df12f98-4f78-48e3-84e0-ff78d1c88c06",
         "Content-Length": "282",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 28 Jul 2025 22:25:30 GMT",
-        "request-id": "c920e566-d8b2-4715-b000-7c83524d7094",
+        "Date": "Tue, 29 Jul 2025 00:51:14 GMT",
+        "request-id": "3df12f98-4f78-48e3-84e0-ff78d1c88c06",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "49",
+        "x-envoy-upstream-service-time": "29",
         "x-ms-region": "East US"
       },
       "ResponseBody": {
         "exportedModelName": "exportedModel",
         "modelId": "m1-20250528T060008-cfae88ebf2144aac900cd1191c6eb50a",
         "lastTrainedDateTime": "2025-05-28T06:00:08.2776456Z",
-        "lastExportedModelDateTime": "2025-07-28T22:25:01Z",
+        "lastExportedModelDateTime": "2025-07-29T00:50:46Z",
         "modelExpirationDate": "2025-11-15",
         "modelTrainingConfigVersion": "2024-11-01"
       }
