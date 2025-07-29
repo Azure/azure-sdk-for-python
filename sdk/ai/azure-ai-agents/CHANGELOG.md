@@ -6,7 +6,7 @@
 
 ### Bugs Fixed
 
-- Fixed `create_agents` to execute with body as a keyword parameter.
+- Fixed `update_agent` to execute with body as a keyword parameter.
 
 ### Features Added
 
