@@ -1,5 +1,29 @@
 # Release History
 
+## 5.0.0b1 (2025-07-24)
+
+### Features Added
+
+  - Model ErrorResponse has a new parameter code
+  - Model ErrorResponse has a new parameter details
+  - Model ErrorResponse has a new parameter message
+
+### Breaking Changes
+
+  - This package now only targets the latest Api-Version available on Azure and removes APIs of other Api-Version. After this change, the package can have much smaller size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ignore this change.
+  - Model ApplicationInsightsComponentProactiveDetectionConfiguration no longer has parameter id
+  - Model ApplicationInsightsComponentProactiveDetectionConfiguration no longer has parameter location
+  - Model ApplicationInsightsComponentProactiveDetectionConfiguration no longer has parameter name_properties_name
+  - Model ApplicationInsightsComponentProactiveDetectionConfiguration no longer has parameter type
+  - Model ErrorResponse no longer has parameter error
+  - Model Resource no longer has parameter system_data
+  - Model TrackedResource no longer has parameter system_data
+  - Removed operation group ComponentCurrentPricingPlanOperations
+  - Removed operation group EASubscriptionListMigrationDateOperations
+  - Removed operation group EASubscriptionMigrateToNewPricingModelOperations
+  - Removed operation group EASubscriptionRollbackToLegacyPricingModelOperations
+  - Removed operation group MyWorkbooksOperations
+
 ## 4.1.0 (2025-03-06)
 
 ### Features Added

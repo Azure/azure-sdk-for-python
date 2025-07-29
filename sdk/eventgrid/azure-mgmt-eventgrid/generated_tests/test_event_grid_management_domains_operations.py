@@ -24,7 +24,7 @@ class TestEventGridManagementDomainsOperations(AzureMgmtRecordedTestCase):
         response = self.client.domains.get(
             resource_group_name=resource_group.name,
             domain_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -84,6 +84,7 @@ class TestEventGridManagementDomainsOperations(AzureMgmtRecordedTestCase):
                 ],
                 "provisioningState": "str",
                 "publicNetworkAccess": "str",
+                "sku": {"name": "Basic"},
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",
@@ -95,7 +96,7 @@ class TestEventGridManagementDomainsOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -107,7 +108,7 @@ class TestEventGridManagementDomainsOperations(AzureMgmtRecordedTestCase):
         response = self.client.domains.begin_delete(
             resource_group_name=resource_group.name,
             domain_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -144,9 +145,10 @@ class TestEventGridManagementDomainsOperations(AzureMgmtRecordedTestCase):
                 "inboundIpRules": [{"action": "str", "ipMask": "str"}],
                 "minimumTlsVersionAllowed": "str",
                 "publicNetworkAccess": "str",
+                "sku": {"name": "Basic"},
                 "tags": {"str": "str"},
             },
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -156,7 +158,7 @@ class TestEventGridManagementDomainsOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_domains_list_by_subscription(self, resource_group):
         response = self.client.domains.list_by_subscription(
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -167,7 +169,7 @@ class TestEventGridManagementDomainsOperations(AzureMgmtRecordedTestCase):
     def test_domains_list_by_resource_group(self, resource_group):
         response = self.client.domains.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -179,7 +181,7 @@ class TestEventGridManagementDomainsOperations(AzureMgmtRecordedTestCase):
         response = self.client.domains.list_shared_access_keys(
             resource_group_name=resource_group.name,
             domain_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -192,7 +194,7 @@ class TestEventGridManagementDomainsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             domain_name="str",
             regenerate_key_request={"keyName": "str"},
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
