@@ -275,7 +275,7 @@ class SipRoutingClient(object):
     ) -> SipDomain:
         """Retrieve a single SIP domain.
 
-        :param domain_name: domain_name of the desired SIP Domain.
+        :param domain_name: name of the desired SIP Domain.
         :type domain_name: str
         :returns: SIP Domain with specified domain_name. If it doesn't exist, throws KeyError.
         :rtype: ~azure.communication.siprouting.models.SipDomain
@@ -315,7 +315,7 @@ class SipRoutingClient(object):
     ) -> None:
         """Deletes SIP Domain.
 
-        :param domain_name: domain_name of the Domain to be deleted.
+        :param domain_name: name of the Domain to be deleted.
         :type domain_name: str
         :returns: None
         :rtype: None

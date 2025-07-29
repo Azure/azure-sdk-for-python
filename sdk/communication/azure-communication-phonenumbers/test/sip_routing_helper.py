@@ -64,13 +64,14 @@ def assert_routes_are_equal(response_routes, request_routes):
             assert request_routes[k].trunks[m] == response_routes[k].trunks[m], "Trunk lists don't match."
 
 
-def setup_configuration(connection_str, trunks=[], routes=[]):
+def setup_configuration(connection_str, trunks=[], routes=[], domains = []):
     if is_live():
         client = SipRoutingClient.from_connection_string(
             connection_str, http_logging_policy=get_http_logging_policy(), header_policy=get_header_policy()
         )
         client.set_routes(routes)
         client.set_trunks(trunks)
+        client.set_domains(domains)
 
 
 def _get_root_domain():

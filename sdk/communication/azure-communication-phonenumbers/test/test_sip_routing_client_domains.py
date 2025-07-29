@@ -16,32 +16,54 @@ class TestSipRoutingClientE2E(PhoneNumbersTestCase):
     additional_domain = SipDomain(fqdn="additionaldomain.com", enabled=False)
     second_additional_domain = SipDomain(fqdn="secondadditionaldomain.com", enabled=False)
 
-
     def setup_method(self):
         super(TestSipRoutingClientE2E, self).setUp(use_dynamic_resource=True)
-        setup_configuration(self.connection_str, trunks=[])
-
-    @recorded_by_proxy
-    def test_domains(self):
         self._sip_routing_client = SipRoutingClient.from_connection_string(
             self.connection_str, http_logging_policy=get_http_logging_policy(), headers_policy=get_header_policy()
         )
-        self._run_test()
+        setup_configuration(self.connection_str, domains=[self.domain, self.additional_domain])
+
+    @recorded_by_proxy
+    def test_list_domains(self, **kwargs):
+        domains = self._sip_routing_client.list_domains()
+        domains_list = get_as_list(domains)
+        assert_domains_are_equal(domains_list, [self.domain, self.additional_domain])
     
     @recorded_by_proxy
-    def test_domains_with_managed_identity(self):
-        self._sip_routing_client = get_sip_client_managed_identity(self.connection_str)
-        self._run_test()
-        
-    def _run_test(self):
-        self._sip_routing_client.set_domains([self.domain,self.additional_domain])
+    def test_list_domains_with_managed_identity(self, **kwargs):
+        client = get_sip_client_managed_identity(self.connection_str)
+        domains = client.list_domains()
+        domains_list = get_as_list(domains)
+        assert_domains_are_equal(domains_list, [self.domain, self.additional_domain])
+
+    @recorded_by_proxy
+    def test_delete_domain(self, **kwargs):
+        domain_to_delete = self.additional_domain.fqdn
+        self._sip_routing_client.delete_domain(domain_to_delete)
         new_domains = self._sip_routing_client.list_domains()
-        new_domains_list = get_as_list(new_domains)
-        assert_domains_are_equal(new_domains_list, [self.domain, self.additional_domain])
-        self._sip_routing_client.set_domain(self.second_additional_domain)
-        new_domain_retrieved = self._sip_routing_client.get_domain(self.second_additional_domain.fqdn)
-        assert_domains_are_equal([new_domain_retrieved], [self.second_additional_domain])
-        self._sip_routing_client.delete_domain(self.second_additional_domain.fqdn)
-        final_domains = self._sip_routing_client.list_domains()
-        final_domains_list = get_as_list(final_domains)
-        assert_domains_are_equal(final_domains_list, [self.domain, self.additional_domain])
+        domains_list = get_as_list(new_domains)
+        assert_domains_are_equal(domains_list, [self.domain])
+
+    @recorded_by_proxy
+    def test_delete_domain_with_managed_identity(self, **kwargs):
+        domain_to_delete = self.additional_domain.fqdn
+        client = get_sip_client_managed_identity(self.connection_str)
+        client.delete_domain(domain_to_delete)
+        new_domains = client.list_domains()
+        domains_list = get_as_list(new_domains)
+        assert_domains_are_equal(domains_list, [self.domain])
+
+    @recorded_by_proxy
+    def test_set_domains(self, **kwargs):
+        self._sip_routing_client.set_domains([self.second_additional_domain])
+        result_domains = self._sip_routing_client.list_domains()
+        domains_list = get_as_list(result_domains)
+        assert_domains_are_equal(domains_list, [self.second_additional_domain])
+
+    @recorded_by_proxy
+    def test_set_domains_with_managed_identity(self, **kwargs):
+        client = get_sip_client_managed_identity(self.connection_str)
+        client.set_domains([self.second_additional_domain])
+        result_domains = client.list_domains()
+        domains_list = get_as_list(result_domains)
+        assert_domains_are_equal(domains_list, [self.second_additional_domain])

@@ -7,7 +7,7 @@ import pytest
 from phone_numbers_testcase import PhoneNumbersTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
 from _shared.utils import get_http_logging_policy, get_header_policy
-from sip_routing_helper import get_async_sip_client_managed_identity, assert_domains_are_equal, setup_configuration, get_test_domain, get_as_list_async
+from sip_routing_helper import assert_trunks_are_equal, get_async_sip_client_managed_identity, assert_domains_are_equal, setup_configuration, get_test_domain, get_as_list_async
 
 from azure.communication.phonenumbers.siprouting.aio import SipRoutingClient
 from azure.communication.phonenumbers.siprouting._models import SipDomain
@@ -20,29 +20,82 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
 
     def setup_method(self):
         super(TestSipRoutingClientE2EAsync, self).setUp(use_dynamic_resource=True)
-        setup_configuration(self.connection_str, trunks=[])
-
-    @recorded_by_proxy_async
-    async def test_domains(self):
         self._sip_routing_client = SipRoutingClient.from_connection_string(
             self.connection_str, http_logging_policy=get_http_logging_policy(), headers_policy=get_header_policy()
         )
-        await self._run_test()               
+        setup_configuration(self.connection_str, domains=[self.domain, self.additional_domain])
 
     @recorded_by_proxy_async
-    async def test_domains_with_managed_identity(self):
-        self._sip_routing_client = get_async_sip_client_managed_identity(self.connection_str)
-        await self._run_test()               
+    async def test_list_domains(self, **kwargs):
+        async with self._sip_routing_client:
+            domains = self._sip_routing_client.list_domains()
+            domains_list = await self._get_as_list(domains)
 
-    async def _run_test(self):
-        await self._sip_routing_client.set_domains([self.domain,self.additional_domain])
-        new_domains = self._sip_routing_client.list_domains()
-        new_domains_list = await get_as_list_async(new_domains)
-        assert_domains_are_equal(new_domains_list, [self.domain, self.additional_domain])
-        await self._sip_routing_client.set_domain(self.second_additional_domain)
-        new_domain_retrieved = await self._sip_routing_client.get_domain(self.second_additional_domain.fqdn)
-        assert_domains_are_equal([new_domain_retrieved], [self.second_additional_domain])
-        await self._sip_routing_client.delete_domain(self.second_additional_domain.fqdn)
-        final_domains = self._sip_routing_client.list_domains()
-        final_domains_list = await get_as_list_async(final_domains)
-        assert_domains_are_equal(final_domains_list, [self.domain, self.additional_domain])
+        assert_domains_are_equal(domains_list, [self.domain, self.additional_domain]), "Domains are not equal."
+
+    @recorded_by_proxy_async
+    async def test_list_domains_with_managed_identity(self, **kwargs):
+        self._sip_routing_client = get_async_sip_client_managed_identity(self.connection_str)
+        async with self._sip_routing_client:
+            domains = self._sip_routing_client.list_domains()
+            domains_list = await self._get_as_list(domains)
+
+        assert_domains_are_equal(domains_list, [self.domain, self.additional_domain]), "Domains are not equal."
+
+    @recorded_by_proxy_async
+    async def test_delete_domain(self, **kwargs):
+        domain_to_delete = self.additional_domain.fqdn
+        async with self._sip_routing_client:
+            await self._sip_routing_client.delete_domain(domain_to_delete)
+            new_domains = self._sip_routing_client.list_domains()
+            domains_list = await self._get_as_list(new_domains)
+
+        assert_domains_are_equal(domains_list, [self.domain]), "Domain was not deleted."
+
+    @recorded_by_proxy_async
+    async def test_delete_domain_with_managed_identity(self, **kwargs):
+        domain_to_delete = self.additional_domain.fqdn
+        self._sip_routing_client = get_async_sip_client_managed_identity(self.connection_str)
+        async with self._sip_routing_client:
+            await self._sip_routing_client.delete_domain(domain_to_delete)
+            new_domains = self._sip_routing_client.list_domains()
+            domains_list = await self._get_as_list(new_domains)
+
+        assert_domains_are_equal(domains_list, [self.domain]), "Domain was not deleted."
+
+    async def test_set_trunk_from_managed_identity(self):
+        modified_trunk = SipTrunk(fqdn=self.second_trunk.fqdn, sip_signaling_port=7777, enabled=True,
+                                  direct_transfer=True, privacy_header="none", ip_address_version="ipv6")
+        self._sip_routing_client = get_async_sip_client_managed_identity(self.connection_str)
+        async with self._sip_routing_client:
+            await self._sip_routing_client.set_trunk(modified_trunk)
+            new_trunks = self._sip_routing_client.list_trunks()
+            new_trunks_list = await self._get_as_list(new_trunks)
+        assert_trunks_are_equal(new_trunks_list, [self.first_trunk, modified_trunk])
+
+    @recorded_by_proxy_async
+    async def test_set_domains(self, **kwargs):
+        async with self._sip_routing_client:
+            await self._sip_routing_client.set_domains([self.second_additional_domain])
+            result_domains = self._sip_routing_client.list_domains()
+            domains_list =  await self._get_as_list(result_domains)
+
+        assert_domains_are_equal(domains_list, [self.second_additional_domain])
+
+    @recorded_by_proxy_async
+    async def test_set_domains_with_managed_identity(self, **kwargs):
+        self._sip_routing_client = get_async_sip_client_managed_identity(self.connection_str)
+        async with self._sip_routing_client:
+            await self._sip_routing_client.set_domains([self.second_additional_domain])
+            result_domains =  self._sip_routing_client.list_domains()
+            domains_list =  await self.get_as_list(result_domains)
+            
+        assert_domains_are_equal(domains_list, [self.second_additional_domain])
+
+
+    async def _get_as_list(self, iter):
+        assert iter is not None, "No iterable was returned."
+        items = []
+        async for item in iter:
+            items.append(item)
+        return items
