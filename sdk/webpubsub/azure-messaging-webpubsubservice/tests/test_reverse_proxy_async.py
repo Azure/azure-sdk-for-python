@@ -6,7 +6,7 @@
 # -------------------------------------------------------------------------
 import pytest
 from azure.messaging.webpubsubservice.aio import WebPubSubServiceClient
-from azure.messaging.webpubsubservice._operations._operations import build_web_pub_sub_service_send_to_all_request
+from azure.messaging.webpubsubservice._operations._patch import build_web_pub_sub_service_send_to_all_request
 from azure.core.credentials import AzureKeyCredential
 
 from testcase import WebpubsubPowerShellPreparer
