@@ -21,6 +21,7 @@
 
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
+import asyncio # pylint: disable=do-not-import-asyncio
 from datetime import datetime
 from typing import (Any, Dict, Mapping, Optional, Sequence, Type, Union, List, Tuple, cast, overload, AsyncIterable,
                     Callable)
@@ -90,6 +91,7 @@ class ContainerProxy:
         properties: Optional[Dict[str, Any]] = None
     ) -> None:
         self.client_connection = client_connection
+        self.container_cache_lock = asyncio.Lock()
         self.id = id
         self.database_link = database_link
         self.container_link = "{}/colls/{}".format(database_link, self.id)
@@ -111,7 +113,9 @@ class ContainerProxy:
 
     async def _get_properties(self, **kwargs: Any) -> Dict[str, Any]:
         if self.container_link not in self.client_connection._container_properties_cache:
-            await self.read(**kwargs)
+            async with self.container_cache_lock:
+                if self.container_link not in self.client_connection._container_properties_cache:
+                    await self.read(**kwargs)
         return self.client_connection._container_properties_cache[self.container_link]
 
     @property

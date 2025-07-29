@@ -1,6 +1,6 @@
 # Release History
 
-## 2.0.0b1 (2025-07-15)
+## 1.2.0b1 (2025-07-24)
 
 ### Features Added
 
@@ -24,10 +24,10 @@
   - Added enum `OccurrenceState`
   - Added enum `ProvisioningState`
   - Added model `ProxyResource`
+  - Added model `RecurringActionsResourceOperationResult`
   - Added model `Resource`
   - Added model `ResourceAttachRequest`
   - Added model `ResourceDetachRequest`
-  - Added model `ResourceOperationResponse`
   - Added enum `ResourceOperationStatus`
   - Added model `ResourcePatchRequest`
   - Added enum `ResourceProvisioningState`
@@ -38,6 +38,9 @@
   - Added model `ScheduledActionProperties`
   - Added model `ScheduledActionResource`
   - Added model `ScheduledActionResources`
+  - Added enum `ScheduledActionType`
+  - Added model `ScheduledActionUpdate`
+  - Added model `ScheduledActionUpdateProperties`
   - Added model `ScheduledActionsSchedule`
   - Added model `SystemData`
   - Added model `TrackedResource`
@@ -57,10 +60,6 @@
   - Added operation group `OccurrenceExtensionOperations`
   - Added operation group `OccurrencesOperations`
   - Added operation group `ScheduledActionExtensionOperations`
-
-### Breaking Changes
-
-  - Deleted or renamed enum value `ActionType.INTERNAL`
 
 ## 1.1.0 (2025-06-05)
 

@@ -58,7 +58,7 @@ class ConnectionPropertiesV2(_serialization.Model):
     :vartype category: str or ~azure.mgmt.cognitiveservices.models.ConnectionCategory
     :ivar created_by_workspace_arm_id:
     :vartype created_by_workspace_arm_id: str
-    :ivar error:
+    :ivar error: Provides the error message if the connection fails.
     :vartype error: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
@@ -69,13 +69,16 @@ class ConnectionPropertiesV2(_serialization.Model):
     :vartype is_shared_to_all: bool
     :ivar metadata: Store user metadata for this connection.
     :vartype metadata: dict[str, str]
-    :ivar pe_requirement: Known values are: "Required", "NotRequired", and "NotApplicable".
+    :ivar pe_requirement: Specifies how private endpoints are used with this connection:
+     'Required', 'NotRequired', or 'NotApplicable'. Known values are: "Required", "NotRequired", and
+     "NotApplicable".
     :vartype pe_requirement: str or ~azure.mgmt.cognitiveservices.models.ManagedPERequirement
-    :ivar pe_status: Known values are: "Inactive", "Active", and "NotApplicable".
+    :ivar pe_status: Specifies the status of private endpoints for this connection: 'Inactive',
+     'Active', or 'NotApplicable'. Known values are: "Inactive", "Active", and "NotApplicable".
     :vartype pe_status: str or ~azure.mgmt.cognitiveservices.models.ManagedPEStatus
     :ivar shared_user_list:
     :vartype shared_user_list: list[str]
-    :ivar target:
+    :ivar target: The connection URL to be used.
     :vartype target: str
     :ivar use_workspace_managed_identity:
     :vartype use_workspace_managed_identity: bool
@@ -155,7 +158,7 @@ class ConnectionPropertiesV2(_serialization.Model):
          "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "Elasticsearch", "OpenAI", "Serp",
          "BingLLMSearch", "Serverless", and "ManagedOnlineEndpoint".
         :paramtype category: str or ~azure.mgmt.cognitiveservices.models.ConnectionCategory
-        :keyword error:
+        :keyword error: Provides the error message if the connection fails.
         :paramtype error: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
@@ -163,13 +166,16 @@ class ConnectionPropertiesV2(_serialization.Model):
         :paramtype is_shared_to_all: bool
         :keyword metadata: Store user metadata for this connection.
         :paramtype metadata: dict[str, str]
-        :keyword pe_requirement: Known values are: "Required", "NotRequired", and "NotApplicable".
+        :keyword pe_requirement: Specifies how private endpoints are used with this connection:
+         'Required', 'NotRequired', or 'NotApplicable'. Known values are: "Required", "NotRequired", and
+         "NotApplicable".
         :paramtype pe_requirement: str or ~azure.mgmt.cognitiveservices.models.ManagedPERequirement
-        :keyword pe_status: Known values are: "Inactive", "Active", and "NotApplicable".
+        :keyword pe_status: Specifies the status of private endpoints for this connection: 'Inactive',
+         'Active', or 'NotApplicable'. Known values are: "Inactive", "Active", and "NotApplicable".
         :paramtype pe_status: str or ~azure.mgmt.cognitiveservices.models.ManagedPEStatus
         :keyword shared_user_list:
         :paramtype shared_user_list: list[str]
-        :keyword target:
+        :keyword target: The connection URL to be used.
         :paramtype target: str
         :keyword use_workspace_managed_identity:
         :paramtype use_workspace_managed_identity: bool
@@ -222,7 +228,7 @@ class AADAuthTypeConnectionProperties(ConnectionPropertiesV2):
     :vartype category: str or ~azure.mgmt.cognitiveservices.models.ConnectionCategory
     :ivar created_by_workspace_arm_id:
     :vartype created_by_workspace_arm_id: str
-    :ivar error:
+    :ivar error: Provides the error message if the connection fails.
     :vartype error: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
@@ -233,13 +239,16 @@ class AADAuthTypeConnectionProperties(ConnectionPropertiesV2):
     :vartype is_shared_to_all: bool
     :ivar metadata: Store user metadata for this connection.
     :vartype metadata: dict[str, str]
-    :ivar pe_requirement: Known values are: "Required", "NotRequired", and "NotApplicable".
+    :ivar pe_requirement: Specifies how private endpoints are used with this connection:
+     'Required', 'NotRequired', or 'NotApplicable'. Known values are: "Required", "NotRequired", and
+     "NotApplicable".
     :vartype pe_requirement: str or ~azure.mgmt.cognitiveservices.models.ManagedPERequirement
-    :ivar pe_status: Known values are: "Inactive", "Active", and "NotApplicable".
+    :ivar pe_status: Specifies the status of private endpoints for this connection: 'Inactive',
+     'Active', or 'NotApplicable'. Known values are: "Inactive", "Active", and "NotApplicable".
     :vartype pe_status: str or ~azure.mgmt.cognitiveservices.models.ManagedPEStatus
     :ivar shared_user_list:
     :vartype shared_user_list: list[str]
-    :ivar target:
+    :ivar target: The connection URL to be used.
     :vartype target: str
     :ivar use_workspace_managed_identity:
     :vartype use_workspace_managed_identity: bool
@@ -302,7 +311,7 @@ class AADAuthTypeConnectionProperties(ConnectionPropertiesV2):
          "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "Elasticsearch", "OpenAI", "Serp",
          "BingLLMSearch", "Serverless", and "ManagedOnlineEndpoint".
         :paramtype category: str or ~azure.mgmt.cognitiveservices.models.ConnectionCategory
-        :keyword error:
+        :keyword error: Provides the error message if the connection fails.
         :paramtype error: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
@@ -310,13 +319,16 @@ class AADAuthTypeConnectionProperties(ConnectionPropertiesV2):
         :paramtype is_shared_to_all: bool
         :keyword metadata: Store user metadata for this connection.
         :paramtype metadata: dict[str, str]
-        :keyword pe_requirement: Known values are: "Required", "NotRequired", and "NotApplicable".
+        :keyword pe_requirement: Specifies how private endpoints are used with this connection:
+         'Required', 'NotRequired', or 'NotApplicable'. Known values are: "Required", "NotRequired", and
+         "NotApplicable".
         :paramtype pe_requirement: str or ~azure.mgmt.cognitiveservices.models.ManagedPERequirement
-        :keyword pe_status: Known values are: "Inactive", "Active", and "NotApplicable".
+        :keyword pe_status: Specifies the status of private endpoints for this connection: 'Inactive',
+         'Active', or 'NotApplicable'. Known values are: "Inactive", "Active", and "NotApplicable".
         :paramtype pe_status: str or ~azure.mgmt.cognitiveservices.models.ManagedPEStatus
         :keyword shared_user_list:
         :paramtype shared_user_list: list[str]
-        :keyword target:
+        :keyword target: The connection URL to be used.
         :paramtype target: str
         :keyword use_workspace_managed_identity:
         :paramtype use_workspace_managed_identity: bool
@@ -408,7 +420,7 @@ class AccessKeyAuthTypeConnectionProperties(ConnectionPropertiesV2):
     :vartype category: str or ~azure.mgmt.cognitiveservices.models.ConnectionCategory
     :ivar created_by_workspace_arm_id:
     :vartype created_by_workspace_arm_id: str
-    :ivar error:
+    :ivar error: Provides the error message if the connection fails.
     :vartype error: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
@@ -419,13 +431,16 @@ class AccessKeyAuthTypeConnectionProperties(ConnectionPropertiesV2):
     :vartype is_shared_to_all: bool
     :ivar metadata: Store user metadata for this connection.
     :vartype metadata: dict[str, str]
-    :ivar pe_requirement: Known values are: "Required", "NotRequired", and "NotApplicable".
+    :ivar pe_requirement: Specifies how private endpoints are used with this connection:
+     'Required', 'NotRequired', or 'NotApplicable'. Known values are: "Required", "NotRequired", and
+     "NotApplicable".
     :vartype pe_requirement: str or ~azure.mgmt.cognitiveservices.models.ManagedPERequirement
-    :ivar pe_status: Known values are: "Inactive", "Active", and "NotApplicable".
+    :ivar pe_status: Specifies the status of private endpoints for this connection: 'Inactive',
+     'Active', or 'NotApplicable'. Known values are: "Inactive", "Active", and "NotApplicable".
     :vartype pe_status: str or ~azure.mgmt.cognitiveservices.models.ManagedPEStatus
     :ivar shared_user_list:
     :vartype shared_user_list: list[str]
-    :ivar target:
+    :ivar target: The connection URL to be used.
     :vartype target: str
     :ivar use_workspace_managed_identity:
     :vartype use_workspace_managed_identity: bool
@@ -492,7 +507,7 @@ class AccessKeyAuthTypeConnectionProperties(ConnectionPropertiesV2):
          "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "Elasticsearch", "OpenAI", "Serp",
          "BingLLMSearch", "Serverless", and "ManagedOnlineEndpoint".
         :paramtype category: str or ~azure.mgmt.cognitiveservices.models.ConnectionCategory
-        :keyword error:
+        :keyword error: Provides the error message if the connection fails.
         :paramtype error: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
@@ -500,13 +515,16 @@ class AccessKeyAuthTypeConnectionProperties(ConnectionPropertiesV2):
         :paramtype is_shared_to_all: bool
         :keyword metadata: Store user metadata for this connection.
         :paramtype metadata: dict[str, str]
-        :keyword pe_requirement: Known values are: "Required", "NotRequired", and "NotApplicable".
+        :keyword pe_requirement: Specifies how private endpoints are used with this connection:
+         'Required', 'NotRequired', or 'NotApplicable'. Known values are: "Required", "NotRequired", and
+         "NotApplicable".
         :paramtype pe_requirement: str or ~azure.mgmt.cognitiveservices.models.ManagedPERequirement
-        :keyword pe_status: Known values are: "Inactive", "Active", and "NotApplicable".
+        :keyword pe_status: Specifies the status of private endpoints for this connection: 'Inactive',
+         'Active', or 'NotApplicable'. Known values are: "Inactive", "Active", and "NotApplicable".
         :paramtype pe_status: str or ~azure.mgmt.cognitiveservices.models.ManagedPEStatus
         :keyword shared_user_list:
         :paramtype shared_user_list: list[str]
-        :keyword target:
+        :keyword target: The connection URL to be used.
         :paramtype target: str
         :keyword use_workspace_managed_identity:
         :paramtype use_workspace_managed_identity: bool
@@ -723,7 +741,7 @@ class AccountKeyAuthTypeConnectionProperties(ConnectionPropertiesV2):
     :vartype category: str or ~azure.mgmt.cognitiveservices.models.ConnectionCategory
     :ivar created_by_workspace_arm_id:
     :vartype created_by_workspace_arm_id: str
-    :ivar error:
+    :ivar error: Provides the error message if the connection fails.
     :vartype error: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
@@ -734,13 +752,16 @@ class AccountKeyAuthTypeConnectionProperties(ConnectionPropertiesV2):
     :vartype is_shared_to_all: bool
     :ivar metadata: Store user metadata for this connection.
     :vartype metadata: dict[str, str]
-    :ivar pe_requirement: Known values are: "Required", "NotRequired", and "NotApplicable".
+    :ivar pe_requirement: Specifies how private endpoints are used with this connection:
+     'Required', 'NotRequired', or 'NotApplicable'. Known values are: "Required", "NotRequired", and
+     "NotApplicable".
     :vartype pe_requirement: str or ~azure.mgmt.cognitiveservices.models.ManagedPERequirement
-    :ivar pe_status: Known values are: "Inactive", "Active", and "NotApplicable".
+    :ivar pe_status: Specifies the status of private endpoints for this connection: 'Inactive',
+     'Active', or 'NotApplicable'. Known values are: "Inactive", "Active", and "NotApplicable".
     :vartype pe_status: str or ~azure.mgmt.cognitiveservices.models.ManagedPEStatus
     :ivar shared_user_list:
     :vartype shared_user_list: list[str]
-    :ivar target:
+    :ivar target: The connection URL to be used.
     :vartype target: str
     :ivar use_workspace_managed_identity:
     :vartype use_workspace_managed_identity: bool
@@ -807,7 +828,7 @@ class AccountKeyAuthTypeConnectionProperties(ConnectionPropertiesV2):
          "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "Elasticsearch", "OpenAI", "Serp",
          "BingLLMSearch", "Serverless", and "ManagedOnlineEndpoint".
         :paramtype category: str or ~azure.mgmt.cognitiveservices.models.ConnectionCategory
-        :keyword error:
+        :keyword error: Provides the error message if the connection fails.
         :paramtype error: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
@@ -815,13 +836,16 @@ class AccountKeyAuthTypeConnectionProperties(ConnectionPropertiesV2):
         :paramtype is_shared_to_all: bool
         :keyword metadata: Store user metadata for this connection.
         :paramtype metadata: dict[str, str]
-        :keyword pe_requirement: Known values are: "Required", "NotRequired", and "NotApplicable".
+        :keyword pe_requirement: Specifies how private endpoints are used with this connection:
+         'Required', 'NotRequired', or 'NotApplicable'. Known values are: "Required", "NotRequired", and
+         "NotApplicable".
         :paramtype pe_requirement: str or ~azure.mgmt.cognitiveservices.models.ManagedPERequirement
-        :keyword pe_status: Known values are: "Inactive", "Active", and "NotApplicable".
+        :keyword pe_status: Specifies the status of private endpoints for this connection: 'Inactive',
+         'Active', or 'NotApplicable'. Known values are: "Inactive", "Active", and "NotApplicable".
         :paramtype pe_status: str or ~azure.mgmt.cognitiveservices.models.ManagedPEStatus
         :keyword shared_user_list:
         :paramtype shared_user_list: list[str]
-        :keyword target:
+        :keyword target: The connection URL to be used.
         :paramtype target: str
         :keyword use_workspace_managed_identity:
         :paramtype use_workspace_managed_identity: bool
@@ -1206,10 +1230,11 @@ class AccountProperties(_serialization.Model):
      child resources, used as containers for access management, data isolation and cost in AI
      Foundry.
     :vartype allow_project_management: bool
-    :ivar default_project: Specifies the project that is targeted when data plane endpoints are
-     called without a project parameter.
+    :ivar default_project: Specifies the project, by project name, that is targeted when data plane
+     endpoints are called without a project parameter.
     :vartype default_project: str
-    :ivar associated_projects: Specifies the projects that are associated with this resource.
+    :ivar associated_projects: Specifies the projects, by project name, that are associated with
+     this resource.
     :vartype associated_projects: list[str]
     """
 
@@ -1334,10 +1359,11 @@ class AccountProperties(_serialization.Model):
          as child resources, used as containers for access management, data isolation and cost in AI
          Foundry.
         :paramtype allow_project_management: bool
-        :keyword default_project: Specifies the project that is targeted when data plane endpoints are
-         called without a project parameter.
+        :keyword default_project: Specifies the project, by project name, that is targeted when data
+         plane endpoints are called without a project parameter.
         :paramtype default_project: str
-        :keyword associated_projects: Specifies the projects that are associated with this resource.
+        :keyword associated_projects: Specifies the projects, by project name, that are associated with
+         this resource.
         :paramtype associated_projects: list[str]
         """
         super().__init__(**kwargs)
@@ -1476,7 +1502,7 @@ class ApiKeyAuthConnectionProperties(ConnectionPropertiesV2):
     :vartype category: str or ~azure.mgmt.cognitiveservices.models.ConnectionCategory
     :ivar created_by_workspace_arm_id:
     :vartype created_by_workspace_arm_id: str
-    :ivar error:
+    :ivar error: Provides the error message if the connection fails.
     :vartype error: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
@@ -1487,13 +1513,16 @@ class ApiKeyAuthConnectionProperties(ConnectionPropertiesV2):
     :vartype is_shared_to_all: bool
     :ivar metadata: Store user metadata for this connection.
     :vartype metadata: dict[str, str]
-    :ivar pe_requirement: Known values are: "Required", "NotRequired", and "NotApplicable".
+    :ivar pe_requirement: Specifies how private endpoints are used with this connection:
+     'Required', 'NotRequired', or 'NotApplicable'. Known values are: "Required", "NotRequired", and
+     "NotApplicable".
     :vartype pe_requirement: str or ~azure.mgmt.cognitiveservices.models.ManagedPERequirement
-    :ivar pe_status: Known values are: "Inactive", "Active", and "NotApplicable".
+    :ivar pe_status: Specifies the status of private endpoints for this connection: 'Inactive',
+     'Active', or 'NotApplicable'. Known values are: "Inactive", "Active", and "NotApplicable".
     :vartype pe_status: str or ~azure.mgmt.cognitiveservices.models.ManagedPEStatus
     :ivar shared_user_list:
     :vartype shared_user_list: list[str]
-    :ivar target:
+    :ivar target: The connection URL to be used.
     :vartype target: str
     :ivar use_workspace_managed_identity:
     :vartype use_workspace_managed_identity: bool
@@ -1560,7 +1589,7 @@ class ApiKeyAuthConnectionProperties(ConnectionPropertiesV2):
          "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "Elasticsearch", "OpenAI", "Serp",
          "BingLLMSearch", "Serverless", and "ManagedOnlineEndpoint".
         :paramtype category: str or ~azure.mgmt.cognitiveservices.models.ConnectionCategory
-        :keyword error:
+        :keyword error: Provides the error message if the connection fails.
         :paramtype error: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
@@ -1568,13 +1597,16 @@ class ApiKeyAuthConnectionProperties(ConnectionPropertiesV2):
         :paramtype is_shared_to_all: bool
         :keyword metadata: Store user metadata for this connection.
         :paramtype metadata: dict[str, str]
-        :keyword pe_requirement: Known values are: "Required", "NotRequired", and "NotApplicable".
+        :keyword pe_requirement: Specifies how private endpoints are used with this connection:
+         'Required', 'NotRequired', or 'NotApplicable'. Known values are: "Required", "NotRequired", and
+         "NotApplicable".
         :paramtype pe_requirement: str or ~azure.mgmt.cognitiveservices.models.ManagedPERequirement
-        :keyword pe_status: Known values are: "Inactive", "Active", and "NotApplicable".
+        :keyword pe_status: Specifies the status of private endpoints for this connection: 'Inactive',
+         'Active', or 'NotApplicable'. Known values are: "Inactive", "Active", and "NotApplicable".
         :paramtype pe_status: str or ~azure.mgmt.cognitiveservices.models.ManagedPEStatus
         :keyword shared_user_list:
         :paramtype shared_user_list: list[str]
-        :keyword target:
+        :keyword target: The connection URL to be used.
         :paramtype target: str
         :keyword use_workspace_managed_identity:
         :paramtype use_workspace_managed_identity: bool
@@ -2028,11 +2060,14 @@ class CapabilityHostProperties(ResourceBase):
      "Succeeded", "Failed", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or
      ~azure.mgmt.cognitiveservices.models.CapabilityHostProvisioningState
-    :ivar storage_connections: List of Storage connections.
+    :ivar storage_connections: List of connection names from those available in the account or
+     project to be used as a storage resource.
     :vartype storage_connections: list[str]
-    :ivar thread_storage_connections: List of Thread storage connections.
+    :ivar thread_storage_connections: List of connection names from those available in the account
+     or project to be used for Thread storage.
     :vartype thread_storage_connections: list[str]
-    :ivar vector_store_connections: List of VectorStore connections.
+    :ivar vector_store_connections: List of connection names from those available in the account or
+     project to be used for vector database (e.g. CosmosDB).
     :vartype vector_store_connections: list[str]
     """
 
@@ -2076,11 +2111,14 @@ class CapabilityHostProperties(ResourceBase):
         :paramtype capability_host_kind: str or ~azure.mgmt.cognitiveservices.models.CapabilityHostKind
         :keyword customer_subnet: Customer subnet info to help set up this capability host.
         :paramtype customer_subnet: str
-        :keyword storage_connections: List of Storage connections.
+        :keyword storage_connections: List of connection names from those available in the account or
+         project to be used as a storage resource.
         :paramtype storage_connections: list[str]
-        :keyword thread_storage_connections: List of Thread storage connections.
+        :keyword thread_storage_connections: List of connection names from those available in the
+         account or project to be used for Thread storage.
         :paramtype thread_storage_connections: list[str]
-        :keyword vector_store_connections: List of VectorStore connections.
+        :keyword vector_store_connections: List of connection names from those available in the account
+         or project to be used for vector database (e.g. CosmosDB).
         :paramtype vector_store_connections: list[str]
         """
         super().__init__(description=description, tags=tags, **kwargs)
@@ -3256,7 +3294,7 @@ class CustomKeysConnectionProperties(ConnectionPropertiesV2):
     :vartype category: str or ~azure.mgmt.cognitiveservices.models.ConnectionCategory
     :ivar created_by_workspace_arm_id:
     :vartype created_by_workspace_arm_id: str
-    :ivar error:
+    :ivar error: Provides the error message if the connection fails.
     :vartype error: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
@@ -3267,13 +3305,16 @@ class CustomKeysConnectionProperties(ConnectionPropertiesV2):
     :vartype is_shared_to_all: bool
     :ivar metadata: Store user metadata for this connection.
     :vartype metadata: dict[str, str]
-    :ivar pe_requirement: Known values are: "Required", "NotRequired", and "NotApplicable".
+    :ivar pe_requirement: Specifies how private endpoints are used with this connection:
+     'Required', 'NotRequired', or 'NotApplicable'. Known values are: "Required", "NotRequired", and
+     "NotApplicable".
     :vartype pe_requirement: str or ~azure.mgmt.cognitiveservices.models.ManagedPERequirement
-    :ivar pe_status: Known values are: "Inactive", "Active", and "NotApplicable".
+    :ivar pe_status: Specifies the status of private endpoints for this connection: 'Inactive',
+     'Active', or 'NotApplicable'. Known values are: "Inactive", "Active", and "NotApplicable".
     :vartype pe_status: str or ~azure.mgmt.cognitiveservices.models.ManagedPEStatus
     :ivar shared_user_list:
     :vartype shared_user_list: list[str]
-    :ivar target:
+    :ivar target: The connection URL to be used.
     :vartype target: str
     :ivar use_workspace_managed_identity:
     :vartype use_workspace_managed_identity: bool
@@ -3340,7 +3381,7 @@ class CustomKeysConnectionProperties(ConnectionPropertiesV2):
          "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "Elasticsearch", "OpenAI", "Serp",
          "BingLLMSearch", "Serverless", and "ManagedOnlineEndpoint".
         :paramtype category: str or ~azure.mgmt.cognitiveservices.models.ConnectionCategory
-        :keyword error:
+        :keyword error: Provides the error message if the connection fails.
         :paramtype error: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
@@ -3348,13 +3389,16 @@ class CustomKeysConnectionProperties(ConnectionPropertiesV2):
         :paramtype is_shared_to_all: bool
         :keyword metadata: Store user metadata for this connection.
         :paramtype metadata: dict[str, str]
-        :keyword pe_requirement: Known values are: "Required", "NotRequired", and "NotApplicable".
+        :keyword pe_requirement: Specifies how private endpoints are used with this connection:
+         'Required', 'NotRequired', or 'NotApplicable'. Known values are: "Required", "NotRequired", and
+         "NotApplicable".
         :paramtype pe_requirement: str or ~azure.mgmt.cognitiveservices.models.ManagedPERequirement
-        :keyword pe_status: Known values are: "Inactive", "Active", and "NotApplicable".
+        :keyword pe_status: Specifies the status of private endpoints for this connection: 'Inactive',
+         'Active', or 'NotApplicable'. Known values are: "Inactive", "Active", and "NotApplicable".
         :paramtype pe_status: str or ~azure.mgmt.cognitiveservices.models.ManagedPEStatus
         :keyword shared_user_list:
         :paramtype shared_user_list: list[str]
-        :keyword target:
+        :keyword target: The connection URL to be used.
         :paramtype target: str
         :keyword use_workspace_managed_identity:
         :paramtype use_workspace_managed_identity: bool
@@ -4276,7 +4320,7 @@ class ManagedIdentityAuthTypeConnectionProperties(ConnectionPropertiesV2):  # py
     :vartype category: str or ~azure.mgmt.cognitiveservices.models.ConnectionCategory
     :ivar created_by_workspace_arm_id:
     :vartype created_by_workspace_arm_id: str
-    :ivar error:
+    :ivar error: Provides the error message if the connection fails.
     :vartype error: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
@@ -4287,13 +4331,16 @@ class ManagedIdentityAuthTypeConnectionProperties(ConnectionPropertiesV2):  # py
     :vartype is_shared_to_all: bool
     :ivar metadata: Store user metadata for this connection.
     :vartype metadata: dict[str, str]
-    :ivar pe_requirement: Known values are: "Required", "NotRequired", and "NotApplicable".
+    :ivar pe_requirement: Specifies how private endpoints are used with this connection:
+     'Required', 'NotRequired', or 'NotApplicable'. Known values are: "Required", "NotRequired", and
+     "NotApplicable".
     :vartype pe_requirement: str or ~azure.mgmt.cognitiveservices.models.ManagedPERequirement
-    :ivar pe_status: Known values are: "Inactive", "Active", and "NotApplicable".
+    :ivar pe_status: Specifies the status of private endpoints for this connection: 'Inactive',
+     'Active', or 'NotApplicable'. Known values are: "Inactive", "Active", and "NotApplicable".
     :vartype pe_status: str or ~azure.mgmt.cognitiveservices.models.ManagedPEStatus
     :ivar shared_user_list:
     :vartype shared_user_list: list[str]
-    :ivar target:
+    :ivar target: The connection URL to be used.
     :vartype target: str
     :ivar use_workspace_managed_identity:
     :vartype use_workspace_managed_identity: bool
@@ -4360,7 +4407,7 @@ class ManagedIdentityAuthTypeConnectionProperties(ConnectionPropertiesV2):  # py
          "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "Elasticsearch", "OpenAI", "Serp",
          "BingLLMSearch", "Serverless", and "ManagedOnlineEndpoint".
         :paramtype category: str or ~azure.mgmt.cognitiveservices.models.ConnectionCategory
-        :keyword error:
+        :keyword error: Provides the error message if the connection fails.
         :paramtype error: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
@@ -4368,13 +4415,16 @@ class ManagedIdentityAuthTypeConnectionProperties(ConnectionPropertiesV2):  # py
         :paramtype is_shared_to_all: bool
         :keyword metadata: Store user metadata for this connection.
         :paramtype metadata: dict[str, str]
-        :keyword pe_requirement: Known values are: "Required", "NotRequired", and "NotApplicable".
+        :keyword pe_requirement: Specifies how private endpoints are used with this connection:
+         'Required', 'NotRequired', or 'NotApplicable'. Known values are: "Required", "NotRequired", and
+         "NotApplicable".
         :paramtype pe_requirement: str or ~azure.mgmt.cognitiveservices.models.ManagedPERequirement
-        :keyword pe_status: Known values are: "Inactive", "Active", and "NotApplicable".
+        :keyword pe_status: Specifies the status of private endpoints for this connection: 'Inactive',
+         'Active', or 'NotApplicable'. Known values are: "Inactive", "Active", and "NotApplicable".
         :paramtype pe_status: str or ~azure.mgmt.cognitiveservices.models.ManagedPEStatus
         :keyword shared_user_list:
         :paramtype shared_user_list: list[str]
-        :keyword target:
+        :keyword target: The connection URL to be used.
         :paramtype target: str
         :keyword use_workspace_managed_identity:
         :paramtype use_workspace_managed_identity: bool
@@ -5317,7 +5367,7 @@ class NoneAuthTypeConnectionProperties(ConnectionPropertiesV2):
     :vartype category: str or ~azure.mgmt.cognitiveservices.models.ConnectionCategory
     :ivar created_by_workspace_arm_id:
     :vartype created_by_workspace_arm_id: str
-    :ivar error:
+    :ivar error: Provides the error message if the connection fails.
     :vartype error: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
@@ -5328,13 +5378,16 @@ class NoneAuthTypeConnectionProperties(ConnectionPropertiesV2):
     :vartype is_shared_to_all: bool
     :ivar metadata: Store user metadata for this connection.
     :vartype metadata: dict[str, str]
-    :ivar pe_requirement: Known values are: "Required", "NotRequired", and "NotApplicable".
+    :ivar pe_requirement: Specifies how private endpoints are used with this connection:
+     'Required', 'NotRequired', or 'NotApplicable'. Known values are: "Required", "NotRequired", and
+     "NotApplicable".
     :vartype pe_requirement: str or ~azure.mgmt.cognitiveservices.models.ManagedPERequirement
-    :ivar pe_status: Known values are: "Inactive", "Active", and "NotApplicable".
+    :ivar pe_status: Specifies the status of private endpoints for this connection: 'Inactive',
+     'Active', or 'NotApplicable'. Known values are: "Inactive", "Active", and "NotApplicable".
     :vartype pe_status: str or ~azure.mgmt.cognitiveservices.models.ManagedPEStatus
     :ivar shared_user_list:
     :vartype shared_user_list: list[str]
-    :ivar target:
+    :ivar target: The connection URL to be used.
     :vartype target: str
     :ivar use_workspace_managed_identity:
     :vartype use_workspace_managed_identity: bool
@@ -5397,7 +5450,7 @@ class NoneAuthTypeConnectionProperties(ConnectionPropertiesV2):
          "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "Elasticsearch", "OpenAI", "Serp",
          "BingLLMSearch", "Serverless", and "ManagedOnlineEndpoint".
         :paramtype category: str or ~azure.mgmt.cognitiveservices.models.ConnectionCategory
-        :keyword error:
+        :keyword error: Provides the error message if the connection fails.
         :paramtype error: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
@@ -5405,13 +5458,16 @@ class NoneAuthTypeConnectionProperties(ConnectionPropertiesV2):
         :paramtype is_shared_to_all: bool
         :keyword metadata: Store user metadata for this connection.
         :paramtype metadata: dict[str, str]
-        :keyword pe_requirement: Known values are: "Required", "NotRequired", and "NotApplicable".
+        :keyword pe_requirement: Specifies how private endpoints are used with this connection:
+         'Required', 'NotRequired', or 'NotApplicable'. Known values are: "Required", "NotRequired", and
+         "NotApplicable".
         :paramtype pe_requirement: str or ~azure.mgmt.cognitiveservices.models.ManagedPERequirement
-        :keyword pe_status: Known values are: "Inactive", "Active", and "NotApplicable".
+        :keyword pe_status: Specifies the status of private endpoints for this connection: 'Inactive',
+         'Active', or 'NotApplicable'. Known values are: "Inactive", "Active", and "NotApplicable".
         :paramtype pe_status: str or ~azure.mgmt.cognitiveservices.models.ManagedPEStatus
         :keyword shared_user_list:
         :paramtype shared_user_list: list[str]
-        :keyword target:
+        :keyword target: The connection URL to be used.
         :paramtype target: str
         :keyword use_workspace_managed_identity:
         :paramtype use_workspace_managed_identity: bool
@@ -5464,7 +5520,7 @@ class OAuth2AuthTypeConnectionProperties(ConnectionPropertiesV2):
     :vartype category: str or ~azure.mgmt.cognitiveservices.models.ConnectionCategory
     :ivar created_by_workspace_arm_id:
     :vartype created_by_workspace_arm_id: str
-    :ivar error:
+    :ivar error: Provides the error message if the connection fails.
     :vartype error: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
@@ -5475,13 +5531,16 @@ class OAuth2AuthTypeConnectionProperties(ConnectionPropertiesV2):
     :vartype is_shared_to_all: bool
     :ivar metadata: Store user metadata for this connection.
     :vartype metadata: dict[str, str]
-    :ivar pe_requirement: Known values are: "Required", "NotRequired", and "NotApplicable".
+    :ivar pe_requirement: Specifies how private endpoints are used with this connection:
+     'Required', 'NotRequired', or 'NotApplicable'. Known values are: "Required", "NotRequired", and
+     "NotApplicable".
     :vartype pe_requirement: str or ~azure.mgmt.cognitiveservices.models.ManagedPERequirement
-    :ivar pe_status: Known values are: "Inactive", "Active", and "NotApplicable".
+    :ivar pe_status: Specifies the status of private endpoints for this connection: 'Inactive',
+     'Active', or 'NotApplicable'. Known values are: "Inactive", "Active", and "NotApplicable".
     :vartype pe_status: str or ~azure.mgmt.cognitiveservices.models.ManagedPEStatus
     :ivar shared_user_list:
     :vartype shared_user_list: list[str]
-    :ivar target:
+    :ivar target: The connection URL to be used.
     :vartype target: str
     :ivar use_workspace_managed_identity:
     :vartype use_workspace_managed_identity: bool
@@ -5549,7 +5608,7 @@ class OAuth2AuthTypeConnectionProperties(ConnectionPropertiesV2):
          "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "Elasticsearch", "OpenAI", "Serp",
          "BingLLMSearch", "Serverless", and "ManagedOnlineEndpoint".
         :paramtype category: str or ~azure.mgmt.cognitiveservices.models.ConnectionCategory
-        :keyword error:
+        :keyword error: Provides the error message if the connection fails.
         :paramtype error: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
@@ -5557,13 +5616,16 @@ class OAuth2AuthTypeConnectionProperties(ConnectionPropertiesV2):
         :paramtype is_shared_to_all: bool
         :keyword metadata: Store user metadata for this connection.
         :paramtype metadata: dict[str, str]
-        :keyword pe_requirement: Known values are: "Required", "NotRequired", and "NotApplicable".
+        :keyword pe_requirement: Specifies how private endpoints are used with this connection:
+         'Required', 'NotRequired', or 'NotApplicable'. Known values are: "Required", "NotRequired", and
+         "NotApplicable".
         :paramtype pe_requirement: str or ~azure.mgmt.cognitiveservices.models.ManagedPERequirement
-        :keyword pe_status: Known values are: "Inactive", "Active", and "NotApplicable".
+        :keyword pe_status: Specifies the status of private endpoints for this connection: 'Inactive',
+         'Active', or 'NotApplicable'. Known values are: "Inactive", "Active", and "NotApplicable".
         :paramtype pe_status: str or ~azure.mgmt.cognitiveservices.models.ManagedPEStatus
         :keyword shared_user_list:
         :paramtype shared_user_list: list[str]
-        :keyword target:
+        :keyword target: The connection URL to be used.
         :paramtype target: str
         :keyword use_workspace_managed_identity:
         :paramtype use_workspace_managed_identity: bool
@@ -5741,7 +5803,7 @@ class PATAuthTypeConnectionProperties(ConnectionPropertiesV2):
     :vartype category: str or ~azure.mgmt.cognitiveservices.models.ConnectionCategory
     :ivar created_by_workspace_arm_id:
     :vartype created_by_workspace_arm_id: str
-    :ivar error:
+    :ivar error: Provides the error message if the connection fails.
     :vartype error: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
@@ -5752,13 +5814,16 @@ class PATAuthTypeConnectionProperties(ConnectionPropertiesV2):
     :vartype is_shared_to_all: bool
     :ivar metadata: Store user metadata for this connection.
     :vartype metadata: dict[str, str]
-    :ivar pe_requirement: Known values are: "Required", "NotRequired", and "NotApplicable".
+    :ivar pe_requirement: Specifies how private endpoints are used with this connection:
+     'Required', 'NotRequired', or 'NotApplicable'. Known values are: "Required", "NotRequired", and
+     "NotApplicable".
     :vartype pe_requirement: str or ~azure.mgmt.cognitiveservices.models.ManagedPERequirement
-    :ivar pe_status: Known values are: "Inactive", "Active", and "NotApplicable".
+    :ivar pe_status: Specifies the status of private endpoints for this connection: 'Inactive',
+     'Active', or 'NotApplicable'. Known values are: "Inactive", "Active", and "NotApplicable".
     :vartype pe_status: str or ~azure.mgmt.cognitiveservices.models.ManagedPEStatus
     :ivar shared_user_list:
     :vartype shared_user_list: list[str]
-    :ivar target:
+    :ivar target: The connection URL to be used.
     :vartype target: str
     :ivar use_workspace_managed_identity:
     :vartype use_workspace_managed_identity: bool
@@ -5825,7 +5890,7 @@ class PATAuthTypeConnectionProperties(ConnectionPropertiesV2):
          "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "Elasticsearch", "OpenAI", "Serp",
          "BingLLMSearch", "Serverless", and "ManagedOnlineEndpoint".
         :paramtype category: str or ~azure.mgmt.cognitiveservices.models.ConnectionCategory
-        :keyword error:
+        :keyword error: Provides the error message if the connection fails.
         :paramtype error: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
@@ -5833,13 +5898,16 @@ class PATAuthTypeConnectionProperties(ConnectionPropertiesV2):
         :paramtype is_shared_to_all: bool
         :keyword metadata: Store user metadata for this connection.
         :paramtype metadata: dict[str, str]
-        :keyword pe_requirement: Known values are: "Required", "NotRequired", and "NotApplicable".
+        :keyword pe_requirement: Specifies how private endpoints are used with this connection:
+         'Required', 'NotRequired', or 'NotApplicable'. Known values are: "Required", "NotRequired", and
+         "NotApplicable".
         :paramtype pe_requirement: str or ~azure.mgmt.cognitiveservices.models.ManagedPERequirement
-        :keyword pe_status: Known values are: "Inactive", "Active", and "NotApplicable".
+        :keyword pe_status: Specifies the status of private endpoints for this connection: 'Inactive',
+         'Active', or 'NotApplicable'. Known values are: "Inactive", "Active", and "NotApplicable".
         :paramtype pe_status: str or ~azure.mgmt.cognitiveservices.models.ManagedPEStatus
         :keyword shared_user_list:
         :paramtype shared_user_list: list[str]
-        :keyword target:
+        :keyword target: The connection URL to be used.
         :paramtype target: str
         :keyword use_workspace_managed_identity:
         :paramtype use_workspace_managed_identity: bool
@@ -7057,8 +7125,8 @@ class RaiPolicyProperties(_serialization.Model):
     :ivar type: Content Filters policy type. Known values are: "UserManaged" and "SystemManaged".
     :vartype type: str or ~azure.mgmt.cognitiveservices.models.RaiPolicyType
     :ivar mode: Rai policy mode. The enum value mapping is as below: Default = 0, Deferred=1,
-     Blocking=2, Asynchronous_filter =3. Please use 'Asynchronous_filter' after 2025-04-01-preview.
-     It is the same as 'Deferred' in previous version. Known values are: "Default", "Deferred",
+     Blocking=2, Asynchronous_filter =3. Please use 'Asynchronous_filter' after 2025-06-01. It is
+     the same as 'Deferred' in previous version. Known values are: "Default", "Deferred",
      "Blocking", and "Asynchronous_filter".
     :vartype mode: str or ~azure.mgmt.cognitiveservices.models.RaiPolicyMode
     :ivar base_policy_name: Name of Rai policy.
@@ -7092,8 +7160,8 @@ class RaiPolicyProperties(_serialization.Model):
     ) -> None:
         """
         :keyword mode: Rai policy mode. The enum value mapping is as below: Default = 0, Deferred=1,
-         Blocking=2, Asynchronous_filter =3. Please use 'Asynchronous_filter' after 2025-04-01-preview.
-         It is the same as 'Deferred' in previous version. Known values are: "Default", "Deferred",
+         Blocking=2, Asynchronous_filter =3. Please use 'Asynchronous_filter' after 2025-06-01. It is
+         the same as 'Deferred' in previous version. Known values are: "Default", "Deferred",
          "Blocking", and "Asynchronous_filter".
         :paramtype mode: str or ~azure.mgmt.cognitiveservices.models.RaiPolicyMode
         :keyword base_policy_name: Name of Rai policy.
@@ -7410,7 +7478,7 @@ class SASAuthTypeConnectionProperties(ConnectionPropertiesV2):
     :vartype category: str or ~azure.mgmt.cognitiveservices.models.ConnectionCategory
     :ivar created_by_workspace_arm_id:
     :vartype created_by_workspace_arm_id: str
-    :ivar error:
+    :ivar error: Provides the error message if the connection fails.
     :vartype error: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
@@ -7421,13 +7489,16 @@ class SASAuthTypeConnectionProperties(ConnectionPropertiesV2):
     :vartype is_shared_to_all: bool
     :ivar metadata: Store user metadata for this connection.
     :vartype metadata: dict[str, str]
-    :ivar pe_requirement: Known values are: "Required", "NotRequired", and "NotApplicable".
+    :ivar pe_requirement: Specifies how private endpoints are used with this connection:
+     'Required', 'NotRequired', or 'NotApplicable'. Known values are: "Required", "NotRequired", and
+     "NotApplicable".
     :vartype pe_requirement: str or ~azure.mgmt.cognitiveservices.models.ManagedPERequirement
-    :ivar pe_status: Known values are: "Inactive", "Active", and "NotApplicable".
+    :ivar pe_status: Specifies the status of private endpoints for this connection: 'Inactive',
+     'Active', or 'NotApplicable'. Known values are: "Inactive", "Active", and "NotApplicable".
     :vartype pe_status: str or ~azure.mgmt.cognitiveservices.models.ManagedPEStatus
     :ivar shared_user_list:
     :vartype shared_user_list: list[str]
-    :ivar target:
+    :ivar target: The connection URL to be used.
     :vartype target: str
     :ivar use_workspace_managed_identity:
     :vartype use_workspace_managed_identity: bool
@@ -7494,7 +7565,7 @@ class SASAuthTypeConnectionProperties(ConnectionPropertiesV2):
          "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "Elasticsearch", "OpenAI", "Serp",
          "BingLLMSearch", "Serverless", and "ManagedOnlineEndpoint".
         :paramtype category: str or ~azure.mgmt.cognitiveservices.models.ConnectionCategory
-        :keyword error:
+        :keyword error: Provides the error message if the connection fails.
         :paramtype error: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
@@ -7502,13 +7573,16 @@ class SASAuthTypeConnectionProperties(ConnectionPropertiesV2):
         :paramtype is_shared_to_all: bool
         :keyword metadata: Store user metadata for this connection.
         :paramtype metadata: dict[str, str]
-        :keyword pe_requirement: Known values are: "Required", "NotRequired", and "NotApplicable".
+        :keyword pe_requirement: Specifies how private endpoints are used with this connection:
+         'Required', 'NotRequired', or 'NotApplicable'. Known values are: "Required", "NotRequired", and
+         "NotApplicable".
         :paramtype pe_requirement: str or ~azure.mgmt.cognitiveservices.models.ManagedPERequirement
-        :keyword pe_status: Known values are: "Inactive", "Active", and "NotApplicable".
+        :keyword pe_status: Specifies the status of private endpoints for this connection: 'Inactive',
+         'Active', or 'NotApplicable'. Known values are: "Inactive", "Active", and "NotApplicable".
         :paramtype pe_status: str or ~azure.mgmt.cognitiveservices.models.ManagedPEStatus
         :keyword shared_user_list:
         :paramtype shared_user_list: list[str]
-        :keyword target:
+        :keyword target: The connection URL to be used.
         :paramtype target: str
         :keyword use_workspace_managed_identity:
         :paramtype use_workspace_managed_identity: bool
@@ -7564,7 +7638,7 @@ class ServicePrincipalAuthTypeConnectionProperties(ConnectionPropertiesV2):  # p
     :vartype category: str or ~azure.mgmt.cognitiveservices.models.ConnectionCategory
     :ivar created_by_workspace_arm_id:
     :vartype created_by_workspace_arm_id: str
-    :ivar error:
+    :ivar error: Provides the error message if the connection fails.
     :vartype error: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
@@ -7575,13 +7649,16 @@ class ServicePrincipalAuthTypeConnectionProperties(ConnectionPropertiesV2):  # p
     :vartype is_shared_to_all: bool
     :ivar metadata: Store user metadata for this connection.
     :vartype metadata: dict[str, str]
-    :ivar pe_requirement: Known values are: "Required", "NotRequired", and "NotApplicable".
+    :ivar pe_requirement: Specifies how private endpoints are used with this connection:
+     'Required', 'NotRequired', or 'NotApplicable'. Known values are: "Required", "NotRequired", and
+     "NotApplicable".
     :vartype pe_requirement: str or ~azure.mgmt.cognitiveservices.models.ManagedPERequirement
-    :ivar pe_status: Known values are: "Inactive", "Active", and "NotApplicable".
+    :ivar pe_status: Specifies the status of private endpoints for this connection: 'Inactive',
+     'Active', or 'NotApplicable'. Known values are: "Inactive", "Active", and "NotApplicable".
     :vartype pe_status: str or ~azure.mgmt.cognitiveservices.models.ManagedPEStatus
     :ivar shared_user_list:
     :vartype shared_user_list: list[str]
-    :ivar target:
+    :ivar target: The connection URL to be used.
     :vartype target: str
     :ivar use_workspace_managed_identity:
     :vartype use_workspace_managed_identity: bool
@@ -7648,7 +7725,7 @@ class ServicePrincipalAuthTypeConnectionProperties(ConnectionPropertiesV2):  # p
          "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "Elasticsearch", "OpenAI", "Serp",
          "BingLLMSearch", "Serverless", and "ManagedOnlineEndpoint".
         :paramtype category: str or ~azure.mgmt.cognitiveservices.models.ConnectionCategory
-        :keyword error:
+        :keyword error: Provides the error message if the connection fails.
         :paramtype error: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
@@ -7656,13 +7733,16 @@ class ServicePrincipalAuthTypeConnectionProperties(ConnectionPropertiesV2):  # p
         :paramtype is_shared_to_all: bool
         :keyword metadata: Store user metadata for this connection.
         :paramtype metadata: dict[str, str]
-        :keyword pe_requirement: Known values are: "Required", "NotRequired", and "NotApplicable".
+        :keyword pe_requirement: Specifies how private endpoints are used with this connection:
+         'Required', 'NotRequired', or 'NotApplicable'. Known values are: "Required", "NotRequired", and
+         "NotApplicable".
         :paramtype pe_requirement: str or ~azure.mgmt.cognitiveservices.models.ManagedPERequirement
-        :keyword pe_status: Known values are: "Inactive", "Active", and "NotApplicable".
+        :keyword pe_status: Specifies the status of private endpoints for this connection: 'Inactive',
+         'Active', or 'NotApplicable'. Known values are: "Inactive", "Active", and "NotApplicable".
         :paramtype pe_status: str or ~azure.mgmt.cognitiveservices.models.ManagedPEStatus
         :keyword shared_user_list:
         :paramtype shared_user_list: list[str]
-        :keyword target:
+        :keyword target: The connection URL to be used.
         :paramtype target: str
         :keyword use_workspace_managed_identity:
         :paramtype use_workspace_managed_identity: bool
@@ -8222,7 +8302,7 @@ class UsernamePasswordAuthTypeConnectionProperties(ConnectionPropertiesV2):  # p
     :vartype category: str or ~azure.mgmt.cognitiveservices.models.ConnectionCategory
     :ivar created_by_workspace_arm_id:
     :vartype created_by_workspace_arm_id: str
-    :ivar error:
+    :ivar error: Provides the error message if the connection fails.
     :vartype error: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
@@ -8233,13 +8313,16 @@ class UsernamePasswordAuthTypeConnectionProperties(ConnectionPropertiesV2):  # p
     :vartype is_shared_to_all: bool
     :ivar metadata: Store user metadata for this connection.
     :vartype metadata: dict[str, str]
-    :ivar pe_requirement: Known values are: "Required", "NotRequired", and "NotApplicable".
+    :ivar pe_requirement: Specifies how private endpoints are used with this connection:
+     'Required', 'NotRequired', or 'NotApplicable'. Known values are: "Required", "NotRequired", and
+     "NotApplicable".
     :vartype pe_requirement: str or ~azure.mgmt.cognitiveservices.models.ManagedPERequirement
-    :ivar pe_status: Known values are: "Inactive", "Active", and "NotApplicable".
+    :ivar pe_status: Specifies the status of private endpoints for this connection: 'Inactive',
+     'Active', or 'NotApplicable'. Known values are: "Inactive", "Active", and "NotApplicable".
     :vartype pe_status: str or ~azure.mgmt.cognitiveservices.models.ManagedPEStatus
     :ivar shared_user_list:
     :vartype shared_user_list: list[str]
-    :ivar target:
+    :ivar target: The connection URL to be used.
     :vartype target: str
     :ivar use_workspace_managed_identity:
     :vartype use_workspace_managed_identity: bool
@@ -8306,7 +8389,7 @@ class UsernamePasswordAuthTypeConnectionProperties(ConnectionPropertiesV2):  # p
          "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "Elasticsearch", "OpenAI", "Serp",
          "BingLLMSearch", "Serverless", and "ManagedOnlineEndpoint".
         :paramtype category: str or ~azure.mgmt.cognitiveservices.models.ConnectionCategory
-        :keyword error:
+        :keyword error: Provides the error message if the connection fails.
         :paramtype error: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
@@ -8314,13 +8397,16 @@ class UsernamePasswordAuthTypeConnectionProperties(ConnectionPropertiesV2):  # p
         :paramtype is_shared_to_all: bool
         :keyword metadata: Store user metadata for this connection.
         :paramtype metadata: dict[str, str]
-        :keyword pe_requirement: Known values are: "Required", "NotRequired", and "NotApplicable".
+        :keyword pe_requirement: Specifies how private endpoints are used with this connection:
+         'Required', 'NotRequired', or 'NotApplicable'. Known values are: "Required", "NotRequired", and
+         "NotApplicable".
         :paramtype pe_requirement: str or ~azure.mgmt.cognitiveservices.models.ManagedPERequirement
-        :keyword pe_status: Known values are: "Inactive", "Active", and "NotApplicable".
+        :keyword pe_status: Specifies the status of private endpoints for this connection: 'Inactive',
+         'Active', or 'NotApplicable'. Known values are: "Inactive", "Active", and "NotApplicable".
         :paramtype pe_status: str or ~azure.mgmt.cognitiveservices.models.ManagedPEStatus
         :keyword shared_user_list:
         :paramtype shared_user_list: list[str]
-        :keyword target:
+        :keyword target: The connection URL to be used.
         :paramtype target: str
         :keyword use_workspace_managed_identity:
         :paramtype use_workspace_managed_identity: bool
