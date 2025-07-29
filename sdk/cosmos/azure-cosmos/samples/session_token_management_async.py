@@ -66,10 +66,10 @@ async def storing_session_tokens_pk(container):
         }
         target_feed_range = await container.feed_range_from_partition_key(item['pk'])
         await perform_create_item_with_cached_session_token(cache, container, feed_ranges_and_session_tokens, item,
-                                                      target_feed_range)
+                                                            target_feed_range)
 
 async def perform_create_item_with_cached_session_token(cache, container, feed_ranges_and_session_tokens, item,
-                                                  target_feed_range):
+                                                        target_feed_range):
     # only doing this for the key to be immutable
     feed_range_json = json.dumps(target_feed_range)
     session_token = cache[feed_range_json] if feed_range_json in cache else None
