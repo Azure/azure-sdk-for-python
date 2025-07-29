@@ -173,12 +173,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self.UseMultipleWriteLocations = False
         self._global_endpoint_manager = _GlobalPartitionEndpointManagerForCircuitBreaker(self)
 
-        retry_policy = None
         if isinstance(self.connection_policy.ConnectionRetryConfiguration, HTTPPolicy):
             retry_policy = self.connection_policy.ConnectionRetryConfiguration
         elif isinstance(self.connection_policy.ConnectionRetryConfiguration, int):
-            retry_policy = ConnectionRetryPolicy(
-                total=self.connection_policy.ConnectionRetryConfiguration)
+            retry_policy = ConnectionRetryPolicy(total=self.connection_policy.ConnectionRetryConfiguration)
         elif isinstance(self.connection_policy.ConnectionRetryConfiguration, Retry):
             # Convert a urllib3 retry policy to a Pipeline policy
             retry_policy = ConnectionRetryPolicy(
@@ -187,8 +185,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 retry_read=self.connection_policy.ConnectionRetryConfiguration.read,
                 retry_status=self.connection_policy.ConnectionRetryConfiguration.status,
                 retry_backoff_max=self.connection_policy.ConnectionRetryConfiguration.DEFAULT_BACKOFF_MAX,
-                retry_on_status_codes=list(
-                    self.connection_policy.ConnectionRetryConfiguration.status_forcelist),
+                retry_on_status_codes=list(self.connection_policy.ConnectionRetryConfiguration.status_forcelist),
                 retry_backoff_factor=self.connection_policy.ConnectionRetryConfiguration.backoff_factor
             )
         else:
@@ -199,8 +196,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if self.connection_policy.ProxyConfiguration and self.connection_policy.ProxyConfiguration.Host:
             host = self.connection_policy.ProxyConfiguration.Host
             url = urllib.parse.urlparse(host)
-            proxy = host if url.port else host + ":" + \
-                str(self.connection_policy.ProxyConfiguration.Port)
+            proxy = host if url.port else host + ":" + str(self.connection_policy.ProxyConfiguration.Port)
             proxies.update({url.scheme: proxy})
 
         suffix = kwargs.pop('user_agent_suffix', None)
@@ -213,8 +209,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 scope = scope_override
             else:
                 scope = base.create_scope_from_url(self.url_connection)
-            credentials_policy = CosmosBearerTokenCredentialPolicy(
-                self.aad_credentials, scope)
+            credentials_policy = CosmosBearerTokenCredentialPolicy(self.aad_credentials, scope)
 
         policies = [
             HeadersPolicy(**kwargs),
@@ -228,8 +223,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             DistributedTracingPolicy(**kwargs),
             CosmosHttpLoggingPolicy(
                 logger=kwargs.pop("logger", None),
-                enable_diagnostics_logging=kwargs.pop(
-                    "enable_diagnostics_logging", False),
+                enable_diagnostics_logging=kwargs.pop("enable_diagnostics_logging", False),
                 global_endpoint_manager=self._global_endpoint_manager,
                 **kwargs
             ),
@@ -248,11 +242,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self._query_compatibility_mode = CosmosClientConnection._QueryCompatibilityMode.Default
 
         # Routing map provider
-        self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(
-            self)
+        self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
 
-        database_account, _ = self._global_endpoint_manager._GetDatabaseAccount(
-            **kwargs)
+        database_account, _ = self._global_endpoint_manager._GetDatabaseAccount(**kwargs)
         self._global_endpoint_manager.force_refresh_on_startup(database_account)
 
         # Use database_account if no consistency passed in to verify consistency level to be used
@@ -296,8 +288,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if consistency_level is None and database_account.ConsistencyPolicy:
             # Set to default level present in account
             user_consistency_policy = database_account.ConsistencyPolicy
-            consistency_level = user_consistency_policy.get(
-                Constants.DefaultConsistencyLevel)
+            consistency_level = user_consistency_policy.get(Constants.DefaultConsistencyLevel)
         else:
             # Set consistency level header to be used for the client
             self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
@@ -357,8 +348,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if partition_resolver is None:
             raise ValueError("partition_resolver is None.")
 
-        self.partition_resolvers = {base.TrimBeginningAndEndingSlashes(
-            database_link): partition_resolver}
+        self.partition_resolvers = {base.TrimBeginningAndEndingSlashes(database_link): partition_resolver}
 
     def GetPartitionResolver(self, database_link: str) -> Optional[RangePartitionResolver]:
         """Gets the partition resolver associated with the database link
@@ -642,8 +632,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        database_id, path = self._GetDatabaseIdWithPathForUser(
-            database_link, user)
+        database_id, path = self._GetDatabaseIdWithPathForUser(database_link, user)
         return self.Create(user, path, http_constants.ResourceType.User, database_id, None, options, **kwargs)
 
     def UpsertUser(
@@ -669,8 +658,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        database_id, path = self._GetDatabaseIdWithPathForUser(
-            database_link, user)
+        database_id, path = self._GetDatabaseIdWithPathForUser(database_link, user)
         return self.Upsert(user, path, http_constants.ResourceType.User, database_id, None, options, **kwargs)
 
     def _GetDatabaseIdWithPathForUser(self, database_link: str, user: Mapping[str, Any]) -> Tuple[Optional[str], str]:
@@ -815,8 +803,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        path, user_id = self._GetUserIdWithPathForPermission(
-            permission, user_link)
+        path, user_id = self._GetUserIdWithPathForPermission(permission, user_link)
         return self.Create(permission, path, http_constants.ResourceType.Permission, user_id, None, options, **kwargs)
 
     def UpsertPermission(
@@ -844,8 +831,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        path, user_id = self._GetUserIdWithPathForPermission(
-            permission, user_link)
+        path, user_id = self._GetUserIdWithPathForPermission(permission, user_link)
         return self.Upsert(permission, path, http_constants.ResourceType.Permission, user_id, None, options, **kwargs)
 
     def _GetUserIdWithPathForPermission(
@@ -1061,8 +1047,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self,
         collection_link: str,
         feed_options: Optional[Mapping[str, Any]] = None,
-        response_hook: Optional[Callable[[
-            Mapping[str, Any], Dict[str, Any]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Reads all documents in a collection.
@@ -1084,8 +1069,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         query: Optional[Union[str, Dict[str, Any]]],
         options: Optional[Mapping[str, Any]] = None,
         partition_key: Optional[_PartitionKeyType] = None,
-        response_hook: Optional[Callable[[
-            Mapping[str, Any], Dict[str, Any]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Queries documents in a collection.
@@ -1105,8 +1089,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             query_iterable.QueryIterable
 
         """
-        database_or_container_link = base.TrimBeginningAndEndingSlashes(
-            database_or_container_link)
+        database_or_container_link = base.TrimBeginningAndEndingSlashes(database_or_container_link)
 
         if options is None:
             options = {}
@@ -1123,8 +1106,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             )
 
         path = base.GetPathFromLink(database_or_container_link, http_constants.ResourceType.Document)
-        collection_id = base.GetResourceIdOrFullNameFromLink(
-            database_or_container_link)
+        collection_id = base.GetResourceIdOrFullNameFromLink(database_or_container_link)
 
         def fetch_fn(options: Mapping[str, Any]) -> Tuple[List[Dict[str, Any]], CaseInsensitiveDict]:
             return self.__QueryFeed(
@@ -1155,8 +1137,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self,
         collection_link: str,
         options: Optional[Mapping[str, Any]] = None,
-        response_hook: Optional[Callable[[
-            Mapping[str, Any], Mapping[str, Any]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Queries documents change feed in a collection.
@@ -1415,8 +1396,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             if partition_resolver is not None:
                 collection_link = partition_resolver.ResolveForCreate(document)
             else:
-                raise ValueError(
-                    CosmosClientConnection.PartitionResolverErrorMessage)
+                raise ValueError(CosmosClientConnection.PartitionResolverErrorMessage)
 
         path = base.GetPathFromLink(collection_link, http_constants.ResourceType.Document)
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)

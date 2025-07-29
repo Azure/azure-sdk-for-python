@@ -3019,7 +3019,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # Query operations will use ReadEndpoint even though it uses POST(for regular query operations)
         req_headers = base.GetHeaders(self, initial_headers, "post", path, id_, resource_type,
-                                      documents._OperationType.SqlQuery, options, partition_key_range_id)request_params = _request_object.RequestObject(
+                                      documents._OperationType.SqlQuery, options, partition_key_range_id)
+        request_params = _request_object.RequestObject(
             resource_type, documents._OperationType.SqlQuery, req_headers)
         request_params.set_excluded_location_from_options(options)
         if not is_query_plan:
