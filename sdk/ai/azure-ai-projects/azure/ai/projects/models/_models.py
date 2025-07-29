@@ -913,7 +913,7 @@ class NoAuthenticationCredentials(BaseCredentials, discriminator="None"):
         super().__init__(*args, type=CredentialType.NONE, **kwargs)
 
 
-class PendingUploadConfiguration(_Model):
+class PendingUploadRequest(_Model):
     """Represents a request for a pending upload.
 
     :ivar pending_upload_id: If PendingUploadId is not provided, a random GUID will be used.
@@ -959,7 +959,7 @@ class PendingUploadConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PendingUploadResult(_Model):
+class PendingUploadResponse(_Model):
     """Represents the response for a pending upload request.
 
     :ivar blob_reference: Container-level read, write, list SAS. Required.

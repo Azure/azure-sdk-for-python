@@ -765,44 +765,24 @@ class DatasetsOperations:
         self,
         name: str,
         version: str,
-        configuration: _models.PendingUploadConfiguration,
+        pending_upload_request: _models.PendingUploadRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.PendingUploadResult:
+    ) -> _models.PendingUploadResponse:
         """Start a new or get an existing pending upload of a dataset for a specific version.
 
         :param name: The name of the resource. Required.
         :type name: str
         :param version: The specific version id of the DatasetVersion to operate on. Required.
         :type version: str
-        :param configuration: The pending upload request parameters. Required.
-        :type configuration: ~azure.ai.projects.models.PendingUploadConfiguration
+        :param pending_upload_request: The pending upload request parameters. Required.
+        :type pending_upload_request: ~azure.ai.projects.models.PendingUploadRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: PendingUploadResult. The PendingUploadResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.PendingUploadResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def pending_upload(
-        self, name: str, version: str, configuration: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.PendingUploadResult:
-        """Start a new or get an existing pending upload of a dataset for a specific version.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the DatasetVersion to operate on. Required.
-        :type version: str
-        :param configuration: The pending upload request parameters. Required.
-        :type configuration: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PendingUploadResult. The PendingUploadResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.PendingUploadResult
+        :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.PendingUploadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -811,24 +791,50 @@ class DatasetsOperations:
         self,
         name: str,
         version: str,
-        configuration: IO[bytes],
+        pending_upload_request: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.PendingUploadResult:
+    ) -> _models.PendingUploadResponse:
         """Start a new or get an existing pending upload of a dataset for a specific version.
 
         :param name: The name of the resource. Required.
         :type name: str
         :param version: The specific version id of the DatasetVersion to operate on. Required.
         :type version: str
-        :param configuration: The pending upload request parameters. Required.
-        :type configuration: IO[bytes]
+        :param pending_upload_request: The pending upload request parameters. Required.
+        :type pending_upload_request: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.PendingUploadResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def pending_upload(
+        self,
+        name: str,
+        version: str,
+        pending_upload_request: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.PendingUploadResponse:
+        """Start a new or get an existing pending upload of a dataset for a specific version.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param version: The specific version id of the DatasetVersion to operate on. Required.
+        :type version: str
+        :param pending_upload_request: The pending upload request parameters. Required.
+        :type pending_upload_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: PendingUploadResult. The PendingUploadResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.PendingUploadResult
+        :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.PendingUploadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -837,20 +843,21 @@ class DatasetsOperations:
         self,
         name: str,
         version: str,
-        configuration: Union[_models.PendingUploadConfiguration, JSON, IO[bytes]],
+        pending_upload_request: Union[_models.PendingUploadRequest, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> _models.PendingUploadResult:
+    ) -> _models.PendingUploadResponse:
         """Start a new or get an existing pending upload of a dataset for a specific version.
 
         :param name: The name of the resource. Required.
         :type name: str
         :param version: The specific version id of the DatasetVersion to operate on. Required.
         :type version: str
-        :param configuration: The pending upload request parameters. Is one of the following types:
-         PendingUploadConfiguration, JSON, IO[bytes] Required.
-        :type configuration: ~azure.ai.projects.models.PendingUploadConfiguration or JSON or IO[bytes]
-        :return: PendingUploadResult. The PendingUploadResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.PendingUploadResult
+        :param pending_upload_request: The pending upload request parameters. Is one of the following
+         types: PendingUploadRequest, JSON, IO[bytes] Required.
+        :type pending_upload_request: ~azure.ai.projects.models.PendingUploadRequest or JSON or
+         IO[bytes]
+        :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.PendingUploadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -865,14 +872,14 @@ class DatasetsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PendingUploadResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.PendingUploadResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(configuration, (IOBase, bytes)):
-            _content = configuration
+        if isinstance(pending_upload_request, (IOBase, bytes)):
+            _content = pending_upload_request
         else:
-            _content = json.dumps(configuration, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(pending_upload_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_datasets_pending_upload_request(
             name=name,
@@ -907,7 +914,7 @@ class DatasetsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.PendingUploadResult, response.json())
+            deserialized = _deserialize(_models.PendingUploadResponse, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

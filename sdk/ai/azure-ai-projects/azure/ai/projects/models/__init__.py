@@ -35,8 +35,8 @@ from ._models import (  # type: ignore
     ModelDeployment,
     ModelDeploymentSku,
     NoAuthenticationCredentials,
-    PendingUploadConfiguration,
-    PendingUploadResult,
+    PendingUploadRequest,
+    PendingUploadResponse,
     SASCredentials,
 )
 
@@ -74,8 +74,8 @@ __all__ = [
     "ModelDeployment",
     "ModelDeploymentSku",
     "NoAuthenticationCredentials",
-    "PendingUploadConfiguration",
-    "PendingUploadResult",
+    "PendingUploadRequest",
+    "PendingUploadResponse",
     "SASCredentials",
     "ConnectionType",
     "CredentialType",

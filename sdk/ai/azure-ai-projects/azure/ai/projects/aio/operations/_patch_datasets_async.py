@@ -20,9 +20,9 @@ from ._operations import DatasetsOperations as DatasetsOperationsGenerated
 from ...models._models import (
     FileDatasetVersion,
     FolderDatasetVersion,
-    PendingUploadConfiguration,
+    PendingUploadRequest,
+    PendingUploadResponse,
     PendingUploadType,
-    PendingUploadResult,
 )
 
 logger = logging.getLogger(__name__)
@@ -47,10 +47,10 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         connection_name: Optional[str] = None,
     ) -> Tuple[ContainerClient, str]:
 
-        pending_upload_result: PendingUploadResult = await self.pending_upload(
+        pending_upload_result: PendingUploadResponse = await self.pending_upload(
             name=name,
             version=input_version,
-            configuration=PendingUploadConfiguration(
+            pending_upload_request=PendingUploadRequest(
                 pending_upload_type=PendingUploadType.BLOB_REFERENCE,
                 connection_name=connection_name,
             ),
