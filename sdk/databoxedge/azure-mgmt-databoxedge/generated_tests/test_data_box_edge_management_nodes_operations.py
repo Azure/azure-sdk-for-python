@@ -24,7 +24,7 @@ class TestDataBoxEdgeManagementNodesOperations(AzureMgmtRecordedTestCase):
         response = self.client.nodes.list_by_data_box_edge_device(
             device_name="str",
             resource_group_name=resource_group.name,
-            api_version="2019-08-01",
+            api_version="2021-02-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
