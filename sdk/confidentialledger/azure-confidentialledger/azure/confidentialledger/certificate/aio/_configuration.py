@@ -19,18 +19,21 @@ class ConfidentialLedgerCertificateClientConfiguration:  # pylint: disable=too-m
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param endpoint: Default value is "https://identity.confidential-ledger.core.azure.com".
-    :type endpoint: str
+    :param certificate_endpoint: Default value is
+     "https://identity.confidential-ledger.core.azure.com".
+    :type certificate_endpoint: str
     :keyword api_version: The API version to use for this operation. Default value is
      "2024-12-09-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str = "https://identity.confidential-ledger.core.azure.com", **kwargs: Any) -> None:
+    def __init__(
+        self, certificate_endpoint: str = "https://identity.confidential-ledger.core.azure.com", **kwargs: Any
+    ) -> None:
         api_version: str = kwargs.pop("api_version", "2024-12-09-preview")
 
-        self.endpoint = endpoint
+        self.certificate_endpoint = certificate_endpoint
         self.api_version = api_version
         kwargs.setdefault("sdk_moniker", "confidentialledger/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)

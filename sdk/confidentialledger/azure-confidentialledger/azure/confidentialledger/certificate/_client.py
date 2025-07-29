@@ -22,8 +22,9 @@ from ._operations import ConfidentialLedgerCertificateClientOperationsMixin
 class ConfidentialLedgerCertificateClient(ConfidentialLedgerCertificateClientOperationsMixin):
     """ConfidentialLedgerCertificateClient.
 
-    :keyword endpoint: Default value is "https://identity.confidential-ledger.core.azure.com".
-    :paramtype endpoint: str
+    :keyword certificate_endpoint: Default value is
+     "https://identity.confidential-ledger.core.azure.com".
+    :paramtype certificate_endpoint: str
     :keyword api_version: The API version to use for this operation. Default value is
      "2024-12-09-preview". Note that overriding this default value may result in unsupported
      behavior.
@@ -31,10 +32,12 @@ class ConfidentialLedgerCertificateClient(ConfidentialLedgerCertificateClientOpe
     """
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
-        self, *, endpoint: str = "https://identity.confidential-ledger.core.azure.com", **kwargs: Any
+        self, *, certificate_endpoint: str = "https://identity.confidential-ledger.core.azure.com", **kwargs: Any
     ) -> None:
-        _endpoint = "{endpoint}"
-        self._config = ConfidentialLedgerCertificateClientConfiguration(endpoint=endpoint, **kwargs)
+        _endpoint = "{certificateEndpoint}"
+        self._config = ConfidentialLedgerCertificateClientConfiguration(
+            certificate_endpoint=certificate_endpoint, **kwargs
+        )
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:
@@ -79,7 +82,9 @@ class ConfidentialLedgerCertificateClient(ConfidentialLedgerCertificateClientOpe
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "certificateEndpoint": self._serialize.url(
+                "self._config.certificate_endpoint", self._config.certificate_endpoint, "str", skip_quote=True
+            ),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

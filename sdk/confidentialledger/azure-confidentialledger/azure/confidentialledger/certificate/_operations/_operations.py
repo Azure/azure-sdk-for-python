@@ -100,7 +100,9 @@ class ConfidentialLedgerCertificateClientOperationsMixin(  # pylint: disable=nam
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "certificateEndpoint": self._serialize.url(
+                "self._config.certificate_endpoint", self._config.certificate_endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
