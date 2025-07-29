@@ -21,7 +21,7 @@ class TestComputeManagementGalleryApplicationVersionsOperationsAsync(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_gallery_application_versions_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.gallery_application_versions.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -35,23 +35,78 @@ class TestComputeManagementGalleryApplicationVersionsOperationsAsync(AzureMgmtRe
                     "provisioningState": "str",
                     "publishingProfile": {
                         "source": {"mediaLink": "str", "defaultConfigurationLink": "str"},
+                        "advancedSettings": {"str": "str"},
+                        "customActions": [
+                            {
+                                "name": "str",
+                                "script": "str",
+                                "description": "str",
+                                "parameters": [
+                                    {
+                                        "name": "str",
+                                        "defaultValue": "str",
+                                        "description": "str",
+                                        "required": bool,
+                                        "type": "str",
+                                    }
+                                ],
+                            }
+                        ],
                         "enableHealthCheck": bool,
                         "endOfLifeDate": "2020-02-20 00:00:00",
                         "excludeFromLatest": bool,
                         "manageActions": {"install": "str", "remove": "str", "update": "str"},
                         "publishedDate": "2020-02-20 00:00:00",
                         "replicaCount": 0,
+                        "replicationMode": "str",
+                        "settings": {"configFileName": "str", "packageFileName": "str"},
                         "storageAccountType": "str",
-                        "targetRegions": [{"name": "str", "regionalReplicaCount": 0, "storageAccountType": "str"}],
+                        "targetExtendedLocations": [
+                            {
+                                "encryption": {
+                                    "dataDiskImages": [{"lun": 0, "diskEncryptionSetId": "str"}],
+                                    "osDiskImage": {
+                                        "diskEncryptionSetId": "str",
+                                        "securityProfile": {
+                                            "confidentialVMEncryptionType": "str",
+                                            "secureVMDiskEncryptionSetId": "str",
+                                        },
+                                    },
+                                },
+                                "extendedLocation": {"name": "str", "type": "str"},
+                                "extendedLocationReplicaCount": 0,
+                                "name": "str",
+                                "storageAccountType": "str",
+                            }
+                        ],
+                        "targetRegions": [
+                            {
+                                "name": "str",
+                                "encryption": {
+                                    "dataDiskImages": [{"lun": 0, "diskEncryptionSetId": "str"}],
+                                    "osDiskImage": {
+                                        "diskEncryptionSetId": "str",
+                                        "securityProfile": {
+                                            "confidentialVMEncryptionType": "str",
+                                            "secureVMDiskEncryptionSetId": "str",
+                                        },
+                                    },
+                                },
+                                "excludeFromLatest": bool,
+                                "regionalReplicaCount": 0,
+                                "storageAccountType": "str",
+                            }
+                        ],
                     },
                     "replicationStatus": {
                         "aggregatedState": "str",
                         "summary": [{"details": "str", "progress": 0, "region": "str", "state": "str"}],
                     },
+                    "safetyProfile": {"allowDeletionOfReplicatedLocations": bool},
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2019-03-01",
+                api_version="2023-07-03",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -60,13 +115,106 @@ class TestComputeManagementGalleryApplicationVersionsOperationsAsync(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_gallery_application_versions_begin_update(self, resource_group):
+        response = await (
+            await self.client.gallery_application_versions.begin_update(
+                resource_group_name=resource_group.name,
+                gallery_name="str",
+                gallery_application_name="str",
+                gallery_application_version_name="str",
+                gallery_application_version={
+                    "id": "str",
+                    "name": "str",
+                    "provisioningState": "str",
+                    "publishingProfile": {
+                        "source": {"mediaLink": "str", "defaultConfigurationLink": "str"},
+                        "advancedSettings": {"str": "str"},
+                        "customActions": [
+                            {
+                                "name": "str",
+                                "script": "str",
+                                "description": "str",
+                                "parameters": [
+                                    {
+                                        "name": "str",
+                                        "defaultValue": "str",
+                                        "description": "str",
+                                        "required": bool,
+                                        "type": "str",
+                                    }
+                                ],
+                            }
+                        ],
+                        "enableHealthCheck": bool,
+                        "endOfLifeDate": "2020-02-20 00:00:00",
+                        "excludeFromLatest": bool,
+                        "manageActions": {"install": "str", "remove": "str", "update": "str"},
+                        "publishedDate": "2020-02-20 00:00:00",
+                        "replicaCount": 0,
+                        "replicationMode": "str",
+                        "settings": {"configFileName": "str", "packageFileName": "str"},
+                        "storageAccountType": "str",
+                        "targetExtendedLocations": [
+                            {
+                                "encryption": {
+                                    "dataDiskImages": [{"lun": 0, "diskEncryptionSetId": "str"}],
+                                    "osDiskImage": {
+                                        "diskEncryptionSetId": "str",
+                                        "securityProfile": {
+                                            "confidentialVMEncryptionType": "str",
+                                            "secureVMDiskEncryptionSetId": "str",
+                                        },
+                                    },
+                                },
+                                "extendedLocation": {"name": "str", "type": "str"},
+                                "extendedLocationReplicaCount": 0,
+                                "name": "str",
+                                "storageAccountType": "str",
+                            }
+                        ],
+                        "targetRegions": [
+                            {
+                                "name": "str",
+                                "encryption": {
+                                    "dataDiskImages": [{"lun": 0, "diskEncryptionSetId": "str"}],
+                                    "osDiskImage": {
+                                        "diskEncryptionSetId": "str",
+                                        "securityProfile": {
+                                            "confidentialVMEncryptionType": "str",
+                                            "secureVMDiskEncryptionSetId": "str",
+                                        },
+                                    },
+                                },
+                                "excludeFromLatest": bool,
+                                "regionalReplicaCount": 0,
+                                "storageAccountType": "str",
+                            }
+                        ],
+                    },
+                    "replicationStatus": {
+                        "aggregatedState": "str",
+                        "summary": [{"details": "str", "progress": 0, "region": "str", "state": "str"}],
+                    },
+                    "safetyProfile": {"allowDeletionOfReplicatedLocations": bool},
+                    "tags": {"str": "str"},
+                    "type": "str",
+                },
+                api_version="2023-07-03",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_gallery_application_versions_get(self, resource_group):
         response = await self.client.gallery_application_versions.get(
             resource_group_name=resource_group.name,
             gallery_name="str",
             gallery_application_name="str",
             gallery_application_version_name="str",
-            api_version="2019-03-01",
+            api_version="2023-07-03",
         )
 
         # please add some check logic here by yourself
@@ -74,14 +222,14 @@ class TestComputeManagementGalleryApplicationVersionsOperationsAsync(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_gallery_application_versions_begin_delete(self, resource_group):
         response = await (
             await self.client.gallery_application_versions.begin_delete(
                 resource_group_name=resource_group.name,
                 gallery_name="str",
                 gallery_application_name="str",
                 gallery_application_version_name="str",
-                api_version="2019-03-01",
+                api_version="2023-07-03",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -90,12 +238,12 @@ class TestComputeManagementGalleryApplicationVersionsOperationsAsync(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_gallery_application(self, resource_group):
+    async def test_gallery_application_versions_list_by_gallery_application(self, resource_group):
         response = self.client.gallery_application_versions.list_by_gallery_application(
             resource_group_name=resource_group.name,
             gallery_name="str",
             gallery_application_name="str",
-            api_version="2019-03-01",
+            api_version="2023-07-03",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

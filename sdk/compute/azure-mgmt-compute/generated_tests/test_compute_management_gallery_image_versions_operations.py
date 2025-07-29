@@ -20,7 +20,7 @@ class TestComputeManagementGalleryImageVersionsOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_gallery_image_versions_begin_create_or_update(self, resource_group):
         response = self.client.gallery_image_versions.begin_create_or_update(
             resource_group_name=resource_group.name,
             gallery_name="str",
@@ -32,25 +32,89 @@ class TestComputeManagementGalleryImageVersionsOperations(AzureMgmtRecordedTestC
                 "name": "str",
                 "provisioningState": "str",
                 "publishingProfile": {
-                    "source": {"managedImage": {"id": "str"}},
                     "endOfLifeDate": "2020-02-20 00:00:00",
                     "excludeFromLatest": bool,
                     "publishedDate": "2020-02-20 00:00:00",
                     "replicaCount": 0,
-                    "targetRegions": [{"name": "str", "regionalReplicaCount": 0}],
+                    "replicationMode": "str",
+                    "storageAccountType": "str",
+                    "targetExtendedLocations": [
+                        {
+                            "encryption": {
+                                "dataDiskImages": [{"lun": 0, "diskEncryptionSetId": "str"}],
+                                "osDiskImage": {
+                                    "diskEncryptionSetId": "str",
+                                    "securityProfile": {
+                                        "confidentialVMEncryptionType": "str",
+                                        "secureVMDiskEncryptionSetId": "str",
+                                    },
+                                },
+                            },
+                            "extendedLocation": {"name": "str", "type": "str"},
+                            "extendedLocationReplicaCount": 0,
+                            "name": "str",
+                            "storageAccountType": "str",
+                        }
+                    ],
+                    "targetRegions": [
+                        {
+                            "name": "str",
+                            "encryption": {
+                                "dataDiskImages": [{"lun": 0, "diskEncryptionSetId": "str"}],
+                                "osDiskImage": {
+                                    "diskEncryptionSetId": "str",
+                                    "securityProfile": {
+                                        "confidentialVMEncryptionType": "str",
+                                        "secureVMDiskEncryptionSetId": "str",
+                                    },
+                                },
+                            },
+                            "excludeFromLatest": bool,
+                            "regionalReplicaCount": 0,
+                            "storageAccountType": "str",
+                        }
+                    ],
                 },
                 "replicationStatus": {
                     "aggregatedState": "str",
                     "summary": [{"details": "str", "progress": 0, "region": "str", "state": "str"}],
                 },
+                "safetyProfile": {
+                    "allowDeletionOfReplicatedLocations": bool,
+                    "policyViolations": [{"category": "str", "details": "str"}],
+                    "reportedForPolicyViolation": bool,
+                },
+                "securityProfile": {
+                    "uefiSettings": {
+                        "additionalSignatures": {
+                            "db": [{"type": "str", "value": ["str"]}],
+                            "dbx": [{"type": "str", "value": ["str"]}],
+                            "kek": [{"type": "str", "value": ["str"]}],
+                            "pk": {"type": "str", "value": ["str"]},
+                        },
+                        "signatureTemplateNames": ["str"],
+                    }
+                },
                 "storageProfile": {
-                    "dataDiskImages": [{"hostCaching": "str", "lun": 0, "sizeInGB": 0}],
-                    "osDiskImage": {"hostCaching": "str", "sizeInGB": 0},
+                    "dataDiskImages": [
+                        {
+                            "lun": 0,
+                            "hostCaching": "str",
+                            "sizeInGB": 0,
+                            "source": {"id": "str", "storageAccountId": "str", "uri": "str"},
+                        }
+                    ],
+                    "osDiskImage": {
+                        "hostCaching": "str",
+                        "sizeInGB": 0,
+                        "source": {"id": "str", "storageAccountId": "str", "uri": "str"},
+                    },
+                    "source": {"communityGalleryImageId": "str", "id": "str", "virtualMachineId": "str"},
                 },
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2018-06-01",
+            api_version="2023-07-03",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -58,13 +122,114 @@ class TestComputeManagementGalleryImageVersionsOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_gallery_image_versions_begin_update(self, resource_group):
+        response = self.client.gallery_image_versions.begin_update(
+            resource_group_name=resource_group.name,
+            gallery_name="str",
+            gallery_image_name="str",
+            gallery_image_version_name="str",
+            gallery_image_version={
+                "id": "str",
+                "name": "str",
+                "provisioningState": "str",
+                "publishingProfile": {
+                    "endOfLifeDate": "2020-02-20 00:00:00",
+                    "excludeFromLatest": bool,
+                    "publishedDate": "2020-02-20 00:00:00",
+                    "replicaCount": 0,
+                    "replicationMode": "str",
+                    "storageAccountType": "str",
+                    "targetExtendedLocations": [
+                        {
+                            "encryption": {
+                                "dataDiskImages": [{"lun": 0, "diskEncryptionSetId": "str"}],
+                                "osDiskImage": {
+                                    "diskEncryptionSetId": "str",
+                                    "securityProfile": {
+                                        "confidentialVMEncryptionType": "str",
+                                        "secureVMDiskEncryptionSetId": "str",
+                                    },
+                                },
+                            },
+                            "extendedLocation": {"name": "str", "type": "str"},
+                            "extendedLocationReplicaCount": 0,
+                            "name": "str",
+                            "storageAccountType": "str",
+                        }
+                    ],
+                    "targetRegions": [
+                        {
+                            "name": "str",
+                            "encryption": {
+                                "dataDiskImages": [{"lun": 0, "diskEncryptionSetId": "str"}],
+                                "osDiskImage": {
+                                    "diskEncryptionSetId": "str",
+                                    "securityProfile": {
+                                        "confidentialVMEncryptionType": "str",
+                                        "secureVMDiskEncryptionSetId": "str",
+                                    },
+                                },
+                            },
+                            "excludeFromLatest": bool,
+                            "regionalReplicaCount": 0,
+                            "storageAccountType": "str",
+                        }
+                    ],
+                },
+                "replicationStatus": {
+                    "aggregatedState": "str",
+                    "summary": [{"details": "str", "progress": 0, "region": "str", "state": "str"}],
+                },
+                "safetyProfile": {
+                    "allowDeletionOfReplicatedLocations": bool,
+                    "policyViolations": [{"category": "str", "details": "str"}],
+                    "reportedForPolicyViolation": bool,
+                },
+                "securityProfile": {
+                    "uefiSettings": {
+                        "additionalSignatures": {
+                            "db": [{"type": "str", "value": ["str"]}],
+                            "dbx": [{"type": "str", "value": ["str"]}],
+                            "kek": [{"type": "str", "value": ["str"]}],
+                            "pk": {"type": "str", "value": ["str"]},
+                        },
+                        "signatureTemplateNames": ["str"],
+                    }
+                },
+                "storageProfile": {
+                    "dataDiskImages": [
+                        {
+                            "lun": 0,
+                            "hostCaching": "str",
+                            "sizeInGB": 0,
+                            "source": {"id": "str", "storageAccountId": "str", "uri": "str"},
+                        }
+                    ],
+                    "osDiskImage": {
+                        "hostCaching": "str",
+                        "sizeInGB": 0,
+                        "source": {"id": "str", "storageAccountId": "str", "uri": "str"},
+                    },
+                    "source": {"communityGalleryImageId": "str", "id": "str", "virtualMachineId": "str"},
+                },
+                "tags": {"str": "str"},
+                "type": "str",
+            },
+            api_version="2023-07-03",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_gallery_image_versions_get(self, resource_group):
         response = self.client.gallery_image_versions.get(
             resource_group_name=resource_group.name,
             gallery_name="str",
             gallery_image_name="str",
             gallery_image_version_name="str",
-            api_version="2018-06-01",
+            api_version="2023-07-03",
         )
 
         # please add some check logic here by yourself
@@ -72,13 +237,13 @@ class TestComputeManagementGalleryImageVersionsOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_gallery_image_versions_begin_delete(self, resource_group):
         response = self.client.gallery_image_versions.begin_delete(
             resource_group_name=resource_group.name,
             gallery_name="str",
             gallery_image_name="str",
             gallery_image_version_name="str",
-            api_version="2018-06-01",
+            api_version="2023-07-03",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -86,12 +251,12 @@ class TestComputeManagementGalleryImageVersionsOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_gallery_image(self, resource_group):
+    def test_gallery_image_versions_list_by_gallery_image(self, resource_group):
         response = self.client.gallery_image_versions.list_by_gallery_image(
             resource_group_name=resource_group.name,
             gallery_name="str",
             gallery_image_name="str",
-            api_version="2018-06-01",
+            api_version="2023-07-03",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
