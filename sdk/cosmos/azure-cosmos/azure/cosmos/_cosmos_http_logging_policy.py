@@ -157,7 +157,7 @@ def _log_diagnostics_error(  # type: ignore[attr-defined, union-attr]
         if "duration" in logger_attributes:
             seconds = logger_attributes["duration"] / 1000  # type: ignore[operator]
             log_string += f"\nElapsed time in seconds: {seconds:.6f}".rstrip('0').rstrip('.')
-        log_string += "\nResponse error message: {}".format(_format_error(error.message))
+        log_string += "\nResponse error message: {}".format(_format_error(getattr(error, 'message', str(error))))
         logger.info(log_string, extra=logger_attributes)
 
 

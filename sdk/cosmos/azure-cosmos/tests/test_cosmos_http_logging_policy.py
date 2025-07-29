@@ -385,7 +385,6 @@ class TestCosmosHttpLogger(unittest.TestCase):
         # Attempt to create an item, which should trigger the injected 502 error
         container: ContainerProxy = initialized_objects["col"]
         try:
-            container: ContainerProxy = initialized_objects["col"]
             container.create_item(body=document_definition)
             pytest.fail("Expected exception not thrown")
         except CosmosHttpResponseError as cosmosError:
