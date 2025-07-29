@@ -140,7 +140,7 @@ class TestSignatures:
 
     @pytest.mark.asyncio
     @assert_same_http_requests
-    async def test_updte_agents(
+    async def test_update_agents(
         self, agent: AgentsClient, async_agent: AsyncAgentsClient, assertion: OverloadAssertion
     ):
         model = "model"
