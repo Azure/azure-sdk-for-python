@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
 from ._client import ConfidentialLedgerCertificateClient  # type: ignore
-from ._version import VERSION
+from .._version import VERSION
 
 __version__ = VERSION
 

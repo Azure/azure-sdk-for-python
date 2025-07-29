@@ -14,14 +14,13 @@ from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
-from .._utils.serialization import Deserializer, Serializer
+from ..._utils.serialization import Deserializer, Serializer
 from ._configuration import ConfidentialLedgerCertificateClientConfiguration
 from ._operations import ConfidentialLedgerCertificateClientOperationsMixin
 
 
 class ConfidentialLedgerCertificateClient(ConfidentialLedgerCertificateClientOperationsMixin):
-    """The Confidential Ledger Certificate endpoint is used to retrieve the TLS certificate
-    required for connecting to a Confidential Ledger.
+    """ConfidentialLedgerCertificateClient.
 
     :keyword endpoint: Default value is "https://identity.confidential-ledger.core.azure.com".
     :paramtype endpoint: str

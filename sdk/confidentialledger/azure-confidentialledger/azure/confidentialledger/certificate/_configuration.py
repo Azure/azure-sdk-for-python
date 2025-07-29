@@ -10,7 +10,7 @@ from typing import Any
 
 from azure.core.pipeline import policies
 
-from ._version import VERSION
+from .._version import VERSION
 
 
 class ConfidentialLedgerCertificateClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
@@ -32,7 +32,7 @@ class ConfidentialLedgerCertificateClientConfiguration:  # pylint: disable=too-m
 
         self.endpoint = endpoint
         self.api_version = api_version
-        kwargs.setdefault("sdk_moniker", "confidentialledger-certificate/{}".format(VERSION))
+        kwargs.setdefault("sdk_moniker", "confidentialledger/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 

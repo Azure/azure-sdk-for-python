@@ -24,11 +24,11 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models
+from ... import models as _models2
+from ..._utils.model_base import _deserialize, _failsafe_deserialize
+from ..._utils.serialization import Serializer
+from ..._utils.utils import ClientMixinABC
 from .._configuration import ConfidentialLedgerCertificateClientConfiguration
-from .._utils.model_base import _deserialize, _failsafe_deserialize
-from .._utils.serialization import Serializer
-from .._utils.utils import ClientMixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -68,7 +68,7 @@ class ConfidentialLedgerCertificateClientOperationsMixin(  # pylint: disable=nam
 ):
 
     @distributed_trace
-    def get_ledger_identity(self, ledger_id: str, **kwargs: Any) -> _models.LedgerIdentityInformation:
+    def get_ledger_identity(self, ledger_id: str, **kwargs: Any) -> _models2.LedgerIdentityInformation:
         """Gets identity information for a Confidential Ledger instance.
 
         Gets identity information for a Confidential Ledger instance.
@@ -77,7 +77,7 @@ class ConfidentialLedgerCertificateClientOperationsMixin(  # pylint: disable=nam
         :type ledger_id: str
         :return: LedgerIdentityInformation. The LedgerIdentityInformation is compatible with
          MutableMapping
-        :rtype: ~azure.confidentialledger.certificate.models.LedgerIdentityInformation
+        :rtype: ~azure.confidentialledger.models.LedgerIdentityInformation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -91,7 +91,7 @@ class ConfidentialLedgerCertificateClientOperationsMixin(  # pylint: disable=nam
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.LedgerIdentityInformation] = kwargs.pop("cls", None)
+        cls: ClsType[_models2.LedgerIdentityInformation] = kwargs.pop("cls", None)
 
         _request = build_confidential_ledger_certificate_get_ledger_identity_request(
             ledger_id=ledger_id,
@@ -124,7 +124,7 @@ class ConfidentialLedgerCertificateClientOperationsMixin(  # pylint: disable=nam
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.LedgerIdentityInformation, response.json())
+            deserialized = _deserialize(_models2.LedgerIdentityInformation, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
