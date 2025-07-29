@@ -19,9 +19,9 @@ import logging
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.voicelive import VoiceLiveClient
 from azure.ai.voicelive.models import (
-    VoiceLiveServerEventSessionUpdated,
-    VoiceLiveServerEventError,
-    VoiceLiveServerEventResponseTextDelta,
+    ServerEventSessionUpdated,
+    ServerEventError,
+    ServerEventResponseTextDelta,
 )
 
 # Set up logger
@@ -56,7 +56,7 @@ def main():
             logger.info(f"Received event: {event.type}")
 
             # Handle different event types with specific processing
-            if isinstance(event, VoiceLiveServerEventSessionUpdated):
+            if isinstance(event, ServerEventSessionUpdated):
                 logger.info(f"Session updated with ID: {event.session.id}")
                 logger.info(f"Session modalities: {event.session.modalities}")
 
@@ -71,11 +71,11 @@ def main():
                     }
                 )
 
-            elif isinstance(event, VoiceLiveServerEventResponseTextDelta):
+            elif isinstance(event, ServerEventResponseTextDelta):
                 # Process text deltas with proper typing
                 logger.info(f"Text delta: {event.delta}")
 
-            elif isinstance(event, VoiceLiveServerEventError):
+            elif isinstance(event, ServerEventError):
                 logger.error(f"Error: {event.error.message}")
                 break
 

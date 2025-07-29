@@ -31,7 +31,7 @@ from ... import models as _models
 from ..._operations._operations import build_voice_live_force_models_request
 from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.utils import ClientMixinABC
-from .._configuration import VoiceLiveClientConfiguration
+from .._configuration import ClientConfiguration
 
 JSON = MutableMapping[str, Any]
 _Unset: Any = object()
@@ -40,43 +40,39 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 
 
 class _VoiceLiveClientOperationsMixin(
-    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], VoiceLiveClientConfiguration]
+    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], ClientConfiguration]
 ):
 
     @overload
     async def _force_models(
-        self,
-        *,
-        session: _models.VoiceLiveClientEventSessionUpdate,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.VoiceLiveServerEventResponseAudioDone: ...
+        self, *, session: _models.ClientEventSessionUpdate, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ServerEventResponseAudioDone: ...
     @overload
     async def _force_models(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.VoiceLiveServerEventResponseAudioDone: ...
+    ) -> _models.ServerEventResponseAudioDone: ...
     @overload
     async def _force_models(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.VoiceLiveServerEventResponseAudioDone: ...
+    ) -> _models.ServerEventResponseAudioDone: ...
 
     @distributed_trace_async
     async def _force_models(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        session: _models.VoiceLiveClientEventSessionUpdate = _Unset,
+        session: _models.ClientEventSessionUpdate = _Unset,
         **kwargs: Any
-    ) -> _models.VoiceLiveServerEventResponseAudioDone:
+    ) -> _models.ServerEventResponseAudioDone:
         """force_models.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
         :keyword session: Required.
-        :paramtype session: ~azure.ai.voicelive.models.VoiceLiveClientEventSessionUpdate
-        :return: VoiceLiveServerEventResponseAudioDone. The VoiceLiveServerEventResponseAudioDone is
-         compatible with MutableMapping
-        :rtype: ~azure.ai.voicelive.models.VoiceLiveServerEventResponseAudioDone
+        :paramtype session: ~azure.ai.voicelive.models.ClientEventSessionUpdate
+        :return: ServerEventResponseAudioDone. The ServerEventResponseAudioDone is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.voicelive.models.ServerEventResponseAudioDone
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -91,7 +87,7 @@ class _VoiceLiveClientOperationsMixin(
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.VoiceLiveServerEventResponseAudioDone] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ServerEventResponseAudioDone] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if session is _Unset:
@@ -135,7 +131,7 @@ class _VoiceLiveClientOperationsMixin(
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.VoiceLiveServerEventResponseAudioDone, response.json())
+            deserialized = _deserialize(_models.ServerEventResponseAudioDone, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

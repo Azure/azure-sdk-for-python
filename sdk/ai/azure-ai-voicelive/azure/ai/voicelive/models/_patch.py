@@ -14,48 +14,48 @@ import logging
 
 # Import the generated classes
 from ._models import (
-    VoiceLiveClientEvent as VoiceLiveClientEventGenerated,
-    VoiceLiveServerEvent as VoiceLiveServerEventGenerated,
-    VoiceLiveServerEventSessionCreated,
-    VoiceLiveServerEventSessionUpdated,
-    VoiceLiveServerEventError,
-    VoiceLiveServerEventResponseTextDelta,
-    VoiceLiveServerEventResponseAudioDelta,
-    VoiceLiveServerEventConversationItemCreated,
-    VoiceLiveServerEventConversationItemDeleted,
-    VoiceLiveServerEventConversationItemRetrieved,
-    VoiceLiveServerEventConversationItemTruncated,
-    VoiceLiveServerEventConversationItemInputAudioTranscriptionCompleted,
-    VoiceLiveServerEventConversationItemInputAudioTranscriptionDelta,
-    VoiceLiveServerEventConversationItemInputAudioTranscriptionFailed,
-    VoiceLiveServerEventInputAudioBufferCommitted,
-    VoiceLiveServerEventInputAudioBufferCleared,
-    VoiceLiveServerEventInputAudioBufferSpeechStarted,
-    VoiceLiveServerEventInputAudioBufferSpeechStopped,
-    VoiceLiveServerEventResponseCreated,
-    VoiceLiveServerEventResponseDone,
-    VoiceLiveServerEventResponseOutputItemAdded,
-    VoiceLiveServerEventResponseOutputItemDone,
-    VoiceLiveServerEventResponseContentPartAdded,
-    VoiceLiveServerEventResponseContentPartDone,
-    VoiceLiveServerEventResponseTextDone,
-    VoiceLiveServerEventResponseAudioTranscriptDelta,
-    VoiceLiveServerEventResponseAudioTranscriptDone,
-    VoiceLiveServerEventResponseAudioDone,
-    VoiceLiveResponseSession,
+    ClientEvent as ClientEventGenerated,
+    ServerEvent as ServerEventGenerated,
+    ServerEventSessionCreated,
+    ServerEventSessionUpdated,
+    ServerEventError,
+    ServerEventResponseTextDelta,
+    ServerEventResponseAudioDelta,
+    ServerEventConversationItemCreated,
+    ServerEventConversationItemDeleted,
+    ServerEventConversationItemRetrieved,
+    ServerEventConversationItemTruncated,
+    ServerEventConversationItemInputAudioTranscriptionCompleted,
+    ServerEventConversationItemInputAudioTranscriptionDelta,
+    ServerEventConversationItemInputAudioTranscriptionFailed,
+    ServerEventInputAudioBufferCommitted,
+    ServerEventInputAudioBufferCleared,
+    ServerEventInputAudioBufferSpeechStarted,
+    ServerEventInputAudioBufferSpeechStopped,
+    ServerEventResponseCreated,
+    ServerEventResponseDone,
+    ServerEventResponseOutputItemAdded,
+    ServerEventResponseOutputItemDone,
+    ServerEventResponseContentPartAdded,
+    ServerEventResponseContentPartDone,
+    ServerEventResponseTextDone,
+    ServerEventResponseAudioTranscriptDelta,
+    ServerEventResponseAudioTranscriptDone,
+    ServerEventResponseAudioDone,
+    ResponseSession,
 )
-from ._enums import VoiceLiveServerEventType, VoiceLiveClientEventType
+from ._enums import ServerEventType, ClientEventType
 
 __all__: List[str] = [
-    "VoiceLiveClientEvent",
-    "VoiceLiveServerEvent",
+    "ClientEvent",
+    "ServerEvent",
 ]  # Add all objects you want publicly available to users at this package level
 
 log = logging.getLogger(__name__)
 
 
-class VoiceLiveClientEvent(VoiceLiveClientEventGenerated):
-    """Extended VoiceLiveClientEvent with serialization."""
+class ClientEvent(ClientEventGenerated):
+    """Extended ClientEvent with serialization."""
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert the event to a dictionary.
@@ -70,7 +70,7 @@ class VoiceLiveClientEvent(VoiceLiveClientEventGenerated):
             result["event_id"] = self.event_id
 
         # Add specific fields based on event type
-        if self.type == VoiceLiveClientEventType.SESSION_UPDATE:
+        if self.type == ClientEventType.SESSION_UPDATE:
             result["session"] = {}
             if hasattr(self, "session") and self.session is not None:
                 # Use Model's serialize_data if available, otherwise convert to dict manually
@@ -95,17 +95,17 @@ class VoiceLiveClientEvent(VoiceLiveClientEventGenerated):
         return json.dumps(self.to_dict())
 
 
-class VoiceLiveServerEvent(VoiceLiveServerEventGenerated):
-    """Extended VoiceLiveServerEvent with deserialization."""
+class ServerEvent(ServerEventGenerated):
+    """Extended ServerEvent with deserialization."""
 
     @classmethod
-    def deserialize(cls, data: Union[str, bytes]) -> "VoiceLiveServerEvent":
-        """Deserialize a JSON string or bytes to a VoiceLiveServerEvent.
+    def deserialize(cls, data: Union[str, bytes]) -> "ServerEvent":
+        """Deserialize a JSON string or bytes to a ServerEvent.
 
         :param data: JSON string or bytes to deserialize.
         :type data: Union[str, bytes]
-        :return: A VoiceLiveServerEvent instance.
-        :rtype: ~azure.ai.voicelive.models.VoiceLiveServerEvent
+        :return: A ServerEvent instance.
+        :rtype: ~azure.ai.voicelive.models.ServerEvent
         :raises ValueError: If the data is not valid JSON or the event type is not recognized.
         """
         if isinstance(data, bytes):
@@ -122,58 +122,58 @@ class VoiceLiveServerEvent(VoiceLiveServerEventGenerated):
         return cls.from_dict(data_dict)
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "VoiceLiveServerEvent":
+    def from_dict(cls, data: Dict[str, Any]) -> "ServerEvent":
         """Create an event instance from a dictionary.
 
         :param data: Dictionary containing event data.
         :type data: Dict[str, Any]
-        :return: A VoiceLiveServerEvent instance.
-        :rtype: ~azure.ai.voicelive.models.VoiceLiveServerEvent
+        :return: A ServerEvent instance.
+        :rtype: ~azure.ai.voicelive.models.ServerEvent
         """
         # Determine the event type
         event_type = data.get("type")
 
         # Map event type to appropriate class
         event_class_map = {
-            VoiceLiveServerEventType.SESSION_CREATED: VoiceLiveServerEventSessionCreated,
-            VoiceLiveServerEventType.SESSION_UPDATED: VoiceLiveServerEventSessionUpdated,
-            VoiceLiveServerEventType.ERROR: VoiceLiveServerEventError,
-            VoiceLiveServerEventType.RESPONSE_TEXT_DELTA: VoiceLiveServerEventResponseTextDelta,
-            VoiceLiveServerEventType.RESPONSE_AUDIO_DELTA: VoiceLiveServerEventResponseAudioDelta,
-            VoiceLiveServerEventType.CONVERSATION_ITEM_CREATED: VoiceLiveServerEventConversationItemCreated,
-            VoiceLiveServerEventType.CONVERSATION_ITEM_DELETED: VoiceLiveServerEventConversationItemDeleted,
-            VoiceLiveServerEventType.CONVERSATION_ITEM_RETRIEVED: VoiceLiveServerEventConversationItemRetrieved,
-            VoiceLiveServerEventType.CONVERSATION_ITEM_TRUNCATED: VoiceLiveServerEventConversationItemTruncated,
-            VoiceLiveServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_COMPLETED: VoiceLiveServerEventConversationItemInputAudioTranscriptionCompleted,
-            VoiceLiveServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_DELTA: VoiceLiveServerEventConversationItemInputAudioTranscriptionDelta,
-            VoiceLiveServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_FAILED: VoiceLiveServerEventConversationItemInputAudioTranscriptionFailed,
-            VoiceLiveServerEventType.INPUT_AUDIO_BUFFER_COMMITTED: VoiceLiveServerEventInputAudioBufferCommitted,
-            VoiceLiveServerEventType.INPUT_AUDIO_BUFFER_CLEARED: VoiceLiveServerEventInputAudioBufferCleared,
-            VoiceLiveServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STARTED: VoiceLiveServerEventInputAudioBufferSpeechStarted,
-            VoiceLiveServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STOPPED: VoiceLiveServerEventInputAudioBufferSpeechStopped,
-            VoiceLiveServerEventType.RESPONSE_CREATED: VoiceLiveServerEventResponseCreated,
-            VoiceLiveServerEventType.RESPONSE_DONE: VoiceLiveServerEventResponseDone,
-            VoiceLiveServerEventType.RESPONSE_OUTPUT_ITEM_ADDED: VoiceLiveServerEventResponseOutputItemAdded,
-            VoiceLiveServerEventType.RESPONSE_OUTPUT_ITEM_DONE: VoiceLiveServerEventResponseOutputItemDone,
-            VoiceLiveServerEventType.RESPONSE_CONTENT_PART_ADDED: VoiceLiveServerEventResponseContentPartAdded,
-            VoiceLiveServerEventType.RESPONSE_CONTENT_PART_DONE: VoiceLiveServerEventResponseContentPartDone,
-            VoiceLiveServerEventType.RESPONSE_TEXT_DONE: VoiceLiveServerEventResponseTextDone,
-            VoiceLiveServerEventType.RESPONSE_AUDIO_TRANSCRIPT_DELTA: VoiceLiveServerEventResponseAudioTranscriptDelta,
-            VoiceLiveServerEventType.RESPONSE_AUDIO_TRANSCRIPT_DONE: VoiceLiveServerEventResponseAudioTranscriptDone,
-            VoiceLiveServerEventType.RESPONSE_AUDIO_DONE: VoiceLiveServerEventResponseAudioDone,
+            ServerEventType.SESSION_CREATED: ServerEventSessionCreated,
+            ServerEventType.SESSION_UPDATED: ServerEventSessionUpdated,
+            ServerEventType.ERROR: ServerEventError,
+            ServerEventType.RESPONSE_TEXT_DELTA: ServerEventResponseTextDelta,
+            ServerEventType.RESPONSE_AUDIO_DELTA: ServerEventResponseAudioDelta,
+            ServerEventType.CONVERSATION_ITEM_CREATED: ServerEventConversationItemCreated,
+            ServerEventType.CONVERSATION_ITEM_DELETED: ServerEventConversationItemDeleted,
+            ServerEventType.CONVERSATION_ITEM_RETRIEVED: ServerEventConversationItemRetrieved,
+            ServerEventType.CONVERSATION_ITEM_TRUNCATED: ServerEventConversationItemTruncated,
+            ServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_COMPLETED: ServerEventConversationItemInputAudioTranscriptionCompleted,
+            ServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_DELTA: ServerEventConversationItemInputAudioTranscriptionDelta,
+            ServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_FAILED: ServerEventConversationItemInputAudioTranscriptionFailed,
+            ServerEventType.INPUT_AUDIO_BUFFER_COMMITTED: ServerEventInputAudioBufferCommitted,
+            ServerEventType.INPUT_AUDIO_BUFFER_CLEARED: ServerEventInputAudioBufferCleared,
+            ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STARTED: ServerEventInputAudioBufferSpeechStarted,
+            ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STOPPED: ServerEventInputAudioBufferSpeechStopped,
+            ServerEventType.RESPONSE_CREATED: ServerEventResponseCreated,
+            ServerEventType.RESPONSE_DONE: ServerEventResponseDone,
+            ServerEventType.RESPONSE_OUTPUT_ITEM_ADDED: ServerEventResponseOutputItemAdded,
+            ServerEventType.RESPONSE_OUTPUT_ITEM_DONE: ServerEventResponseOutputItemDone,
+            ServerEventType.RESPONSE_CONTENT_PART_ADDED: ServerEventResponseContentPartAdded,
+            ServerEventType.RESPONSE_CONTENT_PART_DONE: ServerEventResponseContentPartDone,
+            ServerEventType.RESPONSE_TEXT_DONE: ServerEventResponseTextDone,
+            ServerEventType.RESPONSE_AUDIO_TRANSCRIPT_DELTA: ServerEventResponseAudioTranscriptDelta,
+            ServerEventType.RESPONSE_AUDIO_TRANSCRIPT_DONE: ServerEventResponseAudioTranscriptDone,
+            ServerEventType.RESPONSE_AUDIO_DONE: ServerEventResponseAudioDone,
         }
 
         # Get the appropriate class or default to base class
         event_class = event_class_map.get(event_type, cls)
 
         # Special handling for certain event types
-        if event_type in [VoiceLiveServerEventType.SESSION_CREATED, VoiceLiveServerEventType.SESSION_UPDATED]:
+        if event_type in [ServerEventType.SESSION_CREATED, ServerEventType.SESSION_UPDATED]:
             # Extract session data for special handling
             session_data = data.get("session", {})
 
-            # Convert session data to VoiceLiveResponseSession object if not already
+            # Convert session data to ResponseSession object if not already
             if isinstance(session_data, dict):
-                session = VoiceLiveResponseSession(**session_data)
+                session = ResponseSession(**session_data)
                 data["session"] = session
 
         # Create and return the event instance

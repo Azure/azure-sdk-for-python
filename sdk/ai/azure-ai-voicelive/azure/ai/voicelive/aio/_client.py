@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable
+from typing import Any, Awaitable, TYPE_CHECKING, Union
 from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
@@ -16,24 +16,29 @@ from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._utils.serialization import Deserializer, Serializer
-from ._configuration import VoiceLiveClientConfiguration
+from ._configuration import ClientConfiguration
 from ._operations._operations import _VoiceLiveClientOperationsMixin
+
+if TYPE_CHECKING:
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class VoiceLiveClient(_VoiceLiveClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """VoiceLiveClient.
 
-    :param credential: Credential used to authenticate requests to the service. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
-    :keyword endpoint: Service host. Default value is "wss://api.voicelive.com/v1".
-    :paramtype endpoint: str
+    :param endpoint: Azure AI VoiceLive endpoint. Required.
+    :type endpoint: str
+    :param credential: Credential used to authenticate requests to the service. Is either a key
+     credential type or a token credential type. Required.
+    :type credential: ~azure.core.credentials.AzureKeyCredential or
+     ~azure.core.credentials_async.AsyncTokenCredential
     """
 
     def __init__(
-        self, *, credential: AzureKeyCredential, endpoint: str, **kwargs: Any
+        self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
     ) -> None:
-        _endpoint = "{endpoint}"
-        self._config = VoiceLiveClientConfiguration(credential=credential, endpoint=endpoint, **kwargs)
+        _endpoint = "{endpoint}/voice-agent/realtime"
+        self._config = ClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:

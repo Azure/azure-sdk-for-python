@@ -56,15 +56,15 @@ For real-time, bi-directional communication, VoiceLive supports WebSocket connec
 
 The SDK provides typed event classes for easier handling of server responses:
 
-- `VoiceLiveServerEvent`: Base class for all server events
-- `VoiceLiveClientEvent`: Base class for all client events
-- Specific event types like `VoiceLiveServerEventSessionUpdated` and `VoiceLiveServerEventError`
+- `ServerEvent`: Base class for all server events
+- `ClientEvent`: Base class for all client events
+- Specific event types like `ServerEventSessionUpdated` and `ServerEventError`
 
 ### Resource Classes
 
 The SDK provides resource classes to simplify common operations:
 
-- `VoiceLiveSessionResource`: Manages session configuration
+- `SessionResource`: Manages session configuration
 
 ## Examples
 
@@ -74,8 +74,8 @@ The SDK provides resource classes to simplify common operations:
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.voicelive import VoiceLiveClient
 from azure.ai.voicelive.models import (
-    VoiceLiveServerEventSessionUpdated, 
-    VoiceLiveServerEventError
+    ServerEventSessionUpdated, 
+    ServerEventError
 )
 
 # Create client
@@ -99,11 +99,11 @@ with client.connect(model="gpt-4o-realtime-preview") as connection:
         print(f"Received event type: {event.type}")
         
         # Type-specific handling
-        if isinstance(event, VoiceLiveServerEventSessionUpdated):
+        if isinstance(event, ServerEventSessionUpdated):
             print(f"Session updated with ID: {event.session.id}")
             break
             
-        elif isinstance(event, VoiceLiveServerEventError):
+        elif isinstance(event, ServerEventError):
             print(f"Error: {event.error.message}")
             break
 ```
@@ -113,7 +113,7 @@ with client.connect(model="gpt-4o-realtime-preview") as connection:
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.voicelive import VoiceLiveClient
-from azure.ai.voicelive.models import VoiceLiveServerEventSessionUpdated
+from azure.ai.voicelive.models import ServerEventSessionUpdated
 
 # Create client
 client = VoiceLiveClient(
@@ -135,7 +135,7 @@ with client.connect(model="gpt-4o-realtime-preview") as connection:
     
     # Wait for confirmation
     for event in connection:
-        if isinstance(event, VoiceLiveServerEventSessionUpdated):
+        if isinstance(event, ServerEventSessionUpdated):
             print(f"Session updated with ID: {event.session.id}")
             print(f"Current modalities: {event.session.modalities}")
             print(f"Voice: {event.session.voice}")
@@ -148,8 +148,8 @@ with client.connect(model="gpt-4o-realtime-preview") as connection:
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.voicelive import (
     VoiceLiveClient,
-    VoiceLiveConnectionError,
-    VoiceLiveConnectionClosed
+    ConnectionError,
+    ConnectionClosed
 )
 
 try:
@@ -165,9 +165,9 @@ try:
 except ImportError as e:
     print(f"Required package not installed: {e}")
     print("Please install the 'websockets' package with 'pip install websockets'")
-except VoiceLiveConnectionClosed as e:
+except ConnectionClosed as e:
     print(f"Connection closed: Code {e.code}, Reason: {e.reason}")
-except VoiceLiveConnectionError as e:
+except ConnectionError as e:
     print(f"Connection error: {e}")
 ```
 

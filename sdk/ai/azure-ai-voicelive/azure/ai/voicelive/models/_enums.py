@@ -10,26 +10,7 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class OAIVoice(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Voice identifier for OpenAI-provided voices."""
-
-    ALLOY = "alloy"
-    ASH = "ash"
-    BALLAD = "ballad"
-    CORAL = "coral"
-    ECHO = "echo"
-    SAGE = "sage"
-    SHIMMER = "shimmer"
-    VERSE = "verse"
-
-
-class Phi4mmVoice(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Voice identifier for Phi4mm voices."""
-
-    COSYVOICE = "cosyvoice"
-
-
-class VoiceLiveAnimationOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class AnimationOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the types of animation data to output."""
 
     BLENDSHAPES = "blendshapes"
@@ -37,22 +18,22 @@ class VoiceLiveAnimationOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     EMOTION = "emotion"
 
 
-class VoiceLiveAudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of VoiceLiveAudioFormat."""
+class AudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of AudioFormat."""
 
     PCM16 = "pcm16"
     G711_ULAW = "g711_ulaw"
     G711_ALAW = "g711_alaw"
 
 
-class VoiceLiveAudioTimestampType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class AudioTimestampType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Output timestamp types supported in audio response content."""
 
     WORD = "word"
     """Timestamps per word in the output audio."""
 
 
-class VoiceLiveClientEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ClientEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Client event types used in VoiceLive protocol."""
 
     SESSION_UPDATE = "session.update"
@@ -73,8 +54,8 @@ class VoiceLiveClientEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SESSION_AVATAR_CONNECT = "session.avatar.connect"
 
 
-class VoiceLiveContentPartType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of VoiceLiveContentPartType."""
+class ContentPartType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ContentPartType."""
 
     INPUT_TEXT = "input_text"
     INPUT_AUDIO = "input_audio"
@@ -82,32 +63,32 @@ class VoiceLiveContentPartType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AUDIO = "audio"
 
 
-class VoiceLiveItemStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of VoiceLiveItemStatus."""
+class ItemStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ItemStatus."""
 
     IN_PROGRESS = "in_progress"
     COMPLETED = "completed"
     INCOMPLETE = "incomplete"
 
 
-class VoiceLiveItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of VoiceLiveItemType."""
+class ItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ItemType."""
 
     MESSAGE = "message"
     FUNCTION_CALL = "function_call"
     FUNCTION_CALL_OUTPUT = "function_call_output"
 
 
-class VoiceLiveMessageRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of VoiceLiveMessageRole."""
+class MessageRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of MessageRole."""
 
     SYSTEM = "system"
     USER = "user"
     ASSISTANT = "assistant"
 
 
-class VoiceLiveModality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of VoiceLiveModality."""
+class Modality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of Modality."""
 
     TEXT = "text"
     AUDIO = "audio"
@@ -115,7 +96,26 @@ class VoiceLiveModality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AVATAR = "avatar"
 
 
-class VoiceLiveServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class OAIVoice(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Voice identifier for OpenAI-provided voices."""
+
+    ALLOY = "alloy"
+    ASH = "ash"
+    BALLAD = "ballad"
+    CORAL = "coral"
+    ECHO = "echo"
+    SAGE = "sage"
+    SHIMMER = "shimmer"
+    VERSE = "verse"
+
+
+class Phi4mmVoice(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Voice identifier for Phi4mm voices."""
+
+    COSYVOICE = "cosyvoice"
+
+
+class ServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Server event types used in VoiceLive protocol."""
 
     ERROR = "error"
@@ -154,7 +154,7 @@ class VoiceLiveServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RESPONSE_ANIMATION_VISEME_DONE = "response.animation_viseme.done"
 
 
-class VoiceLiveToolChoiceLiteral(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ToolChoiceLiteral(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The available set of mode-level, string literal tool_choice options for the voicelive endpoint."""
 
     AUTO = "auto"
@@ -165,7 +165,7 @@ class VoiceLiveToolChoiceLiteral(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies that the model should call at least one tool."""
 
 
-class VoiceLiveToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The supported tool type discriminators for voicelive tools.
     Currently, only 'function' tools are supported.
     """

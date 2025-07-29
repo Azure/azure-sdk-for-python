@@ -19,8 +19,8 @@ import os
 import logging
 import time
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.voicelive import VoiceLiveClient, VoiceLiveConnectionError, VoiceLiveConnectionClosed
-from azure.ai.voicelive.models import VoiceLiveServerEventSessionUpdated, VoiceLiveServerEventError
+from azure.ai.voicelive import VoiceLiveClient, ConnectionError, ConnectionClosed
+from azure.ai.voicelive.models import ServerEventSessionUpdated, ServerEventError
 
 # Set up logger
 logging.basicConfig(level=logging.INFO)
@@ -54,14 +54,14 @@ def main():
             # Wait for the session update confirmation
             session_updated = False
             for event in connection:
-                if isinstance(event, VoiceLiveServerEventSessionUpdated):
+                if isinstance(event, ServerEventSessionUpdated):
                     session_updated = True
                     logger.info(f"Session updated (text-only): {event.session.id}")
                     logger.info(f"Current modalities: {event.session.modalities}")
                     break
-                elif isinstance(event, VoiceLiveServerEventError):
+                elif isinstance(event, ServerEventError):
                     logger.error(f"Session update failed: {event.error.message}")
-                    raise VoiceLiveConnectionError(f"Session update failed: {event.error.message}")
+                    raise ConnectionError(f"Session update failed: {event.error.message}")
 
             if not session_updated:
                 logger.warning("Did not receive session update confirmation")
@@ -76,14 +76,14 @@ def main():
 
             # Process events again
             for event in connection:
-                if isinstance(event, VoiceLiveServerEventSessionUpdated):
+                if isinstance(event, ServerEventSessionUpdated):
                     logger.info(f"Session updated (with audio): {event.session.id}")
                     logger.info(f"Current modalities: {event.session.modalities}")
                     logger.info(f"Voice: {event.session.voice}")
                     break
-                elif isinstance(event, VoiceLiveServerEventError):
+                elif isinstance(event, ServerEventError):
                     logger.error(f"Session update failed: {event.error.message}")
-                    raise VoiceLiveConnectionError(f"Session update failed: {event.error.message}")
+                    raise ConnectionError(f"Session update failed: {event.error.message}")
 
             # Clean up by closing the connection manually
             logger.info("Closing connection...")
@@ -92,9 +92,9 @@ def main():
     except ImportError as e:
         logger.error(f"Required package not installed: {e}")
         logger.info("Please install the 'websockets' package with 'pip install websockets'")
-    except VoiceLiveConnectionClosed as e:
+    except ConnectionClosed as e:
         logger.warning(f"Connection closed: Code {e.code}, Reason: {e.reason}")
-    except VoiceLiveConnectionError as e:
+    except ConnectionError as e:
         logger.error(f"Connection error: {e}")
     except Exception as e:
         logger.error(f"Unexpected error: {e}", exc_info=True)

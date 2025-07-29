@@ -77,7 +77,7 @@ python basic_voice_assistant.py \
 The assistant establishes a WebSocket connection and configures the session using strongly-typed objects:
 - Bidirectional audio streaming (PCM16, 24kHz, mono)
 - Server-side voice activity detection with configurable thresholds
-- Strongly-typed session configuration (VoiceLiveRequestSession)
+- Strongly-typed session configuration (RequestSession)
 - Azure voice configuration (AzureStandardVoice) or OpenAI voices
 
 ### 2. Audio Processing
@@ -157,19 +157,19 @@ voice_config = AzureStandardVoice(
 )
 
 # Strongly-typed turn detection
-turn_detection_config = VoiceLiveServerVad(
+turn_detection_config = ServerVad(
     threshold=0.5,
     prefix_padding_ms=300,
     silence_duration_ms=500
 )
 
 # Strongly-typed session configuration
-session_config = VoiceLiveRequestSession(
-    modalities=[VoiceLiveModality.TEXT, VoiceLiveModality.AUDIO],
+session_config = RequestSession(
+    modalities=[Modality.TEXT, Modality.AUDIO],
     instructions=instructions,
     voice=voice_config,
-    input_audio_format=VoiceLiveAudioFormat.PCM16,
-    output_audio_format=VoiceLiveAudioFormat.PCM16,
+    input_audio_format=AudioFormat.PCM16,
+    output_audio_format=AudioFormat.PCM16,
     turn_detection=turn_detection_config
 )
 

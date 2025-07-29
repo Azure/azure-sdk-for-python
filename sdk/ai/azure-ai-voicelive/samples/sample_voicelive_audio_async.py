@@ -44,7 +44,7 @@ except ImportError:
 from azure.core.credentials import AzureKeyCredential
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.voicelive.aio import VoiceLiveClient
-from azure.ai.voicelive.models import VoiceLiveServerEventSessionUpdated, VoiceLiveRequestSession
+from azure.ai.voicelive.models import ServerEventSessionUpdated, RequestSession
 
 
 class AudioProcessor:
@@ -218,9 +218,9 @@ async def main():
                 frames_per_buffer=audio_processor.chunk,
                 output_device_index=4,  # Try specifying your headphone device index here
             )
-    
-    setup_output_stream()    
-    
+
+    setup_output_stream()
+
     try:
         # Initialize the client
         client = VoiceLiveClient(
@@ -241,7 +241,7 @@ async def main():
         ) as connection:
             # Set up the session
             print("Setting up session...")
-            s = VoiceLiveRequestSession(
+            s = RequestSession(
                 modalities=["audio", "text"],
                 instructions="You are a helpful assistant. Keep your responses concise and natural.",
                 turn_detection={

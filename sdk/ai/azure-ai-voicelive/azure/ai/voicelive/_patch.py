@@ -16,21 +16,21 @@ from urllib.parse import urlparse, urlunparse, urlencode, parse_qs
 from azure.core.credentials import AzureKeyCredential
 
 from ._client import VoiceLiveClient as VoiceLiveClientGenerated
-from .models import VoiceLiveClientEvent, VoiceLiveServerEvent
+from .models import ClientEvent, ServerEvent
 
 __all__: List[str] = [
     "VoiceLiveClient",
     "WebsocketConnectionOptions",
-    "VoiceLiveConnectionError",
-    "VoiceLiveConnectionClosed",
+    "ConnectionError",
+    "ConnectionClosed",
     "VoiceLiveConnection",
-    "VoiceLiveSessionResource",
-    "VoiceLiveResponseResource",
-    "VoiceLiveInputAudioBufferResource",
-    "VoiceLiveOutputAudioBufferResource",
-    "VoiceLiveConversationResource",
-    "VoiceLiveConversationItemResource",
-    "VoiceLiveTranscriptionSessionResource",
+    "SessionResource",
+    "ResponseResource",
+    "InputAudioBufferResource",
+    "OutputAudioBufferResource",
+    "ConversationResource",
+    "ConversationItemResource",
+    "TranscriptionSessionResource",
 ]  # Add all objects you want publicly available to users at this package level
 
 log = logging.getLogger(__name__)
@@ -50,13 +50,13 @@ class WebsocketConnectionOptions(TypedDict, total=False):
     write_limit: Optional[Union[int, Tuple[int, Optional[int]]]]
 
 
-class VoiceLiveConnectionError(Exception):
+class ConnectionError(Exception):
     """Base exception for VoiceLive WebSocket connection errors."""
 
     pass
 
 
-class VoiceLiveConnectionClosed(VoiceLiveConnectionError):
+class ConnectionClosed(ConnectionError):
     """Exception raised when a WebSocket connection is closed."""
 
     def __init__(self, code: int, reason: str) -> None:
@@ -65,7 +65,7 @@ class VoiceLiveConnectionClosed(VoiceLiveConnectionError):
         super().__init__(f"WebSocket connection closed with code {code}: {reason}")
 
 
-class VoiceLiveSessionResource:
+class SessionResource:
     """Resource for session management."""
 
     def __init__(self, connection: "VoiceLiveConnection") -> None:
@@ -91,7 +91,7 @@ class VoiceLiveSessionResource:
         self._connection.send(event)
 
 
-class VoiceLiveResponseResource:
+class ResponseResource:
     """Resource for response management."""
 
     def __init__(self, connection: "VoiceLiveConnection") -> None:
@@ -142,7 +142,7 @@ class VoiceLiveResponseResource:
         self._connection.send(event)
 
 
-class VoiceLiveInputAudioBufferResource:
+class InputAudioBufferResource:
     """Resource for input audio buffer management."""
 
     def __init__(self, connection: "VoiceLiveConnection") -> None:
@@ -202,7 +202,7 @@ class VoiceLiveInputAudioBufferResource:
         self._connection.send(event)
 
 
-class VoiceLiveOutputAudioBufferResource:
+class OutputAudioBufferResource:
     """Resource for output audio buffer management."""
 
     def __init__(self, connection: "VoiceLiveConnection") -> None:
@@ -229,7 +229,7 @@ class VoiceLiveOutputAudioBufferResource:
         self._connection.send(event)
 
 
-class VoiceLiveConversationItemResource:
+class ConversationItemResource:
     """Resource for conversation item management."""
 
     def __init__(self, connection: "VoiceLiveConnection") -> None:
@@ -321,7 +321,7 @@ class VoiceLiveConversationItemResource:
         self._connection.send(event)
 
 
-class VoiceLiveConversationResource:
+class ConversationResource:
     """Resource for conversation management."""
 
     def __init__(self, connection: "VoiceLiveConnection") -> None:
@@ -331,10 +331,10 @@ class VoiceLiveConversationResource:
         :type connection: ~azure.ai.voicelive.VoiceLiveConnection
         """
         self._connection = connection
-        self.item = VoiceLiveConversationItemResource(connection)
+        self.item = ConversationItemResource(connection)
 
 
-class VoiceLiveTranscriptionSessionResource:
+class TranscriptionSessionResource:
     """Resource for transcription session management."""
 
     def __init__(self, connection: "VoiceLiveConnection") -> None:
@@ -371,18 +371,18 @@ class VoiceLiveConnection:
         self._connection = connection
 
         # Add all resource attributes
-        self.session = VoiceLiveSessionResource(self)
-        self.response = VoiceLiveResponseResource(self)
-        self.input_audio_buffer = VoiceLiveInputAudioBufferResource(self)
-        self.conversation = VoiceLiveConversationResource(self)
-        self.output_audio_buffer = VoiceLiveOutputAudioBufferResource(self)
-        self.transcription_session = VoiceLiveTranscriptionSessionResource(self)
+        self.session = SessionResource(self)
+        self.response = ResponseResource(self)
+        self.input_audio_buffer = InputAudioBufferResource(self)
+        self.conversation = ConversationResource(self)
+        self.output_audio_buffer = OutputAudioBufferResource(self)
+        self.transcription_session = TranscriptionSessionResource(self)
 
-    def __iter__(self) -> Iterator[VoiceLiveServerEvent]:
+    def __iter__(self) -> Iterator[ServerEvent]:
         """Yield typed events until the connection is closed.
 
-        :return: An iterator of VoiceLiveServerEvent objects.
-        :rtype: Iterator[~azure.ai.voicelive.models.VoiceLiveServerEvent]
+        :return: An iterator of ServerEvent objects.
+        :rtype: Iterator[~azure.ai.voicelive.models.ServerEvent]
         """
         try:
             while True:
@@ -391,25 +391,25 @@ class VoiceLiveConnection:
             log.debug(f"Connection closed: {e}")
             return
 
-    def recv(self) -> VoiceLiveServerEvent:
+    def recv(self) -> ServerEvent:
         """Receive and parse the next message as a typed event.
 
         :return: A parsed server event.
-        :rtype: ~azure.ai.voicelive.models.VoiceLiveServerEvent
-        :raises VoiceLiveConnectionError: If the connection is closed or the message cannot be parsed.
+        :rtype: ~azure.ai.voicelive.models.ServerEvent
+        :raises ConnectionError: If the connection is closed or the message cannot be parsed.
         """
         try:
-            return VoiceLiveServerEvent.deserialize(self.recv_bytes())
+            return ServerEvent.deserialize(self.recv_bytes())
         except Exception as e:
             log.error(f"Error parsing message: {e}")
-            raise VoiceLiveConnectionError(f"Failed to parse message: {e}") from e
+            raise ConnectionError(f"Failed to parse message: {e}") from e
 
     def recv_bytes(self) -> bytes:
         """Receive raw bytes from the connection.
 
         :return: The raw message bytes.
         :rtype: bytes
-        :raises VoiceLiveConnectionClosed: If the connection is closed.
+        :raises ConnectionClosed: If the connection is closed.
         """
         try:
             message = self._connection.recv(decode=False)
@@ -418,14 +418,14 @@ class VoiceLiveConnection:
         except Exception as e:
             code = getattr(e, "code", 1006)  # Default to 1006 (Abnormal Closure) if no code
             reason = str(e)
-            raise VoiceLiveConnectionClosed(code, reason) from e
+            raise ConnectionClosed(code, reason) from e
 
-    def send(self, event: Union[Dict[str, Any], VoiceLiveClientEvent]) -> None:
+    def send(self, event: Union[Dict[str, Any], ClientEvent]) -> None:
         """Send an event to the server.
 
-        :param event: The event to send, either as a dictionary or a VoiceLiveClientEvent.
-        :type event: Union[Dict[str, Any], ~azure.ai.voicelive.models.VoiceLiveClientEvent]
-        :raises VoiceLiveConnectionError: If the event cannot be sent.
+        :param event: The event to send, either as a dictionary or a ClientEvent.
+        :type event: Union[Dict[str, Any], ~azure.ai.voicelive.models.ClientEvent]
+        :raises ConnectionError: If the event cannot be sent.
         """
         try:
             if isinstance(event, dict):
@@ -435,7 +435,7 @@ class VoiceLiveConnection:
             self._connection.send(data)
         except Exception as e:
             log.error(f"Failed to send event: {e}")
-            raise VoiceLiveConnectionError(f"Failed to send event: {e}") from e
+            raise ConnectionError(f"Failed to send event: {e}") from e
 
     def close(self, *, code: int = 1000, reason: str = "") -> None:
         """Close the WebSocket connection.
@@ -478,7 +478,7 @@ class VoiceLiveConnectionManager:
         :return: A VoiceLiveConnection instance.
         :rtype: ~azure.ai.voicelive.VoiceLiveConnection
         :raises ImportError: If the websockets package is not installed.
-        :raises VoiceLiveConnectionError: If the connection cannot be established.
+        :raises ConnectionError: If the connection cannot be established.
         """
         try:
             from websockets.sync.client import connect
@@ -507,43 +507,36 @@ class VoiceLiveConnectionManager:
             self.__connection = VoiceLiveConnection(connection)
             return self.__connection
         except WebSocketException as e:
-            raise VoiceLiveConnectionError(f"Failed to establish WebSocket connection: {e}") from e
+            raise ConnectionError(f"Failed to establish WebSocket connection: {e}") from e
 
     def _prepare_url(self) -> str:
         """Prepare the WebSocket URL."""
         # Parse the base URL
         parsed = urlparse(self.__client._config.endpoint)
-        
+
         # Ensure WebSocket scheme
         if parsed.scheme.startswith("http"):
             scheme = "wss" if parsed.scheme == "https" else "ws"
         else:
             scheme = parsed.scheme
-        
+
         # Prepare query parameters
         params = {"model": self.__model, "api-version": self.__apiVersion}
         params.update(self.__extra_query)
-        
+
         # Parse existing query parameters and merge with new ones
         existing_params = parse_qs(parsed.query)
         # Flatten existing params (parse_qs returns lists)
         for key, value_list in existing_params.items():
             if key not in params:  # Don't override new params
                 params[key] = value_list[0] if value_list else ""
-        
+
         # Build the path (equivalent to raw_path operations)
-        path = parsed.path.rstrip('/') + '/voice-agent/realtime'
-        
+        path = parsed.path.rstrip("/") + "/voice-agent/realtime"
+
         # Reconstruct the URL
-        url = urlunparse((
-            scheme,
-            parsed.netloc,
-            path,
-            parsed.params,
-            urlencode(params),
-            parsed.fragment
-        ))
-        
+        url = urlunparse((scheme, parsed.netloc, path, parsed.params, urlencode(params), parsed.fragment))
+
         return url
 
     def __exit__(self, exc_type, exc, exc_tb) -> None:
@@ -567,7 +560,7 @@ class VoiceLiveClient(VoiceLiveClientGenerated):
         api_version: str = "2025-05-01-preview",
         query: Dict[str, Any] = {},
         headers: Dict[str, Any] = {},
-        connection_options: WebsocketConnectionOptions  = {},
+        connection_options: WebsocketConnectionOptions = {},
     ) -> VoiceLiveConnectionManager:
         """Connect to the VoiceLive API via WebSocket.
 

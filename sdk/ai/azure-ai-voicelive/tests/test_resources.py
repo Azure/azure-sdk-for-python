@@ -11,13 +11,13 @@ import json
 
 from azure.ai.voicelive import (
     VoiceLiveConnection,
-    VoiceLiveSessionResource,
-    VoiceLiveResponseResource,
-    VoiceLiveInputAudioBufferResource,
-    VoiceLiveOutputAudioBufferResource,
-    VoiceLiveConversationResource,
-    VoiceLiveConversationItemResource,
-    VoiceLiveTranscriptionSessionResource,
+    SessionResource,
+    ResponseResource,
+    InputAudioBufferResource,
+    OutputAudioBufferResource,
+    ConversationResource,
+    ConversationItemResource,
+    TranscriptionSessionResource,
 )
 
 

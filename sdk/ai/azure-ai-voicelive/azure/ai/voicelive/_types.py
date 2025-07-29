@@ -19,4 +19,4 @@ Voice = Union[
     str,
     "_models.Phi4mmVoice",
 ]
-VoiceLiveToolChoice = Union[str, "_models.VoiceLiveToolChoiceLiteral", "_models.VoiceLiveToolChoiceObject"]
+ToolChoice = Union[str, "_models.ToolChoiceLiteral", "_models.ToolChoiceObject"]
