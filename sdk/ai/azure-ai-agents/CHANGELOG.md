@@ -2,6 +2,10 @@
 
 ## 1.0.3 (Unreleased)
 
+### Bugs Fixed
+
+- Fixed `create_agents` to execute with body as a keyword parameter.
+
 ### Features Added
 
 ### Bugs Fixed
