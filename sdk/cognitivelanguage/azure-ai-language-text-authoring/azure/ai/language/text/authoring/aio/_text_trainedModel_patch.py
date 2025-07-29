@@ -8,7 +8,7 @@ from azure.core.async_paging import AsyncItemPaged, AsyncList
 
 JSON = MutableMapping[str, Any]
 
-class TextAuthoringTrainedModelClient:
+class TextAuthoringTrainedModelClientAsync:
     def __init__(self, operations: TextAuthoringTrainedModelOperations, project_name: str, trained_model_label: str):
         self._operations = operations
         self._project_name = project_name
