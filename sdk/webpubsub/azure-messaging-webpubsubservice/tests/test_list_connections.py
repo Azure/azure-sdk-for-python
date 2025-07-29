@@ -17,7 +17,6 @@ class TestListConnections(WebpubsubTest):
     def test_list_connections(self, **kwargs):
         # The Azure SDK test preparers (like WebpubsubPowerShellPreparer and recorded_by_proxy) are not fully compatible with async test functions out of the box.
         # Use asyncio to work around the issue
-        set_custom_default_matcher(ignore_query_ordering=True)
         import asyncio
 
         asyncio.run(self._test_list_connections_impl(**kwargs))
