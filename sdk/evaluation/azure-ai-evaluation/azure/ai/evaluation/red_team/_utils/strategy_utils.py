@@ -89,7 +89,7 @@ def get_converter_for_strategy(
 
 def get_chat_target(
     target: Union[PromptChatTarget, Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
-    prompt_to_context: Optional[Dict[str, str]] = None
+    prompt_to_context: Optional[Dict[str, str]] = None,
 ) -> PromptChatTarget:
     """Convert various target types to a PromptChatTarget.
 
@@ -166,11 +166,11 @@ def get_chat_target(
                 messages_list = [_message_to_dict(chat_message) for chat_message in messages]  # type: ignore
                 latest_message = messages_list[-1]
                 application_input = latest_message["content"]
-                
+
                 # Check if target accepts context as a parameter
                 sig = inspect.signature(target)
                 param_names = list(sig.parameters.keys())
-                
+
                 try:
                     if "context" in param_names:
                         # Pass context if the target function accepts it

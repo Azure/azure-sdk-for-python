@@ -35,10 +35,7 @@ def chat_target(mock_callback):
 @pytest.fixture(scope="function")
 def chat_target_with_context(mock_callback):
     """Create a _CallbackChatTarget instance with context mapping for tests."""
-    prompt_to_context = {
-        "test prompt": "test context data",
-        "another prompt": "another context"
-    }
+    prompt_to_context = {"test prompt": "test context data", "another prompt": "another context"}
     return _CallbackChatTarget(callback=mock_callback, prompt_to_context=prompt_to_context)
 
 
@@ -153,7 +150,7 @@ class TestCallbackChatTargetPrompts:
 
         mock_request = MagicMock()
         mock_request.request_pieces = [request_piece]
-        
+
         with patch.object(chat_target_with_context, "_memory") as mock_memory, patch(
             "azure.ai.evaluation.red_team._callback_chat_target.construct_response_from_request"
         ) as mock_construct:

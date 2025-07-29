@@ -208,6 +208,7 @@ class TestChatTargetFunctions:
 
     def test_get_chat_target_simple_function_context_support(self):
         """Test that simple function with context parameter receives context."""
+
         def simple_fn_with_context(query, context=None):
             # Function that accepts context parameter
             if context:
@@ -216,18 +217,19 @@ class TestChatTargetFunctions:
 
         prompt_to_context = {"test prompt": "test context"}
         result = get_chat_target(simple_fn_with_context, prompt_to_context=prompt_to_context)
-        
+
         # Verify we get a callback target
         assert isinstance(result, _CallbackChatTarget)
 
     def test_get_chat_target_simple_function_no_context_support(self):
         """Test that simple function without context parameter works normally."""
+
         def simple_fn(query):
             return "test response"
 
         prompt_to_context = {"test prompt": "test context"}
         result = get_chat_target(simple_fn, prompt_to_context=prompt_to_context)
-        
+
         # Verify we get a callback target
         assert isinstance(result, _CallbackChatTarget)
 
