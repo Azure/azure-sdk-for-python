@@ -112,7 +112,7 @@ class LocalFileStorage:
 
         self._customer_statsbeat_metrics = None
         self.filesystem_is_readonly = False
-        self.exception_occured = None
+        self.exception_occurred = None
 
         self._enabled = self._check_and_set_folder_permissions()
         if self._enabled:
@@ -215,14 +215,14 @@ class LocalFileStorage:
             if self._customer_statsbeat_metrics:
                 _track_dropped_items(self._customer_statsbeat_metrics, data, DropCode.CLIENT_PERSISTENCE_CAPACITY, None)
             return None
-        if self.exception_occured is not None:
+        if self.exception_occurred is not None:
             if self._customer_statsbeat_metrics:
                 _track_dropped_items(
                     self._customer_statsbeat_metrics,
                     data, DropCode.CLIENT_EXCEPTION,
-                    self.exception_occured
+                    self.exception_occurred
                 )
-            self.exception_occured = None
+            self.exception_occurred = None
             return None
         blob = LocalFileBlob(
             os.path.join(
@@ -277,13 +277,12 @@ class LocalFileStorage:
                 os.chmod(self._path, 0o700)
                 return True
         except OSError as error:
-            # Check for readonly errors
-            if getattr(error, 'errno', None) == errno.EROFS:
+            if getattr(error, 'errno', None) == errno.EROFS:  # cspell:disable-line
                 self.filesystem_is_readonly = True
             else:
-                self.exception_occured = error
+                self.exception_occurred = error
         except Exception as exception:
-            self.exception_occured = exception
+            self.exception_occurred = exception
         return False
 
     def _check_storage_size(self):

@@ -519,8 +519,8 @@ class TestLocalFileStorage(unittest.TestCase):
 
                 mock_statsbeat.count_dropped_items.assert_not_called()
 
-    def test_exception_occured_tracks_dropped_items(self):
-        """Test that when exception_occured is set, put() tracks dropped items in customer statsbeat."""
+    def test_exception_occurred_tracks_dropped_items(self):
+        """Test that when exception_occurred is set, put() tracks dropped items in customer statsbeat."""
         mock_statsbeat = mock.Mock()
         test_items = [
             {"name": "test_item1", "data": {"base_type": "RequestData"}},
@@ -534,8 +534,8 @@ class TestLocalFileStorage(unittest.TestCase):
             LocalFileStorage, "_check_and_set_folder_permissions", return_value=True
         ):
             with LocalFileStorage(os.path.join(TEST_FOLDER, "exception_storage")) as stor:
-                # Manually set the exception_occured to simulate an exception that happened during initialization
-                stor.exception_occured = test_exception
+                # Manually set the exception_occurred to simulate an exception that happened during initialization
+                stor.exception_occurred = test_exception
                 stor._customer_statsbeat_metrics = mock_statsbeat
                 
                 # Mock _track_dropped_items to capture the call
@@ -543,7 +543,7 @@ class TestLocalFileStorage(unittest.TestCase):
                     result = stor.put(test_items)
                     
                     # Verify that _track_dropped_items was called at least once with our exception
-                    # Note: It might be called multiple times (once for exception_occured, and potentially 
+                    # Note: It might be called multiple times (once for exception_occurred, and potentially 
                     # once more if blob.put() also fails), so we check that our expected call is present
                     expected_call = mock.call(mock_statsbeat, test_items, DropCode.CLIENT_EXCEPTION, test_exception)
                     self.assertIn(expected_call, mock_track.call_args_list)
@@ -551,8 +551,8 @@ class TestLocalFileStorage(unittest.TestCase):
                     # Verify that at least one call was made
                     self.assertGreaterEqual(mock_track.call_count, 1)
 
-    def test_exception_occured_specific_tracking_only(self):
-        """Test the specific exception_occured tracking logic by mocking blob.put to succeed."""
+    def test_exception_occurred_specific_tracking_only(self):
+        """Test the specific exception_occurred tracking logic by mocking blob.put to succeed."""
         mock_statsbeat = mock.Mock()
         test_items = [
             {"name": "test_item1", "data": {"base_type": "RequestData"}},
@@ -564,14 +564,14 @@ class TestLocalFileStorage(unittest.TestCase):
             LocalFileStorage, "_check_and_set_folder_permissions", return_value=True
         ):
             with LocalFileStorage(os.path.join(TEST_FOLDER, "exception_specific_storage")) as stor:
-                stor.exception_occured = test_exception
+                stor.exception_occurred = test_exception
                 stor._customer_statsbeat_metrics = mock_statsbeat
                 
                 # Mock _track_dropped_items to capture the call
                 with mock.patch("azure.monitor.opentelemetry.exporter._storage._track_dropped_items") as mock_track:
                     result = stor.put(test_items)
                     
-                    # Should call _track_dropped_items exactly once for exception_occured
+                    # Should call _track_dropped_items exactly once for exception_occurred
                     mock_track.assert_called_once_with(
                         mock_statsbeat,
                         test_items,
@@ -579,14 +579,14 @@ class TestLocalFileStorage(unittest.TestCase):
                         test_exception
                     )
                     
-                    # Should return None since exception_occured causes early return
+                    # Should return None since exception_occurred causes early return
                     self.assertIsNone(result)
                     
-                    # Verify that exception_occured is reset to None after tracking
-                    self.assertIsNone(stor.exception_occured)
+                    # Verify that exception_occurred is reset to None after tracking
+                    self.assertIsNone(stor.exception_occurred)
 
-    def test_exception_occured_no_customer_statsbeat(self):
-        """Test that when exception_occured is set but no customer statsbeat is available, no tracking occurs."""
+    def test_exception_occurred_no_customer_statsbeat(self):
+        """Test that when exception_occurred is set but no customer statsbeat is available, no tracking occurs."""
         test_items = [
             {"name": "test_item1", "data": {"base_type": "RequestData"}},
         ]
@@ -597,8 +597,8 @@ class TestLocalFileStorage(unittest.TestCase):
             LocalFileStorage, "_check_and_set_folder_permissions", return_value=True
         ):
             with LocalFileStorage(os.path.join(TEST_FOLDER, "exception_no_statsbeat_storage")) as stor:
-                # Set exception_occured but no customer statsbeat metrics
-                stor.exception_occured = test_exception
+                # Set exception_occurred but no customer statsbeat metrics
+                stor.exception_occurred = test_exception
                 self.assertIsNone(stor._customer_statsbeat_metrics)
                 
                 # Mock _track_dropped_items to ensure it's not called
@@ -608,8 +608,8 @@ class TestLocalFileStorage(unittest.TestCase):
                     # Should not call _track_dropped_items when no customer statsbeat is available
                     mock_track.assert_not_called()
 
-    def test_exception_occured_none_no_tracking(self):
-        """Test that when exception_occured is None, no exception tracking occurs."""
+    def test_exception_occurred_none_no_tracking(self):
+        """Test that when exception_occurred is None, no exception tracking occurs."""
         mock_statsbeat = mock.Mock()
         test_items = [
             {"name": "test_item1", "data": {"base_type": "RequestData"}},
@@ -617,8 +617,8 @@ class TestLocalFileStorage(unittest.TestCase):
         
         with LocalFileStorage(os.path.join(TEST_FOLDER, "no_exception_storage")) as stor:
             stor._customer_statsbeat_metrics = mock_statsbeat
-            # exception_occured should be None by default
-            self.assertIsNone(stor.exception_occured)
+            # exception_occurred should be None by default
+            self.assertIsNone(stor.exception_occurred)
             
             # Mock the blob.put to return a successful result
             mock_blob = mock.Mock()
@@ -626,11 +626,11 @@ class TestLocalFileStorage(unittest.TestCase):
                 with mock.patch("azure.monitor.opentelemetry.exporter._storage._track_dropped_items") as mock_track:
                     result = stor.put(test_items)
                     
-                    # Should not call _track_dropped_items for exception when exception_occured is None
+                    # Should not call _track_dropped_items for exception when exception_occurred is None
                     mock_track.assert_not_called()
                     self.assertEqual(result, mock_blob)
 
-    def test_exception_occured_with_different_exception_types(self):
+    def test_exception_occurred_with_different_exception_types(self):
         """Test exception tracking with different types of exceptions."""
         mock_statsbeat = mock.Mock()
         test_items = [{"name": "test_item", "data": {"base_type": "RequestData"}}]
@@ -650,7 +650,7 @@ class TestLocalFileStorage(unittest.TestCase):
                     LocalFileStorage, "_check_and_set_folder_permissions", return_value=True
                 ):
                     with LocalFileStorage(storage_path) as stor:
-                        stor.exception_occured = test_exception
+                        stor.exception_occurred = test_exception
                         stor._customer_statsbeat_metrics = mock_statsbeat
                         
                         with mock.patch("azure.monitor.opentelemetry.exporter._storage._track_dropped_items") as mock_track:
@@ -664,20 +664,19 @@ class TestLocalFileStorage(unittest.TestCase):
                                 test_exception
                             )
                             
-                            # Should return None since exception_occured causes early return
+                            # Should return None since exception_occurred causes early return
                             self.assertIsNone(result)
                             
-                            # Verify that exception_occured is reset after tracking
-                            self.assertIsNone(stor.exception_occured)
+                            # Verify that exception_occurred is reset after tracking
+                            self.assertIsNone(stor.exception_occurred)
                             mock_track.reset_mock()
 
     def test_check_and_set_folder_permissions_readonly_filesystem(self):
         """Test that OSError with errno.EROFS sets filesystem_is_readonly flag"""
         import errno
         
-        # Create a mock OSError with EROFS errno (readonly filesystem)
         readonly_error = OSError("Read-only file system")
-        readonly_error.errno = errno.EROFS
+        readonly_error.errno = errno.EROFS  # cspell:disable-line
         
         with mock.patch("os.makedirs", side_effect=readonly_error):
             with mock.patch.object(
@@ -689,11 +688,11 @@ class TestLocalFileStorage(unittest.TestCase):
                 self.assertFalse(stor._enabled)
                 # Should set readonly flag
                 self.assertTrue(stor.filesystem_is_readonly)
-                # Should not set exception_occured for readonly
-                self.assertIsNone(stor.exception_occured)
+                # Should not set exception_occurred for readonly
+                self.assertIsNone(stor.exception_occurred)
 
     def test_check_and_set_folder_permissions_permission_error(self):
-        """Test that PermissionError (OSError subclass) sets exception_occured"""
+        """Test that PermissionError (OSError subclass) sets exception_occurred"""
         permission_error = PermissionError("Permission denied")
         
         with mock.patch("os.makedirs", side_effect=permission_error):
@@ -706,11 +705,11 @@ class TestLocalFileStorage(unittest.TestCase):
                 self.assertFalse(stor._enabled)
                 # Should not set readonly flag
                 self.assertFalse(stor.filesystem_is_readonly)
-                # Should set exception_occured for permission error
-                self.assertEqual(stor.exception_occured, permission_error)
+                # Should set exception_occurred for permission error
+                self.assertEqual(stor.exception_occurred, permission_error)
 
     def test_check_and_set_folder_permissions_other_os_error(self):
-        """Test that other OSError types set exception_occured"""
+        """Test that other OSError types set exception_occurred"""
         import errno
         
         # Create a mock OSError with different errno (not EROFS)
@@ -727,11 +726,11 @@ class TestLocalFileStorage(unittest.TestCase):
                 self.assertFalse(stor._enabled)
                 # Should not set readonly flag
                 self.assertFalse(stor.filesystem_is_readonly)
-                # Should set exception_occured for other OS error
-                self.assertEqual(stor.exception_occured, other_os_error)
+                # Should set exception_occurred for other OS error
+                self.assertEqual(stor.exception_occurred, other_os_error)
 
     def test_check_and_set_folder_permissions_general_exception(self):
-        """Test that non-OSError exceptions set exception_occured"""
+        """Test that non-OSError exceptions set exception_occurred"""
         value_error = ValueError("Invalid path format")
         
         with mock.patch("os.makedirs", side_effect=value_error):
@@ -744,29 +743,33 @@ class TestLocalFileStorage(unittest.TestCase):
                 self.assertFalse(stor._enabled)
                 # Should not set readonly flag
                 self.assertFalse(stor.filesystem_is_readonly)
-                # Should set exception_occured for general exception
-                self.assertEqual(stor.exception_occured, value_error)
+                # Should set exception_occurred for general exception
+                self.assertEqual(stor.exception_occurred, value_error)
 
     def test_check_and_set_folder_permissions_os_error_without_errno(self):
-        """Test that OSError without errno attribute sets exception_occured"""
-        # Create an OSError without errno attribute
+        """Test that OSError without errno attribute sets exception_occurred"""
+        # Create a regular OSError
         os_error_no_errno = OSError("Generic OS error")
-        # Explicitly ensure no errno attribute
-        if hasattr(os_error_no_errno, 'errno'):
-            delattr(os_error_no_errno, 'errno')
         
         with mock.patch("os.makedirs", side_effect=os_error_no_errno):
-            with mock.patch.object(
-                LocalFileStorage, "_maintenance_routine"
-            ), mock.patch.object(LocalFileStorage, "__exit__"):
-                stor = LocalFileStorage(os.path.join(TEST_FOLDER, "no_errno_test"))
+            # Mock the getattr call in the storage module to return None for errno
+            with mock.patch("azure.monitor.opentelemetry.exporter._storage.getattr") as mock_getattr:
+                mock_getattr.return_value = None  # Simulate no errno attribute
                 
-                # Should not be enabled due to OS error
-                self.assertFalse(stor._enabled)
-                # Should not set readonly flag (getattr returns None, not equal to EROFS)
-                self.assertFalse(stor.filesystem_is_readonly)
-                # Should set exception_occured for OS error without errno
-                self.assertEqual(stor.exception_occured, os_error_no_errno)
+                with mock.patch.object(
+                    LocalFileStorage, "_maintenance_routine"
+                ), mock.patch.object(LocalFileStorage, "__exit__"):
+                    stor = LocalFileStorage(os.path.join(TEST_FOLDER, "no_errno_test"))
+                    
+                    # Should not be enabled due to OS error
+                    self.assertFalse(stor._enabled)
+                    # Should not set readonly flag (getattr returns None, not equal to EROFS)
+                    self.assertFalse(stor.filesystem_is_readonly)
+                    # Should set exception_occurred for OS error without errno
+                    self.assertEqual(stor.exception_occurred, os_error_no_errno)
+                    
+                    # Verify getattr was called with the expected parameters
+                    mock_getattr.assert_called_with(os_error_no_errno, 'errno', None)
 
     def test_check_and_set_folder_permissions_windows_icacls_failure(self):
         """Test Windows icacls failure handling"""
@@ -788,8 +791,8 @@ class TestLocalFileStorage(unittest.TestCase):
                             self.assertFalse(stor._enabled)
                             # Should not set readonly flag (no exception thrown)
                             self.assertFalse(stor.filesystem_is_readonly)
-                            # Should not set exception_occured (no exception thrown)
-                            self.assertIsNone(stor.exception_occured)
+                            # Should not set exception_occurred (no exception thrown)
+                            self.assertIsNone(stor.exception_occurred)
 
     def test_check_and_set_folder_permissions_unix_chmod_success(self):
         """Test Unix chmod success path"""
@@ -805,8 +808,8 @@ class TestLocalFileStorage(unittest.TestCase):
                         self.assertTrue(stor._enabled)
                         # Should not set readonly flag
                         self.assertFalse(stor.filesystem_is_readonly)
-                        # Should not set exception_occured
-                        self.assertIsNone(stor.exception_occured)
+                        # Should not set exception_occurred
+                        self.assertIsNone(stor.exception_occurred)
 
     def test_exception_handling_categorization_integration(self):
         """Integration test to verify exception categorization works end-to-end"""
@@ -829,7 +832,7 @@ class TestLocalFileStorage(unittest.TestCase):
                 
                 # Should categorize as readonly and be disabled
                 self.assertTrue(stor.filesystem_is_readonly)
-                self.assertIsNone(stor.exception_occured)
+                self.assertIsNone(stor.exception_occurred)
                 self.assertFalse(stor._enabled)  # Storage should be disabled
                 
                 # Test put behavior - disabled storage should return CLIENT_STORAGE_DISABLED
@@ -843,7 +846,7 @@ class TestLocalFileStorage(unittest.TestCase):
                     args = mock_statsbeat.count_dropped_items.call_args[0]
                     self.assertEqual(args[2], DropCode.CLIENT_STORAGE_DISABLED)
         
-        # Test 2: Permission error (should go to exception_occured)
+        # Test 2: Permission error (should go to exception_occurred)
         permission_error = PermissionError("Permission denied")
         
         with mock.patch("os.makedirs", side_effect=permission_error):
@@ -854,7 +857,7 @@ class TestLocalFileStorage(unittest.TestCase):
                 
                 # Should categorize as general exception and be disabled
                 self.assertFalse(stor.filesystem_is_readonly)
-                self.assertEqual(stor.exception_occured, permission_error)
+                self.assertEqual(stor.exception_occurred, permission_error)
                 self.assertFalse(stor._enabled)  # Storage should be disabled
                 
         # Test 3: Successful initialization with enabled storage to test readonly handling in put()
@@ -869,7 +872,7 @@ class TestLocalFileStorage(unittest.TestCase):
                 # Should be enabled and not have readonly/exception flags
                 self.assertTrue(stor._enabled)
                 self.assertFalse(stor.filesystem_is_readonly)
-                self.assertIsNone(stor.exception_occured)
+                self.assertIsNone(stor.exception_occurred)
                 
                 # Now test readonly handling in put() by manually setting the flag
                 stor.filesystem_is_readonly = True
