@@ -4,6 +4,10 @@
 
 ## 1.1.0b5 (Unreleased)
 
+### Bugs Fixed
+
+- Fixed `create_agents` to execute with body as a keyword parameter.
+
 ### Features Added
 
 - Support `tool_resources` for run async operations.
