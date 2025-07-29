@@ -1530,7 +1530,6 @@ You can add an Application Insights Azure resource to your Azure AI Foundry proj
 Make sure to install OpenTelemetry and the Azure SDK tracing plugin via
 
 ```bash
-pip install opentelemetry
 pip install azure-ai-agents azure-identity opentelemetry-sdk azure-core-tracing-opentelemetry
 ```
 
