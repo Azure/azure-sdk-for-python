@@ -9,7 +9,7 @@ scoring evaluation.
 This sample shows how to:
 1. Configure an Azure OpenAI model for grading
 2. Create a score model grader with custom prompts
-3. Run evaluation using the evaluate() method
+3. Run evaluation using the evaluate() method with both foundry and hub-based projects
 4. Interpret continuous scoring results
 
 Prerequisites:
@@ -17,6 +17,15 @@ Prerequisites:
 - Model deployment (e.g., gpt-4, gpt-4o-mini)
 - Sample conversation data in JSONL format
 - Environment variables configured in .env file
+- Azure AI project configuration (either foundry-based or hub-based)
+
+Azure AI Project Configuration Options:
+1. Foundry-based project (recommended):
+   - AZURE_AI_PROJECT_ENDPOINT
+2. Hub-based project (legacy):
+   - AZURE_SUBSCRIPTION_ID
+   - AZURE_RESOURCE_GROUP_NAME  
+   - AZURE_PROJECT_NAME
 """
 
 import json
@@ -141,6 +150,37 @@ def create_sample_data() -> str:
     return filename
 
 
+def get_azure_ai_project():
+    """
+    Get Azure AI project configuration based on available environment variables.
+
+    Returns either:
+    1. Foundry-based project (preferred): Uses AZURE_AI_PROJECT_ENDPOINT
+    2. Hub-based project (legacy): Uses subscription_id, resource_group_name, project_name
+    """
+    # Try foundry-based project first (newer approach)
+    foundry_endpoint = os.environ.get("AZURE_AI_PROJECT_ENDPOINT")
+    if foundry_endpoint:
+        print("✅ Using foundry-based Azure AI project")
+        return foundry_endpoint
+
+    # Fall back to hub-based project (legacy approach)
+    subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID")
+    resource_group = os.environ.get("AZURE_RESOURCE_GROUP_NAME")
+    project_name = os.environ.get("AZURE_PROJECT_NAME")
+
+    if subscription_id and resource_group and project_name:
+        print("✅ Using hub-based Azure AI project (legacy)")
+        return AzureAIProject(
+            subscription_id=subscription_id,
+            resource_group_name=resource_group,
+            project_name=project_name,
+        )
+
+    print("⚠️  No Azure AI project configuration found")
+    return None
+
+
 def demonstrate_score_model_grader():
     """Demonstrate the AzureOpenAIScoreModelGrader usage with real credentials."""
 
@@ -160,7 +200,15 @@ def demonstrate_score_model_grader():
 
         print("✅ Model configuration loaded successfully")
 
-        # 2. Create conversation quality grader
+        # 2. Get Azure AI project configuration (supports both foundry and hub-based projects)
+        azure_ai_project = get_azure_ai_project()
+        if not azure_ai_project:
+            print("❌ No Azure AI project configuration found. Please set either:")
+            print("   - AZURE_AI_PROJECT_ENDPOINT (for foundry-based projects), or")
+            print("   - AZURE_SUBSCRIPTION_ID, AZURE_RESOURCE_GROUP_NAME, AZURE_PROJECT_NAME (for hub-based projects)")
+            return
+
+        # 3. Create conversation quality grader
         conversation_quality_grader = AzureOpenAIScoreModelGrader(
             model_config=model_config,
             name="Conversation Quality Assessment",
@@ -192,16 +240,8 @@ def demonstrate_score_model_grader():
 
         print("✅ Conversation quality grader created successfully")
 
-        # 3. Run evaluation with the score model grader
+        # 4. Run evaluation with the score model grader
         print("\n🚀 Running evaluation with score model grader...")
-
-        # Use Azure AI project configuration for portal tracking
-        azure_ai_project = AzureAIProject(
-            subscription_id=os.environ.get("AZURE_SUBSCRIPTION_ID") or "",
-            resource_group_name=os.environ.get("AZURE_RESOURCE_GROUP_NAME") or "",
-            project_name=os.environ.get("AZURE_PROJECT_NAME") or "",
-        )
-
         result = evaluate(
             data=data_file,
             evaluators={"conversation_quality": conversation_quality_grader},
@@ -215,7 +255,7 @@ def demonstrate_score_model_grader():
             },
         )
 
-        # 4. Display results
+        # 5. Display results
         print("\n=== Evaluation Results ===")
         print(f"Total samples evaluated: {len(result['rows'])}")
 

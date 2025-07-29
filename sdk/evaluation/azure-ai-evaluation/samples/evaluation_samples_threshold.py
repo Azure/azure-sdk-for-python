@@ -61,12 +61,6 @@ class EvaluationThresholdSamples(object):
                     },
                 },
             },
-            tags={
-                "evaluation_type": "threshold_testing",
-                "coherence_threshold": "2",
-                "relevance_threshold": "4",
-                "purpose": "quality_gating",
-            },
         )
 
         # [END threshold_evaluate_method]
@@ -401,10 +395,6 @@ class EvaluationThresholdSamples(object):
 
 
 if __name__ == "__main__":
-    from dotenv import load_dotenv
-
-    load_dotenv()
-
     print("Loading samples in evaluation_samples_threshold.py")
     sample = EvaluationThresholdSamples()
     print("Samples loaded successfully!")

@@ -8,7 +8,7 @@
 
 ### Features Added
 
-- Added support for user-supplied tags in the `evaluate` function. Tags are key-value pairs that can be used for experiment tracking, A/B testing, filtering, and organizing evaluation runs. The function accepts a `tags` parameter (dictionary with up to 50 tags, where each key can have a maximum of 100 characters and each value can have a maximum of 1000 characters). Tags are automatically propagated through the evaluation pipeline and logged to both MLflow and OneDP tracking systems. A default tag `mlflow.user=azure-ai-evaluation` is automatically added unless overridden by user-supplied tags.
+- Added support for user-supplied tags in the `evaluate` function. Tags are key-value pairs that can be used for experiment tracking, A/B testing, filtering, and organizing evaluation runs. The function accepts a `tags` parameter. A default tag `mlflow.user=azure-ai-evaluation` is automatically added unless overridden by user-supplied tags.
 - Added support for Azure OpenAI Python grader via `AzureOpenAIPythonGrader` class, which serves as a wrapper around Azure Open AI Python grader configurations. This new grader object can be supplied to the main `evaluate` method as if it were a normal callable evaluator.
 - Added `attack_success_thresholds` parameter to `RedTeam` class for configuring custom thresholds that determine attack success. This allows users to set specific threshold values for each risk category, with scores greater than the threshold considered successful attacks (i.e. higher threshold means higher 
 tolerance for harmful responses).
