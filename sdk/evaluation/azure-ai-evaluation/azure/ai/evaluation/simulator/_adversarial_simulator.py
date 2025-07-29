@@ -49,8 +49,8 @@ class AdversarialSimulator:
     """
     Initializes the adversarial simulator with a project scope.
 
-    :param azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint 
-        or an instance of AzureAIProject. It contains subscription id, resource group, and project name. 
+    :param azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint
+        or an instance of AzureAIProject. It contains subscription id, resource group, and project name.
     :type azure_ai_project: Union[str, AzureAIProject]
     :param credential: The credential for connecting to Azure AI project.
     :type credential: ~azure.core.credentials.TokenCredential
@@ -77,7 +77,7 @@ class AdversarialSimulator:
                 logger=logging.getLogger("AdversarialSimulator"),
                 credential=self.credential,
             )
-            self.rai_client  = AIProjectClient(endpoint=azure_ai_project, credential=credential)
+            self.rai_client = AIProjectClient(endpoint=azure_ai_project, credential=credential)
         else:
             try:
                 self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
@@ -96,7 +96,7 @@ class AdversarialSimulator:
                 credential=self.credential,
             )
             self.rai_client = RAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager)
-                            
+
         self.adversarial_template_handler = AdversarialTemplateHandler(
             azure_ai_project=self.azure_ai_project, rai_client=self.rai_client
         )
@@ -239,8 +239,11 @@ class AdversarialSimulator:
             # So randomize a the selection instead of the parameter list directly,
             # or a potentially large deep copy.
             if randomization_seed is not None:
-                random.seed(randomization_seed)
-            random.shuffle(templates)
+                # Create a local random instance to avoid polluting global state
+                local_random = random.Random(randomization_seed)
+                local_random.shuffle(templates)
+            else:
+                random.shuffle(templates)
 
         # Prepare task parameters based on scenario - but use a single append call for all scenarios
         tasks = []
@@ -264,7 +267,9 @@ class AdversarialSimulator:
 
         # Limit to max_simulation_results if needed
         if len(template_parameter_pairs) > max_simulation_results:
-            template_parameter_pairs = template_parameter_pairs[:max_simulation_results]        # Create a seeded random instance for jailbreak selection if randomization_seed is provided
+            template_parameter_pairs = template_parameter_pairs[
+                :max_simulation_results
+            ]  # Create a seeded random instance for jailbreak selection if randomization_seed is provided
         jailbreak_random = None
         if _jailbreak_type == "upia" and randomization_seed is not None:
             jailbreak_random = random.Random(randomization_seed)
@@ -364,10 +369,21 @@ class AdversarialSimulator:
             target=target, role=ConversationRole.ASSISTANT, template=template, parameters=parameters, scenario=scenario
         )
         bots = [user_bot, system_bot]
-        
+
+        async def run_simulation(session_obj):
+            async with semaphore:
+                _, conversation_history = await simulate_conversation(
+                    bots=bots,
+                    session=session_obj,
+                    turn_limit=max_conversation_turns,
+                    api_call_delay_sec=api_call_delay_sec,
+                    language=language,
+                )
+            return conversation_history
+
         if isinstance(self.rai_client, AIProjectClient):
             session = self.rai_client
-        else:    
+        else:
             session = get_async_http_client().with_policies(
                 retry_policy=AsyncRetryPolicy(
                     retry_total=api_call_retry_limit,
@@ -375,13 +391,7 @@ class AdversarialSimulator:
                     retry_mode=RetryMode.Fixed,
                 )
             )
-        _, conversation_history = await simulate_conversation(
-            bots=bots,
-            session=session,
-            turn_limit=max_conversation_turns,
-            api_call_delay_sec=api_call_delay_sec,
-            language=language,
-        )
+        conversation_history = await run_simulation(session)
 
         return self._to_chat_protocol(
             conversation_history=conversation_history,
@@ -391,7 +401,11 @@ class AdversarialSimulator:
     def _get_user_proxy_completion_model(
         self, template_key: str, template_parameters: TemplateParameters, simulation_id: str = ""
     ) -> ProxyChatCompletionsModel:
-        endpoint_url = self.rai_client._config.endpoint + "/redTeams/simulation/chat/completions/submit" if isinstance(self.rai_client, AIProjectClient) else self.rai_client.simulation_submit_endpoint    
+        endpoint_url = (
+            self.rai_client._config.endpoint + "/redTeams/simulation/chat/completions/submit"
+            if isinstance(self.rai_client, AIProjectClient)
+            else self.rai_client.simulation_submit_endpoint
+        )
         return ProxyChatCompletionsModel(
             name="raisvc_proxy_model",
             template_key=template_key,

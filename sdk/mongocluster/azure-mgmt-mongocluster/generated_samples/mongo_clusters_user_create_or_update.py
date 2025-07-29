@@ -36,7 +36,7 @@ def main():
         user_name="uuuuuuuu-uuuu-uuuu-uuuu-uuuuuuuuuuuu",
         resource={
             "properties": {
-                "identityProvider": {"properties": {"principalType": "User"}, "type": "MicrosoftEntraID"},
+                "identityProvider": {"properties": {"principalType": "user"}, "type": "MicrosoftEntraID"},
                 "roles": [{"db": "admin", "role": "dbOwner"}],
             }
         },

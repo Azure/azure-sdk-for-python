@@ -22,6 +22,7 @@ def get_enum_value(value):
 
 
 class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Error codes returned by the service."""
 
     # Generic storage values
     ACCOUNT_ALREADY_EXISTS = "AccountAlreadyExists"
@@ -167,6 +168,7 @@ class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SHARING_VIOLATION = "SharingViolation"
     SHARE_SNAPSHOT_IN_PROGRESS = "ShareSnapshotInProgress"
     SHARE_SNAPSHOT_COUNT_EXCEEDED = "ShareSnapshotCountExceeded"
+    SHARE_SNAPSHOT_NOT_FOUND = "ShareSnapshotNotFound"
     SHARE_SNAPSHOT_OPERATION_NOT_SUPPORTED = "ShareSnapshotOperationNotSupported"
     SHARE_HAS_SNAPSHOTS = "ShareHasSnapshots"
     CONTAINER_QUOTA_DOWNGRADE_NOT_ALLOWED = "ContainerQuotaDowngradeNotAllowed"

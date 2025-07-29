@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.servicebus.v2021_11_01 import ServiceBusManagementClient
+from azure.mgmt.servicebus import ServiceBusManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -22,7 +22,7 @@ class TestServiceBusManagementOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_operations_list(self, resource_group):
         response = self.client.operations.list(
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

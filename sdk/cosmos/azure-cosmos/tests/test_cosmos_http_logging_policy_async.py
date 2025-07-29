@@ -17,7 +17,7 @@ from _fault_injection_transport_async import FaultInjectionTransportAsync
 from test_fault_injection_transport_async import TestFaultInjectionTransportAsync
 
 from test_cosmos_http_logging_policy import create_logger, L1, L2, CONFIG, \
-    get_locations_list, FilterStatusCode, MockHandler
+    get_locations_list, FilterStatusCode
 
 try:
     from unittest.mock import Mock
@@ -43,10 +43,10 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
                 "tests.")
 
     async def asyncSetUp(self):
-        self.mock_handler_default = MockHandler()
-        self.mock_handler_diagnostic = MockHandler()
-        self.mock_handler_filtered_diagnostic = MockHandler()
-        self.mock_handler_activity_id = MockHandler()
+        self.mock_handler_default = test_config.MockHandler()
+        self.mock_handler_diagnostic = test_config.MockHandler()
+        self.mock_handler_filtered_diagnostic = test_config.MockHandler()
+        self.mock_handler_activity_id = test_config.MockHandler()
         # Add filter to the filtered diagnostics handler
 
         self.mock_handler_filtered_diagnostic.addFilter(FilterStatusCode())
@@ -212,7 +212,7 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
         multiple_write_locations = True
 
         # Client setup
-        mock_handler = MockHandler()
+        mock_handler = test_config.MockHandler()
         logger = create_logger("test_logger_client_settings", mock_handler)
 
         custom_transport = FaultInjectionTransportAsync()

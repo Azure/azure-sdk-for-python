@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -14,7 +15,8 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-agents azure-identity
+    pip install azure-identity
+    pip install --pre azure-ai-projects
 
     Set this environment variables with your own values:
     1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -26,16 +28,11 @@ USAGE:
 """
 
 import os
-from azure.ai.agents import AgentsClient
+from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import BingCustomSearchTool
 
-
-# Create an Azure AI Client from a connection string, copied from your AI Studio project.
-# At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-# Customer needs to login to Azure subscription via Azure CLI and set the environment variables
-
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
 )
@@ -46,7 +43,9 @@ conn_id = os.environ["BING_CUSTOM_CONNECTION_ID"]
 bing_custom_tool = BingCustomSearchTool(connection_id=conn_id, instance_name="<config_instance_name>")
 
 # Create Agent with the Bing Custom Search tool and process Agent run
-with agents_client:
+with project_client:
+    agents_client = project_client.agents
+
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",

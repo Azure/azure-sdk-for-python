@@ -1,5 +1,5 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -10,10 +10,9 @@
 import datetime
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -133,8 +132,8 @@ class ErrorAdditionalInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None
-        self.info = None
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
 
 
 class ErrorDetail(_serialization.Model):
@@ -173,11 +172,11 @@ class ErrorDetail(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = None
-        self.additional_info = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[List["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -225,8 +224,8 @@ class GrafanaAvailablePlugin(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.plugin_id = None
-        self.name = None
+        self.plugin_id: Optional[str] = None
+        self.name: Optional[str] = None
 
 
 class GrafanaAvailablePluginListResponse(_serialization.Model):
@@ -267,20 +266,54 @@ class GrafanaConfigurations(_serialization.Model):
     :ivar smtp: Email server settings.
      https://grafana.com/docs/grafana/v9.0/setup-grafana/configure-grafana/#smtp.
     :vartype smtp: ~azure.mgmt.dashboard.models.Smtp
+    :ivar snapshots: Grafana Snapshots settings.
+    :vartype snapshots: ~azure.mgmt.dashboard.models.Snapshots
+    :ivar users: Grafana users settings.
+    :vartype users: ~azure.mgmt.dashboard.models.Users
+    :ivar security: Grafana security settings.
+    :vartype security: ~azure.mgmt.dashboard.models.Security
+    :ivar unified_alerting_screenshots: Grafana Unified Alerting Screenshots settings.
+    :vartype unified_alerting_screenshots: ~azure.mgmt.dashboard.models.UnifiedAlertingScreenshots
     """
 
     _attribute_map = {
         "smtp": {"key": "smtp", "type": "Smtp"},
+        "snapshots": {"key": "snapshots", "type": "Snapshots"},
+        "users": {"key": "users", "type": "Users"},
+        "security": {"key": "security", "type": "Security"},
+        "unified_alerting_screenshots": {"key": "unifiedAlertingScreenshots", "type": "UnifiedAlertingScreenshots"},
     }
 
-    def __init__(self, *, smtp: Optional["_models.Smtp"] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        smtp: Optional["_models.Smtp"] = None,
+        snapshots: Optional["_models.Snapshots"] = None,
+        users: Optional["_models.Users"] = None,
+        security: Optional["_models.Security"] = None,
+        unified_alerting_screenshots: Optional["_models.UnifiedAlertingScreenshots"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword smtp: Email server settings.
          https://grafana.com/docs/grafana/v9.0/setup-grafana/configure-grafana/#smtp.
         :paramtype smtp: ~azure.mgmt.dashboard.models.Smtp
+        :keyword snapshots: Grafana Snapshots settings.
+        :paramtype snapshots: ~azure.mgmt.dashboard.models.Snapshots
+        :keyword users: Grafana users settings.
+        :paramtype users: ~azure.mgmt.dashboard.models.Users
+        :keyword security: Grafana security settings.
+        :paramtype security: ~azure.mgmt.dashboard.models.Security
+        :keyword unified_alerting_screenshots: Grafana Unified Alerting Screenshots settings.
+        :paramtype unified_alerting_screenshots:
+         ~azure.mgmt.dashboard.models.UnifiedAlertingScreenshots
         """
         super().__init__(**kwargs)
         self.smtp = smtp
+        self.snapshots = snapshots
+        self.users = users
+        self.security = security
+        self.unified_alerting_screenshots = unified_alerting_screenshots
 
 
 class GrafanaIntegrations(_serialization.Model):
@@ -334,7 +367,416 @@ class GrafanaPlugin(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.plugin_id = None
+        self.plugin_id: Optional[str] = None
+
+
+class Resource(_serialization.Model):
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.dashboard.models.SystemData
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
+
+
+class TrackedResource(Resource):
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.dashboard.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+    }
+
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+        self.location = location
+
+
+class IntegrationFabric(TrackedResource):
+    """The integration fabric resource type.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.dashboard.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties:
+    :vartype properties: ~azure.mgmt.dashboard.models.IntegrationFabricProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "IntegrationFabricProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        properties: Optional["_models.IntegrationFabricProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword properties:
+        :paramtype properties: ~azure.mgmt.dashboard.models.IntegrationFabricProperties
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.properties = properties
+
+
+class IntegrationFabricListResponse(_serialization.Model):
+    """IntegrationFabricListResponse.
+
+    :ivar value:
+    :vartype value: list[~azure.mgmt.dashboard.models.IntegrationFabric]
+    :ivar next_link:
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[IntegrationFabric]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.IntegrationFabric"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.dashboard.models.IntegrationFabric]
+        :keyword next_link:
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class IntegrationFabricProperties(_serialization.Model):
+    """IntegrationFabricProperties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", and
+     "NotSpecified".
+    :vartype provisioning_state: str or ~azure.mgmt.dashboard.models.ProvisioningState
+    :ivar target_resource_id: The resource Id of the Azure resource being integrated with Azure
+     Managed Grafana. E.g., an Azure Kubernetes Service cluster.
+    :vartype target_resource_id: str
+    :ivar data_source_resource_id: The resource Id of the Azure resource which is used to configure
+     Grafana data source. E.g., an Azure Monitor Workspace, an Azure Data Explorer cluster, etc.
+    :vartype data_source_resource_id: str
+    :ivar scenarios: A list of integration scenarios covered by this integration fabric.
+    :vartype scenarios: list[str]
+    """
+
+    _validation = {
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "target_resource_id": {"key": "targetResourceId", "type": "str"},
+        "data_source_resource_id": {"key": "dataSourceResourceId", "type": "str"},
+        "scenarios": {"key": "scenarios", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        target_resource_id: Optional[str] = None,
+        data_source_resource_id: Optional[str] = None,
+        scenarios: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword target_resource_id: The resource Id of the Azure resource being integrated with Azure
+         Managed Grafana. E.g., an Azure Kubernetes Service cluster.
+        :paramtype target_resource_id: str
+        :keyword data_source_resource_id: The resource Id of the Azure resource which is used to
+         configure Grafana data source. E.g., an Azure Monitor Workspace, an Azure Data Explorer
+         cluster, etc.
+        :paramtype data_source_resource_id: str
+        :keyword scenarios: A list of integration scenarios covered by this integration fabric.
+        :paramtype scenarios: list[str]
+        """
+        super().__init__(**kwargs)
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.target_resource_id = target_resource_id
+        self.data_source_resource_id = data_source_resource_id
+        self.scenarios = scenarios
+
+
+class IntegrationFabricPropertiesUpdateParameters(_serialization.Model):  # pylint: disable=name-too-long
+    """IntegrationFabricPropertiesUpdateParameters.
+
+    :ivar scenarios: The new integration scenarios covered by this integration fabric.
+    :vartype scenarios: list[str]
+    """
+
+    _attribute_map = {
+        "scenarios": {"key": "scenarios", "type": "[str]"},
+    }
+
+    def __init__(self, *, scenarios: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword scenarios: The new integration scenarios covered by this integration fabric.
+        :paramtype scenarios: list[str]
+        """
+        super().__init__(**kwargs)
+        self.scenarios = scenarios
+
+
+class IntegrationFabricUpdateParameters(_serialization.Model):
+    """The parameters for a PATCH request to a Integration Fabric resource.
+
+    :ivar tags: The new tags of the Integration Fabric resource.
+    :vartype tags: dict[str, str]
+    :ivar properties: The new properties of this Integration Fabric resource.
+    :vartype properties: ~azure.mgmt.dashboard.models.IntegrationFabricPropertiesUpdateParameters
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+        "properties": {"key": "properties", "type": "IntegrationFabricPropertiesUpdateParameters"},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        properties: Optional["_models.IntegrationFabricPropertiesUpdateParameters"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: The new tags of the Integration Fabric resource.
+        :paramtype tags: dict[str, str]
+        :keyword properties: The new properties of this Integration Fabric resource.
+        :paramtype properties: ~azure.mgmt.dashboard.models.IntegrationFabricPropertiesUpdateParameters
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+        self.properties = properties
+
+
+class ManagedDashboard(TrackedResource):
+    """The managed dashboard resource type.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.dashboard.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", and
+     "NotSpecified".
+    :vartype provisioning_state: str or ~azure.mgmt.dashboard.models.ProvisioningState
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+    }
+
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+
+
+class ManagedDashboardListResponse(_serialization.Model):
+    """ManagedDashboardListResponse.
+
+    :ivar value:
+    :vartype value: list[~azure.mgmt.dashboard.models.ManagedDashboard]
+    :ivar next_link:
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ManagedDashboard]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.ManagedDashboard"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.dashboard.models.ManagedDashboard]
+        :keyword next_link:
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class ManagedDashboardUpdateParameters(_serialization.Model):
+    """The parameters for a PATCH request to a managed dashboard resource.
+
+    :ivar tags: The new tags of the managed dashboard resource.
+    :vartype tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tags: The new tags of the managed dashboard resource.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
 
 
 class ManagedGrafana(_serialization.Model):
@@ -404,13 +846,13 @@ class ManagedGrafana(_serialization.Model):
         :paramtype location: str
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.sku = sku
         self.properties = properties
         self.identity = identity
-        self.system_data = None
+        self.system_data: Optional["_models.SystemData"] = None
         self.tags = tags
         self.location = location
 
@@ -443,7 +885,7 @@ class ManagedGrafanaListResponse(_serialization.Model):
         self.next_link = next_link
 
 
-class ManagedGrafanaProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ManagedGrafanaProperties(_serialization.Model):
     """Properties specific to the grafana resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -568,15 +1010,15 @@ class ManagedGrafanaProperties(_serialization.Model):  # pylint: disable=too-man
         :paramtype grafana_major_version: str
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
-        self.grafana_version = None
-        self.endpoint = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.grafana_version: Optional[str] = None
+        self.endpoint: Optional[str] = None
         self.public_network_access = public_network_access
         self.zone_redundancy = zone_redundancy
         self.api_key = api_key
         self.deterministic_outbound_ip = deterministic_outbound_ip
-        self.outbound_i_ps = None
-        self.private_endpoint_connections = None
+        self.outbound_i_ps: Optional[List[str]] = None
+        self.private_endpoint_connections: Optional[List["_models.PrivateEndpointConnection"]] = None
         self.auto_generated_domain_name_label_scope = auto_generated_domain_name_label_scope
         self.grafana_integrations = grafana_integrations
         self.enterprise_configurations = enterprise_configurations
@@ -754,111 +1196,16 @@ class ManagedPrivateEndpointConnectionState(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.status = None
-        self.description = None
+        self.status: Optional[Union[str, "_models.ManagedPrivateEndpointConnectionStatus"]] = None
+        self.description: Optional[str] = None
 
 
-class Resource(_serialization.Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.dashboard.models.SystemData
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
-
-
-class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which
-    has 'tags' and a 'location'.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.dashboard.models.SystemData
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "location": {"required": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "location": {"key": "location", "type": "str"},
-    }
-
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword location: The geo-location where the resource lives. Required.
-        :paramtype location: str
-        """
-        super().__init__(**kwargs)
-        self.tags = tags
-        self.location = location
-
-
-class ManagedPrivateEndpointModel(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class ManagedPrivateEndpointModel(TrackedResource):
     """The managed private endpoint resource type.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -960,14 +1307,14 @@ class ManagedPrivateEndpointModel(TrackedResource):  # pylint: disable=too-many-
         :paramtype private_link_service_url: str
         """
         super().__init__(tags=tags, location=location, **kwargs)
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.private_link_resource_id = private_link_resource_id
         self.private_link_resource_region = private_link_resource_region
         self.group_ids = group_ids
         self.request_message = request_message
-        self.connection_state = None
+        self.connection_state: Optional["_models.ManagedPrivateEndpointConnectionState"] = None
         self.private_link_service_url = private_link_service_url
-        self.private_link_service_private_ip = None
+        self.private_link_service_private_ip: Optional[str] = None
 
 
 class ManagedPrivateEndpointModelListResponse(_serialization.Model):
@@ -1027,7 +1374,7 @@ class ManagedServiceIdentity(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
      will only be provided for a system assigned identity.
@@ -1079,8 +1426,8 @@ class ManagedServiceIdentity(_serialization.Model):
          ~azure.mgmt.dashboard.models.UserAssignedIdentity]
         """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
 
@@ -1176,11 +1523,11 @@ class Operation(_serialization.Model):
         :paramtype display: ~azure.mgmt.dashboard.models.OperationDisplay
         """
         super().__init__(**kwargs)
-        self.name = None
-        self.is_data_action = None
+        self.name: Optional[str] = None
+        self.is_data_action: Optional[bool] = None
         self.display = display
-        self.origin = None
-        self.action_type = None
+        self.origin: Optional[Union[str, "_models.Origin"]] = None
+        self.action_type: Optional[Union[str, "_models.ActionType"]] = None
 
 
 class OperationDisplay(_serialization.Model):
@@ -1219,10 +1566,10 @@ class OperationDisplay(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.provider = None
-        self.resource = None
-        self.operation = None
-        self.description = None
+        self.provider: Optional[str] = None
+        self.resource: Optional[str] = None
+        self.operation: Optional[str] = None
+        self.description: Optional[str] = None
 
 
 class OperationListResult(_serialization.Model):
@@ -1250,8 +1597,8 @@ class OperationListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[List["_models.Operation"]] = None
+        self.next_link: Optional[str] = None
 
 
 class PrivateEndpoint(_serialization.Model):
@@ -1274,7 +1621,7 @@ class PrivateEndpoint(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
+        self.id: Optional[str] = None
 
 
 class PrivateEndpointConnection(Resource):
@@ -1351,7 +1698,7 @@ class PrivateEndpointConnection(Resource):
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
         self.group_ids = group_ids
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.PrivateEndpointConnectionProvisioningState"]] = None
 
 
 class PrivateEndpointConnectionListResult(_serialization.Model):
@@ -1381,7 +1728,7 @@ class PrivateEndpointConnectionListResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class PrivateLinkResource(Resource):
@@ -1439,9 +1786,9 @@ class PrivateLinkResource(Resource):
         :paramtype required_zone_names: list[str]
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
-        self.group_id = None
-        self.required_members = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.group_id: Optional[str] = None
+        self.required_members: Optional[List[str]] = None
         self.required_zone_names = required_zone_names
 
 
@@ -1472,7 +1819,7 @@ class PrivateLinkResourceListResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class PrivateLinkServiceConnectionState(_serialization.Model):
@@ -1522,7 +1869,7 @@ class PrivateLinkServiceConnectionState(_serialization.Model):
 class ResourceSku(_serialization.Model):
     """ResourceSku.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Required.
     :vartype name: str
@@ -1589,6 +1936,28 @@ class SaasSubscriptionDetails(_serialization.Model):
         self.offer_id = offer_id
         self.publisher_id = publisher_id
         self.term = term
+
+
+class Security(_serialization.Model):
+    """Grafana security settings.
+
+    :ivar csrf_always_check: Set to true to execute the CSRF check even if the login cookie is not
+     in a request (default false).
+    :vartype csrf_always_check: bool
+    """
+
+    _attribute_map = {
+        "csrf_always_check": {"key": "csrfAlwaysCheck", "type": "bool"},
+    }
+
+    def __init__(self, *, csrf_always_check: Optional[bool] = None, **kwargs: Any) -> None:
+        """
+        :keyword csrf_always_check: Set to true to execute the CSRF check even if the login cookie is
+         not in a request (default false).
+        :paramtype csrf_always_check: bool
+        """
+        super().__init__(**kwargs)
+        self.csrf_always_check = csrf_always_check
 
 
 class Smtp(_serialization.Model):
@@ -1678,6 +2047,26 @@ class Smtp(_serialization.Model):
         self.from_name = from_name
         self.start_tls_policy = start_tls_policy
         self.skip_verify = skip_verify
+
+
+class Snapshots(_serialization.Model):
+    """Grafana Snapshots settings.
+
+    :ivar external_enabled: Set to false to disable external snapshot publish endpoint.
+    :vartype external_enabled: bool
+    """
+
+    _attribute_map = {
+        "external_enabled": {"key": "externalEnabled", "type": "bool"},
+    }
+
+    def __init__(self, *, external_enabled: Optional[bool] = None, **kwargs: Any) -> None:
+        """
+        :keyword external_enabled: Set to false to disable external snapshot publish endpoint.
+        :paramtype external_enabled: bool
+        """
+        super().__init__(**kwargs)
+        self.external_enabled = external_enabled
 
 
 class SubscriptionTerm(_serialization.Model):
@@ -1783,6 +2172,28 @@ class SystemData(_serialization.Model):
         self.last_modified_at = last_modified_at
 
 
+class UnifiedAlertingScreenshots(_serialization.Model):
+    """Grafana Unified Alerting Screenshots settings.
+
+    :ivar capture_enabled: Set to false to disable capture screenshot in Unified Alert due to
+     performance issue.
+    :vartype capture_enabled: bool
+    """
+
+    _attribute_map = {
+        "capture_enabled": {"key": "captureEnabled", "type": "bool"},
+    }
+
+    def __init__(self, *, capture_enabled: Optional[bool] = None, **kwargs: Any) -> None:
+        """
+        :keyword capture_enabled: Set to false to disable capture screenshot in Unified Alert due to
+         performance issue.
+        :paramtype capture_enabled: bool
+        """
+        super().__init__(**kwargs)
+        self.capture_enabled = capture_enabled
+
+
 class UserAssignedIdentity(_serialization.Model):
     """User assigned identity properties.
 
@@ -1807,5 +2218,37 @@ class UserAssignedIdentity(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
+        self.principal_id: Optional[str] = None
+        self.client_id: Optional[str] = None
+
+
+class Users(_serialization.Model):
+    """Grafana users settings.
+
+    :ivar viewers_can_edit: Set to true so viewers can access and use explore and perform temporary
+     edits on panels in dashboards they have access to. They cannot save their changes.
+    :vartype viewers_can_edit: bool
+    :ivar editors_can_admin: Set to true so editors can administrate dashboards, folders and teams
+     they create.
+    :vartype editors_can_admin: bool
+    """
+
+    _attribute_map = {
+        "viewers_can_edit": {"key": "viewersCanEdit", "type": "bool"},
+        "editors_can_admin": {"key": "editorsCanAdmin", "type": "bool"},
+    }
+
+    def __init__(
+        self, *, viewers_can_edit: Optional[bool] = None, editors_can_admin: Optional[bool] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword viewers_can_edit: Set to true so viewers can access and use explore and perform
+         temporary edits on panels in dashboards they have access to. They cannot save their changes.
+        :paramtype viewers_can_edit: bool
+        :keyword editors_can_admin: Set to true so editors can administrate dashboards, folders and
+         teams they create.
+        :paramtype editors_can_admin: bool
+        """
+        super().__init__(**kwargs)
+        self.viewers_can_edit = viewers_can_edit
+        self.editors_can_admin = editors_can_admin

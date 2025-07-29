@@ -14,11 +14,11 @@ from azure.cosmos import _partition_health_tracker, documents
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.http_constants import ResourceType
-from test_per_partition_circuit_breaker_mm_async import (create_doc, PK_VALUE, create_errors,
-                                                         DELETE_ALL_ITEMS_BY_PARTITION_KEY,
-                                                         validate_unhealthy_partitions as validate_unhealthy_partitions_mm,
-                                                         perform_write_operation, cleanup_method)
-from test_per_partition_circuit_breaker_sm_mrr_async import validate_unhealthy_partitions as validate_unhealthy_partitions_sm_mrr
+from test_per_partition_circuit_breaker_mm_async import (perform_write_operation, cleanup_method)
+from test_per_partition_circuit_breaker_mm import create_doc, DELETE_ALL_ITEMS_BY_PARTITION_KEY, PK_VALUE, \
+    create_errors, validate_unhealthy_partitions as validate_unhealthy_partitions_mm
+from test_per_partition_circuit_breaker_sm_mrr import \
+    validate_unhealthy_partitions as validate_unhealthy_partitions_sm_mrr
 from _fault_injection_transport_async import FaultInjectionTransportAsync
 
 COLLECTION = "created_collection"
@@ -163,8 +163,8 @@ class TestCircuitBreakerEmulatorAsync:
 
         validate_unhealthy_partitions_mm(global_endpoint_manager, 1)
         # remove faults and reduce initial recover time and perform a write
-        original_unavailable_time = _partition_health_tracker.INITIAL_UNAVAILABLE_TIME
-        _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = 1
+        original_unavailable_time = _partition_health_tracker.INITIAL_UNAVAILABLE_TIME_MS
+        _partition_health_tracker.INITIAL_UNAVAILABLE_TIME_MS = 1
         custom_transport.faults = []
         try:
             await perform_write_operation(DELETE_ALL_ITEMS_BY_PARTITION_KEY,
@@ -174,7 +174,7 @@ class TestCircuitBreakerEmulatorAsync:
                                     PK_VALUE,
                                     uri_down)
         finally:
-            _partition_health_tracker.INITIAL_UNAVAILABLE_TIME = original_unavailable_time
+            _partition_health_tracker.INITIAL_UNAVAILABLE_TIME_MS = original_unavailable_time
         validate_unhealthy_partitions_mm(global_endpoint_manager, 0)
         await cleanup_method([custom_setup, setup])
 

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -30,13 +31,11 @@ def main():
         subscription_id="187f412d-1758-44d9-b052-169e2564721d",
     )
 
-    response = client.action_groups.list_by_resource_group(
-        resource_group_name="Default-NotificationRules",
-    )
+    response = client.action_groups.list_by_subscription_id()
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/stable/2022-06-01/examples/listActionGroups.json
+# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/stable/2023-01-01/examples/listActionGroups.json
 if __name__ == "__main__":
     main()

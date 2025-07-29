@@ -1,0 +1,117 @@
+# This template is used to build and publish python SDK tools to DevOps feed.
+# This release stage MUST NOT be used for sdk packages, and should not be relied upon by any language team members (dataplane / mgmt both)
+# This template supports only tool package that uses pyproject.toml to build the package.
+parameters:
+- name: PythonVersion
+  type: string
+  default: '3.13'
+- name: PackagePath
+  type: string
+  default: ''
+- name: FeedName
+  type: string
+  default: ''
+- name: ArtifactName
+  type: string
+  default: ''
+- name: PackageName
+  type: string
+  default: ''
+- name: TestSteps
+  type: object
+  default: []
+
+extends:
+  template: /eng/pipelines/templates/stages/1es-redirect.yml
+  parameters:
+    stages:
+      - stage: 'Build'
+        variables:
+          - template: /eng/pipelines/templates/variables/globals.yml
+          - template: /eng/pipelines/templates/variables/image.yml
+        jobs:
+          - job: 'Build'
+
+            pool:
+              name: $(LINUXPOOL)
+              image: $(LINUXNEXTVMIMAGE)
+              os: linux
+
+            steps:
+              - template: /eng/pipelines/templates/steps/use-python-version.yml
+                parameters:
+                  versionSpec: '${{ parameters.PythonVersion }}'
+
+              - pwsh: |
+                  python -m pip install -r eng/ci_tools.txt
+                displayName: 'Install Python Tools'
+                condition: succeededOrFailed()
+
+              - pwsh: |
+                  Write-Host "Building python tool artifacts using pyproject.toml"
+                  python -m build  --outdir $(Build.ArtifactStagingDirectory)
+                displayName: 'Build ${{ parameters.PackageName }}'
+                workingDirectory: $(Build.SourcesDirectory)/${{ parameters.PackagePath }}
+
+              - task: 1ES.PublishPipelineArtifact@1
+                inputs:
+                  targetPath: '$(Build.ArtifactStagingDirectory)'
+                  artifactName: ${{ parameters.ArtifactName }}
+
+          - ${{ if not(eq(length(parameters.TestSteps), 0)) }}:
+            - job: 'Test'
+
+              dependsOn:
+                - 'Build'
+
+              pool:
+                name: $(LINUXPOOL)
+                image: $(LINUXNEXTVMIMAGE)
+                os: linux
+
+              steps:
+                - template: /eng/pipelines/templates/steps/use-python-version.yml
+                  parameters:
+                    versionSpec: '${{ parameters.PythonVersion }}'
+
+                - ${{ parameters.TestSteps }}
+
+      - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
+        - stage: 'Release'
+          dependsOn: Build
+          condition: Succeeded()
+          variables:
+            - template: /eng/pipelines/templates/variables/globals.yml
+            - template: /eng/pipelines/templates/variables/image.yml
+          jobs:
+          - job: PublishPackage
+            displayName: 'Publish ${{ parameters.PackageName }} package to devops feed'
+            pool:
+              name: $(LINUXPOOL)
+              image: $(LINUXNEXTVMIMAGE)
+              os: linux
+            steps:
+            - checkout: none
+            - download: current
+            - task: UsePythonVersion@0
+
+            - script: |
+                set -e
+                python -m pip install twine
+              displayName: Install Twine
+
+            - task: TwineAuthenticate@0
+              displayName: 'Twine Authenticate to feed'
+              inputs:
+                artifactFeeds: ${{ parameters.FeedName }}
+
+            - task: PipAuthenticate@1
+              displayName: 'Pip Authenticate to feed'
+              inputs:
+                artifactFeeds: ${{ parameters.FeedName }}
+                onlyAddExtraIndex: false
+
+            - pwsh: |
+                twine upload --repository ${{ parameters.FeedName }} --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{ parameters.ArtifactName }}/*.whl
+                echo "Uploaded whl to devops feed ${{ parameters.FeedName }}"
+              displayName: 'Publish ${{ parameters.PackageName }} to DevOps feed'

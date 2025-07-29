@@ -129,13 +129,13 @@ resource blobContainer 'Microsoft.Storage/storageAccounts/blobServices/container
 
 resource managedIdentityRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (enableHsm) {
   name: guid(resourceGroup().id, 'StorageBlobContributor', managedIdentityId)
+  scope: resourceGroup()
   properties: {
     roleDefinitionId: subscriptionResourceId(
       'Microsoft.Authorization/roleDefinitions',
       'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
     )
     principalId: managedIdentity.properties.principalId
-    scope: resourceGroup().id
     principalType: 'ServicePrincipal'
   }
 }
@@ -178,4 +178,5 @@ output CLIENT_OBJECTID string = testApplicationOid
 output BLOB_STORAGE_URL string = storageAccount.properties.primaryEndpoints.blob
 output BLOB_CONTAINER_NAME string = blobContainerName
 output AZURE_KEYVAULT_ATTESTATION_URL string = 'https://${webApp.properties.defaultHostName}/'
-output MANAGED_IDENTITY_CLIENT_ID string = managedIdentityId
+output MANAGED_IDENTITY_RESOURCE_ID string = (enableHsm) ? managedIdentityId : ''
+output MANAGED_IDENTITY_CLIENT_ID string = (enableHsm) ? managedIdentity.properties.clientId: ''

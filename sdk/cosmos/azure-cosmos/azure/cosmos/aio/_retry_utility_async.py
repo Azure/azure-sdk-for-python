@@ -136,16 +136,20 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                     and request.method == 'POST':
                 # Grab the link used for getting throughput properties to add to message.
                 link = json.loads(request.body)["parameters"][0]["value"]
+                response = exceptions.InternalException(status_code=StatusCodes.NOT_FOUND,
+                                                        headers={HttpHeaders.SubStatus:
+                                                                     SubStatusCodes.THROUGHPUT_OFFER_NOT_FOUND})
                 e_offer = exceptions.CosmosResourceNotFoundError(
                     status_code=StatusCodes.NOT_FOUND,
                     message="Could not find ThroughputProperties for container " + link,
-                    sub_status_code=SubStatusCodes.THROUGHPUT_OFFER_NOT_FOUND)
+                    response=response)
+
                 response_headers = result[1] if len(result) > 1 else {}
                 logger_attributes = {
                     "duration": time.time() - start_time,
                     "verb": request.method,
                     "status_code": e_offer.status_code,
-                    "sub_status_code": e_offer.sub_status_code,
+                    "sub_status_code": e_offer.sub_status,
                 }
                 _log_diagnostics_error(client._enable_diagnostics_logging, request, response_headers, e_offer,
                                        logger_attributes, global_endpoint_manager, logger=logger)
@@ -153,6 +157,9 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
 
             return result
         except exceptions.CosmosHttpResponseError as e:
+            if request:
+                # update session token for relevant operations
+                client._UpdateSessionIfRequired(request.headers, {}, e.headers)
             if request and _has_database_account_header(request.headers):
                 retry_policy = database_account_retry_policy
             elif e.status_code == StatusCodes.FORBIDDEN and e.sub_status in \

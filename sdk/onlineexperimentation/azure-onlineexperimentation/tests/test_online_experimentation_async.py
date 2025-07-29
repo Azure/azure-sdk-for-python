@@ -190,14 +190,14 @@ class TestOnlineExperimentationAsync(OnlineExperimentationClientTestBaseAsync):
             experiment_metric_id=original_metric.id,
             resource=updated_metric,
             match_condition=MatchConditions.IfNotModified,
-            etag=original_metric.e_tag,
+            etag=original_metric.etag,
         )
 
         # Assert
         assert response is not None
         assert response.id == original_metric.id
         assert response.description == updated_metric.description
-        assert response.e_tag != original_metric.e_tag
+        assert response.etag != original_metric.etag
 
     @OnlineExperimentationPreparer()
     @recorded_by_proxy_async
@@ -257,7 +257,7 @@ class TestOnlineExperimentationAsync(OnlineExperimentationClientTestBaseAsync):
         # Assert
         assert response is not None
         assert response.id == created_metric.id
-        assert hasattr(response, "e_tag") and response.e_tag is not None
+        assert hasattr(response, "etag") and response.etag is not None
 
     @OnlineExperimentationPreparer()
     @recorded_by_proxy_async
@@ -353,7 +353,7 @@ class TestOnlineExperimentationAsync(OnlineExperimentationClientTestBaseAsync):
         delete_response = await client.delete_metric(
             experiment_metric_id=created_metric.id,
             match_condition=MatchConditions.IfNotModified,
-            etag=created_metric.e_tag,
+            etag=created_metric.etag,
         )
 
         # Verify deletion

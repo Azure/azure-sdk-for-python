@@ -10,7 +10,7 @@ import json
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_client, get_http_client
 from azure.ai.evaluation._model_configurations import AzureAIProject
-from azure.ai.evaluation._user_agent import USER_AGENT
+from azure.ai.evaluation._user_agent import UserAgentSingleton
 from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
 
 from ._identity_manager import APITokenManager
@@ -148,7 +148,7 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
         headers = {
             "Authorization": f"Bearer {token}",
             "Content-Type": "application/json",
-            "User-Agent": USER_AGENT,
+            "User-Agent": UserAgentSingleton().value,
         }
 
         session = self._create_async_client()
@@ -184,7 +184,7 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
         headers = {
             "Authorization": f"Bearer {token}",
             "Content-Type": "application/json",
-            "User-Agent": USER_AGENT,
+            "User-Agent": UserAgentSingleton().value,
         }
 
         session = self._create_async_client()
@@ -209,9 +209,11 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
             blame=ErrorBlame.USER_ERROR,
         )
 
-    async def get_attack_objectives(self, risk_categories: List[str], application_scenario: str = None, strategy: str = None) -> Any:
+    async def get_attack_objectives(
+        self, risk_categories: List[str], application_scenario: str = None, strategy: str = None
+    ) -> Any:
         """Get the attack objectives based on risk categories and application scenario
-        
+
         :param risk_categories: List of risk categories to generate attack objectives for
         :type risk_categories: List[str]
         :param application_scenario: Optional description of the application scenario for context
@@ -224,17 +226,17 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
         # Create query parameters for the request
         if application_scenario:
             raise NotImplementedError("Application scenario is not supported yet")
-        
+
         params = {
             "api-version": "2022-11-01-preview",
             "riskTypes": ",".join(risk_categories),
-            "lang": "en"  # Default to English
+            "lang": "en",  # Default to English
         }
-        
+
         # Add strategy parameter if provided
         if strategy:
             params["strategy"] = strategy
-            
+
         try:
             # Make the request using the existing get method
             result = await self.get(self.attack_objectives_endpoint)
@@ -254,25 +256,11 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
         except Exception:
             # If the API fails or isn't implemented yet, return a mock response
             # This is temporary until the API endpoint is fully implemented
-            return [{
-                "metadata": {
-                    "lang": "en",
-                    "target_harms": [
-                        {
-                            "risk-type": "violence",
-                            "risk-subtype": ""
-                        }
-                    ]
-                },
-                "messages": [
-                    {
-                        "role": "user",
-                        "content": "Risky content"
-                    }
-                ],
-                "modality": "text",
-                "source": [
-                    "source"
-                ]
-            }]
- 
+            return [
+                {
+                    "metadata": {"lang": "en", "target_harms": [{"risk-type": "violence", "risk-subtype": ""}]},
+                    "messages": [{"role": "user", "content": "Risky content"}],
+                    "modality": "text",
+                    "source": ["source"],
+                }
+            ]

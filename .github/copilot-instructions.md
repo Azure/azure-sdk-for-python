@@ -73,9 +73,9 @@ curl -s "https://api.github.com/repos/Azure/azure-rest-api-specs/commits?path=<p
 ## EXECUTION SEQUENCE - 7 MANDATORY STEPS
 
 **ESTIMATED TOTAL TIME: 10-15 minutes**
-- SDK Generation: 5-6 minutes
-- Static Validation: 3-5 minutes  
-- Documentation & Commit: 2-4 minutes
+- SDK Generation: ~2 minutes
+- Static Validation: ~3-5 minutes
+- Documentation & Commit: ~2-4 minutes
 
 **ALWAYS inform users of time expectations before starting any long-running operations.**
 
@@ -89,10 +89,7 @@ IF missing dependencies:
 
 ### STEP 2: SDK GENERATION
 ```
-ACTION: Use azure-sdk-python-mcp sdk generation server tools (init, init_local)
-TIMING: ALWAYS inform user before starting: "This SDK generation step will take approximately 5-6 minutes to complete."
-IF local path provided:
-    USE local mcp tools with tspconfig.yaml path
+ACTION: Use azure-sdk-python-mcp sdk generation server tools (init for new packages, update for existing packages)
 IF commands fail:
     ANALYZE error messages
     DIRECT user to fix TypeSpec errors in source repo
@@ -100,7 +97,6 @@ IF commands fail:
 
 ### STEP 3: STATIC VALIDATION (SEQUENTIAL)
 ```
-TIMING: Inform user: "Static validation will take approximately 3-5 minutes for each step."
 FOR EACH validation step:
     RUN validation (tox mcp tool)
     IF errors/warnings found:
@@ -122,6 +118,24 @@ tox -e pyright -c [path to tox.ini] --root .
 
 # Step 3d: Verifytypes
 tox -e verifytypes -c [path to tox.ini] --root .
+
+# Step 3e: Sphinx
+tox -e sphinx -c [path to tox.ini] --root .
+
+# Step 3f: Mindependency
+tox -e mindependency -c [path to tox.ini] --root .
+
+# Step 3g: Bandit
+tox -e bandit -c [path to tox.ini] --root .
+
+# Step 3h: Black
+tox -e black -c [path to tox.ini] --root .
+
+# Step 3i: Samples
+tox -e samples -c [path to tox.ini] --root .
+
+# Step 3j: Breaking
+tox -e breaking -c [path to tox.ini] --root .
 ```
 
 **REQUIREMENTS:**
@@ -224,3 +238,63 @@ tox -e pylint --c <path_to_tox.ini> --root .
 - Use Python 3.9 compatible environment
 - Follow official fixing guidelines
 - Use tox mcp tool for running MyPy
+
+---
+
+## Python SDK Health tool
+
+- Use the azure-sdk-python-mcp mcp tool to lookup a library's health status.
+- Always include the date of last update based on the Last Refresh date.
+- Explanation of statuses can be found here: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/repo_health_status.md
+- Release blocking checks are MyPy, Pylint, Sphinx, and Tests - CI. These checks should all PASS. If not PASS, mention that the library is blocked for release.
+- If links are available in the table, make the statuses (e.g. PASS, WARNING, etc) you report linked. Avoid telling the user to check the links in the report themselves.
+- Don't share information like SDK Owned
+
+### Example
+
+As of <Last Refresh date>, here is the health status for azure-ai-projects:
+
+Overall Status: ⚠️ NEEDS_ACTION
+
+✅ Passing Checks:
+
+Pyright: PASS
+Sphinx: PASS
+Type Checked Samples: ENABLED
+SLA Questions and Bugs: 0
+
+⚠️ Areas Needing Attention:
+
+Pylint: WARNING
+Tests - Live: ❓ UNKNOWN
+Tests - Samples: ❌ DISABLED
+Customer-reported issues: 🔴 5 open issues
+
+❌ Release blocking
+
+Mypy: FAIL
+Tests - CI: FAIL
+
+This library is failing two release blocking checks - Mypy and Tests - CI. The library needs attention primarily due to Pylint warnings, disabled sample tests, and open customer-reported issues.
+
+---
+
+## SDK release
+
+There are two tools to help with SDK releases:
+- Check SDK release readiness
+- Release SDK
+
+### Check SDK Release Readiness
+Run `CheckPackageReleaseReadiness` to verify if the package is ready for release. This tool checks:
+- API review status
+- Change log status
+- Package name approval(If package is new and releasing a preview version)
+- Release date is set in release tracker
+
+### Release SDK
+Run `ReleasePackage` to release the package. This tool requires package name and language as inputs. It will:
+- Check if the package is ready for release
+- Identify the release pipeline
+- Trigger the release pipeline.
+User needs to approve the release stage in the pipeline after it is triggered.

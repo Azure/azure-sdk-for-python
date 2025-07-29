@@ -23,7 +23,7 @@
 from io import BytesIO
 import binascii
 import struct
-from typing import IO, Sequence, Type, Union, overload, List, cast
+from typing import Any, Dict, IO, List, Sequence, Type, Union, cast, overload
 from typing_extensions import Literal
 
 from ._cosmos_integers import _UInt32, _UInt64, _UInt128
@@ -68,6 +68,13 @@ class _PartitionKeyComponentType:
     Float = 0x14
     Infinity = 0xFF
 
+class _PartitionKeyKind:
+    HASH: str = "Hash"
+    MULTI_HASH: str = "MultiHash"
+
+class _PartitionKeyVersion:
+    V1: int = 1
+    V2: int = 2
 
 class NonePartitionKeyValue:
     """Represents None value for partitionKey when it's missing in a container.
@@ -89,6 +96,9 @@ class _Undefined:
 class _Infinity:
     """Represents infinity value for partitionKey."""
 
+_SingularPartitionKeyType = Union[None, bool, float, int, str, Type[NonePartitionKeyValue], _Empty, _Undefined]
+_SequentialPartitionKeyType = Sequence[_SingularPartitionKeyType]
+_PartitionKeyType = Union[_SingularPartitionKeyType, _SequentialPartitionKeyType]
 
 class PartitionKey(dict):
     """Key used to partition a container into logical partitions.
@@ -96,23 +106,50 @@ class PartitionKey(dict):
     See https://learn.microsoft.com/azure/cosmos-db/partitioning-overview#choose-partitionkey
     for information on how to choose partition keys.
 
-    :ivar str path: The path of the partition key
-    :ivar str kind: What kind of partition key is being defined (default: "Hash")
-    :ivar int version: The version of the partition key (default: 2)
+    This constructor supports multiple overloads:
+
+    1. **Single Partition Key**:
+
+       **Parameters**:
+        - `path` (str): The path of the partition key.
+        - `kind` (Literal["Hash"], optional): The kind of partition key. Defaults to "Hash".
+        - `version` (int, optional): The version of the partition key. Defaults to 2.
+
+       **Example**:
+         >>> pk = PartitionKey(path="/id")
+
+    2. **Hierarchical Partition Key**:
+
+       **Parameters**:
+        - `path` (List[str]): A list of paths representing the partition key, supports up to three hierarchical levels.
+        - `kind` (Literal["MultiHash"], optional): The kind of partition key. Defaults to "MultiHash".
+        - `version` (int, optional): The version of the partition key. Defaults to 2.
+
+       **Example**:
+         >>> pk = PartitionKey(path=["/id", "/category"], kind="MultiHash")
+
+    :ivar str path: The path(s) of the partition key.
+    :ivar str kind: The kind of partition key ("Hash" or "MultiHash") (default: "Hash").
+    :ivar int version: The version of the partition key (default: 2).
     """
 
     @overload
-    def __init__(self, path: List[str], *, kind: Literal["MultiHash"] = "MultiHash", version: int = 2) -> None:
+    def __init__(self, path: List[str], *, kind: Literal["MultiHash"] = "MultiHash",
+                 version: int = _PartitionKeyVersion.V2
+    ) -> None:
         ...
 
     @overload
-    def __init__(self, path: str, *, kind: Literal["Hash"] = "Hash", version: int = 2) -> None:
+    def __init__(self, path: str, *, kind: Literal["Hash"] = "Hash",
+                 version:int = _PartitionKeyVersion.V2
+    ) -> None:
         ...
 
     def __init__(self, *args, **kwargs):
         path = args[0] if args else kwargs['path']
-        kind = args[1] if len(args) > 1 else kwargs.get('kind', 'Hash' if isinstance(path, str) else 'MultiHash')
-        version = args[2] if len(args) > 2 else kwargs.get('version', 2)
+        kind = args[1] if len(args) > 1 else kwargs.get('kind', _PartitionKeyKind.HASH if isinstance(path, str)
+        else _PartitionKeyKind.MULTI_HASH)
+        version = args[2] if len(args) > 2 else kwargs.get('version', _PartitionKeyVersion.V2)
         super().__init__(paths=[path] if isinstance(path, str) else path, kind=kind, version=version)
 
     def __repr__(self) -> str:
@@ -128,7 +165,7 @@ class PartitionKey(dict):
 
     @property
     def path(self) -> str:
-        if self.kind == "MultiHash":
+        if self.kind == _PartitionKeyKind.MULTI_HASH:
             return ''.join(self["paths"])
         return self["paths"][0]
 
@@ -149,9 +186,9 @@ class PartitionKey(dict):
 
     def _get_epk_range_for_prefix_partition_key(
         self,
-        pk_value: Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]]
+        pk_value: _SequentialPartitionKeyType
     ) -> _Range:
-        if self.kind != "MultiHash":
+        if self.kind != _PartitionKeyKind.MULTI_HASH:
             raise ValueError(
                 "Effective Partition Key Range for Prefix Partition Keys is only supported for Hierarchical Partition Keys.")  # pylint: disable=line-too-long
         len_pk_value = len(pk_value)
@@ -175,33 +212,31 @@ class PartitionKey(dict):
 
     def _get_epk_range_for_partition_key(
             self,
-            pk_value: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]] # pylint: disable=line-too-long
+            pk_value: _PartitionKeyType
     ) -> _Range:
         if self._is_prefix_partition_key(pk_value):
             return self._get_epk_range_for_prefix_partition_key(
-                cast(Sequence[Union[None, bool, int, float, str, Type[NonePartitionKeyValue]]], pk_value))
+                cast(_SequentialPartitionKeyType, pk_value))
 
         # else return point range
         if isinstance(pk_value, (list, tuple)) or (isinstance(pk_value, Sequence) and not isinstance(pk_value, str)):
-            effective_partition_key_string = self._get_effective_partition_key_string(
-                cast(Sequence[Union[None, bool, int, float, str, Type[NonePartitionKeyValue]]], pk_value))
+            effective_partition_key_string = self._get_effective_partition_key_string(pk_value)
         else:
             effective_partition_key_string =\
-                self._get_effective_partition_key_string(
-                    cast(List[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]], [pk_value]))
+                self._get_effective_partition_key_string([pk_value])
         return _Range(effective_partition_key_string, effective_partition_key_string, True, True)
 
     @staticmethod
     def _truncate_for_v1_hashing(
-            value: Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]
-    ) -> Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]:
+            value: _SingularPartitionKeyType
+    ) -> _SingularPartitionKeyType:
         if isinstance(value, str):
             return value[:100]
         return value
 
     @staticmethod
     def _get_effective_partition_key_for_hash_partitioning(
-            pk_value: Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]]
+            pk_value: Union[str, _SequentialPartitionKeyType]
     ) -> str:
         truncated_components = []
         # In Python, Strings are sequences, so we make sure we instead hash the entire string instead of each character
@@ -224,44 +259,50 @@ class PartitionKey(dict):
         partition_key_components = [hash_value] + truncated_components
         return _to_hex_encoded_binary_string_v1(partition_key_components)
 
-    def _get_effective_partition_key_string(
-        self,
-        pk_value: Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]]
+    @staticmethod
+    def _get_hashed_partition_key_string(
+            pk_value: _SequentialPartitionKeyType,
+            kind: str,
+            version: int = _PartitionKeyVersion.V2,
     ) -> Union[int, str]:
         if not pk_value:
             return _MinimumInclusiveEffectivePartitionKey
 
+        if kind == _PartitionKeyKind.HASH:
+            if version == _PartitionKeyVersion.V1:
+                return PartitionKey._get_effective_partition_key_for_hash_partitioning(pk_value)
+            if version == _PartitionKeyVersion.V2:
+                return PartitionKey._get_effective_partition_key_for_hash_partitioning_v2(pk_value)
+        elif kind == _PartitionKeyKind.MULTI_HASH:
+            return PartitionKey._get_effective_partition_key_for_multi_hash_partitioning_v2(pk_value)
+        return _to_hex_encoded_binary_string(pk_value)
+
+    def _get_effective_partition_key_string(
+        self,
+        pk_value: _SequentialPartitionKeyType
+    ) -> Union[int, str]:
         if isinstance(self, _Infinity):
             return _MaximumExclusiveEffectivePartitionKey
 
-        kind = self.kind
-        if kind == 'Hash':
-            version = self.version or 2
-            if version == 1:
-                return PartitionKey._get_effective_partition_key_for_hash_partitioning(pk_value)
-            if version == 2:
-                return PartitionKey._get_effective_partition_key_for_hash_partitioning_v2(pk_value)
-        elif kind == 'MultiHash':
-            return self._get_effective_partition_key_for_multi_hash_partitioning_v2(pk_value)
-        return _to_hex_encoded_binary_string(pk_value)
+        return PartitionKey._get_hashed_partition_key_string(pk_value=pk_value, kind=self.kind, version=self.version)
 
     @staticmethod
     def _write_for_hashing(
-            value: Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]],
+            value: _SingularPartitionKeyType,
             writer: IO[bytes]
     ) -> None:
         PartitionKey._write_for_hashing_core(value, bytes([0]), writer)
 
     @staticmethod
     def _write_for_hashing_v2(
-        value: Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]],
+        value: _SingularPartitionKeyType,
         writer: IO[bytes]
     ) -> None:
         PartitionKey._write_for_hashing_core(value, bytes([0xFF]), writer)
 
     @staticmethod
     def _write_for_hashing_core(
-        value: Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]],
+        value: _SingularPartitionKeyType,
         string_suffix: bytes,
         writer: IO[bytes]
     ) -> None:
@@ -287,7 +328,7 @@ class PartitionKey(dict):
 
     @staticmethod
     def _get_effective_partition_key_for_hash_partitioning_v2(
-        pk_value: Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]]
+        pk_value: _SequentialPartitionKeyType
     ) -> str:
         with BytesIO() as ms:
             for component in pk_value:
@@ -306,7 +347,7 @@ class PartitionKey(dict):
 
     @staticmethod
     def _get_effective_partition_key_for_multi_hash_partitioning_v2(
-        pk_value: Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]]
+        pk_value: _SequentialPartitionKeyType
     ) -> str:
         sb = []
         for value in pk_value:
@@ -330,8 +371,8 @@ class PartitionKey(dict):
 
     def _is_prefix_partition_key(
             self,
-            partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]) -> bool:  # pylint: disable=line-too-long
-        if self.kind != "MultiHash":
+            partition_key: _PartitionKeyType) -> bool:  # pylint: disable=line-too-long
+        if self.kind != _PartitionKeyKind.MULTI_HASH:
             return False
         ret = ((isinstance(partition_key, Sequence) and
                 not isinstance(partition_key, str)) and len(self['paths']) != len(partition_key))
@@ -354,6 +395,7 @@ def _to_hex_encoded_binary_string(components: Sequence[object]) -> str:
 
     for component in components:
         if isinstance(component, (bool, int, float, str, _Infinity, _Undefined)):
+            component = cast(_SingularPartitionKeyType, component)
             _write_for_binary_encoding(component, ms)
         else:
             raise TypeError(f"Unexpected type for PK component: {type(component)}")
@@ -364,6 +406,7 @@ def _to_hex_encoded_binary_string_v1(components: Sequence[object]) -> str:
     ms = BytesIO()
     for component in components:
         if isinstance(component, (bool, int, float, str, _Infinity, _Undefined)):
+            component = cast(_SingularPartitionKeyType, component)
             _write_for_binary_encoding_v1(component, ms)
         else:
             raise TypeError(f"Unexpected type for PK component: {type(component)}")
@@ -371,7 +414,7 @@ def _to_hex_encoded_binary_string_v1(components: Sequence[object]) -> str:
     return _to_hex(bytearray(ms.getvalue()), 0, ms.tell())
 
 def _write_for_binary_encoding_v1(
-    value: Union[bool, int, float, str, _Infinity, _Undefined],
+    value: _SingularPartitionKeyType,
     binary_writer: IO[bytes]
 ) -> None:
     if isinstance(value, bool):
@@ -424,7 +467,7 @@ def _write_for_binary_encoding_v1(
         binary_writer.write(bytes([_PartitionKeyComponentType.Undefined]))
 
 def _write_for_binary_encoding(
-    value: Union[bool, int, float, str, _Infinity, _Undefined],
+    value: _SingularPartitionKeyType,
     binary_writer: IO[bytes]
 ) -> None:
     if isinstance(value, bool):
@@ -472,3 +515,22 @@ def _write_for_binary_encoding(
 
     elif isinstance(value, _Undefined):
         binary_writer.write(bytes([_PartitionKeyComponentType.Undefined]))
+
+def _get_partition_key_from_partition_key_definition(
+    partition_key_definition: Union[Dict[str, Any], "PartitionKey"]
+) -> "PartitionKey":
+    """Internal method to create a PartitionKey instance from a dictionary or PartitionKey object.
+
+    :param partition_key_definition: A dictionary or PartitionKey object containing the partition key definition.
+    :type partition_key_definition: Union[Dict[str, Any], PartitionKey]
+    :return: A PartitionKey instance created from the provided definition.
+    :rtype: PartitionKey
+    """
+    path = partition_key_definition.get("paths", "")
+    kind = partition_key_definition.get("kind", "Hash")
+    version: int = partition_key_definition.get("version", 1)  # Default to version 1 if not provided
+    return PartitionKey(path=path, kind=kind, version=version)
+
+def _build_partition_key_from_properties(container_properties: Dict[str, Any]) -> PartitionKey:
+    partition_key_definition = container_properties["partitionKey"]
+    return _get_partition_key_from_partition_key_definition(partition_key_definition)
