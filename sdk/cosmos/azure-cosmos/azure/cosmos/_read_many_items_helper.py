@@ -8,7 +8,7 @@ from azure.cosmos._query_builder import _QueryBuilder
 from azure.cosmos.partition_key import _get_partition_key_from_partition_key_definition
 from azure.cosmos import CosmosList
 if TYPE_CHECKING:
-    from azure.cosmos._cosmos_client_connection import PartitionKeyType
+    from azure.cosmos._cosmos_client_connection import _PartitionKeyType , CosmosClientConnection
 import logging
 
 
@@ -20,7 +20,7 @@ class ReadManyItemsHelperSync:
             self,
             client: 'CosmosClientConnection',
             collection_link: str,
-            items: List[Tuple[str, "PartitionKeyType"]],
+            items: List[Tuple[str, "_PartitionKeyType"]],
             options: Optional[Mapping[str, Any]],
             partition_key_definition: Dict[str, Any],
             **kwargs: Any
@@ -67,14 +67,14 @@ class ReadManyItemsHelperSync:
 
         return CosmosList(results, response_headers=final_headers)
 
-    def _partition_items_by_range(self) -> Dict[str, List[Tuple[str, "PartitionKeyType"]]]:
+    def _partition_items_by_range(self) -> Dict[str, List[Tuple[str, "_PartitionKeyType"]]]:
         """Groups items by their partition key range ID efficiently."""
         collection_rid = _base.GetResourceIdOrFullNameFromLink(self.collection_link)
         partition_key = _get_partition_key_from_partition_key_definition(self.partition_key_definition)
-        items_by_partition: Dict[str, List[Tuple[str, "PartitionKeyType"]]] = {}
+        items_by_partition: Dict[str, List[Tuple[str, "_PartitionKeyType"]]] = {}
 
         # Group items by logical partition key first to avoid redundant range lookups
-        items_by_pk_value: Dict[Any, List[Tuple[str, "PartitionKeyType"]]] = {}
+        items_by_pk_value: Dict[Any, List[Tuple[str, "_PartitionKeyType"]]] = {}
         for item_id, pk_value in self.items:
             # Convert list to tuple to use as a dictionary key, as lists are unhashable
             key = tuple(pk_value) if isinstance(pk_value, list) else pk_value
@@ -99,7 +99,7 @@ class ReadManyItemsHelperSync:
         return items_by_partition
 
     def _execute_query_chunk_worker(
-            self, partition_id: str, chunk_partition_items: List[Tuple[str, "PartitionKeyType"]]
+            self, partition_id: str, chunk_partition_items: List[Tuple[str, "_PartitionKeyType"]]
     ) -> Tuple[List[Dict[str, Any]], float]:
         """Synchronous worker to build and execute a query for a chunk of items."""
         captured_headers = {}

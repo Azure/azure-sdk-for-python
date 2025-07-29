@@ -302,7 +302,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             initial_headers: Optional[Dict[str, str]] = None,
             excluded_locations: Optional[List[str]] = None,
             **kwargs: Any
-    ) -> CosmosList[Dict[str, Any]]:
+    ) -> CosmosList:
         """Reads multiple items from the container.
 
         This method is a batched point-read operation. It is more efficient than
@@ -316,7 +316,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The read-many operation failed.
         :returns: A CosmosList containing the retrieved items. Items that were not found are omitted from the list.
-        :rtype: ~azure.cosmos.CosmosList[Dict[str, Any]]
+        :rtype: ~azure.cosmos.CosmosList
         """
 
         if session_token is not None:

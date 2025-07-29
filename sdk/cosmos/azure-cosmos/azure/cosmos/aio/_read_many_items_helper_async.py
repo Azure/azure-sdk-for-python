@@ -10,7 +10,7 @@ import logging
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from azure.cosmos.aio._cosmos_client_connection_async import PartitionKeyType
+    from azure.cosmos.aio._cosmos_client_connection_async import PartitionKeyType, CosmosClientConnection
 
 
 class ReadManyItemsHelper:

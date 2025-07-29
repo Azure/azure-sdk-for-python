@@ -446,7 +446,7 @@ class ContainerProxy:
             initial_headers: Optional[Dict[str, str]] = None,
             excluded_locations: Optional[List[str]] = None,
             **kwargs: Any
-    ) -> CosmosList[Dict[str, Any]]:
+    ) -> CosmosList:
         """Reads multiple items from the container.
 
         This method is a batched point-read operation. It is more efficient than
@@ -460,7 +460,7 @@ class ContainerProxy:
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The read-many operation failed.
         :returns: A CosmosList containing the retrieved items. Items that were not found are omitted from the list.
-        :rtype: ~azure.cosmos.CosmosList[Dict[str, Any]]
+        :rtype: ~azure.cosmos.CosmosList
         """
 
 
@@ -489,11 +489,9 @@ class ContainerProxy:
         await self._get_properties_with_options(query_options)
         query_options["enableCrossPartitionQuery"] = True
 
-        item_tuples = [(item_id, await self._set_partition_key(pk)) for item_id, pk in items]
-
         return await self.client_connection.read_many_items(
             collection_link=self.container_link,
-            items=item_tuples,
+            items=items,
             options= query_options,
             **kwargs)
 

@@ -5,7 +5,7 @@ from typing import Dict, List, Tuple, Any, TYPE_CHECKING
 
 from azure.cosmos.partition_key import _Undefined, _Empty, NonePartitionKeyValue
 if TYPE_CHECKING:
-    from azure.cosmos._cosmos_client_connection import PartitionKeyType
+    from azure.cosmos._cosmos_client_connection import _PartitionKeyType
 
 
 class _QueryBuilder:
@@ -24,7 +24,7 @@ class _QueryBuilder:
 
     @staticmethod
     def is_id_partition_key_query(
-            items: List[Tuple[str, "PartitionKeyType"]],
+            items: List[Tuple[str, "_PartitionKeyType"]],
             partition_key_definition: Dict[str, Any]
     ) -> bool:
         """Check if we can use the optimized ID IN query."""
@@ -40,7 +40,7 @@ class _QueryBuilder:
 
     @staticmethod
     def is_single_logical_partition_query(
-            items: List[Tuple[str, "PartitionKeyType"]]
+            items: List[Tuple[str, "_PartitionKeyType"]]
     ) -> bool:
         """
         Check if all items in a chunk belong to the same logical partition and would benefit from an IN clause.
@@ -52,7 +52,7 @@ class _QueryBuilder:
 
     @staticmethod
     def build_pk_and_id_in_query(
-            items: List[Tuple[str, "PartitionKeyType"]],
+            items: List[Tuple[str, "_PartitionKeyType"]],
             partition_key_definition: Dict[str, Any]
     ) -> Dict[str, Any]:
         """
@@ -73,7 +73,7 @@ class _QueryBuilder:
         return {"query": query_text, "parameters": parameters}
 
     @staticmethod
-    def build_id_in_query(items: List[Tuple[str, "PartitionKeyType"]]) -> Dict[str, Any]:
+    def build_id_in_query(items: List[Tuple[str, "_PartitionKeyType"]]) -> Dict[str, Any]:
         """Build optimized query using ID IN clause when ID equals partition key."""
         id_params = {f"@param_id{i}": item_id for i, (item_id, _) in enumerate(items)}
         param_names = ", ".join(id_params.keys())
@@ -85,7 +85,7 @@ class _QueryBuilder:
 
     @staticmethod
     def build_parameterized_query_for_items(
-            items_by_partition: Dict[str, List[Tuple[str, "PartitionKeyType"]]],
+            items_by_partition: Dict[str, List[Tuple[str, "_PartitionKeyType"]]],
             partition_key_definition: Dict[str, Any]
     ) -> Dict[str, Any]:
         """Builds a parameterized SQL query for reading multiple items."""
