@@ -204,8 +204,6 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         :type entry: ~azure.confidentialledger.models.LedgerEntry or JSON or IO[bytes]
         :keyword collection_id: The collection id. Default value is None.
         :paramtype collection_id: str
-        :keyword tags: Comma separated tags. Default value is None.
-        :paramtype tags: str
         :return: TransactionStatus. The TransactionStatus is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.confidentialledger.models.TransactionStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -318,8 +316,6 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         :type entry: ~azure.confidentialledger.models.LedgerEntry or JSON or IO[bytes]
         :keyword collection_id: The collection id. Default value is None.
         :paramtype collection_id: str
-        :keyword tags: Comma separated tags. Default value is None.
-        :paramtype tags: str
         :return: LedgerWriteResult. The LedgerWriteResult is compatible with MutableMapping
         :rtype: ~azure.confidentialledger.models.LedgerWriteResult
         :raises ~azure.core.exceptions.HttpResponseError:
