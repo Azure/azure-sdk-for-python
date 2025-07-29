@@ -2979,6 +2979,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         request_id_parameter: Optional[str] = None,
         snapshot: Optional[str] = None,
         version_id: Optional[str] = None,
+        if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
@@ -3004,6 +3008,18 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          specifies the version of the blob to operate on. It's for service version 2019-10-10 and newer.
          Default value is None.
         :type version_id: str
+        :param if_modified_since: Specify this header value to operate only on a blob if it has been
+         modified since the specified date/time. Default value is None.
+        :type if_modified_since: ~datetime.datetime
+        :param if_unmodified_since: Specify this header value to operate only on a blob if it has not
+         been modified since the specified date/time. Default value is None.
+        :type if_unmodified_since: ~datetime.datetime
+        :param if_match: Specify an ETag value to operate only on blobs with a matching value. Default
+         value is None.
+        :type if_match: str
+        :param if_none_match: Specify an ETag value to operate only on blobs without a matching value.
+         Default value is None.
+        :type if_none_match: str
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -3041,6 +3057,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             version_id=version_id,
             if_tags=_if_tags,
             lease_id=_lease_id,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            if_match=if_match,
+            if_none_match=if_none_match,
             comp=comp,
             version=self._config.version,
             headers=_headers,
@@ -3083,6 +3103,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         transactional_content_md5: Optional[bytes] = None,
         transactional_content_crc64: Optional[bytes] = None,
         request_id_parameter: Optional[str] = None,
+        if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         tags: Optional[_models.BlobTags] = None,
@@ -3109,6 +3133,18 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
+        :param if_modified_since: Specify this header value to operate only on a blob if it has been
+         modified since the specified date/time. Default value is None.
+        :type if_modified_since: ~datetime.datetime
+        :param if_unmodified_since: Specify this header value to operate only on a blob if it has not
+         been modified since the specified date/time. Default value is None.
+        :type if_unmodified_since: ~datetime.datetime
+        :param if_match: Specify an ETag value to operate only on blobs with a matching value. Default
+         value is None.
+        :type if_match: str
+        :param if_none_match: Specify an ETag value to operate only on blobs without a matching value.
+         Default value is None.
+        :type if_none_match: str
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -3154,6 +3190,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             request_id_parameter=request_id_parameter,
             if_tags=_if_tags,
             lease_id=_lease_id,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            if_match=if_match,
+            if_none_match=if_none_match,
             comp=comp,
             content_type=content_type,
             version=self._config.version,
