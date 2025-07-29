@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.planetarycomputer import StacClient
+from azure.planetarycomputer import PlanetaryComputerClient
 
 """
 # PREREQUISITES
@@ -25,12 +25,11 @@ from azure.planetarycomputer import StacClient
 
 
 def main():
-    client = StacCollectionConfigurationClient(
+    client = PlanetaryComputerClient(
         credential=DefaultAzureCredential(),
-        collection_id="COLLECTION_ID",
     )
 
-    client.begin_create_item(
+    client.stac_items.begin_create(
         collection_id="36fcb8da-9b15-49e0-b400-0d2e751e2061",
         body={
             "assets": {

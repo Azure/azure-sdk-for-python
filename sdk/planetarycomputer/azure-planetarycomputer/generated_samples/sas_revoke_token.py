@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.planetarycomputer import SharedAccessSignatureClient
+from azure.planetarycomputer import PlanetaryComputerClient
 
 """
 # PREREQUISITES
@@ -25,12 +25,11 @@ from azure.planetarycomputer import SharedAccessSignatureClient
 
 
 def main():
-    client = StacCollectionConfigurationClient(
+    client = PlanetaryComputerClient(
         credential=DefaultAzureCredential(),
-        collection_id="COLLECTION_ID",
     )
 
-    client.revoke_token()
+    client.sas.revoke_token()
 
 
 # x-ms-original-file: 2025-04-30-preview/Sas_RevokeToken.json

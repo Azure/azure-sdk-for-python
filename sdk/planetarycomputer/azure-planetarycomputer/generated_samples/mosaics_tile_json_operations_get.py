@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.planetarycomputer import MosaicTilerClient
+from azure.planetarycomputer import PlanetaryComputerClient
 
 """
 # PREREQUISITES
@@ -25,12 +25,11 @@ from azure.planetarycomputer import MosaicTilerClient
 
 
 def main():
-    client = StacCollectionConfigurationClient(
+    client = PlanetaryComputerClient(
         credential=DefaultAzureCredential(),
-        collection_id="COLLECTION_ID",
     )
 
-    response = client.get_tile_json(
+    response = client.mosaics_tile_json_operations.get(
         search_id="searchid-0df36a74d7ed",
     )
     print(response)

@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.planetarycomputer import TileMatrixSetsClient
+from azure.planetarycomputer import PlanetaryComputerClient
 
 """
 # PREREQUISITES
@@ -25,12 +25,11 @@ from azure.planetarycomputer import TileMatrixSetsClient
 
 
 def main():
-    client = StacCollectionConfigurationClient(
+    client = PlanetaryComputerClient(
         credential=DefaultAzureCredential(),
-        collection_id="COLLECTION_ID",
     )
 
-    response = client.get_matrix_definition(
+    response = client.tile_matrix_definitions.get(
         tile_matrix_set_id="WebMercatorQuad",
     )
     print(response)

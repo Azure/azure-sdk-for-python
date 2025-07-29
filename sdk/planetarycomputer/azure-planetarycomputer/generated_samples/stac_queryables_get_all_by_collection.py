@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.planetarycomputer import StacCollectionConfigurationClient
+from azure.planetarycomputer import PlanetaryComputerClient
 
 """
 # PREREQUISITES
@@ -25,12 +25,13 @@ from azure.planetarycomputer import StacCollectionConfigurationClient
 
 
 def main():
-    client = StacCollectionConfigurationClient(
+    client = PlanetaryComputerClient(
         credential=DefaultAzureCredential(),
-        collection_id="COLLECTION_ID",
     )
 
-    response = client.get_all_queryables_by_collection()
+    response = client.stac_queryables.get_all_by_collection(
+        collection_id="c1007ec2-3ddc-4335-9edd-b1c26b1b4c92",
+    )
     print(response)
 
 

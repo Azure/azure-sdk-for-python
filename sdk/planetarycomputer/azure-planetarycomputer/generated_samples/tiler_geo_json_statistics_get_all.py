@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.planetarycomputer import StacItemTilerClient
+from azure.planetarycomputer import PlanetaryComputerClient
 
 """
 # PREREQUISITES
@@ -25,12 +25,13 @@ from azure.planetarycomputer import StacItemTilerClient
 
 
 def main():
-    client = StacCollectionConfigurationClient(
+    client = PlanetaryComputerClient(
         credential=DefaultAzureCredential(),
-        collection_id="COLLECTION_ID",
     )
 
-    response = client.get_geo_json_statistics(
+    response = client.tiler_geo_json_statistics.get_all(
+        collection_id="{{collectionId}}",
+        item_id="{{itemId}}",
         body={
             "features": [
                 {

@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.planetarycomputer import MosaicTilerClient
+from azure.planetarycomputer import PlanetaryComputerClient
 
 """
 # PREREQUISITES
@@ -25,12 +25,11 @@ from azure.planetarycomputer import MosaicTilerClient
 
 
 def main():
-    client = StacCollectionConfigurationClient(
+    client = PlanetaryComputerClient(
         credential=DefaultAzureCredential(),
-        collection_id="COLLECTION_ID",
     )
 
-    response = client.get_wmts_capabilities_with_matrix_set(
+    response = client.mosaics_wmts_mosaics_tile_matrix_sets.get_capabilities_xml(
         search_id="searchid-0df36a74d7ed",
         tile_matrix_set_id="WebMercatorQuad",
     )

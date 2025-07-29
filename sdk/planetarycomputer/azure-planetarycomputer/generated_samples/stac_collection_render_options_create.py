@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.planetarycomputer import StacCollectionConfigurationClient
+from azure.planetarycomputer import PlanetaryComputerClient
 
 """
 # PREREQUISITES
@@ -26,12 +25,12 @@ from azure.planetarycomputer import StacCollectionConfigurationClient
 
 
 def main():
-    client = StacCollectionConfigurationClient(
+    client = PlanetaryComputerClient(
         credential=DefaultAzureCredential(),
-        collection_id="COLLECTION_ID",
     )
 
-    response = client.create_render_option(
+    response = client.stac_collection_render_options.create(
+        collection_id="36fcb8da-9b15-49e0-b400-0d2e751e2061",
         body={
             "conditions": None,
             "description": "False color rendering with non-visible bands to reduce effects of atmospheric particles (B12, B11, B8A).",

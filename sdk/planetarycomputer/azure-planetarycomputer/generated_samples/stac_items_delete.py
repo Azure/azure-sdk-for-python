@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.planetarycomputer import StacClient
+from azure.planetarycomputer import PlanetaryComputerClient
 
 """
 # PREREQUISITES
@@ -25,12 +25,11 @@ from azure.planetarycomputer import StacClient
 
 
 def main():
-    client = StacCollectionConfigurationClient(
+    client = PlanetaryComputerClient(
         credential=DefaultAzureCredential(),
-        collection_id="COLLECTION_ID",
     )
 
-    client.begin_delete_item(
+    client.stac_items.begin_delete(
         collection_id="c1007ec2-3ddc-4335-9edd-b1c26b1b4c92",
         item_id="9bb31abd-91d6-4649-9c6f-beadbec7c622",
     ).result()

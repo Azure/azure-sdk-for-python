@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.planetarycomputer import StacItemTilerClient
+from azure.planetarycomputer import PlanetaryComputerClient
 
 """
 # PREREQUISITES
@@ -25,16 +25,17 @@ from azure.planetarycomputer import StacItemTilerClient
 
 
 def main():
-    client = StacCollectionConfigurationClient(
+    client = PlanetaryComputerClient(
         credential=DefaultAzureCredential(),
-        collection_id="COLLECTION_ID",
     )
 
-    response = client.get_tile(
-        z="0",
-        x="0",
-        y="0",
-        scale="1",
+    response = client.tiler_tiles.get_zxy_scalex_format(
+        collection_id="collectionId-0df36a74d7ed",
+        item_id="item-0df36a74d7ed",
+        z=12,
+        x=47.6062,
+        y=17,
+        scale=1,
         format="png",
     )
     print(response)

@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.planetarycomputer import IngestionClient
+from azure.planetarycomputer import PlanetaryComputerClient
 
 """
 # PREREQUISITES
@@ -25,12 +25,12 @@ from azure.planetarycomputer import IngestionClient
 
 
 def main():
-    client = StacCollectionConfigurationClient(
+    client = PlanetaryComputerClient(
         credential=DefaultAzureCredential(),
-        collection_id="COLLECTION_ID",
     )
 
-    response = client.update_ingestion(
+    response = client.ingestions.update(
+        collection_id="potsdam-stacforge",
         ingestion_id="5e961a4c-7c3e-40ca-b151-2e574bae1635",
         definition={
             "displayName": "test-ingestion1",

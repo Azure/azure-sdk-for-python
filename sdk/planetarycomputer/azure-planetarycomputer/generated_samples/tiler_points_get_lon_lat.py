@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.planetarycomputer import StacItemTilerClient
+from azure.planetarycomputer import PlanetaryComputerClient
 
 """
 # PREREQUISITES
@@ -25,14 +25,15 @@ from azure.planetarycomputer import StacItemTilerClient
 
 
 def main():
-    client = StacCollectionConfigurationClient(
+    client = PlanetaryComputerClient(
         credential=DefaultAzureCredential(),
-        collection_id="COLLECTION_ID",
     )
 
-    response = client.get_point(
-        lon="-65.75381224878205",
-        lat="18.252615371961497",
+    response = client.tiler_points.get_lon_lat(
+        collection_id="{{collectionId}}",
+        item_id="{{itemId}}",
+        lon=-65.75381224878205,
+        lat=18.252615371961497,
     )
     print(response)
 

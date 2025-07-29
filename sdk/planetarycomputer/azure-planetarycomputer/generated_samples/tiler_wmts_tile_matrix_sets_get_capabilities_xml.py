@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.planetarycomputer import StacItemTilerClient
+from azure.planetarycomputer import PlanetaryComputerClient
 
 """
 # PREREQUISITES
@@ -25,12 +25,13 @@ from azure.planetarycomputer import StacItemTilerClient
 
 
 def main():
-    client = StacCollectionConfigurationClient(
+    client = PlanetaryComputerClient(
         credential=DefaultAzureCredential(),
-        collection_id="COLLECTION_ID",
     )
 
-    response = client.get_wmts_capabilities_with_matrix_set(
+    response = client.tiler_wmts_tile_matrix_sets.get_capabilities_xml(
+        collection_id="collectionId-0df36a74d7ed",
+        item_id="item-0df36a74d7ed",
         tile_matrix_set_id="WebMercatorQuad",
     )
     print(response)

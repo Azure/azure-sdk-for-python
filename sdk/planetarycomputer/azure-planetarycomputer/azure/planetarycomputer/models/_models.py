@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -1663,58 +1662,7 @@ class ItemProperties(_Model):
 
 
 class JsonSchema(_Model):
-    """JSON Schema structure for STAC Queryables.
-
-    :ivar id: Schema identifier. Required.
-    :vartype id: str
-    :ivar type: Schema type. Required.
-    :vartype type: str
-    :ivar title: Schema title.
-    :vartype title: str
-    :ivar schema: JSON Schema version. Required.
-    :vartype schema: str
-    :ivar properties: Schema properties. Required.
-    :vartype properties: dict[str, any]
-    :ivar additional_properties: Whether additional properties are allowed.
-    :vartype additional_properties: bool
-    """
-
-    id: str = rest_field(name="$id", visibility=["read", "create", "update", "delete", "query"])
-    """Schema identifier. Required."""
-    type: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Schema type. Required."""
-    title: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Schema title."""
-    schema: str = rest_field(name="$schema", visibility=["read", "create", "update", "delete", "query"])
-    """JSON Schema version. Required."""
-    properties: Dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Schema properties. Required."""
-    additional_properties: Optional[bool] = rest_field(
-        name="additionalProperties", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Whether additional properties are allowed."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        type: str,
-        schema: str,
-        properties: Dict[str, Any],
-        title: Optional[str] = None,
-        additional_properties: Optional[bool] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
+    """JSON Schema structure for STAC Queryables."""
 
 
 class LandingPage(_Model):
