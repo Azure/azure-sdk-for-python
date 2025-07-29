@@ -2,14 +2,11 @@
 
 ## 1.0.3 (Unreleased)
 
-### Bugs Fixed
-
-- Fixed `create_agents` to execute with body as a keyword parameter.
-
 ### Features Added
 
 ### Bugs Fixed
 - `AgentsResponseFormatOption`, `MessageInputContent`, `MessageAttachmentToolDefinition`, `AgentsToolChoiceOption` are now public.
+- Fixed `create_agents` to execute with body as a keyword parameter.
   
 ### Sample updates
 
