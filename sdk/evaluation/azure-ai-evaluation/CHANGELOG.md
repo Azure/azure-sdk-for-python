@@ -23,9 +23,10 @@ tolerance for harmful responses).
 
 ### Other Changes
 
-- The default engine for evaluation was changed from `promptflow` (PFClient) to an in-SDK Batch Engine
-  - In the event users need to fallback to the `promptflow` implementation, this can temporarily be done by setting the `_use_pf_client=True` when invoking `evaluate()`
-      - Note: This is due to be removed in a future release.
+- The default engine for evaluation was changed from `promptflow` (PFClient) to an in-SDK batch client (RunSubmitterClient)
+  - Note: We've temporarily kept an escape hatch to fall back to the legacy `promptflow` implementation by setting `_use_pf_client=True` when invoking `evaluate()`.
+    This is due to be removed in a future release.
+
 
 ## 1.9.0 (2025-07-02)
 
