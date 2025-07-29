@@ -8,9 +8,28 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import List
+from ._client import AuthoringClient as AuthoringClientGenerated
+from ._conversation_project_patch import ConversationAuthoringProjectClientAsync
+from ._conversation_deployment_patch import ConversationAuthoringDeploymentClientAsync
+from ._conversation_exportedModel_patch import ConversationAuthoringExportedModelClientAsync
+from ._conversation_trainedModel_patch import ConversationAuthoringTrainedModelClientAsync
 
-__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
+class ConversationAuthoringClientAsync(AuthoringClientGenerated):
+    def get_project_client(self, project_name: str) -> ConversationAuthoringProjectClientAsync:
+        return ConversationAuthoringProjectClientAsync(self.conversation_authoring_project, project_name)
 
+    def get_deployment_client(self, project_name: str, deployment_name: str) -> ConversationAuthoringDeploymentClientAsync:
+        return ConversationAuthoringDeploymentClientAsync(self.conversation_authoring_deployment, project_name, deployment_name)
+
+    def get_exported_model_client(self, project_name: str, exported_model_name: str) -> ConversationAuthoringExportedModelClientAsync:
+        return ConversationAuthoringExportedModelClientAsync(self.conversation_authoring_exported_model, project_name, exported_model_name)
+
+    def get_trained_model_client(self, project_name: str, trained_model_label: str) -> ConversationAuthoringTrainedModelClientAsync:
+        return ConversationAuthoringTrainedModelClientAsync(
+            self.conversation_authoring_trained_model,
+            project_name,
+            trained_model_label
+        )
 
 def patch_sdk():
     """Do not remove from this file.
@@ -19,3 +38,5 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+
+__all__ = ["ConversationAuthoringClientAsync"]
