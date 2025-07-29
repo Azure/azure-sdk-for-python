@@ -7,6 +7,7 @@
 import pytest
 from websockets import connect as ws_connect
 from testcase import WebpubsubPowerShellPreparer
+from devtools_testutils import set_custom_default_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
 from testcase_async import WebpubsubAsyncTest
 
@@ -17,6 +18,7 @@ class TestListConnectionsAsync(WebpubsubAsyncTest):
     @WebpubsubPowerShellPreparer()
     @recorded_by_proxy_async
     async def test_list_connections(self, **kwargs):
+        set_custom_default_matcher(ignore_query_ordering=True)
         webpubsub_connection_string = kwargs.get("webpubsub_connection_string")
         # Test cases with different pagination scenarios
         test_cases = [
