@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -2114,45 +2114,6 @@ class DtmfResult(_serialization.Model):
         self.tones: Optional[List[Union[str, "_models.DtmfTone"]]] = None
 
 
-class Error(_serialization.Model):
-    """Error details.
-
-    :ivar code: Error code.
-    :vartype code: str
-    :ivar message: Error message.
-    :vartype message: str
-    :ivar inner_error: Inner error details.
-    :vartype inner_error: ~azure.communication.callautomation.models.Error
-    """
-
-    _attribute_map = {
-        "code": {"key": "code", "type": "str"},
-        "message": {"key": "message", "type": "str"},
-        "inner_error": {"key": "innerError", "type": "Error"},
-    }
-
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        inner_error: Optional["_models.Error"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword code: Error code.
-        :paramtype code: str
-        :keyword message: Error message.
-        :paramtype message: str
-        :keyword inner_error: Inner error details.
-        :paramtype inner_error: ~azure.communication.callautomation.models.Error
-        """
-        super().__init__(**kwargs)
-        self.code = code
-        self.message = message
-        self.inner_error = inner_error
-
-
 class ExternalStorage(_serialization.Model):
     """ExternalStorage.
 
@@ -4065,135 +4026,6 @@ class RecognizeRequest(_serialization.Model):
         self.operation_callback_uri = operation_callback_uri
 
 
-class RecordingChunkStorageInfo(_serialization.Model):
-    """Recording chunk data.
-
-    :ivar document_id: Chunk document id.
-    :vartype document_id: str
-    :ivar index: Chunks order in a multi chunk recording.
-    :vartype index: int
-    :ivar end_reason: Reason this chunk ended. Known values are: "chunkIsBeingRecorded",
-     "sessionEnded", "chunkMaximumSizeExceeded", "chunkMaximumTimeExceeded", and
-     "chunkUploadFailure".
-    :vartype end_reason: str or ~azure.communication.callautomation.models.ChunkEndReason
-    :ivar content_location: Location of the chunk.
-    :vartype content_location: str
-    :ivar metadata_location: Location of chunk metadata.
-    :vartype metadata_location: str
-    :ivar delete_location: Callback for deleting chunk.
-    :vartype delete_location: str
-    """
-
-    _attribute_map = {
-        "document_id": {"key": "documentId", "type": "str"},
-        "index": {"key": "index", "type": "int"},
-        "end_reason": {"key": "endReason", "type": "str"},
-        "content_location": {"key": "contentLocation", "type": "str"},
-        "metadata_location": {"key": "metadataLocation", "type": "str"},
-        "delete_location": {"key": "deleteLocation", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        document_id: Optional[str] = None,
-        index: Optional[int] = None,
-        end_reason: Optional[Union[str, "_models.ChunkEndReason"]] = None,
-        content_location: Optional[str] = None,
-        metadata_location: Optional[str] = None,
-        delete_location: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword document_id: Chunk document id.
-        :paramtype document_id: str
-        :keyword index: Chunks order in a multi chunk recording.
-        :paramtype index: int
-        :keyword end_reason: Reason this chunk ended. Known values are: "chunkIsBeingRecorded",
-         "sessionEnded", "chunkMaximumSizeExceeded", "chunkMaximumTimeExceeded", and
-         "chunkUploadFailure".
-        :paramtype end_reason: str or ~azure.communication.callautomation.models.ChunkEndReason
-        :keyword content_location: Location of the chunk.
-        :paramtype content_location: str
-        :keyword metadata_location: Location of chunk metadata.
-        :paramtype metadata_location: str
-        :keyword delete_location: Callback for deleting chunk.
-        :paramtype delete_location: str
-        """
-        super().__init__(**kwargs)
-        self.document_id = document_id
-        self.index = index
-        self.end_reason = end_reason
-        self.content_location = content_location
-        self.metadata_location = metadata_location
-        self.delete_location = delete_location
-
-
-class RecordingResultResponse(_serialization.Model):
-    """Recording result data.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar recording_id:
-    :vartype recording_id: str
-    :ivar recording_storage_info: Container for chunks.
-    :vartype recording_storage_info:
-     ~azure.communication.callautomation.models.RecordingStorageInfo
-    :ivar errors:
-    :vartype errors: list[~azure.communication.callautomation.models.Error]
-    :ivar recording_start_time:
-    :vartype recording_start_time: ~datetime.datetime
-    :ivar recording_duration_ms:
-    :vartype recording_duration_ms: int
-    :ivar session_end_reason: Known values are: "sessionStillOngoing", "callEnded",
-     "initiatorLeft", "handedOverOrTransfered", "maximumSessionTimeReached", "callStartTimeout",
-     "mediaTimeout", "audioStreamFailure", "allInstancesBusy", "teamsTokenConversionFailed",
-     "reportCallStateFailed", "reportCallStateFailedAndSessionMustBeDiscarded",
-     "couldNotRejoinCall", "invalidBotData", "couldNotStart",
-     "appHostedMediaFailureOutcomeWithError", "appHostedMediaFailureOutcomeGracefully",
-     "handedOverDueToMediaTimeout", "handedOverDueToAudioStreamFailure",
-     "speechRecognitionSessionNonRetriableError",
-     "speechRecognitionSessionRetriableErrorMaxRetryCountReached",
-     "handedOverDueToChunkCreationFailure", "chunkCreationFailed",
-     "handedOverDueToProcessingTimeout", "processingTimeout", and "transcriptObjectCreationFailed".
-    :vartype session_end_reason: str or
-     ~azure.communication.callautomation.models.CallSessionEndReason
-    :ivar recording_expiration_time:
-    :vartype recording_expiration_time: ~datetime.datetime
-    """
-
-    _validation = {
-        "recording_id": {"readonly": True},
-        "recording_storage_info": {"readonly": True},
-        "errors": {"readonly": True},
-        "recording_start_time": {"readonly": True},
-        "recording_duration_ms": {"readonly": True},
-        "session_end_reason": {"readonly": True},
-        "recording_expiration_time": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "recording_id": {"key": "recordingId", "type": "str"},
-        "recording_storage_info": {"key": "recordingStorageInfo", "type": "RecordingStorageInfo"},
-        "errors": {"key": "errors", "type": "[Error]"},
-        "recording_start_time": {"key": "recordingStartTime", "type": "iso-8601"},
-        "recording_duration_ms": {"key": "recordingDurationMs", "type": "int"},
-        "session_end_reason": {"key": "sessionEndReason", "type": "str"},
-        "recording_expiration_time": {"key": "recordingExpirationTime", "type": "iso-8601"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.recording_id: Optional[str] = None
-        self.recording_storage_info: Optional["_models.RecordingStorageInfo"] = None
-        self.errors: Optional[List["_models.Error"]] = None
-        self.recording_start_time: Optional[datetime.datetime] = None
-        self.recording_duration_ms: Optional[int] = None
-        self.session_end_reason: Optional[Union[str, "_models.CallSessionEndReason"]] = None
-        self.recording_expiration_time: Optional[datetime.datetime] = None
-
-
 class RecordingStateChanged(_serialization.Model):
     """RecordingStateChanged.
 
@@ -4312,32 +4144,6 @@ class RecordingStateResponse(_serialization.Model):
         self.recording_id = recording_id
         self.recording_state = recording_state
         self.recording_kind = recording_kind
-
-
-class RecordingStorageInfo(_serialization.Model):
-    """Container for chunks.
-
-    :ivar recording_chunks: Collection of
-     {Microsoft.Skype.Platform.ExecutionAgent.Azure.Communication.Service.ServerCalling.Content.Contracts.BETA7_2025_08_15_preview.Models.RecordingChunkStorageInfo}.
-    :vartype recording_chunks:
-     list[~azure.communication.callautomation.models.RecordingChunkStorageInfo]
-    """
-
-    _attribute_map = {
-        "recording_chunks": {"key": "recordingChunks", "type": "[RecordingChunkStorageInfo]"},
-    }
-
-    def __init__(
-        self, *, recording_chunks: Optional[List["_models.RecordingChunkStorageInfo"]] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword recording_chunks: Collection of
-         {Microsoft.Skype.Platform.ExecutionAgent.Azure.Communication.Service.ServerCalling.Content.Contracts.BETA7_2025_08_15_preview.Models.RecordingChunkStorageInfo}.
-        :paramtype recording_chunks:
-         list[~azure.communication.callautomation.models.RecordingChunkStorageInfo]
-        """
-        super().__init__(**kwargs)
-        self.recording_chunks = recording_chunks
 
 
 class RedirectCallRequest(_serialization.Model):
@@ -5869,6 +5675,74 @@ class TextSource(_serialization.Model):
         self.custom_voice_endpoint_id = custom_voice_endpoint_id
 
 
+class TranscriptionCallSummaryUpdate(_serialization.Model):
+    """TranscriptionCallSummaryUpdate.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar transcription_update: Defines the result for TranscriptionUpdate with the current status
+     and the details about the status.
+    :vartype transcription_update: ~azure.communication.callautomation.models.TranscriptionUpdate
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    """
+
+    _validation = {
+        "transcription_update": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "transcription_update": {"key": "transcriptionUpdate", "type": "TranscriptionUpdate"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
+    }
+
+    def __init__(
+        self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["_models.ResultInformation"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword call_connection_id: Call connection ID.
+        :paramtype call_connection_id: str
+        :keyword server_call_id: Server call ID.
+        :paramtype server_call_id: str
+        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+         skype chain ID.
+        :paramtype correlation_id: str
+        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
+         request to the response event.
+        :paramtype operation_context: str
+        :keyword result_information: Contains the resulting SIP code, sub-code and message.
+        :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
+        """
+        super().__init__(**kwargs)
+        self.transcription_update: Optional["_models.TranscriptionUpdate"] = None
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
+
+
 class TranscriptionFailed(_serialization.Model):
     """TranscriptionFailed.
 
@@ -6166,21 +6040,26 @@ class TranscriptionUpdate(_serialization.Model):
     """TranscriptionUpdate.
 
     :ivar transcription_status: Known values are: "transcriptionStarted", "transcriptionFailed",
-     "transcriptionResumed", "transcriptionUpdated", "transcriptionStopped", and "unspecifiedError".
+     "transcriptionResumed", "transcriptionUpdated", "transcriptionStopped", "callSummaryUpdate",
+     and "unspecifiedError".
     :vartype transcription_status: str or
      ~azure.communication.callautomation.models.TranscriptionStatus
     :ivar transcription_status_details: Known values are: "subscriptionStarted",
      "streamConnectionReestablished", "streamConnectionUnsuccessful", "streamUrlMissing",
      "serviceShutdown", "streamConnectionInterrupted", "speechServicesConnectionError",
      "subscriptionStopped", "unspecifiedError", "authenticationFailure", "badRequest",
-     "tooManyRequests", "forbidden", "serviceTimeout", and "transcriptionLocaleUpdated".
+     "tooManyRequests", "forbidden", "serviceTimeout", "transcriptionLocaleUpdated",
+     "callSummarySuccess", and "callSummaryFailure".
     :vartype transcription_status_details: str or
      ~azure.communication.callautomation.models.TranscriptionStatusDetails
+    :ivar message:
+    :vartype message: str
     """
 
     _attribute_map = {
         "transcription_status": {"key": "transcriptionStatus", "type": "str"},
         "transcription_status_details": {"key": "transcriptionStatusDetails", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
     def __init__(
@@ -6188,24 +6067,30 @@ class TranscriptionUpdate(_serialization.Model):
         *,
         transcription_status: Optional[Union[str, "_models.TranscriptionStatus"]] = None,
         transcription_status_details: Optional[Union[str, "_models.TranscriptionStatusDetails"]] = None,
+        message: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword transcription_status: Known values are: "transcriptionStarted", "transcriptionFailed",
-         "transcriptionResumed", "transcriptionUpdated", "transcriptionStopped", and "unspecifiedError".
+         "transcriptionResumed", "transcriptionUpdated", "transcriptionStopped", "callSummaryUpdate",
+         and "unspecifiedError".
         :paramtype transcription_status: str or
          ~azure.communication.callautomation.models.TranscriptionStatus
         :keyword transcription_status_details: Known values are: "subscriptionStarted",
          "streamConnectionReestablished", "streamConnectionUnsuccessful", "streamUrlMissing",
          "serviceShutdown", "streamConnectionInterrupted", "speechServicesConnectionError",
          "subscriptionStopped", "unspecifiedError", "authenticationFailure", "badRequest",
-         "tooManyRequests", "forbidden", "serviceTimeout", and "transcriptionLocaleUpdated".
+         "tooManyRequests", "forbidden", "serviceTimeout", "transcriptionLocaleUpdated",
+         "callSummarySuccess", and "callSummaryFailure".
         :paramtype transcription_status_details: str or
          ~azure.communication.callautomation.models.TranscriptionStatusDetails
+        :keyword message:
+        :paramtype message: str
         """
         super().__init__(**kwargs)
         self.transcription_status = transcription_status
         self.transcription_status_details = transcription_status_details
+        self.message = message
 
 
 class TranscriptionUpdated(_serialization.Model):

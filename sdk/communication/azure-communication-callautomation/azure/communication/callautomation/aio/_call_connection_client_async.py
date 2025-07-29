@@ -54,7 +54,8 @@ from .._generated.models import (
     HoldRequest,
     UnholdRequest,
     StartMediaStreamingRequest,
-    StopMediaStreamingRequest
+    StopMediaStreamingRequest,
+    SummarizeCallRequest
 )
 from .._generated.models._enums import RecognizeInputType
 from .._shared.auth_policy_utils import get_authentication_policy
@@ -1086,46 +1087,38 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def summarize_call(
-            self,
-            call_connection_id: str,
-            *,
-            summarize_call_request_operation_context: Optional[str] = None,
-            summarize_call_request_operation_callback_uri: Optional[str] = None,
-            enable_end_call_summary: Optional[bool] = None,
-            summarize_call_request_summarization_options_locale: Optional[str] = None,
+        self,
+        *,
+        operation_context: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
+        summarization_options: Optional[SummarizationOptions] = None,
         **kwargs
     ) -> None:
-        """API to get a summary of the call so far.
+        """ Summary details of call.
 
-        :param call_connection_id: The call connection id. Required.
-        :type call_connection_id: str
-        :keyword summarize_call_request_operation_context: The value to identify context of the
-         operation. Default value is None.
-        :paramtype summarize_call_request_operation_context: str
-        :keyword summarize_call_request_operation_callback_uri: Set a callback URI that overrides the
-         default callback URI set by CreateCall/AnswerCall for this operation.
-         This setup is per-action. If this is not set, the default callback URI set by
-         CreateCall/AnswerCall will be used. Default value is None.
-        :paramtype summarize_call_request_operation_callback_uri: str
-        :keyword enable_end_call_summary: Indicating
-         whether end call summary should be enabled. Default value is None.
-        :paramtype enable_end_call_summary: bool
-        :keyword summarize_call_request_summarization_options_locale: Locale for summarization (e.g.,
-         en-US). Default value is None.
-        :paramtype summarize_call_request_summarization_options_locale: str
+        :keyword operation_context: The value to identify context of the operation.
+        :paramtype operation_context: str
+        :keyword operation_callback_url: Set a callback URL that overrides the default callback URL set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URL set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_url: str or None
+        :keyword summarization_options: Summarization configuration options.
+        :paramtype summarization_options: ~azure.communication.callautomation.models.SummarizationOptions
+        :type locale: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        await self._call_media_client.summarize_call(
-            call_connection_id=call_connection_id,
-            summarize_call_request_operation_callback_uri=summarize_call_request_operation_callback_uri,
-            summarize_call_request_operation_context=summarize_call_request_operation_context,
-            summarize_call_request_summarization_options_enable_end_call_summary=enable_end_call_summary,
-            summarize_call_request_summarization_options_locale=summarize_call_request_summarization_options_locale,
+        summarize_call_request = SummarizeCallRequest(
+            operation_context=operation_context,
+            operation_callback_uri=operation_callback_url,
+            summarization_options=summarization_options._to_generated() if summarization_options else None,  # pylint:disable=protected-access
             **kwargs
-            )
+        )
+
+        await self._call_media_client.summarize_call(self._call_connection_id, summarize_call_request)
 
     @distributed_trace_async
     async def hold(

@@ -62,7 +62,6 @@ from ...operations._operations import (
     build_call_media_unhold_request,
     build_call_media_update_transcription_request,
     build_call_recording_get_recording_properties_request,
-    build_call_recording_get_recording_result_request,
     build_call_recording_pause_recording_request,
     build_call_recording_resume_recording_request,
     build_call_recording_start_recording_request,
@@ -2202,37 +2201,73 @@ class CallMediaOperations:
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
+    @overload
+    async def summarize_call(
+        self,
+        call_connection_id: str,
+        summarize_call_request: _models.SummarizeCallRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> None:
+        """API to trigger a summary of the call so far.
+
+        API to trigger a summary of the call so far.
+
+        :param call_connection_id: The call connection id. Required.
+        :type call_connection_id: str
+        :param summarize_call_request: The SummarizeCall request. Required.
+        :type summarize_call_request: ~azure.communication.callautomation.models.SummarizeCallRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def summarize_call(
+        self,
+        call_connection_id: str,
+        summarize_call_request: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> None:
+        """API to trigger a summary of the call so far.
+
+        API to trigger a summary of the call so far.
+
+        :param call_connection_id: The call connection id. Required.
+        :type call_connection_id: str
+        :param summarize_call_request: The SummarizeCall request. Required.
+        :type summarize_call_request: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @distributed_trace_async
     async def summarize_call(
         self,
         call_connection_id: str,
-        *,
-        summarize_call_request_operation_context: Optional[str] = None,
-        summarize_call_request_operation_callback_uri: Optional[str] = None,
-        summarize_call_request_summarization_options_enable_end_call_summary: Optional[bool] = None,
-        summarize_call_request_summarization_options_locale: Optional[str] = None,
+        summarize_call_request: Union[_models.SummarizeCallRequest, IO[bytes]],
         **kwargs: Any
     ) -> None:
-        """API to get a summary of the call so far.
+        """API to trigger a summary of the call so far.
 
-        API to get a summary of the call so far.
+        API to trigger a summary of the call so far.
 
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
-        :keyword summarize_call_request_operation_context: The value to identify context of the
-         operation. Default value is None.
-        :paramtype summarize_call_request_operation_context: str
-        :keyword summarize_call_request_operation_callback_uri: Set a callback URI that overrides the
-         default callback URI set by CreateCall/AnswerCall for this operation.
-         This setup is per-action. If this is not set, the default callback URI set by
-         CreateCall/AnswerCall will be used. Default value is None.
-        :paramtype summarize_call_request_operation_callback_uri: str
-        :keyword summarize_call_request_summarization_options_enable_end_call_summary: Indicating
-         whether end call summary should be enabled. Default value is None.
-        :paramtype summarize_call_request_summarization_options_enable_end_call_summary: bool
-        :keyword summarize_call_request_summarization_options_locale: Locale for summarization (e.g.,
-         en-US). Default value is None.
-        :paramtype summarize_call_request_summarization_options_locale: str
+        :param summarize_call_request: The SummarizeCall request. Is either a SummarizeCallRequest type
+         or a IO[bytes] type. Required.
+        :type summarize_call_request: ~azure.communication.callautomation.models.SummarizeCallRequest
+         or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2245,18 +2280,26 @@ class CallMediaOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(summarize_call_request, (IOBase, bytes)):
+            _content = summarize_call_request
+        else:
+            _json = self._serialize.body(summarize_call_request, "SummarizeCallRequest")
 
         _request = build_call_media_summarize_call_request(
             call_connection_id=call_connection_id,
-            summarize_call_request_operation_context=summarize_call_request_operation_context,
-            summarize_call_request_operation_callback_uri=summarize_call_request_operation_callback_uri,
-            summarize_call_request_summarization_options_enable_end_call_summary=summarize_call_request_summarization_options_enable_end_call_summary,
-            summarize_call_request_summarization_options_locale=summarize_call_request_summarization_options_locale,
+            content_type=content_type,
             api_version=self._config.api_version,
+            json=_json,
+            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -3639,58 +3682,3 @@ class CallRecordingOperations:
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace_async
-    async def get_recording_result(self, recording_id: str, **kwargs: Any) -> _models.RecordingResultResponse:
-        """Get recording result. This includes the download URLs for the recording chunks.
-
-        Get recording result. This includes the download URLs for the recording chunks.
-
-        :param recording_id: The recording id. Required.
-        :type recording_id: str
-        :return: RecordingResultResponse
-        :rtype: ~azure.communication.callautomation.models.RecordingResultResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.RecordingResultResponse] = kwargs.pop("cls", None)
-
-        _request = build_call_recording_get_recording_result_request(
-            recording_id=recording_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        deserialized = self._deserialize("RecordingResultResponse", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore

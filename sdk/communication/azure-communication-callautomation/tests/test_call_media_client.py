@@ -15,6 +15,7 @@ from azure.communication.callautomation._models import (
     SsmlSource,
     PhoneNumberIdentifier,
     RecognitionChoice,
+    SummarizationOptions
 )
 from azure.communication.callautomation._generated.models import (
     PlayRequest,
@@ -30,7 +31,8 @@ from azure.communication.callautomation._generated.models import (
     HoldRequest,
     UnholdRequest,
     StartMediaStreamingRequest,
-    StopMediaStreamingRequest
+    StopMediaStreamingRequest,
+    SummarizeCallRequest
 )
 from azure.communication.callautomation._generated.models._enums import RecognizeInputType, DtmfTone
 from unittest.mock import Mock
@@ -610,6 +612,33 @@ class TestCallMediaClient(unittest.TestCase):
 
         self.assertEqual(self.call_connection_id, actual_call_connection_id)
         self.assertEqual(expected_update_transcription_request.locale, actual_update_transcription_request.locale)
+
+    def test_summarize_call(self):
+        mock_summarize_call = Mock()
+        self.call_media_operations.summarize_call = mock_summarize_call
+        summarization_options = SummarizationOptions(
+            enable_end_call_summary=True,
+            locale="en-us"
+        )
+        self.call_connection_client.summarize_call(
+            operation_context=self.operation_context,
+            operation_callback_url=self.operation_callback_url,
+            summarization_options=summarization_options
+            )
+
+        expected_summarize_call_request = SummarizeCallRequest(
+            operation_context=self.operation_context,
+            operation_callback_uri=self.operation_callback_url,
+            summarization_options=summarization_options
+            )
+
+        mock_summarize_call.assert_called_once()
+        actual_call_connection_id = mock_summarize_call.call_args[0][0]
+        actual_summarize_call_request = mock_summarize_call.call_args[0][1]
+
+        self.assertEqual(self.call_connection_id, actual_call_connection_id)
+        self.assertEqual(expected_summarize_call_request.operation_context, actual_summarize_call_request.operation_context)
+        self.assertEqual(expected_summarize_call_request.operation_callback_uri, actual_summarize_call_request.operation_callback_uri)
 
     def test_hold_with_file_source(self):
         mock_hold = Mock()

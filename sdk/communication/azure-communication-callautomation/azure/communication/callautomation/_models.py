@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from datetime import datetime
 from typing import List, Optional, Union, TYPE_CHECKING
 from typing_extensions import Literal
 
@@ -25,9 +24,7 @@ from ._generated.models import (
     TranscriptionSubscription as TranscriptionSubscriptionInternal,
     PiiRedactionOptions as PiiRedactionOptionsInternal,
     TeamsPhoneCallDetails as TeamsPhoneCallDetailsInternal,
-    SummarizationOptions as SummarizationOptionsInternal,
-    RecordingStorageInfo,
-    Error
+    SummarizationOptions as SummarizationOptionsInternal
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -36,7 +33,6 @@ from ._shared.models import (
 )
 from ._generated.models._enums import PlaySourceType, RedactionType
 from ._generated.models._enums import RecordingStorageKind
-from ._generated.models._enums import CallSessionEndReason
 from ._utils import (
     deserialize_phone_identifier,
     deserialize_identifier,
@@ -469,6 +465,14 @@ class TranscriptionOptions:
     """Endpoint where the custom model was deployed."""
     enable_intermediate_results: Optional[bool] = None
     """Enables intermediate results for the transcribed speech."""
+    pii_redaction_options: Optional["PiiRedactionOptions"] = None
+    """PII redaction configuration options."""
+    enable_sentiment_analysis: Optional[bool] = None
+    """Indicating if sentiment analysis should be used."""
+    locales: Optional[List[str]] = None
+    """List of languages for Language Identification."""
+    summarization_options: Optional["SummarizationOptions"] = None
+    """Summarization configuration options."""
 
     def __init__(
         self,
@@ -479,6 +483,10 @@ class TranscriptionOptions:
         start_transcription: bool,
         speech_recognition_model_endpoint_id: Optional[str] = None,
         enable_intermediate_results: Optional[bool] = None,
+        pii_redaction_options: Optional["PiiRedactionOptions"] = None,
+        enable_sentiment_analysis: Optional[bool] = None,
+        locales: Optional[List[str]] = None,
+        summarization_options: Optional["SummarizationOptions"] = None,
     ):
         self.transport_url = transport_url
         self.transport_type = transport_type
@@ -486,6 +494,10 @@ class TranscriptionOptions:
         self.start_transcription = start_transcription
         self.speech_recognition_model_endpoint_id = speech_recognition_model_endpoint_id
         self.enable_intermediate_results = enable_intermediate_results
+        self.pii_redaction_options=pii_redaction_options
+        self.enable_sentiment_analysis=enable_sentiment_analysis
+        self.locales=locales
+        self.summarization_options=summarization_options
 
     def _to_generated(self):
         return WebSocketTranscriptionOptionsRest(
@@ -494,7 +506,11 @@ class TranscriptionOptions:
             locale=self.locale,
             start_transcription=self.start_transcription,
             speech_recognition_model_endpoint_id=self.speech_recognition_model_endpoint_id,
-            enable_intermediate_results=self.enable_intermediate_results
+            enable_intermediate_results=self.enable_intermediate_results,
+            pii_redaction_options=self.pii_redaction_options._to_generated() if self.pii_redaction_options else None, # pylint:disable=protected-access
+            enable_sentiment_analysis=self.enable_sentiment_analysis,
+            locales=self.locales,
+            summarization_options=self.summarization_options._to_generated() if self.summarization_options else None # pylint:disable=protected-access
         )
 
 class MediaStreamingSubscription:
@@ -758,81 +774,6 @@ class RecordingProperties:
             recording_id=recording_state_result.recording_id,
             recording_state=recording_state_result.recording_state,
             recording_kind=recording_state_result.recording_kind,
-        )
-
-class RecordingResult:
-    """Recording result data.
-    Variables are only populated by the server, and will be ignored when sending a request.
-    :ivar recording_id:
-    :vartype recording_id: str
-    :ivar recording_storage_info: Container for chunks.
-    :vartype recording_storage_info:
-     ~azure.communication.callautomation.models.RecordingStorageInfo
-    :ivar errors:
-    :vartype errors: list[~azure.communication.callautomation.models.Error]
-    :ivar recording_start_time:
-    :vartype recording_start_time: ~datetime.datetime
-    :ivar recording_duration_ms:
-    :vartype recording_duration_ms: int
-    :ivar session_end_reason: Known values are: "sessionStillOngoing", "callEnded",
-     "initiatorLeft", "handedOverOrTransferred", "maximumSessionTimeReached", "callStartTimeout",
-     "mediaTimeout", "audioStreamFailure", "allInstancesBusy", "teamsTokenConversionFailed",
-     "reportCallStateFailed", "reportCallStateFailedAndSessionMustBeDiscarded",
-     "couldNotRejoinCall", "invalidBotData", "couldNotStart",
-     "appHostedMediaFailureOutcomeWithError", "appHostedMediaFailureOutcomeGracefully",
-     "handedOverDueToMediaTimeout", "handedOverDueToAudioStreamFailure",
-     "speechRecognitionSessionNonRetriableError",
-     "speechRecognitionSessionRetriableErrorMaxRetryCountReached",
-     "handedOverDueToChunkCreationFailure", "chunkCreationFailed",
-     "handedOverDueToProcessingTimeout", "processingTimeout", and "transcriptObjectCreationFailed".
-    :vartype session_end_reason: str or
-     ~azure.communication.callautomation.models.CallSessionEndReason
-    :ivar recording_expiration_time:
-    :vartype recording_expiration_time: ~datetime.datetime
-    """
-
-    recording_id: Optional[str]
-    """Id of this recording operation."""
-    recording_storage_info: Optional[RecordingStorageInfo]
-    """recording storage info."""
-    errors: Optional[List[Error]]
-    """Error."""
-    session_end_reason: Optional[Union[str, 'CallSessionEndReason']]
-    """session end reason."""
-    recording_start_time: Optional[datetime]
-    """recording start time."""
-    recording_duration_ms: Optional[int]
-    """recording duration ms."""
-    recording_expiration_time: Optional[datetime]
-    """recording expiration time."""
-
-    def __init__(
-        self, *, recording_id: Optional[str] = None,
-        recording_storage_info: Optional[RecordingStorageInfo] = None,
-        session_end_reason: Optional[Union[str,  'CallSessionEndReason']] = None,
-        recording_start_time: Optional[datetime] = None,
-        recording_duration_ms: Optional[int] = None,
-        recording_expiration_time: Optional[datetime] = None,
-        errors: Optional[List[Error]]
-    ):
-        self.recording_id = recording_id
-        self.recording_storage_info = recording_storage_info
-        self.session_end_reason = session_end_reason
-        self.recording_start_time = recording_start_time
-        self.recording_duration_ms = recording_duration_ms
-        self.recording_expiration_time = recording_expiration_time
-        self.errors = errors
-
-    @classmethod
-    def _from_generated(cls, recording_result: "RecordingResultRest"):
-        return cls(
-            recording_id=recording_result.recording_id,
-            recording_storage_info=recording_result.recording_storage_info,
-            session_end_reason=recording_result.session_end_reason,
-            recording_start_time=recording_result.recording_start_time,
-            recording_duration_ms=recording_result.recording_duration_ms,
-            recording_expiration_time=recording_result.recording_expiration_time,
-            errors=recording_result.errors
         )
 
 class CallParticipant:

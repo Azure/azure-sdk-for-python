@@ -55,6 +55,7 @@ from ._generated.models import (
     UnholdRequest,
     StartMediaStreamingRequest,
     StopMediaStreamingRequest,
+    SummarizeCallRequest
 )
 from ._generated.models._enums import RecognizeInputType
 from ._shared.auth_policy_utils import get_authentication_policy
@@ -1076,6 +1077,41 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             **kwargs
         )
         self._call_media_client.update_transcription(self._call_connection_id, update_transcription_request)
+
+    @distributed_trace
+    def summarize_call(
+        self,
+        *,
+        operation_context: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
+        summarization_options: Optional[SummarizationOptions] = None,
+        **kwargs
+        ) -> None:
+        """ Summary details of call.
+
+        :keyword operation_context: The value to identify context of the operation.
+        :paramtype operation_context: str
+        :keyword operation_callback_url: Set a callback URL that overrides the default callback URL set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URL set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_url: str or None
+        :keyword summarization_options: Summarization configuration options.
+        :paramtype summarization_options: ~azure.communication.callautomation.models.SummarizationOptions
+        :type locale: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        summarize_call_request = SummarizeCallRequest(
+            operation_context=operation_context,
+            operation_callback_uri=operation_callback_url,
+            summarization_options=summarization_options._to_generated() if summarization_options else None,  # pylint:disable=protected-access
+            **kwargs
+        )
+
+        self._call_media_client.summarize_call(self._call_connection_id, summarize_call_request)
 
     @distributed_trace
     def hold(
