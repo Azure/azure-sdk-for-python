@@ -193,7 +193,7 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         *,
         collection_id: Optional[str] = None,
         **kwargs: Any,
-    ) -> LROPoller[_models.LedgerWriteResult]:
+    ) -> LROPoller[_models.TransactionStatus]:
         """Writes a ledger entry and returns a poller to wait for it to be durably committed. The
         poller returns the result for the initial call to create the ledger entry.
 
@@ -206,8 +206,8 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         :paramtype collection_id: str
         :keyword tags: Comma separated tags. Default value is None.
         :paramtype tags: str
-        :return: LedgerWriteResult. The LedgerWriteResult is compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.confidentialledger.models.LedgerWriteResult]
+        :return: TransactionStatus. The TransactionStatus is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.confidentialledger.models.TransactionStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 

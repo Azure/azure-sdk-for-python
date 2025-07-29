@@ -143,7 +143,7 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
 
     async def begin_create_ledger_entry(
         self, entry: _models.LedgerEntry, *, collection_id: Optional[str] = None, **kwargs: Any
-    ) -> AsyncLROPoller[_models.LedgerWriteResult]:
+    ) -> AsyncLROPoller[_models.TransactionStatus]:
         """Writes a ledger entry and returns a poller to wait for it to be durably committed. The
         poller returns the result for the initial call to create the ledger entry.
 
@@ -158,8 +158,8 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AsyncLROPoller[LedgerWriteResult]. The LedgerWriteResult is compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.confidentialledger.models.LedgerWriteResult]
+        :return: AsyncLROPoller[TransactionStatus]. The TransactionStatus is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.confidentialledger.models.TransactionStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
