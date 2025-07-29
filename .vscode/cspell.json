@@ -1766,7 +1766,8 @@
       "filename": "sdk/confidentialledger/azure-confidentialledger/**",
       "words": [
         "mrenclave",
-        "MRENCLAVE"
+        "MRENCLAVE",
+        "oeverify"
       ]
     },
     {
