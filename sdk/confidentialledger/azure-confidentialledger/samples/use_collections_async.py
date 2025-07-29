@@ -24,7 +24,6 @@ import tempfile
 from typing import Any, Dict
 
 from azure.confidentialledger.aio import ConfidentialLedgerClient
-from azure.confidentialledger.models import LedgerEntry
 from azure.confidentialledger.certificate.aio import (
     ConfidentialLedgerCertificateClient,
 )
@@ -96,7 +95,7 @@ async def main():
                             msg = f"{sender}'s message {msg_idx}"
 
                         post_poller = await ledger_client.begin_create_ledger_entry(  # type: ignore[attr-defined]
-                            entry=LedgerEntry({"contents": msg}),
+                            entry={"contents": msg},
                             collection_id=sender,
                         )
                         post_result = await post_poller.result()
