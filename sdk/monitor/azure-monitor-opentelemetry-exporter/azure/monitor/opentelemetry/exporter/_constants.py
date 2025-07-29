@@ -79,12 +79,14 @@ _AZURE_MONITOR_DISTRO_VERSION_ARG = "distro_version"
 _MICROSOFT_CUSTOM_EVENT_NAME = "microsoft.custom_event.name"
 
 # ONE SETTINGS
-_ONE_SETTINGS_URL = "https://settings-ppe.data.microsoft.com/settings/v3.0/AzureMonitorSDK/AzMonSDKDynamicConfiguration"
-_ONE_SETTINGS_PROD_URL = "https://settings.data.microsoft.com/settings/v3.0/AzureMonitorSDK/AzMonSDKDynamicConfiguration"
 _ONE_SETTINGS_PYTHON_KEY = "python"
+_ONE_SETTINGS_CHANGE_VERSION_KEY = "CHANGE_VERSION"
 _ONE_SETTINGS_CNAME = "https://settings.sdk.monitor.azure.com"
-_ONE_SETTINGS_PATH = "/settings/v3.0/AzureMonitorSDK/AzMonSDKDynamicConfiguration"
-_ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS = 1800  # 30 minutes
+_ONE_SETTINGS_PATH = "/AzMonSDKDynamicConfiguration"
+_ONE_SETTINGS_CHANGE_PATH = "/AzMonSDKDynamicConfigurationChanges"
+_ONE_SETTINGS_CONFIG_URL = _ONE_SETTINGS_CNAME + _ONE_SETTINGS_PATH
+_ONE_SETTINGS_CHANGE_URL = _ONE_SETTINGS_CNAME + _ONE_SETTINGS_CHANGE_PATH
+_ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS = 3600  # 60 minutes
 
 # Statsbeat
 # (OpenTelemetry metric name, Statsbeat metric name)

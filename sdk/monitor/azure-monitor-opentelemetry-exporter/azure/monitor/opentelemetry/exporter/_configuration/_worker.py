@@ -9,46 +9,29 @@ class _ConfigurationWorker:
     
     This class manages a daemon thread that periodically calls a configuration refresh function
     and updates the refresh interval dynamically based on configuration responses.
-    This class is implemented as a singleton to ensure only one configuration refresh process
-    exists across the application. Multiple requests to start configuration workers with
-    the same refresh_callback will reuse the existing worker instance.    
     """
 
-    _instance = None
-    _instance_lock = threading.Lock()
-    _refresh_interval = 1800.0  # Default to 30 minutes in seconds
-    _interval_lock = threading.Lock()
-    _refresh_thread = None
-    _shutdown_event = None
-    _initialized = False
-    _running = False
-    _state_lock = threading.Lock()
-
-    def __new__(cls):
-        with cls._instance_lock:
-            if cls._instance is None:
-                cls._instance = super(_ConfigurationWorker, cls).__new__(cls)
-            return cls._instance
-
-    def __init__(self,) -> None:
-        """Initialize the ConfigurationWorker. Will not reinitialize if already created."""
-        with self._state_lock:
-            if not self._initialized:
-                self._shutdown_event = threading.Event()
-                self._refresh_thread = threading.Thread(
-                    target=self._get_configuration,
-                    name="ConfigurationWorker",
-                    daemon=True
-                )
-                self._shutdown_event.clear()
-                self._refresh_thread.start()
-                self._running = True
-                self._initialized = True
+    def __init__(self, refresh_interval=None) -> None:
+        """Initialize the ConfigurationWorker."""
+        self._default_refresh_interval = 3600.0  # Default to 60 minutes in seconds
+        self._interval_lock = threading.Lock()
+        self._state_lock = threading.Lock()
+        
+        self._shutdown_event = threading.Event()
+        self._refresh_thread = threading.Thread(
+            target=self._get_configuration,
+            name="ConfigurationWorker",
+            daemon=True
+        )
+        self._refresh_interval = refresh_interval or self._default_refresh_interval
+        self._shutdown_event.clear()
+        self._refresh_thread.start()
+        self._running = True
 
     def shutdown(self) -> None:
         """Shut down the configuration refresh worker thread."""
         with self._state_lock:
-            if not self._initialized or not self._running:
+            if not self._running:
                 return
 
             self._running = False

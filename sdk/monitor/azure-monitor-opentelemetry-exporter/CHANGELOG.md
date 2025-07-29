@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Configuration manager/worker fetch via OneSettings part 1
+  ([#41549] https://github.com/Azure/azure-sdk-for-python/pull/41549)
+
 ### Breaking Changes
 
 ### Bugs Fixed
@@ -38,8 +41,6 @@
 
 ### Other Changes
 
-- Configuration manager/worker fetch via OneSettings part 1
-  ([#41549] https://github.com/Azure/azure-sdk-for-python/pull/41549)
 - Add logging errors for `401: Unauthorized` and `403: Forbidden` to assist in customer troubleshooting
   ([#41767](https://github.com/Azure/azure-sdk-for-python/pull/41767))
 

@@ -43,7 +43,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _RETRYABLE_STATUS_CODES,
     _THROTTLE_STATUS_CODES,
 )
-from azure.monitor.opentelemetry.exporter._configuration._worker import _ConfigurationWorker
+from azure.monitor.opentelemetry.exporter._configuration import _ConfigurationManager
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage
 from azure.monitor.opentelemetry.exporter._utils import _get_auth_policy
@@ -87,8 +87,7 @@ class BaseExporter:
         """
         parsed_connection_string = ConnectionStringParser(kwargs.get("connection_string"))
 
-        # Configuration worker to periodically refresh configuration settings
-        self.config_worker = _ConfigurationWorker()
+        self._configuration_manager = _ConfigurationManager()
 
         self._api_version = kwargs.get("api_version") or _SERVICE_API_LATEST
         if self._is_stats_exporter():
