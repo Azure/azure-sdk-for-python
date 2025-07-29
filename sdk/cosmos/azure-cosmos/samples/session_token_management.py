@@ -6,7 +6,7 @@
 import json
 import random
 import uuid
-from typing import Dict, Any
+from typing import Dict, Any, List, Tuple
 
 from azure.cosmos import PartitionKey
 from azure.cosmos import CosmosClient
@@ -54,7 +54,7 @@ def storing_session_tokens_pk(container):
     # Everything below is just a simulation of what could be run on different machines and clients
     # to store session tokens in a cache by feed range from the partition key.
     # The cache is a Dict here for simplicity but in a real-world scenario, it would be some service.
-    feed_ranges_and_session_tokens = []
+    feed_ranges_and_session_tokens: List[Tuple[Dict[str, Any], str]] = []
 
     # populating cache with session tokens
     for i in range(5):
@@ -91,7 +91,7 @@ def storing_session_tokens_container_feed_ranges(container):
 
     # Everything below is just a simulation of what could be run on different machines and clients
     # to store session tokens in a cache by feed range from the partition key.
-    feed_ranges_and_session_tokens = []
+    feed_ranges_and_session_tokens: List[Tuple[Dict[str, Any], str]] = []
     feed_ranges = list(container.read_feed_ranges())
 
     # populating cache with session tokens
