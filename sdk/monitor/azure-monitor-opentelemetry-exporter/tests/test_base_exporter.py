@@ -19,6 +19,7 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     ExportResult,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._state import _REQUESTS_MAP, _STATSBEAT_STATE
+from azure.monitor.opentelemetry.exporter.statsbeat import _customer_statsbeat
 from azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat import _CUSTOMER_STATSBEAT_STATE, CustomerStatsbeatMetrics
 from azure.monitor.opentelemetry.exporter.statsbeat._exporter import _StatsBeatExporter
 from azure.monitor.opentelemetry.exporter.export.metrics._exporter import AzureMonitorMetricExporter
@@ -111,12 +112,11 @@ class TestBaseExporter(unittest.TestCase):
         })
         _CUSTOMER_STATSBEAT_STATE.clear()
         _CUSTOMER_STATSBEAT_STATE.update({
-            "INITIAL_FAILURE_COUNT": 0,
-            "INITIAL_SUCCESS": False,
             "SHUTDOWN": False,
-            "CUSTOM_EVENTS_FEATURE_SET": False,
-            "LIVE_METRICS_FEATURE_SET": False,
         })
+        # Reset customer statsbeat singleton for test isolation
+        _customer_statsbeat._STATSBEAT_METRICS = None
+        _CUSTOMER_STATSBEAT_STATE["SHUTDOWN"] = False
 
     def tearDown(self):
         clean_folder(self._base.storage._path)

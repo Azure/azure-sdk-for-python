@@ -672,7 +672,7 @@ class TestLocalFileStorage(unittest.TestCase):
                             mock_track.reset_mock()
 
     def test_check_and_set_folder_permissions_readonly_filesystem(self):
-        """Test that OSError with errno.EROFS sets filesystem_is_readonly flag"""
+        """Test that OSError readonly error sets filesystem_is_readonly flag"""
         import errno
         
         readonly_error = OSError("Read-only file system")
@@ -712,9 +712,9 @@ class TestLocalFileStorage(unittest.TestCase):
         """Test that other OSError types set exception_occurred"""
         import errno
         
-        # Create a mock OSError with different errno (not EROFS)
+        # Create a mock OSError with different errno 
         other_os_error = OSError("No space left on device")
-        other_os_error.errno = errno.ENOSPC
+        other_os_error.errno = errno.ENOSPC # cspell:disable-line
         
         with mock.patch("os.makedirs", side_effect=other_os_error):
             with mock.patch.object(
@@ -763,7 +763,7 @@ class TestLocalFileStorage(unittest.TestCase):
                     
                     # Should not be enabled due to OS error
                     self.assertFalse(stor._enabled)
-                    # Should not set readonly flag (getattr returns None, not equal to EROFS)
+                    # Should not set readonly flag
                     self.assertFalse(stor.filesystem_is_readonly)
                     # Should set exception_occurred for OS error without errno
                     self.assertEqual(stor.exception_occurred, os_error_no_errno)
@@ -822,7 +822,7 @@ class TestLocalFileStorage(unittest.TestCase):
         
         # Test 1: Readonly filesystem error
         readonly_error = OSError("Read-only file system")
-        readonly_error.errno = errno.EROFS
+        readonly_error.errno = errno.EROFS  # cspell:disable-line
         
         with mock.patch("os.makedirs", side_effect=readonly_error):
             with mock.patch.object(
