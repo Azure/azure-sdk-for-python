@@ -18,7 +18,7 @@ class TestDataBoundaryMgmtDataBoundariesOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(DataBoundaryMgmtClient)
 
-    @pytest.mark.skip(reason='can not pass')
+    @pytest.mark.skip(reason="can not pass")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_put(self, resource_group):
@@ -28,7 +28,6 @@ class TestDataBoundaryMgmtDataBoundariesOperations(AzureMgmtRecordedTestCase):
         )
 
         assert response
-        
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
@@ -38,4 +37,3 @@ class TestDataBoundaryMgmtDataBoundariesOperations(AzureMgmtRecordedTestCase):
         )
 
         assert response
-        

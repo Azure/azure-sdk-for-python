@@ -1,15 +1,14 @@
 # Release History
 
-## 1.2.2 (Unreleased)
+## 1.3.0 (2025-07-07)
+
+### Features Added
+- Added new APIs "list_connections"
+
+## 1.2.2 (2025-02-28)
 
 ### Features Added
 - Added support for SocketIO when generating client access token
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.2.1 (2024-08-13)
 

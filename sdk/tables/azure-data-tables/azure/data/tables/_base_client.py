@@ -7,7 +7,7 @@
 import os
 from uuid import uuid4
 from urllib.parse import parse_qs, quote, urlparse
-from typing import Any, List, Optional, Mapping, Union
+from typing import Any, List, Optional, Mapping, Union, Literal
 from typing_extensions import Self
 
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential, TokenCredential
@@ -48,6 +48,18 @@ _SUPPORTED_API_VERSIONS = ["2019-02-02", "2019-07-07", "2020-12-06"]
 # cspell:disable-next-line
 _DEV_CONN_STRING = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1"  # pylint: disable=line-too-long
 
+AudienceType = Union[
+    str,
+    Literal[
+        "https://storage.azure.com",
+        "https://storage.azure.us",
+        "https://storage.azure.cn",
+        "https://cosmos.azure.com",
+        "https://cosmos.azure.us",
+        "https://cosmos.azure.cn",
+    ],
+]
+
 
 def get_api_version(api_version: Optional[str], default: str) -> str:
     if api_version and api_version not in _SUPPORTED_API_VERSIONS:
@@ -71,6 +83,7 @@ class TablesBaseClient:  # pylint: disable=too-many-instance-attributes
         *,
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, TokenCredential]] = None,
         api_version: Optional[str] = None,
+        audience: Optional[AudienceType] = None,
         **kwargs: Any,
     ) -> None:
         """
@@ -83,6 +96,9 @@ class TablesBaseClient:  # pylint: disable=too-many-instance-attributes
             ~azure.core.credentials.AzureNamedKeyCredential or
             ~azure.core.credentials.AzureSasCredential or
             ~azure.core.credentials.TokenCredential or None
+        :keyword audience: Optional audience to use for Microsoft Entra ID authentication. If not specified,
+            the public cloud audience will be used.
+        :paramtype audience: str or None
         :keyword api_version: Specifies the version of the operation to use for this request. Default value
             is "2019-02-02".
         :paramtype api_version: str or None
@@ -129,7 +145,7 @@ class TablesBaseClient:  # pylint: disable=too-many-instance-attributes
             }
         self._hosts = _hosts
 
-        self._policies = self._configure_policies(hosts=self._hosts, **kwargs)
+        self._policies = self._configure_policies(audience=audience, hosts=self._hosts, **kwargs)
         if self._cosmos_endpoint:
             self._policies.insert(0, CosmosPatchTransformPolicy())
 
@@ -222,8 +238,10 @@ class TablesBaseClient:  # pylint: disable=too-many-instance-attributes
         """
         return f"{self.scheme}://{hostname}{self._query_str}"
 
-    def _configure_policies(self, **kwargs):
-        credential_policy = _configure_credential(self.credential, self._cosmos_endpoint)
+    def _configure_policies(self, *, audience: Optional[str] = None, **kwargs: Any) -> List[Any]:
+        credential_policy = _configure_credential(
+            self.credential, cosmos_endpoint=self._cosmos_endpoint, audience=audience
+        )
         return [
             RequestIdPolicy(**kwargs),
             StorageHeadersPolicy(**kwargs),

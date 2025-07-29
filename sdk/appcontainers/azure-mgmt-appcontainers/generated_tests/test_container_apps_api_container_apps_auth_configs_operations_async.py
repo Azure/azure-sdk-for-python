@@ -21,11 +21,11 @@ class TestContainerAppsAPIContainerAppsAuthConfigsOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_container_app(self, resource_group):
+    async def test_container_apps_auth_configs_list_by_container_app(self, resource_group):
         response = self.client.container_apps_auth_configs.list_by_container_app(
             resource_group_name=resource_group.name,
             container_app_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestContainerAppsAPIContainerAppsAuthConfigsOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_container_apps_auth_configs_get(self, resource_group):
         response = await self.client.container_apps_auth_configs.get(
             resource_group_name=resource_group.name,
             container_app_name="str",
             auth_config_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestContainerAppsAPIContainerAppsAuthConfigsOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_container_apps_auth_configs_create_or_update(self, resource_group):
         response = await self.client.container_apps_auth_configs.create_or_update(
             resource_group_name=resource_group.name,
             container_app_name="str",
@@ -162,7 +162,7 @@ class TestContainerAppsAPIContainerAppsAuthConfigsOperationsAsync(AzureMgmtRecor
                 },
                 "type": "str",
             },
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -170,12 +170,12 @@ class TestContainerAppsAPIContainerAppsAuthConfigsOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_container_apps_auth_configs_delete(self, resource_group):
         response = await self.client.container_apps_auth_configs.delete(
             resource_group_name=resource_group.name,
             container_app_name="str",
             auth_config_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself

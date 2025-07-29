@@ -29,7 +29,7 @@
 # 2. The last update to the library was a year ago, so it seems the library is
 #    not being actively maintained.
 
-import asyncio
+import asyncio # pylint:disable=do-not-import-asyncio
 from collections import OrderedDict
 from functools import _CacheInfo, _make_key, partial, wraps
 

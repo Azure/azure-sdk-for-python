@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+import sys
+from typing import Any, Callable, Dict, IO, Iterator, Optional, TypeVar, Union, cast, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -15,12 +15,13 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
@@ -28,8 +29,12 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import RecoveryServicesBackupClientMixinABC, _convert_request
+from .._vendor import RecoveryServicesBackupClientMixinABC
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -43,7 +48,7 @@ def build_get_operation_status_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -75,7 +80,7 @@ def build_bms_prepare_data_move_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -109,7 +114,7 @@ def build_bms_trigger_data_move_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -150,7 +155,7 @@ def build_move_recovery_point_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -185,6 +190,7 @@ def build_move_recovery_point_request(
 class RecoveryServicesBackupClientOperationsMixin(  # pylint: disable=name-too-long
     RecoveryServicesBackupClientMixinABC
 ):
+
     @distributed_trace
     def get_operation_status(
         self, vault_name: str, resource_group_name: str, operation_id: str, **kwargs: Any
@@ -202,7 +208,7 @@ class RecoveryServicesBackupClientOperationsMixin(  # pylint: disable=name-too-l
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.OperationStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -225,7 +231,6 @@ class RecoveryServicesBackupClientOperationsMixin(  # pylint: disable=name-too-l
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -240,21 +245,21 @@ class RecoveryServicesBackupClientOperationsMixin(  # pylint: disable=name-too-l
             error = self._deserialize.failsafe_deserialize(_models.NewErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("OperationStatus", pipeline_response)
+        deserialized = self._deserialize("OperationStatus", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    def _bms_prepare_data_move_initial(  # pylint: disable=inconsistent-return-statements
+    def _bms_prepare_data_move_initial(
         self,
         vault_name: str,
         resource_group_name: str,
         parameters: Union[_models.PrepareDataMoveRequest, IO[bytes]],
         **kwargs: Any
-    ) -> None:
-        error_map = {
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -267,7 +272,7 @@ class RecoveryServicesBackupClientOperationsMixin(  # pylint: disable=name-too-l
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -288,10 +293,10 @@ class RecoveryServicesBackupClientOperationsMixin(  # pylint: disable=name-too-l
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -299,12 +304,20 @@ class RecoveryServicesBackupClientOperationsMixin(  # pylint: disable=name-too-l
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.NewErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     def begin_bms_prepare_data_move(
@@ -393,7 +406,7 @@ class RecoveryServicesBackupClientOperationsMixin(  # pylint: disable=name-too-l
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._bms_prepare_data_move_initial(  # type: ignore
+            raw_result = self._bms_prepare_data_move_initial(
                 vault_name=vault_name,
                 resource_group_name=resource_group_name,
                 parameters=parameters,
@@ -404,6 +417,7 @@ class RecoveryServicesBackupClientOperationsMixin(  # pylint: disable=name-too-l
                 params=_params,
                 **kwargs
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -425,14 +439,14 @@ class RecoveryServicesBackupClientOperationsMixin(  # pylint: disable=name-too-l
             )
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    def _bms_trigger_data_move_initial(  # pylint: disable=inconsistent-return-statements
+    def _bms_trigger_data_move_initial(
         self,
         vault_name: str,
         resource_group_name: str,
         parameters: Union[_models.TriggerDataMoveRequest, IO[bytes]],
         **kwargs: Any
-    ) -> None:
-        error_map = {
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -445,7 +459,7 @@ class RecoveryServicesBackupClientOperationsMixin(  # pylint: disable=name-too-l
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -466,10 +480,10 @@ class RecoveryServicesBackupClientOperationsMixin(  # pylint: disable=name-too-l
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -477,12 +491,20 @@ class RecoveryServicesBackupClientOperationsMixin(  # pylint: disable=name-too-l
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.NewErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     def begin_bms_trigger_data_move(
@@ -571,7 +593,7 @@ class RecoveryServicesBackupClientOperationsMixin(  # pylint: disable=name-too-l
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._bms_trigger_data_move_initial(  # type: ignore
+            raw_result = self._bms_trigger_data_move_initial(
                 vault_name=vault_name,
                 resource_group_name=resource_group_name,
                 parameters=parameters,
@@ -582,6 +604,7 @@ class RecoveryServicesBackupClientOperationsMixin(  # pylint: disable=name-too-l
                 params=_params,
                 **kwargs
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -603,7 +626,7 @@ class RecoveryServicesBackupClientOperationsMixin(  # pylint: disable=name-too-l
             )
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    def _move_recovery_point_initial(  # pylint: disable=inconsistent-return-statements
+    def _move_recovery_point_initial(
         self,
         vault_name: str,
         resource_group_name: str,
@@ -613,8 +636,8 @@ class RecoveryServicesBackupClientOperationsMixin(  # pylint: disable=name-too-l
         recovery_point_id: str,
         parameters: Union[_models.MoveRPAcrossTiersRequest, IO[bytes]],
         **kwargs: Any
-    ) -> None:
-        error_map = {
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -627,7 +650,7 @@ class RecoveryServicesBackupClientOperationsMixin(  # pylint: disable=name-too-l
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -652,10 +675,10 @@ class RecoveryServicesBackupClientOperationsMixin(  # pylint: disable=name-too-l
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -663,11 +686,19 @@ class RecoveryServicesBackupClientOperationsMixin(  # pylint: disable=name-too-l
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     def begin_move_recovery_point(
@@ -799,7 +830,7 @@ class RecoveryServicesBackupClientOperationsMixin(  # pylint: disable=name-too-l
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._move_recovery_point_initial(  # type: ignore
+            raw_result = self._move_recovery_point_initial(
                 vault_name=vault_name,
                 resource_group_name=resource_group_name,
                 fabric_name=fabric_name,
@@ -814,6 +845,7 @@ class RecoveryServicesBackupClientOperationsMixin(  # pylint: disable=name-too-l
                 params=_params,
                 **kwargs
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements

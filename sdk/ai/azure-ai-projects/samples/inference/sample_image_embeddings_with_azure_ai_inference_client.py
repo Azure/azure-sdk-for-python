@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -5,9 +6,10 @@
 
 """
 DESCRIPTION:
-    Given an AIProjectClient, this sample demonstrates how to get an authenticated 
-    async ImageEmbeddingsClient from the azure.ai.inference package. For more information
-    on the azure.ai.inference package see https://pypi.org/project/azure-ai-inference/.
+    Given an AI Foundry Project endpoint, this sample demonstrates how to get an authenticated 
+    ImageEmbeddingsClient from the azure.ai.inference package, and perform one image
+    embeddings operation. For more information on the azure.ai.inference package see
+    https://pypi.org/project/azure-ai-inference/.
 
 USAGE:
     python sample_image_embeddings_with_azure_ai_inference_client.py
@@ -16,28 +18,42 @@ USAGE:
 
     pip install azure-ai-projects azure-ai-inference azure-identity
 
-    Set these environment variable with your own values:
-    * PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
-    * MODEL_DEPLOYMENT_NAME - The model deployment name, as found in your AI Foundry project.
+    Set these environment variables with your own values:
+    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
+       Azure AI Foundry project.
+    2) MODEL_DEPLOYMENT_NAME - The AI model deployment name, as found in your AI Foundry project.
+    3) DATA_FOLDER - Optional. The folder path where the image file is located.
 """
-import os
-from azure.ai.projects import AIProjectClient
-from azure.ai.inference.models import ImageEmbeddingInput
-from azure.identity import DefaultAzureCredential
 
-project_connection_string = os.environ["PROJECT_CONNECTION_STRING"]
+import os
+from urllib.parse import urlparse
+from azure.identity import DefaultAzureCredential
+from azure.ai.inference import ImageEmbeddingsClient
+from azure.ai.inference.models import ImageEmbeddingInput
+
+endpoint = os.environ["PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 
-with AIProjectClient.from_connection_string(
-    credential=DefaultAzureCredential(),
-    conn_str=project_connection_string,
-) as project_client:
+# Project endpoint has the form:   https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/<your-project-name>
+# Inference endpoint has the form: https://<your-ai-services-account-name>.services.ai.azure.com/models
+# Strip the "/api/projects/<your-project-name>" part and replace with "/models":
+inference_endpoint = f"https://{urlparse(endpoint).netloc}/models"
 
-    # Get an authenticated azure.ai.inference image embeddings client for your default Serverless connection:
-    with project_client.inference.get_image_embeddings_client() as client:
+# Construct the path to the image file used in this sample
+data_folder = os.environ.get("DATA_FOLDER", os.path.dirname(os.path.abspath(__file__)))
+image_file = os.path.join(data_folder, "sample1.png")
+
+with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
+
+    with ImageEmbeddingsClient(
+        endpoint=inference_endpoint,
+        credential=credential,
+        credential_scopes=["https://ai.azure.com/.default"],
+    ) as client:
 
         response = client.embed(
-            model=model_deployment_name, input=[ImageEmbeddingInput.load(image_file="sample1.png", image_format="png")]
+            model=model_deployment_name,
+            input=[ImageEmbeddingInput.load(image_file=image_file, image_format="png")],
         )
 
         for item in response.data:

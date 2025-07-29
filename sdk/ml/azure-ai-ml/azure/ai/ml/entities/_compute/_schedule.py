@@ -11,7 +11,7 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import ScheduleStatus as
 from azure.ai.ml._restclient.v2022_10_01_preview.models import TriggerType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
-from .._schedule.trigger import CronTrigger, RecurrenceTrigger
+from .._schedule.trigger import CronTrigger, RecurrencePattern, RecurrenceTrigger
 
 
 class ComputeStartStopSchedule(RestTranslatableMixin):
@@ -104,7 +104,7 @@ class ComputeStartStopSchedule(RestTranslatableMixin):
                 time_zone=obj.recurrence.time_zone,
                 frequency=obj.recurrence.frequency,
                 interval=obj.recurrence.interval,
-                schedule=obj.recurrence.schedule,
+                schedule=RecurrencePattern._from_rest_object(obj.recurrence.schedule),
             )
 
         return schedule

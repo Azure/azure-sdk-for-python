@@ -56,6 +56,13 @@ steps:
       }
     displayName: Set Component Governance Path
 
+  # Create package properties file before updating the version to daily dev build
+  # This is required to set the package version in info file before it's updated.
+  - template: /eng/common/pipelines/templates/steps/save-package-properties.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      ExcludePaths: ${{ parameters.ExcludePaths }}
+
   # set dev build calls SavePackageProperties with dev version if necessary. this will never happen in a PR build
   # however, it will set the variable SetDevVersion as appropriate for normal nightly runs
   - template: set-dev-build.yml
@@ -98,7 +105,7 @@ steps:
 
   - script: |
       sudo apt-get update
-      sudo apt-get install -y qemu-user-static
+      sudo apt-get install -y qemu-user-static binfmt-support
       sudo update-binfmts --enable qemu-aarch64
     displayName: 'Install QEMU Dependencies'
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))

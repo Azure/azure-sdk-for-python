@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -75,9 +76,9 @@ def main():
                 "count": 3,
                 "labels": [{"key": "kubernetes.label", "value": "true"}],
                 "mode": "System",
-                "taints": [{"key": "kubernetes.taint", "value": "true"}],
+                "taints": [{"key": "kubernetes.taint", "value": "true:NoSchedule"}],
                 "upgradeSettings": {"maxSurge": "1"},
-                "vmSkuName": "NC_XXXX",
+                "vmSkuName": "NC_P46_224_v1",
             },
             "tags": {"key1": "myvalue1", "key2": "myvalue2"},
         },
@@ -85,6 +86,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/preview/2024-06-01-preview/examples/AgentPools_Create.json
+# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/AgentPools_Create.json
 if __name__ == "__main__":
     main()

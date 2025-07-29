@@ -8,13 +8,12 @@
 
 from typing import Any
 
-from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
 from .._version import VERSION
 
 
-class ConfidentialLedgerClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+class ConfidentialLedgerClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for ConfidentialLedgerClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -23,14 +22,13 @@ class ConfidentialLedgerClientConfiguration(Configuration):  # pylint: disable=t
     :param ledger_endpoint: The Confidential Ledger URL, for example
      https://contoso.confidentialledger.azure.com. Required.
     :type ledger_endpoint: str
-    :keyword api_version: Api Version. Default value is "2022-05-13". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2024-12-09-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, ledger_endpoint: str, **kwargs: Any) -> None:
-        super(ConfidentialLedgerClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2022-05-13")  # type: str
+        api_version: str = kwargs.pop("api_version", "2024-12-09-preview")
 
         if ledger_endpoint is None:
             raise ValueError("Parameter 'ledger_endpoint' must not be None.")
@@ -38,6 +36,7 @@ class ConfidentialLedgerClientConfiguration(Configuration):  # pylint: disable=t
         self.ledger_endpoint = ledger_endpoint
         self.api_version = api_version
         kwargs.setdefault("sdk_moniker", "confidentialledger/{}".format(VERSION))
+        self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
     def _configure(self, **kwargs: Any) -> None:
@@ -46,7 +45,7 @@ class ConfidentialLedgerClientConfiguration(Configuration):  # pylint: disable=t
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
         self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
         self.http_logging_policy = kwargs.get("http_logging_policy") or policies.HttpLoggingPolicy(**kwargs)
-        self.retry_policy = kwargs.get("retry_policy") or policies.AsyncRetryPolicy(**kwargs)
         self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
         self.redirect_policy = kwargs.get("redirect_policy") or policies.AsyncRedirectPolicy(**kwargs)
+        self.retry_policy = kwargs.get("retry_policy") or policies.AsyncRetryPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")

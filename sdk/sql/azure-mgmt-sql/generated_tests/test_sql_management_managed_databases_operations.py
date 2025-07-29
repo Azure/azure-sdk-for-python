@@ -20,11 +20,11 @@ class TestSqlManagementManagedDatabasesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_instance(self, resource_group):
+    def test_managed_databases_list_by_instance(self, resource_group):
         response = self.client.managed_databases.list_by_instance(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
-            api_version="2022-08-01-preview",
+            api_version="2024-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,12 +32,12 @@ class TestSqlManagementManagedDatabasesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_managed_databases_get(self, resource_group):
         response = self.client.managed_databases.get(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             database_name="str",
-            api_version="2022-08-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestSqlManagementManagedDatabasesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_managed_databases_begin_create_or_update(self, resource_group):
         response = self.client.managed_databases.begin_create_or_update(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
@@ -79,7 +79,7 @@ class TestSqlManagementManagedDatabasesOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2022-08-01-preview",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -87,12 +87,12 @@ class TestSqlManagementManagedDatabasesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_managed_databases_begin_delete(self, resource_group):
         response = self.client.managed_databases.begin_delete(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             database_name="str",
-            api_version="2022-08-01-preview",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -100,7 +100,7 @@ class TestSqlManagementManagedDatabasesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update(self, resource_group):
+    def test_managed_databases_begin_update(self, resource_group):
         response = self.client.managed_databases.begin_update(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
@@ -130,7 +130,7 @@ class TestSqlManagementManagedDatabasesOperations(AzureMgmtRecordedTestCase):
                 "storageContainerUri": "str",
                 "tags": {"str": "str"},
             },
-            api_version="2022-08-01-preview",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -138,13 +138,13 @@ class TestSqlManagementManagedDatabasesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_cancel_move(self, resource_group):
+    def test_managed_databases_begin_cancel_move(self, resource_group):
         response = self.client.managed_databases.begin_cancel_move(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             database_name="str",
             parameters={"destinationManagedDatabaseId": "str"},
-            api_version="2022-08-01-preview",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -152,13 +152,13 @@ class TestSqlManagementManagedDatabasesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_complete_move(self, resource_group):
+    def test_managed_databases_begin_complete_move(self, resource_group):
         response = self.client.managed_databases.begin_complete_move(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             database_name="str",
             parameters={"destinationManagedDatabaseId": "str"},
-            api_version="2022-08-01-preview",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -166,13 +166,13 @@ class TestSqlManagementManagedDatabasesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_complete_restore(self, resource_group):
+    def test_managed_databases_begin_complete_restore(self, resource_group):
         response = self.client.managed_databases.begin_complete_restore(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             database_name="str",
             parameters={"lastBackupName": "str"},
-            api_version="2022-08-01-preview",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -180,13 +180,13 @@ class TestSqlManagementManagedDatabasesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_start_move(self, resource_group):
+    def test_managed_databases_begin_start_move(self, resource_group):
         response = self.client.managed_databases.begin_start_move(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             database_name="str",
             parameters={"destinationManagedDatabaseId": "str", "operationMode": "str"},
-            api_version="2022-08-01-preview",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -194,11 +194,11 @@ class TestSqlManagementManagedDatabasesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_inaccessible_by_instance(self, resource_group):
+    def test_managed_databases_list_inaccessible_by_instance(self, resource_group):
         response = self.client.managed_databases.list_inaccessible_by_instance(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
-            api_version="2022-08-01-preview",
+            api_version="2024-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

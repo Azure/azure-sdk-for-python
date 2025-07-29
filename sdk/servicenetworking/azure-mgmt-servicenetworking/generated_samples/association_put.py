@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -47,6 +48,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-01-01/AssociationPut.json
+# x-ms-original-file: 2025-03-01-preview/AssociationPut.json
 if __name__ == "__main__":
     main()

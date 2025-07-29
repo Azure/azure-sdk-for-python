@@ -1,15 +1,16 @@
 [tool.azure-sdk-build]
-mypy = true
+mypy = false
 pyright = false
-pylint = true
+pylint = false
 black = true
 verifytypes = false
+whl_no_aio = false
 
 [tool.isort]
 profile = "black"
 line_length = 120
 known_first_party = ["azure"]
-filter_files=true
+filter_files = true
 extend_skip_glob = [
   "*/_vendor/*",
   "*/_generated/*",

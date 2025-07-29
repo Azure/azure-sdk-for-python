@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import collections.abc
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 from itertools import groupby
 from typing import Iterator, cast
 from multidict import CIMultiDict
@@ -132,7 +132,7 @@ class _CIMultiDict(CIMultiDict):
     def __getitem__(self, key: str) -> str:
         return ", ".join(self.getall(key, []))
 
-    def get(self, key, default=None):
+    def get(self, key, /, default=None):
         values = self.getall(key, None)
         if values:
             values = ", ".join(values)

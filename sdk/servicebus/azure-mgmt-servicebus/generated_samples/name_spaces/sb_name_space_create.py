@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -35,13 +36,14 @@ def main():
         namespace_name="sdk-Namespace2924",
         parameters={
             "location": "South Central US",
-            "sku": {"name": "Standard", "tier": "Standard"},
+            "properties": {"premiumMessagingPartitions": 2},
+            "sku": {"capacity": 4, "name": "Premium", "tier": "Premium"},
             "tags": {"tag1": "value1", "tag2": "value2"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/servicebus/resource-manager/Microsoft.ServiceBus/stable/2021-11-01/examples/NameSpaces/SBNameSpaceCreate.json
+# x-ms-original-file: specification/servicebus/resource-manager/Microsoft.ServiceBus/preview/2022-10-01-preview/examples/NameSpaces/SBNameSpaceCreate.json
 if __name__ == "__main__":
     main()

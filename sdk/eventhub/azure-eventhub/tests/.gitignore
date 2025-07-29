@@ -1,0 +1,10 @@
+# amqpproxy
+**/amqpproxy_startup.log
+*.bin
+
+# ignoring the key files so they don't get checked in.
+*-bin-*.txt
+*-tlskeys.txt
+server.crt
+server.key
+faultinjector-traffic.json

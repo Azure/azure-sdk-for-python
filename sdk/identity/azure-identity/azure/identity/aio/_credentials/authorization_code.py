@@ -111,7 +111,7 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
         :keyword options: A dictionary of options for the token request. Unknown options will be ignored. Optional.
         :paramtype options: ~azure.core.credentials.TokenRequestOptions
 
-        :rtype: AccessTokenInfo
+        :rtype: ~azure.core.credentials.AccessTokenInfo
         :return: An AccessTokenInfo instance containing information about the token.
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
           attribute gives a reason. Any error response from Microsoft Entra ID is available as the error's
@@ -133,7 +133,7 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
             return token
 
         token = cast(AccessTokenInfo, None)
-        for refresh_token in self._client.get_cached_refresh_tokens(scopes):
+        for refresh_token in self._client.get_cached_refresh_tokens(scopes, **kwargs):
             if "secret" in refresh_token:
                 token = await self._client.obtain_token_by_refresh_token(scopes, refresh_token["secret"], **kwargs)
                 if token:

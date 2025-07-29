@@ -45,7 +45,10 @@ class TestServiceNetworkingMgmtTrafficControllerInterfaceOperations(AzureMgmtRec
                     "frontends": [{"id": "str"}],
                     "provisioningState": "str",
                     "securityPolicies": [{"id": "str"}],
-                    "securityPolicyConfigurations": {"wafSecurityPolicy": {"id": "str"}},
+                    "securityPolicyConfigurations": {
+                        "ipAccessRulesSecurityPolicy": {"id": "str"},
+                        "wafSecurityPolicy": {"id": "str"},
+                    },
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -70,7 +73,12 @@ class TestServiceNetworkingMgmtTrafficControllerInterfaceOperations(AzureMgmtRec
             resource_group_name=resource_group.name,
             traffic_controller_name="str",
             properties={
-                "properties": {"securityPolicyConfigurations": {"wafSecurityPolicy": {"id": "str"}}},
+                "properties": {
+                    "securityPolicyConfigurations": {
+                        "ipAccessRulesSecurityPolicy": {"id": "str"},
+                        "wafSecurityPolicy": {"id": "str"},
+                    }
+                },
                 "tags": {"str": "str"},
             },
         )

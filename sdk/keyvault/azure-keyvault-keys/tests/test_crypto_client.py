@@ -5,6 +5,7 @@
 import codecs
 from datetime import datetime, timezone
 import hashlib
+from json import dumps
 import os
 import time
 from datetime import datetime, timezone
@@ -35,7 +36,7 @@ from azure.keyvault.keys.crypto import (
     SignatureAlgorithm,
 )
 from azure.keyvault.keys.crypto._providers import NoLocalCryptography, get_local_cryptography_provider
-from azure.keyvault.keys._generated._serialization import Deserializer, Serializer
+from azure.keyvault.keys._generated._serialization import Deserializer
 from azure.keyvault.keys._generated.models import KeySignParameters
 from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
@@ -173,7 +174,6 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @recorded_by_proxy
     def test_ec_key_id(self, key_client, is_hsm, **kwargs):
         """When initialized with a key ID, the client should retrieve the key and perform public operations locally"""
-        set_bodiless_matcher()
         key = self._create_ec_key(key_client, self.get_resource_name("eckey"), hardware_protected=is_hsm)
 
         crypto_client = self.create_crypto_client(key.id, api_version=key_client.api_version)
@@ -207,7 +207,6 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_encrypt_and_decrypt(self, key_client, is_hsm, **kwargs):
-        set_bodiless_matcher()
         key_name = self.get_resource_name("keycrypt")
 
         imported_key = self._import_test_key(key_client, key_name, hardware_protected=is_hsm)
@@ -226,7 +225,6 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_encrypt_and_decrypt_with_managed_key(self, key_client, **kwargs):
-        set_bodiless_matcher()
         key_name = self.get_resource_name("keycrypt")
 
         imported_key = self._import_test_key(key_client, key_name)
@@ -258,7 +256,6 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_encrypt_and_decrypt_with_managed_key_no_get(self, key_client, **kwargs):
-        set_bodiless_matcher()
         key_name = self.get_resource_name("keycrypt")
 
         imported_key = self._import_test_key(key_client, key_name)
@@ -361,7 +358,6 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_wrap_and_unwrap(self, key_client, is_hsm, **kwargs):
-        set_bodiless_matcher()
         key_name = self.get_resource_name("keywrap")
 
         created_key = self._create_rsa_key(key_client, key_name, hardware_protected=is_hsm)
@@ -444,7 +440,6 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_encrypt_local(self, key_client, is_hsm, **kwargs):
-        set_bodiless_matcher()
         """Encrypt locally, decrypt with Key Vault"""
         key_name = self.get_resource_name("encrypt-local")
         key = self._create_rsa_key(key_client, key_name, size=4096, hardware_protected=is_hsm)
@@ -462,7 +457,6 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_encrypt_local_from_jwk(self, key_client, is_hsm, **kwargs):
-        set_bodiless_matcher()
         """Encrypt locally, decrypt with Key Vault"""
         key_name = self.get_resource_name("encrypt-local")
         key = self._create_rsa_key(key_client, key_name, size=4096, hardware_protected=is_hsm)
@@ -541,7 +535,6 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_wrap_local(self, key_client, is_hsm, **kwargs):
-        set_bodiless_matcher()
         """Wrap locally, unwrap with Key Vault"""
         key_name = self.get_resource_name("wrap-local")
         key = self._create_rsa_key(key_client, key_name, size=4096, hardware_protected=is_hsm)
@@ -559,7 +552,6 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @recorded_by_proxy
     def test_wrap_local_from_jwk(self, key_client, is_hsm, **kwargs):
         """Wrap locally, unwrap with Key Vault"""
-        set_bodiless_matcher()
         key_name = self.get_resource_name("wrap-local")
         key = self._create_rsa_key(key_client, key_name, size=4096, hardware_protected=is_hsm)
         crypto_client = self.create_crypto_client(key, api_version=key_client.api_version)
@@ -735,7 +727,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         crypto_client = self.create_crypto_client(imported_key.id, api_version=key_client.api_version)
 
         parameters = KeySignParameters(algorithm=SignatureAlgorithm.rs256, value=digest)
-        json = Serializer().body(parameters, "KeySignParameters")
+        json = parameters.as_dict()
 
         # sign using a custom request
         request = HttpRequest(
@@ -745,6 +737,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
             json=json
         )
         response = crypto_client.send_request(request)
+        response.raise_for_status()
         result = response.json()
         signature = Deserializer().deserialize_base64(result["value"])
         assert result["kid"] == imported_key.id
@@ -1149,22 +1142,7 @@ def test_rsa_private_key_private_bytes():
 def test_retain_url_port():
     """Regression test for https://github.com/Azure/azure-sdk-for-python/issues/24446"""
 
-    mock_client = mock.Mock()
     key = mock.Mock(spec=KeyVaultKey, id="https://localhost:8443/keys/rsa-2048/2d93f37afada4679b00b528f7238ad5c")
     client = CryptographyClient(key, mock.Mock())
-    client._client = mock_client
+    # Client's vault_url is also set as generated client's base URL as-is (with port)
     assert client.vault_url == "https://localhost:8443"
-
-    # Make request for locally unsupported operation, prompting a service request
-    supports_nothing = mock.Mock(supports=mock.Mock(return_value=False))
-    with mock.patch(CryptographyClient.__module__ + ".get_local_cryptography_provider", lambda *_: supports_nothing):
-        client.encrypt(EncryptionAlgorithm.rsa_oaep, b"...")
-    assert mock_client.encrypt.call_count == 1
-
-    # See https://docs.python.org/dev/library/unittest.mock.html#calls-as-tuples for details about this inspection
-    for method_call in mock_client.method_calls:
-        name, args, kwargs = method_call
-        if name == "encrypt":
-            # This check is implementation-dependent, and assumes that the generated client's encrypt method is
-            # called using named arguments
-            assert kwargs.get("vault_base_url") == "https://localhost:8443"

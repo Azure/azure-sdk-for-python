@@ -280,12 +280,14 @@ class ComputeInstance(Compute):
             subnet_resource = None
 
         ssh_settings = None
+        disable_local_auth = True
         if self.ssh_public_access_enabled is not None or self.ssh_settings is not None:
             ssh_settings = CiSShSettings()
             ssh_settings.ssh_public_access = "Enabled" if self.ssh_public_access_enabled else "Disabled"
             ssh_settings.admin_public_key = (
                 self.ssh_settings.ssh_key_value if self.ssh_settings and self.ssh_settings.ssh_key_value else None
             )
+            disable_local_auth = not self.ssh_public_access_enabled
 
         personal_compute_instance_settings = None
         if self.create_on_behalf_of:
@@ -330,6 +332,7 @@ class ComputeInstance(Compute):
             description=self.description,
             compute_type=self.type,
             properties=compute_instance_prop,
+            disable_local_auth=disable_local_auth,
         )
         return ComputeResource(
             location=self.location,

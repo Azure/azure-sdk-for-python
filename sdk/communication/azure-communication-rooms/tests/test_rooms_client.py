@@ -24,6 +24,7 @@ class TestRoomsClient(ACSRoomsTestCase):
         sanitizedId2 = "8:acs:sanitized2"
         sanitizedId3 = "8:acs:sanitized3"
         sanitizedId4 = "8:acs:sanitized4"
+        sanitizedId5 = "8:acs:sanitized5"
         if is_live():
             self.identity_client = CommunicationIdentityClient.from_connection_string(self.connection_str)
 
@@ -31,15 +32,18 @@ class TestRoomsClient(ACSRoomsTestCase):
             self.id2 = self.identity_client.create_user().properties["id"]
             self.id3 = self.identity_client.create_user().properties["id"]
             self.id4 = self.identity_client.create_user().properties["id"]
+            self.id5 = self.identity_client.create_user().properties["id"]
             add_general_regex_sanitizer(regex=self.id1, value=sanitizedId1)
             add_general_regex_sanitizer(regex=self.id2, value=sanitizedId2)
             add_general_regex_sanitizer(regex=self.id3, value=sanitizedId3)
             add_general_regex_sanitizer(regex=self.id4, value=sanitizedId4)
+            add_general_regex_sanitizer(regex=self.id5, value=sanitizedId5)
         else:
             self.id1 = sanitizedId1
             self.id2 = sanitizedId2
             self.id3 = sanitizedId3
             self.id4 = sanitizedId4
+            self.id5 = sanitizedId5
 
         self.rooms_client = RoomsClient.from_connection_string(
             self.connection_str, http_logging_policy=get_http_logging_policy()
@@ -55,6 +59,9 @@ class TestRoomsClient(ACSRoomsTestCase):
             "chris": RoomParticipant(
                 communication_identifier=CommunicationUserIdentifier(self.id3), role=ParticipantRole.ATTENDEE
             ),
+            "jordan": RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id4), role=ParticipantRole.COLLABORATOR
+            ),
         }
         self.rooms_client = RoomsClient.from_connection_string(
             self.connection_str, http_logging_policy=get_http_logging_policy()
@@ -69,7 +76,7 @@ class TestRoomsClient(ACSRoomsTestCase):
     @recorded_by_proxy
     def test_create_room_only_participants(self):
         # add john and chris to room
-        participants = [self.users["john"], self.users["chris"]]
+        participants = [self.users["john"], self.users["chris"],self.users["jordan"]]
 
         response = self.rooms_client.create_room(participants=participants)
         # delete created room
@@ -299,7 +306,7 @@ class TestRoomsClient(ACSRoomsTestCase):
     @recorded_by_proxy
     def test_add_or_update_participants(self):
         # add john and chris to room
-        create_participants = [self.users["john"], self.users["chris"]]
+        create_participants = [self.users["john"], self.users["chris"],self.users["jordan"]]
         create_response = self.rooms_client.create_room(participants=create_participants)
 
         # update join to consumer and add fred to room
@@ -316,6 +323,9 @@ class TestRoomsClient(ACSRoomsTestCase):
             RoomParticipant(
                 communication_identifier=CommunicationUserIdentifier(self.id2), role=ParticipantRole.CONSUMER
             ),
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id4), role=ParticipantRole.COLLABORATOR
+            ),
         ]
 
         self.rooms_client.add_or_update_participants(
@@ -325,7 +335,7 @@ class TestRoomsClient(ACSRoomsTestCase):
         participants = []
         for participant in update_response:
             participants.append(participant)
-        assert len(participants) == 3
+        assert len(participants) == 4
         case = unittest.TestCase()
         case.assertCountEqual(expected_participants, participants)
         # delete created room

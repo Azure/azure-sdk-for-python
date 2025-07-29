@@ -22,7 +22,8 @@ from azure.storage.blob import (
     ImmutabilityPolicy,
     PremiumPageBlobTier,
     SequenceNumberAction,
-    generate_blob_sas)
+    generate_blob_sas
+)
 from azure.storage.blob._shared.policies import StorageContentValidation
 
 from devtools_testutils import recorded_by_proxy
@@ -1980,49 +1981,51 @@ class TestStoragePageBlob(StorageRecordedTestCase):
 
         # Assert
 
-    @pytest.mark.skip(reason="Requires further investigation. Failing for unexpected kwarg seal_blob")
     @BlobPreparer()
+    @recorded_by_proxy
     def test_incremental_copy_blob(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key, max_page_size=4 * 1024)
         self._setup(bsc)
-        source_blob = self._create_blob(bsc, length=2048)
-        data = self.get_random_bytes(512)
-        resp1 = source_blob.upload_page(data, offset=0, length=512)
-        resp2 = source_blob.upload_page(data, offset=1024, length=512)
-        source_snapshot_blob = source_blob.create_snapshot()
 
-        snapshot_blob = BlobClient.from_blob_url(
-            source_blob.url, credential=source_blob.credential, snapshot=source_snapshot_blob)
-        sas_token = self.generate_sas(
-            generate_blob_sas,
-            snapshot_blob.account_name,
-            snapshot_blob.container_name,
-            snapshot_blob.blob_name,
-            snapshot=snapshot_blob.snapshot,
-            account_key=snapshot_blob.credential.account_key,
-            permission=BlobSasPermissions(read=True),
-            expiry=datetime.utcnow() + timedelta(hours=1),
-        )
-        sas_blob = BlobClient.from_blob_url(snapshot_blob.url, credential=sas_token)
+        try:
+            source_blob = self._create_blob(bsc, length=2048)
+            data = self.get_random_bytes(512)
+            resp1 = source_blob.upload_page(data, offset=0, length=512)
+            resp2 = source_blob.upload_page(data, offset=1024, length=512)
+            source_snapshot_blob = source_blob.create_snapshot()
 
-        # Act
-        dest_blob = bsc.get_blob_client(self.container_name, 'dest_blob')
-        copy = dest_blob.start_copy_from_url(sas_blob.url, incremental_copy=True)
+            snapshot_blob = BlobClient.from_blob_url(
+                source_blob.url, credential=source_blob.credential, snapshot=source_snapshot_blob)
+            sas_token = self.generate_sas(
+                generate_blob_sas,
+                snapshot_blob.account_name,
+                snapshot_blob.container_name,
+                snapshot_blob.blob_name,
+                snapshot=snapshot_blob.snapshot,
+                account_key=snapshot_blob.credential.account_key,
+                permission=BlobSasPermissions(read=True),
+                expiry=datetime.utcnow() + timedelta(hours=1),
+            )
+            sas_blob = BlobClient.from_blob_url(snapshot_blob.url, credential=sas_token)
 
-        # Assert
-        assert copy is not None
-        assert copy['copy_id'] is not None
-        assert copy['copy_status'] == 'pending'
+            # Act
+            dest_blob = bsc.get_blob_client(self.container_name, 'dest_blob')
+            copy = dest_blob.start_copy_from_url(sas_blob.url, incremental_copy=True)
 
-        copy_blob = self._wait_for_async_copy(dest_blob)
-        assert copy_blob.copy.status == 'success'
-        assert copy_blob.copy.destination_snapshot is not None
+            # Assert
+            assert copy is not None
+            assert copy['copy_id'] is not None
+            assert copy['copy_status'] == 'pending'
 
-        # strip off protocol
-        assert copy_blob.copy.source.endswith(sas_blob.url[5:])
+            copy_blob = self._wait_for_async_copy(dest_blob)
+            assert copy_blob.copy.status == 'success'
+            assert copy_blob.copy.destination_snapshot is not None
+        finally:
+            bsc.delete_container(self.container_name)
+            bsc.delete_container(self.source_container_name)
 
     @BlobPreparer()
     @recorded_by_proxy

@@ -22,6 +22,8 @@ from azure.ai.ml._artifacts._constants import (
     CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
 )
 from azure.ai.ml._exception_helper import log_and_raise_error
+
+from azure.ai.ml._restclient.model_dataplane import AzureMachineLearningWorkspaces as ServiceClientModelDataPlane
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
@@ -105,6 +107,7 @@ class ModelOperations(_ScopeDependentOperations):
         operation_config: OperationConfig,
         service_client: Union[ServiceClient082023Preview, ServiceClient102021Dataplane],
         datastore_operations: DatastoreOperations,
+        service_client_model_dataplane: ServiceClientModelDataPlane = None,
         all_operations: Optional[OperationsContainer] = None,
         **kwargs,
     ):
@@ -112,6 +115,8 @@ class ModelOperations(_ScopeDependentOperations):
         ops_logger.update_filter()
         self._model_versions_operation = service_client.model_versions
         self._model_container_operation = service_client.model_containers
+        if service_client_model_dataplane is not None:
+            self._model_dataplane_operation = service_client_model_dataplane.models
         self._service_client = service_client
         self._datastore_operation = datastore_operations
         self._all_operations = all_operations
@@ -251,14 +256,14 @@ class ModelOperations(_ScopeDependentOperations):
             model_version_resource = model._to_rest_object()
             auto_increment_version = model._auto_increment_version
             try:
+                cont_token = self._scope_kwargs.pop("continuation_token", None)  # type: Optional[str]
                 result = (
-                    self._model_versions_operation.begin_create_or_update(
-                        name=name,
-                        version=version,
-                        body=model_version_resource,
-                        registry_name=self._registry_name,
-                        **self._scope_kwargs,
-                    ).result()
+                    self._begin_create_or_update_registry_model(
+                        name,
+                        version,
+                        model_version_resource,
+                        cont_token,
+                    )
                     if self._registry_name
                     else self._model_versions_operation.create_or_update(
                         name=name,
@@ -294,6 +299,31 @@ class ModelOperations(_ScopeDependentOperations):
                 log_and_raise_error(ex)
             else:
                 raise ex
+
+    def _begin_create_or_update_registry_model(self, name, version, model_version_resource, cont_token):
+        # if continuation token is None and system_metadata attribute found
+        # we need to send the system_metadata values in the request
+        return (
+            self._model_dataplane_operation.begin_create_or_update_model_with_system_metadata(
+                subscription_id=self._operation_scope._subscription_id,
+                name=str(name),
+                version=str(version),
+                body=model_version_resource,
+                registry_name=self._registry_name,
+                **self._scope_kwargs,
+            ).result()
+            if self._registry_name
+            and cont_token is None
+            and hasattr(model_version_resource.properties, "system_metadata")
+            and self._model_dataplane_operation is not None
+            else self._model_versions_operation.begin_create_or_update(
+                name=name,
+                version=version,
+                body=model_version_resource,
+                registry_name=self._registry_name,
+                **self._scope_kwargs,
+            ).result()
+        )
 
     def _get(self, name: str, version: Optional[str] = None) -> ModelVersion:  # name:latest
         if version:
@@ -422,10 +452,10 @@ class ModelOperations(_ScopeDependentOperations):
                     from azure.identity import ClientSecretCredential
 
                     token_credential = ClientSecretCredential(
-                        tenant_id=ds.credentials["tenant_id"],
-                        client_id=ds.credentials["client_id"],
-                        client_secret=ds.credentials["client_secret"],
-                        authority=ds.credentials["authority_url"],
+                        tenant_id=ds.credentials["tenant_id"],  # type:ignore
+                        client_id=ds.credentials["client_id"],  # type:ignore
+                        client_secret=ds.credentials["client_secret"],  # type:ignore
+                        authority=ds.credentials["authority_url"],  # type:ignore
                     )
                     credential = token_credential
                 except (KeyError, TypeError):
@@ -656,7 +686,9 @@ class ModelOperations(_ScopeDependentOperations):
         model_versions_operation_ = self._model_versions_operation
 
         try:
-            _client, _rg, _sub = get_registry_client(self._service_client._config.credential, registry_name)
+            _client, _rg, _sub, _model_client = get_registry_client(
+                self._service_client._config.credential, registry_name
+            )
             self._operation_scope.registry_name = registry_name
             self._operation_scope._resource_group_name = _rg
             self._operation_scope._subscription_id = _sub

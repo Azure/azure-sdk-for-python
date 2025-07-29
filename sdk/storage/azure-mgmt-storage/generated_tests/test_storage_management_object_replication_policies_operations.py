@@ -24,7 +24,7 @@ class TestStorageManagementObjectReplicationPoliciesOperations(AzureMgmtRecorded
         response = self.client.object_replication_policies.list(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2023-05-01",
+            api_version="2024-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestStorageManagementObjectReplicationPoliciesOperations(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             account_name="str",
             object_replication_policy_id="str",
-            api_version="2023-05-01",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -54,6 +54,7 @@ class TestStorageManagementObjectReplicationPoliciesOperations(AzureMgmtRecorded
                 "destinationAccount": "str",
                 "enabledTime": "2020-02-20 00:00:00",
                 "id": "str",
+                "metrics": {"enabled": bool},
                 "name": "str",
                 "policyId": "str",
                 "rules": [
@@ -67,7 +68,7 @@ class TestStorageManagementObjectReplicationPoliciesOperations(AzureMgmtRecorded
                 "sourceAccount": "str",
                 "type": "str",
             },
-            api_version="2023-05-01",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -80,7 +81,7 @@ class TestStorageManagementObjectReplicationPoliciesOperations(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             account_name="str",
             object_replication_policy_id="str",
-            api_version="2023-05-01",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself

@@ -37,6 +37,7 @@ from cryptography.hazmat.primitives.serialization import pkcs12
 #
 # ----------------------------------------------------------------------------------------------------------
 
+
 async def run_sample():
     # Instantiate a certificate client that will be used to call the service.
     # Here we use the DefaultAzureCredential, but any azure-identity credential can be used.
@@ -59,9 +60,7 @@ async def run_sample():
 
     # Awaiting create_certificate will return the certificate as a KeyVaultCertificate
     # if creation is successful, and the CertificateOperation if not.
-    created_certificate = await certificate_client.create_certificate(
-        certificate_name=cert_name, policy=cert_policy
-    )
+    created_certificate = await certificate_client.create_certificate(certificate_name=cert_name, policy=cert_policy)
     print(f"Certificate with name '{created_certificate.name}' was created")
 
     # Key Vault also creates a secret with the same name as the created certificate.
@@ -77,8 +76,7 @@ async def run_sample():
     # in place of load_key_and_certificates.
     cert_bytes = base64.b64decode(certificate_secret.value)
     private_key, public_certificate, additional_certificates = pkcs12.load_key_and_certificates(
-        data=cert_bytes,
-        password=None
+        data=cert_bytes, password=None
     )
     print(f"Certificate with name '{certificate_secret.name}' was parsed.")
 

@@ -424,10 +424,9 @@ class TestContentSafetyEvaluator:
     ):
         result = await evaluate_with_rai_service(
             "what is the weather outside?",
-            "raining cats and dogs",
-            "points",
+            EvaluationMetrics.HATE_FAIRNESS,
             {"subscription_id": "fake-id", "project_name": "fake-name", "resource_group_name": "fake-group"},
-            None,
+            DefaultAzureCredential(),
         )
         assert result == "wow-that's-a-lot-of-patches"
         assert fetch_token_mock._mock_call_count == 1

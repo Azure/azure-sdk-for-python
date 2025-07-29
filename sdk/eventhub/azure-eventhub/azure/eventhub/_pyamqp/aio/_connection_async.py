@@ -10,7 +10,7 @@ import time
 from urllib.parse import urlparse
 import socket
 from ssl import SSLError
-import asyncio
+import asyncio # pylint:disable=do-not-import-asyncio
 from typing import Any, Dict, List, Tuple, Optional, NamedTuple, Type, Union, cast
 
 from ._transport_async import AsyncTransport
@@ -70,7 +70,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
      and 1 for transport type AmqpOverWebsocket.
     """
 
-    def __init__( # pylint:disable=too-many-locals
+    def __init__(  # pylint:disable=too-many-locals
         self,
         endpoint: str,
         *,

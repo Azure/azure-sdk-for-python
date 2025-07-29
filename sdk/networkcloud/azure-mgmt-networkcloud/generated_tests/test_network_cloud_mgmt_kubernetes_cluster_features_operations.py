@@ -20,11 +20,11 @@ class TestNetworkCloudMgmtKubernetesClusterFeaturesOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_kubernetes_cluster(self, resource_group):
+    def test_kubernetes_cluster_features_list_by_kubernetes_cluster(self, resource_group):
         response = self.client.kubernetes_cluster_features.list_by_kubernetes_cluster(
             resource_group_name=resource_group.name,
             kubernetes_cluster_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2025-02-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,12 +32,12 @@ class TestNetworkCloudMgmtKubernetesClusterFeaturesOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_kubernetes_cluster_features_get(self, resource_group):
         response = self.client.kubernetes_cluster_features.get(
             resource_group_name=resource_group.name,
             kubernetes_cluster_name="str",
             feature_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2025-02-01",
         )
 
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestNetworkCloudMgmtKubernetesClusterFeaturesOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_kubernetes_cluster_features_begin_create_or_update(self, resource_group):
         response = self.client.kubernetes_cluster_features.begin_create_or_update(
             resource_group_name=resource_group.name,
             kubernetes_cluster_name="str",
@@ -55,6 +55,7 @@ class TestNetworkCloudMgmtKubernetesClusterFeaturesOperations(AzureMgmtRecordedT
                 "availabilityLifecycle": "str",
                 "detailedStatus": "str",
                 "detailedStatusMessage": "str",
+                "etag": "str",
                 "id": "str",
                 "name": "str",
                 "options": [{"key": "str", "value": "str"}],
@@ -72,7 +73,7 @@ class TestNetworkCloudMgmtKubernetesClusterFeaturesOperations(AzureMgmtRecordedT
                 "type": "str",
                 "version": "str",
             },
-            api_version="2024-06-01-preview",
+            api_version="2025-02-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -80,12 +81,12 @@ class TestNetworkCloudMgmtKubernetesClusterFeaturesOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_kubernetes_cluster_features_begin_delete(self, resource_group):
         response = self.client.kubernetes_cluster_features.begin_delete(
             resource_group_name=resource_group.name,
             kubernetes_cluster_name="str",
             feature_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2025-02-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -93,12 +94,12 @@ class TestNetworkCloudMgmtKubernetesClusterFeaturesOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update(self, resource_group):
+    def test_kubernetes_cluster_features_begin_update(self, resource_group):
         response = self.client.kubernetes_cluster_features.begin_update(
             resource_group_name=resource_group.name,
             kubernetes_cluster_name="str",
             feature_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2025-02-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

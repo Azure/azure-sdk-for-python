@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -13,7 +13,6 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 from .. import _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -191,7 +190,7 @@ class AADPropertiesResource(Resource):
         self.properties = properties
 
 
-class ProtectedItem(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ProtectedItem(_serialization.Model):
     """Base class for backup items.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -361,7 +360,7 @@ class ProtectedItem(_serialization.Model):  # pylint: disable=too-many-instance-
         self.resource_guard_operation_requests = resource_guard_operation_requests
 
 
-class AzureFileshareProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attributes
+class AzureFileshareProtectedItem(ProtectedItem):
     """Azure File Share workload-specific backup item.
 
     All required parameters must be populated in order to send to server.
@@ -851,7 +850,7 @@ class AzureFileShareRestoreRequest(RestoreRequest):
         self.target_details = target_details
 
 
-class AzureIaaSVMProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attributes
+class AzureIaaSVMProtectedItem(ProtectedItem):
     """IaaS VM workload-specific backup item.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1119,7 +1118,7 @@ class AzureIaaSVMProtectedItem(ProtectedItem):  # pylint: disable=too-many-insta
         self.extended_properties = extended_properties
 
 
-class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylint: disable=too-many-instance-attributes
+class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):
     """IaaS VM workload-specific backup item representing the Classic Compute VM.
 
     All required parameters must be populated in order to send to server.
@@ -1377,7 +1376,7 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylin
         self.protected_item_type: str = "Microsoft.ClassicCompute/virtualMachines"
 
 
-class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylint: disable=too-many-instance-attributes
+class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):
     """IaaS VM workload-specific backup item representing the Azure Resource Manager VM.
 
     All required parameters must be populated in order to send to server.
@@ -1825,7 +1824,7 @@ class Job(_serialization.Model):
         self.job_type: Optional[str] = None
 
 
-class AzureIaaSVMJob(Job):  # pylint: disable=too-many-instance-attributes
+class AzureIaaSVMJob(Job):
     """Azure IaaS VM workload-specific job object.
 
     All required parameters must be populated in order to send to server.
@@ -2136,7 +2135,7 @@ class AzureIaaSVMProtectedItemExtendedInfo(_serialization.Model):
         self.policy_inconsistent = policy_inconsistent
 
 
-class AzureSqlProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attributes
+class AzureSqlProtectedItem(ProtectedItem):
     """Azure SQL workload-specific backup item.
 
     All required parameters must be populated in order to send to server.
@@ -2400,7 +2399,7 @@ class AzureStorageErrorInfo(_serialization.Model):
         self.recommendations = recommendations
 
 
-class AzureStorageJob(Job):  # pylint: disable=too-many-instance-attributes
+class AzureStorageJob(Job):
     """Azure storage specific job.
 
     All required parameters must be populated in order to send to server.
@@ -2604,7 +2603,7 @@ class AzureStorageJobTaskDetails(_serialization.Model):
         self.status = status
 
 
-class AzureVmWorkloadProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attributes
+class AzureVmWorkloadProtectedItem(ProtectedItem):
     """Azure VM workload-specific protected item.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2926,9 +2925,7 @@ class AzureVmWorkloadProtectedItemExtendedInfo(_serialization.Model):
         self.policy_state = policy_state
 
 
-class AzureVmWorkloadSAPAseDatabaseProtectedItem(
-    AzureVmWorkloadProtectedItem
-):  # pylint: disable=too-many-instance-attributes,name-too-long
+class AzureVmWorkloadSAPAseDatabaseProtectedItem(AzureVmWorkloadProtectedItem):  # pylint: disable=name-too-long
     """Azure VM workload-specific protected item representing SAP ASE Database.
 
     All required parameters must be populated in order to send to server.
@@ -3197,9 +3194,7 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(
         self.protected_item_type: str = "AzureVmWorkloadSAPAseDatabase"
 
 
-class AzureVmWorkloadSAPHanaDatabaseProtectedItem(
-    AzureVmWorkloadProtectedItem
-):  # pylint: disable=too-many-instance-attributes,name-too-long
+class AzureVmWorkloadSAPHanaDatabaseProtectedItem(AzureVmWorkloadProtectedItem):  # pylint: disable=name-too-long
     """Azure VM workload-specific protected item representing SAP HANA Database.
 
     All required parameters must be populated in order to send to server.
@@ -3468,9 +3463,7 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(
         self.protected_item_type: str = "AzureVmWorkloadSAPHanaDatabase"
 
 
-class AzureVmWorkloadSQLDatabaseProtectedItem(
-    AzureVmWorkloadProtectedItem
-):  # pylint: disable=too-many-instance-attributes
+class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
     """Azure VM workload-specific protected item representing SQL Database.
 
     All required parameters must be populated in order to send to server.
@@ -3792,7 +3785,7 @@ class AzureWorkloadErrorInfo(_serialization.Model):
         self.additional_details = additional_details
 
 
-class AzureWorkloadJob(Job):  # pylint: disable=too-many-instance-attributes
+class AzureWorkloadJob(Job):
     """Azure storage specific job.
 
     All required parameters must be populated in order to send to server.
@@ -4960,9 +4953,7 @@ class AzureWorkloadSQLRestoreRequest(AzureWorkloadRestoreRequest):
         self.alternate_directory_paths = alternate_directory_paths
 
 
-class AzureWorkloadSQLPointInTimeRestoreRequest(
-    AzureWorkloadSQLRestoreRequest
-):  # pylint: disable=too-many-instance-attributes,name-too-long
+class AzureWorkloadSQLPointInTimeRestoreRequest(AzureWorkloadSQLRestoreRequest):  # pylint: disable=name-too-long
     """AzureWorkload SQL -specific restore. Specifically for PointInTime/Log restore.
 
     All required parameters must be populated in order to send to server.
@@ -5628,7 +5619,7 @@ class CrossRegionRestoreRequestResource(Resource):
         self.properties = properties
 
 
-class CrrAccessToken(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class CrrAccessToken(_serialization.Model):
     """CrrAccessToken.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -6075,7 +6066,7 @@ class DpmErrorInfo(_serialization.Model):
         self.recommendations = recommendations
 
 
-class DpmJob(Job):  # pylint: disable=too-many-instance-attributes
+class DpmJob(Job):
     """DPM workload-specific job object.
 
     All required parameters must be populated in order to send to server.
@@ -6318,7 +6309,7 @@ class DpmJobTaskDetails(_serialization.Model):
         self.status = status
 
 
-class DPMProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attributes
+class DPMProtectedItem(ProtectedItem):
     """Additional information on Backup engine specific backup item.
 
     All required parameters must be populated in order to send to server.
@@ -6508,7 +6499,7 @@ class DPMProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attr
         self.extended_info = extended_info
 
 
-class DPMProtectedItemExtendedInfo(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class DPMProtectedItemExtendedInfo(_serialization.Model):
     """Additional information of DPM Protected item.
 
     :ivar protectable_object_load_path: Attribute to provide information on various DBs.
@@ -6764,7 +6755,7 @@ class ExtendedProperties(_serialization.Model):
         self.disk_exclusion_properties = disk_exclusion_properties
 
 
-class GenericProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attributes
+class GenericProtectedItem(ProtectedItem):
     """Base class for backup items.
 
     All required parameters must be populated in order to send to server.
@@ -7028,7 +7019,7 @@ class GenericRecoveryPoint(RecoveryPoint):
         self.recovery_point_additional_info = recovery_point_additional_info
 
 
-class IaasVMRecoveryPoint(RecoveryPoint):  # pylint: disable=too-many-instance-attributes
+class IaasVMRecoveryPoint(RecoveryPoint):
     """IaaS VM workload specific backup copy.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7175,7 +7166,7 @@ class IaasVMRecoveryPoint(RecoveryPoint):  # pylint: disable=too-many-instance-a
         self.recovery_point_move_readiness_info = recovery_point_move_readiness_info
 
 
-class IaasVMRestoreRequest(RestoreRequest):  # pylint: disable=too-many-instance-attributes
+class IaasVMRestoreRequest(RestoreRequest):
     """IaaS VM workload-specific restore.
 
     All required parameters must be populated in order to send to server.
@@ -7819,7 +7810,7 @@ class MabErrorInfo(_serialization.Model):
         self.recommendations = None
 
 
-class MabFileFolderProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attributes
+class MabFileFolderProtectedItem(ProtectedItem):
     """MAB workload-specific backup item.
 
     All required parameters must be populated in order to send to server.
@@ -8065,7 +8056,7 @@ class MabFileFolderProtectedItemExtendedInfo(_serialization.Model):
         self.recovery_point_count = recovery_point_count
 
 
-class MabJob(Job):  # pylint: disable=too-many-instance-attributes
+class MabJob(Job):
     """MAB workload-specific job.
 
     All required parameters must be populated in order to send to server.
@@ -9350,7 +9341,7 @@ class TargetRestoreInfo(_serialization.Model):
         self.target_directory_for_file_restore = target_directory_for_file_restore
 
 
-class WorkloadCrrAccessToken(CrrAccessToken):  # pylint: disable=too-many-instance-attributes
+class WorkloadCrrAccessToken(CrrAccessToken):
     """WorkloadCrrAccessToken.
 
     All required parameters must be populated in order to send to server.

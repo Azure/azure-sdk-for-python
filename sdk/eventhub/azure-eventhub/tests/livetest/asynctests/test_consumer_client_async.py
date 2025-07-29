@@ -15,6 +15,7 @@ from azure.eventhub._constants import ALL_PARTITIONS
 async def test_receive_storage_checkpoint_async(
     auth_credential_senders_async,
     uamqp_transport,
+    client_args,
     checkpoint_store_aio,
     live_eventhub,
     resource_mgmt_client,
@@ -37,6 +38,7 @@ async def test_receive_storage_checkpoint_async(
         consumer_group="$default",
         checkpoint_store=checkpoint_store_aio,
         uamqp_transport=uamqp_transport,
+        **client_args,
     )
 
     sequence_numbers_0 = []
@@ -87,7 +89,7 @@ async def test_receive_storage_checkpoint_async(
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_receive_no_partition_async(auth_credential_senders_async, uamqp_transport):
+async def test_receive_no_partition_async(auth_credential_senders_async, uamqp_transport, client_args):
     fully_qualified_namespace, eventhub_name, credential, senders = auth_credential_senders_async
     senders[0].send(EventData("Test EventData"))
     senders[1].send(EventData("Test EventData"))
@@ -97,6 +99,7 @@ async def test_receive_no_partition_async(auth_credential_senders_async, uamqp_t
         credential=credential(),
         consumer_group="$default",
         uamqp_transport=uamqp_transport,
+        **client_args,
     )
 
     async def on_event(partition_context, event):
@@ -135,7 +138,7 @@ async def test_receive_no_partition_async(auth_credential_senders_async, uamqp_t
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_receive_partition_async(auth_credential_senders_async, uamqp_transport):
+async def test_receive_partition_async(auth_credential_senders_async, uamqp_transport, client_args):
     fully_qualified_namespace, eventhub_name, credential, senders = auth_credential_senders_async
     senders[0].send(EventData("Test EventData"))
     client = EventHubConsumerClient(
@@ -144,6 +147,7 @@ async def test_receive_partition_async(auth_credential_senders_async, uamqp_tran
         credential=credential(),
         consumer_group="$default",
         uamqp_transport=uamqp_transport,
+        **client_args,
     )
 
     async def on_event(partition_context, event):
@@ -163,7 +167,7 @@ async def test_receive_partition_async(auth_credential_senders_async, uamqp_tran
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_receive_load_balancing_async(auth_credentials_async, uamqp_transport):
+async def test_receive_load_balancing_async(auth_credentials_async, uamqp_transport, client_args):
     fully_qualified_namespace, eventhub_name, credential = auth_credentials_async
     cs = InMemoryCheckpointStore()
     client1 = EventHubConsumerClient(
@@ -174,6 +178,7 @@ async def test_receive_load_balancing_async(auth_credentials_async, uamqp_transp
         checkpoint_store=cs,
         load_balancing_interval=1,
         uamqp_transport=uamqp_transport,
+        **client_args,
     )
     client2 = EventHubConsumerClient(
         fully_qualified_namespace=fully_qualified_namespace,
@@ -183,6 +188,7 @@ async def test_receive_load_balancing_async(auth_credentials_async, uamqp_transp
         checkpoint_store=cs,
         load_balancing_interval=1,
         uamqp_transport=uamqp_transport,
+        **client_args,
     )
 
     async def on_event(partition_context, event):
@@ -201,7 +207,7 @@ async def test_receive_load_balancing_async(auth_credentials_async, uamqp_transp
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_receive_batch_no_max_wait_time_async(auth_credential_senders_async, uamqp_transport):
+async def test_receive_batch_no_max_wait_time_async(auth_credential_senders_async, uamqp_transport, client_args):
     """Test whether callback is called when max_wait_time is None and max_batch_size has reached"""
     fully_qualified_namespace, eventhub_name, credential, senders = auth_credential_senders_async
     senders[0].send(EventData("Test EventData"))
@@ -212,6 +218,7 @@ async def test_receive_batch_no_max_wait_time_async(auth_credential_senders_asyn
         credential=credential(),
         consumer_group="$default",
         uamqp_transport=uamqp_transport,
+        **client_args,
     )
 
     async def on_event_batch(partition_context, event_batch):
@@ -265,7 +272,7 @@ async def test_receive_batch_no_max_wait_time_async(auth_credential_senders_asyn
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_receive_batch_empty_with_max_wait_time_async(
-    auth_credentials_async, max_wait_time, sleep_time, expected_result, uamqp_transport
+    auth_credentials_async, max_wait_time, sleep_time, expected_result, uamqp_transport, client_args
 ):
     """Test whether event handler is called when max_wait_time > 0 and no event is received"""
     fully_qualified_namespace, eventhub_name, credential = auth_credentials_async
@@ -275,6 +282,7 @@ async def test_receive_batch_empty_with_max_wait_time_async(
         credential=credential(),
         consumer_group="$default",
         uamqp_transport=uamqp_transport,
+        **client_args,
     )
 
     async def on_event_batch(partition_context, event_batch):
@@ -293,7 +301,7 @@ async def test_receive_batch_empty_with_max_wait_time_async(
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_receive_batch_early_callback_async(auth_credential_senders_async, uamqp_transport):
+async def test_receive_batch_early_callback_async(auth_credential_senders_async, uamqp_transport, client_args):
     """Test whether the callback is called once max_batch_size reaches and before max_wait_time reaches."""
     fully_qualified_namespace, eventhub_name, credential, senders = auth_credential_senders_async
     for _ in range(10):
@@ -304,6 +312,7 @@ async def test_receive_batch_early_callback_async(auth_credential_senders_async,
         credential=credential(),
         consumer_group="$default",
         uamqp_transport=uamqp_transport,
+        **client_args,
     )
 
     async def on_event_batch(partition_context, event_batch):
@@ -328,7 +337,7 @@ async def test_receive_batch_early_callback_async(auth_credential_senders_async,
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_receive_batch_tracing_async(auth_credential_senders_async, uamqp_transport):
+async def test_receive_batch_tracing_async(auth_credential_senders_async, uamqp_transport, client_args):
     """Test that that receive and process spans are properly created and linked."""
     # TODO: Commenting out tracing for now. Need to fix this issue first: #36571
 
@@ -353,6 +362,7 @@ async def test_receive_batch_tracing_async(auth_credential_senders_async, uamqp_
         credential=credential(),
         consumer_group="$default",
         uamqp_transport=uamqp_transport,
+        **client_args,
     )
 
     async def on_event_batch(partition_context, event_batch):
@@ -390,7 +400,7 @@ async def test_receive_batch_tracing_async(auth_credential_senders_async, uamqp_
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_receive_batch_large_event_async(auth_credential_senders_async, uamqp_transport):
+async def test_receive_batch_large_event_async(auth_credential_senders_async, uamqp_transport, client_args):
     fully_qualified_namespace, eventhub_name, credential, senders = auth_credential_senders_async
     senders[0].send(EventData("A" * 15700))
     client = EventHubConsumerClient(
@@ -399,6 +409,7 @@ async def test_receive_batch_large_event_async(auth_credential_senders_async, ua
         credential=credential(),
         consumer_group="$default",
         uamqp_transport=uamqp_transport,
+        **client_args,
     )
 
     async def on_event(partition_context, event):
@@ -419,7 +430,7 @@ async def test_receive_batch_large_event_async(auth_credential_senders_async, ua
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_receive_mimic_processing_async(auth_credential_senders_async, uamqp_transport):
+async def test_receive_mimic_processing_async(auth_credential_senders_async, uamqp_transport, client_args):
     fully_qualified_namespace, eventhub_name, credential, senders = auth_credential_senders_async
     for i in range(305):
         senders[0].send(EventData("A"))
@@ -429,6 +440,7 @@ async def test_receive_mimic_processing_async(auth_credential_senders_async, uam
         credential=credential(),
         consumer_group="$default",
         uamqp_transport=uamqp_transport,
+        **client_args,
     )
 
     async def on_event(partition_context, event):

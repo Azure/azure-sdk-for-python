@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import List, Optional, Dict, cast
+from typing import List, Optional, Dict, cast, Any, MutableMapping
 
 import base64
 import itertools
@@ -21,6 +21,7 @@ def convert_search_result(result):
     ret["@search.highlights"] = result.highlights
     ret["@search.captions"] = result.captions
     ret["@search.document_debug_info"] = result.document_debug_info
+    ret["@search.reranker_boosted_score"] = result.reranker_boosted_score
     return ret
 
 
@@ -130,7 +131,7 @@ class SearchPageIterator(PageIterator):
         self._client = client
         self._initial_query = initial_query
         self._kwargs = kwargs
-        self._facets = None
+        self._facets: Optional[MutableMapping[str, List[MutableMapping[str, Any]]]] = None
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
 
     def _get_next_cb(self, continuation_token):
@@ -147,7 +148,7 @@ class SearchPageIterator(PageIterator):
         return continuation_token, results
 
     @_ensure_response
-    def get_facets(self) -> Optional[Dict]:
+    def get_facets(self) -> Optional[MutableMapping[str, Any]]:
         self.continuation_token = None
         response = cast(SearchDocumentsResult, self._response)
         facets = response.facets

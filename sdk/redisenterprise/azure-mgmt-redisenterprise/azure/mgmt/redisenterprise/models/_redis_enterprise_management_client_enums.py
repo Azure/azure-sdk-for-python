@@ -42,8 +42,9 @@ class AofFrequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ClusteringPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Clustering policy - default is OSSCluster. This property must be chosen at create time, and
-    cannot be changed without deleting the database.
+    """Clustering policy - default is OSSCluster. This property can be updated only if the current
+    value is NoCluster. If the value is OSSCluster or EnterpriseCluster, it cannot be updated
+    without deleting the database.
     """
 
     ENTERPRISE_CLUSTER = "EnterpriseCluster"
@@ -52,6 +53,9 @@ class ClusteringPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     OSS_CLUSTER = "OSSCluster"
     """OSS clustering policy follows the redis cluster specification, and requires all clients to
     support redis clustering."""
+    NO_CLUSTER = "NoCluster"
+    """The NoCluster policy is used for non-clustered Redis instances that do not require clustering
+    features."""
 
 
 class CmkIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -101,6 +105,13 @@ class HighAvailability(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
+
+
+class Kind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Distinguishes the kind of cluster. Read-only."""
+
+    V1 = "v1"
+    V2 = "v2"
 
 
 class LinkState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -207,6 +218,7 @@ class ResourceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DISABLED = "Disabled"
     SCALING = "Scaling"
     SCALING_FAILED = "ScalingFailed"
+    MOVING = "Moving"
 
 
 class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):

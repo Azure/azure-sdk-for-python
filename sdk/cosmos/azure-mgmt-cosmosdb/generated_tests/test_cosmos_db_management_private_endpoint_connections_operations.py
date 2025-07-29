@@ -24,7 +24,7 @@ class TestCosmosDBManagementPrivateEndpointConnectionsOperations(AzureMgmtRecord
         response = self.client.private_endpoint_connections.list_by_database_account(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-12-01-preview",
+            api_version="2025-04-15",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestCosmosDBManagementPrivateEndpointConnectionsOperations(AzureMgmtRecord
             resource_group_name=resource_group.name,
             account_name="str",
             private_endpoint_connection_name="str",
-            api_version="2024-12-01-preview",
+            api_version="2025-04-15",
         )
 
         # please add some check logic here by yourself
@@ -57,17 +57,9 @@ class TestCosmosDBManagementPrivateEndpointConnectionsOperations(AzureMgmtRecord
                 "privateEndpoint": {"id": "str"},
                 "privateLinkServiceConnectionState": {"actionsRequired": "str", "description": "str", "status": "str"},
                 "provisioningState": "str",
-                "systemData": {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "createdBy": "str",
-                    "createdByType": "str",
-                    "lastModifiedAt": "2020-02-20 00:00:00",
-                    "lastModifiedBy": "str",
-                    "lastModifiedByType": "str",
-                },
                 "type": "str",
             },
-            api_version="2024-12-01-preview",
+            api_version="2025-04-15",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -80,7 +72,7 @@ class TestCosmosDBManagementPrivateEndpointConnectionsOperations(AzureMgmtRecord
             resource_group_name=resource_group.name,
             account_name="str",
             private_endpoint_connection_name="str",
-            api_version="2024-12-01-preview",
+            api_version="2025-04-15",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

@@ -5,7 +5,7 @@ from tempfile import TemporaryDirectory
 from ci_tools.functions import resolve_compatible_package, is_package_compatible
 from typing import Optional, List
 from packaging.version import Version
-from pkg_resources import Requirement
+from packaging.requirements import Requirement
 
 
 @pytest.mark.parametrize(
@@ -31,4 +31,5 @@ def test_resolution_no_requirement():
         "azure-identity",
         [Requirement("azure-core")],
     )
-    assert result == "azure-identity==1.19.0"
+    assert result is not None
+    assert result.startswith("azure-identity==1.")

@@ -1214,7 +1214,7 @@ class TestChatCompletions(AzureRecordedTestCase):
     def test_chat_completion_parallel_tool_calls_disable(self, client, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "Don't make assumptions about what values to plug into tools. Ask for clarification if a user request is ambiguous."},
-            {"role": "user", "content": "What's the weather like today in Seattle and Los Angeles?"}
+            {"role": "user", "content": "What's the weather like today in Seattle and Los Angeles in Fahrenheit?"}
         ]
         tools = [
             {

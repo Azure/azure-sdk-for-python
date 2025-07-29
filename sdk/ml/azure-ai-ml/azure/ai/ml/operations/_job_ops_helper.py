@@ -435,6 +435,22 @@ def get_git_properties() -> Dict[str, str]:
     return properties
 
 
+def has_pat_token(url: Optional[str]) -> bool:
+    """Check if the given repository URL contains a PAT token.
+
+    :param url: Repository URL to check.
+    :type url: Optional[str]
+    :return: True if PAT token is detected, False otherwise.
+    :rtype: bool
+    """
+    if url is None:
+        return False
+
+    # Matches both "https://dev.azure.com/mypattoken@..." and "https://mypattoken@dev.azure.com/..."
+    pat_regex = r"https://(?:[^/@]+/)?([^/@]+)@"
+    return re.search(pat_regex, url) is not None
+
+
 def get_job_output_uris_from_dataplane(
     job_name: Optional[str],
     run_operations: RunOperations,

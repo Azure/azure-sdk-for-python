@@ -20,11 +20,11 @@ class TestServiceBusManagementPrivateLinkResourcesOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_private_link_resources_get(self, resource_group):
         response = self.client.private_link_resources.get(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself

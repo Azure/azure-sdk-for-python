@@ -6,9 +6,7 @@
 
 from typing import Any, Dict, Optional
 
-from azure.ai.ml._restclient.v2022_12_01_preview.models import (
-    AmlCompute as AmlComputeRest,
-)
+from azure.ai.ml._restclient.v2022_12_01_preview.models import AmlCompute as AmlComputeRest
 from azure.ai.ml._restclient.v2022_12_01_preview.models import (
     AmlComputeProperties,
     ComputeResource,
@@ -18,11 +16,7 @@ from azure.ai.ml._restclient.v2022_12_01_preview.models import (
 )
 from azure.ai.ml._schema._utils.utils import get_subnet_str
 from azure.ai.ml._schema.compute.aml_compute import AmlComputeSchema
-from azure.ai.ml._utils.utils import (
-    camel_to_snake,
-    snake_to_pascal,
-    to_iso_duration_format,
-)
+from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal, to_iso_duration_format
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._compute import ComputeDefaults, ComputeType
 from azure.ai.ml.entities._credentials import IdentityConfiguration
@@ -137,10 +131,10 @@ class AmlCompute(Compute):
         tags: Optional[dict] = None,
         ssh_public_access_enabled: Optional[bool] = None,
         ssh_settings: Optional[AmlComputeSshSettings] = None,
-        min_instances: Optional[int] = None,
-        max_instances: Optional[int] = None,
+        min_instances: Optional[int] = 0,
+        max_instances: Optional[int] = 4,
         network_settings: Optional[NetworkSettings] = None,
-        idle_time_before_scale_down: Optional[int] = None,
+        idle_time_before_scale_down: Optional[int] = 120,
         identity: Optional[IdentityConfiguration] = None,
         tier: Optional[str] = None,
         enable_node_public_ip: bool = True,
@@ -155,8 +149,8 @@ class AmlCompute(Compute):
             **kwargs,
         )
         self.size = size
-        self.min_instances = min_instances or 0
-        self.max_instances = max_instances or 1
+        self.min_instances = min_instances
+        self.max_instances = max_instances
         self.idle_time_before_scale_down = idle_time_before_scale_down
         self.identity = identity
         self.ssh_public_access_enabled = ssh_public_access_enabled
@@ -251,7 +245,7 @@ class AmlCompute(Compute):
             ),
         )
         remote_login_public_access = "Enabled"
-        disableLocalAuth = not (self.ssh_public_access_enabled and self.ssh_settings is not None)
+        disableLocalAuth = not self.ssh_settings
         if self.ssh_public_access_enabled is not None:
             remote_login_public_access = "Enabled" if self.ssh_public_access_enabled else "Disabled"
 

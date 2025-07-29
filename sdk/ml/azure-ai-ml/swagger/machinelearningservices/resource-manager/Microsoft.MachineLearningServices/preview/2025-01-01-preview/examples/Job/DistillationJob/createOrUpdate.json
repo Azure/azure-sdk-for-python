@@ -1,0 +1,215 @@
+{
+  "parameters": {
+    "api-version": "2025-01-01-preview",
+    "body": {
+      "properties": {
+        "computeId": "gpu-compute",
+        "experimentName": "llm-finetuning",
+        "dataGenerationDetails": {
+          "dataGenerationType": "LabelGeneration",
+          "dataGenerationTaskType": "Conversation",
+          "teacherModelEndpoint": {
+            "endpointName": "newfinetuneinttesting-jbuob"
+          },
+          "trainingData": {
+            "description": null,
+            "jobInputType": "uri_file",
+            "mode": "ReadOnlyMount",
+            "uri": "azureml://registries/azureml-meta/models/Llama-2-7b/versions/11"
+          }
+        },
+        "finetuningDetails": {
+          "studentModel": {
+            "description": null,
+            "jobInputType": "mlflow_model",
+            "mode": "ReadOnlyMount",
+            "uri": "azureml://registries/azureml-meta/models/Meta-Llama-3.1-8B-Instruct/versions/1"
+          }
+        },
+        "jobType": "Distillation",
+        "outputs": {
+          "string": {
+            "description": "string",
+            "uri": "string",
+            "mode": "ReadWriteMount",
+            "jobOutputType": "mlflow_model"
+          }
+        },
+        "queueSettings": {
+          "jobTier": "Standard"
+        },
+        "resources": {
+          "instanceTypes": [
+            "Standard_NC6"
+          ]
+        }
+      }
+    },
+    "id": "string",
+    "resourceGroupName": "test-rg",
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "workspaceName": "my-aml-workspace"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "id": "string",
+        "name": "string",
+        "properties": {
+          "componentId": "string",
+          "computeId": "string",
+          "description": "string",
+          "displayName": "string",
+          "experimentName": "string",
+          "dataGenerationDetails": {
+            "dataGenerationType": "LabelGeneration",
+            "dataGenerationTaskType": "Conversation",
+            "teacherModelEndpoint": {
+              "endpointName": "newfinetuneinttesting-jbuob"
+            },
+            "trainingData": {
+              "description": null,
+              "jobInputType": "uri_file",
+              "mode": "ReadOnlyMount",
+              "uri": "azureml://registries/azureml-meta/models/Llama-2-7b/versions/11"
+            }
+          },
+          "finetuningDetails": {
+            "studentModel": {
+              "description": null,
+              "jobInputType": "mlflow_model",
+              "mode": "ReadOnlyMount",
+              "uri": "azureml://registries/azureml-meta/models/Meta-Llama-3.1-8B-Instruct/versions/1"
+            }
+          },
+          "identity": {
+            "identityType": "AMLToken"
+          },
+          "isArchived": false,
+          "jobType": "Distillation",
+          "notificationSetting": {
+            "emailOn": [
+              "JobFailed"
+            ],
+            "emails": [
+              "string"
+            ]
+          },
+          "outputs": {
+            "string": {
+              "description": "string",
+              "uri": "string",
+              "mode": "ReadWriteMount",
+              "jobOutputType": "mlflow_model"
+            }
+          },
+          "properties": {
+            "string": "string"
+          },
+          "queueSettings": {
+            "jobTier": "Standard"
+          },
+          "resources": {
+            "instanceTypes": [
+              "Standard_NC6"
+            ]
+          },
+          "status": "Created",
+          "tags": {
+            "string": "string"
+          }
+        },
+        "systemData": {
+          "createdAt": "2025-01-01T12:34:56.999+00:22",
+          "createdBy": "string",
+          "createdByType": "Application",
+          "lastModifiedAt": "2025-01-01T12:34:56.999+00:22",
+          "lastModifiedBy": "string",
+          "lastModifiedByType": "ManagedIdentity"
+        },
+        "type": "string"
+      },
+      "headers": {}
+    },
+    "201": {
+      "body": {
+        "id": "string",
+        "name": "string",
+        "properties": {
+          "componentId": "string",
+          "computeId": "string",
+          "description": "string",
+          "displayName": "string",
+          "experimentName": "string",
+          "dataGenerationDetails": {
+            "dataGenerationType": "LabelGeneration",
+            "dataGenerationTaskType": "Conversation",
+            "teacherModelEndpoint": {
+              "endpointName": "newfinetuneinttesting-jbuob"
+            },
+            "trainingData": {
+              "description": null,
+              "jobInputType": "uri_file",
+              "mode": "ReadOnlyMount",
+              "uri": "azureml://registries/azureml-meta/models/Llama-2-7b/versions/11"
+            }
+          },
+          "finetuningDetails": {
+            "studentModel": {
+              "description": null,
+              "jobInputType": "mlflow_model",
+              "mode": "ReadOnlyMount",
+              "uri": "azureml://registries/azureml-meta/models/Meta-Llama-3.1-8B-Instruct/versions/1"
+            }
+          },
+          "identity": {
+            "identityType": "AMLToken"
+          },
+          "isArchived": false,
+          "jobType": "Distillation",
+          "notificationSetting": {
+            "emailOn": [
+              "JobFailed"
+            ],
+            "emails": [
+              "string"
+            ]
+          },
+          "outputs": {
+            "string": {
+              "description": "string",
+              "uri": "string",
+              "mode": "ReadWriteMount",
+              "jobOutputType": "mlflow_model"
+            }
+          },
+          "properties": {
+            "string": "string"
+          },
+          "queueSettings": {
+            "jobTier": "Standard"
+          },
+          "resources": {
+            "instanceTypes": [
+              "Standard_NC6"
+            ]
+          },
+          "status": "Created",
+          "tags": {
+            "string": "string"
+          }
+        },
+        "systemData": {
+          "createdAt": "2025-01-01T12:34:56.999+00:22",
+          "createdBy": "string",
+          "createdByType": "Application",
+          "lastModifiedAt": "2025-01-01T12:34:56.999+00:22",
+          "lastModifiedBy": "string",
+          "lastModifiedByType": "ManagedIdentity"
+        },
+        "type": "string"
+      },
+      "headers": {}
+    }
+  }
+}

@@ -33,7 +33,7 @@ from ._constants import (
     AzureWebAppEnvironmentVariable,
     ContainerAppEnvironmentVariable,
     KubernetesEnvironmentVariable,
-    EMPTY_LABEL,
+    NULL_CHAR,
     CUSTOM_FILTER_KEY,
     PERCENTAGE_FILTER_KEY,
     TIME_WINDOW_FILTER_KEY,
@@ -65,6 +65,8 @@ def update_correlation_context_header(
     uses_key_vault,
     uses_load_balancing,
     is_failover_request,
+    uses_ai_configuration,
+    uses_aicc_configuration,
 ) -> Dict[str, str]:
     if os.environ.get(REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE, default="").lower() == "true":
         return headers
@@ -106,8 +108,19 @@ def update_correlation_context_header(
     if is_failover_request:
         correlation_context += ",Failover"
 
+    features = ""
+
     if uses_load_balancing:
-        correlation_context += ",Features=LB"
+        features += "LB+"
+
+    if uses_ai_configuration:
+        features += "AI+"
+
+    if uses_aicc_configuration:
+        features += "AICC+"
+
+    if features:
+        correlation_context += ",Features=" + features[:-1]
 
     headers["Correlation-Context"] = correlation_context
     return headers
@@ -153,7 +166,7 @@ def _build_sentinel(setting: Union[str, Tuple[str, str]]) -> Tuple[str, str]:
         key, label = setting  # type:ignore
     except IndexError:
         key = setting
-        label = EMPTY_LABEL
+        label = NULL_CHAR
     if "*" in key or "*" in label:
         raise ValueError("Wildcard key or label filters are not supported for refresh.")
     return key, label
@@ -250,7 +263,7 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         self._origin_endpoint = kwargs.get("endpoint", None)
         self._dict: Dict[str, Any] = {}
         self._selects: List[SettingSelector] = kwargs.pop(
-            "selects", [SettingSelector(key_filter="*", label_filter=EMPTY_LABEL)]
+            "selects", [SettingSelector(key_filter="*", label_filter=NULL_CHAR)]
         )
 
         trim_prefixes: List[str] = kwargs.pop("trim_prefixes", [])
@@ -274,6 +287,8 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         self._feature_flag_refresh_enabled = kwargs.pop("feature_flag_refresh_enabled", False)
         self._feature_filter_usage: Mapping[str, bool] = {}
         self._uses_load_balancing = kwargs.pop("load_balancing_enabled", False)
+        self._uses_ai_configuration = False
+        self._uses_aicc_configuration = False  # AI Chat Completion
         self._update_lock = Lock()
         self._refresh_lock = Lock()
 

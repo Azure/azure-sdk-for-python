@@ -12,9 +12,11 @@ import warnings
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
+from azure.core.polling import LROPoller, NoPolling
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.mgmt.core.exceptions import ARMErrorFormat
+from azure.mgmt.core.polling.arm_polling import ARMPolling
 from msrest import Serializer
 
 from .. import models as _models
@@ -457,6 +459,50 @@ def build_deployment_settings_request(
         **kwargs
     )
 
+
+def build_create_or_update_request_initial(
+    name,  # type: str
+    version,  # type: str
+    subscription_id,  # type: str
+    resource_group_name,  # type: str
+    registry_name,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2021-10-01-dataplanepreview")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{name}/versions/{version}')
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, 'str', pattern=r'^(?![\-_.])[a-zA-Z0-9\-_.]{1,255}(?<!\.)$'),
+        "version": _SERIALIZER.url("version", version, 'str'),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="PUT",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
 # fmt: on
 class ModelsOperations(object):
     """ModelsOperations operations.
@@ -824,6 +870,107 @@ class ModelsOperations(object):
 
     create_unregistered_output_model.metadata = {'url': '/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/createUnregisteredOutput'}  # type: ignore
 
+
+    # this method is only used for model create/update with system metadata
+    @distributed_trace
+    def begin_create_or_update_model_with_system_metadata(
+        self,
+        subscription_id, # type: str
+        name,  # type: str
+        version,  # type: str
+        resource_group_name,  # type: str
+        registry_name,  # type: str
+        body,  # type: "ModelVersion"
+        **kwargs,  # type: Any
+    ):
+        # type: (...) -> LROPoller[None]
+        """Create or update version.
+
+        Create or update version.
+
+        :param name: Container name.
+        :type name: str
+        :param version: Version identifier.
+        :type version: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param registry_name: Name of Azure Machine Learning registry.
+        :type registry_name: str
+        :param body: Version entity to create or update.
+        :type body: ~azure.mgmt.machinelearningservices.models.ModelVersionData
+        :keyword api_version: Api Version. The default value is "2021-10-01-dataplanepreview". Note
+         that overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
+        _json = self._serialize.body(body, "ModelVersionData")
+        _json["properties"]["system_metadata"] = body.properties.system_metadata
+
+        request = build_create_or_update_request_initial(
+            name=name,
+            version=version,
+            subscription_id=subscription_id,
+            resource_group_name=resource_group_name,
+            registry_name=registry_name,
+            json=_json,
+            template_url=self.begin_create_or_update_model_with_system_metadata.metadata["url"],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["x-ms-async-operation-timeout"] = self._deserialize(
+            "duration", response.headers.get("x-ms-async-operation-timeout")
+        )
+        response_headers["Location"] = self._deserialize(
+            "str", response.headers.get("Location")
+        )
+        response_headers["Retry-After"] = self._deserialize(
+            "int", response.headers.get("Retry-After")
+        )
+
+        cls = kwargs.pop("cls", None)
+
+        def get_long_running_output(pipeline_response):
+            if cls:
+                return cls(pipeline_response, None, {})
+            return None
+
+        polling = kwargs.pop("polling", True)
+        if polling is True:
+            lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+            polling_method = ARMPolling(lro_delay, **kwargs)
+        elif polling is False:
+            polling_method = NoPolling()
+        else:
+            polling_method = polling
+
+        return LROPoller(
+            self._client, pipeline_response, get_long_running_output, polling_method
+        )
+
+    begin_create_or_update_model_with_system_metadata.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{name}/versions/{version}"}  # type: ignore
 
     @distributed_trace
     def batch_get_resolved_uris(

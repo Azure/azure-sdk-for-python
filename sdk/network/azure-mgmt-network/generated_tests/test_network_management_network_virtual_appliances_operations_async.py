@@ -26,7 +26,7 @@ class TestNetworkManagementNetworkVirtualAppliancesOperationsAsync(AzureMgmtReco
             await self.client.network_virtual_appliances.begin_delete(
                 resource_group_name=resource_group.name,
                 network_virtual_appliance_name="str",
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -39,7 +39,7 @@ class TestNetworkManagementNetworkVirtualAppliancesOperationsAsync(AzureMgmtReco
         response = await self.client.network_virtual_appliances.get(
             resource_group_name=resource_group.name,
             network_virtual_appliance_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -52,7 +52,7 @@ class TestNetworkManagementNetworkVirtualAppliancesOperationsAsync(AzureMgmtReco
             resource_group_name=resource_group.name,
             network_virtual_appliance_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -117,7 +117,7 @@ class TestNetworkManagementNetworkVirtualAppliancesOperationsAsync(AzureMgmtReco
                     "virtualApplianceSites": [{"id": "str"}],
                     "virtualHub": {"id": "str"},
                 },
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -131,7 +131,36 @@ class TestNetworkManagementNetworkVirtualAppliancesOperationsAsync(AzureMgmtReco
             await self.client.network_virtual_appliances.begin_restart(
                 resource_group_name=resource_group.name,
                 network_virtual_appliance_name="str",
-                api_version="2024-05-01",
+                api_version="2024-07-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_network_virtual_appliances_begin_reimage(self, resource_group):
+        response = await (
+            await self.client.network_virtual_appliances.begin_reimage(
+                resource_group_name=resource_group.name,
+                network_virtual_appliance_name="str",
+                api_version="2024-07-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_network_virtual_appliances_begin_get_boot_diagnostic_logs(self, resource_group):
+        response = await (
+            await self.client.network_virtual_appliances.begin_get_boot_diagnostic_logs(
+                resource_group_name=resource_group.name,
+                network_virtual_appliance_name="str",
+                request={"consoleScreenshotStorageSasUrl": "str", "instanceId": 0, "serialConsoleStorageSasUrl": "str"},
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -143,7 +172,7 @@ class TestNetworkManagementNetworkVirtualAppliancesOperationsAsync(AzureMgmtReco
     async def test_network_virtual_appliances_list_by_resource_group(self, resource_group):
         response = self.client.network_virtual_appliances.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -153,7 +182,7 @@ class TestNetworkManagementNetworkVirtualAppliancesOperationsAsync(AzureMgmtReco
     @recorded_by_proxy_async
     async def test_network_virtual_appliances_list(self, resource_group):
         response = self.client.network_virtual_appliances.list(
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

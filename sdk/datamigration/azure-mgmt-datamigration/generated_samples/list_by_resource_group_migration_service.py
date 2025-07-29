@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.datamigration import DataMigrationManagementClient
 
 """
@@ -29,13 +31,13 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.sql_migration_services.list_by_resource_group(
+    response = client.migration_services.list_by_resource_group(
         resource_group_name="testrg",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/datamigration/resource-manager/Microsoft.DataMigration/preview/2022-03-30-preview/examples/ListByResourceGroupMigrationService.json
+# x-ms-original-file: specification/datamigration/resource-manager/Microsoft.DataMigration/preview/2025-03-15-preview/examples/ListByResourceGroupMigrationService.json
 if __name__ == "__main__":
     main()

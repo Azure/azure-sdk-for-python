@@ -16,6 +16,7 @@ from azure.keyvault.certificates import (
     AdministratorContact,
     ApiVersion,
     CertificateContact,
+    CertificateOperation,
     CertificatePolicyAction,
     CertificatePolicy,
     KeyType,
@@ -26,7 +27,7 @@ from azure.keyvault.certificates import (
     LifetimeAction,
     CertificateIssuer,
     IssuerProperties,
-    WellKnownIssuerNames
+    WellKnownIssuerNames,
 )
 from azure.keyvault.certificates.aio import CertificateClient
 from azure.keyvault.certificates._client import NO_SAN_OR_SUBJECT
@@ -102,7 +103,7 @@ class TestCertificateClient(KeyVaultTestCase):
         if a.enhanced_key_usage:
             assert set(a.enhanced_key_usage) == set(b.enhanced_key_usage)
         if a.key_usage:
-            assert  set(a.key_usage) == set(b.key_usage)
+            assert set(a.key_usage) == set(b.key_usage)
         assert a.content_type == b.content_type
         assert a.validity_in_months == b.validity_in_months
         assert a.certificate_type == b.certificate_type
@@ -186,7 +187,6 @@ class TestCertificateClient(KeyVaultTestCase):
         self._validate_certificate_bundle(cert=cert, cert_name=cert_name, cert_policy=cert_policy)
 
         assert (await client.get_certificate_operation(certificate_name=cert_name)).status.lower() == "completed"
-        
 
         # get certificate
         cert = await client.get_certificate(certificate_name=cert_name)
@@ -486,7 +486,6 @@ class TestCertificateClient(KeyVaultTestCase):
 
         self._validate_certificate_policy(cert_policy, returned_policy)
 
-
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_version", all_api_versions)
     @AsyncCertificatesClientPreparer()
@@ -611,7 +610,7 @@ class TestCertificateClient(KeyVaultTestCase):
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_version", all_api_versions)
-    @AsyncCertificatesClientPreparer(logging_enable = True)
+    @AsyncCertificatesClientPreparer(logging_enable=True)
     @recorded_by_proxy_async
     async def test_logging_enabled(self, client, **kwargs):
         mock_handler = MockHandler()
@@ -646,7 +645,7 @@ class TestCertificateClient(KeyVaultTestCase):
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_version", all_api_versions)
-    @AsyncCertificatesClientPreparer(logging_enable = False)
+    @AsyncCertificatesClientPreparer(logging_enable=False)
     @recorded_by_proxy_async
     async def test_logging_disabled(self, client, **kwargs):
         mock_handler = MockHandler()
@@ -680,7 +679,7 @@ class TestCertificateClient(KeyVaultTestCase):
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_version", all_api_versions)
-    @AsyncCertificatesClientPreparer(logging_enable = True)
+    @AsyncCertificatesClientPreparer(logging_enable=True)
     @recorded_by_proxy_async
     async def test_get_certificate_version(self, client, **kwargs):
         cert_name = self.get_resource_name("cert")
@@ -708,7 +707,7 @@ class TestCertificateClient(KeyVaultTestCase):
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_version", only_2016_10_01)
-    @AsyncCertificatesClientPreparer(logging_enable = True)
+    @AsyncCertificatesClientPreparer(logging_enable=True)
     @recorded_by_proxy_async
     async def test_list_properties_of_certificates(self, client, **kwargs):
         """Tests API version v2016_10_01"""
@@ -722,12 +721,14 @@ class TestCertificateClient(KeyVaultTestCase):
             async for cert in certs:
                 pass
 
-        assert "The 'include_pending' parameter to `list_properties_of_certificates` is only available for API versions v7.0 and up" in str(excinfo.value)
+        assert (
+            "The 'include_pending' parameter to `list_properties_of_certificates` is only available for API versions v7.0 and up"
+            in str(excinfo.value)
+        )
 
-    
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_version", only_2016_10_01)
-    @AsyncCertificatesClientPreparer(logging_enable = True)
+    @AsyncCertificatesClientPreparer(logging_enable=True)
     @recorded_by_proxy_async
     async def test_list_deleted_certificates_2016_10_01(self, client, **kwargs):
         """Tests API version v2016_10_01"""
@@ -741,7 +742,29 @@ class TestCertificateClient(KeyVaultTestCase):
             async for cert in certs:
                 pass
 
-        assert "The 'include_pending' parameter to `list_deleted_certificates` is only available for API versions v7.0 and up" in str(excinfo.value)
+        assert (
+            "The 'include_pending' parameter to `list_deleted_certificates` is only available for API versions v7.0 and up"
+            in str(excinfo.value)
+        )
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version", only_latest)
+    @AsyncCertificatesClientPreparer()
+    @recorded_by_proxy_async
+    async def test_preserve_certificate_order(self, client, **kwargs):
+        """
+        Ensure that preserve_order works with create_certificate and that the property appears in
+        models returned by the service.
+        """
+        cert_name = self.get_resource_name("cert")
+        cert_policy = CertificatePolicy.get_default()
+
+        # create certificate
+        certificate = await client.create_certificate(
+            certificate_name=cert_name, policy=cert_policy, preserve_order=True
+        )
+
+        assert certificate.properties.preserve_order is True
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_version", only_latest)
@@ -757,10 +780,37 @@ class TestCertificateClient(KeyVaultTestCase):
         # 409 is raised correctly (`create_certificate` shouldn't actually trigger this, but for raising behavior)
         async def run(*_, **__):
             return Mock(http_response=Mock(status_code=409))
+
         with patch.object(client._client._client._pipeline, "run", run):
             with pytest.raises(ResourceExistsError):
                 await client.create_certificate("...", CertificatePolicy.get_default())
         await client.close()
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version", only_latest)
+    @AsyncCertificatesClientPreparer()
+    @recorded_by_proxy_async
+    async def test_unknown_issuer_response(self, client, **kwargs):
+        """When a certificate is created with an unknown issuer, the poller result should be a CertificateOperation"""
+        cert_name = self.get_resource_name("unknownIssuer")
+
+        # create certificate with unknown issuer
+        cert_policy = CertificatePolicy(
+            issuer_name=WellKnownIssuerNames.unknown,
+            subject="CN=*.microsoft.com",
+            san_dns_names=["sdk.azure-int.net"],
+            exportable=True,
+            key_type="RSA",
+            key_size=2048,
+            reuse_key=False,
+            content_type=CertificateContentType.pkcs12,
+            validity_in_months=24,
+        )
+        result = await client.create_certificate(certificate_name=cert_name, policy=cert_policy)
+        # The operation should indicate that certificate creation is in progress and requires a merge to complete
+        assert isinstance(result, CertificateOperation)
+        assert result.status and result.status.lower() == "inprogress"
+        assert result.status_details and "merge" in result.status_details.lower()
 
 
 @pytest.mark.asyncio

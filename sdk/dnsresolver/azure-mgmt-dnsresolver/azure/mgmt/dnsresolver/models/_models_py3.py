@@ -1,5 +1,5 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -10,10 +10,9 @@
 import datetime
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -69,7 +68,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -98,10 +97,10 @@ class Resource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
 class TrackedResource(Resource):
@@ -113,7 +112,7 @@ class TrackedResource(Resource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -166,7 +165,7 @@ class DnsForwardingRuleset(TrackedResource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -238,10 +237,10 @@ class DnsForwardingRuleset(TrackedResource):
         :paramtype dns_resolver_outbound_endpoints: list[~azure.mgmt.dnsresolver.models.SubResource]
         """
         super().__init__(tags=tags, location=location, **kwargs)
-        self.etag = None
+        self.etag: Optional[str] = None
         self.dns_resolver_outbound_endpoints = dns_resolver_outbound_endpoints
-        self.provisioning_state = None
-        self.resource_guid = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.resource_guid: Optional[str] = None
 
 
 class DnsForwardingRulesetListResult(_serialization.Model):
@@ -271,7 +270,7 @@ class DnsForwardingRulesetListResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class DnsForwardingRulesetPatch(_serialization.Model):
@@ -310,7 +309,7 @@ class DnsForwardingRulesetPatch(_serialization.Model):
         self.tags = tags
 
 
-class DnsResolver(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class DnsResolver(TrackedResource):
     """Describes a DNS resolver.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -318,7 +317,7 @@ class DnsResolver(TrackedResource):  # pylint: disable=too-many-instance-attribu
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -394,11 +393,11 @@ class DnsResolver(TrackedResource):  # pylint: disable=too-many-instance-attribu
         :paramtype virtual_network: ~azure.mgmt.dnsresolver.models.SubResource
         """
         super().__init__(tags=tags, location=location, **kwargs)
-        self.etag = None
+        self.etag: Optional[str] = None
         self.virtual_network = virtual_network
-        self.dns_resolver_state = None
-        self.provisioning_state = None
-        self.resource_guid = None
+        self.dns_resolver_state: Optional[Union[str, "_models.DnsResolverState"]] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.resource_guid: Optional[str] = None
 
 
 class DnsResolverDomainList(TrackedResource):
@@ -409,7 +408,7 @@ class DnsResolverDomainList(TrackedResource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -425,8 +424,11 @@ class DnsResolverDomainList(TrackedResource):
     :vartype location: str
     :ivar etag: ETag of the DNS resolver domain list.
     :vartype etag: str
-    :ivar domains: The domains in the domain list. Required.
+    :ivar domains: The domains in the domain list. Will be null if user is using large domain list.
     :vartype domains: list[str]
+    :ivar domains_url: The URL for bulk upload or download for domain lists containing larger set
+     of domains. This will be populated if domains is empty or null.
+    :vartype domains_url: str
     :ivar provisioning_state: The current provisioning state of the DNS resolver domain list. This
      is a read-only property and any attempt to set this value will be ignored. Known values are:
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", and "Canceled".
@@ -442,7 +444,7 @@ class DnsResolverDomainList(TrackedResource):
         "system_data": {"readonly": True},
         "location": {"required": True},
         "etag": {"readonly": True},
-        "domains": {"required": True},
+        "domains_url": {"readonly": True},
         "provisioning_state": {"readonly": True},
         "resource_guid": {"readonly": True},
     }
@@ -456,26 +458,71 @@ class DnsResolverDomainList(TrackedResource):
         "location": {"key": "location", "type": "str"},
         "etag": {"key": "etag", "type": "str"},
         "domains": {"key": "properties.domains", "type": "[str]"},
+        "domains_url": {"key": "properties.domainsUrl", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
     }
 
     def __init__(
-        self, *, location: str, domains: List[str], tags: Optional[Dict[str, str]] = None, **kwargs: Any
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        domains: Optional[List[str]] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
-        :keyword domains: The domains in the domain list. Required.
+        :keyword domains: The domains in the domain list. Will be null if user is using large domain
+         list.
         :paramtype domains: list[str]
         """
         super().__init__(tags=tags, location=location, **kwargs)
-        self.etag = None
+        self.etag: Optional[str] = None
         self.domains = domains
-        self.provisioning_state = None
-        self.resource_guid = None
+        self.domains_url: Optional[str] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.resource_guid: Optional[str] = None
+
+
+class DnsResolverDomainListBulk(_serialization.Model):
+    """Describes a DNS resolver domain list for bulk UPLOAD or DOWNLOAD operations.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar storage_url: The storage account blob file URL to be used in the bulk upload or download
+     request of DNS resolver domain list. Required.
+    :vartype storage_url: str
+    :ivar action: The action to take in the request, Upload or Download. Required. Known values
+     are: "Upload" and "Download".
+    :vartype action: str or ~azure.mgmt.dnsresolver.models.Action
+    """
+
+    _validation = {
+        "storage_url": {"required": True},
+        "action": {"required": True},
+    }
+
+    _attribute_map = {
+        "storage_url": {"key": "properties.storageUrl", "type": "str"},
+        "action": {"key": "properties.action", "type": "str"},
+    }
+
+    def __init__(self, *, storage_url: str, action: Union[str, "_models.Action"], **kwargs: Any) -> None:
+        """
+        :keyword storage_url: The storage account blob file URL to be used in the bulk upload or
+         download request of DNS resolver domain list. Required.
+        :paramtype storage_url: str
+        :keyword action: The action to take in the request, Upload or Download. Required. Known values
+         are: "Upload" and "Download".
+        :paramtype action: str or ~azure.mgmt.dnsresolver.models.Action
+        """
+        super().__init__(**kwargs)
+        self.storage_url = storage_url
+        self.action = action
 
 
 class DnsResolverDomainListPatch(_serialization.Model):
@@ -533,7 +580,7 @@ class DnsResolverDomainListResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class DnsResolverListResult(_serialization.Model):
@@ -563,7 +610,7 @@ class DnsResolverListResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class DnsResolverPatch(_serialization.Model):
@@ -594,7 +641,7 @@ class DnsResolverPolicy(TrackedResource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -649,9 +696,9 @@ class DnsResolverPolicy(TrackedResource):
         :paramtype location: str
         """
         super().__init__(tags=tags, location=location, **kwargs)
-        self.etag = None
-        self.provisioning_state = None
-        self.resource_guid = None
+        self.etag: Optional[str] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.resource_guid: Optional[str] = None
 
 
 class DnsResolverPolicyListResult(_serialization.Model):
@@ -681,7 +728,7 @@ class DnsResolverPolicyListResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class DnsResolverPolicyPatch(_serialization.Model):
@@ -712,7 +759,7 @@ class DnsResolverPolicyVirtualNetworkLink(TrackedResource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -778,9 +825,9 @@ class DnsResolverPolicyVirtualNetworkLink(TrackedResource):
         :paramtype virtual_network: ~azure.mgmt.dnsresolver.models.SubResource
         """
         super().__init__(tags=tags, location=location, **kwargs)
-        self.etag = None
+        self.etag: Optional[str] = None
         self.virtual_network = virtual_network
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class DnsResolverPolicyVirtualNetworkLinkListResult(_serialization.Model):  # pylint: disable=name-too-long
@@ -812,7 +859,7 @@ class DnsResolverPolicyVirtualNetworkLinkListResult(_serialization.Model):  # py
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class DnsResolverPolicyVirtualNetworkLinkPatch(_serialization.Model):
@@ -835,7 +882,7 @@ class DnsResolverPolicyVirtualNetworkLinkPatch(_serialization.Model):
         self.tags = tags
 
 
-class DnsSecurityRule(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class DnsSecurityRule(TrackedResource):
     """Describes a DNS security rule.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -843,7 +890,7 @@ class DnsSecurityRule(TrackedResource):  # pylint: disable=too-many-instance-att
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -931,12 +978,12 @@ class DnsSecurityRule(TrackedResource):  # pylint: disable=too-many-instance-att
         :paramtype dns_security_rule_state: str or ~azure.mgmt.dnsresolver.models.DnsSecurityRuleState
         """
         super().__init__(tags=tags, location=location, **kwargs)
-        self.etag = None
+        self.etag: Optional[str] = None
         self.priority = priority
         self.action = action
         self.dns_resolver_domain_lists = dns_resolver_domain_lists
         self.dns_security_rule_state = dns_security_rule_state
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class DnsSecurityRuleAction(_serialization.Model):
@@ -944,32 +991,20 @@ class DnsSecurityRuleAction(_serialization.Model):
 
     :ivar action_type: The type of action to take. Known values are: "Allow", "Alert", and "Block".
     :vartype action_type: str or ~azure.mgmt.dnsresolver.models.ActionType
-    :ivar block_response_code: The response code for block actions. "SERVFAIL"
-    :vartype block_response_code: str or ~azure.mgmt.dnsresolver.models.BlockResponseCode
     """
 
     _attribute_map = {
         "action_type": {"key": "actionType", "type": "str"},
-        "block_response_code": {"key": "blockResponseCode", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        action_type: Optional[Union[str, "_models.ActionType"]] = None,
-        block_response_code: Optional[Union[str, "_models.BlockResponseCode"]] = None,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, *, action_type: Optional[Union[str, "_models.ActionType"]] = None, **kwargs: Any) -> None:
         """
         :keyword action_type: The type of action to take. Known values are: "Allow", "Alert", and
          "Block".
         :paramtype action_type: str or ~azure.mgmt.dnsresolver.models.ActionType
-        :keyword block_response_code: The response code for block actions. "SERVFAIL"
-        :paramtype block_response_code: str or ~azure.mgmt.dnsresolver.models.BlockResponseCode
         """
         super().__init__(**kwargs)
         self.action_type = action_type
-        self.block_response_code = block_response_code
 
 
 class DnsSecurityRuleListResult(_serialization.Model):
@@ -999,7 +1034,7 @@ class DnsSecurityRuleListResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class DnsSecurityRulePatch(_serialization.Model):
@@ -1083,8 +1118,8 @@ class ErrorAdditionalInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None
-        self.info = None
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
 
 
 class ErrorDetail(_serialization.Model):
@@ -1123,11 +1158,11 @@ class ErrorDetail(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = None
-        self.additional_info = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[List["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -1158,7 +1193,7 @@ class ProxyResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1179,7 +1214,7 @@ class ForwardingRule(ProxyResource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1251,12 +1286,12 @@ class ForwardingRule(ProxyResource):
         :paramtype forwarding_rule_state: str or ~azure.mgmt.dnsresolver.models.ForwardingRuleState
         """
         super().__init__(**kwargs)
-        self.etag = None
+        self.etag: Optional[str] = None
         self.domain_name = domain_name
         self.target_dns_servers = target_dns_servers
         self.metadata = metadata
         self.forwarding_rule_state = forwarding_rule_state
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class ForwardingRuleListResult(_serialization.Model):
@@ -1286,7 +1321,7 @@ class ForwardingRuleListResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class ForwardingRulePatch(_serialization.Model):
@@ -1338,7 +1373,7 @@ class InboundEndpoint(TrackedResource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1406,10 +1441,10 @@ class InboundEndpoint(TrackedResource):
         :paramtype ip_configurations: list[~azure.mgmt.dnsresolver.models.IpConfiguration]
         """
         super().__init__(tags=tags, location=location, **kwargs)
-        self.etag = None
+        self.etag: Optional[str] = None
         self.ip_configurations = ip_configurations
-        self.provisioning_state = None
-        self.resource_guid = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.resource_guid: Optional[str] = None
 
 
 class InboundEndpointListResult(_serialization.Model):
@@ -1439,7 +1474,7 @@ class InboundEndpointListResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class InboundEndpointPatch(_serialization.Model):
@@ -1518,7 +1553,7 @@ class OutboundEndpoint(TrackedResource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1581,10 +1616,10 @@ class OutboundEndpoint(TrackedResource):
         :paramtype subnet: ~azure.mgmt.dnsresolver.models.SubResource
         """
         super().__init__(tags=tags, location=location, **kwargs)
-        self.etag = None
+        self.etag: Optional[str] = None
         self.subnet = subnet
-        self.provisioning_state = None
-        self.resource_guid = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.resource_guid: Optional[str] = None
 
 
 class OutboundEndpointListResult(_serialization.Model):
@@ -1614,7 +1649,7 @@ class OutboundEndpointListResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class OutboundEndpointPatch(_serialization.Model):
@@ -1690,7 +1725,7 @@ class SubResourceListResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class SystemData(_serialization.Model):
@@ -1850,7 +1885,7 @@ class VirtualNetworkDnsForwardingRulesetListResult(_serialization.Model):  # pyl
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class VirtualNetworkLink(ProxyResource):
@@ -1861,7 +1896,7 @@ class VirtualNetworkLink(ProxyResource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1916,10 +1951,10 @@ class VirtualNetworkLink(ProxyResource):
         :paramtype metadata: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.etag = None
+        self.etag: Optional[str] = None
         self.virtual_network = virtual_network
         self.metadata = metadata
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class VirtualNetworkLinkListResult(_serialization.Model):
@@ -1949,7 +1984,7 @@ class VirtualNetworkLinkListResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link = None
+        self.next_link: Optional[str] = None
 
 
 class VirtualNetworkLinkPatch(_serialization.Model):

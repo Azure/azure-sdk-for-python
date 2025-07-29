@@ -20,11 +20,11 @@ class TestContainerAppsAPIJavaComponentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_java_components_list(self, resource_group):
         response = self.client.java_components.list(
             resource_group_name=resource_group.name,
             environment_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,12 +32,12 @@ class TestContainerAppsAPIJavaComponentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_java_components_get(self, resource_group):
         response = self.client.java_components.get(
             resource_group_name=resource_group.name,
             environment_name="str",
             name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestContainerAppsAPIJavaComponentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_java_components_begin_create_or_update(self, resource_group):
         response = self.client.java_components.begin_create_or_update(
             resource_group_name=resource_group.name,
             environment_name="str",
@@ -64,7 +64,7 @@ class TestContainerAppsAPIJavaComponentsOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -72,7 +72,7 @@ class TestContainerAppsAPIJavaComponentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update(self, resource_group):
+    def test_java_components_begin_update(self, resource_group):
         response = self.client.java_components.begin_update(
             resource_group_name=resource_group.name,
             environment_name="str",
@@ -91,7 +91,7 @@ class TestContainerAppsAPIJavaComponentsOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -99,12 +99,12 @@ class TestContainerAppsAPIJavaComponentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_java_components_begin_delete(self, resource_group):
         response = self.client.java_components.begin_delete(
             resource_group_name=resource_group.name,
             environment_name="str",
             name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

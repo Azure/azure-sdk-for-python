@@ -1,5 +1,26 @@
-
 # Azure Core Library - Client library developer reference
+
+## Table of contents
+
+- [Pipeline](#pipeline)
+  - [Pipeline client configurations](#pipeline-client-configurations)
+  - [Transport](#transport)
+  - [Proxy Settings](#proxy-settings)
+  - [HttpRequest and HttpResponse](#httprequest-and-httpresponse)
+  - [PipelineRequest and PipelineResponse](#pipelinerequest-and-pipelineresponse)
+  - [Policies](#policies)
+    - [SansIOHTTPPolicy](#sansiohttppolicy)
+    - [HTTPPolicy and AsyncHTTPPolicy](#httppolicy-and-asynchttppolicy)
+    - [Available Policies](#available-policies)
+  - [The Pipeline](#the-pipeline)
+- [Credentials](#credentials)
+  - [Token Credential Protocols](#token-credential-protocols)
+    - [SupportsTokenInfo and AsyncSupportsTokenInfo protocols (preferred)](#supportstokeninfo-and-asyncsupportstokeninfo-protocols-preferred)
+    - [TokenCredential protocol (legacy)](#tokencredential-protocol-legacy)
+  - [Implementation Guidance](#implementation-guidance)
+  - [Known uses of token request parameters](#known-uses-of-token-request-parameters)
+  - [BearerTokenCredentialPolicy and AsyncBearerTokenCredentialPolicy](#bearertokencredentialpolicy-and-asyncbearertokencredentialpolicy)
+- [Long-running operation (LRO) customization](#long-running-operation-lro-customization)
 
 ## Pipeline
 
@@ -544,10 +565,67 @@ class Pipeline:
 
 ## Credentials
 
-### TokenCredential protocol
+### Token Credential Protocols
 
-Clients from the Azure SDK often require a `TokenCredential` instance in their constructors. A `TokenCredential` is
-meant to provide OAuth tokens to authenticate service requests and can be implemented in a number of ways.
+Clients from the Azure SDK often require a credential instance in their constructors. Azure Core offers several protocols for credential types that provide OAuth tokens. The main protocols are `SupportsTokenInfo` (preferred) and `TokenCredential` (legacy).
+
+#### SupportsTokenInfo and AsyncSupportsTokenInfo protocols (preferred)
+
+These protocols are the preferred way to implement new credential types in the Azure SDK. They are capable of providing enhanced token information and also provide a more structured approach to token requests compared to the legacy `TokenCredential` protocol. New credential implementations should aim to implement these protocols.
+
+The `SupportsTokenInfo` protocol specifies a class that implements `get_token_info` which returns an `AccessTokenInfo` object which contains the token string, its expiration time, and additional properties such as `refresh_on` and `token_type`.
+
+```python
+class AccessTokenInfo:
+    """Information about an OAuth access token.
+
+    This class is an alternative to `AccessToken` which provides additional
+    information about the token.
+    """
+
+    token: str
+    """The token string."""
+    expires_on: int
+    """The token's expiration time in Unix time."""
+    token_type: str
+    """The type of access token."""
+    refresh_on: Optional[int]
+    """Specifies the time, in Unix time, when the cached token should be proactively
+       refreshed. Optional."""
+
+
+class SupportsTokenInfo(Protocol, ContextManager["SupportsTokenInfo"]):
+    """Protocol for classes able to provide OAuth access tokens with additional properties."""
+
+    def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
+        """Request an access token for `scopes`.
+
+        :param str scopes: The type of access needed.
+        :keyword options: A dictionary of options for the token request. Unknown options will be ignored.
+        :paramtype options: TokenRequestOptions
+
+        :rtype: AccessTokenInfo
+        :return: An AccessTokenInfo instance containing information about the token.
+        """
+
+    def close(self) -> None:
+        ...
+```
+
+The async version `AsyncSupportsTokenInfo` provides the same functionality but with async/await support and requires implementation of the async context manager protocol (`__aenter__`, `__aexit__`, and `close` methods should be implemented).
+
+The `get_token_info` methods use `TokenRequestOptions` to handle token request parameters in a more structured way:
+
+```python
+class TokenRequestOptions(TypedDict, total=False):
+    claims: str      # Additional claims required in the token
+    tenant_id: str   # The tenant ID for the token request
+    enable_cae: bool # Whether to enable Continuous Access Evaluation
+```
+
+#### TokenCredential protocol (legacy)
+
+While still supported, the `TokenCredential` protocol is considered legacy as it has extensibility limitations. It is recommended to use `SupportsTokenInfo` for new credential implementations. Generally, to ensure compatibility with existing clients, new credential implementations should implement both `SupportsTokenInfo` and `TokenCredential`.
 
 The `TokenCredential` protocol specifies a class that has a single method -- `get_token` -- which returns an
 `AccessToken`: a `NamedTuple` containing a `token` string and an `expires_on` integer (in Unix time).
@@ -559,7 +637,12 @@ class TokenCredential(Protocol):
     """Protocol for classes able to provide OAuth tokens."""
 
     def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        enable_cae: bool = False,
+        **kwargs: Any,
     ) -> AccessToken:
         """Request an access token for `scopes`.
 
@@ -576,22 +659,56 @@ class TokenCredential(Protocol):
         """
 ```
 
-A `TokenCredential` implementation needs to implement the `get_token` method to these specifications and can optionally
-implement additional methods. The [`azure-identity`][identity_github] package has a number of `TokenCredential`
-implementations that can be used for reference. For example, the [`InteractiveCredential`][interactive_cred] is used as
-a base class for multiple credentials and uses `claims` and `tenant_id` in token requests.
+The async version `AsyncTokenCredential` provides the same functionality but with async/await support and also requires implementation of the async context manager protocol (`__aenter__`, `__aexit__`, and `close` methods should be implemented).
 
-If a `TokenCredential` implementation doesn't have a use for a keyword argument in a given scenario, the unused
-keyword argument should be removed from `kwargs` before getting passed elsewhere. The documentation for the
-implementation should mention that this keyword argument will not be used when making token requests, as well as any
-potential consequences of this. For example, if a `TokenCredential` implementation doesn't use `tenant_id`, it should
-document that fetched tokens may not authorize requests made to the specified tenant.
+If a `TokenCredential` implementation doesn't have a use for a keyword argument in a given scenario, the documentation for the implementation should mention that this keyword argument will not be used when making token requests, as well as any potential consequences of this. For example, if a `TokenCredential` implementation doesn't use `tenant_id`, it should document that fetched tokens may not authorize requests made to the specified tenant.
 
-There is also an async protocol -- the `AsyncTokenCredential` protocol -- that specifies a class with an async
-`get_token` method with the same arguments. An `AsyncTokenCredential` implementation additionally needs to be a context
-manager, with `__aenter__`, `__aexit__`, and `close` methods.
+When implementing the `get_token` method, ensure all keyword arguments are explicitly defined rather than using `**kwargs`. This approach prevents unintended keyword arguments from being passed to the HTTP transport layer, which could lead to unexpected behavior. The `get_token_info` method in `SupportsTokenInfo` does not have this issue, as it uses a `TokenRequestOptions` object to handle token request parameters.
 
-#### Known uses of `get_token` keyword-only parameters
+### Implementation Guidance
+
+When implementing a new credential type:
+
+1. Implement `SupportsTokenInfo`/`AsyncSupportsTokenInfo` as your primary protocol
+2. If backwards compatibility is needed:
+   - Implement `TokenCredential`/`AsyncTokenCredential` as a secondary protocol
+   - Convert `get_token_info` results to `AccessToken` in the `get_token` implementation
+
+Example structure for a new credential implementation:
+
+```python
+from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
+
+
+class MyNewCredential(SupportsTokenInfo):
+    def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
+        # Primary implementation
+        ...
+
+    def get_token(
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        enable_cae: bool = False,
+        **kwargs: Any,
+     ) -> AccessToken:
+
+        # Secondary implementation for backwards compatibility
+        options: TokenRequestOptions = {}
+        if tenant_id:
+            options["tenant_id"] = tenant_id
+        if claims:
+            options["claims"] = claims
+        options["enable_cae"] = enable_cae
+
+        token_info = self.get_token_info(*scopes, options=options)
+        return AccessToken(token_info.token, token_info.expires_on)
+```
+
+The [`azure-identity`][identity_github] package has a number of credentials that implement both protocols, and serves as a good reference for implementing new credentials. For example, the [`InteractiveCredential`][interactive_cred] is used as a base class for multiple credentials and uses `claims` and `tenant_id` in token requests.
+
+### Known uses of token request parameters
 
 **`claims`**
 
@@ -613,9 +730,9 @@ manager, with `__aenter__`, `__aexit__`, and `close` methods.
 
 ### BearerTokenCredentialPolicy and AsyncBearerTokenCredentialPolicy
 
-`BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` are HTTP policies that are used to authenticate requests to services that accept bearer tokens in their authorization headers. These credential policies take a `TokenCredential` instance and scopes as parameters in their constructors. The `TokenCredential` instance is used to get an access token for the scopes, and the policy adds the token to the request's authorization header.
+`BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` are HTTP policies that are used to authenticate requests to services that accept bearer tokens in their authorization headers. These credential policies take `SupportsTokenInfo`/`TokenCredential` instances and scopes as parameters in their constructors. The `SupportsTokenInfo`/`TokenCredential` instance is used to get an access token for the scopes, and the policy adds the token to the request's authorization header.
 
-Both of these policies also accept an `enable_cae` keyword argument that is passed to the `TokenCredential` instance's `get_token` method if set to `True`. This argument is used to indicate that the requested token should be [CAE-enabled][cae_doc]. If an SDK's service supports CAE, it should set this value to `True` when creating the policy.
+Both of these policies also accept an `enable_cae` keyword argument that is passed to the `SupportsTokenInfo`/`TokenCredential` instance's `get_token_info`/`get_token` method if set to `True`. This argument is used to indicate that the requested token should be [CAE-enabled][cae_doc]. If an SDK's service supports CAE, it should set this value to `True` when creating the policy.
 
 ```python
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy

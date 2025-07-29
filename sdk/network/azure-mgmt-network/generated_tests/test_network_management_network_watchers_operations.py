@@ -33,7 +33,7 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
         response = self.client.network_watchers.get(
             resource_group_name=resource_group.name,
             network_watcher_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -57,7 +57,7 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
         response = self.client.network_watchers.begin_delete(
             resource_group_name=resource_group.name,
             network_watcher_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -70,7 +70,7 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             network_watcher_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -81,7 +81,7 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
     def test_network_watchers_list(self, resource_group):
         response = self.client.network_watchers.list(
             resource_group_name=resource_group.name,
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -91,7 +91,7 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_network_watchers_list_all(self, resource_group):
         response = self.client.network_watchers.list_all(
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -108,7 +108,7 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
                 "targetSubnet": {"id": "str"},
                 "targetVirtualNetwork": {"id": "str"},
             },
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -130,7 +130,7 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
                 "targetResourceId": "str",
                 "targetNicResourceId": "str",
             },
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -148,7 +148,7 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
                 "targetResourceId": "str",
                 "targetNicResourceId": "str",
             },
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -161,7 +161,7 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             network_watcher_name="str",
             parameters={"targetResourceId": "str"},
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -174,7 +174,7 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             network_watcher_name="str",
             parameters={"storageId": "str", "storagePath": "str", "targetResourceId": "str"},
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -187,7 +187,7 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             network_watcher_name="str",
             parameters={"targetResourceId": "str"},
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -222,7 +222,7 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
                 },
                 "retentionPolicy": {"days": 0, "enabled": False},
             },
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -235,7 +235,7 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             network_watcher_name="str",
             parameters={"targetResourceId": "str"},
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -260,7 +260,7 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
                     }
                 },
             },
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -279,7 +279,7 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
                 "azureLocations": ["str"],
                 "providers": ["str"],
             },
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -292,7 +292,7 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             network_watcher_name="str",
             parameters={"azureLocations": ["str"], "city": "str", "country": "str", "state": "str"},
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -317,7 +317,7 @@ class TestNetworkManagementNetworkWatchersOperations(AzureMgmtRecordedTestCase):
                 "targetResourceId": "str",
                 "verbosityLevel": "str",
             },
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

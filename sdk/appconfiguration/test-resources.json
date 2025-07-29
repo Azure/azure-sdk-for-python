@@ -72,7 +72,8 @@
                 "name": "[parameters('sku')]"
             },
             "properties": {
-                "endpoint": "[variables('endpointValue')]"
+                "endpoint": "[variables('endpointValue')]",
+                "disableLocalAuth": true
             }
         },
         {

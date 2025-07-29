@@ -1,5 +1,5 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -10,10 +10,9 @@
 import datetime
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from ... import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -39,7 +38,7 @@ class ActivationProperties(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.status = None
+        self.status: Optional[Union[str, "_models.ActivationStatus"]] = None
 
 
 class ActiveDirectoryObject(_serialization.Model):
@@ -99,7 +98,7 @@ class Actor(_serialization.Model):
 class CallbackConfig(_serialization.Model):
     """The configuration of service URI and custom headers for the webhook.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar service_uri: The service URI for the webhook to post notifications. Required.
     :vartype service_uri: str
@@ -161,13 +160,13 @@ class ProxyResource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
-class ConnectedRegistry(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class ConnectedRegistry(ProxyResource):
     """An object that represents a connected registry for a container registry.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -272,17 +271,17 @@ class ConnectedRegistry(ProxyResource):  # pylint: disable=too-many-instance-att
         :paramtype logging: ~azure.mgmt.containerregistry.v2020_11_01_preview.models.LoggingProperties
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.mode = mode
-        self.version = None
-        self.connection_state = None
-        self.last_activity_time = None
-        self.activation = None
+        self.version: Optional[str] = None
+        self.connection_state: Optional[Union[str, "_models.ConnectionState"]] = None
+        self.last_activity_time: Optional[datetime.datetime] = None
+        self.activation: Optional["_models.ActivationProperties"] = None
         self.parent = parent
         self.client_token_ids = client_token_ids
         self.login_server = login_server
         self.logging = logging
-        self.status_details = None
+        self.status_details: Optional[List["_models.StatusDetailProperties"]] = None
 
 
 class ConnectedRegistryListResult(_serialization.Model):
@@ -425,7 +424,7 @@ class ErrorResponse(_serialization.Model):
 class ErrorResponseBody(_serialization.Model):
     """An error response from the Azure Container Registry service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar code: error code. Required.
     :vartype code: str
@@ -825,7 +824,7 @@ class ExportPipeline(ProxyResource):
         self.identity = identity
         self.target = target
         self.options = options
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class ExportPipelineListResult(_serialization.Model):
@@ -861,7 +860,7 @@ class ExportPipelineListResult(_serialization.Model):
 class ExportPipelineTargetProperties(_serialization.Model):
     """The properties of the export pipeline target.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of target for the export pipeline.
     :vartype type: str
@@ -1047,7 +1046,7 @@ class IdentityProperties(_serialization.Model):
 class ImportImageParameters(_serialization.Model):
     """ImportImageParameters.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar source: The source of the image. Required.
     :vartype source: ~azure.mgmt.containerregistry.v2020_11_01_preview.models.ImportSource
@@ -1190,7 +1189,7 @@ class ImportPipeline(ProxyResource):
         self.source = source
         self.trigger = trigger
         self.options = options
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class ImportPipelineListResult(_serialization.Model):
@@ -1226,7 +1225,7 @@ class ImportPipelineListResult(_serialization.Model):
 class ImportPipelineSourceProperties(_serialization.Model):
     """The properties of the import pipeline source.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of source for the import pipeline. "AzureStorageBlobContainer"
     :vartype type: str or
@@ -1279,7 +1278,7 @@ class ImportPipelineSourceProperties(_serialization.Model):
 class ImportSource(_serialization.Model):
     """ImportSource.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar resource_id: The resource identifier of the source Azure Container Registry.
     :vartype resource_id: str
@@ -1339,7 +1338,7 @@ class ImportSource(_serialization.Model):
 class ImportSourceCredentials(_serialization.Model):
     """ImportSourceCredentials.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar username: The username to authenticate with the source registry.
     :vartype username: str
@@ -1371,7 +1370,7 @@ class ImportSourceCredentials(_serialization.Model):
 class InnerErrorDescription(_serialization.Model):
     """inner error.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar code: error code. Required.
     :vartype code: str
@@ -1410,7 +1409,7 @@ class InnerErrorDescription(_serialization.Model):
 class IPRule(_serialization.Model):
     """IP rule with specific IP or IP range in CIDR format.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar action: The action of IP ACL rule. "Allow"
     :vartype action: str or ~azure.mgmt.containerregistry.v2020_11_01_preview.models.Action
@@ -1484,10 +1483,10 @@ class KeyVaultProperties(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.key_identifier = key_identifier
-        self.versioned_key_identifier = None
+        self.versioned_key_identifier: Optional[str] = None
         self.identity = identity
-        self.key_rotation_enabled = None
-        self.last_key_rotation_timestamp = None
+        self.key_rotation_enabled: Optional[bool] = None
+        self.last_key_rotation_timestamp: Optional[datetime.datetime] = None
 
 
 class LoggingProperties(_serialization.Model):
@@ -1552,14 +1551,14 @@ class LoginServerProperties(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.host = None
-        self.tls = None
+        self.host: Optional[str] = None
+        self.tls: Optional["_models.TlsProperties"] = None
 
 
 class NetworkRuleSet(_serialization.Model):
     """The network rule set for a container registry.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar default_action: The default action of allow or deny when no other rules match. Known
      values are: "Allow" and "Deny".
@@ -1882,7 +1881,7 @@ class OperationServiceSpecificationDefinition(_serialization.Model):
 class ParentProperties(_serialization.Model):
     """The properties of the connected registry parent.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource ID of the parent to which the connected registry will be associated.
     :vartype id: str
@@ -1981,9 +1980,9 @@ class PipelineRun(ProxyResource):
         :paramtype force_update_tag: str
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.request = request
-        self.response = None
+        self.response: Optional["_models.PipelineRunResponse"] = None
         self.force_update_tag = force_update_tag
 
 
@@ -2268,7 +2267,7 @@ class PipelineSourceTriggerDescriptor(_serialization.Model):
 class PipelineSourceTriggerProperties(_serialization.Model):
     """PipelineSourceTriggerProperties.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar status: The current status of the source trigger. Known values are: "Enabled" and
      "Disabled".
@@ -2472,7 +2471,7 @@ class PrivateEndpointConnection(ProxyResource):
         super().__init__(**kwargs)
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class PrivateEndpointConnectionListResult(_serialization.Model):
@@ -2568,7 +2567,7 @@ class PrivateLinkResource(_serialization.Model):
         :paramtype required_zone_names: list[str]
         """
         super().__init__(**kwargs)
-        self.type = None
+        self.type: Optional[str] = None
         self.id = id
         self.name = name
         self.group_id = group_id
@@ -2707,7 +2706,7 @@ class QuarantinePolicy(_serialization.Model):
 class RegenerateCredentialParameters(_serialization.Model):
     """The parameters used to regenerate the login credential.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Specifies name of the password which should be regenerated -- password or
      password2. Required. Known values are: "password" and "password2".
@@ -2737,7 +2736,7 @@ class Resource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource ID.
     :vartype id: str
@@ -2780,20 +2779,20 @@ class Resource(_serialization.Model):
         :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.location = location
         self.tags = tags
-        self.system_data = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
-class Registry(Resource):  # pylint: disable=too-many-instance-attributes
+class Registry(Resource):
     """An object that represents a container registry.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource ID.
     :vartype id: str
@@ -2961,17 +2960,17 @@ class Registry(Resource):  # pylint: disable=too-many-instance-attributes
         super().__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.identity = identity
-        self.login_server = None
-        self.creation_date = None
-        self.provisioning_state = None
-        self.status = None
+        self.login_server: Optional[str] = None
+        self.creation_date: Optional[datetime.datetime] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.status: Optional["_models.Status"] = None
         self.admin_user_enabled = admin_user_enabled
         self.network_rule_set = network_rule_set
         self.policies = policies
         self.encryption = encryption
         self.data_endpoint_enabled = data_endpoint_enabled
-        self.data_endpoint_host_names = None
-        self.private_endpoint_connections = None
+        self.data_endpoint_host_names: Optional[List[str]] = None
+        self.private_endpoint_connections: Optional[List["_models.PrivateEndpointConnection"]] = None
         self.public_network_access = public_network_access
         self.network_rule_bypass_options = network_rule_bypass_options
         self.zone_redundancy = zone_redundancy
@@ -3047,7 +3046,7 @@ class RegistryNameCheckRequest(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the container registry. Required.
     :vartype name: str
@@ -3147,7 +3146,7 @@ class RegistryPassword(_serialization.Model):
         self.value = value
 
 
-class RegistryUpdateParameters(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class RegistryUpdateParameters(_serialization.Model):
     """The parameters for updating a container registry.
 
     :ivar identity: The identity of the container registry.
@@ -3328,7 +3327,7 @@ class Replication(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource ID.
     :vartype id: str
@@ -3408,8 +3407,8 @@ class Replication(Resource):
          ~azure.mgmt.containerregistry.v2020_11_01_preview.models.ZoneRedundancy
         """
         super().__init__(location=location, tags=tags, **kwargs)
-        self.provisioning_state = None
-        self.status = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.status: Optional["_models.Status"] = None
         self.region_endpoint_enabled = region_endpoint_enabled
         self.zone_redundancy = zone_redundancy
 
@@ -3569,7 +3568,7 @@ class RetentionPolicy(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.days = days
-        self.last_updated_time = None
+        self.last_updated_time: Optional[datetime.datetime] = None
         self.status = status
 
 
@@ -3637,9 +3636,9 @@ class ScopeMap(ProxyResource):
         """
         super().__init__(**kwargs)
         self.description = description
-        self.type_properties_type = None
-        self.creation_date = None
-        self.provisioning_state = None
+        self.type_properties_type: Optional[str] = None
+        self.creation_date: Optional[datetime.datetime] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.actions = actions
 
 
@@ -3710,7 +3709,7 @@ class Sku(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The SKU name of the container registry. Required for registry creation. Required.
      Known values are: "Classic", "Basic", "Standard", and "Premium".
@@ -3738,7 +3737,7 @@ class Sku(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.name = name
-        self.tier = None
+        self.tier: Optional[Union[str, "_models.SkuTier"]] = None
 
 
 class Source(_serialization.Model):
@@ -3798,9 +3797,9 @@ class Status(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.display_status = None
-        self.message = None
-        self.timestamp = None
+        self.display_status: Optional[str] = None
+        self.message: Optional[str] = None
+        self.timestamp: Optional[datetime.datetime] = None
 
 
 class StatusDetailProperties(_serialization.Model):
@@ -3839,11 +3838,11 @@ class StatusDetailProperties(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None
-        self.code = None
-        self.description = None
-        self.timestamp = None
-        self.correlation_id = None
+        self.type: Optional[str] = None
+        self.code: Optional[str] = None
+        self.description: Optional[str] = None
+        self.timestamp: Optional[datetime.datetime] = None
+        self.correlation_id: Optional[str] = None
 
 
 class SyncProperties(_serialization.Model):
@@ -3851,7 +3850,7 @@ class SyncProperties(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar token_id: The resource ID of the ACR token used to authenticate the connected registry to
      its parent during sync. Required.
@@ -3919,8 +3918,8 @@ class SyncProperties(_serialization.Model):
         self.schedule = schedule
         self.sync_window = sync_window
         self.message_ttl = message_ttl
-        self.last_sync_time = None
-        self.gateway_endpoint = None
+        self.last_sync_time: Optional[datetime.datetime] = None
+        self.gateway_endpoint: Optional[str] = None
 
 
 class SyncUpdateProperties(_serialization.Model):
@@ -4142,8 +4141,8 @@ class TlsCertificateProperties(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None
-        self.location = None
+        self.type: Optional[Union[str, "_models.CertificateType"]] = None
+        self.location: Optional[str] = None
 
 
 class TlsProperties(_serialization.Model):
@@ -4172,8 +4171,8 @@ class TlsProperties(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.status = None
-        self.certificate = None
+        self.status: Optional[Union[str, "_models.TlsStatus"]] = None
+        self.certificate: Optional["_models.TlsCertificateProperties"] = None
 
 
 class Token(ProxyResource):
@@ -4247,8 +4246,8 @@ class Token(ProxyResource):
         :paramtype status: str or ~azure.mgmt.containerregistry.v2020_11_01_preview.models.TokenStatus
         """
         super().__init__(**kwargs)
-        self.creation_date = None
-        self.provisioning_state = None
+        self.creation_date: Optional[datetime.datetime] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.scope_map_id = scope_map_id
         self.credentials = credentials
         self.status = status
@@ -4420,7 +4419,7 @@ class TokenPassword(_serialization.Model):
         self.creation_time = creation_time
         self.expiry = expiry
         self.name = name
-        self.value = None
+        self.value: Optional[str] = None
 
 
 class TokenUpdateParameters(_serialization.Model):
@@ -4532,7 +4531,7 @@ class UserIdentityProperties(_serialization.Model):
 class VirtualNetworkRule(_serialization.Model):
     """Virtual network rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar action: The action of virtual network rule. "Allow"
     :vartype action: str or ~azure.mgmt.containerregistry.v2020_11_01_preview.models.Action
@@ -4572,7 +4571,7 @@ class Webhook(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource ID.
     :vartype id: str
@@ -4658,13 +4657,13 @@ class Webhook(Resource):
         self.status = status
         self.scope = scope
         self.actions = actions
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class WebhookCreateParameters(_serialization.Model):
     """The parameters for creating a webhook.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar tags: The tags for the webhook.
     :vartype tags: dict[str, str]

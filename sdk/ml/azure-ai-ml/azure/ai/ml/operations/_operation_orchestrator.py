@@ -332,7 +332,8 @@ class OperationOrchestrator(object):
 
     def _get_model_arm_id(self, model: Model, register_asset: bool = True) -> Union[str, Model]:
         try:
-            self._validate_datastore_name(model.path)
+            if not is_registry_id_for_resource(model.id):
+                self._validate_datastore_name(model.path)
 
             if register_asset:
                 if model.id:

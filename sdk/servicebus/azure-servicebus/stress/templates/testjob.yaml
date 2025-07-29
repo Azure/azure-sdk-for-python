@@ -16,60 +16,60 @@ spec:
           cpu: "1"
 
       {{ if eq .Stress.testTarget "aqueuew" }}
-      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && python3 test_stress_queues.py --method send_receive --duration 300000 --logging-enable --debug_level Debug --transport']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && python3 stress_test_queues.py --method send_receive --duration 300000 --logging-enable --debug_level Debug --transport']
       {{- end -}}
 
       {{ if eq .Stress.testTarget "queuew" }}
-      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && python3 test_stress_queues.py --method send_receive --duration 300000 --logging-enable --debug_level Debug --transport']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && python3 stress_test_queues.py --method send_receive --duration 300000 --logging-enable --debug_level Debug --transport']
       {{- end -}}
 
       {{ if eq .Stress.testTarget "aqueuepullw" }}
-      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE &&  python3 test_stress_queues_async.py --method send_pull_receive --duration 300000 --logging-enable --debug_level Debug --transport']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE &&  python3 stress_test_queues_async.py --method send_pull_receive --duration 300000 --logging-enable --debug_level Debug --transport']
       {{- end -}}
 
       {{ if eq .Stress.testTarget "queuepullw" }}
-      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && python3 test_stress_queues.py --method send_pull_receive --duration 300000 --logging-enable --debug_level Debug --transport']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && python3 stress_test_queues.py --method send_pull_receive --duration 300000 --logging-enable --debug_level Debug --transport']
       {{- end -}}
 
       {{ if eq .Stress.testTarget "abatchw" }}
-      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && python3 test_stress_queues_async.py --method send_receive_batch --duration 300000 --logging-enable --debug_level Debug --transport']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && python3 stress_test_queues_async.py --method send_receive_batch --duration 300000 --logging-enable --debug_level Debug --transport']
       {{- end -}}
 
       {{ if eq .Stress.testTarget "batchw" }}
-      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && python3 test_stress_queues.py --method send_receive_batch --duration 300000 --logging-enable --debug_level Debug --transport']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && python3 stress_test_queues.py --method send_receive_batch --duration 300000 --logging-enable --debug_level Debug --transport']
       {{- end -}}
 
       {{ if eq .Stress.testTarget "aqueue" }}
-      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && python3 test_stress_queues_async.py --method send_receive --duration 300000 --logging-enable --debug_level Debug']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && python3 stress_test_queues_async.py --method send_receive --duration 300000 --logging-enable --debug_level Debug']
       {{- end -}}
 
       {{ if eq .Stress.testTarget "queue" }}
-      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && python3 test_stress_queues.py --method send_receive --duration 300000 --logging-enable --debug_level Debug']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && python3 stress_test_queues.py --method send_receive --duration 300000 --logging-enable --debug_level Debug']
       {{- end -}}
 
       {{ if eq .Stress.testTarget "aqueuepull" }}
-      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && python3 test_stress_queues_async.py --method send_pull_receive --duration 300000 --logging-enable --debug_level Debug']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && python3 stress_test_queues_async.py --method send_pull_receive --duration 300000 --logging-enable --debug_level Debug']
       {{- end -}}
 
       {{ if eq .Stress.testTarget "queuepull" }}
-      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE &&  python3 test_stress_queues.py --method send_pull_receive --duration 300000 --logging-enable --debug_level Debug']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE &&  python3 stress_test_queues.py --method send_pull_receive --duration 300000 --logging-enable --debug_level Debug']
       {{- end -}}
 
       {{ if eq .Stress.testTarget "abatch" }}
-      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && python3 test_stress_queues_async.py --method send_receive_batch --duration 300000 --logging-enable --debug_level Debug']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && python3 stress_test_queues_async.py --method send_receive_batch --duration 300000 --logging-enable --debug_level Debug']
       {{- end -}}
 
       {{ if eq .Stress.testTarget "batch" }}
-      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE  && python3 test_stress_queues.py --method send_receive_batch --duration 300000 --logging-enable --debug_level Debug  ']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE  && python3 stress_test_queues.py --method send_receive_batch --duration 300000 --logging-enable --debug_level Debug  ']
       {{- end -}}
 
       # TODO: Running with both memray and RotatingFileHandler is resulting in a memory leak. Turn off rotating logs as a workaround to avoid the memory leak when running memray.
       {{ if eq .Stress.testTarget "amemray" }}
-      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && memray run --output $DEBUG_SHARE/sb_async_memray_output.bin test_stress_queues_async.py --method send_pull_receive --duration 300000 --logging-enable --debug_level Debug --no-rotating-logs']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && memray run --output $DEBUG_SHARE/sb_async_memray_output.bin stress_test_queues_async.py --method send_pull_receive --duration 300000 --logging-enable --debug_level Debug --no-rotating-logs']
       {{- end -}}
 
       {{ if eq .Stress.testTarget "memray" }}
-      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && memray run --output $DEBUG_SHARE/sb_memray_output.bin test_stress_queues.py --method send_pull_receive --duration 300000 --logging-enable --debug_level Debug --no-rotating-logs']
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && memray run --output $DEBUG_SHARE/sb_memray_output.bin stress_test_queues.py --method send_pull_receive --duration 300000 --logging-enable --debug_level Debug --no-rotating-logs']
       {{- end -}}
 
       {{- include "stress-test-addons.container-env" . | nindent 6 }}

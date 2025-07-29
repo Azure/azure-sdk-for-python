@@ -42,6 +42,7 @@ See [Prerequisites](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/
 To construct any of the clients, you will need to pass in the endpoint URL. If you are using key authentication, you also need to pass in the key associated with your deployed AI model.
 
 * For Serverless API and Managed Compute endpoints, the endpoint URL has the form `https://your-unique-resouce-name.your-azure-region.models.ai.azure.com`, where `your-unique-resource-name` is your globally unique Azure resource name and `your-azure-region` is the Azure region where the model is deployed (e.g. `eastus2`).
+  * For Managed Compute Endpoints, do not include the inference path (e.g. `/score`) in endpoint URL.  
 
 * For Azure OpenAI endpoints, the endpoint URL has the form `https://your-unique-resouce-name.openai.azure.com/openai/deployments/your-deployment-name`, where `your-unique-resource-name` is your globally unique Azure OpenAI resource name, and `your-deployment-name` is your AI Model deployment name.
 

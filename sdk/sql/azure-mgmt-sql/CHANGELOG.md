@@ -1,5 +1,92 @@
 # Release History
 
+## 4.0.0b21 (2025-03-23)
+
+### Features Added
+
+  - Added operation GeoBackupPoliciesOperations.list
+  - Added operation ManagedDatabaseSensitivityLabelsOperations.list_by_database
+  - Added operation ManagedInstanceLongTermRetentionPoliciesOperations.begin_delete
+  - Added operation SensitivityLabelsOperations.list_by_database
+  - Added operation group InstancePoolOperationsOperations
+  - Added operation group NetworkSecurityPerimeterConfigurationsOperations
+  - Model DataMaskingRuleListResult has a new parameter next_link
+  - Model DatabaseExtensions has a new parameter administrator_login
+  - Model DatabaseExtensions has a new parameter administrator_login_password
+  - Model DatabaseExtensions has a new parameter authentication_type
+  - Model DatabaseExtensions has a new parameter database_edition
+  - Model DatabaseExtensions has a new parameter max_size_bytes
+  - Model DatabaseExtensions has a new parameter network_isolation
+  - Model DatabaseExtensions has a new parameter service_objective_name
+  - Model EditionCapability has a new parameter zone_pinning
+  - Model ElasticPool has a new parameter auto_pause_delay
+  - Model ElasticPoolEditionCapability has a new parameter zone_pinning
+  - Model ElasticPoolPerDatabaseSettings has a new parameter auto_pause_delay
+  - Model ElasticPoolPerformanceLevelCapability has a new parameter supported_auto_pause_delay
+  - Model ElasticPoolPerformanceLevelCapability has a new parameter supported_min_capacities
+  - Model ElasticPoolPerformanceLevelCapability has a new parameter supported_per_database_auto_pause_delay
+  - Model ElasticPoolPerformanceLevelCapability has a new parameter supported_zones
+  - Model ElasticPoolUpdate has a new parameter auto_pause_delay
+  - Model GeoBackupPolicyListResult has a new parameter next_link
+  - Model ImportExportExtensionsOperationResult has a new parameter blob_uri
+  - Model ImportExportExtensionsOperationResult has a new parameter private_endpoint_connections
+  - Model ImportExportExtensionsOperationResult has a new parameter queued_time
+  - Model JobAgent has a new parameter identity
+  - Model JobAgentUpdate has a new parameter identity
+  - Model JobAgentUpdate has a new parameter sku
+  - Model LocationCapabilities has a new parameter supported_job_agent_versions
+  - Model ManagedInstance has a new parameter total_memory_mb
+  - Model ManagedInstanceEditionCapability has a new parameter is_general_purpose_v2
+  - Model ManagedInstanceFamilyCapability has a new parameter zone_redundant
+  - Model ManagedInstanceLongTermRetentionBackup has a new parameter backup_storage_access_tier
+  - Model ManagedInstanceLongTermRetentionPolicy has a new parameter backup_storage_access_tier
+  - Model ManagedInstancePrivateLinkProperties has a new parameter required_zone_names
+  - Model ManagedInstanceUpdate has a new parameter total_memory_mb
+  - Model ManagedInstanceVcoresCapability has a new parameter included_storage_i_ops
+  - Model ManagedInstanceVcoresCapability has a new parameter included_storage_throughput_m_bps
+  - Model ManagedInstanceVcoresCapability has a new parameter iops_included_value_override_factor_per_selected_storage_gb
+  - Model ManagedInstanceVcoresCapability has a new parameter iops_min_value_override_factor_per_selected_storage_gb
+  - Model ManagedInstanceVcoresCapability has a new parameter supported_memory_limits_mb
+  - Model ManagedInstanceVcoresCapability has a new parameter supported_storage_i_ops
+  - Model ManagedInstanceVcoresCapability has a new parameter supported_storage_throughput_m_bps
+  - Model ManagedInstanceVcoresCapability has a new parameter throughput_m_bps_included_value_override_factor_per_selected_storage_gb
+  - Model ManagedInstanceVcoresCapability has a new parameter throughput_m_bps_min_value_override_factor_per_selected_storage_gb
+  - Model SensitivityLabel has a new parameter client_classification_source
+  - Model ServerUsage has a new parameter id
+  - Model ServerUsage has a new parameter type
+  - Model ServerUsageListResult has a new parameter next_link
+  - Model ServiceObjectiveCapability has a new parameter supported_free_limit_exhaustion_behaviors
+  - Model ServiceObjectiveCapability has a new parameter supported_zones
+  - Model ServiceObjectiveCapability has a new parameter zone_pinning
+  - Operation LongTermRetentionManagedInstanceBackupsOperations.list_by_location has a new optional parameter filter
+  - Operation LongTermRetentionManagedInstanceBackupsOperations.list_by_location has a new optional parameter skip
+  - Operation LongTermRetentionManagedInstanceBackupsOperations.list_by_location has a new optional parameter top
+  - Operation LongTermRetentionManagedInstanceBackupsOperations.list_by_resource_group_location has a new optional parameter filter
+  - Operation LongTermRetentionManagedInstanceBackupsOperations.list_by_resource_group_location has a new optional parameter skip
+  - Operation LongTermRetentionManagedInstanceBackupsOperations.list_by_resource_group_location has a new optional parameter top
+
+### Breaking Changes
+
+  - Model LongTermRetentionPolicy no longer has parameter backup_storage_access_tier
+  - Model LongTermRetentionPolicy no longer has parameter make_backups_immutable
+  - Model ManagedInstanceEditionCapability no longer has parameter zone_redundant
+  - Model ServerUsage no longer has parameter next_reset_time
+  - Model ServerUsage no longer has parameter resource_name
+  - Operation DataMaskingPoliciesOperations.create_or_update has a new required parameter data_masking_policy_name
+  - Operation DataMaskingPoliciesOperations.get has a new required parameter data_masking_policy_name
+  - Operation DataMaskingRulesOperations.create_or_update has a new required parameter data_masking_policy_name
+  - Operation DataMaskingRulesOperations.list_by_database has a new required parameter data_masking_policy_name
+  - Operation OutboundFirewallRulesOperations.begin_create_or_update no longer has parameter parameters
+  - Removed operation DatabasesOperations.list_metric_definitions
+  - Removed operation DatabasesOperations.list_metrics
+  - Removed operation ElasticPoolsOperations.list_metric_definitions
+  - Removed operation ElasticPoolsOperations.list_metrics
+  - Removed operation GeoBackupPoliciesOperations.list_by_database
+  - Removed operation group ElasticPoolActivitiesOperations
+  - Removed operation group ElasticPoolDatabaseActivitiesOperations
+  - Removed operation group ServerCommunicationLinksOperations
+  - Removed operation group ServiceObjectivesOperations
+
 ## 4.0.0b20 (2024-11-04)
 
 ### Features Added

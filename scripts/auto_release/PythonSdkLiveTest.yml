@@ -19,14 +19,14 @@ variables:
   - group: Azure SDK Auto Release Pipeline Secrets
 
 jobs:
-- job: LiveTestPython310
-  displayName: Live Test Python 3.10
+- job: LiveTestPython
+  displayName: Live Test Python
   timeoutInMinutes: 1500
   strategy:
     maxParallel: 5
   pool:
-    name: azsdk-pool-mms-ubuntu-2004-general
-    vmImage: 'ubuntu-20.04'
+    name: azsdk-pool
+    vmImage: 'ubuntu-22.04'
   variables:
     Codeql.Enabled: false
   steps:
@@ -35,6 +35,10 @@ jobs:
         versionSpec: '3.10'
         addToPath: true
         architecture: 'x64'
+    - task: NodeTool@0
+      displayName: Install Node.js
+      inputs:
+        versionSpec: 22.x
     - bash: |
         python scripts/dev_setup.py -p azure-core
         cd ..

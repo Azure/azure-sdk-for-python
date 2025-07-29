@@ -1,0 +1,103 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "test-rg",
+    "workspaceName": "my-aml-workspace",
+    "name": "string",
+    "api-version": "2025-01-01-preview",
+    "skipValidation": false,
+    "body": {
+      "properties": {
+        "description": "string",
+        "tags": {
+          "string": "string"
+        },
+        "properties": null,
+        "credentials": {
+          "credentialsType": "AccountKey",
+          "secrets": {
+            "secretsType": "AccountKey",
+            "key": "string"
+          }
+        },
+        "datastoreType": "AzureBlob",
+        "accountName": "string",
+        "containerName": "string",
+        "endpoint": "core.windows.net",
+        "protocol": "https"
+      }
+    }
+  },
+  "responses": {
+    "200": {
+      "headers": {},
+      "body": {
+        "id": "string",
+        "name": "string",
+        "type": "string",
+        "properties": {
+          "description": "string",
+          "tags": {
+            "string": "string"
+          },
+          "isDefault": false,
+          "properties": null,
+          "credentials": {
+            "credentialsType": "AccountKey",
+            "secrets": {
+              "secretsType": "AccountKey"
+            }
+          },
+          "datastoreType": "AzureBlob",
+          "accountName": "string",
+          "containerName": "string",
+          "endpoint": "core.windows.net",
+          "protocol": "https"
+        },
+        "systemData": {
+          "createdAt": "2020-01-01T12:34:56.999Z",
+          "createdBy": "string",
+          "createdByType": "User",
+          "lastModifiedAt": "2020-01-01T12:34:56.999Z",
+          "lastModifiedBy": "string",
+          "lastModifiedByType": "User"
+        }
+      }
+    },
+    "201": {
+      "headers": {},
+      "body": {
+        "id": "string",
+        "name": "string",
+        "type": "string",
+        "properties": {
+          "description": "string",
+          "tags": {
+            "string": "string"
+          },
+          "isDefault": false,
+          "properties": null,
+          "credentials": {
+            "credentialsType": "AccountKey",
+            "secrets": {
+              "secretsType": "AccountKey"
+            }
+          },
+          "datastoreType": "AzureBlob",
+          "accountName": "string",
+          "containerName": "string",
+          "endpoint": "core.windows.net",
+          "protocol": "https"
+        },
+        "systemData": {
+          "createdAt": "2020-01-01T12:34:56.999Z",
+          "createdBy": "string",
+          "createdByType": "User",
+          "lastModifiedAt": "2020-01-01T12:34:56.999Z",
+          "lastModifiedBy": "string",
+          "lastModifiedByType": "User"
+        }
+      }
+    }
+  }
+}

@@ -21,7 +21,7 @@ from ci_tools.ci_interactions import output_ci_warning
 from ci_tools.scenario.generation import replace_dev_reqs
 from ci_tools.functions import cleanup_directory
 from ci_tools.parsing import ParsedSetup
-from pkg_resources import parse_requirements, RequirementParseError
+from packaging.requirements import Requirement
 import logging
 
 logging.getLogger().setLevel(logging.INFO)
@@ -33,27 +33,6 @@ DEFAULT_TOX_INI_LOCATION = os.path.join(root_dir, "eng/tox/tox.ini")
 IGNORED_TOX_INIS = ["azure-cosmos"]
 test_tools_path = os.path.join(root_dir, "eng", "test_tools.txt")
 dependency_tools_path = os.path.join(root_dir, "eng", "dependency_tools.txt")
-
-
-def combine_coverage_files(targeted_packages):
-    # find tox.ini file. tox.ini is used to combine coverage paths to generate formatted report
-    tox_ini_file = os.path.join(root_dir, "eng", "tox", "tox.ini")
-    config_file_flag = "--rcfile={}".format(tox_ini_file)
-
-    if os.path.isfile(tox_ini_file):
-        # for every individual coverage file, run coverage combine to combine path
-        for package_dir in [package for package in targeted_packages]:
-            coverage_file = os.path.join(package_dir, ".coverage")
-            if os.path.isfile(coverage_file):
-                cov_cmd_array = [sys.executable, "-m", "coverage", "combine"]
-                # tox.ini file has coverage paths to combine
-                # Pas tox.ini as coverage config file
-                cov_cmd_array.extend([config_file_flag, coverage_file])
-                run_check_call(cov_cmd_array, package_dir)
-    else:
-        # not a hard error at this point
-        # this combine step is required only for modules if report has package name starts with .tox
-        logging.error("tox.ini is not found in path {}".format(root_dir))
 
 
 def collect_tox_coverage_files(targeted_packages):
@@ -79,7 +58,7 @@ def compare_req_to_injected_reqs(parsed_req, injected_packages):
 
     return any(parsed_req.name in req for req in injected_packages)
 
-
+# todo: verify this code
 def inject_custom_reqs(file, injected_packages, package_dir):
     req_lines = []
     injected_packages = [p for p in re.split(r"[\s,]", injected_packages) if p]
@@ -90,17 +69,17 @@ def inject_custom_reqs(file, injected_packages, package_dir):
             for line in f:
                 logging.info("Attempting to parse {}".format(line))
                 try:
-                    parsed_req = [req for req in parse_requirements(line)]
+                    parsed_req = Requirement(line.strip())
                 except Exception as e:
                     logging.error(e)
-                    parsed_req = [None]
+                    parsed_req = None
                 req_lines.append((line, parsed_req))
 
         if req_lines:
             all_adjustments = injected_packages + [
                 line_tuple[0].strip()
                 for line_tuple in req_lines
-                if line_tuple[0].strip() and not compare_req_to_injected_reqs(line_tuple[1][0], injected_packages)
+                if line_tuple[0].strip() and not compare_req_to_injected_reqs(line_tuple[1], injected_packages)
             ]
         else:
             all_adjustments = injected_packages

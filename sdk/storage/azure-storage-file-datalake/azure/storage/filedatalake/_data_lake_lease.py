@@ -6,72 +6,72 @@
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
 import uuid
-
 from typing import (
     Union, Optional, Any,
-    TypeVar, TYPE_CHECKING
+    TYPE_CHECKING
 )
+from typing_extensions import Self
+
 from azure.core.tracing.decorator import distributed_trace
 from azure.storage.blob import BlobLeaseClient
 
-
-
 if TYPE_CHECKING:
     from datetime import datetime
-    FileSystemClient = TypeVar("FileSystemClient")
-    DataLakeDirectoryClient = TypeVar("DataLakeDirectoryClient")
-    DataLakeFileClient = TypeVar("DataLakeFileClient")
+    from azure.storage.filedatalake import FileSystemClient
+    from ._path_client import PathClient
 
 
-class DataLakeLeaseClient(object):  # pylint: disable=client-accepts-api-version-keyword
+class DataLakeLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
     """Creates a new DataLakeLeaseClient.
 
     This client provides lease operations on a FileSystemClient, DataLakeDirectoryClient or DataLakeFileClient.
 
-    :ivar str id:
-        The ID of the lease currently being maintained. This will be `None` if no
-        lease has yet been acquired.
-    :ivar str etag:
-        The ETag of the lease currently being maintained. This will be `None` if no
-        lease has yet been acquired or modified.
-    :ivar ~datetime.datetime last_modified:
-        The last modified timestamp of the lease currently being maintained.
-        This will be `None` if no lease has yet been acquired or modified.
-
     :param client:
         The client of the file system, directory, or file to lease.
-    :type client: ~azure.storage.filedatalake.FileSystemClient or
-        ~azure.storage.filedatalake.DataLakeDirectoryClient or ~azure.storage.filedatalake.DataLakeFileClient
+    :type client:
+        ~azure.storage.filedatalake.FileSystemClient or
+        ~azure.storage.filedatalake.DataLakeDirectoryClient or
+        ~azure.storage.filedatalake.DataLakeFileClient
     :param str lease_id:
         A string representing the lease ID of an existing lease. This value does not
         need to be specified in order to acquire a new lease, or break one.
     """
-    def __init__(
-            self, client, lease_id=None
-    ):  # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
-        # type: (Union[FileSystemClient, DataLakeDirectoryClient, DataLakeFileClient], Optional[str]) -> None
+
+    id: str
+    """The ID of the lease currently being maintained. This will be `None` if no
+        lease has yet been acquired."""
+    etag: Optional[str]
+    """The ETag of the lease currently being maintained. This will be `None` if no
+        lease has yet been acquired or modified."""
+    last_modified: Optional["datetime"]
+    """The last modified timestamp of the lease currently being maintained.
+        This will be `None` if no lease has yet been acquired or modified."""
+
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential, missing-client-constructor-parameter-kwargs
+        self, client: Union["FileSystemClient", "PathClient"],
+        lease_id: Optional[str] = None
+    ) -> None:
         self.id = lease_id or str(uuid.uuid4())
         self.last_modified = None
         self.etag = None
 
         if hasattr(client, '_blob_client'):
-            _client = client._blob_client  # type: ignore
+            _client = client._blob_client
         elif hasattr(client, '_container_client'):
-            _client = client._container_client  # type: ignore
+            _client = client._container_client
         else:
-            raise TypeError("Lease must use any of FileSystemClient DataLakeDirectoryClient, or DataLakeFileClient.")
+            raise TypeError("Lease must use any of FileSystemClient, DataLakeDirectoryClient, or DataLakeFileClient.")
 
         self._blob_lease_client = BlobLeaseClient(_client, lease_id=lease_id)
 
-    def __enter__(self):
+    def __enter__(self) -> Self:
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         self.release()
 
     @distributed_trace
-    def acquire(self, lease_duration=-1, **kwargs):
-        # type: (int, Optional[int], **Any) -> None
+    def acquire(self, lease_duration: int = -1, **kwargs: Any) -> None:
         """Requests a new lease.
 
         If the file/file system does not have an active lease, the DataLake service creates a
@@ -111,8 +111,7 @@ class DataLakeLeaseClient(object):  # pylint: disable=client-accepts-api-version
         self._update_lease_client_attributes()
 
     @distributed_trace
-    def renew(self, **kwargs):
-        # type: (Any) -> None
+    def renew(self, **kwargs: Any) -> None:
         """Renews the lease.
 
         The lease can be renewed if the lease ID specified in the
@@ -150,8 +149,7 @@ class DataLakeLeaseClient(object):  # pylint: disable=client-accepts-api-version
         self._update_lease_client_attributes()
 
     @distributed_trace
-    def release(self, **kwargs):
-        # type: (Any) -> None
+    def release(self, **kwargs: Any) -> None:
         """Release the lease.
 
         The lease may be released if the client lease id specified matches
@@ -187,8 +185,7 @@ class DataLakeLeaseClient(object):  # pylint: disable=client-accepts-api-version
         self._update_lease_client_attributes()
 
     @distributed_trace
-    def change(self, proposed_lease_id, **kwargs):
-        # type: (str, Any) -> None
+    def change(self, proposed_lease_id: str, **kwargs: Any) -> None:
         """Change the lease ID of an active lease.
 
         :param str proposed_lease_id:
@@ -223,8 +220,7 @@ class DataLakeLeaseClient(object):  # pylint: disable=client-accepts-api-version
         self._update_lease_client_attributes()
 
     @distributed_trace
-    def break_lease(self, lease_break_period=None, **kwargs):
-        # type: (Optional[int], Any) -> int
+    def break_lease(self, lease_break_period: Optional[int] = None, **kwargs: Any) -> int:
         """Break the lease, if the file system or file has an active lease.
 
         Once a lease is broken, it cannot be renewed. Any authorized request can break the lease;
@@ -265,9 +261,9 @@ class DataLakeLeaseClient(object):  # pylint: disable=client-accepts-api-version
         :return: Approximate time remaining in the lease period, in seconds.
         :rtype: int
         """
-        self._blob_lease_client.break_lease(lease_break_period=lease_break_period, **kwargs)
+        return self._blob_lease_client.break_lease(lease_break_period=lease_break_period, **kwargs)
 
-    def _update_lease_client_attributes(self):
-        self.id = self._blob_lease_client.id  # type: str
-        self.last_modified = self._blob_lease_client.last_modified  # type: datetime
-        self.etag = self._blob_lease_client.etag  # type: str
+    def _update_lease_client_attributes(self) -> None:
+        self.id = self._blob_lease_client.id
+        self.last_modified = self._blob_lease_client.last_modified
+        self.etag = self._blob_lease_client.etag

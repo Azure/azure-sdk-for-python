@@ -156,6 +156,13 @@ class CustomJwtAuthenticationManagedIdentityType(str, Enum, metaclass=CaseInsens
     USER_ASSIGNED = "UserAssigned"
 
 
+class CustomWebhookAuthenticationManagedIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of managed identity used. Can be either 'SystemAssigned' or 'UserAssigned'."""
+
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+
+
 class DataResidencyBoundary(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Data Residency Boundary of the resource."""
 

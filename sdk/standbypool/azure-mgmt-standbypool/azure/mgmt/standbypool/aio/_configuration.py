@@ -14,11 +14,10 @@ from azure.mgmt.core.policies import ARMHttpLoggingPolicy, AsyncARMChallengeAuth
 from .._version import VERSION
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class StandbyPoolMgmtClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class StandbyPoolMgmtClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for StandbyPoolMgmtClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -30,7 +29,7 @@ class StandbyPoolMgmtClientConfiguration:  # pylint: disable=too-many-instance-a
     :type subscription_id: str
     :param base_url: Service host. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: The API version to use for this operation. Default value is "2024-03-01".
+    :keyword api_version: The API version to use for this operation. Default value is "2025-03-01".
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -42,7 +41,7 @@ class StandbyPoolMgmtClientConfiguration:  # pylint: disable=too-many-instance-a
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        api_version: str = kwargs.pop("api_version", "2024-03-01")
+        api_version: str = kwargs.pop("api_version", "2025-03-01")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

@@ -13,6 +13,7 @@ import pytest
 
 from azure.core.exceptions import HttpResponseError
 from azure.monitor.ingestion import LogsIngestionClient
+from azure.monitor.ingestion._version import VERSION
 
 from base_testcase import LogsIngestionClientTestCase
 
@@ -82,7 +83,7 @@ class TestLogsIngestionClient(LogsIngestionClientTestCase):
             json.dump(LOGS_BODY, f)
 
         with client:
-            with open(temp_file, "r") as f:
+            with open(temp_file, "rb") as f:
                 client.upload(rule_id=monitor_info["dcr_id"], stream_name=monitor_info["stream_name"], logs=f)
         os.remove(temp_file)
 
@@ -153,3 +154,10 @@ class TestLogsIngestionClient(LogsIngestionClientTestCase):
 
         with pytest.raises(ValueError):
             client.upload(rule_id="rule", stream_name="stream", logs=logs)
+
+    def test_user_agent_version(self, monitor_info):
+        client = self.get_client(
+            LogsIngestionClient, self.get_credential(LogsIngestionClient), endpoint=monitor_info["dce"]
+        )
+
+        assert f"monitor-ingestion/{VERSION}" in client._config.user_agent_policy._user_agent

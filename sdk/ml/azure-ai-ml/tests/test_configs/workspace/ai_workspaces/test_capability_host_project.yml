@@ -6,4 +6,6 @@ ai_services_connections:
   - "aiservice_connection_1"
 storage_connections:
   - "storage_connection_1"
+thread_storage_connections:
+  - "thread_storage_connection_1"
 capability_host_kind: "Agents"

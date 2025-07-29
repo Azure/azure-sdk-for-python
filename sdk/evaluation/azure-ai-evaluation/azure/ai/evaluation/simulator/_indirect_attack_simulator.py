@@ -5,20 +5,23 @@
 # noqa: E501
 import asyncio
 import logging
-from typing import Callable, cast
+import random
+from typing import Callable, cast, Union, Optional
 
 from tqdm import tqdm
 
-from azure.ai.evaluation._common.utils import validate_azure_ai_project
+from azure.ai.evaluation._common.utils import validate_azure_ai_project, is_onedp_project
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation.simulator import AdversarialScenarioJailbreak, SupportedLanguages
 from azure.ai.evaluation._model_configurations import AzureAIProject
+from azure.ai.evaluation._common.onedp._client import AIProjectClient
 from azure.core.credentials import TokenCredential
+from azure.ai.evaluation._constants import TokenScope
 
 from ._adversarial_simulator import AdversarialSimulator, JsonLineList
 
-from ._model_tools import AdversarialTemplateHandler, ManagedIdentityAPITokenManager, RAIClient, TokenScope
+from ._model_tools import AdversarialTemplateHandler, ManagedIdentityAPITokenManager, RAIClient
 
 logger = logging.getLogger(__name__)
 
@@ -28,9 +31,9 @@ class IndirectAttackSimulator(AdversarialSimulator):
     """
     Initializes the XPIA (cross domain prompt injected attack) jailbreak adversarial simulator with a project scope.
 
-    :param azure_ai_project: The scope of the Azure AI project. It contains subscription id, resource group, and project
-        name.
-    :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
+    :param azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint
+        or an instance of AzureAIProject. It contains subscription id, resource group, and project name.
+    :type azure_ai_project: Union[str, AzureAIProject]
     :param credential: The credential for connecting to Azure AI project.
     :type credential: ~azure.core.credentials.TokenCredential
 
@@ -44,30 +47,43 @@ class IndirectAttackSimulator(AdversarialSimulator):
             :caption: Run the IndirectAttackSimulator to produce 1 result with 1 conversation turn (2 messages in the result).
     """
 
-    def __init__(self, *, azure_ai_project: AzureAIProject, credential: TokenCredential):
+    def __init__(self, *, azure_ai_project: Union[str, AzureAIProject], credential: TokenCredential):
         """Constructor."""
 
-        try:
-            self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
-        except EvaluationException as e:
-            raise EvaluationException(
-                message=e.message,
-                internal_message=e.internal_message,
-                target=ErrorTarget.DIRECT_ATTACK_SIMULATOR,
-                category=e.category,
-                blame=e.blame,
-            ) from e
+        if is_onedp_project(azure_ai_project):
+            self.azure_ai_project = azure_ai_project
+            self.credential = cast(TokenCredential, credential)
+            self.token_manager = ManagedIdentityAPITokenManager(
+                token_scope=TokenScope.COGNITIVE_SERVICES_MANAGEMENT,
+                logger=logging.getLogger("AdversarialSimulator"),
+                credential=self.credential,
+            )
+            self.rai_client = AIProjectClient(endpoint=azure_ai_project, credential=credential)
+            self.adversarial_template_handler = AdversarialTemplateHandler(
+                azure_ai_project=self.azure_ai_project, rai_client=self.rai_client
+            )
+        else:
+            try:
+                self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
+            except EvaluationException as e:
+                raise EvaluationException(
+                    message=e.message,
+                    internal_message=e.internal_message,
+                    target=ErrorTarget.DIRECT_ATTACK_SIMULATOR,
+                    category=e.category,
+                    blame=e.blame,
+                ) from e
 
-        self.credential = cast(TokenCredential, credential)
-        self.token_manager = ManagedIdentityAPITokenManager(
-            token_scope=TokenScope.DEFAULT_AZURE_MANAGEMENT,
-            logger=logging.getLogger("AdversarialSimulator"),
-            credential=self.credential,
-        )
-        self.rai_client = RAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager)
-        self.adversarial_template_handler = AdversarialTemplateHandler(
-            azure_ai_project=self.azure_ai_project, rai_client=self.rai_client
-        )
+            self.credential = cast(TokenCredential, credential)
+            self.token_manager = ManagedIdentityAPITokenManager(
+                token_scope=TokenScope.DEFAULT_AZURE_MANAGEMENT,
+                logger=logging.getLogger("AdversarialSimulator"),
+                credential=self.credential,
+            )
+            self.rai_client = RAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager)
+            self.adversarial_template_handler = AdversarialTemplateHandler(
+                azure_ai_project=self.azure_ai_project, rai_client=self.rai_client
+            )
         super().__init__(azure_ai_project=azure_ai_project, credential=credential)
 
     def _ensure_service_dependencies(self):
@@ -90,6 +106,7 @@ class IndirectAttackSimulator(AdversarialSimulator):
         api_call_retry_sleep_sec: int = 1,
         api_call_delay_sec: int = 0,
         concurrent_async_task: int = 3,
+        randomization_seed: Optional[int] = None,
         **kwargs,
     ):
         """
@@ -115,6 +132,9 @@ class IndirectAttackSimulator(AdversarialSimulator):
         :keyword concurrent_async_task: The number of asynchronous tasks to run concurrently during the simulation.
             Defaults to 3.
         :paramtype concurrent_async_task: int
+        :keyword randomization_seed: The seed used to randomize prompt selection. If unset, the system's
+            default seed is used. Defaults to None.
+        :paramtype randomization_seed: Optional[int]
         :return: A list of dictionaries, each representing a simulated conversation. Each dictionary contains:
 
          - 'template_parameters': A dictionary with parameters used in the conversation template,
@@ -175,6 +195,13 @@ class IndirectAttackSimulator(AdversarialSimulator):
             ncols=100,
             unit="simulations",
         )
+
+        # Apply randomization to templates if seed is provided
+        if randomization_seed is not None:
+            # Create a local random instance to avoid polluting global state
+            local_random = random.Random(randomization_seed)
+            local_random.shuffle(templates)
+
         for template in templates:
             for parameter in template.template_parameters:
                 tasks.append(

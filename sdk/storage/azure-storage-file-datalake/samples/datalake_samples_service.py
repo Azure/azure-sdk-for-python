@@ -18,8 +18,8 @@ DESCRIPTION:
 USAGE:
     python datalake_samples_service.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING
-    2) STORAGE_ACCOUNT_NAME
+    1) DATALAKE_STORAGE_CONNECTION_STRING
+    2) DATALAKE_STORAGE_ACCOUNT_NAME
 """
 
 import os
@@ -27,8 +27,9 @@ import os
 
 class DataLakeServiceSamples(object):
 
-    connection_string = os.environ['AZURE_STORAGE_CONNECTION_STRING']
-    account_name = os.getenv('STORAGE_ACCOUNT_NAME', "")
+    connection_string = os.environ['DATALAKE_STORAGE_CONNECTION_STRING']
+    account_name = os.getenv('DATALAKE_STORAGE_ACCOUNT_NAME', "")
+
 
     #--Begin DataLake Service Samples-----------------------------------------------------------------
 
@@ -57,7 +58,7 @@ class DataLakeServiceSamples(object):
 
         # Create file systems
         # [START create_file_system_from_service_client]
-        datalake_service_client.create_file_system("filesystem")
+        datalake_service_client.create_file_system("filesystemservice")
         # [END create_file_system_from_service_client]
         file_system_client = datalake_service_client.create_file_system("anotherfilesystem")
 
@@ -96,7 +97,7 @@ class DataLakeServiceSamples(object):
 
         # Delete File Systems
         # [START delete_file_system_from_service_client]
-        datalake_service_client.delete_file_system("filesystem")
+        datalake_service_client.delete_file_system("filesystemservice")
         # [END delete_file_system_from_service_client]
         file_system_client.delete_file_system()
 

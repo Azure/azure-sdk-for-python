@@ -46,39 +46,39 @@ class ManagedIdentityCredential(AsyncContextManager):
     def __init__(
         self, *, client_id: Optional[str] = None, identity_config: Optional[Mapping[str, str]] = None, **kwargs: Any
     ) -> None:
-        validate_identity_config(client_id, identity_config)
+        user_identity_info = validate_identity_config(client_id, identity_config)
         self._credential: Optional[AsyncSupportsTokenInfo] = None
         exclude_workload_identity = kwargs.pop("_exclude_workload_identity_credential", False)
-
+        managed_identity_type = None
         if os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT):
             if os.environ.get(EnvironmentVariables.IDENTITY_HEADER):
                 if os.environ.get(EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT):
-                    _LOGGER.info("%s will use Service Fabric managed identity", self.__class__.__name__)
+                    managed_identity_type = "Service Fabric managed identity"
                     from .service_fabric import ServiceFabricCredential
 
                     self._credential = ServiceFabricCredential(
                         client_id=client_id, identity_config=identity_config, **kwargs
                     )
                 else:
-                    _LOGGER.info("%s will use App Service managed identity", self.__class__.__name__)
+                    managed_identity_type = "App Service managed identity"
                     from .app_service import AppServiceCredential
 
                     self._credential = AppServiceCredential(
                         client_id=client_id, identity_config=identity_config, **kwargs
                     )
             elif os.environ.get(EnvironmentVariables.IMDS_ENDPOINT):
-                _LOGGER.info("%s will use Azure Arc managed identity", self.__class__.__name__)
+                managed_identity_type = "Azure Arc managed identity"
                 from .azure_arc import AzureArcCredential
 
                 self._credential = AzureArcCredential(client_id=client_id, identity_config=identity_config, **kwargs)
         elif os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
             if os.environ.get(EnvironmentVariables.MSI_SECRET):
-                _LOGGER.info("%s will use Azure ML managed identity", self.__class__.__name__)
+                managed_identity_type = "Azure ML managed identity"
                 from .azure_ml import AzureMLCredential
 
                 self._credential = AzureMLCredential(client_id=client_id, identity_config=identity_config, **kwargs)
             else:
-                _LOGGER.info("%s will use Cloud Shell managed identity", self.__class__.__name__)
+                managed_identity_type = "Cloud Shell managed identity"
                 from .cloud_shell import CloudShellCredential
 
                 self._credential = CloudShellCredential(client_id=client_id, identity_config=identity_config, **kwargs)
@@ -86,24 +86,35 @@ class ManagedIdentityCredential(AsyncContextManager):
             all(os.environ.get(var) for var in EnvironmentVariables.WORKLOAD_IDENTITY_VARS)
             and not exclude_workload_identity
         ):
-            _LOGGER.info("%s will use workload identity", self.__class__.__name__)
             from .workload_identity import WorkloadIdentityCredential
 
             workload_client_id = client_id or os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
             if not workload_client_id:
-                raise ValueError('Configure the environment with a client ID or pass a value for "client_id" argument')
+                raise ValueError(
+                    "Workload identity was selected but no client ID was provided. "
+                    'Configure the environment with a client ID or pass a value for "client_id" argument'
+                )
+
+            managed_identity_type = "workload identity"
+            user_identity_info = ("client_id", workload_client_id)
 
             self._credential = WorkloadIdentityCredential(
                 tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
                 client_id=workload_client_id,
                 token_file_path=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
-                **kwargs
+                **kwargs,
             )
         else:
+            managed_identity_type = "IMDS"
             from .imds import ImdsCredential
 
-            _LOGGER.info("%s will use IMDS", self.__class__.__name__)
             self._credential = ImdsCredential(client_id=client_id, identity_config=identity_config, **kwargs)
+
+        if managed_identity_type:
+            log_msg = f"{self.__class__.__name__} will use {managed_identity_type}"
+            if user_identity_info:
+                log_msg += f" with {user_identity_info[0]}: {user_identity_info[1]}"
+            _LOGGER.info(log_msg)
 
     async def __aenter__(self) -> "ManagedIdentityCredential":
         if self._credential:
@@ -156,7 +167,7 @@ class ManagedIdentityCredential(AsyncContextManager):
         :keyword options: A dictionary of options for the token request. Unknown options will be ignored. Optional.
         :paramtype options: ~azure.core.credentials.TokenRequestOptions
 
-        :rtype: AccessTokenInfo
+        :rtype: ~azure.core.credentials.AccessTokenInfo
         :return: An AccessTokenInfo instance containing information about the token.
         :raises ~azure.identity.CredentialUnavailableError: managed identity isn't available in the hosting environment.
         """

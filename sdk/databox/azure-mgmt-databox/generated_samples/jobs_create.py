@@ -65,12 +65,12 @@ def main():
                 },
                 "transferType": "ImportToAzure",
             },
-            "sku": {"name": "DataBox"},
+            "sku": {"model": "DataBox", "name": "DataBox"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/databox/resource-manager/Microsoft.DataBox/stable/2022-12-01/examples/JobsCreate.json
+# x-ms-original-file: specification/databox/resource-manager/Microsoft.DataBox/stable/2025-02-01/examples/JobsCreate.json
 if __name__ == "__main__":
     main()

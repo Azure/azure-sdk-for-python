@@ -1,7 +1,0 @@
-recursive-include tests *.py
-recursive-include samples *.py *.md
-include *.md
-include LICENSE
-include azure/__init__.py
-include azure/ai/__init__.py
-include azure/ai/metricsadvisor/py.typed

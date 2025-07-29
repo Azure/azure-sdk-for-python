@@ -25,7 +25,7 @@ class TestCosmosDBManagementGremlinResourcesOperationsAsync(AzureMgmtRecordedTes
         response = self.client.gremlin_resources.list_gremlin_databases(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-12-01-preview",
+            api_version="2025-04-15",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestCosmosDBManagementGremlinResourcesOperationsAsync(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             account_name="str",
             database_name="str",
-            api_version="2024-12-01-preview",
+            api_version="2025-04-15",
         )
 
         # please add some check logic here by yourself
@@ -63,19 +63,13 @@ class TestCosmosDBManagementGremlinResourcesOperationsAsync(AzureMgmtRecordedTes
                         },
                     },
                     "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
                     "location": "str",
                     "name": "str",
                     "options": {"autoscaleSettings": {"maxThroughput": 0}, "throughput": 0},
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-12-01-preview",
+                api_version="2025-04-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -90,7 +84,7 @@ class TestCosmosDBManagementGremlinResourcesOperationsAsync(AzureMgmtRecordedTes
                 resource_group_name=resource_group.name,
                 account_name="str",
                 database_name="str",
-                api_version="2024-12-01-preview",
+                api_version="2025-04-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -104,7 +98,7 @@ class TestCosmosDBManagementGremlinResourcesOperationsAsync(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             account_name="str",
             database_name="str",
-            api_version="2024-12-01-preview",
+            api_version="2025-04-15",
         )
 
         # please add some check logic here by yourself
@@ -130,21 +124,14 @@ class TestCosmosDBManagementGremlinResourcesOperationsAsync(AzureMgmtRecordedTes
                         "offerReplacePending": "str",
                         "softAllowedMaximumThroughput": "str",
                         "throughput": 0,
-                        "throughputBuckets": [{"id": 0, "maxThroughputPercentage": 0}],
                     },
                     "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
                     "location": "str",
                     "name": "str",
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-12-01-preview",
+                api_version="2025-04-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -159,7 +146,7 @@ class TestCosmosDBManagementGremlinResourcesOperationsAsync(AzureMgmtRecordedTes
                 resource_group_name=resource_group.name,
                 account_name="str",
                 database_name="str",
-                api_version="2024-12-01-preview",
+                api_version="2025-04-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -174,7 +161,7 @@ class TestCosmosDBManagementGremlinResourcesOperationsAsync(AzureMgmtRecordedTes
                 resource_group_name=resource_group.name,
                 account_name="str",
                 database_name="str",
-                api_version="2024-12-01-preview",
+                api_version="2025-04-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -188,7 +175,7 @@ class TestCosmosDBManagementGremlinResourcesOperationsAsync(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             account_name="str",
             database_name="str",
-            api_version="2024-12-01-preview",
+            api_version="2025-04-15",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -202,7 +189,7 @@ class TestCosmosDBManagementGremlinResourcesOperationsAsync(AzureMgmtRecordedTes
             account_name="str",
             database_name="str",
             graph_name="str",
-            api_version="2024-12-01-preview",
+            api_version="2025-04-15",
         )
 
         # please add some check logic here by yourself
@@ -248,19 +235,13 @@ class TestCosmosDBManagementGremlinResourcesOperationsAsync(AzureMgmtRecordedTes
                         "uniqueKeyPolicy": {"uniqueKeys": [{"paths": ["str"]}]},
                     },
                     "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
                     "location": "str",
                     "name": "str",
                     "options": {"autoscaleSettings": {"maxThroughput": 0}, "throughput": 0},
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-12-01-preview",
+                api_version="2025-04-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -276,7 +257,7 @@ class TestCosmosDBManagementGremlinResourcesOperationsAsync(AzureMgmtRecordedTes
                 account_name="str",
                 database_name="str",
                 graph_name="str",
-                api_version="2024-12-01-preview",
+                api_version="2025-04-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -291,7 +272,7 @@ class TestCosmosDBManagementGremlinResourcesOperationsAsync(AzureMgmtRecordedTes
             account_name="str",
             database_name="str",
             graph_name="str",
-            api_version="2024-12-01-preview",
+            api_version="2025-04-15",
         )
 
         # please add some check logic here by yourself
@@ -318,21 +299,14 @@ class TestCosmosDBManagementGremlinResourcesOperationsAsync(AzureMgmtRecordedTes
                         "offerReplacePending": "str",
                         "softAllowedMaximumThroughput": "str",
                         "throughput": 0,
-                        "throughputBuckets": [{"id": 0, "maxThroughputPercentage": 0}],
                     },
                     "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
                     "location": "str",
                     "name": "str",
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-12-01-preview",
+                api_version="2025-04-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -348,7 +322,7 @@ class TestCosmosDBManagementGremlinResourcesOperationsAsync(AzureMgmtRecordedTes
                 account_name="str",
                 database_name="str",
                 graph_name="str",
-                api_version="2024-12-01-preview",
+                api_version="2025-04-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -364,7 +338,7 @@ class TestCosmosDBManagementGremlinResourcesOperationsAsync(AzureMgmtRecordedTes
                 account_name="str",
                 database_name="str",
                 graph_name="str",
-                api_version="2024-12-01-preview",
+                api_version="2025-04-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -381,7 +355,7 @@ class TestCosmosDBManagementGremlinResourcesOperationsAsync(AzureMgmtRecordedTes
                 database_name="str",
                 graph_name="str",
                 location={"location": "str"},
-                api_version="2024-12-01-preview",
+                api_version="2025-04-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 

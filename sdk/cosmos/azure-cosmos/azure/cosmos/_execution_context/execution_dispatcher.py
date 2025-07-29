@@ -36,6 +36,7 @@ from azure.cosmos._execution_context.query_engine_execution_context import _Quer
 from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
 from azure.cosmos.documents import _DistinctType
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes
+from .._constants import _Constants as Constants
 from azure.cosmos.query_engine import QueryEngine
 
 if TYPE_CHECKING:
@@ -64,8 +65,9 @@ def _verify_valid_hybrid_search_query(hybrid_search_query_info):
         raise ValueError("Executing a hybrid search query without TOP or LIMIT can consume many" +
                          " RUs very fast and have long runtimes. Please ensure you are using one" +
                          " of the two filters with your hybrid search query.")
-    if hybrid_search_query_info['take'] > os.environ.get('AZURE_COSMOS_HYBRID_SEARCH_MAX_ITEMS', 1000):
-        raise ValueError("Executing a hybrid search query with more items than the max is not allowed." +
+    if hybrid_search_query_info['take'] > int(os.environ.get(Constants.HS_MAX_ITEMS_CONFIG,
+                                                             Constants.HS_MAX_ITEMS_CONFIG_DEFAULT)):
+        raise ValueError("Executing a hybrid search query with more items than the max is not allowed. " +
                          "Please ensure you are using a limit smaller than the max, or change the max.")
 
 
@@ -89,8 +91,10 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                  resource_link: str,
                  query: Optional[Union[str, Dict[str, Any]]],
                  options: Optional[Mapping[str, Any]] = {},
-                 fetch_function: Callable[[
-                     Mapping[str, Any]], Tuple[List[Dict[str, Any]], CaseInsensitiveDict]] = None,
+                 fetch_function: Callable[[Mapping[str, Any]], Tuple[List[Dict[str, Any]], CaseInsensitiveDict]] = None,
+                 response_hook,
+                 raw_response_hook,
+                 resource_typ,
                  query_engine: Optional[QueryEngine] = None):
         """
         Constructor
@@ -102,7 +106,19 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         self._resource_link = resource_link
         self._query = query
         self._fetch_function = fetch_function
+        self._resource_type = resource_type
+        self._response_hook = response_hook
+        self._raw_response_hook = raw_response_hook
+        self._fetched_query_plan = False
         self._query_engine = query_engine
+
+    def _create_execution_context_with_query_plan(self):
+        self._fetched_query_plan = True
+        query_to_use = self._query if self._query is not None else "Select * from root r"
+        query_execution_info = _PartitionedQueryExecutionInfo(self._client._GetQueryPlanThroughGateway
+        (query_to_use, self._resource_link, self._options.get('excludedLocations')))
+        self._execution_context = self._create_pipelined_execution_context(query_execution_info)
+        # self._create_execution_context(query_to_use)
 
     def __next__(self):
         """Returns the next query result.
@@ -115,9 +131,8 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         try:
             return next(self._execution_context)
         except CosmosHttpResponseError as e:
-            if _is_partitioned_execution_info(e):
-                query_to_use = self._query if self._query is not None else "Select * from root r"
-                self._create_execution_context(query_to_use)
+            if _is_partitioned_execution_info(e) or _is_hybrid_search_query(self._query, e):
+                self._create_execution_context_with_query_plan()
             else:
                 raise e
 
@@ -132,15 +147,11 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         :return: List of results.
         :rtype: list
         """
-        # TODO: NEED to change this - make every query retrieve a query plan
-        # also, we can't have this logic being returned to so often - there should be no need for this
-        # need to split up query plan logic and actual query iterating logic
         try:
             return self._execution_context.fetch_next_block()
         except CosmosHttpResponseError as e:
             if _is_partitioned_execution_info(e) or _is_hybrid_search_query(self._query, e):
-                query_to_use = self._query if self._query is not None else "Select * from root r"
-                self._create_execution_context(query_to_use)
+                self._create_execution_context_with_query_plan()
             else:
                 raise e
 
@@ -184,15 +195,18 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                 raise ValueError("Executing a vector search query without TOP or LIMIT can consume many" +
                                  " RUs very fast and have long runtimes. Please ensure you are using one" +
                                  " of the two filters with your vector search query.")
-            if total_item_buffer > os.environ.get('AZURE_COSMOS_MAX_ITEM_BUFFER_VECTOR_SEARCH', 50000):
-                raise ValueError("Executing a vector search query with more items than the max is not allowed." +
+            if total_item_buffer > int(os.environ.get(Constants.MAX_ITEM_BUFFER_VS_CONFIG,
+                                                      Constants.MAX_ITEM_BUFFER_VS_CONFIG_DEFAULT)):
+                raise ValueError("Executing a vector search query with more items than the max is not allowed. " +
                                  "Please ensure you are using a limit smaller than the max, or change the max.")
             execution_context_aggregator = \
                 non_streaming_order_by_aggregator._NonStreamingOrderByContextAggregator(self._client,
                                                                                         self._resource_link,
                                                                                         self._query,
                                                                                         self._options,
-                                                                                        query_execution_info)
+                                                                                        query_execution_info,
+                                                                                        self._response_hook,
+                                                                                        self._raw_response_hook)
         elif query_execution_info.has_hybrid_search_query_info():
             hybrid_search_query_info = query_execution_info._query_execution_info[
                 'hybridSearchQueryInfo']
@@ -202,7 +216,9 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                                                                         self._resource_link,
                                                                         self._options,
                                                                         query_execution_info,
-                                                                        hybrid_search_query_info)
+                                                                        hybrid_search_query_info,
+                                                                        self._response_hook,
+                                                                        self._raw_response_hook)
             execution_context_aggregator._run_hybrid_search()
         else:
             execution_context_aggregator = \
@@ -210,7 +226,10 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                                                                             self._resource_link,
                                                                             self._query,
                                                                             self._options,
-                                                                            query_execution_info)
+                                                                            query_execution_info,
+                                                                            self._response_hook,
+                                                                            self._raw_response_hook)
+            execution_context_aggregator._configure_partition_ranges()
         return _PipelineExecutionContext(self._client, self._options, execution_context_aggregator,
                                          query_execution_info)
 

@@ -21,11 +21,11 @@ class TestKeyVaultManagementMHSMPrivateLinkResourcesOperationsAsync(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_mhsm_resource(self, resource_group):
+    async def test_mhsm_private_link_resources_list_by_mhsm_resource(self, resource_group):
         response = await self.client.mhsm_private_link_resources.list_by_mhsm_resource(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself

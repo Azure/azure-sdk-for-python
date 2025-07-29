@@ -1,0 +1,1 @@
+{"Time":"2025-04-29T15:28:57.461191426-07:00","Direction":"in","FrameType":"SASLMechanisms","Frame":{"Header":{"Size":63,"DataOffset":2,"FrameType":1,"Channel":0,"Raw":"AAAAPwIBAAA="},"Body":{"Mechanisms":["MSSBCBS","PLAIN","ANONYMOUS","EXTERNAL"]},"BodyType":"SASLMechanisms"},"MessageData":{}}

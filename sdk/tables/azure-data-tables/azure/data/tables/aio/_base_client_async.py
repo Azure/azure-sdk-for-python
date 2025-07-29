@@ -30,7 +30,7 @@ from ._authentication_async import _configure_credential
 from .._common_conversion import _is_cosmos_endpoint, _get_account
 from .._constants import DEFAULT_STORAGE_ENDPOINT_SUFFIX
 from .._generated.aio import AzureTable
-from .._base_client import extract_batch_part_metadata, parse_query, format_query_string, get_api_version
+from .._base_client import extract_batch_part_metadata, parse_query, format_query_string, get_api_version, AudienceType
 from .._error import (
     RequestTooLargeError,
     TableTransactionError,
@@ -57,6 +57,7 @@ class AsyncTablesBaseClient:  # pylint: disable=too-many-instance-attributes
         endpoint: str,
         *,
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, AsyncTokenCredential]] = None,
+        audience: Optional[AudienceType] = None,
         api_version: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
@@ -70,6 +71,9 @@ class AsyncTablesBaseClient:  # pylint: disable=too-many-instance-attributes
             ~azure.core.credentials.AzureNamedKeyCredential or
             ~azure.core.credentials.AzureSasCredential or
             ~azure.core.credentials_async.AsyncTokenCredential or None
+        :keyword audience: Optional audience to use for Microsoft Entra ID authentication. If not specified,
+            the public cloud audience will be used.
+        :paramtype audience: str or None
         :keyword api_version: Specifies the version of the operation to use for this request. Default value
             is "2019-02-02".
         :paramtype api_version: str or None
@@ -116,7 +120,7 @@ class AsyncTablesBaseClient:  # pylint: disable=too-many-instance-attributes
             }
         self._hosts = _hosts
 
-        self._policies = self._configure_policies(hosts=self._hosts, **kwargs)
+        self._policies = self._configure_policies(audience=audience, hosts=self._hosts, **kwargs)
         if self._cosmos_endpoint:
             self._policies.insert(0, CosmosPatchTransformPolicy())
 
@@ -215,8 +219,8 @@ class AsyncTablesBaseClient:  # pylint: disable=too-many-instance-attributes
         """
         return f"{self.scheme}://{hostname}{self._query_str}"
 
-    def _configure_policies(self, **kwargs):
-        credential_policy = _configure_credential(self.credential, self._cosmos_endpoint)
+    def _configure_policies(self, *, audience: Optional[str] = None, **kwargs: Any) -> List[Any]:
+        credential_policy = _configure_credential(self.credential, self._cosmos_endpoint, audience=audience)
         return [
             RequestIdPolicy(**kwargs),
             StorageHeadersPolicy(**kwargs),

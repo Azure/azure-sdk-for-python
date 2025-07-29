@@ -2,11 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Dict, List, Optional, TypedDict, cast
-
+from typing import Dict, List, Optional, TypedDict, cast, Union
+from ast import literal_eval
 from typing_extensions import NotRequired
 
 from azure.ai.evaluation._model_configurations import AzureAIProject
+from azure.ai.evaluation._common.onedp._client import AIProjectClient
+from azure.ai.evaluation.simulator._adversarial_scenario import AdversarialScenario
 
 from ._rai_client import RAIClient
 
@@ -145,15 +147,18 @@ class AdversarialTemplate:
 
 class AdversarialTemplateHandler:
     """
-    Adversarial template handler constructor.
+    Initialize the AdversarialTemplateHandler.
 
-    :param azure_ai_project: The Azure AI project.
-    :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
-    :param rai_client: The RAI client.
-    :type rai_client: ~azure.ai.evaluation.simulator._model_tools.RAIClient
+    :param azure_ai_project: The Azure AI project, which can either be a string representing the project endpoint
+        or an instance of AzureAIProject. It contains subscription id, resource group, and project name.
+    :type azure_ai_project: Union[str, AzureAIProject]
+    :param rai_client: The RAI client or AI Project client used for fetching parameters.
+    :type rai_client: Union[~azure.ai.evaluation.simulator._model_tools.RAIClient, ~azure.ai.evaluation._common.onedp._client.AIProjectClient]
     """
 
-    def __init__(self, azure_ai_project: AzureAIProject, rai_client: RAIClient) -> None:
+    def __init__(
+        self, azure_ai_project: Union[str, AzureAIProject], rai_client: Union[RAIClient, AIProjectClient]
+    ) -> None:
         self.azure_ai_project = azure_ai_project
         self.categorized_ch_parameters: Optional[Dict[str, _CategorizedParameter]] = None
         self.rai_client = rai_client
@@ -162,8 +167,10 @@ class AdversarialTemplateHandler:
         if self.categorized_ch_parameters is None:
             categorized_parameters: Dict[str, _CategorizedParameter] = {}
             util = ContentHarmTemplatesUtils
-
-            parameters = await self.rai_client.get_contentharm_parameters()
+            if isinstance(self.rai_client, RAIClient):
+                parameters = await self.rai_client.get_contentharm_parameters()
+            elif isinstance(self.rai_client, AIProjectClient):
+                parameters = literal_eval(self.rai_client.red_teams.get_template_parameters())
 
             for k in parameters.keys():
                 template_key = util.get_template_key(k)
@@ -176,17 +183,29 @@ class AdversarialTemplateHandler:
 
         template_category = collection_key.split("adv_")[-1]
 
+        # Handle both qa_enterprise and qa_documents mapping to qa
+        if template_category in ["qa_enterprise", "qa_documents"]:
+            template_category = "qa"
+
         plist = self.categorized_ch_parameters
         ch_templates = []
+
         for key, value in plist.items():
+            # Skip enterprise templates for ADVERSARIAL_QA
+            if collection_key == AdversarialScenario.ADVERSARIAL_QA.value and "enterprise" in key:
+                continue
+            # Skip non-enterprise templates for ADVERSARIAL_QA_DOCUMENTS
+            if collection_key == AdversarialScenario.ADVERSARIAL_QA_DOCUMENTS.value and "enterprise" not in key:
+                continue
+
             if value["category"] == template_category:
                 params = value["parameters"]
                 for p in params:
                     p.update({"ch_template_placeholder": "{{ch_template_placeholder}}"})
 
                 template = AdversarialTemplate(template_name=key, text=None, context_key=[], template_parameters=params)
-
                 ch_templates.append(template)
+
         return ch_templates
 
     def get_template(self, template_name: str) -> Optional[AdversarialTemplate]:

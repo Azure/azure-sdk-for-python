@@ -1,8 +1,0 @@
-recursive-include tests *.py
-recursive-include samples *.py *.md *.txt
-include *.md
-include azure/__init__.py
-include azure/ai/__init__.py
-include azure/ai/resources/py.typed
-include azure/ai/resources/_index/_utils/encodings/*
-include azure/ai/common/operations/component-configs/*

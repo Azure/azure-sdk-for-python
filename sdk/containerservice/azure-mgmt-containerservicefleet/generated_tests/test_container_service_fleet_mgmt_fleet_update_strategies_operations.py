@@ -20,11 +20,11 @@ class TestContainerServiceFleetMgmtFleetUpdateStrategiesOperations(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_fleet(self, resource_group):
+    def test_fleet_update_strategies_list_by_fleet(self, resource_group):
         response = self.client.fleet_update_strategies.list_by_fleet(
             resource_group_name=resource_group.name,
             fleet_name="str",
-            api_version="2024-04-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,12 +32,12 @@ class TestContainerServiceFleetMgmtFleetUpdateStrategiesOperations(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_fleet_update_strategies_get(self, resource_group):
         response = self.client.fleet_update_strategies.get(
             resource_group_name=resource_group.name,
             fleet_name="str",
             update_strategy_name="str",
-            api_version="2024-04-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestContainerServiceFleetMgmtFleetUpdateStrategiesOperations(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_fleet_update_strategies_begin_create_or_update(self, resource_group):
         response = self.client.fleet_update_strategies.begin_create_or_update(
             resource_group_name=resource_group.name,
             fleet_name="str",
@@ -66,7 +66,7 @@ class TestContainerServiceFleetMgmtFleetUpdateStrategiesOperations(AzureMgmtReco
                 },
                 "type": "str",
             },
-            api_version="2024-04-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -74,12 +74,12 @@ class TestContainerServiceFleetMgmtFleetUpdateStrategiesOperations(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_fleet_update_strategies_begin_delete(self, resource_group):
         response = self.client.fleet_update_strategies.begin_delete(
             resource_group_name=resource_group.name,
             fleet_name="str",
             update_strategy_name="str",
-            api_version="2024-04-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

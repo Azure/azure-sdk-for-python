@@ -26,8 +26,9 @@ from azure.keyvault.keys import (
     KeyType
 )
 from azure.keyvault.keys._generated.models import KeyRotationPolicy as _KeyRotationPolicy
+from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
 from dateutil import parser as date_parse
-from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
+from devtools_testutils import recorded_by_proxy
 
 from _shared.test_case import KeyVaultTestCase
 from _test_case import KeysClientPreparer, get_attestation_token, get_decorator, get_release_policy, is_public_cloud
@@ -36,6 +37,7 @@ from _keys_test_case import KeysTestCase
 
 all_api_versions = get_decorator()
 only_hsm = get_decorator(only_hsm=True)
+only_hsm_default = get_decorator(only_hsm=True, api_versions=[DEFAULT_VERSION])
 only_hsm_7_4_plus = get_decorator(only_hsm=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5])
 only_vault_7_4_plus = get_decorator(only_vault=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5])
 only_7_4_plus = get_decorator(api_versions=[ApiVersion.V7_4, ApiVersion.V7_5])
@@ -112,7 +114,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         kid = key_attributes.id
         assert key_curve == key.crv
         assert kid.index(prefix) == 0, f"Key Id should start with '{prefix}', but value is '{kid}'"
-        assert key.kty == kty, f"kty should by '{key}', but is '{key.kty}'"
+        assert key.kty == kty, f"kty should be '{kty}', but is '{key.kty}'"
         assert key_attributes.properties.created_on and key_attributes.properties.updated_on,"Missing required date attributes."
         
 
@@ -121,7 +123,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         key = key_attributes.key
         kid = key_attributes.id
         assert kid.index(prefix) == 0, f"Key Id should start with '{prefix}', but value is '{kid}'"
-        assert key.kty == kty, f"kty should by '{key}', but is '{key.kty}'"
+        assert key.kty == kty, f"kty should be '{kty}', but is '{key.kty}'"
         assert key.n and key.e, "Bad RSA public material."
         assert sorted(key_ops) == sorted(key.key_ops), f"keyOps should be '{key_ops}', but is '{key.key_ops}'"
         assert key_attributes.properties.created_on and key_attributes.properties.updated_on, "Missing required date attributes."
@@ -186,7 +188,6 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_key_crud_operations(self, client, is_hsm, **kwargs):
-        set_bodiless_matcher()
         assert client is not None
 
         # create ec key
@@ -252,7 +253,6 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @recorded_by_proxy
     def test_rsa_public_exponent(self, client, **kwargs):
         """The public exponent of a Managed HSM RSA key can be specified during creation"""
-        set_bodiless_matcher()
         assert client is not None
 
         key_name = self.get_resource_name("rsa-key")
@@ -264,7 +264,6 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_backup_restore(self, client, is_hsm, **kwargs):
-        set_bodiless_matcher()
         assert client is not None
 
         key_name = self.get_resource_name("keybak")
@@ -291,8 +290,6 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_key_list(self, client, is_hsm, **kwargs):
-        set_bodiless_matcher()
-
         assert client is not None
 
         max_keys = LIST_TEST_SIZE
@@ -338,11 +335,11 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
                 self._assert_key_attributes_equal(expected_key.properties, key)
         assert 0 == len(expected)
 
+    @pytest.mark.skip("Temporarily disabled due to service issue")
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_list_deleted_keys(self, client, is_hsm, **kwargs):
-        set_bodiless_matcher()
         assert client is not None
 
         expected = {}
@@ -369,11 +366,11 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
                 self._assert_key_attributes_equal(expected[key.name].properties, key.properties)
                 del expected[key.name]
 
+    @pytest.mark.skip("Temporarily disabled due to service issue")
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_recover(self, client, is_hsm, **kwargs):
-        set_bodiless_matcher()
         assert client is not None
 
         # create keys
@@ -400,7 +397,6 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_purge(self, client, is_hsm, **kwargs):
-        set_bodiless_matcher()
         assert client is not None
 
         # create keys
@@ -522,7 +518,6 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         if is_hsm and client.api_version == ApiVersion.V7_5:
             pytest.skip("Currently failing on 7.5-preview.1; skipping for now")
 
-        set_bodiless_matcher()
         attestation_uri = self._get_attestation_uri()
         attestation = get_attestation_token(attestation_uri)
         release_policy = get_release_policy(attestation_uri)
@@ -550,7 +545,6 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         if client.api_version == ApiVersion.V7_5:
             pytest.skip("Currently failing on 7.5-preview.1; skipping for now")
 
-        set_bodiless_matcher()
         attestation_uri = self._get_attestation_uri()
         attestation = get_attestation_token(attestation_uri)
         release_policy = get_release_policy(attestation_uri)
@@ -575,7 +569,6 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         if client.api_version == ApiVersion.V7_5:
             pytest.skip("Currently failing on 7.5-preview.1; skipping for now")
 
-        set_bodiless_matcher()
         attestation_uri = self._get_attestation_uri()
         release_policy = get_release_policy(attestation_uri)
         key_name = self.get_resource_name("key-name")
@@ -620,7 +613,6 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         if (self.is_live and os.environ["KEYVAULT_SKU"] != "premium"):
             pytest.skip("This test is not supported on standard SKU vaults. Follow up with service team")
 
-        set_bodiless_matcher()
         attestation_uri = self._get_attestation_uri()
         release_policy = get_release_policy(attestation_uri, immutable=True)
         key_name = self.get_resource_name("key-name")
@@ -657,7 +649,6 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         if (not is_public_cloud() and self.is_live):
             pytest.skip("This test is not supported in usgov/china region. Follow up with service team.")
 
-        set_bodiless_matcher()
         key_name = self.get_resource_name("rotation-key")
         key = self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
 
@@ -679,7 +670,6 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         if (not is_public_cloud() and self.is_live):
             pytest.skip("This test is not supported in usgov/china region. Follow up with service team.")
 
-        set_bodiless_matcher()
         key_name = self.get_resource_name("rotation-key")
         self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
 
@@ -799,6 +789,37 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         )
         response = client.send_request(request)
         assert response.json()["key"]["kid"] == key.id
+
+    @pytest.mark.parametrize("api_version,is_hsm",only_hsm_default)
+    @KeysClientPreparer()
+    @recorded_by_proxy
+    def test_get_key_attestation(self, client, **kwargs):
+        # create a key
+        key_name = self.get_resource_name("key-name")
+        key = self._create_rsa_key(client, key_name, hardware_protected=True)
+        # attestation info shouldn't be included unless requested with get_key_attestation
+        assert key.properties.attestation is None
+
+        # fetch the key we just created
+        fetched_key = client.get_key_attestation(key_name)
+        attestation = fetched_key.properties.attestation
+        assert attestation is not None
+        assert attestation.certificate_pem_file is not None
+        assert attestation.private_key_attestation is not None
+        assert attestation.public_key_attestation is not None
+        assert attestation.version
+
+        # create new key version to validate versioned fetching
+        updated_key = client.update_key_properties(key_name, tags={"tag": "value"})
+        updated_attestation = client.get_key_attestation(key_name).properties.attestation
+        assert updated_attestation is not None
+        assert updated_attestation.certificate_pem_file == attestation.certificate_pem_file
+        assert updated_attestation.private_key_attestation == attestation.private_key_attestation
+        assert updated_attestation.public_key_attestation == attestation.public_key_attestation
+        assert updated_attestation.version != updated_key.properties.version
+
+        original_attestation = client.get_key_attestation(key_name, key.properties.version).properties.attestation
+        assert original_attestation.version == attestation.version
 
     @pytest.mark.parametrize("api_version,is_hsm", only_vault_7_4_plus)
     @KeysClientPreparer()

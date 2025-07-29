@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 from typing import Any, Optional, cast
 
@@ -25,7 +25,7 @@ class ChainedTokenCredential(AsyncContextManager):
     https://aka.ms/azsdk/python/identity/credential-chains#chainedtokencredential-overview.
 
     :param credentials: credential instances to form the chain
-    :type credentials: ~azure.core.credentials.AsyncTokenCredential
+    :type credentials: ~azure.core.credentials_async.AsyncTokenCredential
 
     .. admonition:: Example:
 
@@ -139,7 +139,7 @@ class ChainedTokenCredential(AsyncContextManager):
         :keyword options: A dictionary of options for the token request. Unknown options will be ignored. Optional.
         :paramtype options: ~azure.core.credentials.TokenRequestOptions
 
-        :rtype: AccessTokenInfo
+        :rtype: ~azure.core.credentials.AccessTokenInfo
         :return: An AccessTokenInfo instance containing information about the token.
 
         :raises ~azure.core.exceptions.ClientAuthenticationError: no credential in the chain provided a token.

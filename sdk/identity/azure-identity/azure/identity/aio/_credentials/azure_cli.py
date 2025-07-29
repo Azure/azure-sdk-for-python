@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 import os
 import shutil
@@ -127,7 +127,7 @@ class AzureCliCredential(AsyncContextManager):
         :keyword options: A dictionary of options for the token request. Unknown options will be ignored. Optional.
         :paramtype options: ~azure.core.credentials.TokenRequestOptions
 
-        :rtype: AccessTokenInfo
+        :rtype: ~azure.core.credentials.AccessTokenInfo
         :return: An AccessTokenInfo instance containing information about the token.
 
         :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke the Azure CLI.
@@ -184,7 +184,11 @@ class AzureCliCredential(AsyncContextManager):
 
 async def _run_command(command_args: List[str], timeout: int) -> str:
     # Ensure executable exists in PATH first. This avoids a subprocess call that would fail anyway.
-    az_path = shutil.which(EXECUTABLE_NAME)
+    if sys.platform.startswith("win"):
+        # On Windows, the expected executable is az.cmd, so we check for that first, falling back to 'az' in case.
+        az_path = shutil.which(EXECUTABLE_NAME + ".cmd") or shutil.which(EXECUTABLE_NAME)
+    else:
+        az_path = shutil.which(EXECUTABLE_NAME)
     if not az_path:
         raise CredentialUnavailableError(message=CLI_NOT_FOUND)
 

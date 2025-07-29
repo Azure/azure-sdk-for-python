@@ -14,6 +14,7 @@ omitted_paths:
   - sdk/**/swagger/*
   - sdk/ml/azure-ai-ml/tests/*
   - sdk/vision/azure-ai-vision-imageanalysis/tests/*
+  - sdk/ai/azure-ai-agents/tests/*
   - sdk/ai/azure-ai-inference/tests/*
   - sdk/ai/azure-ai-projects/tests/*
   - sdk/storage/azure-storage-extensions/*
@@ -113,6 +114,7 @@ known_content_issues:
   - ['sdk/modelsrepository/azure-iot-modelsrepository/README.md', '#4554']
   - ['sdk/openai/azure-openai/README.md', '#4554']
   - ['sdk/ai/azure-ai-generative/README.md', 'Deprecated package.']
+  - ['sdk/ai/azure-ai-resources/README.md', 'Deprecated package.']
 
   # common.
   - ['sdk/appconfiguration/azure-appconfiguration/README.md', 'common']

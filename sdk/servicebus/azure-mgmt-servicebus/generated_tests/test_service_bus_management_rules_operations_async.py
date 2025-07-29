@@ -21,13 +21,13 @@ class TestServiceBusManagementRulesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_subscriptions(self, resource_group):
+    async def test_rules_list_by_subscriptions(self, resource_group):
         response = self.client.rules.list_by_subscriptions(
             resource_group_name=resource_group.name,
             namespace_name="str",
             topic_name="str",
             subscription_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -35,7 +35,7 @@ class TestServiceBusManagementRulesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_rules_create_or_update(self, resource_group):
         response = await self.client.rules.create_or_update(
             resource_group_name=resource_group.name,
             namespace_name="str",
@@ -71,7 +71,7 @@ class TestServiceBusManagementRulesOperationsAsync(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -79,14 +79,14 @@ class TestServiceBusManagementRulesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_rules_delete(self, resource_group):
         response = await self.client.rules.delete(
             resource_group_name=resource_group.name,
             namespace_name="str",
             topic_name="str",
             subscription_name="str",
             rule_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -94,14 +94,14 @@ class TestServiceBusManagementRulesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_rules_get(self, resource_group):
         response = await self.client.rules.get(
             resource_group_name=resource_group.name,
             namespace_name="str",
             topic_name="str",
             subscription_name="str",
             rule_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself

@@ -10,8 +10,11 @@
 # --------------------------------------------------------------------------
 
 from typing import Any, Optional, TYPE_CHECKING
+from typing_extensions import Self
 
+from azure.core.pipeline import policies
 from azure.mgmt.core import AsyncARMPipelineClient
+from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPolicy
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 
@@ -74,7 +77,25 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
         if api_version:
             kwargs.setdefault('api_version', api_version)
         self._config = IotHubClientConfiguration(credential, subscription_id, **kwargs)
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                AsyncARMAutoResourceProviderRegistrationPolicy(),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
         super(IotHubClient, self).__init__(
             api_version=api_version,
             profile=profile
@@ -88,68 +109,16 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
     def models(cls, api_version=DEFAULT_API_VERSION):
         """Module depends on the API version:
 
-           * 2016-02-03: :mod:`v2016_02_03.models<azure.mgmt.iothub.v2016_02_03.models>`
-           * 2017-01-19: :mod:`v2017_01_19.models<azure.mgmt.iothub.v2017_01_19.models>`
-           * 2017-07-01: :mod:`v2017_07_01.models<azure.mgmt.iothub.v2017_07_01.models>`
-           * 2018-01-22: :mod:`v2018_01_22.models<azure.mgmt.iothub.v2018_01_22.models>`
-           * 2018-04-01: :mod:`v2018_04_01.models<azure.mgmt.iothub.v2018_04_01.models>`
            * 2019-03-22: :mod:`v2019_03_22.models<azure.mgmt.iothub.v2019_03_22.models>`
            * 2019-07-01-preview: :mod:`v2019_07_01_preview.models<azure.mgmt.iothub.v2019_07_01_preview.models>`
-           * 2019-11-04: :mod:`v2019_11_04.models<azure.mgmt.iothub.v2019_11_04.models>`
-           * 2020-03-01: :mod:`v2020_03_01.models<azure.mgmt.iothub.v2020_03_01.models>`
-           * 2021-03-03-preview: :mod:`v2021_03_03_preview.models<azure.mgmt.iothub.v2021_03_03_preview.models>`
-           * 2021-03-31: :mod:`v2021_03_31.models<azure.mgmt.iothub.v2021_03_31.models>`
-           * 2021-07-01: :mod:`v2021_07_01.models<azure.mgmt.iothub.v2021_07_01.models>`
-           * 2021-07-02: :mod:`v2021_07_02.models<azure.mgmt.iothub.v2021_07_02.models>`
-           * 2022-04-30-preview: :mod:`v2022_04_30_preview.models<azure.mgmt.iothub.v2022_04_30_preview.models>`
-           * 2022-11-15-preview: :mod:`v2022_11_15_preview.models<azure.mgmt.iothub.v2022_11_15_preview.models>`
            * 2023-06-30: :mod:`v2023_06_30.models<azure.mgmt.iothub.v2023_06_30.models>`
            * 2023-06-30-preview: :mod:`v2023_06_30_preview.models<azure.mgmt.iothub.v2023_06_30_preview.models>`
         """
-        if api_version == '2016-02-03':
-            from ..v2016_02_03 import models
-            return models
-        elif api_version == '2017-01-19':
-            from ..v2017_01_19 import models
-            return models
-        elif api_version == '2017-07-01':
-            from ..v2017_07_01 import models
-            return models
-        elif api_version == '2018-01-22':
-            from ..v2018_01_22 import models
-            return models
-        elif api_version == '2018-04-01':
-            from ..v2018_04_01 import models
-            return models
-        elif api_version == '2019-03-22':
+        if api_version == '2019-03-22':
             from ..v2019_03_22 import models
             return models
         elif api_version == '2019-07-01-preview':
             from ..v2019_07_01_preview import models
-            return models
-        elif api_version == '2019-11-04':
-            from ..v2019_11_04 import models
-            return models
-        elif api_version == '2020-03-01':
-            from ..v2020_03_01 import models
-            return models
-        elif api_version == '2021-03-03-preview':
-            from ..v2021_03_03_preview import models
-            return models
-        elif api_version == '2021-03-31':
-            from ..v2021_03_31 import models
-            return models
-        elif api_version == '2021-07-01':
-            from ..v2021_07_01 import models
-            return models
-        elif api_version == '2021-07-02':
-            from ..v2021_07_02 import models
-            return models
-        elif api_version == '2022-04-30-preview':
-            from ..v2022_04_30_preview import models
-            return models
-        elif api_version == '2022-11-15-preview':
-            from ..v2022_11_15_preview import models
             return models
         elif api_version == '2023-06-30':
             from ..v2023_06_30 import models
@@ -163,49 +132,16 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
     def certificates(self):
         """Instance depends on the API version:
 
-           * 2017-07-01: :class:`CertificatesOperations<azure.mgmt.iothub.v2017_07_01.aio.operations.CertificatesOperations>`
-           * 2018-01-22: :class:`CertificatesOperations<azure.mgmt.iothub.v2018_01_22.aio.operations.CertificatesOperations>`
-           * 2018-04-01: :class:`CertificatesOperations<azure.mgmt.iothub.v2018_04_01.aio.operations.CertificatesOperations>`
            * 2019-03-22: :class:`CertificatesOperations<azure.mgmt.iothub.v2019_03_22.aio.operations.CertificatesOperations>`
            * 2019-07-01-preview: :class:`CertificatesOperations<azure.mgmt.iothub.v2019_07_01_preview.aio.operations.CertificatesOperations>`
-           * 2019-11-04: :class:`CertificatesOperations<azure.mgmt.iothub.v2019_11_04.aio.operations.CertificatesOperations>`
-           * 2020-03-01: :class:`CertificatesOperations<azure.mgmt.iothub.v2020_03_01.aio.operations.CertificatesOperations>`
-           * 2021-03-03-preview: :class:`CertificatesOperations<azure.mgmt.iothub.v2021_03_03_preview.aio.operations.CertificatesOperations>`
-           * 2021-03-31: :class:`CertificatesOperations<azure.mgmt.iothub.v2021_03_31.aio.operations.CertificatesOperations>`
-           * 2021-07-01: :class:`CertificatesOperations<azure.mgmt.iothub.v2021_07_01.aio.operations.CertificatesOperations>`
-           * 2021-07-02: :class:`CertificatesOperations<azure.mgmt.iothub.v2021_07_02.aio.operations.CertificatesOperations>`
-           * 2022-04-30-preview: :class:`CertificatesOperations<azure.mgmt.iothub.v2022_04_30_preview.aio.operations.CertificatesOperations>`
-           * 2022-11-15-preview: :class:`CertificatesOperations<azure.mgmt.iothub.v2022_11_15_preview.aio.operations.CertificatesOperations>`
            * 2023-06-30: :class:`CertificatesOperations<azure.mgmt.iothub.v2023_06_30.aio.operations.CertificatesOperations>`
            * 2023-06-30-preview: :class:`CertificatesOperations<azure.mgmt.iothub.v2023_06_30_preview.aio.operations.CertificatesOperations>`
         """
         api_version = self._get_api_version('certificates')
-        if api_version == '2017-07-01':
-            from ..v2017_07_01.aio.operations import CertificatesOperations as OperationClass
-        elif api_version == '2018-01-22':
-            from ..v2018_01_22.aio.operations import CertificatesOperations as OperationClass
-        elif api_version == '2018-04-01':
-            from ..v2018_04_01.aio.operations import CertificatesOperations as OperationClass
-        elif api_version == '2019-03-22':
+        if api_version == '2019-03-22':
             from ..v2019_03_22.aio.operations import CertificatesOperations as OperationClass
         elif api_version == '2019-07-01-preview':
             from ..v2019_07_01_preview.aio.operations import CertificatesOperations as OperationClass
-        elif api_version == '2019-11-04':
-            from ..v2019_11_04.aio.operations import CertificatesOperations as OperationClass
-        elif api_version == '2020-03-01':
-            from ..v2020_03_01.aio.operations import CertificatesOperations as OperationClass
-        elif api_version == '2021-03-03-preview':
-            from ..v2021_03_03_preview.aio.operations import CertificatesOperations as OperationClass
-        elif api_version == '2021-03-31':
-            from ..v2021_03_31.aio.operations import CertificatesOperations as OperationClass
-        elif api_version == '2021-07-01':
-            from ..v2021_07_01.aio.operations import CertificatesOperations as OperationClass
-        elif api_version == '2021-07-02':
-            from ..v2021_07_02.aio.operations import CertificatesOperations as OperationClass
-        elif api_version == '2022-04-30-preview':
-            from ..v2022_04_30_preview.aio.operations import CertificatesOperations as OperationClass
-        elif api_version == '2022-11-15-preview':
-            from ..v2022_11_15_preview.aio.operations import CertificatesOperations as OperationClass
         elif api_version == '2023-06-30':
             from ..v2023_06_30.aio.operations import CertificatesOperations as OperationClass
         elif api_version == '2023-06-30-preview':
@@ -221,14 +157,6 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
 
            * 2019-03-22: :class:`IotHubOperations<azure.mgmt.iothub.v2019_03_22.aio.operations.IotHubOperations>`
            * 2019-07-01-preview: :class:`IotHubOperations<azure.mgmt.iothub.v2019_07_01_preview.aio.operations.IotHubOperations>`
-           * 2019-11-04: :class:`IotHubOperations<azure.mgmt.iothub.v2019_11_04.aio.operations.IotHubOperations>`
-           * 2020-03-01: :class:`IotHubOperations<azure.mgmt.iothub.v2020_03_01.aio.operations.IotHubOperations>`
-           * 2021-03-03-preview: :class:`IotHubOperations<azure.mgmt.iothub.v2021_03_03_preview.aio.operations.IotHubOperations>`
-           * 2021-03-31: :class:`IotHubOperations<azure.mgmt.iothub.v2021_03_31.aio.operations.IotHubOperations>`
-           * 2021-07-01: :class:`IotHubOperations<azure.mgmt.iothub.v2021_07_01.aio.operations.IotHubOperations>`
-           * 2021-07-02: :class:`IotHubOperations<azure.mgmt.iothub.v2021_07_02.aio.operations.IotHubOperations>`
-           * 2022-04-30-preview: :class:`IotHubOperations<azure.mgmt.iothub.v2022_04_30_preview.aio.operations.IotHubOperations>`
-           * 2022-11-15-preview: :class:`IotHubOperations<azure.mgmt.iothub.v2022_11_15_preview.aio.operations.IotHubOperations>`
            * 2023-06-30: :class:`IotHubOperations<azure.mgmt.iothub.v2023_06_30.aio.operations.IotHubOperations>`
            * 2023-06-30-preview: :class:`IotHubOperations<azure.mgmt.iothub.v2023_06_30_preview.aio.operations.IotHubOperations>`
         """
@@ -237,22 +165,6 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
             from ..v2019_03_22.aio.operations import IotHubOperations as OperationClass
         elif api_version == '2019-07-01-preview':
             from ..v2019_07_01_preview.aio.operations import IotHubOperations as OperationClass
-        elif api_version == '2019-11-04':
-            from ..v2019_11_04.aio.operations import IotHubOperations as OperationClass
-        elif api_version == '2020-03-01':
-            from ..v2020_03_01.aio.operations import IotHubOperations as OperationClass
-        elif api_version == '2021-03-03-preview':
-            from ..v2021_03_03_preview.aio.operations import IotHubOperations as OperationClass
-        elif api_version == '2021-03-31':
-            from ..v2021_03_31.aio.operations import IotHubOperations as OperationClass
-        elif api_version == '2021-07-01':
-            from ..v2021_07_01.aio.operations import IotHubOperations as OperationClass
-        elif api_version == '2021-07-02':
-            from ..v2021_07_02.aio.operations import IotHubOperations as OperationClass
-        elif api_version == '2022-04-30-preview':
-            from ..v2022_04_30_preview.aio.operations import IotHubOperations as OperationClass
-        elif api_version == '2022-11-15-preview':
-            from ..v2022_11_15_preview.aio.operations import IotHubOperations as OperationClass
         elif api_version == '2023-06-30':
             from ..v2023_06_30.aio.operations import IotHubOperations as OperationClass
         elif api_version == '2023-06-30-preview':
@@ -266,55 +178,16 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
     def iot_hub_resource(self):
         """Instance depends on the API version:
 
-           * 2016-02-03: :class:`IotHubResourceOperations<azure.mgmt.iothub.v2016_02_03.aio.operations.IotHubResourceOperations>`
-           * 2017-01-19: :class:`IotHubResourceOperations<azure.mgmt.iothub.v2017_01_19.aio.operations.IotHubResourceOperations>`
-           * 2017-07-01: :class:`IotHubResourceOperations<azure.mgmt.iothub.v2017_07_01.aio.operations.IotHubResourceOperations>`
-           * 2018-01-22: :class:`IotHubResourceOperations<azure.mgmt.iothub.v2018_01_22.aio.operations.IotHubResourceOperations>`
-           * 2018-04-01: :class:`IotHubResourceOperations<azure.mgmt.iothub.v2018_04_01.aio.operations.IotHubResourceOperations>`
            * 2019-03-22: :class:`IotHubResourceOperations<azure.mgmt.iothub.v2019_03_22.aio.operations.IotHubResourceOperations>`
            * 2019-07-01-preview: :class:`IotHubResourceOperations<azure.mgmt.iothub.v2019_07_01_preview.aio.operations.IotHubResourceOperations>`
-           * 2019-11-04: :class:`IotHubResourceOperations<azure.mgmt.iothub.v2019_11_04.aio.operations.IotHubResourceOperations>`
-           * 2020-03-01: :class:`IotHubResourceOperations<azure.mgmt.iothub.v2020_03_01.aio.operations.IotHubResourceOperations>`
-           * 2021-03-03-preview: :class:`IotHubResourceOperations<azure.mgmt.iothub.v2021_03_03_preview.aio.operations.IotHubResourceOperations>`
-           * 2021-03-31: :class:`IotHubResourceOperations<azure.mgmt.iothub.v2021_03_31.aio.operations.IotHubResourceOperations>`
-           * 2021-07-01: :class:`IotHubResourceOperations<azure.mgmt.iothub.v2021_07_01.aio.operations.IotHubResourceOperations>`
-           * 2021-07-02: :class:`IotHubResourceOperations<azure.mgmt.iothub.v2021_07_02.aio.operations.IotHubResourceOperations>`
-           * 2022-04-30-preview: :class:`IotHubResourceOperations<azure.mgmt.iothub.v2022_04_30_preview.aio.operations.IotHubResourceOperations>`
-           * 2022-11-15-preview: :class:`IotHubResourceOperations<azure.mgmt.iothub.v2022_11_15_preview.aio.operations.IotHubResourceOperations>`
            * 2023-06-30: :class:`IotHubResourceOperations<azure.mgmt.iothub.v2023_06_30.aio.operations.IotHubResourceOperations>`
            * 2023-06-30-preview: :class:`IotHubResourceOperations<azure.mgmt.iothub.v2023_06_30_preview.aio.operations.IotHubResourceOperations>`
         """
         api_version = self._get_api_version('iot_hub_resource')
-        if api_version == '2016-02-03':
-            from ..v2016_02_03.aio.operations import IotHubResourceOperations as OperationClass
-        elif api_version == '2017-01-19':
-            from ..v2017_01_19.aio.operations import IotHubResourceOperations as OperationClass
-        elif api_version == '2017-07-01':
-            from ..v2017_07_01.aio.operations import IotHubResourceOperations as OperationClass
-        elif api_version == '2018-01-22':
-            from ..v2018_01_22.aio.operations import IotHubResourceOperations as OperationClass
-        elif api_version == '2018-04-01':
-            from ..v2018_04_01.aio.operations import IotHubResourceOperations as OperationClass
-        elif api_version == '2019-03-22':
+        if api_version == '2019-03-22':
             from ..v2019_03_22.aio.operations import IotHubResourceOperations as OperationClass
         elif api_version == '2019-07-01-preview':
             from ..v2019_07_01_preview.aio.operations import IotHubResourceOperations as OperationClass
-        elif api_version == '2019-11-04':
-            from ..v2019_11_04.aio.operations import IotHubResourceOperations as OperationClass
-        elif api_version == '2020-03-01':
-            from ..v2020_03_01.aio.operations import IotHubResourceOperations as OperationClass
-        elif api_version == '2021-03-03-preview':
-            from ..v2021_03_03_preview.aio.operations import IotHubResourceOperations as OperationClass
-        elif api_version == '2021-03-31':
-            from ..v2021_03_31.aio.operations import IotHubResourceOperations as OperationClass
-        elif api_version == '2021-07-01':
-            from ..v2021_07_01.aio.operations import IotHubResourceOperations as OperationClass
-        elif api_version == '2021-07-02':
-            from ..v2021_07_02.aio.operations import IotHubResourceOperations as OperationClass
-        elif api_version == '2022-04-30-preview':
-            from ..v2022_04_30_preview.aio.operations import IotHubResourceOperations as OperationClass
-        elif api_version == '2022-11-15-preview':
-            from ..v2022_11_15_preview.aio.operations import IotHubResourceOperations as OperationClass
         elif api_version == '2023-06-30':
             from ..v2023_06_30.aio.operations import IotHubResourceOperations as OperationClass
         elif api_version == '2023-06-30-preview':
@@ -328,49 +201,16 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
     def operations(self):
         """Instance depends on the API version:
 
-           * 2017-07-01: :class:`Operations<azure.mgmt.iothub.v2017_07_01.aio.operations.Operations>`
-           * 2018-01-22: :class:`Operations<azure.mgmt.iothub.v2018_01_22.aio.operations.Operations>`
-           * 2018-04-01: :class:`Operations<azure.mgmt.iothub.v2018_04_01.aio.operations.Operations>`
            * 2019-03-22: :class:`Operations<azure.mgmt.iothub.v2019_03_22.aio.operations.Operations>`
            * 2019-07-01-preview: :class:`Operations<azure.mgmt.iothub.v2019_07_01_preview.aio.operations.Operations>`
-           * 2019-11-04: :class:`Operations<azure.mgmt.iothub.v2019_11_04.aio.operations.Operations>`
-           * 2020-03-01: :class:`Operations<azure.mgmt.iothub.v2020_03_01.aio.operations.Operations>`
-           * 2021-03-03-preview: :class:`Operations<azure.mgmt.iothub.v2021_03_03_preview.aio.operations.Operations>`
-           * 2021-03-31: :class:`Operations<azure.mgmt.iothub.v2021_03_31.aio.operations.Operations>`
-           * 2021-07-01: :class:`Operations<azure.mgmt.iothub.v2021_07_01.aio.operations.Operations>`
-           * 2021-07-02: :class:`Operations<azure.mgmt.iothub.v2021_07_02.aio.operations.Operations>`
-           * 2022-04-30-preview: :class:`Operations<azure.mgmt.iothub.v2022_04_30_preview.aio.operations.Operations>`
-           * 2022-11-15-preview: :class:`Operations<azure.mgmt.iothub.v2022_11_15_preview.aio.operations.Operations>`
            * 2023-06-30: :class:`Operations<azure.mgmt.iothub.v2023_06_30.aio.operations.Operations>`
            * 2023-06-30-preview: :class:`Operations<azure.mgmt.iothub.v2023_06_30_preview.aio.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
-        if api_version == '2017-07-01':
-            from ..v2017_07_01.aio.operations import Operations as OperationClass
-        elif api_version == '2018-01-22':
-            from ..v2018_01_22.aio.operations import Operations as OperationClass
-        elif api_version == '2018-04-01':
-            from ..v2018_04_01.aio.operations import Operations as OperationClass
-        elif api_version == '2019-03-22':
+        if api_version == '2019-03-22':
             from ..v2019_03_22.aio.operations import Operations as OperationClass
         elif api_version == '2019-07-01-preview':
             from ..v2019_07_01_preview.aio.operations import Operations as OperationClass
-        elif api_version == '2019-11-04':
-            from ..v2019_11_04.aio.operations import Operations as OperationClass
-        elif api_version == '2020-03-01':
-            from ..v2020_03_01.aio.operations import Operations as OperationClass
-        elif api_version == '2021-03-03-preview':
-            from ..v2021_03_03_preview.aio.operations import Operations as OperationClass
-        elif api_version == '2021-03-31':
-            from ..v2021_03_31.aio.operations import Operations as OperationClass
-        elif api_version == '2021-07-01':
-            from ..v2021_07_01.aio.operations import Operations as OperationClass
-        elif api_version == '2021-07-02':
-            from ..v2021_07_02.aio.operations import Operations as OperationClass
-        elif api_version == '2022-04-30-preview':
-            from ..v2022_04_30_preview.aio.operations import Operations as OperationClass
-        elif api_version == '2022-11-15-preview':
-            from ..v2022_11_15_preview.aio.operations import Operations as OperationClass
         elif api_version == '2023-06-30':
             from ..v2023_06_30.aio.operations import Operations as OperationClass
         elif api_version == '2023-06-30-preview':
@@ -384,32 +224,11 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
     def private_endpoint_connections(self):
         """Instance depends on the API version:
 
-           * 2020-03-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.iothub.v2020_03_01.aio.operations.PrivateEndpointConnectionsOperations>`
-           * 2021-03-03-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.iothub.v2021_03_03_preview.aio.operations.PrivateEndpointConnectionsOperations>`
-           * 2021-03-31: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.iothub.v2021_03_31.aio.operations.PrivateEndpointConnectionsOperations>`
-           * 2021-07-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.iothub.v2021_07_01.aio.operations.PrivateEndpointConnectionsOperations>`
-           * 2021-07-02: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.iothub.v2021_07_02.aio.operations.PrivateEndpointConnectionsOperations>`
-           * 2022-04-30-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.iothub.v2022_04_30_preview.aio.operations.PrivateEndpointConnectionsOperations>`
-           * 2022-11-15-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.iothub.v2022_11_15_preview.aio.operations.PrivateEndpointConnectionsOperations>`
            * 2023-06-30: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.iothub.v2023_06_30.aio.operations.PrivateEndpointConnectionsOperations>`
            * 2023-06-30-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.iothub.v2023_06_30_preview.aio.operations.PrivateEndpointConnectionsOperations>`
         """
         api_version = self._get_api_version('private_endpoint_connections')
-        if api_version == '2020-03-01':
-            from ..v2020_03_01.aio.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2021-03-03-preview':
-            from ..v2021_03_03_preview.aio.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2021-03-31':
-            from ..v2021_03_31.aio.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2021-07-01':
-            from ..v2021_07_01.aio.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2021-07-02':
-            from ..v2021_07_02.aio.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2022-04-30-preview':
-            from ..v2022_04_30_preview.aio.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2022-11-15-preview':
-            from ..v2022_11_15_preview.aio.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2023-06-30':
+        if api_version == '2023-06-30':
             from ..v2023_06_30.aio.operations import PrivateEndpointConnectionsOperations as OperationClass
         elif api_version == '2023-06-30-preview':
             from ..v2023_06_30_preview.aio.operations import PrivateEndpointConnectionsOperations as OperationClass
@@ -422,32 +241,11 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
     def private_link_resources(self):
         """Instance depends on the API version:
 
-           * 2020-03-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.iothub.v2020_03_01.aio.operations.PrivateLinkResourcesOperations>`
-           * 2021-03-03-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.iothub.v2021_03_03_preview.aio.operations.PrivateLinkResourcesOperations>`
-           * 2021-03-31: :class:`PrivateLinkResourcesOperations<azure.mgmt.iothub.v2021_03_31.aio.operations.PrivateLinkResourcesOperations>`
-           * 2021-07-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.iothub.v2021_07_01.aio.operations.PrivateLinkResourcesOperations>`
-           * 2021-07-02: :class:`PrivateLinkResourcesOperations<azure.mgmt.iothub.v2021_07_02.aio.operations.PrivateLinkResourcesOperations>`
-           * 2022-04-30-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.iothub.v2022_04_30_preview.aio.operations.PrivateLinkResourcesOperations>`
-           * 2022-11-15-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.iothub.v2022_11_15_preview.aio.operations.PrivateLinkResourcesOperations>`
            * 2023-06-30: :class:`PrivateLinkResourcesOperations<azure.mgmt.iothub.v2023_06_30.aio.operations.PrivateLinkResourcesOperations>`
            * 2023-06-30-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.iothub.v2023_06_30_preview.aio.operations.PrivateLinkResourcesOperations>`
         """
         api_version = self._get_api_version('private_link_resources')
-        if api_version == '2020-03-01':
-            from ..v2020_03_01.aio.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2021-03-03-preview':
-            from ..v2021_03_03_preview.aio.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2021-03-31':
-            from ..v2021_03_31.aio.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2021-07-01':
-            from ..v2021_07_01.aio.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2021-07-02':
-            from ..v2021_07_02.aio.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2022-04-30-preview':
-            from ..v2022_04_30_preview.aio.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2022-11-15-preview':
-            from ..v2022_11_15_preview.aio.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2023-06-30':
+        if api_version == '2023-06-30':
             from ..v2023_06_30.aio.operations import PrivateLinkResourcesOperations as OperationClass
         elif api_version == '2023-06-30-preview':
             from ..v2023_06_30_preview.aio.operations import PrivateLinkResourcesOperations as OperationClass
@@ -460,43 +258,16 @@ class IotHubClient(MultiApiClientMixin, _SDKClient):
     def resource_provider_common(self):
         """Instance depends on the API version:
 
-           * 2018-04-01: :class:`ResourceProviderCommonOperations<azure.mgmt.iothub.v2018_04_01.aio.operations.ResourceProviderCommonOperations>`
            * 2019-03-22: :class:`ResourceProviderCommonOperations<azure.mgmt.iothub.v2019_03_22.aio.operations.ResourceProviderCommonOperations>`
            * 2019-07-01-preview: :class:`ResourceProviderCommonOperations<azure.mgmt.iothub.v2019_07_01_preview.aio.operations.ResourceProviderCommonOperations>`
-           * 2019-11-04: :class:`ResourceProviderCommonOperations<azure.mgmt.iothub.v2019_11_04.aio.operations.ResourceProviderCommonOperations>`
-           * 2020-03-01: :class:`ResourceProviderCommonOperations<azure.mgmt.iothub.v2020_03_01.aio.operations.ResourceProviderCommonOperations>`
-           * 2021-03-03-preview: :class:`ResourceProviderCommonOperations<azure.mgmt.iothub.v2021_03_03_preview.aio.operations.ResourceProviderCommonOperations>`
-           * 2021-03-31: :class:`ResourceProviderCommonOperations<azure.mgmt.iothub.v2021_03_31.aio.operations.ResourceProviderCommonOperations>`
-           * 2021-07-01: :class:`ResourceProviderCommonOperations<azure.mgmt.iothub.v2021_07_01.aio.operations.ResourceProviderCommonOperations>`
-           * 2021-07-02: :class:`ResourceProviderCommonOperations<azure.mgmt.iothub.v2021_07_02.aio.operations.ResourceProviderCommonOperations>`
-           * 2022-04-30-preview: :class:`ResourceProviderCommonOperations<azure.mgmt.iothub.v2022_04_30_preview.aio.operations.ResourceProviderCommonOperations>`
-           * 2022-11-15-preview: :class:`ResourceProviderCommonOperations<azure.mgmt.iothub.v2022_11_15_preview.aio.operations.ResourceProviderCommonOperations>`
            * 2023-06-30: :class:`ResourceProviderCommonOperations<azure.mgmt.iothub.v2023_06_30.aio.operations.ResourceProviderCommonOperations>`
            * 2023-06-30-preview: :class:`ResourceProviderCommonOperations<azure.mgmt.iothub.v2023_06_30_preview.aio.operations.ResourceProviderCommonOperations>`
         """
         api_version = self._get_api_version('resource_provider_common')
-        if api_version == '2018-04-01':
-            from ..v2018_04_01.aio.operations import ResourceProviderCommonOperations as OperationClass
-        elif api_version == '2019-03-22':
+        if api_version == '2019-03-22':
             from ..v2019_03_22.aio.operations import ResourceProviderCommonOperations as OperationClass
         elif api_version == '2019-07-01-preview':
             from ..v2019_07_01_preview.aio.operations import ResourceProviderCommonOperations as OperationClass
-        elif api_version == '2019-11-04':
-            from ..v2019_11_04.aio.operations import ResourceProviderCommonOperations as OperationClass
-        elif api_version == '2020-03-01':
-            from ..v2020_03_01.aio.operations import ResourceProviderCommonOperations as OperationClass
-        elif api_version == '2021-03-03-preview':
-            from ..v2021_03_03_preview.aio.operations import ResourceProviderCommonOperations as OperationClass
-        elif api_version == '2021-03-31':
-            from ..v2021_03_31.aio.operations import ResourceProviderCommonOperations as OperationClass
-        elif api_version == '2021-07-01':
-            from ..v2021_07_01.aio.operations import ResourceProviderCommonOperations as OperationClass
-        elif api_version == '2021-07-02':
-            from ..v2021_07_02.aio.operations import ResourceProviderCommonOperations as OperationClass
-        elif api_version == '2022-04-30-preview':
-            from ..v2022_04_30_preview.aio.operations import ResourceProviderCommonOperations as OperationClass
-        elif api_version == '2022-11-15-preview':
-            from ..v2022_11_15_preview.aio.operations import ResourceProviderCommonOperations as OperationClass
         elif api_version == '2023-06-30':
             from ..v2023_06_30.aio.operations import ResourceProviderCommonOperations as OperationClass
         elif api_version == '2023-06-30-preview':

@@ -30,6 +30,7 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: keyvault
+    TestTimeoutInMinutes: 120
     TestProxy: true
     Artifacts:
     - name: azure-keyvault-administration
@@ -40,5 +41,7 @@ extends:
       safeName: azurekeyvaultkeys
     - name: azure-keyvault-secrets
       safeName: azurekeyvaultsecrets
+    - name: azure-keyvault-securitydomain
+      safeName: azurekeyvaultsecuritydomain
     - name: azure-mgmt-keyvault
       safeName: azuremgmtkeyvault

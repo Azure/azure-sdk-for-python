@@ -31,6 +31,7 @@ from azure.keyvault.certificates.aio import CertificateClient
 #
 # ----------------------------------------------------------------------------------------------------------
 
+
 async def run_sample():
     # Instantiate a certificate client that will be used to call the service.
     # Here we use the DefaultAzureCredential, but any azure-identity credential can be used.
@@ -64,6 +65,7 @@ async def run_sample():
 
     await credential.close()
     await client.close()
+
 
 if __name__ == "__main__":
     asyncio.run(run_sample())

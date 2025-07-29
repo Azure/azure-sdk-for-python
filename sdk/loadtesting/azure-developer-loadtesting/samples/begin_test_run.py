@@ -5,13 +5,13 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: create_or_update_test_run.py
+FILE: begin_test_run.py
 
 DESCRIPTION:
-    This sample shows how to create or update a test run
+    This sample shows how to start a load test run.
 
 USAGE:
-    python create_or_update_test_run.py
+    python begin_test_run.py
 
     Set the environment variables with your own values before running the sample:
     1)  AZURE_CLIENT_ID - client id
@@ -31,7 +31,7 @@ from dotenv import load_dotenv
 load_dotenv()
 LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
 
-TEST_RUN_ID = "some-test-run-id"
+TEST_RUN_ID = "my-sdk-test-run-id"
 TEST_ID = "my-sdk-test-id"
 
 # Build a client through AAD and resource endpoint
@@ -42,10 +42,10 @@ testRunPoller = client.begin_test_run(
     {
         "testId": TEST_ID,
         "displayName": "My New Load Test Run",
-    }
+    },
 )
 
-#waiting for test run status to be completed with timeout = 3600 seconds
+# waiting for test run status to be completed with timeout = 3600 seconds
 result = testRunPoller.result(3600)
 
 print(result["status"])

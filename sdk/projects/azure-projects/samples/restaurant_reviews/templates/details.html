@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block title %}Restaurant Details{% endblock %}
+{% block head %}
+    {{ super() }}
+    <style>
+      body {
+          min-height: 75rem;
+          padding-top: 4.5rem;
+      }
+  </style>
+{% endblock %}
+{% block content %}
+  <h1>{{ restaurant.name }}</h1> 
+  <div class="row">
+      <div class="col-md-2 fw-bold">Street address:</div>
+      <div class="col">{{ restaurant.street_address }}</div>
+  </div>
+  <div class="row">
+      <div class="col-md-2 fw-bold">Description:</div>
+      <div class="col">{{ restaurant.description }}</div>                
+  </div>
+  <div class="row">
+      <div class="col-md-2 fw-bold">Rating:</div>
+      <div class="col"></div>                
+  </div>
+
+  <h4 class="mt-5">Reviews</h4>
+
+  <p>
+      <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addReviewModal">
+          Add new review
+      </button>
+  </p>
+
+<!-- Button trigger modal -->
+    {% if reviews %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>User</th>
+                    <th>Rating</th>
+                    <th>Review</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for review in reviews %}
+                    <tr>
+                        <td>{{ review.review_date }}</td>
+                        <td>{{ review.user_name }}</td>
+                        <td>{{ review.rating }}</td>
+                        <td>{{ review.review_text }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No reviews of this restaurant yet.</p>
+    {% endif %}
+
+    <!-- Modal -->
+    <div class="modal fade" id="addReviewModal" tabindex="-1" aria-labelledby="addReviewModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addReviewModalLabel">Add Review</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+            {% if error %}
+              <p class=error><strong>Error:</strong> {{ error }}
+            {% endif %}
+              <form method="POST" action="{{ url_for('add_review', id=restaurant.id) }}">
+
+              <div class="modal-body">
+
+                <div class="mb-3">                        
+                    <label for="user_name" class="form-label fw-bold">Your name</label>
+                    <input type="text" class="form-control" id="user_name" name="user_name">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label fw-bold">Rating</label>
+
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="rating" id="rating1" value="1">
+                        <label class="form-check-label" for="rating1">1</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="rating" id="rating2" value="2">
+                        <label class="form-check-label" for="rating2">2</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="rating" id="rating3" value="3">
+                        <label class="form-check-label" for="rating3">3</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="rating" id="rating4" value="4">
+                        <label class="form-check-label" for="rating3">4</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="rating" id="rating5" value="5">
+                        <label class="form-check-label" for="rating3">5</label>
+                      </div>
+                  </div>
+                  <div class="mb-3">
+                      <label for="review_text" class="form-label fw-bold">Comments</label>
+                      <input type="text" class="form-control" id="review_text" name="review_text">
+                  </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save changes</button>
+              </div>
+        </form>
+        </div>
+      </div>
+    </div>
+{% endblock %}

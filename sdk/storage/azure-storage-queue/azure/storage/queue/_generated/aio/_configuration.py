@@ -13,7 +13,7 @@ from azure.core.pipeline import policies
 VERSION = "unknown"
 
 
-class AzureQueueStorageConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class AzureQueueStorageConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for AzureQueueStorage.
 
     Note that all parameters used to create this instance are saved as instance

@@ -200,7 +200,7 @@ class AsyncPipeline(
 
         # Not happy to make this code asyncio specific, but that's multipart only for now
         # If we need trio and multipart, let's reinvesitgate that later
-        import asyncio
+        import asyncio  # pylint: disable=do-not-import-asyncio
 
         await asyncio.gather(*[prepare_requests(req) for req in requests])
 

@@ -1,0 +1,219 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "test-rg",
+    "workspaceName": "my-aml-workspace",
+    "name": "string",
+    "version": "string",
+    "api-version": "2025-01-01-preview",
+    "body": {
+      "properties": {
+        "description": "string",
+        "tags": {
+          "string": "string"
+        },
+        "properties": {
+          "string": "string"
+        },
+        "isArchived": false,
+        "isAnonymous": false,
+        "specification": {
+          "path": "string"
+        },
+        "materializationSettings": {
+          "storeType": "Online",
+          "schedule": {
+            "endTime": "string",
+            "startTime": "string",
+            "timeZone": "string",
+            "triggerType": "Recurrence",
+            "frequency": "Day",
+            "interval": 1,
+            "schedule": {
+              "hours": [
+                1
+              ],
+              "minutes": [
+                1
+              ],
+              "weekDays": [
+                "Monday"
+              ],
+              "monthDays": [
+                1
+              ]
+            }
+          },
+          "notification": {
+            "emails": [
+              "string"
+            ],
+            "emailOn": [
+              "JobFailed"
+            ]
+          },
+          "resource": {
+            "instanceType": "string"
+          },
+          "sparkConfiguration": {
+            "string": "string"
+          }
+        },
+        "stage": "string",
+        "entities": [
+          "string"
+        ]
+      }
+    }
+  },
+  "responses": {
+    "200": {
+      "headers": {},
+      "body": {
+        "id": "string",
+        "name": "string",
+        "type": "string",
+        "properties": {
+          "description": "string",
+          "tags": {
+            "string": "string"
+          },
+          "properties": {
+            "string": "string"
+          },
+          "isArchived": false,
+          "isAnonymous": false,
+          "specification": {
+            "path": "string"
+          },
+          "materializationSettings": {
+            "storeType": "OnlineAndOffline",
+            "schedule": {
+              "endTime": "string",
+              "startTime": "string",
+              "timeZone": "string",
+              "triggerType": "Recurrence",
+              "frequency": "Day",
+              "interval": 1,
+              "schedule": {
+                "hours": [
+                  1
+                ],
+                "minutes": [
+                  1
+                ],
+                "weekDays": [
+                  "Wednesday"
+                ],
+                "monthDays": [
+                  1
+                ]
+              }
+            },
+            "notification": {
+              "emails": [
+                "string"
+              ],
+              "emailOn": [
+                "JobFailed"
+              ]
+            },
+            "resource": {
+              "instanceType": "string"
+            },
+            "sparkConfiguration": {
+              "string": "string"
+            }
+          },
+          "stage": "string",
+          "entities": [
+            "string"
+          ],
+          "provisioningState": "Deleting"
+        },
+        "systemData": {
+          "createdAt": "2020-01-01T12:34:56.999+00:52",
+          "createdBy": "string",
+          "createdByType": "Application",
+          "lastModifiedAt": "2020-01-01T12:34:56.999+00:52",
+          "lastModifiedBy": "string",
+          "lastModifiedByType": "User"
+        }
+      }
+    },
+    "201": {
+      "headers": {},
+      "body": {
+        "id": "string",
+        "name": "string",
+        "type": "string",
+        "properties": {
+          "description": "string",
+          "tags": {
+            "string": "string"
+          },
+          "properties": {
+            "string": "string"
+          },
+          "isArchived": false,
+          "isAnonymous": false,
+          "specification": {
+            "path": "string"
+          },
+          "materializationSettings": {
+            "storeType": "Offline",
+            "schedule": {
+              "endTime": "string",
+              "startTime": "string",
+              "timeZone": "string",
+              "triggerType": "Recurrence",
+              "frequency": "Hour",
+              "interval": 1,
+              "schedule": {
+                "hours": [
+                  1
+                ],
+                "minutes": [
+                  1
+                ],
+                "weekDays": [
+                  "Wednesday"
+                ],
+                "monthDays": [
+                  1
+                ]
+              }
+            },
+            "notification": {
+              "emails": [
+                "string"
+              ],
+              "emailOn": [
+                "JobCancelled"
+              ]
+            },
+            "resource": {
+              "instanceType": "string"
+            },
+            "sparkConfiguration": {
+              "string": "string"
+            }
+          },
+          "stage": "string",
+          "entities": [
+            "string"
+          ],
+          "provisioningState": "Failed"
+        },
+        "systemData": {
+          "createdAt": "2020-01-01T12:34:56.999+00:52",
+          "createdBy": "string",
+          "createdByType": "Application",
+          "lastModifiedAt": "2020-01-01T12:34:56.999+00:52",
+          "lastModifiedBy": "string",
+          "lastModifiedByType": "Key"
+        }
+      }
+    }
+  }
+}

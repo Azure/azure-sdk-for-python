@@ -1,0 +1,13 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "testrg123",
+    "workspaceName": "workspace123",
+    "api-version": "2025-01-01-preview",
+    "name": "datacontainer123"
+  },
+  "responses": {
+    "200": {},
+    "204": {}
+  }
+}

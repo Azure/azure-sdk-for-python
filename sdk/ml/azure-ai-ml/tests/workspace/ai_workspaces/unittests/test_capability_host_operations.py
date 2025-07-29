@@ -1,13 +1,11 @@
 from unittest.mock import Mock
 
 import pytest
-from azure.ai.ml import load_capability_host
 
-from azure.ai.ml._scope_dependent_operations import OperationScope, OperationConfig
-from azure.ai.ml.operations._capability_hosts_operations import (
-    CapabilityHostsOperations,
-)
+from azure.ai.ml import load_capability_host
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.exceptions import MlException
+from azure.ai.ml.operations._capability_hosts_operations import CapabilityHostsOperations
 
 
 @pytest.fixture
@@ -19,14 +17,14 @@ def mock_credential() -> Mock:
 def mock_capability_hosts_operation(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
-    mock_aml_services_2024_10_01_preview: Mock,
+    mock_aml_services_2025_01_01_preview: Mock,
     mock_machinelearning_client: Mock,
     mock_credential: Mock,
 ) -> CapabilityHostsOperations:
     yield CapabilityHostsOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        service_client_10_2024=mock_aml_services_2024_10_01_preview,
+        service_client_01_2025=mock_aml_services_2025_01_01_preview,
         all_operations=mock_machinelearning_client._operation_container,
         credentials=mock_credential,
     )
@@ -36,14 +34,14 @@ def mock_capability_hosts_operation(
 def mock_invalid_capability_hosts_operation(
     mock_registry_scope: OperationScope,
     mock_operation_config: OperationConfig,
-    mock_aml_services_2024_10_01_preview: Mock,
+    mock_aml_services_2025_01_01_preview: Mock,
     mock_machinelearning_client: Mock,
     mock_credential: Mock,
 ) -> CapabilityHostsOperations:
     yield CapabilityHostsOperations(
         operation_scope=mock_registry_scope,
         operation_config=mock_operation_config,
-        service_client_10_2024=mock_aml_services_2024_10_01_preview,
+        service_client_01_2025=mock_aml_services_2025_01_01_preview,
         all_operations=mock_machinelearning_client._operation_container,
         credentials=mock_credential,
     )

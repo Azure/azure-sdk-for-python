@@ -1,0 +1,37 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "resourceGroup-1",
+    "workspaceName": "testworkspace",
+    "connectionName": "testConnection",
+    "deploymentName": "text-davinci-003",
+    "api-version": "2025-01-01-preview"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "systemData": {
+          "createdBy": "00000000-1111-2222-3333-444444444444",
+          "createdByType": "Application",
+          "lastModifiedBy": "00000000-1111-2222-3333-444444444444",
+          "lastModifiedByType": "Application"
+        },
+        "id": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/resourceGroup-1/providers/Microsoft.MachineLearningServices/workspaces/testworkspace/connections/testConnection/deployments/text-davinci-003",
+        "name": "text-davinci-003",
+        "type": "Microsoft.MachineLearningServices/workspaces/connections/deployments",
+        "properties": {
+          "type": "Azure.OpenAI",
+          "model": {
+            "format": "OpenAI",
+            "name": "text-davinci-003",
+            "version": "1",
+            "source": null
+          },
+          "versionUpgradeOption": "OnceNewDefaultVersionAvailable",
+          "raiPolicyName": "Microsoft.Default",
+          "provisioningState": "Succeeded"
+        }
+      }
+    }
+  }
+}

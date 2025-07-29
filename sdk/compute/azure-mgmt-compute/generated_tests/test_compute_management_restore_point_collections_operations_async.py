@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.compute.aio import ComputeManagementClient
+from azure.mgmt.compute.v2024_11_01.aio import ComputeManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -18,6 +18,39 @@ AZURE_LOCATION = "eastus"
 class TestComputeManagementRestorePointCollectionsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(ComputeManagementClient, is_async=True)
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_restore_point_collections_list_all(self, resource_group):
+        response = self.client.restore_point_collections.list_all(
+            api_version="2024-11-01",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_restore_point_collections_list(self, resource_group):
+        response = self.client.restore_point_collections.list(
+            resource_group_name=resource_group.name,
+            api_version="2024-11-01",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_restore_point_collections_get(self, resource_group):
+        response = await self.client.restore_point_collections.get(
+            resource_group_name=resource_group.name,
+            restore_point_collection_name="str",
+            api_version="2024-11-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
@@ -128,7 +161,13 @@ class TestComputeManagementRestorePointCollectionsOperationsAsync(AzureMgmtRecor
                             "securityProfile": {
                                 "encryptionAtHost": bool,
                                 "encryptionIdentity": {"userAssignedIdentityResourceId": "str"},
-                                "proxyAgentSettings": {"enabled": bool, "keyIncarnationId": 0, "mode": "str"},
+                                "proxyAgentSettings": {
+                                    "enabled": bool,
+                                    "imds": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
+                                    "keyIncarnationId": 0,
+                                    "mode": "str",
+                                    "wireServer": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
+                                },
                                 "securityType": "str",
                                 "uefiSettings": {"secureBootEnabled": bool, "vTpmEnabled": bool},
                             },
@@ -188,15 +227,31 @@ class TestComputeManagementRestorePointCollectionsOperationsAsync(AzureMgmtRecor
                             "vmId": "str",
                         },
                         "sourceRestorePoint": {"id": "str"},
+                        "systemData": {
+                            "createdAt": "2020-02-20 00:00:00",
+                            "createdBy": "str",
+                            "createdByType": "str",
+                            "lastModifiedAt": "2020-02-20 00:00:00",
+                            "lastModifiedBy": "str",
+                            "lastModifiedByType": "str",
+                        },
                         "timeCreated": "2020-02-20 00:00:00",
                         "type": "str",
                     }
                 ],
                 "source": {"id": "str", "location": "str"},
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -308,7 +363,13 @@ class TestComputeManagementRestorePointCollectionsOperationsAsync(AzureMgmtRecor
                             "securityProfile": {
                                 "encryptionAtHost": bool,
                                 "encryptionIdentity": {"userAssignedIdentityResourceId": "str"},
-                                "proxyAgentSettings": {"enabled": bool, "keyIncarnationId": 0, "mode": "str"},
+                                "proxyAgentSettings": {
+                                    "enabled": bool,
+                                    "imds": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
+                                    "keyIncarnationId": 0,
+                                    "mode": "str",
+                                    "wireServer": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
+                                },
                                 "securityType": "str",
                                 "uefiSettings": {"secureBootEnabled": bool, "vTpmEnabled": bool},
                             },
@@ -368,6 +429,14 @@ class TestComputeManagementRestorePointCollectionsOperationsAsync(AzureMgmtRecor
                             "vmId": "str",
                         },
                         "sourceRestorePoint": {"id": "str"},
+                        "systemData": {
+                            "createdAt": "2020-02-20 00:00:00",
+                            "createdBy": "str",
+                            "createdByType": "str",
+                            "lastModifiedAt": "2020-02-20 00:00:00",
+                            "lastModifiedBy": "str",
+                            "lastModifiedByType": "str",
+                        },
                         "timeCreated": "2020-02-20 00:00:00",
                         "type": "str",
                     }
@@ -375,7 +444,7 @@ class TestComputeManagementRestorePointCollectionsOperationsAsync(AzureMgmtRecor
                 "source": {"id": "str", "location": "str"},
                 "tags": {"str": "str"},
             },
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -388,42 +457,9 @@ class TestComputeManagementRestorePointCollectionsOperationsAsync(AzureMgmtRecor
             await self.client.restore_point_collections.begin_delete(
                 resource_group_name=resource_group.name,
                 restore_point_collection_name="str",
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_restore_point_collections_get(self, resource_group):
-        response = await self.client.restore_point_collections.get(
-            resource_group_name=resource_group.name,
-            restore_point_collection_name="str",
-            api_version="2024-07-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_restore_point_collections_list(self, resource_group):
-        response = self.client.restore_point_collections.list(
-            resource_group_name=resource_group.name,
-            api_version="2024-07-01",
-        )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_restore_point_collections_list_all(self, resource_group):
-        response = self.client.restore_point_collections.list_all(
-            api_version="2024-07-01",
-        )
-        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

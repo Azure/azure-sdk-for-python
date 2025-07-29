@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.resource import ResourceManagementClient
+from azure.mgmt.resource.resources import ResourceManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -20,10 +20,10 @@ class TestResourceManagementResourceGroupsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_check_existence(self, resource_group):
+    def test_resource_groups_check_existence(self, resource_group):
         response = self.client.resource_groups.check_existence(
             resource_group_name=resource_group.name,
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -31,7 +31,7 @@ class TestResourceManagementResourceGroupsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_resource_groups_create_or_update(self, resource_group):
         response = self.client.resource_groups.create_or_update(
             resource_group_name=resource_group.name,
             parameters={
@@ -43,7 +43,7 @@ class TestResourceManagementResourceGroupsOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -51,10 +51,10 @@ class TestResourceManagementResourceGroupsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_resource_groups_begin_delete(self, resource_group):
         response = self.client.resource_groups.begin_delete(
             resource_group_name=resource_group.name,
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -62,10 +62,10 @@ class TestResourceManagementResourceGroupsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_resource_groups_get(self, resource_group):
         response = self.client.resource_groups.get(
             resource_group_name=resource_group.name,
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -73,7 +73,7 @@ class TestResourceManagementResourceGroupsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
+    def test_resource_groups_update(self, resource_group):
         response = self.client.resource_groups.update(
             resource_group_name=resource_group.name,
             parameters={
@@ -82,7 +82,7 @@ class TestResourceManagementResourceGroupsOperations(AzureMgmtRecordedTestCase):
                 "properties": {"provisioningState": "str"},
                 "tags": {"str": "str"},
             },
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -90,11 +90,11 @@ class TestResourceManagementResourceGroupsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_export_template(self, resource_group):
+    def test_resource_groups_begin_export_template(self, resource_group):
         response = self.client.resource_groups.begin_export_template(
             resource_group_name=resource_group.name,
-            parameters={"options": "str", "resources": ["str"]},
-            api_version="2022-09-01",
+            parameters={"options": "str", "outputFormat": "str", "resources": ["str"]},
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -102,9 +102,9 @@ class TestResourceManagementResourceGroupsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_resource_groups_list(self, resource_group):
         response = self.client.resource_groups.list(
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

@@ -21,7 +21,7 @@ class TestRedisEnterpriseManagementAccessPolicyAssignmentOperationsAsync(AzureMg
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_update(self, resource_group):
+    async def test_access_policy_assignment_begin_create_update(self, resource_group):
         response = await (
             await self.client.access_policy_assignment.begin_create_update(
                 resource_group_name=resource_group.name,
@@ -36,7 +36,7 @@ class TestRedisEnterpriseManagementAccessPolicyAssignmentOperationsAsync(AzureMg
                     "type": "str",
                     "user": {"objectId": "str"},
                 },
-                api_version="2024-09-01-preview",
+                api_version="2025-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -45,13 +45,13 @@ class TestRedisEnterpriseManagementAccessPolicyAssignmentOperationsAsync(AzureMg
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_access_policy_assignment_get(self, resource_group):
         response = await self.client.access_policy_assignment.get(
             resource_group_name=resource_group.name,
             cluster_name="str",
             database_name="str",
             access_policy_assignment_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2025-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -59,14 +59,14 @@ class TestRedisEnterpriseManagementAccessPolicyAssignmentOperationsAsync(AzureMg
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_access_policy_assignment_begin_delete(self, resource_group):
         response = await (
             await self.client.access_policy_assignment.begin_delete(
                 resource_group_name=resource_group.name,
                 cluster_name="str",
                 database_name="str",
                 access_policy_assignment_name="str",
-                api_version="2024-09-01-preview",
+                api_version="2025-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -75,12 +75,12 @@ class TestRedisEnterpriseManagementAccessPolicyAssignmentOperationsAsync(AzureMg
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_access_policy_assignment_list(self, resource_group):
         response = self.client.access_policy_assignment.list(
             resource_group_name=resource_group.name,
             cluster_name="str",
             database_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2025-05-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

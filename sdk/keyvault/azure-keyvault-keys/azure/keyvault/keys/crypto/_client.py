@@ -201,7 +201,6 @@ class CryptographyClient(KeyVaultClientBase):
         if not (self._key or self._keys_get_forbidden):
             try:
                 key_bundle = self._client.get_key(
-                    self._key_id.vault_url if self._key_id else None,
                     self._key_id.name if self._key_id else None,
                     self._key_id.version if self._key_id else None,
                     **kwargs
@@ -306,7 +305,6 @@ class CryptographyClient(KeyVaultClientBase):
             )
 
         operation_result = self._client.encrypt(
-            vault_base_url=self._key_id.vault_url if self._key_id else None,
             key_name=self._key_id.name if self._key_id else None,
             key_version=self._key_id.version if self._key_id else None,
             parameters=self._models.KeyOperationsParameters(
@@ -397,7 +395,6 @@ class CryptographyClient(KeyVaultClientBase):
             )
 
         operation_result = self._client.decrypt(
-            vault_base_url=self._key_id.vault_url if self._key_id else None,
             key_name=self._key_id.name if self._key_id else None,
             key_version=self._key_id.version if self._key_id else None,
             parameters=self._models.KeyOperationsParameters(
@@ -443,7 +440,6 @@ class CryptographyClient(KeyVaultClientBase):
             )
 
         operation_result = self._client.wrap_key(
-            vault_base_url=self._key_id.vault_url if self._key_id else None,
             key_name=self._key_id.name if self._key_id else None,
             key_version=self._key_id.version if self._key_id else None,
             parameters=self._models.KeyOperationsParameters(algorithm=algorithm, value=key),
@@ -486,7 +482,6 @@ class CryptographyClient(KeyVaultClientBase):
             )
 
         operation_result = self._client.unwrap_key(
-            vault_base_url=self._key_id.vault_url if self._key_id else None,
             key_name=self._key_id.name if self._key_id else None,
             key_version=self._key_id.version if self._key_id else None,
             parameters=self._models.KeyOperationsParameters(algorithm=algorithm, value=encrypted_key),
@@ -529,7 +524,6 @@ class CryptographyClient(KeyVaultClientBase):
             )
 
         operation_result = self._client.sign(
-            vault_base_url=self._key_id.vault_url if self._key_id else None,
             key_name=self._key_id.name if self._key_id else None,
             key_version=self._key_id.version if self._key_id else None,
             parameters=self._models.KeySignParameters(algorithm=algorithm, value=digest),
@@ -574,7 +568,6 @@ class CryptographyClient(KeyVaultClientBase):
             )
 
         operation_result = self._client.verify(
-            vault_base_url=self._key_id.vault_url if self._key_id else None,
             key_name=self._key_id.name if self._key_id else None,
             key_version=self._key_id.version if self._key_id else None,
             parameters=self._models.KeyVerifyParameters(algorithm=algorithm, digest=digest, signature=signature),

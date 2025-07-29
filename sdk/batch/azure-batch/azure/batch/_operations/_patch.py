@@ -7,7 +7,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import datetime
-from typing import Any, List, Optional
+from typing import Any, Deque, List, Optional, Iterable, Iterator, overload
 import collections
 import logging
 import threading
@@ -15,6 +15,7 @@ import threading
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
 from azure.core.rest import HttpResponse
+from azure.core.tracing.decorator import distributed_trace
 
 from .. import models as _models
 from ._operations import (
@@ -32,13 +33,15 @@ __all__: List[str] = [
 class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
     """Customize generated code"""
 
-    def create_task_collection(
+    # create_task_collection renamed
+    @distributed_trace
+    def create_tasks(
         self,
         job_id: str,
         task_collection: List[_models.BatchTaskCreateContent],
         concurrencies: int = 0,
         *,
-        time_out_in_seconds: Optional[int] = None,
+        timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> _models.BatchTaskAddCollectionResult:
@@ -67,9 +70,9 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         and greater than 0, will start additional threads to submit requests and wait for them to finish.
         Otherwise will submit create_task_collection requests sequentially on main thread
         :type concurrencies: int
-        :keyword time_out_in_seconds: The maximum number of items to return in the response. A maximum of 1000
+        :keyword timeout: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
-        :paramtype time_out_in_seconds: int
+        :paramtype timeout: int
         :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -84,11 +87,12 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.batch.custom.CreateTasksError
         """
 
-        kwargs.update({"time_out_in_seconds": time_out_in_seconds, "ocpdate": ocpdate})
+        kwargs.update({"timeout": timeout, "ocpdate": ocpdate})
 
-        results_queue = collections.deque()  # deque operations(append/pop) are thread-safe
+        # deque operations(append/pop) are thread-safe
+        results_queue: Deque[_models.BatchTaskAddResult] = collections.deque()
         task_workflow_manager = _TaskWorkflowManager(
-            super().create_task_collection, job_id=job_id, task_collection=task_collection, **kwargs
+            self, job_id=job_id, task_collection=task_collection, **kwargs
         )
 
         # multi-threaded behavior
@@ -122,19 +126,20 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             submitted_tasks = _handle_output(results_queue)
             return _models.BatchTaskAddCollectionResult(value=submitted_tasks)
 
+    @distributed_trace
     def get_node_file(
         self,
         pool_id: str,
         node_id: str,
         file_path: str,
         *,
-        time_out_in_seconds: Optional[int] = None,
+        timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         ocp_range: Optional[str] = None,
         **kwargs: Any
-    ) -> bytes:
+    ) -> Iterator[bytes]:
         """Returns the content of the specified Compute Node file.
 
         :param pool_id: The ID of the Pool that contains the Compute Node. Required.
@@ -143,9 +148,9 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :type node_id: str
         :param file_path: The path to the file or directory that you want to delete. Required.
         :type file_path: str
-        :keyword time_out_in_seconds: The maximum number of items to return in the response. A maximum of 1000
+        :keyword timeout: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
-        :paramtype time_out_in_seconds: int
+        :paramtype timeout: int
         :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -173,7 +178,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         args = [pool_id, node_id, file_path]
         kwargs.update(
             {
-                "time_out_in_seconds": time_out_in_seconds,
+                "timeout": timeout,
                 "ocpdate": ocpdate,
                 "if_modified_since": if_modified_since,
                 "if_unmodified_since": if_unmodified_since,
@@ -183,18 +188,19 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         kwargs["stream"] = True
         return super().get_node_file(*args, **kwargs)
 
+    @distributed_trace
     def get_node_file_properties(
         self,
         pool_id: str,
         node_id: str,
         file_path: str,
         *,
-        time_out_in_seconds: Optional[int] = None,
+        timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> HttpResponse:
+    ) -> _models.BatchFileProperties:
         """Gets the properties of the specified Compute Node file.
 
         :param pool_id: The ID of the Pool that contains the Compute Node. Required.
@@ -203,9 +209,9 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :type node_id: str
         :param file_path: The path to the file or directory that you want to delete. Required.
         :type file_path: str
-        :keyword time_out_in_seconds: The maximum number of items to return in the response. A maximum of 1000
+        :keyword timeout: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
-        :paramtype time_out_in_seconds: int
+        :paramtype timeout: int
         :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -222,42 +228,47 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :paramtype if_unmodified_since: ~datetime.datetime
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: HttpResponse
-        :rtype: HttpResponse
+        :return: BatchFileProperties
+        :rtype: ~azure.batch.models.BatchFileProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        args = [pool_id, node_id, file_path]
-        kwargs.update(
-            {
-                "time_out_in_seconds": time_out_in_seconds,
-                "ocpdate": ocpdate,
-                "if_modified_since": if_modified_since,
-                "if_unmodified_since": if_unmodified_since,
-            }
-        )
+        cls = lambda pipeline_response, json_response, headers: _models.BatchFileProperties(
+            url=headers["ocp-batch-file-url"],
+            is_directory=headers["ocp-batch-file-isdirectory"],
+            last_modified=headers["Last-Modified"],
+            content_length=headers["Content-Length"],
+            creation_time=headers["ocp-creation-time"],
+            # content_type=headers["Content-Type"], # need to add to typespec
+            file_mode=headers["ocp-batch-file-mode"],
+            )
+    
+        get_response: _models.BatchFileProperties = super()._get_node_file_properties_internal( # type: ignore
+            pool_id, 
+            node_id, 
+            file_path, 
+            timeout=timeout, 
+            ocpdate=ocpdate, 
+            if_modified_since=if_modified_since, 
+            if_unmodified_since=if_unmodified_since, 
+            cls=cls,
+            **kwargs)
 
-        kwargs["cls"] = lambda pipeline_response, json_response, headers: (
-            pipeline_response,
-            json_response,
-            headers,
-        )
-        get_response = super().get_node_file_properties(*args, **kwargs)
+        return get_response
 
-        return get_response[0].http_response
-
+    @distributed_trace
     def get_task_file_properties(
         self,
         job_id: str,
         task_id: str,
         file_path: str,
         *,
-        time_out_in_seconds: Optional[int] = None,
+        timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> HttpResponse:
+    ) -> _models.BatchFileProperties:
         """Gets the properties of the specified Task file.
 
         :param job_id: The ID of the Job that contains the Task. Required.
@@ -266,9 +277,9 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :type task_id: str
         :param file_path: The path to the Task file that you want to get the content of. Required.
         :type file_path: str
-        :keyword time_out_in_seconds: The maximum number of items to return in the response. A maximum of 1000
+        :keyword timeout: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
-        :paramtype time_out_in_seconds: int
+        :paramtype timeout: int
         :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -285,43 +296,48 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :paramtype if_unmodified_since: ~datetime.datetime
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: HttpResponse
-        :rtype: HttpResponse
+        :return: BatchFileProperties
+        :rtype: ~azure.batch.models.BatchFileProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        args = [job_id, task_id, file_path]
-        kwargs.update(
-            {
-                "time_out_in_seconds": time_out_in_seconds,
-                "ocpdate": ocpdate,
-                "if_modified_since": if_modified_since,
-                "if_unmodified_since": if_unmodified_since,
-            }
-        )
+        cls = lambda pipeline_response, json_response, headers: _models.BatchFileProperties(
+            url=headers["ocp-batch-file-url"],
+            is_directory=headers["ocp-batch-file-isdirectory"],
+            last_modified=headers["Last-Modified"],
+            content_length=headers["Content-Length"],
+            creation_time=headers["ocp-creation-time"],
+            # content_type=headers["Content-Type"], # need to add to typespec
+            file_mode=headers["ocp-batch-file-mode"],
+            )
+    
+        get_response: _models.BatchFileProperties = super()._get_task_file_properties_internal( # type: ignore
+            job_id, 
+            task_id, 
+            file_path, 
+            timeout=timeout, 
+            ocpdate=ocpdate, 
+            if_modified_since=if_modified_since, 
+            if_unmodified_since=if_unmodified_since, 
+            cls=cls,
+            **kwargs)
 
-        kwargs["cls"] = lambda pipeline_response, json_response, headers: (
-            pipeline_response,
-            json_response,
-            headers,
-        )
-        get_response = super().get_task_file_properties(*args, **kwargs)
+        return get_response
 
-        return get_response[0].http_response
-
+    @distributed_trace
     def get_task_file(
         self,
         job_id: str,
         task_id: str,
         file_path: str,
         *,
-        time_out_in_seconds: Optional[int] = None,
+        timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         ocp_range: Optional[str] = None,
         **kwargs: Any
-    ) -> bytes:
+    ) -> Iterator[bytes]:
         """Returns the content of the specified Task file.
 
         :param job_id: The ID of the Job that contains the Task. Required.
@@ -330,9 +346,9 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :type task_id: str
         :param file_path: The path to the Task file that you want to get the content of. Required.
         :type file_path: str
-        :keyword time_out_in_seconds: The maximum number of items to return in the response. A maximum of 1000
+        :keyword timeout: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
-        :paramtype time_out_in_seconds: int
+        :paramtype timeout: int
         :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -361,7 +377,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         args = [job_id, task_id, file_path]
         kwargs.update(
             {
-                "time_out_in_seconds": time_out_in_seconds,
+                "timeout": timeout,
                 "ocpdate": ocpdate,
                 "if_modified_since": if_modified_since,
                 "if_unmodified_since": if_unmodified_since,
@@ -370,237 +386,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
         kwargs["stream"] = True
         return super().get_task_file(*args, **kwargs)
-    
-    def disable_node_scheduling(
-        self,
-        pool_id: str,
-        node_id: str,
-        parameters: Optional[_models.BatchNodeDisableSchedulingOption] = None,
-        *,
-        time_out_in_seconds: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
-        **kwargs: Any
-    ) -> None:
-        """Disables Task scheduling on the specified Compute Node.
 
-        You can disable Task scheduling on a Compute Node only if its current
-        scheduling state is enabled.
-
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
-        :type pool_id: str
-        :param node_id: The ID of the Compute Node on which you want to disable Task scheduling.
-         Required.
-        :type node_id: str
-        :param parameters: The options to use for disabling scheduling on the Compute Node. Default
-         value is None.
-        :type parameters: ~azure.batch.models.BatchNodeDisableSchedulingContent
-        :keyword time_out_in_seconds: The maximum time that the server can spend processing the
-         request, in seconds. The default is 30 seconds. If the value is larger than 30, the default
-         will be used instead.". Default value is None.
-        :paramtype time_out_in_seconds: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                parameters = {
-                    "nodeDisableSchedulingOption": "str"  # Optional. What to do with currently
-                      running Tasks when disabling Task scheduling on the Compute Node. The default
-                      value is requeue. Known values are: "requeue", "terminate", and "taskcompletion".
-                }
-        """
-        content = _models.BatchNodeDisableSchedulingContent(
-            node_disable_scheduling_option=parameters
-        )
-        args = [pool_id, node_id, content]
-        kwargs.update(
-            {
-                "time_out_in_seconds": time_out_in_seconds,
-                "ocpdate": ocpdate,
-            }
-        )
-        return super().disable_node_scheduling(*args, **kwargs)
-
-    def enable_pool_auto_scale(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool_id: str,
-        *,
-        auto_scale_formula: Optional[str] = None,
-        auto_scale_evaluation_interval: Optional[datetime.timedelta] = None,
-        time_out_in_seconds: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any
-    ) -> None:
-        # pylint: disable=line-too-long
-        """Enables automatic scaling for a Pool.
-
-        You cannot enable automatic scaling on a Pool if a resize operation is in
-        progress on the Pool. If automatic scaling of the Pool is currently disabled,
-        you must specify a valid autoscale formula as part of the request. If automatic
-        scaling of the Pool is already enabled, you may specify a new autoscale formula
-        and/or a new evaluation interval. You cannot call this API for the same Pool
-        more than once every 30 seconds.
-
-        :param pool_id: The ID of the Pool to get. Required.
-        :type pool_id: str
-        :param content: The options to use for enabling automatic scaling. Required.
-        :type content: ~azure.batch.models.BatchPoolEnableAutoScaleContent
-        :keyword time_out_in_seconds: The maximum time that the server can spend processing the
-         request, in seconds. The default is 30 seconds. If the value is larger than 30, the default
-         will be used instead.". Default value is None.
-        :paramtype time_out_in_seconds: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
-        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
-         to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                content = {
-                    "autoScaleEvaluationInterval": "1 day, 0:00:00",  # Optional. The time
-                      interval at which to automatically adjust the Pool size according to the
-                      autoscale formula. The default value is 15 minutes. The minimum and maximum value
-                      are 5 minutes and 168 hours respectively. If you specify a value less than 5
-                      minutes or greater than 168 hours, the Batch service rejects the request with an
-                      invalid property value error; if you are calling the REST API directly, the HTTP
-                      status code is 400 (Bad Request). If you specify a new interval, then the
-                      existing autoscale evaluation schedule will be stopped and a new autoscale
-                      evaluation schedule will be started, with its starting time being the time when
-                      this request was issued.
-                    "autoScaleFormula": "str"  # Optional. The formula for the desired number of
-                      Compute Nodes in the Pool. The formula is checked for validity before it is
-                      applied to the Pool. If the formula is not valid, the Batch service rejects the
-                      request with detailed error information. For more information about specifying
-                      this formula, see Automatically scale Compute Nodes in an Azure Batch Pool
-                      (https://azure.microsoft.com/en-us/documentation/articles/batch-automatic-scaling).
-                }
-        """
-        content = _models.BatchPoolEnableAutoScaleContent(
-            auto_scale_formula=auto_scale_formula,
-            auto_scale_evaluation_interval=auto_scale_evaluation_interval
-        )
-        args = [pool_id, content]
-        kwargs.update(
-            {
-                "time_out_in_seconds": time_out_in_seconds,
-                "ocpdate": ocpdate,
-                "if_modified_since": if_modified_since,
-                "if_unmodified_since": if_unmodified_since,
-                "etag": etag,
-                "match_condition": match_condition,
-            }
-        )
-        return super().enable_pool_auto_scale(*args, **kwargs)
-    
-    def terminate_job(  # pylint: disable=inconsistent-return-statements
-        self,
-        job_id: str,
-        reason: Optional[str] = None,
-        *,
-        time_out_in_seconds: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any
-    ) -> None:
-        # pylint: disable=line-too-long
-        """Terminates the specified Job, marking it as completed.
-
-        When a Terminate Job request is received, the Batch service sets the Job to the
-        terminating state. The Batch service then terminates any running Tasks
-        associated with the Job and runs any required Job release Tasks. Then the Job
-        moves into the completed state. If there are any Tasks in the Job in the active
-        state, they will remain in the active state. Once a Job is terminated, new
-        Tasks cannot be added and any remaining active Tasks will not be scheduled.
-
-        :param job_id: The ID of the Job to terminate. Required.
-        :type job_id: str
-        :param parameters: The options to use for terminating the Job. Default value is None.
-        :type parameters: ~azure.batch.models.BatchJobTerminateContent
-        :keyword time_out_in_seconds: The maximum time that the server can spend processing the
-         request, in seconds. The default is 30 seconds. If the value is larger than 30, the default
-         will be used instead.". Default value is None.
-        :paramtype time_out_in_seconds: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
-        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
-         to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                parameters = {
-                    "terminateReason": "str"  # Optional. The text you want to appear as the
-                      Job's TerminationReason. The default is 'UserTerminate'.
-                }
-        """
-        content = _models.BatchJobTerminateContent(
-            termination_reason=reason,
-        )
-        args = [job_id, content]
-        kwargs.update(
-            {
-                "time_out_in_seconds": time_out_in_seconds,
-                "ocpdate": ocpdate,
-                "if_modified_since": if_modified_since,
-                "if_unmodified_since": if_unmodified_since,
-                "etag": etag,
-                "match_condition": match_condition,
-            }
-        )
-        return super().terminate_job(*args, **kwargs)
 
 def patch_sdk():
     """Do not remove from this file.
@@ -611,7 +397,7 @@ def patch_sdk():
     """
 
 
-class _TaskWorkflowManager():
+class _TaskWorkflowManager:
     """Worker class for one create_task_collection request
 
     :param ~TaskOperations task_operations: Parent object which instantiated this
@@ -627,13 +413,17 @@ class _TaskWorkflowManager():
     """
 
     def __init__(
-        self, original_create_task_collection, job_id: str, task_collection: _models.BatchTaskAddCollectionResult, **kwargs
+        self,
+        batch_client: BatchClientOperationsMixin,
+        job_id: str,
+        task_collection: Iterable[_models.BatchTaskCreateContent],
+        **kwargs
     ):
         # Append operations thread safe - Only read once all threads have completed
         # List of tasks which failed to add due to a returned client error
-        self.failure_tasks = collections.deque()
+        self.failure_tasks: Deque[_models.BatchTaskAddResult] = collections.deque()
         # List of unknown exceptions which occurred during requests.
-        self.errors = collections.deque()
+        self.errors: Deque[Any] = collections.deque()
 
         # synchronized through lock variables
         self._max_tasks_per_request = MAX_TASKS_PER_REQUEST
@@ -643,7 +433,7 @@ class _TaskWorkflowManager():
         self._pending_queue_lock = threading.Lock()
 
         # Variables to be used for task create_task_collection requests
-        self._original_create_task_collection = original_create_task_collection
+        self._batch_client = batch_client
         self._job_id = job_id
 
         self._kwargs = kwargs
@@ -657,14 +447,14 @@ class _TaskWorkflowManager():
         :param results_queue: Queue to place the return value of the request
         :type results_queue: collections.deque
         :param chunk_tasks_to_add: Chunk of at most 100 tasks with retry details
-        :type chunk_tasks_to_add: list[~TrackedCloudTask]
+        :type chunk_tasks_to_add: list[~BatchTaskAddResult]
         """
 
         try:
             create_task_collection_response: _models.BatchTaskAddCollectionResult = (
-                self._original_create_task_collection(
+                self._batch_client.create_task_collection(
                     job_id=self._job_id,
-                    task_collection=_models.BatchTaskAddCollectionResult(value=chunk_tasks_to_add),
+                    task_collection=_models.BatchTaskGroup(value=chunk_tasks_to_add),
                     **self._kwargs
                 )
             )
@@ -725,22 +515,22 @@ class _TaskWorkflowManager():
                 create_task_collection_response = create_task_collection_response.output
             except AttributeError:
                 pass
-
-            for task_result in create_task_collection_response.value:  # pylint: disable=no-member
-                if task_result.status == _models.BatchTaskAddStatus.SERVER_ERROR:
-                    # Server error will be retried
-                    with self._pending_queue_lock:
-                        for task in chunk_tasks_to_add:
-                            if task.id == task_result.task_id:
-                                self.tasks_to_add.appendleft(task)
-                elif (
-                    task_result.status == _models.BatchTaskAddStatus.CLIENT_ERROR
-                    and not task_result.error.code == "TaskExists"
-                ):
-                    # Client error will be recorded unless Task already exists
-                    self.failure_tasks.appendleft(task_result)
-                else:
-                    results_queue.appendleft(task_result)
+            if create_task_collection_response.value:
+                for task_result in create_task_collection_response.value:  # pylint: disable=no-member
+                    if task_result.status == _models.BatchTaskAddStatus.SERVER_ERROR:
+                        # Server error will be retried
+                        with self._pending_queue_lock:
+                            for task in chunk_tasks_to_add:
+                                if task.id == task_result.task_id:
+                                    self.tasks_to_add.appendleft(task)
+                    elif (
+                        task_result.status == _models.BatchTaskAddStatus.CLIENT_ERROR
+                        and not (task_result.error and task_result.error.code == "TaskExists")
+                    ):
+                        # Client error will be recorded unless Task already exists
+                        self.failure_tasks.appendleft(task_result)
+                    else:
+                        results_queue.appendleft(task_result)
 
     def task_collection_thread_handler(self, results_queue):
         """Main method for worker to run

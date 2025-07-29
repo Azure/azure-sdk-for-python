@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.web import WebSiteManagementClient
+from azure.mgmt.web.v2024_11_01 import WebSiteManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -22,7 +22,7 @@ class TestWebSiteManagementTopLevelDomainsOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_top_level_domains_list(self, resource_group):
         response = self.client.top_level_domains.list(
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestWebSiteManagementTopLevelDomainsOperations(AzureMgmtRecordedTestCase):
     def test_top_level_domains_get(self, resource_group):
         response = self.client.top_level_domains.get(
             name="str",
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestWebSiteManagementTopLevelDomainsOperations(AzureMgmtRecordedTestCase):
         response = self.client.top_level_domains.list_agreements(
             name="str",
             agreement_option={"forTransfer": bool, "includePrivacy": bool},
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

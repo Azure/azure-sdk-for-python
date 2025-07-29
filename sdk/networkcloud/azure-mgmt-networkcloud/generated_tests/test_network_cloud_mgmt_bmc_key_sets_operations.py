@@ -20,11 +20,11 @@ class TestNetworkCloudMgmtBmcKeySetsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_cluster(self, resource_group):
+    def test_bmc_key_sets_list_by_cluster(self, resource_group):
         response = self.client.bmc_key_sets.list_by_cluster(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2025-02-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,12 +32,12 @@ class TestNetworkCloudMgmtBmcKeySetsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_bmc_key_sets_get(self, resource_group):
         response = self.client.bmc_key_sets.get(
             resource_group_name=resource_group.name,
             cluster_name="str",
             bmc_key_set_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2025-02-01",
         )
 
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestNetworkCloudMgmtBmcKeySetsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_bmc_key_sets_begin_create_or_update(self, resource_group):
         response = self.client.bmc_key_sets.begin_create_or_update(
             resource_group_name=resource_group.name,
             cluster_name="str",
@@ -66,6 +66,7 @@ class TestNetworkCloudMgmtBmcKeySetsOperations(AzureMgmtRecordedTestCase):
                 ],
                 "detailedStatus": "str",
                 "detailedStatusMessage": "str",
+                "etag": "str",
                 "id": "str",
                 "lastValidation": "2020-02-20 00:00:00",
                 "name": "str",
@@ -82,7 +83,7 @@ class TestNetworkCloudMgmtBmcKeySetsOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "userListStatus": [{"azureUserName": "str", "status": "str", "statusMessage": "str"}],
             },
-            api_version="2024-06-01-preview",
+            api_version="2025-02-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -90,12 +91,12 @@ class TestNetworkCloudMgmtBmcKeySetsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_bmc_key_sets_begin_delete(self, resource_group):
         response = self.client.bmc_key_sets.begin_delete(
             resource_group_name=resource_group.name,
             cluster_name="str",
             bmc_key_set_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2025-02-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -103,12 +104,12 @@ class TestNetworkCloudMgmtBmcKeySetsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update(self, resource_group):
+    def test_bmc_key_sets_begin_update(self, resource_group):
         response = self.client.bmc_key_sets.begin_update(
             resource_group_name=resource_group.name,
             cluster_name="str",
             bmc_key_set_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2025-02-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

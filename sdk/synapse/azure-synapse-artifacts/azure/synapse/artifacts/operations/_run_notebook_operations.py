@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,28 +6,35 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+import sys
+from typing import Any, Callable, Dict, IO, Iterator, Optional, TypeVar, Union, cast, overload
 
+from azure.core import PipelineClient
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.core.polling.base_polling import LROBasePolling
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
-from .._serialization import Serializer
-from .._vendor import _convert_request
+from .._configuration import ArtifactsClientConfiguration
+from .._serialization import Deserializer, Serializer
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -149,15 +155,15 @@ class RunNotebookOperations:
 
     def __init__(self, *args, **kwargs):
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ArtifactsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     def _create_run_initial(
         self, run_id: str, run_notebook_request: Union[_models.RunNotebookRequest, IO[bytes]], **kwargs: Any
-    ) -> _models.RunNotebookResponse:
-        error_map = {
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -170,7 +176,7 @@ class RunNotebookOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.RunNotebookResponse] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -189,13 +195,13 @@ class RunNotebookOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -203,13 +209,17 @@ class RunNotebookOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         response_headers = {}
         response_headers["location"] = self._deserialize("str", response.headers.get("location"))
 
-        deserialized = self._deserialize("RunNotebookResponse", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -227,7 +237,8 @@ class RunNotebookOperations:
     ) -> LROPoller[_models.RunNotebookResponse]:
         """Run notebook.
 
-        :param run_id: Notebook run id. Required.
+        :param run_id: Notebook run id. For Create Run, you can generate a new GUID and use it here.
+         For other actions, this is the same ID used in Create Run. Required.
         :type run_id: str
         :param run_notebook_request: Run notebook request payload. Required.
         :type run_notebook_request: ~azure.synapse.artifacts.models.RunNotebookRequest
@@ -246,7 +257,8 @@ class RunNotebookOperations:
     ) -> LROPoller[_models.RunNotebookResponse]:
         """Run notebook.
 
-        :param run_id: Notebook run id. Required.
+        :param run_id: Notebook run id. For Create Run, you can generate a new GUID and use it here.
+         For other actions, this is the same ID used in Create Run. Required.
         :type run_id: str
         :param run_notebook_request: Run notebook request payload. Required.
         :type run_notebook_request: IO[bytes]
@@ -265,7 +277,8 @@ class RunNotebookOperations:
     ) -> LROPoller[_models.RunNotebookResponse]:
         """Run notebook.
 
-        :param run_id: Notebook run id. Required.
+        :param run_id: Notebook run id. For Create Run, you can generate a new GUID and use it here.
+         For other actions, this is the same ID used in Create Run. Required.
         :type run_id: str
         :param run_notebook_request: Run notebook request payload. Is either a RunNotebookRequest type
          or a IO[bytes] type. Required.
@@ -295,6 +308,7 @@ class RunNotebookOperations:
                 params=_params,
                 **kwargs
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
@@ -302,7 +316,7 @@ class RunNotebookOperations:
             response = pipeline_response.http_response
             response_headers["location"] = self._deserialize("str", response.headers.get("location"))
 
-            deserialized = self._deserialize("RunNotebookResponse", pipeline_response)
+            deserialized = self._deserialize("RunNotebookResponse", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
@@ -334,13 +348,14 @@ class RunNotebookOperations:
     def get_status(self, run_id: str, **kwargs: Any) -> _models.RunNotebookResponse:
         """Get RunNotebook Status for run id.
 
-        :param run_id: Notebook run id. Required.
+        :param run_id: Notebook run id. For Create Run, you can generate a new GUID and use it here.
+         For other actions, this is the same ID used in Create Run. Required.
         :type run_id: str
         :return: RunNotebookResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.RunNotebookResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -360,7 +375,6 @@ class RunNotebookOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -377,7 +391,7 @@ class RunNotebookOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("RunNotebookResponse", pipeline_response)
+        deserialized = self._deserialize("RunNotebookResponse", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -388,19 +402,17 @@ class RunNotebookOperations:
     def cancel_run(self, run_id: str, **kwargs: Any) -> _models.RunNotebookResponse:
         """Cancel notebook run.
 
-        :param run_id: Notebook run id. Required.
+        :param run_id: Notebook run id. For Create Run, you can generate a new GUID and use it here.
+         For other actions, this is the same ID used in Create Run. Required.
         :type run_id: str
         :return: RunNotebookResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.RunNotebookResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             304: ResourceNotModifiedError,
-            409: lambda response: ResourceExistsError(
-                response=response, model=self._deserialize(_models.RunNotebookResponse, response)
-            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -416,7 +428,6 @@ class RunNotebookOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -430,10 +441,14 @@ class RunNotebookOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
-            raise HttpResponseError(response=response)
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = None
+            if response.status_code == 409:
+                error = self._deserialize.failsafe_deserialize(_models.RunNotebookResponse, pipeline_response)
+                raise ResourceExistsError(response=response, model=error)
+            raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("RunNotebookResponse", pipeline_response)
+        deserialized = self._deserialize("RunNotebookResponse", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -444,13 +459,14 @@ class RunNotebookOperations:
     def get_snapshot(self, run_id: str, **kwargs: Any) -> _models.RunNotebookSnapshotResponse:
         """Get RunNotebook Snapshot for run id.
 
-        :param run_id: Notebook run id. Required.
+        :param run_id: Notebook run id. For Create Run, you can generate a new GUID and use it here.
+         For other actions, this is the same ID used in Create Run. Required.
         :type run_id: str
         :return: RunNotebookSnapshotResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.RunNotebookSnapshotResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -470,7 +486,6 @@ class RunNotebookOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -487,7 +502,7 @@ class RunNotebookOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("RunNotebookSnapshotResponse", pipeline_response)
+        deserialized = self._deserialize("RunNotebookSnapshotResponse", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

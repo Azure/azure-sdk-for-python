@@ -1,3 +1,5 @@
 *.cer
 *.key
 *.pfx
+*security-domain.json
+*.pem

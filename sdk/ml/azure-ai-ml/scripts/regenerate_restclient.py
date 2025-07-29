@@ -1,3 +1,11 @@
+# coding: utf-8
+
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
 import logging
 import os
 import subprocess
@@ -44,27 +52,27 @@ def _run_command(
 
     t0 = time.perf_counter()
     try:
-        logger.debug("Executing {0} in {1}".format(commands, cwd))
+        logger.debug("Executing %s in %s", commands, cwd)
         out = ""
-        p = subprocess.Popen(commands, stdout=subprocess.PIPE, stderr=stderr, cwd=cwd, shell=shell, env=env)
-        for line in p.stdout:
-            line = line.decode("utf-8").rstrip()
-            if line and line.strip():
-                logger.debug(line)
-                if stream_stdout:
-                    sys.stdout.write(line)
-                    sys.stdout.write("\n")
-                out += line
-                out += "\n"
-        p.communicate()
-        retcode = p.poll()
-        if throw_on_retcode:
-            if retcode:
-                raise subprocess.CalledProcessError(retcode, p.args, output=out, stderr=p.stderr)
+        with subprocess.Popen(commands, stdout=subprocess.PIPE, stderr=stderr, cwd=cwd, shell=shell, env=env) as p:
+            for line in p.stdout:
+                line = line.decode("utf-8").rstrip()
+                if line and line.strip():
+                    logger.debug(line)
+                    if stream_stdout:
+                        sys.stdout.write(line)
+                        sys.stdout.write("\n")
+                    out += line
+                    out += "\n"
+            p.communicate()
+            retcode = p.poll()
+            if throw_on_retcode:
+                if retcode:
+                    raise subprocess.CalledProcessError(retcode, p.args, output=out, stderr=p.stderr)
         return retcode, out
     finally:
         t1 = time.perf_counter()
-        logger.debug("Execution took {0}s for {1} in {2}".format(t1 - t0, commands, cwd))
+        logger.debug("Execution took %ss for %s in %s", t1 - t0, commands, cwd)
 
 
 def run_command(
@@ -90,13 +98,13 @@ def download_file(from_url: str, to_path: Path, with_file_name: str) -> None:
     print_blue(f"- Downloading {with_file_name} from {from_url} to {to_path}")
 
     try:
-        response = urlopen(from_url)
-    except Exception:
+        with urlopen(from_url) as response:
+            with open(f"{to_path}/{with_file_name}", "w", encoding="utf-8") as f:
+                f.write(response.read().decode("utf-8"))
+    except (OSError, URLError, HTTPError) as e:
         sys.exit(
-            f"Connection error while trying to download file from {from_url}. Please try running the script again."
+            f"Connection error while trying to download file from {from_url}: {e}. Please try running the script again."
         )
-    with open(f"{to_path}/{with_file_name}", "w") as f:
-        f.write(response.read().decode("utf-8"))
 
 
 def regenerate_restclient(api_tag, verbose):
@@ -115,7 +123,7 @@ def regenerate_restclient(api_tag, verbose):
         "--python",
         "--track2",
         "--version=3.6.2",
-        "--use=@autorest/python@5.12.6",
+        "--use=@autorest/python@latest",
         f"--python-sdks-folder={restclient_path.absolute()}",
         "--package-version=0.1.0",
         tag_arg,
@@ -138,8 +146,11 @@ if __name__ == "__main__":
         "-a",
         "--api-tag",
         required=False,
-        help="""Specifies which API to generate using autorest. If not supplied, all APIs are targeted.
-            Must match the name of a tag in the sdk/ml/azure-ai-ml/swagger/machinelearningservices/resource-manager/readme.md file.""",
+        help=(
+            "Specifies which API to generate using autorest. If not supplied, all APIs are targeted.\n"
+            "Must match the name of a tag in the sdk/ml/azure-ai-ml/swagger/machinelearningservices/"
+            "resource-manager/readme.md file."
+        ),
     )
     parser.add_argument("-v", "--verbose", action="store_true", required=False, help="turn on verbose output")
 

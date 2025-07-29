@@ -187,6 +187,8 @@ class HttpResponseError(BaseError):
     :vartype status_code: int
     :ivar response: The response that triggered the exception.
     :vartype response: ~corehttp.rest.HttpResponse or ~corehttp.rest.AsyncHttpResponse
+    :ivar model: The response body model
+    :vartype model: Any
     """
 
     def __init__(
@@ -199,6 +201,8 @@ class HttpResponseError(BaseError):
         if response:
             self.reason = response.reason
             self.status_code = response.status_code
+
+        self.model: Optional[Any] = kwargs.pop("model", None)
 
         # By priority, message is:
         # - parameter "message", OR

@@ -20,12 +20,12 @@ class TestServiceBusManagementSubscriptionsOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_topic(self, resource_group):
+    def test_subscriptions_list_by_topic(self, resource_group):
         response = self.client.subscriptions.list_by_topic(
             resource_group_name=resource_group.name,
             namespace_name="str",
             topic_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestServiceBusManagementSubscriptionsOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_subscriptions_create_or_update(self, resource_group):
         response = self.client.subscriptions.create_or_update(
             resource_group_name=resource_group.name,
             namespace_name="str",
@@ -78,7 +78,7 @@ class TestServiceBusManagementSubscriptionsOperations(AzureMgmtRecordedTestCase)
                 "type": "str",
                 "updatedAt": "2020-02-20 00:00:00",
             },
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -86,13 +86,13 @@ class TestServiceBusManagementSubscriptionsOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_subscriptions_delete(self, resource_group):
         response = self.client.subscriptions.delete(
             resource_group_name=resource_group.name,
             namespace_name="str",
             topic_name="str",
             subscription_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -100,13 +100,13 @@ class TestServiceBusManagementSubscriptionsOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_subscriptions_get(self, resource_group):
         response = self.client.subscriptions.get(
             resource_group_name=resource_group.name,
             namespace_name="str",
             topic_name="str",
             subscription_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself

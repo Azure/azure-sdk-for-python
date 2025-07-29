@@ -35,14 +35,12 @@ class FakeSpan(HttpSpanMixin, object):
         :param name: The name of the OpenTelemetry span to create if a new span is needed
         :type name: str
         """
-        self._span = span
         self.name = name
         self._kind = kind or SpanKind.UNSPECIFIED
         self.attributes = {}
         self.children = []
         if self.CONTEXT:
             self.CONTEXT[-1].children.append(self)
-        self.CONTEXT.append(self)
         self.status = None
 
     def __str__(self):
@@ -58,7 +56,7 @@ class FakeSpan(HttpSpanMixin, object):
         """
         :return: The OpenTelemetry span that is being wrapped.
         """
-        return self._span
+        return self
 
     def span(self, name="span"):
         # type: (Optional[str]) -> OpenCensusSpan
@@ -84,13 +82,15 @@ class FakeSpan(HttpSpanMixin, object):
 
     def __enter__(self):
         """Start a span."""
+        self.CONTEXT.append(self)
         return self
 
     def __exit__(self, exception_type, exception_value, traceback):
         """Finish a span."""
         if exception_value:
             self.status = exception_value.args[0]
-        self.CONTEXT.pop()
+        if self.CONTEXT and self.CONTEXT[-1] == self:
+            self.CONTEXT.pop()
 
     def start(self):
         # type: () -> None
@@ -100,7 +100,8 @@ class FakeSpan(HttpSpanMixin, object):
     def finish(self):
         # type: () -> None
         """Set the end time for a span."""
-        self.CONTEXT.pop()
+        if self.CONTEXT and self.CONTEXT[-1] == self:
+            self.CONTEXT.pop()
 
     def to_header(self):
         # type: () -> Dict[str, str]
@@ -108,7 +109,8 @@ class FakeSpan(HttpSpanMixin, object):
         Returns a dictionary with the header labels and values.
         :return: A key value pair dictionary
         """
-        return {"traceparent": "123456789"}
+        current_span = self.get_current_span()
+        return {"traceparent": f"00-12345-{current_span.name}-01"}
 
     def add_attribute(self, key, value):
         # type: (str, Union[str, int]) -> None

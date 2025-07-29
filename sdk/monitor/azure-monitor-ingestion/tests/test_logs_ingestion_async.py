@@ -13,6 +13,7 @@ import pytest
 
 from azure.core.exceptions import HttpResponseError
 from azure.monitor.ingestion.aio import LogsIngestionClient
+from azure.monitor.ingestion._version import VERSION
 
 from base_testcase import LogsIngestionClientTestCase
 
@@ -92,7 +93,7 @@ class TestLogsIngestionClientAsync(LogsIngestionClientTestCase):
             json.dump(LOGS_BODY, f)
 
         async with client:
-            with open(temp_file, "r") as f:
+            with open(temp_file, "rb") as f:
                 await client.upload(rule_id=monitor_info["dcr_id"], stream_name=monitor_info["stream_name"], logs=f)
         os.remove(temp_file)
         await credential.close()
@@ -168,4 +169,13 @@ class TestLogsIngestionClientAsync(LogsIngestionClientTestCase):
         async with client:
             with pytest.raises(ValueError):
                 await client.upload(rule_id="rule", stream_name="stream", logs=logs)
+        await credential.close()
+
+    @pytest.mark.asyncio
+    async def test_user_agent_version(self, monitor_info):
+        credential = self.get_credential(LogsIngestionClient, is_async=True)
+        client = self.get_client(LogsIngestionClient, credential, endpoint=monitor_info["dce"])
+
+        async with client:
+            assert f"azsdk-python-monitor-ingestion/{VERSION}" in client._config.user_agent_policy.user_agent
         await credential.close()

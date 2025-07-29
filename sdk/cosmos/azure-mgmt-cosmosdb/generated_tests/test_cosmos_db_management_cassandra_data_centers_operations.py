@@ -24,7 +24,7 @@ class TestCosmosDBManagementCassandraDataCentersOperations(AzureMgmtRecordedTest
         response = self.client.cassandra_data_centers.list(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-12-01-preview",
+            api_version="2025-04-15",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestCosmosDBManagementCassandraDataCentersOperations(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             cluster_name="str",
             data_center_name="str",
-            api_version="2024-12-01-preview",
+            api_version="2025-04-15",
         )
 
         # please add some check logic here by yourself
@@ -50,7 +50,7 @@ class TestCosmosDBManagementCassandraDataCentersOperations(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             cluster_name="str",
             data_center_name="str",
-            api_version="2024-12-01-preview",
+            api_version="2025-04-15",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -95,7 +95,7 @@ class TestCosmosDBManagementCassandraDataCentersOperations(AzureMgmtRecordedTest
                 },
                 "type": "str",
             },
-            api_version="2024-12-01-preview",
+            api_version="2025-04-15",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -140,7 +140,7 @@ class TestCosmosDBManagementCassandraDataCentersOperations(AzureMgmtRecordedTest
                 },
                 "type": "str",
             },
-            api_version="2024-12-01-preview",
+            api_version="2025-04-15",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

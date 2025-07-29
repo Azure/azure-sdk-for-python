@@ -26,4 +26,3 @@ class TestStandbyPoolMgmtStandbyVirtualMachinePoolsOperations(AzureMgmtRecordedT
         )
         result = [r for r in response]
         assert result == []
-        

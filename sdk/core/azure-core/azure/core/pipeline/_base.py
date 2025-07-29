@@ -53,6 +53,7 @@ _LOGGER = logging.getLogger(__name__)
 
 def cleanup_kwargs_for_transport(kwargs: Dict[str, str]) -> None:
     """Remove kwargs that are not meant for the transport layer.
+
     :param kwargs: The keyword arguments.
     :type kwargs: dict
 
@@ -62,8 +63,9 @@ def cleanup_kwargs_for_transport(kwargs: Dict[str, str]) -> None:
       to the transport layer. This code is needed to handle the case that the
       SensitiveHeaderCleanupPolicy is not added into the pipeline and "insecure_domain_change" is not popped.
     "enable_cae" is added to the `get_token` method of the `TokenCredential` protocol.
+    "tracing_options" is used in the DistributedTracingPolicy and tracing decorators.
     """
-    kwargs_to_remove = ["insecure_domain_change", "enable_cae"]
+    kwargs_to_remove = ["insecure_domain_change", "enable_cae", "tracing_options"]
     if not kwargs:
         return
     for key in kwargs_to_remove:

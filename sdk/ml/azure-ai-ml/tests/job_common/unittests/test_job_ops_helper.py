@@ -12,6 +12,7 @@ from azure.ai.ml._restclient.runhistory.models import RunDetails, RunDetailsWarn
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.operations._job_ops_helper import (
     _get_sorted_filtered_logs,
+    has_pat_token,
     _incremental_print,
     list_logs,
     stream_logs_until_completion,
@@ -62,6 +63,16 @@ def mock_time(request):
 @pytest.fixture
 def mock_run_operations(mock_workspace_scope: OperationScope, mock_aml_services_run_history: Mock) -> RunOperations:
     yield RunOperations(mock_workspace_scope, mock_aml_services_run_history)
+
+
+@pytest.mark.unittest
+@pytest.mark.training_experiences_test
+class TestJobOpsHelper:
+    def test_has_pat_token(self) -> None:
+        assert has_pat_token("https://dev.azure.com/mypattoken@company_machineName/project-name/_git/repo_name")
+        assert has_pat_token("https://mypattoken@dev.azure.com/<organization>/<project>/_git/<repo>")
+        assert not has_pat_token("https://dev.azure.com/organization/project/_apis/pipelines/1/runs")
+        assert not has_pat_token("https://learn.microsoft.com/en-us/ai/?tabs=developer")
 
 
 @pytest.mark.skip("TODO 1907352: Relies on a missing VCR.py recording + test suite needs to be reworked")

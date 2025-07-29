@@ -52,6 +52,9 @@ class QueryIterable(PageIterator):
         partition_key: Optional['PartitionKeyType'] = None,
         continuation_token: Optional[str] = None,
         query_engine: Optional[QueryEngine] = None,
+        resource_type=None,
+        response_hook=None,
+        raw_response_hook=None,
     ):
         """Instantiates a QueryIterable for non-client side partitioning queries.
 
@@ -62,7 +65,7 @@ class QueryIterable(PageIterator):
         :param (str or dict) query:
         :param dict options: The request options for the request.
         :param method fetch_function:
-        :param method resource_type: The type of the resource being queried
+        :param str resource_type: The type of the resource being queried
         :param str resource_link: If this is a Document query/feed collection_link is required.
 
         Example of `fetch_function`:
@@ -82,10 +85,10 @@ class QueryIterable(PageIterator):
         self._database_link = database_link
         self._partition_key = partition_key
         self._ex_context = execution_dispatcher._ProxyQueryExecutionContext(
-            self._client, self._collection_link, self._query, self._options, self._fetch_function, query_engine
+            self._client, self._collection_link, self._query, self._options, self._fetch_function,
+            response_hook, raw_response_hook, resource_type, query_engine
         )
-        super(QueryIterable, self).__init__(self._fetch_next,
-                                            self._unpack, continuation_token=continuation_token)
+        super(QueryIterable, self).__init__(self._fetch_next, self._unpack, continuation_token=continuation_token)
 
     def _unpack(self, block):
         continuation = None

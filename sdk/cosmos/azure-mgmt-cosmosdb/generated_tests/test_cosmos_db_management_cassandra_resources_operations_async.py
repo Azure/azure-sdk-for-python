@@ -25,7 +25,7 @@ class TestCosmosDBManagementCassandraResourcesOperationsAsync(AzureMgmtRecordedT
         response = self.client.cassandra_resources.list_cassandra_keyspaces(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-12-01-preview",
+            api_version="2025-04-15",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestCosmosDBManagementCassandraResourcesOperationsAsync(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             account_name="str",
             keyspace_name="str",
-            api_version="2024-12-01-preview",
+            api_version="2025-04-15",
         )
 
         # please add some check logic here by yourself
@@ -55,19 +55,13 @@ class TestCosmosDBManagementCassandraResourcesOperationsAsync(AzureMgmtRecordedT
                 create_update_cassandra_keyspace_parameters={
                     "resource": {"id": "str"},
                     "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
                     "location": "str",
                     "name": "str",
                     "options": {"autoscaleSettings": {"maxThroughput": 0}, "throughput": 0},
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-12-01-preview",
+                api_version="2025-04-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -82,7 +76,7 @@ class TestCosmosDBManagementCassandraResourcesOperationsAsync(AzureMgmtRecordedT
                 resource_group_name=resource_group.name,
                 account_name="str",
                 keyspace_name="str",
-                api_version="2024-12-01-preview",
+                api_version="2025-04-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -96,7 +90,7 @@ class TestCosmosDBManagementCassandraResourcesOperationsAsync(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             account_name="str",
             keyspace_name="str",
-            api_version="2024-12-01-preview",
+            api_version="2025-04-15",
         )
 
         # please add some check logic here by yourself
@@ -122,21 +116,14 @@ class TestCosmosDBManagementCassandraResourcesOperationsAsync(AzureMgmtRecordedT
                         "offerReplacePending": "str",
                         "softAllowedMaximumThroughput": "str",
                         "throughput": 0,
-                        "throughputBuckets": [{"id": 0, "maxThroughputPercentage": 0}],
                     },
                     "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
                     "location": "str",
                     "name": "str",
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-12-01-preview",
+                api_version="2025-04-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -151,7 +138,7 @@ class TestCosmosDBManagementCassandraResourcesOperationsAsync(AzureMgmtRecordedT
                 resource_group_name=resource_group.name,
                 account_name="str",
                 keyspace_name="str",
-                api_version="2024-12-01-preview",
+                api_version="2025-04-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -166,7 +153,7 @@ class TestCosmosDBManagementCassandraResourcesOperationsAsync(AzureMgmtRecordedT
                 resource_group_name=resource_group.name,
                 account_name="str",
                 keyspace_name="str",
-                api_version="2024-12-01-preview",
+                api_version="2025-04-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -180,7 +167,7 @@ class TestCosmosDBManagementCassandraResourcesOperationsAsync(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             account_name="str",
             keyspace_name="str",
-            api_version="2024-12-01-preview",
+            api_version="2025-04-15",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -194,7 +181,7 @@ class TestCosmosDBManagementCassandraResourcesOperationsAsync(AzureMgmtRecordedT
             account_name="str",
             keyspace_name="str",
             table_name="str",
-            api_version="2024-12-01-preview",
+            api_version="2025-04-15",
         )
 
         # please add some check logic here by yourself
@@ -221,19 +208,13 @@ class TestCosmosDBManagementCassandraResourcesOperationsAsync(AzureMgmtRecordedT
                         },
                     },
                     "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
                     "location": "str",
                     "name": "str",
                     "options": {"autoscaleSettings": {"maxThroughput": 0}, "throughput": 0},
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-12-01-preview",
+                api_version="2025-04-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -249,7 +230,7 @@ class TestCosmosDBManagementCassandraResourcesOperationsAsync(AzureMgmtRecordedT
                 account_name="str",
                 keyspace_name="str",
                 table_name="str",
-                api_version="2024-12-01-preview",
+                api_version="2025-04-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -264,7 +245,7 @@ class TestCosmosDBManagementCassandraResourcesOperationsAsync(AzureMgmtRecordedT
             account_name="str",
             keyspace_name="str",
             table_name="str",
-            api_version="2024-12-01-preview",
+            api_version="2025-04-15",
         )
 
         # please add some check logic here by yourself
@@ -291,21 +272,14 @@ class TestCosmosDBManagementCassandraResourcesOperationsAsync(AzureMgmtRecordedT
                         "offerReplacePending": "str",
                         "softAllowedMaximumThroughput": "str",
                         "throughput": 0,
-                        "throughputBuckets": [{"id": 0, "maxThroughputPercentage": 0}],
                     },
                     "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
                     "location": "str",
                     "name": "str",
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-12-01-preview",
+                api_version="2025-04-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -321,7 +295,7 @@ class TestCosmosDBManagementCassandraResourcesOperationsAsync(AzureMgmtRecordedT
                 account_name="str",
                 keyspace_name="str",
                 table_name="str",
-                api_version="2024-12-01-preview",
+                api_version="2025-04-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -337,169 +311,7 @@ class TestCosmosDBManagementCassandraResourcesOperationsAsync(AzureMgmtRecordedT
                 account_name="str",
                 keyspace_name="str",
                 table_name="str",
-                api_version="2024-12-01-preview",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_cassandra_resources_list_cassandra_views(self, resource_group):
-        response = self.client.cassandra_resources.list_cassandra_views(
-            resource_group_name=resource_group.name,
-            account_name="str",
-            keyspace_name="str",
-            api_version="2024-12-01-preview",
-        )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_cassandra_resources_get_cassandra_view(self, resource_group):
-        response = await self.client.cassandra_resources.get_cassandra_view(
-            resource_group_name=resource_group.name,
-            account_name="str",
-            keyspace_name="str",
-            view_name="str",
-            api_version="2024-12-01-preview",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_cassandra_resources_begin_create_update_cassandra_view(self, resource_group):
-        response = await (
-            await self.client.cassandra_resources.begin_create_update_cassandra_view(
-                resource_group_name=resource_group.name,
-                account_name="str",
-                keyspace_name="str",
-                view_name="str",
-                create_update_cassandra_view_parameters={
-                    "resource": {"id": "str", "viewDefinition": "str"},
-                    "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
-                    "location": "str",
-                    "name": "str",
-                    "options": {"autoscaleSettings": {"maxThroughput": 0}, "throughput": 0},
-                    "tags": {"str": "str"},
-                    "type": "str",
-                },
-                api_version="2024-12-01-preview",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_cassandra_resources_begin_delete_cassandra_view(self, resource_group):
-        response = await (
-            await self.client.cassandra_resources.begin_delete_cassandra_view(
-                resource_group_name=resource_group.name,
-                account_name="str",
-                keyspace_name="str",
-                view_name="str",
-                api_version="2024-12-01-preview",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_cassandra_resources_get_cassandra_view_throughput(self, resource_group):
-        response = await self.client.cassandra_resources.get_cassandra_view_throughput(
-            resource_group_name=resource_group.name,
-            account_name="str",
-            keyspace_name="str",
-            view_name="str",
-            api_version="2024-12-01-preview",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_cassandra_resources_begin_update_cassandra_view_throughput(self, resource_group):
-        response = await (
-            await self.client.cassandra_resources.begin_update_cassandra_view_throughput(
-                resource_group_name=resource_group.name,
-                account_name="str",
-                keyspace_name="str",
-                view_name="str",
-                update_throughput_parameters={
-                    "resource": {
-                        "autoscaleSettings": {
-                            "maxThroughput": 0,
-                            "autoUpgradePolicy": {"throughputPolicy": {"incrementPercent": 0, "isEnabled": bool}},
-                            "targetMaxThroughput": 0,
-                        },
-                        "instantMaximumThroughput": "str",
-                        "minimumThroughput": "str",
-                        "offerReplacePending": "str",
-                        "softAllowedMaximumThroughput": "str",
-                        "throughput": 0,
-                        "throughputBuckets": [{"id": 0, "maxThroughputPercentage": 0}],
-                    },
-                    "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
-                    "location": "str",
-                    "name": "str",
-                    "tags": {"str": "str"},
-                    "type": "str",
-                },
-                api_version="2024-12-01-preview",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_cassandra_resources_begin_migrate_cassandra_view_to_autoscale(self, resource_group):
-        response = await (
-            await self.client.cassandra_resources.begin_migrate_cassandra_view_to_autoscale(
-                resource_group_name=resource_group.name,
-                account_name="str",
-                keyspace_name="str",
-                view_name="str",
-                api_version="2024-12-01-preview",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_cassandra_resources_begin_migrate_cassandra_view_to_manual_throughput(self, resource_group):
-        response = await (
-            await self.client.cassandra_resources.begin_migrate_cassandra_view_to_manual_throughput(
-                resource_group_name=resource_group.name,
-                account_name="str",
-                keyspace_name="str",
-                view_name="str",
-                api_version="2024-12-01-preview",
+                api_version="2025-04-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 

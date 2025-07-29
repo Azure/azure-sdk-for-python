@@ -5,6 +5,7 @@
 # pylint: disable=client-method-missing-tracing-decorator
 from typing import Any, Union, Optional, TYPE_CHECKING, Type
 import logging
+import warnings
 from weakref import WeakSet
 from typing_extensions import Literal
 import certifi
@@ -120,6 +121,15 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         amqp_transport: Union[Type[PyamqpTransport], Type["UamqpTransport"]] = PyamqpTransport
 
         if uamqp_transport:
+            # Deprecation of uamqp transport
+            warnings.warn(
+                "uAMQP legacy support will be removed in the 7.15.0 minor release. "
+                "Please remove the use of `uamqp_transport` keyword argument from the client in order "
+                "to use the pure Python AMQP transport. "
+                "If you rely on this, please comment on [this issue]"
+                "(https://github.com/Azure/azure-sdk-for-python/issues/40347) ",
+                DeprecationWarning, stacklevel=2
+            )
             try:
                 from ._transport._uamqp_transport import UamqpTransport
                 amqp_transport = UamqpTransport

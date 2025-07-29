@@ -67,8 +67,9 @@ def _load_persistent_cache(
     return msal_extensions.PersistedTokenCache(persistence)
 
 
-def _get_persistence(allow_unencrypted, account_name, cache_name):
-    # type: (bool, str, str) -> msal_extensions.persistence.BasePersistence
+def _get_persistence(
+    allow_unencrypted: bool, account_name: str, cache_name: str
+) -> "msal_extensions.persistence.BasePersistence":
     """Get an msal_extensions persistence instance for the current platform.
 
     On Windows the cache is a file protected by the Data Protection API. On Linux and macOS the cache is stored by

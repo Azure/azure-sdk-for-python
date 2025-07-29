@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.hybridkubernetes import ConnectedKubernetesClient
 
 """
@@ -29,13 +30,12 @@ def main():
         subscription_id="1bfbb5d0-917e-4346-9026-1d3b344417f5",
     )
 
-    response = client.connected_cluster.begin_delete(
+    client.connected_cluster.begin_delete(
         resource_group_name="k8sc-rg",
         cluster_name="testCluster",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/hybridkubernetes/resource-manager/Microsoft.Kubernetes/stable/2021-10-01/examples/DeleteClusterExample.json
+# x-ms-original-file: specification/hybridkubernetes/resource-manager/Microsoft.Kubernetes/preview/2024-12-01-preview/examples/DeleteClusterExample.json
 if __name__ == "__main__":
     main()

@@ -43,6 +43,7 @@ from azure.servicebus.amqp import (
     AmqpMessageProperties,
 )
 from azure.servicebus._pyamqp.message import Message
+from azure.servicebus._pyamqp._decode import decode_payload
 from azure.servicebus._pyamqp import error, management_operation
 from azure.servicebus._pyamqp.aio import AMQPClientAsync, ReceiveClientAsync, _management_operation_async
 from azure.servicebus._common.constants import ServiceBusReceiveMode, ServiceBusSubQueue
@@ -58,16 +59,15 @@ from azure.servicebus.exceptions import (
     OperationTimeoutError,
 )
 from devtools_testutils import AzureMgmtRecordedTestCase, AzureRecordedTestCase, get_credential
-from tests.servicebus_preparer import (
+from servicebus_preparer import (
     SERVICEBUS_ENDPOINT_SUFFIX,
     CachedServiceBusNamespacePreparer,
     CachedServiceBusQueuePreparer,
     ServiceBusQueuePreparer,
     CachedServiceBusResourceGroupPreparer,
 )
-from tests.utilities import get_logger, print_message, sleep_until_expired
 from mocks_async import MockReceivedMessage, MockReceiver
-from tests.utilities import (
+from utilities import (
     get_logger,
     print_message,
     sleep_until_expired,
@@ -675,6 +675,64 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 # queue should be empty now
                 peeked_msgs = await receiver.peek_messages(max_message_count=10, timeout=10)
                 assert len(peeked_msgs) == 0
+
+    @pytest.mark.asyncio
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer(name_prefix="servicebustest")
+    @CachedServiceBusNamespacePreparer(name_prefix="servicebustest")
+    @ServiceBusQueuePreparer(
+        name_prefix="servicebustest", dead_lettering_on_message_expiration=True, lock_duration="PT10S"
+    )
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasserAsync()
+    async def test_async_queue_receive_handler_peek_check_uniq_corr_id(
+        self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs
+    ):
+        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
+        credential = get_credential(is_async=True)
+        async with ServiceBusClient(
+            fully_qualified_namespace, credential, logging_enable=False, uamqp_transport=uamqp_transport
+        ) as sb_client:
+            # send 10 messages
+            async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                for i in range(10):
+                    message = ServiceBusMessage("Handler message no. {}".format(i))
+                    await sender.send_messages(message)
+
+            def _hack_parse_received_message(message, message_type, **kwargs):
+                    parsed = []
+                    # Get correlation ID from mgmt msg wrapper. Individual msgs in "value" do not have correlation IDs.
+                    correlation_ids.add(message.properties.correlation_id)
+                    if message.value:
+                        for m in message.value[b"messages"]:
+                            wrapped = decode_payload(memoryview(m[b"message"]))
+                            parsed.append(message_type(wrapped, **kwargs))
+                    return parsed
+
+            async def peek_message(receiver, seq_num):
+                await receiver.peek_messages(max_message_count=1, sequence_number=seq_num)
+
+            # Peek 10 unique messages concurrently
+            async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
+                received_msgs = await receiver.receive_messages(max_message_count=10, max_wait_time=5)
+                while len(received_msgs) < 10:
+                    received_msgs.extend(await receiver.receive_messages(max_message_count=1, max_wait_time=5))
+                assert len(received_msgs) == 10
+
+                # Grab the sequence numbers of the received messages
+                seq_nums = set()
+                for msg in received_msgs:
+                    seq_nums.add(int(msg.sequence_number))
+
+                # Use the sequence numbers to peek messages concurrently
+                # Add the correlation IDs of the peeked msgs to a set
+                # If the correlation ID is not unique, the set will be smaller than 10
+                # Otherwise, the set will be 10
+                correlation_ids = set()
+                receiver._amqp_transport.parse_received_message = _hack_parse_received_message
+                await asyncio.gather(*(peek_message(receiver, seq_num) for seq_num in seq_nums))
+                assert len(correlation_ids) == 10
 
     @pytest.mark.asyncio
     @pytest.mark.liveTest
@@ -3624,3 +3682,117 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 messages_in_queue = await receiver1.peek_messages()
 
                 assert len(messages_in_queue) == 0
+    
+    @pytest.mark.asyncio
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer(name_prefix="servicebustest")
+    @CachedServiceBusNamespacePreparer(name_prefix="servicebustest")
+    @ServiceBusQueuePreparer(name_prefix="servicebustest", dead_lettering_on_message_expiration=True)
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasserAsync()
+    async def test_queue_async_by_queue_client_peek_auto_increment(
+        self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs
+    ):
+        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
+        credential = get_credential(is_async=True)
+        async with ServiceBusClient(
+            fully_qualified_namespace, credential, logging_enable=False, uamqp_transport=uamqp_transport
+        ) as sb_client:
+
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            async with sender:
+                messages = []
+                for i in range(3):
+                    message = ServiceBusMessage("Handler message no. {}".format(i), application_properties={"index": i})
+                    messages.append(message)
+                await sender.send_messages(messages)
+
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)
+            async with receiver:
+                peek_message = await receiver.peek_messages()
+                assert peek_message[0].application_properties[b"index"] == 0
+                assert peek_message[0].sequence_number == 1
+                peek_message = await receiver.peek_messages()
+                assert peek_message[0].application_properties[b"index"] == 1
+                assert peek_message[0].sequence_number == 2
+                peek_message = await receiver.peek_messages()
+                assert peek_message[0].application_properties[b"index"] == 2
+                assert peek_message[0].sequence_number == 3
+    
+    @pytest.mark.asyncio
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer(name_prefix="servicebustest")
+    @CachedServiceBusNamespacePreparer(name_prefix="servicebustest")
+    @ServiceBusQueuePreparer(name_prefix="servicebustest", dead_lettering_on_message_expiration=True)
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasserAsync()
+    async def test_queue_async_by_queue_client_peek_auto_increment_multiple(
+        self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs
+    ):
+        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
+        credential = get_credential(is_async=True)
+        async with ServiceBusClient(
+            fully_qualified_namespace, credential, logging_enable=False, uamqp_transport=uamqp_transport
+        ) as sb_client:
+
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            async with sender:
+                messages = []
+                for i in range(4):
+                    message = ServiceBusMessage("Handler message no. {}".format(i), application_properties={"index": i})
+                    messages.append(message)
+                await sender.send_messages(messages)
+
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)
+            async with receiver:
+                peek_message = await receiver.peek_messages(max_message_count=2)
+                assert len(peek_message) == 2
+                assert peek_message[0].application_properties[b"index"] == 0
+                assert peek_message[0].sequence_number == 1
+                assert peek_message[1].application_properties[b"index"] == 1
+                assert peek_message[1].sequence_number == 2
+                peek_message = await receiver.peek_messages(max_message_count=2)
+                assert len(peek_message) == 2
+                assert peek_message[0].application_properties[b"index"] == 2
+                assert peek_message[0].sequence_number == 3
+                assert peek_message[1].application_properties[b"index"] == 3
+                assert peek_message[1].sequence_number == 4
+    
+    @pytest.mark.asyncio
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer(name_prefix="servicebustest")
+    @CachedServiceBusNamespacePreparer(name_prefix="servicebustest")
+    @ServiceBusQueuePreparer(name_prefix="servicebustest", dead_lettering_on_message_expiration=True)
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasserAsync()
+    async def test_queue_async_by_queue_client_peek_and_receive(
+        self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs
+    ):
+        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
+        credential = get_credential(is_async=True)
+        async with ServiceBusClient(
+            fully_qualified_namespace, credential, logging_enable=False, uamqp_transport=uamqp_transport
+        ) as sb_client:
+
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            async with sender:
+                messages = []
+                for i in range(4):
+                    message = ServiceBusMessage("Handler message no. {}".format(i), application_properties={"index": i})
+                    messages.append(message)
+                await sender.send_messages(messages)
+
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)
+            async with receiver:
+                peeked_messages = await receiver.peek_messages(max_message_count=2)
+
+                messages = await receiver.receive_messages(max_message_count=3)
+                last_received_sequnece_number = messages[-1].sequence_number
+                for message in messages:
+                    await receiver.complete_message(message)
+
+                peeked_messages = await receiver.peek_messages(max_message_count=2)
+                assert peeked_messages[0].sequence_number == last_received_sequnece_number + 1

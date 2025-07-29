@@ -20,10 +20,10 @@ class TestContainerAppsAPIBillingMetersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_billing_meters_get(self, resource_group):
         response = self.client.billing_meters.get(
             location="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself

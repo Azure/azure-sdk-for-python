@@ -1,5 +1,27 @@
 # Release History
 
+## 1.2.0b2 (2025-04-21)
+
+### Features Added
+
+  - Client `ElasticSanMgmtClient` added method `begin_restore_volume`
+  - Model `ElasticSanMgmtClient` added property `url`
+  - Enum `ProvisioningStates` added member `DELETED`
+  - Enum `ProvisioningStates` added member `RESTORING`
+  - Enum `ProvisioningStates` added member `SOFT_DELETING`
+  - Model `VolumeGroupProperties` added property `delete_retention_policy`
+  - Model `VolumeGroupUpdateProperties` added property `delete_retention_policy`
+  - Added model `DeleteRetentionPolicy`
+  - Added enum `DeleteType`
+  - Added model `DiskSnapshotList`
+  - Added enum `PolicyState`
+  - Added model `PreValidationResponse`
+  - Added model `VolumeNameList`
+  - Added enum `XMsAccessSoftDeletedResources`
+  - Operation group `VolumesOperations` added method `begin_pre_backup`
+  - Operation group `VolumesOperations` added method `begin_pre_restore`
+  - Added operation group `ElasticSanMgmtClientOperationsMixin`
+
 ## 1.2.0b1 (2024-10-20)
 
 ### Features Added

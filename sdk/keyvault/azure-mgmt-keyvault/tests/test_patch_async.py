@@ -11,8 +11,10 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from utils import all_api_versions
 
-AZURE_LOCATION = 'eastus'
+AZURE_LOCATION = "eastus"
 
+
+@pytest.mark.live_test_only
 class TestKeyVaultManagementVaultsPatchAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(KeyVaultManagementClient, is_async=True)

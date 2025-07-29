@@ -1,0 +1,31 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "test-rg",
+    "registryName": "registryName",
+    "modelName": "string",
+    "version": "string",
+    "api-version": "2025-01-01-preview",
+    "body": {
+      "pendingUploadId": "string",
+      "pendingUploadType": "TemporaryBlobReference"
+    }
+  },
+  "responses": {
+    "200": {
+      "headers": {},
+      "body": {
+        "blobReferenceForConsumption": {
+          "blobUri": "https://www.contoso.com/example",
+          "storageAccountArmId": "string",
+          "credential": {
+            "credentialType": "SAS",
+            "sasUri": "https://www.contoso.com/example"
+          }
+        },
+        "pendingUploadId": "string",
+        "pendingUploadType": "None"
+      }
+    }
+  }
+}

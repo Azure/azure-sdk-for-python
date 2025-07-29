@@ -1,17 +1,67 @@
 # Release History
 
-## 5.14.0 (2025-02-11)
+## 5.15.1 (Unreleased)
 
 ### Features Added
 
-- Add support for Decimal128 in pyAMQP ([#39511]https://github.com/Azure/azure-sdk-for-python/pull/39511)
+### Breaking Changes
 
 ### Bugs Fixed
 
-- Fix to handle websocket disconnect/close on aiohttp, as aiohttp raises a `TypeError` while asserting bytes. ([#32061](https://github.com/Azure/azure-sdk-for-python/pull/32061))
+### Other Changes
+
+## 5.15.0 (2025-04-15)
+
+### Features Added
+
+- Added support for geo-replication and disaster recovery-enabled Event Hubs. To learn more about geo-replication, refer to this [doc](https://learn.microsoft.com/azure/event-hubs/geo-replication). To enable geo-replication on your Dedicated Event Hubs namespace, refer to [this guide](https://learn.microsoft.com/azure/event-hubs/use-geo-replication).
+- Added a class method `from_bytes` to `EventData` to create from a message payload of bytes. ([#39711](https://github.com/Azure/azure-sdk-for-python/issues/39711))
+
+### Bugs Fixed
+
+- Fixed a bug where service errors were incorrectly required and expected to have info/description fields.
+- Fixed a bug so that the BufferedProducer ThreadPoolExecutor uses one worker per partition. ([#38961](https://github.com/Azure/azure-sdk-for-python/issues/38961))
+
+### Other Changes
+
+- Added support for handling a C# DateTime.MinValue timestamp, which is returned by the service as a sentinel for time which is not set.
+- Deprecating `uamqp_transport` in favor of pyAMQP transport. The `uamqp_transport` will be removed in the next minor release.
+- Fixed aiohttp websocket library showing a deprecation warning due to an incorrect timeout type ([#40429](https://github.com/Azure/azure-sdk-for-python/issues/40429))
+- Dropped support for Python 3.8
+- The following change has been temporarily pulled out and will be added to a future release:
+  - Implemented a new websockets library so that using `AmqpOverWebsocket` no longer requires separate optional dependency installations.
+
+## 5.15.0b2 (2025-03-14)
+
+### Features Added
+
+- Implemented a new websockets library so that using `AmqpOverWebsocket` no longer requires separate optional dependency installations.
+
+## 5.15.0b1 (2025-02-13)
+
+### Features Added
+
+- Added support for geo-replication and disaster recovery-enabled Event Hubs. To learn more about geo-replication, refer to this [doc](https://learn.microsoft.com/azure/event-hubs/geo-replication). To enable geo-replication on your Dedicated Event Hubs namespace, refer to [this guide](https://learn.microsoft.com/azure/event-hubs/use-geo-replication).
+
+### Bugs Fixed
+
+- Fixed a bug where service errors were incorrectly required and expected to have info/description fields.
+- Fixed a bug where max number of messages was not being requested when receiving from the service due to an incorrect link credit calculation.
+- Fixed a bug where the lowest possible timestamp returned by the service to represent an unset time was not being parsed correctly.
+
+## 5.14.0 (2025-02-13)
+
+### Features Added
+
+- Add support for Decimal128 in pyAMQP ([#39511](https://github.com/Azure/azure-sdk-for-python/pull/39511))
+
+### Bugs Fixed
+
+- Fixed a bug where async websocket disconnects were not being retried properly.
 - Fixed a bug where pyAMQP was doubly retrying, causing latency on reconnect. ([#39037](https://github.com/Azure/azure-sdk-for-python/pull/39037))
-- Fix to handle large messages being sent twice due to incoming flow frames triggering a resend. ([#38067](https://github.com/Azure/azure-sdk-for-python/pull/38067))
+- Fixed a bug where handle partial frames being sent twice due to multiple threads trying to send from the same outgoing internal buffer for large messages. ([#38067](https://github.com/Azure/azure-sdk-for-python/pull/38067))
 - Missing await in sender async on pyAMQP. ([#39182](https://github.com/Azure/azure-sdk-for-python/pull/39182))
+- Fixed a bug where message IDs in management operation requests were not unique.
 
 ### Other Changes
 

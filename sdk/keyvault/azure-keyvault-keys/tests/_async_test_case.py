@@ -63,7 +63,8 @@ class AsyncKeysClientPreparer(AzureRecordedTestCase):
 
         if self.is_live:
             self.vault_url = os.environ["AZURE_KEYVAULT_URL"]
-            self.managed_hsm_url = os.environ.get("AZURE_MANAGEDHSM_URL")
+            hsm = os.environ.get("AZURE_MANAGEDHSM_URL")
+            self.managed_hsm_url = hsm if hsm else None
         else:
             self.vault_url = vault_playback_url
             self.managed_hsm_url = hsm_playback_url

@@ -96,7 +96,7 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
     """
 
     @distributed_trace
-    def _get_schema_properties_by_content( # type: ignore[override] # pylint: disable=inconsistent-return-statements
+    def _get_schema_properties_by_content(  # type: ignore[override] # pylint: disable=inconsistent-return-statements
         self,
         group_name: str,
         schema_name: str,
@@ -186,7 +186,7 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
             return cls(pipeline_response, None, response_headers)
 
     @distributed_trace
-    def _register_schema(   # type: ignore[override]    # pylint: disable=inconsistent-return-statements
+    def _register_schema(  # type: ignore[override]    # pylint: disable=inconsistent-return-statements
         self,
         group_name: str,
         schema_name: str,

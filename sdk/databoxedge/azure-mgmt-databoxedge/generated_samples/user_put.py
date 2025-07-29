@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.databoxedge import DataBoxEdgeManagementClient
 
 """
@@ -40,6 +41,7 @@ def main():
                     "encryptionCertThumbprint": "blah",
                     "value": "<value>",
                 },
+                "shareAccessRights": [],
                 "userType": "Share",
             }
         },
@@ -47,6 +49,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/databoxedge/resource-manager/Microsoft.DataBoxEdge/stable/2022-03-01/examples/UserPut.json
+# x-ms-original-file: specification/databoxedge/resource-manager/Microsoft.DataBoxEdge/stable/2019-08-01/examples/UserPut.json
 if __name__ == "__main__":
     main()

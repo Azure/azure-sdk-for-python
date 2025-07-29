@@ -20,11 +20,11 @@ class TestSqlManagementServerConfigurationOptionsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_managed_instance(self, resource_group):
+    def test_server_configuration_options_list_by_managed_instance(self, resource_group):
         response = self.client.server_configuration_options.list_by_managed_instance(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
-            api_version="2022-08-01-preview",
+            api_version="2024-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,12 +32,12 @@ class TestSqlManagementServerConfigurationOptionsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_server_configuration_options_get(self, resource_group):
         response = self.client.server_configuration_options.get(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             server_configuration_option_name="str",
-            api_version="2022-08-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestSqlManagementServerConfigurationOptionsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_server_configuration_options_begin_create_or_update(self, resource_group):
         response = self.client.server_configuration_options.begin_create_or_update(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
@@ -57,7 +57,7 @@ class TestSqlManagementServerConfigurationOptionsOperations(AzureMgmtRecordedTes
                 "serverConfigurationOptionValue": 0,
                 "type": "str",
             },
-            api_version="2022-08-01-preview",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

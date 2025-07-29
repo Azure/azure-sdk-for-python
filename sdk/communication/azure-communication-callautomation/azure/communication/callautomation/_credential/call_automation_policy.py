@@ -26,12 +26,11 @@ class CallAutomationHMACCredentialsPolicy(SansIOHTTPPolicy):
 
     def __init__(
         self,
-        host,  # type: str
-        acs_url,  # type: str
-        access_key,  # type: Union[str, AzureKeyCredential]
-        decode_url=False,  # type: bool
-    ):
-        # type: (...) -> None
+        host: str,
+        acs_url: str,
+        access_key:  Union[str, AzureKeyCredential],
+        decode_url: bool = False,
+    ) -> None:
         super(CallAutomationHMACCredentialsPolicy, self).__init__()
 
         if host.startswith("https://"):
@@ -44,9 +43,7 @@ class CallAutomationHMACCredentialsPolicy(SansIOHTTPPolicy):
         self._decode_url = decode_url
         self._acs_url = acs_url
 
-    def _compute_hmac(
-        self, value  # type: str
-    ):
+    def _compute_hmac(self, value: str) -> str:
         if isinstance(self._access_key, AzureKeyCredential):
             decoded_secret = base64.b64decode(self._access_key.key)
         else:

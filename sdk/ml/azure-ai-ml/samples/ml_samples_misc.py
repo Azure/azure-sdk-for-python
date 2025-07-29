@@ -66,7 +66,7 @@ class MiscConfigurationOptions(object):
         from azure.ai.ml import load_job
         from azure.ai.ml.entities import PipelineJob
 
-        pipeline_job: PipelineJob = load_job(
+        pipeline_job: PipelineJob = load_job(  # type:ignore
             "./sdk/ml/azure-ai-ml/tests/test_configs/pipeline_jobs/invalid/combo.yml",
             params_override=[{"name": job_name}, {"compute": "cpucluster"}],
         )
@@ -132,7 +132,7 @@ class MiscConfigurationOptions(object):
             output_file_name="output-file-name",
             environment_variables={"env1": "value1", "env2": "value2"},
             error_threshold=2,
-            logging_level=1,
+            logging_level="1",
         )
         # [END model_batch_deployment_settings_entity_create]
 
@@ -151,7 +151,7 @@ class MiscConfigurationOptions(object):
         # [START model_package_entity_create]
         from azure.ai.ml.entities import AzureMLOnlineInferencingServer, CodeConfiguration, ModelPackage
 
-        modelPackage = ModelPackage(
+        modelPackage = ModelPackage(  # type:ignore
             inferencing_server=AzureMLOnlineInferencingServer(
                 code_configuration=CodeConfiguration(code="../model-1/foo/", scoring_script="score.py")
             ),
@@ -321,7 +321,9 @@ class MiscConfigurationOptions(object):
         from azure.ai.ml import load_job
         from azure.ai.ml.entities import JobSchedule, RecurrencePattern, RecurrenceTrigger
 
-        pipeline_job = load_job("./sdk/ml/azure-ai-ml/tests/test_configs/command_job/command_job_test_local_env.yml")
+        pipeline_job = load_job(
+            "./sdk/ml/azure-ai-ml/tests/test_configs/command_job/command_job_test_local_env.yml"
+        )  # type:ignore
         trigger = RecurrenceTrigger(
             frequency="week",
             interval=4,
@@ -337,7 +339,7 @@ class MiscConfigurationOptions(object):
         from azure.ai.ml.constants import TimeZone
         from azure.ai.ml.entities import CronTrigger
 
-        trigger = CronTrigger(
+        trigger = CronTrigger(  # type:ignore
             expression="15 10 * * 1",
             start_time=datetime(year=2022, month=3, day=10, hour=10, minute=15),
             end_time=datetime(year=2022, month=6, day=10, hour=10, minute=15),

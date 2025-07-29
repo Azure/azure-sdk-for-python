@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
+import sys
 from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
@@ -20,28 +21,32 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
-from ..._vendor import _convert_request
 from ...operations._gateway_operations import (
     build_create_or_update_request,
     build_delete_request,
     build_generate_token_request,
     build_get_entity_tag_request,
     build_get_request,
+    build_invalidate_debug_credentials_request,
     build_list_by_service_request,
+    build_list_debug_credentials_request,
     build_list_keys_request,
+    build_list_trace_request,
     build_regenerate_key_request,
     build_update_request,
 )
-from .._vendor import ApiManagementClientMixinABC
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -104,7 +109,7 @@ class GatewayOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.GatewayCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -126,7 +131,6 @@ class GatewayOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -142,7 +146,6 @@ class GatewayOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -188,7 +191,7 @@ class GatewayOperations:
         :rtype: bool
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -211,7 +214,6 @@ class GatewayOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -251,7 +253,7 @@ class GatewayOperations:
         :rtype: ~azure.mgmt.apimanagement.models.GatewayContract
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -274,7 +276,6 @@ class GatewayOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -292,7 +293,7 @@ class GatewayOperations:
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
-        deserialized = self._deserialize("GatewayContract", pipeline_response)
+        deserialized = self._deserialize("GatewayContract", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -398,7 +399,7 @@ class GatewayOperations:
         :rtype: ~azure.mgmt.apimanagement.models.GatewayContract
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -434,7 +435,6 @@ class GatewayOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -450,15 +450,9 @@ class GatewayOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        if response.status_code == 200:
-            response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
-            deserialized = self._deserialize("GatewayContract", pipeline_response)
-
-        if response.status_code == 201:
-            response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-
-            deserialized = self._deserialize("GatewayContract", pipeline_response)
+        deserialized = self._deserialize("GatewayContract", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -564,7 +558,7 @@ class GatewayOperations:
         :rtype: ~azure.mgmt.apimanagement.models.GatewayContract
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -600,7 +594,6 @@ class GatewayOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -618,7 +611,7 @@ class GatewayOperations:
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
-        deserialized = self._deserialize("GatewayContract", pipeline_response)
+        deserialized = self._deserialize("GatewayContract", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -626,7 +619,7 @@ class GatewayOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete(  # pylint: disable=inconsistent-return-statements
+    async def delete(
         self, resource_group_name: str, service_name: str, gateway_id: str, if_match: str, **kwargs: Any
     ) -> None:
         """Deletes specific Gateway.
@@ -646,7 +639,7 @@ class GatewayOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -670,7 +663,6 @@ class GatewayOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -706,7 +698,7 @@ class GatewayOperations:
         :rtype: ~azure.mgmt.apimanagement.models.GatewayKeysContract
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -729,7 +721,6 @@ class GatewayOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -747,7 +738,7 @@ class GatewayOperations:
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
-        deserialized = self._deserialize("GatewayKeysContract", pipeline_response)
+        deserialized = self._deserialize("GatewayKeysContract", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -755,7 +746,7 @@ class GatewayOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def regenerate_key(  # pylint: disable=inconsistent-return-statements
+    async def regenerate_key(
         self,
         resource_group_name: str,
         service_name: str,
@@ -786,7 +777,7 @@ class GatewayOperations:
         """
 
     @overload
-    async def regenerate_key(  # pylint: disable=inconsistent-return-statements
+    async def regenerate_key(
         self,
         resource_group_name: str,
         service_name: str,
@@ -817,7 +808,7 @@ class GatewayOperations:
         """
 
     @distributed_trace_async
-    async def regenerate_key(  # pylint: disable=inconsistent-return-statements
+    async def regenerate_key(
         self,
         resource_group_name: str,
         service_name: str,
@@ -843,7 +834,7 @@ class GatewayOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -878,7 +869,6 @@ class GatewayOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -983,7 +973,7 @@ class GatewayOperations:
         :rtype: ~azure.mgmt.apimanagement.models.GatewayTokenContract
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1018,7 +1008,6 @@ class GatewayOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1033,7 +1022,354 @@ class GatewayOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("GatewayTokenContract", pipeline_response)
+        deserialized = self._deserialize("GatewayTokenContract", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def invalidate_debug_credentials(
+        self, resource_group_name: str, service_name: str, gateway_id: str, **kwargs: Any
+    ) -> None:
+        """Action is invalidating all debug credentials issued for gateway.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param service_name: The name of the API Management service. Required.
+        :type service_name: str
+        :param gateway_id: Gateway entity identifier. Must be unique in the current API Management
+         service instance. Must not have value 'managed'. Required.
+        :type gateway_id: str
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_invalidate_debug_credentials_request(
+            resource_group_name=resource_group_name,
+            service_name=service_name,
+            gateway_id=gateway_id,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @overload
+    async def list_debug_credentials(
+        self,
+        resource_group_name: str,
+        service_name: str,
+        gateway_id: str,
+        parameters: _models.GatewayListDebugCredentialsContract,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.GatewayDebugCredentialsContract:
+        """Create new debug credentials for gateway.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param service_name: The name of the API Management service. Required.
+        :type service_name: str
+        :param gateway_id: Gateway entity identifier. Must be unique in the current API Management
+         service instance. Must not have value 'managed'. Required.
+        :type gateway_id: str
+        :param parameters: List debug credentials properties. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.GatewayListDebugCredentialsContract
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: GatewayDebugCredentialsContract or the result of cls(response)
+        :rtype: ~azure.mgmt.apimanagement.models.GatewayDebugCredentialsContract
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def list_debug_credentials(
+        self,
+        resource_group_name: str,
+        service_name: str,
+        gateway_id: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.GatewayDebugCredentialsContract:
+        """Create new debug credentials for gateway.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param service_name: The name of the API Management service. Required.
+        :type service_name: str
+        :param gateway_id: Gateway entity identifier. Must be unique in the current API Management
+         service instance. Must not have value 'managed'. Required.
+        :type gateway_id: str
+        :param parameters: List debug credentials properties. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: GatewayDebugCredentialsContract or the result of cls(response)
+        :rtype: ~azure.mgmt.apimanagement.models.GatewayDebugCredentialsContract
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def list_debug_credentials(
+        self,
+        resource_group_name: str,
+        service_name: str,
+        gateway_id: str,
+        parameters: Union[_models.GatewayListDebugCredentialsContract, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.GatewayDebugCredentialsContract:
+        """Create new debug credentials for gateway.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param service_name: The name of the API Management service. Required.
+        :type service_name: str
+        :param gateway_id: Gateway entity identifier. Must be unique in the current API Management
+         service instance. Must not have value 'managed'. Required.
+        :type gateway_id: str
+        :param parameters: List debug credentials properties. Is either a
+         GatewayListDebugCredentialsContract type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.GatewayListDebugCredentialsContract or
+         IO[bytes]
+        :return: GatewayDebugCredentialsContract or the result of cls(response)
+        :rtype: ~azure.mgmt.apimanagement.models.GatewayDebugCredentialsContract
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.GatewayDebugCredentialsContract] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "GatewayListDebugCredentialsContract")
+
+        _request = build_list_debug_credentials_request(
+            resource_group_name=resource_group_name,
+            service_name=service_name,
+            gateway_id=gateway_id,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("GatewayDebugCredentialsContract", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def list_trace(
+        self,
+        resource_group_name: str,
+        service_name: str,
+        gateway_id: str,
+        parameters: _models.GatewayListTraceContract,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> Dict[str, Any]:
+        """Fetches trace collected by gateway.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param service_name: The name of the API Management service. Required.
+        :type service_name: str
+        :param gateway_id: Gateway entity identifier. Must be unique in the current API Management
+         service instance. Must not have value 'managed'. Required.
+        :type gateway_id: str
+        :param parameters: List trace properties. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.GatewayListTraceContract
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: dict mapping str to any or the result of cls(response)
+        :rtype: dict[str, any]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def list_trace(
+        self,
+        resource_group_name: str,
+        service_name: str,
+        gateway_id: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> Dict[str, Any]:
+        """Fetches trace collected by gateway.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param service_name: The name of the API Management service. Required.
+        :type service_name: str
+        :param gateway_id: Gateway entity identifier. Must be unique in the current API Management
+         service instance. Must not have value 'managed'. Required.
+        :type gateway_id: str
+        :param parameters: List trace properties. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: dict mapping str to any or the result of cls(response)
+        :rtype: dict[str, any]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def list_trace(
+        self,
+        resource_group_name: str,
+        service_name: str,
+        gateway_id: str,
+        parameters: Union[_models.GatewayListTraceContract, IO[bytes]],
+        **kwargs: Any
+    ) -> Dict[str, Any]:
+        """Fetches trace collected by gateway.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param service_name: The name of the API Management service. Required.
+        :type service_name: str
+        :param gateway_id: Gateway entity identifier. Must be unique in the current API Management
+         service instance. Must not have value 'managed'. Required.
+        :type gateway_id: str
+        :param parameters: List trace properties. Is either a GatewayListTraceContract type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.apimanagement.models.GatewayListTraceContract or IO[bytes]
+        :return: dict mapping str to any or the result of cls(response)
+        :rtype: dict[str, any]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Dict[str, Any]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "GatewayListTraceContract")
+
+        _request = build_list_trace_request(
+            resource_group_name=resource_group_name,
+            service_name=service_name,
+            gateway_id=gateway_id,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("{object}", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

@@ -17,8 +17,7 @@ class ServiceBusSharedKeyCredentialPolicy(SansIOHTTPPolicy):
     :param str name:
     """
 
-    def __init__(self, endpoint, credential, name):
-        # type: (str, ServiceBusSharedKeyCredential, str) -> None
+    def __init__(self, endpoint: str, credential: ServiceBusSharedKeyCredential, name: str) -> None:
         super(ServiceBusSharedKeyCredentialPolicy, self).__init__()
         self._credential = credential
         self._endpoint = endpoint
@@ -36,8 +35,7 @@ class ServiceBusSharedKeyCredentialPolicy(SansIOHTTPPolicy):
             self._token_expiry_on = access_token.expires_on
             self._token = access_token.token
 
-    def on_request(self, request):
-        # type: (PipelineRequest) -> None
+    def on_request(self, request: PipelineRequest) -> None:
         """Adds an Authorization header to request and sends request to next policy.
 
         :param request: The pipeline request object

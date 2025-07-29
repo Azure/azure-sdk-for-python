@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 from collections.abc import AsyncIterator
 import functools
 import logging
@@ -194,10 +194,10 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
         except requests.exceptions.ChunkedEncodingError as err:
             msg = err.__str__()
             if "IncompleteRead" in msg:
-                _LOGGER.warning("Incomplete download: %s", err)
+                _LOGGER.warning("Incomplete download.")
                 error = IncompleteReadError(err, error=err)
             else:
-                _LOGGER.warning("Unable to stream download: %s", err)
+                _LOGGER.warning("Unable to stream download.")
                 error = HttpResponseError(err, error=err)
         except requests.RequestException as err:
             error = ServiceRequestError(err, error=err)
@@ -270,14 +270,14 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
         except requests.exceptions.ChunkedEncodingError as err:
             msg = err.__str__()
             if "IncompleteRead" in msg:
-                _LOGGER.warning("Incomplete download: %s", err)
+                _LOGGER.warning("Incomplete download.")
                 internal_response.close()
                 raise IncompleteReadError(err, error=err) from err
-            _LOGGER.warning("Unable to stream download: %s", err)
+            _LOGGER.warning("Unable to stream download.")
             internal_response.close()
             raise HttpResponseError(err, error=err) from err
-        except Exception as err:
-            _LOGGER.warning("Unable to stream download: %s", err)
+        except Exception:
+            _LOGGER.warning("Unable to stream download.")
             internal_response.close()
             raise
 

@@ -1,0 +1,40 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "test-rg",
+    "registryName": "registryName",
+    "name": "string",
+    "api-version": "2025-01-01-preview"
+  },
+  "responses": {
+    "200": {
+      "headers": {},
+      "body": {
+        "id": "string",
+        "name": "string",
+        "type": "string",
+        "properties": {
+          "description": "string",
+          "tags": {
+            "string": "string"
+          },
+          "properties": {
+            "string": "string"
+          },
+          "isArchived": false,
+          "latestVersion": "string",
+          "nextVersion": "string",
+          "dataType": "uri_file"
+        },
+        "systemData": {
+          "createdAt": "2020-01-01T12:34:56.999+00:14",
+          "createdBy": "string",
+          "createdByType": "Key",
+          "lastModifiedAt": "2020-01-01T12:34:56.999+00:14",
+          "lastModifiedBy": "string",
+          "lastModifiedByType": "Key"
+        }
+      }
+    }
+  }
+}

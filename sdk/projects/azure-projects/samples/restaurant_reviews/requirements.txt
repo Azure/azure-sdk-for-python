@@ -1,0 +1,4 @@
+pydantic
+Flask
+azure-data-tables
+azure-monitor-opentelemetry

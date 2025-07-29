@@ -21,11 +21,11 @@ class TestElasticSanMgmtVolumeGroupsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_elastic_san(self, resource_group):
+    async def test_volume_groups_list_by_elastic_san(self, resource_group):
         response = self.client.volume_groups.list_by_elastic_san(
             resource_group_name=resource_group.name,
             elastic_san_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2024-07-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestElasticSanMgmtVolumeGroupsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create(self, resource_group):
+    async def test_volume_groups_begin_create(self, resource_group):
         response = await (
             await self.client.volume_groups.begin_create(
                 resource_group_name=resource_group.name,
@@ -49,6 +49,7 @@ class TestElasticSanMgmtVolumeGroupsOperationsAsync(AzureMgmtRecordedTestCase):
                     },
                     "name": "str",
                     "properties": {
+                        "deleteRetentionPolicy": {"policyState": "str", "retentionPeriodDays": 0},
                         "encryption": "str",
                         "encryptionProperties": {
                             "identity": {"userAssignedIdentity": "str"},
@@ -101,7 +102,7 @@ class TestElasticSanMgmtVolumeGroupsOperationsAsync(AzureMgmtRecordedTestCase):
                     },
                     "type": "str",
                 },
-                api_version="2024-06-01-preview",
+                api_version="2024-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -110,7 +111,7 @@ class TestElasticSanMgmtVolumeGroupsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_volume_groups_begin_update(self, resource_group):
         response = await (
             await self.client.volume_groups.begin_update(
                 resource_group_name=resource_group.name,
@@ -124,6 +125,7 @@ class TestElasticSanMgmtVolumeGroupsOperationsAsync(AzureMgmtRecordedTestCase):
                         "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                     },
                     "properties": {
+                        "deleteRetentionPolicy": {"policyState": "str", "retentionPeriodDays": 0},
                         "encryption": "str",
                         "encryptionProperties": {
                             "identity": {"userAssignedIdentity": "str"},
@@ -141,7 +143,7 @@ class TestElasticSanMgmtVolumeGroupsOperationsAsync(AzureMgmtRecordedTestCase):
                         "protocolType": "str",
                     },
                 },
-                api_version="2024-06-01-preview",
+                api_version="2024-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -150,13 +152,13 @@ class TestElasticSanMgmtVolumeGroupsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_volume_groups_begin_delete(self, resource_group):
         response = await (
             await self.client.volume_groups.begin_delete(
                 resource_group_name=resource_group.name,
                 elastic_san_name="str",
                 volume_group_name="str",
-                api_version="2024-06-01-preview",
+                api_version="2024-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -165,12 +167,12 @@ class TestElasticSanMgmtVolumeGroupsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_volume_groups_get(self, resource_group):
         response = await self.client.volume_groups.get(
             resource_group_name=resource_group.name,
             elastic_san_name="str",
             volume_group_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2024-07-01-preview",
         )
 
         # please add some check logic here by yourself

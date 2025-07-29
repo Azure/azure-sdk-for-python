@@ -1,0 +1,74 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "test-rg",
+    "workspaceName": "my-aml-workspace",
+    "api-version": "2025-01-01-preview",
+    "$skipToken": "string",
+    "count": 1,
+    "tags": "string",
+    "properties": "string",
+    "orderBy": "UpdatedAtAsc"
+  },
+  "responses": {
+    "200": {
+      "headers": {},
+      "body": {
+        "value": [
+          {
+            "id": "string",
+            "name": "string",
+            "type": "string",
+            "properties": {
+              "description": "string",
+              "properties": [
+                {
+                  "key": "string",
+                  "value": "string"
+                }
+              ],
+              "provisioningState": "Failed",
+              "scaleUnitConfiguration": {
+                "registries": [
+                  "string",
+                  "registryName1"
+                ],
+                "disablePublicEgress": false
+              }
+            },
+            "systemData": {
+              "createdAt": "2020-01-01T12:34:56.999+00:22",
+              "createdBy": "string",
+              "createdByType": "Application",
+              "lastModifiedAt": "2020-01-01T12:34:56.999+00:22",
+              "lastModifiedBy": "string",
+              "lastModifiedByType": "Application"
+            },
+            "tags": {},
+            "location": "string",
+            "kind": "string",
+            "identity": {
+              "type": "UserAssigned",
+              "principalId": "00000000-1111-2222-3333-444444444444",
+              "tenantId": "00000000-1111-2222-3333-444444444444",
+              "userAssignedIdentities": {
+                "string": {
+                  "principalId": "00000000-1111-2222-3333-444444444444",
+                  "clientId": "00000000-1111-2222-3333-444444444444"
+                }
+              }
+            },
+            "sku": {
+              "name": "string",
+              "tier": "Premium",
+              "size": "string",
+              "family": "string",
+              "capacity": 1
+            }
+          }
+        ],
+        "nextLink": "string"
+      }
+    }
+  }
+}

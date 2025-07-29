@@ -27,6 +27,8 @@ import logging
 import os
 import sys
 import pytest
+from typing import NamedTuple
+from unittest.mock import patch, MagicMock
 
 # module under test
 import azure.core.settings as m
@@ -201,32 +203,39 @@ class TestStandardSettings(object):
         assert val.tracing_enabled is False
         assert val.log_level == 10
 
-        val = m.settings.config(log_level=30, tracing_enabled=False)
+        val = m.settings.config(log_level=30, tracing_enabled=False, tracing_implementation=None)
         assert val.tracing_enabled is False
         assert val.log_level == 30
+        assert val.tracing_implementation is None
         del os.environ["AZURE_LOG_LEVEL"]
 
         val = m.settings.config(azure_cloud=AzureClouds.AZURE_US_GOVERNMENT)
         assert val.azure_cloud == AzureClouds.AZURE_US_GOVERNMENT
 
     def test_defaults(self):
-        val = m.settings.defaults
-        # assert isinstance(val, tuple)
-        defaults = m.settings.config(log_level=20, tracing_enabled=False, tracing_implementation=None)
-        assert val.log_level == defaults.log_level
-        assert val.tracing_enabled == defaults.tracing_enabled
-        assert val.tracing_implementation == defaults.tracing_implementation
+        val: NamedTuple = m.settings.defaults
+        assert val.log_level == logging.INFO
+        assert val.tracing_enabled is None
+        assert val.tracing_implementation is None
         assert val.azure_cloud == AzureClouds.AZURE_PUBLIC_CLOUD
-        os.environ["AZURE_LOG_LEVEL"] = "debug"
-        defaults = m.settings.config(log_level=20, tracing_enabled=False, tracing_implementation=None)
-        assert val.log_level == defaults.log_level
-        assert val.tracing_enabled == defaults.tracing_enabled
-        assert val.tracing_implementation == defaults.tracing_implementation
-        del os.environ["AZURE_LOG_LEVEL"]
-        os.environ["AZURE_CLOUD"] = "AZURE_PUBLIC_CLOUD"
-        defaults = m.settings.config(log_level=20, tracing_enabled=False, tracing_implementation=None)
-        assert val.azure_cloud == AzureClouds.AZURE_PUBLIC_CLOUD
-        del os.environ["AZURE_CLOUD"]
+
+    def test_tracing_setting(self):
+        mock_tracing_impl = MagicMock()
+
+        assert m.settings.tracing_enabled() is False
+        assert m.settings.tracing_implementation() is None
+
+        m.settings.tracing_enabled = None
+        assert m.settings.tracing_enabled() is False
+        m.settings.tracing_implementation = mock_tracing_impl
+
+        assert m.settings.tracing_implementation() == mock_tracing_impl
+        assert m.settings.tracing_enabled() is True
+
+        m.settings.tracing_enabled = False
+        assert m.settings.tracing_enabled() is False
+
+        m.settings.tracing_implementation = None
 
     def test_current(self):
         os.environ["AZURE_LOG_LEVEL"] = "debug"

@@ -1,5 +1,34 @@
 # Release History
 
+## 12.24.0b1 (Unreleased)
+
+### Features Added
+
+## 12.22.0 (2025-07-16)
+
+### Features Added
+- Stable release of features from 12.22.0b1
+
+## 12.23.0b1 (2025-06-12)
+
+This version and all future versions will require Python 3.9+. Python 3.8 is no longer supported.
+
+### Features Added
+- Added support for service version 2025-11-05.
+- Added support for better error handling for copy operations.
+
+## 12.22.0b1 (2025-05-06)
+
+### Features Added
+- Added support for service version 2025-07-05.
+- Added new `create_symbolic_link` and `get_symbolic_link` APIs to `ShareFileClient` to 
+create/get symbolic links to specified files and is only supported for the `NFS` protocol.
+
+## 12.21.0 (2025-03-11)
+
+### Features Added
+- Stable release of features from 12.21.0b1
+
 ## 12.21.0b1 (2025-02-11)
 
 ### Features Added

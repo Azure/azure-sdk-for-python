@@ -15,7 +15,7 @@ DESCRIPTION:
         * shared access key
         * generating a sas token with which the returned signature can be used with
     the credential parameter of any TableServiceClient or TableClient
-        * Azure Active Directory(AAD)
+        * Microsoft Entra ID
 
 USAGE:
     python sample_authentication.py
@@ -27,7 +27,7 @@ USAGE:
     The following environment variables are required for using azure-identity's DefaultAzureCredential.
     For more information, please refer to https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
     4) AZURE_TENANT_ID - the tenant ID in Azure Active Directory
-    5) AZURE_CLIENT_ID - the application (client) ID registered in the AAD tenant
+    5) AZURE_CLIENT_ID - the application (client) ID registered in the Microsoft Entra tenant
     6) AZURE_CLIENT_SECRET - the client secret for the registered application
 """
 
@@ -89,16 +89,16 @@ class TableAuthSamples(object):
             print(f"{properties}")
         # [END auth_from_sas]
 
-    def authentication_by_AAD(self):
+    def authentication_by_entra(self):
         print("Instantiate a TableServiceClient using a TokenCredential")
-        # [START auth_from_aad]
+        # [START auth_from_entra]
         from azure.data.tables import TableServiceClient
         from azure.identity import DefaultAzureCredential
 
         with TableServiceClient(endpoint=self.endpoint, credential=DefaultAzureCredential()) as table_service_client:
             properties = table_service_client.get_service_properties()
             print(f"{properties}")
-        # [END auth_from_aad]
+        # [END auth_from_entra]
 
 
 if __name__ == "__main__":
@@ -106,4 +106,4 @@ if __name__ == "__main__":
     sample.authentication_by_connection_string()
     sample.authentication_by_shared_key()
     sample.authentication_by_shared_access_signature()
-    sample.authentication_by_AAD()
+    sample.authentication_by_entra()

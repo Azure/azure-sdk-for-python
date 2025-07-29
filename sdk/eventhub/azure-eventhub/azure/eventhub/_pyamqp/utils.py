@@ -14,9 +14,23 @@ from .types import TYPE, VALUE, AMQPTypes
 from ._encode import encode_payload
 
 TZ_UTC: timezone = timezone.utc
+# Number of seconds between the Unix epoch (1/1/1970) and year 1 CE.
+# This is the lowest value that can be represented by an AMQP timestamp.
+CE_ZERO_SECONDS: int = -62_135_596_800
 
 
-def utc_from_timestamp(timestamp):
+def utc_from_timestamp(timestamp: float) -> datetime.datetime:
+    """
+    :param float timestamp: Timestamp in seconds to be converted to datetime.
+    :rtype: datetime.datetime
+    :returns: A datetime object representing the timestamp in UTC.
+    """
+    # The AMQP timestamp is the number of seconds since the Unix epoch.
+    # AMQP brokers represent the lowest value as -62_135_596_800 (the
+    # number of seconds between the Unix epoch (1/1/1970) and year 1 CE) as
+    # a sentinel for a time which is not set.
+    if timestamp == CE_ZERO_SECONDS:
+        return datetime.datetime.min.replace(tzinfo=TZ_UTC)
     return datetime.datetime.fromtimestamp(timestamp, tz=TZ_UTC)
 
 

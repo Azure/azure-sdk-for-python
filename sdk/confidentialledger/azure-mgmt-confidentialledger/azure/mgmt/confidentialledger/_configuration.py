@@ -14,11 +14,10 @@ from azure.mgmt.core.policies import ARMChallengeAuthenticationPolicy, ARMHttpLo
 from ._version import VERSION
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class ConfidentialLedgerConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class ConfidentialLedgerConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for ConfidentialLedger.
 
     Note that all parameters used to create this instance are saved as instance
@@ -28,13 +27,13 @@ class ConfidentialLedgerConfiguration:  # pylint: disable=too-many-instance-attr
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
-    :keyword api_version: Api Version. Default value is "2023-06-28-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2024-09-19-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, credential: "TokenCredential", subscription_id: str, **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2023-06-28-preview")
+        api_version: str = kwargs.pop("api_version", "2024-09-19-preview")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

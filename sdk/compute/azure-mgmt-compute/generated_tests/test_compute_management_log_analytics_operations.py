@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.compute import ComputeManagementClient
+from azure.mgmt.compute.v2024_11_01 import ComputeManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -34,7 +34,7 @@ class TestComputeManagementLogAnalyticsOperations(AzureMgmtRecordedTestCase):
                 "groupByThrottlePolicy": bool,
                 "groupByUserAgent": bool,
             },
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -55,7 +55,7 @@ class TestComputeManagementLogAnalyticsOperations(AzureMgmtRecordedTestCase):
                 "groupByThrottlePolicy": bool,
                 "groupByUserAgent": bool,
             },
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

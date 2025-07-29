@@ -3,6 +3,7 @@
 
 from typing import no_type_check, Optional, Tuple
 from urllib.parse import urlparse
+import math
 
 from opentelemetry.semconv.attributes import (
     client_attributes,
@@ -10,8 +11,26 @@ from opentelemetry.semconv.attributes import (
     url_attributes,
     user_agent_attributes,
 )
+from opentelemetry.context import Context
+from opentelemetry.trace import get_current_span
+from opentelemetry.sdk.trace.sampling import (
+    Decision,
+    SamplingResult,
+    _get_parent_trace_state,
+)
 from opentelemetry.semconv.trace import DbSystemValues, SpanAttributes
 from opentelemetry.util.types import Attributes
+
+# pylint:disable=no-name-in-module
+from fixedint import Int32
+
+from azure.monitor.opentelemetry.exporter._constants import _SAMPLE_RATE_KEY
+
+from azure.monitor.opentelemetry.exporter._constants import (
+    _SAMPLING_HASH,
+    _INTEGER_MAX,
+    _INTEGER_MIN,
+)
 
 
 # pylint:disable=too-many-return-statements
@@ -68,8 +87,9 @@ def _get_azure_sdk_target_source(attributes: Attributes) -> Optional[str]:
     # Currently logic only works for ServiceBus and EventHub
     if attributes:
         # New semconv attributes: https://github.com/Azure/azure-sdk-for-python/pull/29203
-        # TODO: Keep track of when azure-sdk supports stable semconv for these fields
-        peer_address = attributes.get("net.peer.name") or attributes.get("peer.address")
+        peer_address = (
+            attributes.get("server.address") or attributes.get("net.peer.name") or attributes.get("peer.address")
+        )
         destination = attributes.get("messaging.destination.name") or attributes.get("message_bus.destination")
         if peer_address and destination:
             return str(peer_address) + "/" + str(destination)
@@ -152,13 +172,15 @@ def _get_target_for_dependency_from_peer(attributes: Attributes) -> Optional[str
 @no_type_check
 def _get_target_and_path_for_http_dependency(
     attributes: Attributes,
-    target: Optional[str] = "",
     url: Optional[str] = "",  # Usually populated by _get_url_for_http_dependency()
 ) -> Tuple[Optional[str], str]:
     parsed_url = None
+    target = ""
     path = "/"
     default_port = _get_default_port_http(attributes)
     # Find path from url
+    if not url:
+        url = _get_url_for_http_dependency(attributes)
     try:
         parsed_url = urlparse(url)
         if parsed_url.path:
@@ -174,29 +196,34 @@ def _get_target_and_path_for_http_dependency(
             # if not default port, include port in target
             if server_port != default_port:
                 target = "{}:{}".format(target, server_port)
-        # We only use these values for target if not already populated by peer.service
-        elif not SpanAttributes.PEER_SERVICE in attributes:
-            # Target from http.host
-            if SpanAttributes.HTTP_HOST in attributes:
-                host = attributes[SpanAttributes.HTTP_HOST]
-                try:
-                    # urlparse insists on absolute URLs starting with "//"
-                    # This logic assumes host does not include a "//"
-                    host_name = urlparse("//" + str(host))
-                    # Ignore port from target if default port
-                    if host_name.port == default_port:
-                        target = host_name.hostname
-                    else:
-                        # Else include the whole host as the target
-                        target = str(host)
-                except Exception:  # pylint: disable=broad-except
-                    pass
-            elif parsed_url:
-                # Target from httpUrl
-                if parsed_url.port and parsed_url.port == default_port:
-                    target = parsed_url.hostname
+        # Target from peer.service
+        elif SpanAttributes.PEER_SERVICE in attributes:
+            target = attributes[SpanAttributes.PEER_SERVICE]
+        # Target from http.host
+        elif SpanAttributes.HTTP_HOST in attributes:
+            host = attributes[SpanAttributes.HTTP_HOST]
+            try:
+                # urlparse insists on absolute URLs starting with "//"
+                # This logic assumes host does not include a "//"
+                host_name = urlparse("//" + str(host))
+                # Ignore port from target if default port
+                if host_name.port == default_port:
+                    target = host_name.hostname
                 else:
-                    target = parsed_url.netloc
+                    # Else include the whole host as the target
+                    target = str(host)
+            except Exception:  # pylint: disable=broad-except
+                pass
+        elif parsed_url:
+            # Target from httpUrl
+            if parsed_url.port and parsed_url.port == default_port:
+                if parsed_url.hostname:
+                    target = parsed_url.hostname
+            elif parsed_url.netloc:
+                target = parsed_url.netloc
+        if not target:
+            # Get target from peer.* attributes that are NOT peer.service
+            target = _get_target_for_dependency_from_peer(attributes)
     return (target, path)
 
 
@@ -268,24 +295,24 @@ def _get_url_for_http_request(attributes: Attributes) -> Optional[str]:
         http_target = ""
         if url_attributes.URL_PATH in attributes:
             http_target = attributes.get(url_attributes.URL_PATH, "")
-        if url_attributes.URL_QUERY in attributes:
-            http_target = "{}?{}".format(
-                http_target,
-                attributes.get(url_attributes.URL_QUERY, "")
-            )
-        if not http_target:
+            if http_target and url_attributes.URL_QUERY in attributes:
+                http_target = "{}?{}".format(
+                    http_target,
+                    attributes.get(url_attributes.URL_QUERY, "")
+                )
+        elif SpanAttributes.HTTP_TARGET in attributes:
             http_target = attributes.get(SpanAttributes.HTTP_TARGET)
         if scheme and http_target:
             # Host
             http_host = ""
             if server_attributes.SERVER_ADDRESS in attributes:
                 http_host = attributes.get(server_attributes.SERVER_ADDRESS, "")
-            if server_attributes.SERVER_PORT in attributes:
-                http_host = "{}:{}".format(
-                    http_host,
-                    attributes.get(server_attributes.SERVER_PORT, "")
-                )
-            if not http_host:
+                if http_host and server_attributes.SERVER_PORT in attributes:
+                    http_host = "{}:{}".format(
+                        http_host,
+                        attributes.get(server_attributes.SERVER_PORT, "")
+                    )
+            elif SpanAttributes.HTTP_HOST in attributes:
                 http_host = attributes.get(SpanAttributes.HTTP_HOST, "")
             if http_host:
                 url = "{}://{}{}".format(
@@ -312,3 +339,65 @@ def _get_url_for_http_request(attributes: Attributes) -> Optional[str]:
                     http_target,
                 )
     return url
+
+def _get_DJB2_sample_score(trace_id_hex: str) -> float:
+    # This algorithm uses 32bit integers
+    hash_value = Int32(_SAMPLING_HASH)
+    for char in trace_id_hex:
+        hash_value = ((hash_value << 5) + hash_value) + ord(char)
+
+    if hash_value == _INTEGER_MIN:
+        hash_value = int(_INTEGER_MAX)
+    else:
+        hash_value = abs(hash_value)
+
+    # divide by _INTEGER_MAX for value between 0 and 1 for sampling score
+    return float(hash_value) / _INTEGER_MAX
+
+def _round_down_to_nearest(sampling_percentage: float) -> float:
+    if sampling_percentage == 0:
+        return 0
+    # Handle extremely small percentages that would cause overflow
+    if sampling_percentage <= _INTEGER_MIN:  # Extremely small threshold
+        return 0.0
+    item_count = 100.0 / sampling_percentage
+    # Handle case where item_count is infinity or too large for math.ceil
+    if not math.isfinite(item_count) or item_count >= _INTEGER_MAX:
+        return 0.0
+    return 100.0 / math.ceil(item_count)
+
+def parent_context_sampling(
+    parent_context: Optional[Context],
+    attributes: Attributes = None
+) -> Optional["SamplingResult"]:
+
+    if parent_context is not None:
+        parent_span = get_current_span(parent_context)
+        parent_span_context = parent_span.get_span_context()
+        if parent_span_context.is_valid and not parent_span_context.is_remote:
+            if not parent_span.is_recording():
+                # Parent was dropped, drop this child too
+                new_attributes = {} if attributes is None else dict(attributes)
+                new_attributes[_SAMPLE_RATE_KEY] = 0.0
+
+                return SamplingResult(
+                    Decision.DROP,
+                    new_attributes,
+                    _get_parent_trace_state(parent_context),
+                )
+
+            parent_attributes = getattr(parent_span, 'attributes', {})
+            parent_sample_rate = parent_attributes.get(_SAMPLE_RATE_KEY)
+
+            if parent_sample_rate is not None:
+                # Honor parent's sampling rate
+                new_attributes = {} if attributes is None else dict(attributes)
+                new_attributes[_SAMPLE_RATE_KEY] = parent_sample_rate
+
+                return SamplingResult(
+                    Decision.RECORD_AND_SAMPLE,
+                    new_attributes,
+                    _get_parent_trace_state(parent_context),
+                )
+        return None
+    return None

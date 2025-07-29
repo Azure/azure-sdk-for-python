@@ -123,7 +123,7 @@ class StressTestRunner:
         self.logger = get_logger(logfile_name, "stress_test", self.logging_level, rotating_logs=self.rotating_logs)
         self.process_monitor = process_monitor or ProcessMonitor(
             "monitor_{}".format(logfile_name),
-            "test_stress_queues",
+            "stress_test_queues",
             print_console=PRINT_CONSOLE,
         )
 

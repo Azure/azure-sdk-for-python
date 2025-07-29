@@ -21,7 +21,7 @@ class TestEdgeZonesMgmtExtendedZonesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_extended_zones_get(self, resource_group):
         response = await self.client.extended_zones.get(
             extended_zone_name="str",
         )
@@ -31,7 +31,7 @@ class TestEdgeZonesMgmtExtendedZonesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_subscription(self, resource_group):
+    async def test_extended_zones_list_by_subscription(self, resource_group):
         response = self.client.extended_zones.list_by_subscription()
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -39,7 +39,7 @@ class TestEdgeZonesMgmtExtendedZonesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_register(self, resource_group):
+    async def test_extended_zones_register(self, resource_group):
         response = await self.client.extended_zones.register(
             extended_zone_name="str",
         )
@@ -49,7 +49,7 @@ class TestEdgeZonesMgmtExtendedZonesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_unregister(self, resource_group):
+    async def test_extended_zones_unregister(self, resource_group):
         response = await self.client.extended_zones.unregister(
             extended_zone_name="str",
         )

@@ -153,7 +153,6 @@ steps:
       }
       Write-Host (Get-Command python).Source
 
-      python -m pip install coverage==7.2.5
       python scripts/devops_tasks/create_coverage.py
     displayName: Report Coverage
     condition: and(succeeded(), ${{ parameters.RunCoverage }})

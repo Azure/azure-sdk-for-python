@@ -1,0 +1,46 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "workspace-1234",
+    "workspaceName": "testworkspace",
+    "api-version": "2025-01-01-preview"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "value": [
+          {
+            "properties": {
+              "category": "Azure Active Directory",
+              "endpoints": [
+                {
+                  "domainName": "login.microsoftonline.com",
+                  "endpointDetails": [
+                    {
+                      "port": 443
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "properties": {
+              "category": "Azure portal",
+              "endpoints": [
+                {
+                  "domainName": "management.azure.com",
+                  "endpointDetails": [
+                    {
+                      "port": 443
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}

@@ -21,11 +21,11 @@ class TestContainerAppsAPIConnectedEnvironmentsStoragesOperationsAsync(AzureMgmt
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_connected_environments_storages_list(self, resource_group):
         response = await self.client.connected_environments_storages.list(
             resource_group_name=resource_group.name,
             connected_environment_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestContainerAppsAPIConnectedEnvironmentsStoragesOperationsAsync(AzureMgmt
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_connected_environments_storages_get(self, resource_group):
         response = await self.client.connected_environments_storages.get(
             resource_group_name=resource_group.name,
             connected_environment_name="str",
             storage_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestContainerAppsAPIConnectedEnvironmentsStoragesOperationsAsync(AzureMgmt
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_connected_environments_storages_create_or_update(self, resource_group):
         response = await self.client.connected_environments_storages.create_or_update(
             resource_group_name=resource_group.name,
             connected_environment_name="str",
@@ -55,15 +55,7 @@ class TestContainerAppsAPIConnectedEnvironmentsStoragesOperationsAsync(AzureMgmt
                 "id": "str",
                 "name": "str",
                 "properties": {
-                    "azureFile": {"accessMode": "str", "accountKey": "str", "accountName": "str", "shareName": "str"},
-                    "smb": {
-                        "accessMode": "str",
-                        "domain": "str",
-                        "host": "str",
-                        "password": "str",
-                        "shareName": "str",
-                        "username": "str",
-                    },
+                    "azureFile": {"accessMode": "str", "accountKey": "str", "accountName": "str", "shareName": "str"}
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -75,7 +67,7 @@ class TestContainerAppsAPIConnectedEnvironmentsStoragesOperationsAsync(AzureMgmt
                 },
                 "type": "str",
             },
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -83,12 +75,12 @@ class TestContainerAppsAPIConnectedEnvironmentsStoragesOperationsAsync(AzureMgmt
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_connected_environments_storages_delete(self, resource_group):
         response = await self.client.connected_environments_storages.delete(
             resource_group_name=resource_group.name,
             connected_environment_name="str",
             storage_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself

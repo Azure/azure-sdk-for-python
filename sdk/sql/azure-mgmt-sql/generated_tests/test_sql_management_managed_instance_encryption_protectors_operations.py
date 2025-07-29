@@ -20,24 +20,11 @@ class TestSqlManagementManagedInstanceEncryptionProtectorsOperations(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_revalidate(self, resource_group):
-        response = self.client.managed_instance_encryption_protectors.begin_revalidate(
-            resource_group_name=resource_group.name,
-            managed_instance_name="str",
-            encryption_protector_name="str",
-            api_version="2020-11-01-preview",
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_list_by_instance(self, resource_group):
+    def test_managed_instance_encryption_protectors_list_by_instance(self, resource_group):
         response = self.client.managed_instance_encryption_protectors.list_by_instance(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,12 +32,12 @@ class TestSqlManagementManagedInstanceEncryptionProtectorsOperations(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_managed_instance_encryption_protectors_get(self, resource_group):
         response = self.client.managed_instance_encryption_protectors.get(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             encryption_protector_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -58,7 +45,7 @@ class TestSqlManagementManagedInstanceEncryptionProtectorsOperations(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_managed_instance_encryption_protectors_begin_create_or_update(self, resource_group):
         response = self.client.managed_instance_encryption_protectors.begin_create_or_update(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
@@ -74,7 +61,20 @@ class TestSqlManagementManagedInstanceEncryptionProtectorsOperations(AzureMgmtRe
                 "type": "str",
                 "uri": "str",
             },
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_managed_instance_encryption_protectors_begin_revalidate(self, resource_group):
+        response = self.client.managed_instance_encryption_protectors.begin_revalidate(
+            resource_group_name=resource_group.name,
+            managed_instance_name="str",
+            encryption_protector_name="str",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

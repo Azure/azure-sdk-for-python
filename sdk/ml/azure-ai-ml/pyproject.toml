@@ -1,11 +1,13 @@
 [tool.azure-sdk-build]
 mypy = true
 pyright = false
-type_check_samples = false
+type_check_samples = true
 pylint = true
 mindependency = false
 latestdependency = false
 black = true
+absolute_cov = true
+absolute_cov_percent = 65
 
 [tool.isort]
 profile = "black"

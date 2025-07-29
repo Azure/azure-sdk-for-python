@@ -34,12 +34,12 @@ def main():
         resource_group_name="securityalert-4799",
         managed_instance_name="securityalert-6440",
         database_name="testdb",
-        security_alert_policy_name="Default",
+        security_alert_policy_name="default",
         parameters={"properties": {"state": "Enabled"}},
     )
     print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2020-11-01-preview/examples/ManagedDatabaseSecurityAlertCreateMin.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2024-05-01-preview/examples/ManagedDatabaseSecurityAlertCreateMin.json
 if __name__ == "__main__":
     main()

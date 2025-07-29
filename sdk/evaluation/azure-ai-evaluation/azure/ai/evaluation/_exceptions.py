@@ -9,6 +9,15 @@ from typing import Optional
 from azure.core.exceptions import AzureError
 
 
+class ErrorMessage(Enum):
+    """Error messages to be used when raising EvaluationException.
+
+    These messages are used to provide a consistent error message format across the SDK.
+    """
+
+    MALFORMED_CONVERSATION_HISTORY = "Malformed Conversation History: Query parameter representing conversation history should have exactly one more user query than agent responses"
+
+
 class ErrorCategory(Enum):
     """Error category to be specified when using EvaluationException class.
 
@@ -38,6 +47,7 @@ class ErrorCategory(Enum):
     FAILED_REMOTE_TRACKING = "FAILED REMOTE TRACKING"
     PROJECT_ACCESS_ERROR = "PROJECT ACCESS ERROR"
     UNKNOWN = "UNKNOWN"
+    UPLOAD_ERROR = "UPLOAD ERROR"
 
 
 class ErrorBlame(Enum):
@@ -62,15 +72,18 @@ class ErrorTarget(Enum):
     CODE_CLIENT = "CodeClient"
     RAI_CLIENT = "RAIClient"
     COHERENCE_EVALUATOR = "CoherenceEvaluator"
+    COMPLETENESS_EVALUATOR = "CompletenessEvaluator"
     CONTENT_SAFETY_CHAT_EVALUATOR = "ContentSafetyEvaluator"
     ECI_EVALUATOR = "ECIEvaluator"
     F1_EVALUATOR = "F1Evaluator"
     GROUNDEDNESS_EVALUATOR = "GroundednessEvaluator"
     PROTECTED_MATERIAL_EVALUATOR = "ProtectedMaterialEvaluator"
+    INTENT_RESOLUTION_EVALUATOR = "IntentResolutionEvaluator"
     RELEVANCE_EVALUATOR = "RelevanceEvaluator"
     SIMILARITY_EVALUATOR = "SimilarityEvaluator"
     FLUENCY_EVALUATOR = "FluencyEvaluator"
     RETRIEVAL_EVALUATOR = "RetrievalEvaluator"
+    TASK_ADHERENCE_EVALUATOR = "TaskAdherenceEvaluator"
     INDIRECT_ATTACK_EVALUATOR = "IndirectAttackEvaluator"
     INDIRECT_ATTACK_SIMULATOR = "IndirectAttackSimulator"
     ADVERSARIAL_SIMULATOR = "AdversarialSimulator"
@@ -80,6 +93,10 @@ class ErrorTarget(Enum):
     MODELS = "Models"
     UNKNOWN = "Unknown"
     CONVERSATION = "Conversation"
+    TOOL_CALL_ACCURACY_EVALUATOR = "ToolCallAccuracyEvaluator"
+    RED_TEAM = "RedTeam"
+    AOAI_GRADER = "AoaiGrader"
+    CONVERSATION_HISTORY_PARSING = "_get_conversation_history"
 
 
 class EvaluationException(AzureError):

@@ -10,6 +10,13 @@ from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
 from ._enums import KeyVaultRoleScope
+from ._generated.models import (
+    Permission,
+    RoleAssignmentCreateParameters,
+    RoleAssignmentProperties,
+    RoleDefinitionCreateParameters,
+    RoleDefinitionProperties,
+)
 from ._models import KeyVaultPermission, KeyVaultRoleAssignment, KeyVaultRoleDefinition
 from ._internal import KeyVaultClientBase
 
@@ -59,13 +66,12 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         """
         assignment_name = name or uuid4()
 
-        create_parameters = self._client.role_assignments.models.RoleAssignmentCreateParameters(
-            properties=self._client.role_assignments.models.RoleAssignmentProperties(
+        create_parameters = RoleAssignmentCreateParameters(
+            properties=RoleAssignmentProperties(
                 principal_id=principal_id, role_definition_id=str(definition_id)
             )
         )
         assignment = self._client.role_assignments.create(
-            vault_base_url=self._vault_url,
             scope=scope,
             role_assignment_name=str(assignment_name),
             parameters=create_parameters,
@@ -90,7 +96,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         """
         try:
             self._client.role_assignments.delete(
-                vault_base_url=self._vault_url, scope=scope, role_assignment_name=str(name), **kwargs
+                scope=scope, role_assignment_name=str(name), **kwargs
             )
         except ResourceNotFoundError:
             pass
@@ -111,7 +117,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :rtype: ~azure.keyvault.administration.KeyVaultRoleAssignment
         """
         assignment = self._client.role_assignments.get(
-            vault_base_url=self._vault_url, scope=scope, role_assignment_name=str(name), **kwargs
+            scope=scope, role_assignment_name=str(name), **kwargs
         )
         return KeyVaultRoleAssignment._from_generated(assignment)
 
@@ -129,7 +135,6 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.administration.KeyVaultRoleAssignment]
         """
         return self._client.role_assignments.list_for_scope(
-            vault_base_url=self._vault_url,
             scope=scope,
             cls=lambda result: [KeyVaultRoleAssignment._from_generated(a) for a in result],
             **kwargs
@@ -144,7 +149,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         role_name: Optional[str] = None,
         description: Optional[str] = None,
         permissions: Optional[List[KeyVaultPermission]] = None,
-        assignable_scopes: Optional[Union[List[str], List[KeyVaultRoleScope]]] = None,
+        assignable_scopes: Optional[List[Union[str, KeyVaultRoleScope]]] = None,
         **kwargs: Any,
     ) -> KeyVaultRoleDefinition:
         """Creates or updates a custom role definition.
@@ -175,7 +180,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :rtype: ~azure.keyvault.administration.KeyVaultRoleDefinition
         """
         role_permissions = [
-            self._client.role_definitions.models.Permission(
+            Permission(
                 actions=p.actions,
                 not_actions=p.not_actions,
                 data_actions=p.data_actions,
@@ -184,16 +189,15 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
             for p in permissions or []
         ]
 
-        properties = self._client.role_definitions.models.RoleDefinitionProperties(
+        properties = RoleDefinitionProperties(
             role_name=role_name,
             description=description,
             permissions=role_permissions,
             assignable_scopes=assignable_scopes,
         )
-        parameters = self._client.role_definitions.models.RoleDefinitionCreateParameters(properties=properties)
+        parameters = RoleDefinitionCreateParameters(properties=properties)
 
         definition = self._client.role_definitions.create_or_update(
-            vault_base_url=self._vault_url,
             scope=scope,
             role_definition_name=str(name or uuid4()),
             parameters=parameters,
@@ -217,7 +221,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :rtype: ~azure.keyvault.administration.KeyVaultRoleDefinition
         """
         definition = self._client.role_definitions.get(
-            vault_base_url=self._vault_url, scope=scope, role_definition_name=str(name), **kwargs
+            scope=scope, role_definition_name=str(name), **kwargs
         )
         return KeyVaultRoleDefinition._from_generated(definition)
 
@@ -238,7 +242,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         """
         try:
             self._client.role_definitions.delete(
-                vault_base_url=self._vault_url, scope=scope, role_definition_name=str(name), **kwargs
+                scope=scope, role_definition_name=str(name), **kwargs
             )
         except ResourceNotFoundError:
             pass
@@ -257,7 +261,6 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.administration.KeyVaultRoleDefinition]
         """
         return self._client.role_definitions.list(
-            vault_base_url=self._vault_url,
             scope=scope,
             cls=lambda result: [KeyVaultRoleDefinition._from_generated(d) for d in result],
             **kwargs

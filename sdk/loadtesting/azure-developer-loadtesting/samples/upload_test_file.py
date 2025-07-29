@@ -8,7 +8,7 @@
 FILE: upload_test_file.py
 
 DESCRIPTION:
-    This sample shows how to upload a file to your loadtest
+    This sample shows how to upload a file to your existing load test. The file could be a test script file or any other input artifact
 USAGE:
     python upload_test_file.py
 
@@ -18,12 +18,11 @@ USAGE:
     3)  AZURE_TENANT_ID - tenant id for your Azure
     4)  LOADTESTSERVICE_ENDPOINT - Data Plane endpoint for Loadtestservice
 
-    Please ensure that correct jmx file and path is used
+    Please ensure that correct file and path is used
 """
 from azure.developer.loadtesting import LoadTestAdministrationClient
 
-# for details refer: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/loadtestservice/azure-developer
-# -loadtesting/README.md
+# for details refer: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/loadtesting/azure-developer-loadtesting/README.md
 from azure.identity import DefaultAzureCredential
 
 import os
@@ -35,7 +34,7 @@ LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
 client = LoadTestAdministrationClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
 
 TEST_ID = "my-sdk-test-id"
-FILE_NAME = "my-file-id.jmx"
+FILE_NAME = "sample.jmx"
 
 # uploading .jmx file to a test
 resultPoller = client.begin_upload_test_file(TEST_ID, FILE_NAME, open("sample.jmx", "rb"))

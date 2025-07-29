@@ -20,7 +20,6 @@ requirements:
     - msal-extensions >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - pip
     - python
-    - six
     - typing_extensions
   run:
     - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
@@ -28,7 +27,6 @@ requirements:
     - msal >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - msal-extensions >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - python
-    - six
     - typing_extensions
 
 test:

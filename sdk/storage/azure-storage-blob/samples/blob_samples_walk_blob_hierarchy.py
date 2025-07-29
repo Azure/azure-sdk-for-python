@@ -13,12 +13,12 @@ DESCRIPTION:
     This example walks the containers and blobs within a storage account,
     displaying them in a hierarchical structure and, when present, showing
     the number of snapshots that are available per blob. This sample expects
-    that the `AZURE_STORAGE_CONNECTION_STRING` environment variable is set.
+    that the `STORAGE_CONNECTION_STRING` environment variable is set.
     It SHOULD NOT be hardcoded in any code derived from this sample.
 
 USAGE: python blob_samples_walk_blob_hierarchy.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 
 EXAMPLE OUTPUT:
 
@@ -46,9 +46,9 @@ from azure.storage.blob import BlobServiceClient
 from azure.storage.blob import BlobPrefix
 
 try:
-    CONNECTION_STRING = os.environ['AZURE_STORAGE_CONNECTION_STRING']
+    CONNECTION_STRING = os.environ['STORAGE_CONNECTION_STRING']
 except KeyError:
-    print("AZURE_STORAGE_CONNECTION_STRING must be set.")
+    print("STORAGE_CONNECTION_STRING must be set.")
     sys.exit(1)
 
 def walk_container(client, container):

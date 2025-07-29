@@ -37,6 +37,7 @@ Older API versions are supported in `azure-ai-formrecognizer`, please see the [M
 - Python 3.8 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
 - An existing Azure AI Document Intelligence instance.
+- **If running async APIs:** The async transport is designed to be opt-in. The [aiohttp](https://pypi.org/project/aiohttp/) framework is one of the supported implementations of async transport. It's not installed by default. You need to install it separately as follows: `pip install aiohttp`
 
 #### Create a Cognitive Services or Document Intelligence resource
 

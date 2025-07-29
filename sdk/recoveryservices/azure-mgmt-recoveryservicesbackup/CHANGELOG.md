@@ -1,5 +1,21 @@
 # Release History
 
+## 9.2.0 (2025-04-17)
+
+### Features Added
+
+  - Model `AzureFileShareRecoveryPoint` added property `recovery_point_tier_details`
+  - Model `AzureIaaSClassicComputeVMProtectedItem` added property `policy_type`
+  - Model `AzureIaaSComputeVMProtectedItem` added property `policy_type`
+  - Model `AzureIaaSVMProtectedItem` added property `policy_type`
+  - Model `AzureStorageContainer` added property `operation_type`
+  - Enum `OperationType` added member `REHYDRATE`
+  - Added model `AzureVmWorkloadSAPAseDatabaseProtectableItem`
+  - Added model `AzureWorkloadSAPAsePointInTimeRecoveryPoint`
+  - Added model `AzureWorkloadSAPAsePointInTimeRestoreRequest`
+  - Added model `AzureWorkloadSAPAseRecoveryPoint`
+  - Added model `AzureWorkloadSAPAseRestoreRequest`
+
 ## 9.1.0 (2024-04-22)
 
 ### Features Added

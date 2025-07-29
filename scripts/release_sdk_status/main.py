@@ -313,7 +313,7 @@ def read_file(file_name):
 def find_test_path(line: str) -> str:
     line = line.strip('\n') + '\n'
     try:
-        return re.findall('output-folder: \$\(python-sdks-folder\)/(.*?)\n', line)[0]
+        return re.findall(r'output-folder: \$\(python-sdks-folder\)/(.*?)\n', line)[0]
     except:
         FAILED_RESULT.append('[Fail to find sdk path] ' + line)
         return ''
@@ -321,7 +321,7 @@ def find_test_path(line: str) -> str:
 
 def sdk_info_from_swagger() -> List[Dict[str, str]]:
     sdk_name_re = re.compile(r'azure-mgmt-[a-z]+-*([a-z])+')
-    sdk_folder_re = re.compile('output-folder: \$\(python-sdks-folder\)/')
+    sdk_folder_re = re.compile(r'output-folder: \$\(python-sdks-folder\)/')
     resource_manager = []
     SWAGGER_FOLDER = os.getenv('SWAGGER_REPO')
     target_file_pattern = str(Path(f'{SWAGGER_FOLDER}/specification/*/resource-manager/readme.md'))
@@ -395,10 +395,10 @@ def get_latest_pr_from_readme(rest_repo: Repository, service_html: str):
         latest_commit = commit
         break
     latest_pr_brief = latest_commit.commit.message
-    latest_pr_number = re.findall('\(\#[0-9]+\)', latest_pr_brief)
+    latest_pr_number = re.findall(r'\(\#[0-9]+\)', latest_pr_brief)
     latest_pr_number_int = []
     for number in latest_pr_number:
-        number = int(re.search('\d+', number).group())
+        number = int(re.search(r'\d+', number).group())
         latest_pr_number_int.append(number)
     latest_pr_number_int.sort()
 

@@ -1,0 +1,33 @@
+{
+  "parameters": {
+    "subscriptionId": "34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
+    "resourceGroupName": "testrg123",
+    "workspaceName": "workspaces123",
+    "computeName": "compute123",
+    "api-version": "2025-01-01-preview"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "nodes": [
+          {
+            "nodeId": "tvm-3601533753_1-20170719t162906z",
+            "privateIpAddress": "13.84.190.124",
+            "publicIpAddress": "13.84.190.134",
+            "port": 50000,
+            "nodeState": "running",
+            "runId": "2f378a44-38f2-443a-9f0d-9909d0b47890"
+          },
+          {
+            "nodeId": "tvm-3601533753_2-20170719t162906z",
+            "privateIpAddress": "13.84.190.124",
+            "publicIpAddress": "13.84.190.134",
+            "port": 50001,
+            "nodeState": "idle"
+          }
+        ],
+        "nextLink": "nextLink"
+      }
+    }
+  }
+}

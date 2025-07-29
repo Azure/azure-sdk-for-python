@@ -13,8 +13,8 @@ DESCRIPTION:
 USAGE:
     python datalake_samples_directory_async.py
     Set the environment variables with your own values before running the sample:
-    1) STORAGE_ACCOUNT_NAME - the storage account name
-    2) STORAGE_ACCOUNT_KEY - the storage account key
+    1) DATALAKE_STORAGE_ACCOUNT_NAME - the storage account name
+    2) DATALAKE_STORAGE_ACCOUNT_KEY - the storage account key
 """
 
 import asyncio
@@ -31,7 +31,7 @@ from azure.storage.filedatalake.aio import (
 
 async def directory_sample(filesystem_client):
     # create a parent directory
-    dir_name = "testdir"
+    dir_name = "testdirasync"
     print("Creating a directory named '{}'.".format(dir_name))
 
     # Create directory from file system client
@@ -51,7 +51,7 @@ async def directory_sample(filesystem_client):
 
     # rename the directory
     # [START rename_directory]
-    new_dir_name = "testdir2"
+    new_dir_name = "testdir2async"
     print("Renaming the directory named '{}' to '{}'.".format(dir_name, new_dir_name))
     new_directory = await directory_client\
         .rename_directory(new_name=directory_client.file_system_name + '/' + new_dir_name)
@@ -86,8 +86,8 @@ async def create_child_files(directory_client, num_child_files):
 
 
 async def main():
-    account_name = os.getenv('STORAGE_ACCOUNT_NAME', "")
-    account_key = os.getenv('STORAGE_ACCOUNT_KEY', "")
+    account_name = os.getenv('DATALAKE_STORAGE_ACCOUNT_NAME', "")
+    account_key = os.getenv('DATALAKE_STORAGE_ACCOUNT_KEY', "")
 
     # set up the service client with the credentials from the environment variables
     service_client = DataLakeServiceClient(account_url="{}://{}.dfs.core.windows.net".format(

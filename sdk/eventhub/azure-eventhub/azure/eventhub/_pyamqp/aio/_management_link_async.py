@@ -6,6 +6,7 @@
 
 import time
 import logging
+from uuid import uuid4
 from functools import partial
 from typing import Optional, Union
 
@@ -35,7 +36,6 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
     """
 
     def __init__(self, session, endpoint, **kwargs):
-        self.next_message_id = 0
         self.state = ManagementLinkState.IDLE
         self._pending_operations = []
         self._session = session
@@ -228,9 +228,9 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
             message.application_properties["locales"] = locales
         try:
             # TODO: namedtuple is immutable, which may push us to re-think about the namedtuple approach for Message
-            new_properties = message.properties._replace(message_id=self.next_message_id)
+            new_properties = message.properties._replace(message_id=uuid4())
         except AttributeError:
-            new_properties = Properties(message_id=self.next_message_id)
+            new_properties = Properties(message_id=uuid4())
         message = message._replace(properties=new_properties)
         expire_time = (time.time() + timeout) if timeout else None
         message_delivery = _MessageDelivery(message, MessageDeliveryState.WaitingToBeSent, expire_time)
@@ -238,7 +238,6 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
         on_send_complete = partial(self._on_send_complete, message_delivery)
 
         await self._request_link.send_transfer(message, on_send_complete=on_send_complete, timeout=timeout)
-        self.next_message_id += 1
         self._pending_operations.append(PendingManagementOperation(message, on_execute_operation_complete))
 
     async def close(self):

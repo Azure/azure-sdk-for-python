@@ -20,7 +20,7 @@ all_api_versions = get_decorator(is_async=True)
 class TestMergeCertificate(KeyVaultTestCase):
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_version", all_api_versions)
-    @AsyncCertificatesClientPreparer(logging_enable = True)
+    @AsyncCertificatesClientPreparer(logging_enable=True)
     @recorded_by_proxy_async
     async def test_merge_certificate(self, client, **kwargs):
         set_bodiless_matcher()

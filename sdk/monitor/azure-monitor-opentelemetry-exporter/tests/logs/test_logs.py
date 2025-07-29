@@ -28,6 +28,7 @@ from azure.monitor.opentelemetry.exporter.export.logs._exporter import (
 )
 from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
+    _MICROSOFT_CUSTOM_EVENT_NAME,
 )
 from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys
 from azure.monitor.opentelemetry.exporter._utils import (
@@ -56,7 +57,8 @@ class TestAzureLogExporter(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        os.environ.clear()
+        os.environ.pop("APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL", None)
+        os.environ.pop("APPINSIGHTS_INSTRUMENTATIONKEY", None)
         os.environ["APPINSIGHTS_INSTRUMENTATIONKEY"] = "1234abcd-5678-4efa-8abc-1234567890ab"
         os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "true"
         cls._exporter = cls._exporter_class()
@@ -177,6 +179,24 @@ class TestAzureLogExporter(unittest.TestCase):
                 attributes={
                     "event_key": "event_attribute",
                     _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE: True,
+                },
+            ),
+            InstrumentationScope("test_name"),
+        )
+        cls._log_data_custom_event = _logs.LogData(
+            _logs.LogRecord(
+                timestamp=1646865018558419456,
+                trace_id=125960616039069540489478540494783893221,
+                span_id=2909973987304607650,
+                severity_text="INFO",
+                trace_flags=None,
+                severity_number=SeverityNumber.INFO,
+                body="Test Event",
+                resource=Resource.create(attributes={"asd": "test_resource"}),
+                attributes={
+                    "event_key": "event_attribute",
+                    _MICROSOFT_CUSTOM_EVENT_NAME: "event_name",
+                    "client.address": "192.168.1.1",
                 },
             ),
             InstrumentationScope("test_name"),
@@ -342,10 +362,6 @@ class TestAzureLogExporter(unittest.TestCase):
         )
         self.assertEqual(
             envelope.tags.get(ContextTagKeys.AI_DEVICE_LOCALE), azure_monitor_context[ContextTagKeys.AI_DEVICE_LOCALE]
-        )
-        self.assertEqual(
-            envelope.tags.get(ContextTagKeys.AI_DEVICE_OS_VERSION),
-            azure_monitor_context[ContextTagKeys.AI_DEVICE_OS_VERSION],
         )
         self.assertEqual(
             envelope.tags.get(ContextTagKeys.AI_DEVICE_TYPE), azure_monitor_context[ContextTagKeys.AI_DEVICE_TYPE]
@@ -515,6 +531,17 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.name, str(record.body))
         self.assertEqual(envelope.data.base_data.properties["event_key"], "event_attribute")
 
+    def test_log_to_envelope_custom_event(self):
+        exporter = self._exporter
+        envelope = exporter._log_to_envelope(self._log_data_custom_event)
+        record = self._log_data_custom_event.log_record
+        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Event")
+        self.assertEqual(envelope.tags["ai.location.ip"], "192.168.1.1")
+        self.assertEqual(envelope.time, ns_to_iso_str(record.timestamp))
+        self.assertEqual(envelope.data.base_type, "EventData")
+        self.assertEqual(envelope.data.base_data.name, "event_name")
+        self.assertEqual(envelope.data.base_data.properties["event_key"], "event_attribute")
+
     def test_log_to_envelope_timestamp(self):
         exporter = self._exporter
         old_record = self._log_data.log_record
@@ -524,6 +551,70 @@ class TestAzureLogExporter(unittest.TestCase):
         record = self._log_data.log_record
         self.assertEqual(envelope.time, ns_to_iso_str(record.observed_timestamp))
         self._log_data.log_record = old_record
+
+    def test_log_to_envelope_synthetic_source(self):
+        exporter = self._exporter
+        resource = Resource.create(
+            {
+                "service.name": "testServiceName",
+                "service.namespace": "testServiceNamespace",
+                "service.instance.id": "testServiceInstanceId",
+            }
+        )
+        log_data = _logs.LogData(
+            _logs.LogRecord(
+                timestamp=1646865018558419456,
+                trace_id=125960616039069540489478540494783893221,
+                span_id=2909973987304607650,
+                severity_text="WARNING",
+                trace_flags=None,
+                severity_number=SeverityNumber.WARN,
+                body="Test message",
+                resource=resource,
+                attributes={
+                    "test": "attribute",
+                    "user_agent.synthetic.type": "bot",
+                },
+            ),
+            InstrumentationScope("test_name"),
+        )
+        envelope = exporter._log_to_envelope(log_data)
+
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE), "True")
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE), "testServiceNamespace.testServiceName")
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE), "testServiceInstanceId")
+
+    def test_log_to_envelope_synthetic_load_always_on(self):
+        exporter = self._exporter
+        resource = Resource.create(
+            {
+                "service.name": "testServiceName",
+                "service.namespace": "testServiceNamespace",
+                "service.instance.id": "testServiceInstanceId",
+            }
+        )
+        log_data = _logs.LogData(
+            _logs.LogRecord(
+                timestamp=1646865018558419456,
+                trace_id=125960616039069540489478540494783893221,
+                span_id=2909973987304607650,
+                severity_text="WARNING",
+                trace_flags=None,
+                severity_number=SeverityNumber.WARN,
+                body="Test message",
+                resource=resource,
+                attributes={
+                    "test": "attribute",
+                    "http.user_agent": "Azure-Load-Testing/1.0 AlwaysOn",
+                },
+            ),
+            InstrumentationScope("test_name"),
+        )
+        envelope = exporter._log_to_envelope(log_data)
+
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE), "True")
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE), "testServiceNamespace.testServiceName")
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE), "testServiceInstanceId")
 
 
 class TestAzureLogExporterWithDisabledStorage(TestAzureLogExporter):

@@ -18,6 +18,7 @@ from azure.monitor.opentelemetry.exporter import VERSION
 from azure.monitor.opentelemetry.exporter._constants import (
     _ATTACH_METRIC_NAME,
     _FEATURE_METRIC_NAME,
+    _KUBERNETES_SERVICE_HOST,
     _REQ_DURATION_NAME,
     _REQ_EXCEPTION_NAME,
     _REQ_FAILURE_NAME,
@@ -176,18 +177,21 @@ class _StatsbeatMetrics:
         rpId = ""
         os_type = platform.system()
         # rp, rpId
-        if _utils._is_on_app_service():
-            # Web apps
-            rp = _RP_Names.APP_SERVICE.value
-            rpId = "{}/{}".format(os.environ.get(_WEBSITE_SITE_NAME), os.environ.get(_WEBSITE_HOME_STAMPNAME, ""))
-        elif _utils._is_on_functions():
+        if _utils._is_on_functions():
             # Function apps
             rp = _RP_Names.FUNCTIONS.value
             rpId = os.environ.get(_WEBSITE_HOSTNAME, "")
+        elif _utils._is_on_app_service():
+            # Web apps
+            rp = _RP_Names.APP_SERVICE.value
+            rpId = "{}/{}".format(os.environ.get(_WEBSITE_SITE_NAME), os.environ.get(_WEBSITE_HOME_STAMPNAME, ""))
         elif _utils._is_on_aks():
             # AKS
             rp = _RP_Names.AKS.value
-            rpId = os.environ.get(_AKS_ARM_NAMESPACE_ID, "")
+            if _AKS_ARM_NAMESPACE_ID in os.environ:
+                rpId = os.environ.get(_AKS_ARM_NAMESPACE_ID, "")
+            else:
+                rpId = os.environ.get(_KUBERNETES_SERVICE_HOST , "")
         elif self._vm_retry and self._get_azure_compute_metadata():
             # VM
             rp = _RP_Names.VM.value

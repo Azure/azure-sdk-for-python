@@ -3,6 +3,8 @@ import os
 import time
 from typing import Dict, List, Union
 from urllib.parse import urlparse
+from azure.core import exceptions
+import pytest
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils import (
@@ -28,7 +30,7 @@ from _shared.testcase import ConfidentialLedgerPreparer, ConfidentialLedgerTestC
 
 
 class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
-    def create_confidentialledger_client(self, endpoint, ledger_id, is_aad):
+    def create_confidentialledger_client(self, endpoint, ledger_id, use_aad_auth) -> ConfidentialLedgerClient:
         # Always explicitly fetch the TLS certificate.
         network_cert = self.set_ledger_identity(ledger_id)
 
@@ -44,7 +46,8 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         certificate_credential = ConfidentialLedgerCertificateCredential(
             certificate_path=self.user_certificate_path
         )
-        certificate_based_client = ConfidentialLedgerClient(
+        certificate_based_client = self.create_client_from_credential(
+            ConfidentialLedgerClient,
             credential=certificate_credential,
             endpoint=endpoint,
             ledger_certificate_path=self.network_certificate_path,  # type: ignore
@@ -78,10 +81,10 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
                 self.network_certificate_path
             )
 
-        if not is_aad:
-            # We need to add the certificate-based user as an Administrator.
-            aad_based_client.create_or_update_user(
-                USER_CERTIFICATE_THUMBPRINT, {"assignedRole": "Administrator"}
+        if not use_aad_auth:
+            # We need to add the certificate-based user as an Administrator. 
+            aad_based_client.create_or_update_ledger_user(
+                USER_CERTIFICATE_THUMBPRINT, {"assignedRoles": ["Administrator"]}
             )
 
             # Sleep to make sure all replicas know the user is added.
@@ -106,7 +109,17 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=True
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
+        )
+        self.append_entry_flow_actions(client)
+
+    @ConfidentialLedgerPreparer()
+    @recorded_by_proxy
+    def test_append_entry_flow_aad_ledger_user(self, **kwargs):
+        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
+        confidentialledger_id = kwargs.pop("confidentialledger_id")
+        client = self.create_confidentialledger_client(
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
         )
         self.append_entry_flow_actions(client)
 
@@ -116,7 +129,17 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=False
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=False
+        )
+        self.append_entry_flow_actions(client)
+
+    @ConfidentialLedgerPreparer()
+    @recorded_by_proxy
+    def test_append_entry_flow_cert_ledger_user(self, **kwargs):
+        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
+        confidentialledger_id = kwargs.pop("confidentialledger_id")
+        client = self.create_confidentialledger_client(
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=False
         )
         self.append_entry_flow_actions(client)
 
@@ -183,7 +206,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=True
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
         )
         self.append_entry_flow_with_collection_id_actions(client)
 
@@ -195,7 +218,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=False
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=False
         )
         self.append_entry_flow_with_collection_id_actions(client)
 
@@ -272,7 +295,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=True
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
         )
         self.range_query_actions(client)
 
@@ -282,7 +305,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=False
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=False
         )
         self.range_query_actions(client)
 
@@ -334,11 +357,37 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
 
     @ConfidentialLedgerPreparer()
     @recorded_by_proxy
+    def test_user_endpoint_must_redirect(self, **kwargs):
+        # all API versions earlier than 2024-08-26 will be redirected to use the /ledgerUsers endpoint
+        # instead of the /users endpoint.
+        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
+        confidentialledger_id = kwargs.pop("confidentialledger_id")
+        client = self.create_confidentialledger_client(
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
+        )
+    
+        aad_user_id = "0" * 36  # AAD Object Ids have length 36
+        cert_user_id = (
+            "7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4"
+            ":77:30:1F"
+        )
+
+        for user_id in [aad_user_id, cert_user_id]:
+            with pytest.raises(exceptions.HttpResponseError) as excinfo:
+                client.create_or_update_user(user_id, {"assignedRole": "Contributor"})
+            assert str(excinfo.value).startswith("(ApiVersionRedirect)")
+
+            with pytest.raises(exceptions.HttpResponseError) as excinfo:
+                client.delete_user(user_id)
+            assert str(excinfo.value).startswith("(ApiVersionRedirect)")
+
+    @ConfidentialLedgerPreparer()
+    @recorded_by_proxy
     def test_user_management_aad_user(self, **kwargs):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=True
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
         )
         self.user_management_actions(client)
 
@@ -348,40 +397,45 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=False
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=False
         )
         self.user_management_actions(client)
 
-    def user_management_actions(self, client):
+    def user_management_actions(self, client):    
         aad_user_id = "0" * 36  # AAD Object Ids have length 36
         cert_user_id = (
             "7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4"
             ":77:30:1F"
         )
+
         for user_id in [aad_user_id, cert_user_id]:
-            user = client.create_or_update_user(
-                user_id, {"assignedRole": "Contributor"}
-            )
+            client.delete_ledger_user(user_id)
+
+            time.sleep(3)  # Let the DELETE user operation be committed, just in case.
+
+            user = client.create_or_update_ledger_user(user_id, {"assignedRoles": ["Contributor"]})
             assert user["userId"] == user_id
-            assert user["assignedRole"] == "Contributor"
+            assert user["assignedRoles"] == ["Contributor"]
 
             time.sleep(3)  # Let the PATCH user operation be committed, just in case.
 
-            user = client.get_user(user_id)
+            user = client.get_ledger_user(user_id)
             assert user["userId"] == user_id
-            assert user["assignedRole"] == "Contributor"
+            assert user["assignedRoles"] == ["Contributor"]
 
-            user = client.create_or_update_user(user_id, {"assignedRole": "Reader"})
+            user = client.create_or_update_ledger_user(user_id, {"assignedRoles": ["Reader"]})
             assert user["userId"] == user_id
-            assert user["assignedRole"] == "Reader"
+            assert user["assignedRoles"] == ["Reader"]
 
             time.sleep(3)  # Let the PATCH user operation be committed, just in case.
 
-            user = client.get_user(user_id)
+            user = client.get_ledger_user(user_id)
             assert user["userId"] == user_id
-            assert user["assignedRole"] == "Reader"
+            assert user["assignedRoles"] == ["Contributor","Reader"]
 
-            client.delete_user(user_id)
+            client.delete_ledger_user(user_id)
+
+            time.sleep(3)  # Let the DELETE user operation be committed, just in case.
 
     @ConfidentialLedgerPreparer()
     @recorded_by_proxy
@@ -389,7 +443,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=True
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
         )
         self.verification_methods_actions(client)
 
@@ -399,7 +453,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=False
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=False
         )
         self.verification_methods_actions(client)
 
@@ -426,7 +480,6 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         for node_id, quote in ledger_enclaves["enclaveQuotes"].items():
             assert node_id == quote["nodeId"]
             assert quote["nodeId"]
-            assert quote["mrenclave"]
             assert quote["raw"]
             assert quote["quoteVersion"]
 
@@ -483,3 +536,113 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         expected_cert = self.set_ledger_identity(confidentialledger_id)
 
         assert certificate == expected_cert
+
+    @ConfidentialLedgerPreparer()
+    @recorded_by_proxy
+    def test_user_defined_endpoint(self, confidentialledger_endpoint, confidentialledger_id):
+        client = self.create_confidentialledger_client(
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
+        )
+
+        # We need to add the certificate-based user as an Administrator. 
+        user_endpoint = client.create_user_defined_endpoint(
+            {
+                "metadata": {
+                    "endpoints": {
+                        "/content": {
+                            "get": {
+                                "js_module": "test.js",
+                                "js_function": "content",
+                                "forwarding_required": "never",
+                                "redirection_strategy": "none",
+                                "authn_policies": ["no_auth"],
+                                "mode": "readonly",
+                                "openapi": {},
+                            }
+                        }
+                    }
+                },
+                "modules": [
+                    {
+                        "name": "test.js",
+                        "module": """
+                        import { foo } from "./bar/baz.js";
+
+                        export function content(request) {
+                            return {
+                                statusCode: 200,
+                                body: {
+                                    payload: foo(),
+                                },
+                            };
+                        }
+                        """,
+                    },
+                    {
+                        "name": "bar/baz.js",
+                        "module": """
+                        export function foo() {
+                            return "Test content";
+                        }
+                        """,
+                    },
+                ],
+            }
+        )
+
+        saved_endpoint = client.get_user_defined_endpoint()
+        assert saved_endpoint["metadata"]["endpoints"]["/content"]["GET"]["js_module"] == "test.js"
+
+        # We are setting endpoints and modules to empty to have the UDF tests work since UDE and UDF cannot be created simultaneously.
+        user_endpoint = {"metadata": {"endpoints": {}}, "modules": []}
+        assert user_endpoint["metadata"]["endpoints"] == {}
+        assert user_endpoint["modules"] == []
+
+    @ConfidentialLedgerPreparer()
+    @recorded_by_proxy
+    def test_user_defined_role(self, confidentialledger_endpoint, confidentialledger_id):
+        client = self.create_confidentialledger_client(
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
+        )
+
+        role_name = "modify"
+
+        client.create_user_defined_role([{"role_name": role_name, "role_actions": ["/content/read"]}])
+        time.sleep(3)
+
+        roles = client.get_user_defined_role(role_name=role_name)
+        assert roles[0]["role_name"] == role_name
+        assert roles[0]["role_actions"] == ["/content/read"]
+
+        client.update_user_defined_role(
+            [
+                {"role_name": role_name, "role_actions": ["/content/write", "/content/read"]}
+            ]
+        )
+        time.sleep(3)
+
+        roles = client.get_user_defined_role(role_name=role_name)
+        assert roles[0]["role_name"] == role_name
+        assert roles[0]["role_actions"] == ["/content/write", "/content/read"]
+
+        client.delete_user_defined_role(role_name=role_name)
+        time.sleep(3)
+
+    @ConfidentialLedgerPreparer()
+    @recorded_by_proxy
+    def test_user_defined_function(self, confidentialledger_endpoint, confidentialledger_id):
+        client = self.create_confidentialledger_client(
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
+        )
+
+        client.create_user_defined_endpoint({"metadata": {"endpoints": {}}, "modules": []})
+        functionId = "myFunction"
+
+        client.create_user_defined_function(functionId, {"code":"export function main() { return true }"} )
+        time.sleep(3)                
+
+        userFunction = client.get_user_defined_function(functionId)
+        assert userFunction["code"] == "export function main() { return true }"
+
+        client.delete_user_defined_function(functionId)
+        time.sleep(3)

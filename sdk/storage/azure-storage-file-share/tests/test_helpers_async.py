@@ -4,12 +4,15 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import asyncio
+from collections import deque
 from typing import Any, Dict, Optional
 
-from azure.core.pipeline.transport import AsyncHttpTransport
+from azure.core.pipeline.transport import AioHttpTransportResponse, AsyncHttpTransport
 from azure.core.rest import HttpRequest
-from azure.core.rest._aiohttp import RestAioHttpTransportResponse
 from aiohttp import ClientResponse
+from aiohttp.streams import StreamReader
+from aiohttp.client_proto import ResponseHandler
 
 
 class ProgressTracker:
@@ -66,6 +69,10 @@ class MockAioHttpClientResponse(ClientResponse):
         self._loop = None
         self.status = status
         self.reason = reason
+        self.content = StreamReader(ResponseHandler(asyncio.get_event_loop()), 65535)
+        self.content.total_bytes = len(body_bytes)
+        self.content._buffer = deque([body_bytes])
+        self.content._eof = True
 
 
 class MockStorageTransport(AsyncHttpTransport):
@@ -73,7 +80,7 @@ class MockStorageTransport(AsyncHttpTransport):
     This transport returns legacy http response objects from azure core and is 
     intended only to test our backwards compatibility support.
     """
-    async def send(self, request: HttpRequest, **kwargs: Any) -> RestAioHttpTransportResponse:
+    async def send(self, request: HttpRequest, **kwargs: Any) -> AioHttpTransportResponse:
         if request.method == 'GET':
             # download_file
             headers = {
@@ -85,9 +92,9 @@ class MockStorageTransport(AsyncHttpTransport):
             if "x-ms-range-get-content-md5" in request.headers:
                 headers["Content-MD5"] = "I3pVbaOCUTom+G9F9uKFoA=="
 
-            rest_response = RestAioHttpTransportResponse(
+            rest_response = AioHttpTransportResponse(
                 request=request,
-                internal_response=MockAioHttpClientResponse(
+                aiohttp_response=MockAioHttpClientResponse(
                     request.url,
                     b"Hello Async World!",
                     headers,
@@ -96,9 +103,9 @@ class MockStorageTransport(AsyncHttpTransport):
             )
         elif request.method == 'HEAD':
             # get_file_properties
-            rest_response = RestAioHttpTransportResponse(
+            rest_response = AioHttpTransportResponse(
                 request=request,
-                internal_response=MockAioHttpClientResponse(
+                aiohttp_response=MockAioHttpClientResponse(
                     request.url,
                     b"",
                     {
@@ -110,9 +117,9 @@ class MockStorageTransport(AsyncHttpTransport):
             )
         elif request.method == 'PUT':
             # upload_file
-            rest_response = RestAioHttpTransportResponse(
+            rest_response = AioHttpTransportResponse(
                 request=request,
-                internal_response=MockAioHttpClientResponse(
+                aiohttp_response=MockAioHttpClientResponse(
                     request.url,
                     b"",
                     {
@@ -125,9 +132,9 @@ class MockStorageTransport(AsyncHttpTransport):
             )
         elif request.method == 'DELETE':
             # delete_file
-            rest_response = RestAioHttpTransportResponse(
+            rest_response = AioHttpTransportResponse(
                 request=request,
-                internal_response=MockAioHttpClientResponse(
+                aiohttp_response=MockAioHttpClientResponse(
                     request.url,
                     b"",
                     {
@@ -141,7 +148,7 @@ class MockStorageTransport(AsyncHttpTransport):
         else:
             raise ValueError("The request is not accepted as part of MockStorageTransport.")
 
-        await rest_response.read()
+        await rest_response.load_body()
         return rest_response
 
     async def __aenter__(self):

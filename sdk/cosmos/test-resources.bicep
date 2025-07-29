@@ -12,6 +12,9 @@ param enableMultipleRegions bool = false
 @description('Location for the Cosmos DB account.')
 param location string = resourceGroup().location
 
+@description('Whether Per Partition Circuit Breaker should be enabled.')
+param circuitBreakerEnabled string = 'False'
+
 @description('The api version to be used by Bicep to create resources')
 param apiVersion string = '2023-04-15'
 
@@ -30,13 +33,13 @@ var singleRegionConfiguration = [
 ]
 var multiRegionConfiguration = [
   {
-    locationName: 'East US 2'
+    locationName: 'West US 3'
     provisioningState: 'Succeeded'
     failoverPriority: 0
     isZoneRedundant: false
   }
   {
-    locationName: 'East US'
+    locationName: 'West US'
     provisioningState: 'Succeeded'
     failoverPriority: 1
     isZoneRedundant: false
@@ -101,6 +104,6 @@ resource accountName_roleAssignmentId 'Microsoft.DocumentDB/databaseAccounts/sql
   }
 }
 
-
+output AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER string = circuitBreakerEnabled
 output ACCOUNT_HOST string = reference(resourceId, apiVersion).documentEndpoint
 output ACCOUNT_KEY string = listKeys(resourceId, apiVersion).primaryMasterKey

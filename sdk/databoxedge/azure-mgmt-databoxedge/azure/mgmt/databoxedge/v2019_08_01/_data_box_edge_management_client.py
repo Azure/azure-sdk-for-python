@@ -8,9 +8,12 @@
 
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
+from typing_extensions import Self
 
+from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
+from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 
 from . import models as _models
 from .._serialization import Deserializer, Serializer
@@ -35,11 +38,10 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class DataBoxEdgeManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class DataBoxEdgeManagementClient:  # pylint: disable=too-many-instance-attributes
     """The DataBoxEdge Client.
 
     :ivar operations: Operations operations
@@ -101,38 +103,58 @@ class DataBoxEdgeManagementClient:  # pylint: disable=client-accepts-api-version
         self._config = DataBoxEdgeManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                ARMAutoResourceProviderRegistrationPolicy(),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.devices = DevicesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.alerts = AlertsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize, "2019-08-01")
+        self.devices = DevicesOperations(self._client, self._config, self._serialize, self._deserialize, "2019-08-01")
+        self.alerts = AlertsOperations(self._client, self._config, self._serialize, self._deserialize, "2019-08-01")
         self.bandwidth_schedules = BandwidthSchedulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2019-08-01"
         )
-        self.jobs = JobsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.nodes = NodesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.jobs = JobsOperations(self._client, self._config, self._serialize, self._deserialize, "2019-08-01")
+        self.nodes = NodesOperations(self._client, self._config, self._serialize, self._deserialize, "2019-08-01")
         self.operations_status = OperationsStatusOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2019-08-01"
         )
-        self.orders = OrdersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.roles = RolesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.shares = SharesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.orders = OrdersOperations(self._client, self._config, self._serialize, self._deserialize, "2019-08-01")
+        self.roles = RolesOperations(self._client, self._config, self._serialize, self._deserialize, "2019-08-01")
+        self.shares = SharesOperations(self._client, self._config, self._serialize, self._deserialize, "2019-08-01")
         self.storage_account_credentials = StorageAccountCredentialsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2019-08-01"
         )
         self.storage_accounts = StorageAccountsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2019-08-01"
         )
-        self.containers = ContainersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.triggers = TriggersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.users = UsersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.skus = SkusOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.containers = ContainersOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2019-08-01"
+        )
+        self.triggers = TriggersOperations(self._client, self._config, self._serialize, self._deserialize, "2019-08-01")
+        self.users = UsersOperations(self._client, self._config, self._serialize, self._deserialize, "2019-08-01")
+        self.skus = SkusOperations(self._client, self._config, self._serialize, self._deserialize, "2019-08-01")
 
-    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -152,12 +174,12 @@ class DataBoxEdgeManagementClient:  # pylint: disable=client-accepts-api-version
 
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
-        return self._client.send_request(request_copy, **kwargs)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "DataBoxEdgeManagementClient":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 

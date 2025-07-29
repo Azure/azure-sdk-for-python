@@ -1,4 +1,4 @@
-from async_wrapper import async_wrapper
+from async_wrapper import wrap_list_result, wrap_result
 import pytest
 
 
@@ -8,7 +8,7 @@ class TestAyncWrapper:
         async def func():
             return 1
 
-        result = await async_wrapper(func())
+        result = await wrap_result(func())
         assert result == 1
 
     @pytest.mark.asyncio
@@ -17,19 +17,7 @@ class TestAyncWrapper:
             for i in range(3):
                 yield i
 
-        result = await async_wrapper(func())
-        assert result == [0, 1, 2]
-
-    @pytest.mark.asyncio
-    async def test_isNestedAsyncIterable(self):
-        async def func():
-            async def nested():
-                for i in range(3):
-                    yield i
-
-            return nested()
-
-        result = await async_wrapper(func())
+        result = await wrap_list_result(func())
         assert result == [0, 1, 2]
 
     @pytest.mark.asyncio
@@ -40,7 +28,7 @@ class TestAyncWrapper:
 
             return nested()
 
-        result = await async_wrapper(func())
+        result = await wrap_result(func())
         assert result == 2
 
     @pytest.mark.asyncio
@@ -50,7 +38,7 @@ class TestAyncWrapper:
                 yield i
 
         iterable = func()
-        result = await async_wrapper(iterable)
+        result = await wrap_list_result(iterable)
         assert result == iterable
 
     @pytest.mark.asyncio
@@ -58,4 +46,4 @@ class TestAyncWrapper:
         def func():
             return 1
 
-        assert await async_wrapper(func()) == 1
+        assert await wrap_result(func()) == 1

@@ -17,7 +17,7 @@ USAGE:
     python queue_samples_hello_world_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
 
@@ -28,16 +28,20 @@ import sys
 
 class QueueHelloWorldSamplesAsync(object):
 
-    connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+    connection_string = os.getenv("STORAGE_CONNECTION_STRING")
 
     async def create_client_with_connection_string_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable(s). Please see specific test for more details." + '\n' +
-                  "Test: create_client_with_connection_string_async")
+            print(
+                "Missing required environment variable(s). Please see specific test for more details."
+                + "\n"
+                + "Test: create_client_with_connection_string_async"
+            )
             sys.exit(1)
 
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue.aio import QueueServiceClient
+
         queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
 
         # Get queue service properties
@@ -46,13 +50,17 @@ class QueueHelloWorldSamplesAsync(object):
 
     async def queue_and_messages_example_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable(s). Please see specific test for more details." + '\n' +
-                  "Test: queue_and_messages_example_async")
+            print(
+                "Missing required environment variable(s). Please see specific test for more details."
+                + "\n"
+                + "Test: queue_and_messages_example_async"
+            )
             sys.exit(1)
 
         # Instantiate the QueueClient from a connection string
         from azure.storage.queue.aio import QueueClient
-        queue = QueueClient.from_connection_string(conn_str=self.connection_string, queue_name="myqueue")
+
+        queue = QueueClient.from_connection_string(conn_str=self.connection_string, queue_name="asyncmyqueue")
 
         async with queue:
             # Create the queue
@@ -63,8 +71,7 @@ class QueueHelloWorldSamplesAsync(object):
             try:
                 # Send messages
                 await asyncio.gather(
-                    queue.send_message("I'm using queues!"),
-                    queue.send_message("This is my second message")
+                    queue.send_message("I'm using queues!"), queue.send_message("This is my second message")
                 )
 
                 # Receive the messages
@@ -85,5 +92,6 @@ async def main():
     await sample.create_client_with_connection_string_async()
     await sample.queue_and_messages_example_async()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())

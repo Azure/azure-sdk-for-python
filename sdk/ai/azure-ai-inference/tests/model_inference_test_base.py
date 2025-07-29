@@ -16,6 +16,7 @@ from pathlib import Path
 from typing import List, Optional, Union, Dict, Any
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from azure.core.credentials import AzureKeyCredential
+from azure.core.rest import HttpResponse, AsyncHttpResponse
 
 # Set to True to enable SDK logging
 LOGGING_ENABLED = True
@@ -278,6 +279,18 @@ class ModelClientTestBase(AzureRecordedTestCase):
     def _load_chat_client(self, *, bad_key: bool = False, **kwargs) -> sdk.ChatCompletionsClient:
         endpoint, credential = self._load_chat_credentials_api_key(bad_key=bad_key, **kwargs)
         return sdk.load_client(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED)
+
+    def _load_chat_client_on_aoai_endpoint(self, *, bad_key: bool = False, **kwargs) -> sdk.ChatCompletionsClient:
+        endpoint, credential, credential_scopes, api_version = self._load_aoai_chat_credentials(
+            key_auth=True, bad_key=False, **kwargs
+        )
+        return sdk.load_client(
+            endpoint=endpoint,
+            credential=credential,
+            credential_scopes=credential_scopes,
+            api_version=api_version,
+            logging_enable=LOGGING_ENABLED,
+        )
 
     async def _load_async_embeddings_client(self, *, bad_key: bool = False, **kwargs) -> async_sdk.EmbeddingsClient:
         endpoint, credential = self._load_embeddings_credentials_api_key(bad_key=bad_key, **kwargs)
@@ -749,3 +762,168 @@ class ModelClientTestBase(AzureRecordedTestCase):
         """
         with Path(__file__).with_name(file_name).open("r") as f:
             return io.BytesIO(f.read().encode("utf-8"))
+
+
+# **********************************************************************************
+#
+#                         OTHER HELPER CLASSES
+#
+# **********************************************************************************
+
+
+class HttpResponseForUnitTests(HttpResponse):
+
+    def __init__(self, response_bytes: List[bytes]):
+        self._response_bytes = response_bytes
+
+    # Required to support context management
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        pass
+
+    # Implementation of HttpResponse abstract base class methods.
+    # Only the first one requires an implementation for this test to work.
+    def iter_bytes(self):
+        for response_byte in self._response_bytes:
+            yield response_byte
+
+    def close(self):
+        pass
+
+    def iter_raw(self):
+        pass
+
+    def json(self):
+        pass
+
+    def raise_for_status(self):
+        pass
+
+    def text(self):
+        pass
+
+    def read(self):
+        pass
+
+    # Implementation of HttpResponse abstract base class properties
+    # None of these are used by test code.
+    @property
+    def content(self):
+        pass
+
+    @property
+    def content_type(self):
+        pass
+
+    @property
+    def encoding(self):
+        pass
+
+    @property
+    def headers(self):
+        pass
+
+    @property
+    def is_closed(self):
+        pass
+
+    @property
+    def is_stream_consumed(self):
+        pass
+
+    @property
+    def reason(self):
+        pass
+
+    @property
+    def request(self):
+        pass
+
+    @property
+    def status_code(self):
+        pass
+
+    @property
+    def url(self):
+        pass
+
+
+class AsyncHttpResponseForUnitTests(AsyncHttpResponse):
+
+    def __init__(self, response_bytes: List[bytes]):
+        self._response_bytes = response_bytes
+
+    # Required to support context management
+    def __aenter__(self):
+        return self
+
+    def __aexit__(self, exc_type, exc_val, exc_tb):
+        pass
+
+    # Implementation of HttpResponse abstract base class methods.
+    # Only the first one requires an implementation for this test to work.
+    async def iter_bytes(self):
+        for response_byte in self._response_bytes:
+            yield response_byte
+
+    async def close(self):
+        pass
+
+    async def iter_raw(self):
+        pass
+
+    async def json(self):
+        pass
+
+    async def raise_for_status(self):
+        pass
+
+    async def text(self):
+        pass
+
+    async def read(self):
+        pass
+
+    # Implementation of HttpResponse abstract base class properties
+    # None of these are used by test code.
+    @property
+    def content(self):
+        pass
+
+    @property
+    def content_type(self):
+        pass
+
+    @property
+    def encoding(self):
+        pass
+
+    @property
+    def headers(self):
+        pass
+
+    @property
+    def is_closed(self):
+        pass
+
+    @property
+    def is_stream_consumed(self):
+        pass
+
+    @property
+    def reason(self):
+        pass
+
+    @property
+    def request(self):
+        pass
+
+    @property
+    def status_code(self):
+        pass
+
+    @property
+    def url(self):
+        pass

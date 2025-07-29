@@ -23,7 +23,7 @@ class TestNetworkManagementAvailableServiceAliasesOperations(AzureMgmtRecordedTe
     def test_available_service_aliases_list(self, resource_group):
         response = self.client.available_service_aliases.list(
             location="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -35,7 +35,7 @@ class TestNetworkManagementAvailableServiceAliasesOperations(AzureMgmtRecordedTe
         response = self.client.available_service_aliases.list_by_resource_group(
             resource_group_name=resource_group.name,
             location="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

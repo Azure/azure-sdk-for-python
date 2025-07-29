@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines, protected-access
+# pylint: disable=too-many-lines, protected-access,line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.

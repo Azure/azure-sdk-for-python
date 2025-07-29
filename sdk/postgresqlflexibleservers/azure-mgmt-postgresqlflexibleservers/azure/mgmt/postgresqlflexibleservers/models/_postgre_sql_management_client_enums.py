@@ -11,7 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class ActiveDirectoryAuthEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """If Enabled, Azure Active Directory authentication is enabled."""
+    """If Enabled, Microsoft Entra authentication is enabled."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
@@ -169,6 +169,7 @@ class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NONE = "None"
     USER_ASSIGNED = "UserAssigned"
     SYSTEM_ASSIGNED = "SystemAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
 
 
 class KeyStatusEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -313,7 +314,7 @@ class PasswordAuthEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class PrincipalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The principal type used to represent the type of Active Directory Administrator."""
+    """The principal type used to represent the type of Microsoft Entra Administrator."""
 
     UNKNOWN = "Unknown"
     USER = "User"
@@ -357,6 +358,7 @@ class RecommendationTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     CREATE_INDEX = "CreateIndex"
     DROP_INDEX = "DropIndex"
+    RE_INDEX = "ReIndex"
 
 
 class ReplicationPromoteOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -426,6 +428,9 @@ class ServerState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STOPPING = "Stopping"
     STOPPED = "Stopped"
     UPDATING = "Updating"
+    RESTARTING = "Restarting"
+    INACCESSIBLE = "Inaccessible"
+    PROVISIONING = "Provisioning"
 
 
 class ServerVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -560,6 +565,7 @@ class TuningOptionEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """TuningOptionEnum."""
 
     INDEX = "index"
+    CONFIGURATION = "configuration"
 
 
 class ValidationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

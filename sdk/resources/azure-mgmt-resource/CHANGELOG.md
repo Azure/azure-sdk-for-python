@@ -1,5 +1,88 @@
 # Release History
 
+## 25.0.0b1 (2025-07-16)
+
+### Breaking Changes
+
+  - This package now only targets the latest Api-Version available on Azure and removes APIs of other Api-Version. After this change, the package can have much smaller size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ignore this change.
+  - Operation Group `Deployments` and `DeploymentOperations` of `ResourceManagementClient` are moved to `DeploymentsMgmtClient` of independent package `azure-mgmt-resource-deployments`. If you called `ResourceManagementClient(...).deployments.xx(...)` before, just need change to `DeploymentsMgmtClient(...).deployments.xx(...)`. And same for `DeploymentOperations`.
+
+## 24.0.0 (2025-06-16)
+
+### Features Added
+
+  - Model Deployment has a new parameter identity
+  - Model DeploymentParameter has a new parameter expression
+  - Model DeploymentProperties has a new parameter external_input_definitions
+  - Model DeploymentProperties has a new parameter external_inputs
+  - Model DeploymentWhatIfProperties has a new parameter external_input_definitions
+  - Model DeploymentWhatIfProperties has a new parameter external_inputs
+  - Model WhatIfChange has a new parameter extension
+
+### Breaking Changes
+
+  - The `deploymentstacks` module has been separated from the `azure-mgmt-resource` package into independent package `azure-mgmt-resource-deploymentstacks`
+  - The `deploymentscripts` module has been separated from the `azure-mgmt-resource` package into independent package `azure-mgmt-resource-deploymentscripts` 
+  - The `templatespecs` module has been separated from the `azure-mgmt-resource` package into independent package `azure-mgmt-resource-templatespecs`
+  - If you previously imported these modules using statements like `from azure.mgmt.resource import DeploymentStacksClient`, you'll need to update your code to `from azure.mgmt.resource.deploymentstacks import DeploymentStacksClient`. If you were already using the fully qualified import path, no changes are required. This applies to all three modules: `deploymentstacks`, `deploymentscripts`, and `templatespecs`.
+
+## 23.4.0 (2025-05-19)
+
+### Features Added
+
+  - Model DeploymentProperties has a new parameter extension_configs
+  - Model DeploymentPropertiesExtended has a new parameter extensions
+  - Model DeploymentWhatIfProperties has a new parameter extension_configs
+  - Model ResourceReference has a new parameter api_version
+  - Model ResourceReference has a new parameter extension
+  - Model ResourceReference has a new parameter identifiers
+  - Model ResourceReference has a new parameter resource_type
+  - Model TargetResource has a new parameter api_version
+  - Model TargetResource has a new parameter extension
+  - Model TargetResource has a new parameter identifiers
+  - Model TargetResource has a new parameter symbolic_name
+
+## 23.3.0 (2025-02-24)
+
+### Features Added
+
+  - Model DeploymentProperties has a new parameter validation_level
+  - Model DeploymentPropertiesExtended has a new parameter diagnostics
+  - Model DeploymentPropertiesExtended has a new parameter validation_level
+  - Model DeploymentValidateResult has a new parameter id
+  - Model DeploymentValidateResult has a new parameter name
+  - Model DeploymentValidateResult has a new parameter type
+  - Model DeploymentWhatIfProperties has a new parameter validation_level
+  - Model ExportTemplateRequest has a new parameter output_format
+  - Model PolicyAssignment has a new parameter effective_definition_version
+  - Model PolicyAssignment has a new parameter latest_definition_version
+  - Model PolicyDefinitionReference has a new parameter effective_definition_version
+  - Model PolicyDefinitionReference has a new parameter latest_definition_version
+  - Model ResourceGroupExportResult has a new parameter output
+  - Model WhatIfChange has a new parameter deployment_id
+  - Model WhatIfChange has a new parameter identifiers
+  - Model WhatIfChange has a new parameter symbolic_name
+  - Model WhatIfOperationResult has a new parameter diagnostics
+  - Model WhatIfOperationResult has a new parameter potential_changes
+  - Operation PolicyAssignmentsOperations.get has a new optional parameter expand
+  - Operation PolicyAssignmentsOperations.get_by_id has a new optional parameter expand
+  - Operation PolicyAssignmentsOperations.list has a new optional parameter expand
+  - Operation PolicyAssignmentsOperations.list_for_management_group has a new optional parameter expand
+  - Operation PolicyAssignmentsOperations.list_for_resource has a new optional parameter expand
+  - Operation PolicyAssignmentsOperations.list_for_resource_group has a new optional parameter expand
+  - Operation PolicySetDefinitionVersionsOperations.get has a new optional parameter expand
+  - Operation PolicySetDefinitionVersionsOperations.get_at_management_group has a new optional parameter expand
+  - Operation PolicySetDefinitionVersionsOperations.get_built_in has a new optional parameter expand
+  - Operation PolicySetDefinitionVersionsOperations.list has a new optional parameter expand
+  - Operation PolicySetDefinitionVersionsOperations.list_built_in has a new optional parameter expand
+  - Operation PolicySetDefinitionVersionsOperations.list_by_management_group has a new optional parameter expand
+  - Operation PolicySetDefinitionsOperations.get has a new optional parameter expand
+  - Operation PolicySetDefinitionsOperations.get_at_management_group has a new optional parameter expand
+  - Operation PolicySetDefinitionsOperations.get_built_in has a new optional parameter expand
+  - Operation PolicySetDefinitionsOperations.list has a new optional parameter expand
+  - Operation PolicySetDefinitionsOperations.list_built_in has a new optional parameter expand
+  - Operation PolicySetDefinitionsOperations.list_by_management_group has a new optional parameter expand
+
 ## 23.2.0 (2024-10-24)
 
 ### Features Added

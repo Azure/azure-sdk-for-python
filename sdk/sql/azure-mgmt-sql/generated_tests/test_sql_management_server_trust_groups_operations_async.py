@@ -21,12 +21,24 @@ class TestSqlManagementServerTrustGroupsOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_server_trust_groups_list_by_location(self, resource_group):
+        response = self.client.server_trust_groups.list_by_location(
+            resource_group_name=resource_group.name,
+            location_name="str",
+            api_version="2024-05-01-preview",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_server_trust_groups_get(self, resource_group):
         response = await self.client.server_trust_groups.get(
             resource_group_name=resource_group.name,
             location_name="str",
             server_trust_group_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -34,7 +46,7 @@ class TestSqlManagementServerTrustGroupsOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_server_trust_groups_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.server_trust_groups.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -47,7 +59,7 @@ class TestSqlManagementServerTrustGroupsOperationsAsync(AzureMgmtRecordedTestCas
                     "trustScopes": ["str"],
                     "type": "str",
                 },
-                api_version="2020-11-01-preview",
+                api_version="2024-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -56,13 +68,13 @@ class TestSqlManagementServerTrustGroupsOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_server_trust_groups_begin_delete(self, resource_group):
         response = await (
             await self.client.server_trust_groups.begin_delete(
                 resource_group_name=resource_group.name,
                 location_name="str",
                 server_trust_group_name="str",
-                api_version="2020-11-01-preview",
+                api_version="2024-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -71,23 +83,11 @@ class TestSqlManagementServerTrustGroupsOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_location(self, resource_group):
-        response = self.client.server_trust_groups.list_by_location(
-            resource_group_name=resource_group.name,
-            location_name="str",
-            api_version="2020-11-01-preview",
-        )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_list_by_instance(self, resource_group):
+    async def test_server_trust_groups_list_by_instance(self, resource_group):
         response = self.client.server_trust_groups.list_by_instance(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

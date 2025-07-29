@@ -32,7 +32,7 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 # -------------------------------------------------------------------------
 
-import asyncio
+import asyncio # pylint:disable=do-not-import-asyncio
 import errno
 import socket
 import ssl
@@ -294,11 +294,11 @@ class AsyncTransport(AsyncTransportMixin):  # pylint: disable=too-many-instance-
         return tcp_opts
 
     def _set_socket_options(self, sock, socket_settings):
-        tcp_opts = self._get_tcp_socket_defaults(sock)
         if socket_settings:
+            tcp_opts = self._get_tcp_socket_defaults(sock)
             tcp_opts.update(socket_settings)
-        for opt, val in tcp_opts.items():
-            sock.setsockopt(SOL_TCP, opt, val)
+            for opt, val in tcp_opts.items():
+                sock.setsockopt(SOL_TCP, opt, val)
 
     async def _read(
         self,
@@ -438,6 +438,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-
             from aiohttp import (  # pylint: disable=networking-import-outside-azure-core-transport
                 ClientSession,
                 ClientConnectorError,
+                ClientWSTimeout,
             )
             from urllib.parse import urlsplit
         except ImportError:
@@ -466,7 +467,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-
 
             self.sock = await self.session.ws_connect(
                 url=url,
-                timeout=self.socket_timeout,  # timeout for connect
+                timeout=ClientWSTimeout(ws_close=self.socket_timeout),
                 protocols=[AMQP_WS_SUBPROTOCOL],
                 autoclose=False,
                 proxy=http_proxy_host,

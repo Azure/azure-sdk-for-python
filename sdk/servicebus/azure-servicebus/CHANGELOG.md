@@ -1,6 +1,36 @@
 # Release History
 
-## 7.14.0 (2025-02-11)
+## 7.14.3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 7.14.2 (2025-04-09)
+
+### Bugs Fixed
+
+- Fixed a bug where max number of messages was not being requested when receiving from the service due to an incorrect link credit calculation. ([#40156](https://github.com/Azure/azure-sdk-for-python/issues/40156))
+- 
+### Other Changes
+
+- Added support for handling a C# DateTime.MinValue timestamp, which is returned by the service as a sentinel for time which is not set.
+- Deprecating `uamqp_transport` in favor of pyAMQP transport. The `uamqp_transport` will be removed in the next minor release.
+- Fixed aiohttp websocket library showing a deprecation warning due to an incorrect timeout type ([#40429](https://github.com/Azure/azure-sdk-for-python/issues/40429))
+- Dropped support for Python 3.8
+
+## 7.14.1 (2025-03-12)
+
+### Bugs Fixed
+
+- Fixed a bug where service errors were incorrectly expected to have info/description fields set in all cases.
+- Fixed a bug where the type in azure.servicebus.management.AuthorizationRule was not being correctly passed to the request.
+
+## 7.14.0 (2025-02-13)
 
 ### Features Added
 
@@ -11,10 +41,10 @@
 
 - Fixed a bug where async websocket disconnects were not being retried properly. ([#36280](https://github.com/Azure/azure-sdk-for-python/issues/36280))
 - Fixed a bug where sending large messages with synchronous client caused a frame buffer offset error ([#37916](https://github.com/Azure/azure-sdk-for-python/issues/37916))
-- Fix to handle websocket disconnect/close on aiohttp, as aiohttp raises a `TypeError` while asserting bytes. ([#32061](https://github.com/Azure/azure-sdk-for-python/pull/32061))
-- Fixed a bug where pyAMQP was doubly retrying, causing latency on reconnect. ([#39037](https://github.com/Azure/azure-sdk-for-python/pull/39037))
-- Fix to handle large messages being sent twice due to incoming flow frames triggering a resend. ([#38067](https://github.com/Azure/azure-sdk-for-python/pull/38067))
+- Fixed a bug where pyAMQP was doubly retrying, causing higher latency on reconnect. ([#39037](https://github.com/Azure/azure-sdk-for-python/pull/39037))
 - Missing await in sender async on pyAMQP. ([#39182](https://github.com/Azure/azure-sdk-for-python/pull/39182))
+- Improved AutoLockRenewer to renew locks for more registered messages. ([#37340](https://github.com/Azure/azure-sdk-for-python/issues/37340))
+- Fixed a bug where message IDs in management operation requests were not unique.
 
 ### Other Changes
 

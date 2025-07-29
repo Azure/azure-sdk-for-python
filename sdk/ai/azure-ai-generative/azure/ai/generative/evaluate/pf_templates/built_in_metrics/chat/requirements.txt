@@ -1,1 +1,0 @@
-azureml-metrics[generative-ai]

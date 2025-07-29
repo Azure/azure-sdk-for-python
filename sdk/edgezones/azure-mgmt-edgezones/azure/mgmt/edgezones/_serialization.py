@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # --------------------------------------------------------------------------
 #
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -24,7 +25,6 @@
 #
 # --------------------------------------------------------------------------
 
-# pylint: skip-file
 # pyright: reportUnnecessaryTypeIgnoreComment=false
 
 from base64 import b64decode, b64encode
@@ -48,11 +48,8 @@ from typing import (
     IO,
     Mapping,
     Callable,
-    TypeVar,
     MutableMapping,
-    Type,
     List,
-    Mapping,
 )
 
 try:
@@ -62,13 +59,13 @@ except ImportError:
 import xml.etree.ElementTree as ET
 
 import isodate  # type: ignore
+from typing_extensions import Self
 
 from azure.core.exceptions import DeserializationError, SerializationError
 from azure.core.serialization import NULL as CoreNull
 
 _BOM = codecs.BOM_UTF8.decode(encoding="utf-8")
 
-ModelType = TypeVar("ModelType", bound="Model")
 JSON = MutableMapping[str, Any]
 
 
@@ -91,6 +88,8 @@ class RawDeserializer:
         :param data: Input, could be bytes or stream (will be decoded with UTF8) or text
         :type data: str or bytes or IO
         :param str content_type: The content type.
+        :return: The deserialized data.
+        :rtype: object
         """
         if hasattr(data, "read"):
             # Assume a stream
@@ -112,7 +111,7 @@ class RawDeserializer:
             try:
                 return json.loads(data_as_str)
             except ValueError as err:
-                raise DeserializationError("JSON is invalid: {}".format(err), err)
+                raise DeserializationError("JSON is invalid: {}".format(err), err) from err
         elif "xml" in (content_type or []):
             try:
 
@@ -155,6 +154,11 @@ class RawDeserializer:
         Use bytes and headers to NOT use any requests/aiohttp or whatever
         specific implementation.
         Headers will tested for "content-type"
+
+        :param bytes body_bytes: The body of the response.
+        :param dict headers: The headers of the response.
+        :returns: The deserialized data.
+        :rtype: object
         """
         # Try to use content-type from headers if available
         content_type = None
@@ -179,80 +183,31 @@ try:
 except NameError:
     _long_type = int
 
-
-class UTC(datetime.tzinfo):
-    """Time Zone info for handling UTC"""
-
-    def utcoffset(self, dt):
-        """UTF offset for UTC is 0."""
-        return datetime.timedelta(0)
-
-    def tzname(self, dt):
-        """Timestamp representation."""
-        return "Z"
-
-    def dst(self, dt):
-        """No daylight saving for UTC."""
-        return datetime.timedelta(hours=1)
-
-
-try:
-    from datetime import timezone as _FixedOffset  # type: ignore
-except ImportError:  # Python 2.7
-
-    class _FixedOffset(datetime.tzinfo):  # type: ignore
-        """Fixed offset in minutes east from UTC.
-        Copy/pasted from Python doc
-        :param datetime.timedelta offset: offset in timedelta format
-        """
-
-        def __init__(self, offset):
-            self.__offset = offset
-
-        def utcoffset(self, dt):
-            return self.__offset
-
-        def tzname(self, dt):
-            return str(self.__offset.total_seconds() / 3600)
-
-        def __repr__(self):
-            return "<FixedOffset {}>".format(self.tzname(None))
-
-        def dst(self, dt):
-            return datetime.timedelta(0)
-
-        def __getinitargs__(self):
-            return (self.__offset,)
-
-
-try:
-    from datetime import timezone
-
-    TZ_UTC = timezone.utc
-except ImportError:
-    TZ_UTC = UTC()  # type: ignore
+TZ_UTC = datetime.timezone.utc
 
 _FLATTEN = re.compile(r"(?<!\\)\.")
 
 
-def attribute_transformer(key, attr_desc, value):
+def attribute_transformer(key, attr_desc, value):  # pylint: disable=unused-argument
     """A key transformer that returns the Python attribute.
 
     :param str key: The attribute name
     :param dict attr_desc: The attribute metadata
     :param object value: The value
     :returns: A key using attribute name
+    :rtype: str
     """
     return (key, value)
 
 
-def full_restapi_key_transformer(key, attr_desc, value):
+def full_restapi_key_transformer(key, attr_desc, value):  # pylint: disable=unused-argument
     """A key transformer that returns the full RestAPI key path.
 
-    :param str _: The attribute name
+    :param str key: The attribute name
     :param dict attr_desc: The attribute metadata
     :param object value: The value
     :returns: A list of keys using RestAPI syntax.
+    :rtype: list
     """
     keys = _FLATTEN.split(attr_desc["key"])
     return ([_decode_attribute_map_key(k) for k in keys], value)
@@ -265,22 +220,29 @@ def last_restapi_key_transformer(key, attr_desc, value):
     :param dict attr_desc: The attribute metadata
     :param object value: The value
     :returns: The last RestAPI key.
+    :rtype: str
     """
     key, value = full_restapi_key_transformer(key, attr_desc, value)
     return (key[-1], value)
 
 
 def _create_xml_node(tag, prefix=None, ns=None):
-    """Create a XML node."""
+    """Create a XML node.
+
+    :param str tag: The tag name
+    :param str prefix: The prefix
+    :param str ns: The namespace
+    :return: The XML node
+    :rtype: xml.etree.ElementTree.Element
+    """
     if prefix and ns:
         ET.register_namespace(prefix, ns)
     if ns:
         return ET.Element("{" + ns + "}" + tag)
-    else:
-        return ET.Element(tag)
+    return ET.Element(tag)
 
 
-class Model(object):
+class Model:
     """Mixin for all client request body/response body models to support
     serialization and deserialization.
     """
@@ -291,7 +253,7 @@ class Model(object):
 
     def __init__(self, **kwargs: Any) -> None:
         self.additional_properties: Optional[Dict[str, Any]] = {}
-        for k in kwargs:
+        for k in kwargs:  # pylint: disable=consider-using-dict-items
             if k not in self._attribute_map:
                 _LOGGER.warning("%s is not a known attribute of class %s and will be ignored", k, self.__class__)
             elif k in self._validation and self._validation[k].get("readonly", False):
@@ -300,13 +262,23 @@ class Model(object):
                 setattr(self, k, kwargs[k])
 
     def __eq__(self, other: Any) -> bool:
-        """Compare objects by comparing all attributes."""
+        """Compare objects by comparing all attributes.
+
+        :param object other: The object to compare
+        :returns: True if objects are equal
+        :rtype: bool
+        """
         if isinstance(other, self.__class__):
             return self.__dict__ == other.__dict__
         return False
 
     def __ne__(self, other: Any) -> bool:
-        """Compare objects by comparing all attributes."""
+        """Compare objects by comparing all attributes.
+
+        :param object other: The object to compare
+        :returns: True if objects are not equal
+        :rtype: bool
+        """
         return not self.__eq__(other)
 
     def __str__(self) -> str:
@@ -326,7 +298,11 @@ class Model(object):
 
     @classmethod
     def _create_xml_node(cls):
-        """Create XML node."""
+        """Create XML node.
+
+        :returns: The XML node
+        :rtype: xml.etree.ElementTree.Element
+        """
         try:
             xml_map = cls._xml_map  # type: ignore
         except AttributeError:
@@ -346,7 +322,9 @@ class Model(object):
         :rtype: dict
         """
         serializer = Serializer(self._infer_class_models())
-        return serializer._serialize(self, keep_readonly=keep_readonly, **kwargs)  # type: ignore
+        return serializer._serialize(  # type: ignore # pylint: disable=protected-access
+            self, keep_readonly=keep_readonly, **kwargs
+        )
 
     def as_dict(
         self,
@@ -380,12 +358,15 @@ class Model(object):
 
         If you want XML serialization, you can pass the kwargs is_xml=True.
 
+        :param bool keep_readonly: If you want to serialize the readonly attributes
         :param function key_transformer: A key transformer function.
         :returns: A dict JSON compatible object
         :rtype: dict
         """
         serializer = Serializer(self._infer_class_models())
-        return serializer._serialize(self, key_transformer=key_transformer, keep_readonly=keep_readonly, **kwargs)  # type: ignore
+        return serializer._serialize(  # type: ignore # pylint: disable=protected-access
+            self, key_transformer=key_transformer, keep_readonly=keep_readonly, **kwargs
+        )
 
     @classmethod
     def _infer_class_models(cls):
@@ -395,30 +376,31 @@ class Model(object):
             client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
             if cls.__name__ not in client_models:
                 raise ValueError("Not Autorest generated code")
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-caught
             # Assume it's not Autorest generated (tests?). Add ourselves as dependencies.
             client_models = {cls.__name__: cls}
         return client_models
 
     @classmethod
-    def deserialize(cls: Type[ModelType], data: Any, content_type: Optional[str] = None) -> ModelType:
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Self:
         """Parse a str using the RestAPI syntax and return a model.
 
         :param str data: A str using RestAPI structure. JSON by default.
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: An instance of this model
-        :raises: DeserializationError if something went wrong
+        :raises DeserializationError: if something went wrong
+        :rtype: Self
         """
         deserializer = Deserializer(cls._infer_class_models())
         return deserializer(cls.__name__, data, content_type=content_type)  # type: ignore
 
     @classmethod
     def from_dict(
-        cls: Type[ModelType],
+        cls,
         data: Any,
         key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
         content_type: Optional[str] = None,
-    ) -> ModelType:
+    ) -> Self:
         """Parse a dict using given key extractor return a model.
 
         By default consider key
@@ -426,9 +408,11 @@ class Model(object):
         and last_rest_key_case_insensitive_extractor)
 
         :param dict data: A dict using RestAPI structure
+        :param function key_extractors: A key extractor function.
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: An instance of this model
-        :raises: DeserializationError if something went wrong
+        :raises DeserializationError: if something went wrong
+        :rtype: Self
         """
         deserializer = Deserializer(cls._infer_class_models())
         deserializer.key_extractors = (  # type: ignore
@@ -448,21 +432,25 @@ class Model(object):
             return {}
         result = dict(cls._subtype_map[key])
         for valuetype in cls._subtype_map[key].values():
-            result.update(objects[valuetype]._flatten_subtype(key, objects))
+            result.update(objects[valuetype]._flatten_subtype(key, objects))  # pylint: disable=protected-access
         return result
 
     @classmethod
     def _classify(cls, response, objects):
         """Check the class _subtype_map for any child classes.
         We want to ignore any inherited _subtype_maps.
-        Remove the polymorphic key from the initial data.
+
+        :param dict response: The initial data
+        :param dict objects: The class objects
+        :returns: The class to be used
+        :rtype: class
         """
         for subtype_key in cls.__dict__.get("_subtype_map", {}).keys():
             subtype_value = None
 
             if not isinstance(response, ET.Element):
                 rest_api_response_key = cls._get_rest_key_parts(subtype_key)[-1]
-                subtype_value = response.pop(rest_api_response_key, None) or response.pop(subtype_key, None)
+                subtype_value = response.get(rest_api_response_key, None) or response.get(subtype_key, None)
             else:
                 subtype_value = xml_key_extractor(subtype_key, cls._attribute_map[subtype_key], response)
             if subtype_value:
@@ -501,11 +489,13 @@ def _decode_attribute_map_key(key):
     inside the received data.
 
     :param str key: A key string from the generated code
+    :returns: The decoded key
+    :rtype: str
     """
     return key.replace("\\.", ".")
 
 
-class Serializer(object):
+class Serializer:  # pylint: disable=too-many-public-methods
     """Request object model serializer."""
 
     basic_types = {str: "str", int: "int", bool: "bool", float: "float"}
@@ -540,7 +530,7 @@ class Serializer(object):
         "multiple": lambda x, y: x % y != 0,
     }
 
-    def __init__(self, classes: Optional[Mapping[str, type]] = None):
+    def __init__(self, classes: Optional[Mapping[str, type]] = None) -> None:
         self.serialize_type = {
             "iso-8601": Serializer.serialize_iso,
             "rfc-1123": Serializer.serialize_rfc,
@@ -560,13 +550,16 @@ class Serializer(object):
         self.key_transformer = full_restapi_key_transformer
         self.client_side_validation = True
 
-    def _serialize(self, target_obj, data_type=None, **kwargs):
+    def _serialize(  # pylint: disable=too-many-nested-blocks, too-many-branches, too-many-statements, too-many-locals
+        self, target_obj, data_type=None, **kwargs
+    ):
         """Serialize data into a string according to type.
 
-        :param target_obj: The data to be serialized.
+        :param object target_obj: The data to be serialized.
         :param str data_type: The type to be serialized from.
         :rtype: str, dict
-        :raises: SerializationError if serialization fails.
+        :raises SerializationError: if serialization fails.
+        :returns: The serialized data.
         """
         key_transformer = kwargs.get("key_transformer", self.key_transformer)
         keep_readonly = kwargs.get("keep_readonly", False)
@@ -592,12 +585,14 @@ class Serializer(object):
 
         serialized = {}
         if is_xml_model_serialization:
-            serialized = target_obj._create_xml_node()
+            serialized = target_obj._create_xml_node()  # pylint: disable=protected-access
         try:
-            attributes = target_obj._attribute_map
+            attributes = target_obj._attribute_map  # pylint: disable=protected-access
             for attr, attr_desc in attributes.items():
                 attr_name = attr
-                if not keep_readonly and target_obj._validation.get(attr_name, {}).get("readonly", False):
+                if not keep_readonly and target_obj._validation.get(  # pylint: disable=protected-access
+                    attr_name, {}
+                ).get("readonly", False):
                     continue
 
                 if attr_name == "additional_properties" and attr_desc["key"] == "":
@@ -633,7 +628,8 @@ class Serializer(object):
                         if isinstance(new_attr, list):
                             serialized.extend(new_attr)  # type: ignore
                         elif isinstance(new_attr, ET.Element):
-                            # If the down XML has no XML/Name, we MUST replace the tag with the local tag. But keeping the namespaces.
+                            # If the down XML has no XML/Name,
+                            # we MUST replace the tag with the local tag. But keeping the namespaces.
                             if "name" not in getattr(orig_attr, "_xml_map", {}):
                                 splitted_tag = new_attr.tag.split("}")
                                 if len(splitted_tag) == 2:  # Namespace
@@ -664,17 +660,17 @@ class Serializer(object):
         except (AttributeError, KeyError, TypeError) as err:
             msg = "Attribute {} in object {} cannot be serialized.\n{}".format(attr_name, class_name, str(target_obj))
             raise SerializationError(msg) from err
-        else:
-            return serialized
+        return serialized
 
     def body(self, data, data_type, **kwargs):
         """Serialize data intended for a request body.
 
-        :param data: The data to be serialized.
+        :param object data: The data to be serialized.
         :param str data_type: The type to be serialized from.
         :rtype: dict
-        :raises: SerializationError if serialization fails.
-        :raises: ValueError if data is None
+        :raises SerializationError: if serialization fails.
+        :raises ValueError: if data is None
+        :returns: The serialized request body
         """
 
         # Just in case this is a dict
@@ -703,7 +699,7 @@ class Serializer(object):
                         attribute_key_case_insensitive_extractor,
                         last_rest_key_case_insensitive_extractor,
                     ]
-                data = deserializer._deserialize(data_type, data)
+                data = deserializer._deserialize(data_type, data)  # pylint: disable=protected-access
             except DeserializationError as err:
                 raise SerializationError("Unable to build a model: " + str(err)) from err
 
@@ -712,11 +708,13 @@ class Serializer(object):
     def url(self, name, data, data_type, **kwargs):
         """Serialize data intended for a URL path.
 
-        :param data: The data to be serialized.
+        :param str name: The name of the URL path parameter.
+        :param object data: The data to be serialized.
         :param str data_type: The type to be serialized from.
         :rtype: str
-        :raises: TypeError if serialization fails.
-        :raises: ValueError if data is None
+        :returns: The serialized URL path
+        :raises TypeError: if serialization fails.
+        :raises ValueError: if data is None
         """
         try:
             output = self.serialize_data(data, data_type, **kwargs)
@@ -728,21 +726,20 @@ class Serializer(object):
                 output = output.replace("{", quote("{")).replace("}", quote("}"))
             else:
                 output = quote(str(output), safe="")
-        except SerializationError:
-            raise TypeError("{} must be type {}.".format(name, data_type))
-        else:
-            return output
+        except SerializationError as exc:
+            raise TypeError("{} must be type {}.".format(name, data_type)) from exc
+        return output
 
     def query(self, name, data, data_type, **kwargs):
         """Serialize data intended for a URL query.
 
-        :param data: The data to be serialized.
+        :param str name: The name of the query parameter.
+        :param object data: The data to be serialized.
         :param str data_type: The type to be serialized from.
-        :keyword bool skip_quote: Whether to skip quote the serialized result.
-        Defaults to False.
         :rtype: str, list
-        :raises: TypeError if serialization fails.
-        :raises: ValueError if data is None
+        :raises TypeError: if serialization fails.
+        :raises ValueError: if data is None
+        :returns: The serialized query parameter
         """
         try:
             # Treat the list aside, since we don't want to encode the div separator
@@ -759,19 +756,20 @@ class Serializer(object):
                 output = str(output)
             else:
                 output = quote(str(output), safe="")
-        except SerializationError:
-            raise TypeError("{} must be type {}.".format(name, data_type))
-        else:
-            return str(output)
+        except SerializationError as exc:
+            raise TypeError("{} must be type {}.".format(name, data_type)) from exc
+        return str(output)
 
     def header(self, name, data, data_type, **kwargs):
         """Serialize data intended for a request header.
 
-        :param data: The data to be serialized.
+        :param str name: The name of the header.
+        :param object data: The data to be serialized.
         :param str data_type: The type to be serialized from.
         :rtype: str
-        :raises: TypeError if serialization fails.
-        :raises: ValueError if data is None
+        :raises TypeError: if serialization fails.
+        :raises ValueError: if data is None
+        :returns: The serialized header
         """
         try:
             if data_type in ["[str]"]:
@@ -780,21 +778,20 @@ class Serializer(object):
             output = self.serialize_data(data, data_type, **kwargs)
             if data_type == "bool":
                 output = json.dumps(output)
-        except SerializationError:
-            raise TypeError("{} must be type {}.".format(name, data_type))
-        else:
-            return str(output)
+        except SerializationError as exc:
+            raise TypeError("{} must be type {}.".format(name, data_type)) from exc
+        return str(output)
 
     def serialize_data(self, data, data_type, **kwargs):
         """Serialize generic data according to supplied data type.
 
-        :param data: The data to be serialized.
+        :param object data: The data to be serialized.
         :param str data_type: The type to be serialized from.
-        :param bool required: Whether it's essential that the data not be
-         empty or None
-        :raises: AttributeError if required data is None.
-        :raises: ValueError if data is None
-        :raises: SerializationError if serialization fails.
+        :raises AttributeError: if required data is None.
+        :raises ValueError: if data is None
+        :raises SerializationError: if serialization fails.
+        :returns: The serialized data.
+        :rtype: str, int, float, bool, dict, list
         """
         if data is None:
             raise ValueError("No value for given attribute")
@@ -805,7 +802,7 @@ class Serializer(object):
             if data_type in self.basic_types.values():
                 return self.serialize_basic(data, data_type, **kwargs)
 
-            elif data_type in self.serialize_type:
+            if data_type in self.serialize_type:
                 return self.serialize_type[data_type](data, **kwargs)
 
             # If dependencies is empty, try with current data class
@@ -821,11 +818,10 @@ class Serializer(object):
         except (ValueError, TypeError) as err:
             msg = "Unable to serialize value: {!r} as type: {!r}."
             raise SerializationError(msg.format(data, data_type)) from err
-        else:
-            return self._serialize(data, **kwargs)
+        return self._serialize(data, **kwargs)
 
     @classmethod
-    def _get_custom_serializers(cls, data_type, **kwargs):
+    def _get_custom_serializers(cls, data_type, **kwargs):  # pylint: disable=inconsistent-return-statements
         custom_serializer = kwargs.get("basic_types_serializers", {}).get(data_type)
         if custom_serializer:
             return custom_serializer
@@ -841,23 +837,26 @@ class Serializer(object):
         - basic_types_serializers dict[str, callable] : If set, use the callable as serializer
         - is_xml bool : If set, use xml_basic_types_serializers
 
-        :param data: Object to be serialized.
+        :param obj data: Object to be serialized.
         :param str data_type: Type of object in the iterable.
+        :rtype: str, int, float, bool
+        :return: serialized object
         """
         custom_serializer = cls._get_custom_serializers(data_type, **kwargs)
         if custom_serializer:
             return custom_serializer(data)
         if data_type == "str":
             return cls.serialize_unicode(data)
-        return eval(data_type)(data)  # nosec
+        return eval(data_type)(data)  # nosec # pylint: disable=eval-used
 
     @classmethod
     def serialize_unicode(cls, data):
         """Special handling for serializing unicode strings in Py2.
         Encode to UTF-8 if unicode, otherwise handle as a str.
 
-        :param data: Object to be serialized.
+        :param str data: Object to be serialized.
         :rtype: str
+        :return: serialized object
         """
         try:  # If I received an enum, return its value
             return data.value
@@ -871,8 +870,7 @@ class Serializer(object):
                 return data
         except NameError:
             return str(data)
-        else:
-            return str(data)
+        return str(data)
 
     def serialize_iter(self, data, iter_type, div=None, **kwargs):
         """Serialize iterable.
@@ -882,15 +880,13 @@ class Serializer(object):
           serialization_ctxt['type'] should be same as data_type.
         - is_xml bool : If set, serialize as XML
 
-        :param list attr: Object to be serialized.
+        :param list data: Object to be serialized.
         :param str iter_type: Type of object in the iterable.
-        :param bool required: Whether the objects in the iterable must
-         not be None or empty.
         :param str div: If set, this str will be used to combine the elements
          in the iterable into a combined string. Default is 'None'.
-        :keyword bool do_quote: Whether to quote the serialized result of each iterable element.
         Defaults to False.
         :rtype: list, str
+        :return: serialized iterable
         """
         if isinstance(data, str):
             raise SerializationError("Refuse str type as a valid iter type.")
@@ -945,9 +941,8 @@ class Serializer(object):
 
         :param dict attr: Object to be serialized.
         :param str dict_type: Type of object in the dictionary.
-        :param bool required: Whether the objects in the dictionary must
-         not be None or empty.
         :rtype: dict
+        :return: serialized dictionary
         """
         serialization_ctxt = kwargs.get("serialization_ctxt", {})
         serialized = {}
@@ -971,7 +966,7 @@ class Serializer(object):
 
         return serialized
 
-    def serialize_object(self, attr, **kwargs):
+    def serialize_object(self, attr, **kwargs):  # pylint: disable=too-many-return-statements
         """Serialize a generic object.
         This will be handled as a dictionary. If object passed in is not
         a basic type (str, int, float, dict, list) it will simply be
@@ -979,6 +974,7 @@ class Serializer(object):
 
         :param dict attr: Object to be serialized.
         :rtype: dict or str
+        :return: serialized object
         """
         if attr is None:
             return None
@@ -1003,7 +999,7 @@ class Serializer(object):
             return self.serialize_decimal(attr)
 
         # If it's a model or I know this dependency, serialize as a Model
-        elif obj_type in self.dependencies.values() or isinstance(attr, Model):
+        if obj_type in self.dependencies.values() or isinstance(attr, Model):
             return self._serialize(attr)
 
         if obj_type == dict:
@@ -1034,56 +1030,61 @@ class Serializer(object):
         try:
             enum_obj(result)  # type: ignore
             return result
-        except ValueError:
+        except ValueError as exc:
             for enum_value in enum_obj:  # type: ignore
                 if enum_value.value.lower() == str(attr).lower():
                     return enum_value.value
             error = "{!r} is not valid value for enum {!r}"
-            raise SerializationError(error.format(attr, enum_obj))
+            raise SerializationError(error.format(attr, enum_obj)) from exc
 
     @staticmethod
-    def serialize_bytearray(attr, **kwargs):
+    def serialize_bytearray(attr, **kwargs):  # pylint: disable=unused-argument
         """Serialize bytearray into base-64 string.
 
-        :param attr: Object to be serialized.
+        :param str attr: Object to be serialized.
         :rtype: str
+        :return: serialized base64
         """
         return b64encode(attr).decode()
 
     @staticmethod
-    def serialize_base64(attr, **kwargs):
+    def serialize_base64(attr, **kwargs):  # pylint: disable=unused-argument
         """Serialize str into base-64 string.
 
-        :param attr: Object to be serialized.
+        :param str attr: Object to be serialized.
         :rtype: str
+        :return: serialized base64
         """
         encoded = b64encode(attr).decode("ascii")
         return encoded.strip("=").replace("+", "-").replace("/", "_")
 
     @staticmethod
-    def serialize_decimal(attr, **kwargs):
+    def serialize_decimal(attr, **kwargs):  # pylint: disable=unused-argument
         """Serialize Decimal object to float.
 
-        :param attr: Object to be serialized.
+        :param decimal attr: Object to be serialized.
         :rtype: float
+        :return: serialized decimal
         """
         return float(attr)
 
     @staticmethod
-    def serialize_long(attr, **kwargs):
+    def serialize_long(attr, **kwargs):  # pylint: disable=unused-argument
         """Serialize long (Py2) or int (Py3).
 
-        :param attr: Object to be serialized.
+        :param int attr: Object to be serialized.
         :rtype: int/long
+        :return: serialized long
         """
         return _long_type(attr)
 
     @staticmethod
-    def serialize_date(attr, **kwargs):
+    def serialize_date(attr, **kwargs):  # pylint: disable=unused-argument
         """Serialize Date object into ISO-8601 formatted string.
 
         :param Date attr: Object to be serialized.
         :rtype: str
+        :return: serialized date
         """
         if isinstance(attr, str):
             attr = isodate.parse_date(attr)
@@ -1091,11 +1092,12 @@ class Serializer(object):
         return t
 
     @staticmethod
-    def serialize_time(attr, **kwargs):
+    def serialize_time(attr, **kwargs):  # pylint: disable=unused-argument
         """Serialize Time object into ISO-8601 formatted string.
 
         :param datetime.time attr: Object to be serialized.
         :rtype: str
+        :return: serialized time
         """
         if isinstance(attr, str):
             attr = isodate.parse_time(attr)
@@ -1105,30 +1107,32 @@ class Serializer(object):
         return t
 
     @staticmethod
-    def serialize_duration(attr, **kwargs):
+    def serialize_duration(attr, **kwargs):  # pylint: disable=unused-argument
         """Serialize TimeDelta object into ISO-8601 formatted string.
 
         :param TimeDelta attr: Object to be serialized.
         :rtype: str
+        :return: serialized duration
         """
         if isinstance(attr, str):
             attr = isodate.parse_duration(attr)
         return isodate.duration_isoformat(attr)
 
     @staticmethod
-    def serialize_rfc(attr, **kwargs):
+    def serialize_rfc(attr, **kwargs):  # pylint: disable=unused-argument
         """Serialize Datetime object into RFC-1123 formatted string.
 
         :param Datetime attr: Object to be serialized.
         :rtype: str
-        :raises: TypeError if format invalid.
+        :raises TypeError: if format invalid.
+        :return: serialized rfc
         """
         try:
             if not attr.tzinfo:
                 _LOGGER.warning("Datetime with no tzinfo will be considered UTC.")
             utc = attr.utctimetuple()
-        except AttributeError:
-            raise TypeError("RFC1123 object must be valid Datetime object.")
+        except AttributeError as exc:
+            raise TypeError("RFC1123 object must be valid Datetime object.") from exc
 
         return "{}, {:02} {} {:04} {:02}:{:02}:{:02} GMT".format(
             Serializer.days[utc.tm_wday],
@@ -1141,12 +1145,13 @@ class Serializer(object):
         )
 
     @staticmethod
-    def serialize_iso(attr, **kwargs):
+    def serialize_iso(attr, **kwargs):  # pylint: disable=unused-argument
         """Serialize Datetime object into ISO-8601 formatted string.
 
         :param Datetime attr: Object to be serialized.
         :rtype: str
-        :raises: SerializationError if format invalid.
+        :raises SerializationError: if format invalid.
+        :return: serialized iso
         """
         if isinstance(attr, str):
             attr = isodate.parse_datetime(attr)
@@ -1172,13 +1177,14 @@ class Serializer(object):
             raise TypeError(msg) from err
 
     @staticmethod
-    def serialize_unix(attr, **kwargs):
+    def serialize_unix(attr, **kwargs):  # pylint: disable=unused-argument
         """Serialize Datetime object into IntTime format.
         This is represented as seconds.
 
         :param Datetime attr: Object to be serialized.
         :rtype: int
-        :raises: SerializationError if format invalid
+        :raises SerializationError: if format invalid
+        :return: serialied unix
         """
         if isinstance(attr, int):
             return attr
@@ -1186,11 +1192,11 @@ class Serializer(object):
             if not attr.tzinfo:
                 _LOGGER.warning("Datetime with no tzinfo will be considered UTC.")
             return int(calendar.timegm(attr.utctimetuple()))
-        except AttributeError:
-            raise TypeError("Unix time object must be valid Datetime object.")
+        except AttributeError as exc:
+            raise TypeError("Unix time object must be valid Datetime object.") from exc
 
 
-def rest_key_extractor(attr, attr_desc, data):
+def rest_key_extractor(attr, attr_desc, data):  # pylint: disable=unused-argument
     key = attr_desc["key"]
     working_data = data
 
@@ -1211,7 +1217,9 @@ def rest_key_extractor(attr, attr_desc, data):
     return working_data.get(key)
 
 
-def rest_key_case_insensitive_extractor(attr, attr_desc, data):
+def rest_key_case_insensitive_extractor(  # pylint: disable=unused-argument, inconsistent-return-statements
+    attr, attr_desc, data
+):
     key = attr_desc["key"]
     working_data = data
 
@@ -1232,17 +1240,29 @@ def rest_key_case_insensitive_extractor(attr, attr_desc, data):
         return attribute_key_case_insensitive_extractor(key, None, working_data)
 
 
-def last_rest_key_extractor(attr, attr_desc, data):
-    """Extract the attribute in "data" based on the last part of the JSON path key."""
+def last_rest_key_extractor(attr, attr_desc, data):  # pylint: disable=unused-argument
+    """Extract the attribute in "data" based on the last part of the JSON path key.
+
+    :param str attr: The attribute to extract
+    :param dict attr_desc: The attribute description
+    :param dict data: The data to extract from
+    :rtype: object
+    :returns: The extracted attribute
+    """
     key = attr_desc["key"]
     dict_keys = _FLATTEN.split(key)
     return attribute_key_extractor(dict_keys[-1], None, data)
 
 
-def last_rest_key_case_insensitive_extractor(attr, attr_desc, data):
+def last_rest_key_case_insensitive_extractor(attr, attr_desc, data):  # pylint: disable=unused-argument
     """Extract the attribute in "data" based on the last part of the JSON path key.
 
     This is the case insensitive version of "last_rest_key_extractor"
+    :param str attr: The attribute to extract
+    :param dict attr_desc: The attribute description
+    :param dict data: The data to extract from
+    :rtype: object
+    :returns: The extracted attribute
     """
     key = attr_desc["key"]
     dict_keys = _FLATTEN.split(key)
@@ -1279,7 +1299,7 @@ def _extract_name_from_internal_type(internal_type):
     return xml_name
 
 
-def xml_key_extractor(attr, attr_desc, data):
+def xml_key_extractor(attr, attr_desc, data):  # pylint: disable=unused-argument,too-many-return-statements
     if isinstance(data, dict):
         return None
 
@@ -1331,22 +1351,21 @@ def xml_key_extractor(attr, attr_desc, data):
         if is_iter_type:
             if is_wrapped:
                 return None  # is_wrapped no node, we want None
-            else:
-                return []  # not wrapped, assume empty list
+            return []  # not wrapped, assume empty list
         return None  # Assume it's not there, maybe an optional node.
 
     # If is_iter_type and not wrapped, return all found children
     if is_iter_type:
         if not is_wrapped:
             return children
-        else:  # Iter and wrapped, should have found one node only (the wrap one)
-            if len(children) != 1:
-                raise DeserializationError(
-                    "Tried to deserialize an array not wrapped, and found several nodes '{}'. Maybe you should declare this array as wrapped?".format(
-                        xml_name
-                    )
+        # Iter and wrapped, should have found one node only (the wrap one)
+        if len(children) != 1:
+            raise DeserializationError(
+                "Tried to deserialize an array not wrapped, and found several nodes '{}'. Maybe you should declare this array as wrapped?".format(
+                    xml_name
                 )
-            return list(children[0])  # Might be empty list and that's ok.
+            )
+        return list(children[0])  # Might be empty list and that's ok.
 
     # Here it's not a itertype, we should have found one element only or empty
     if len(children) > 1:
@@ -1354,7 +1373,7 @@ def xml_key_extractor(attr, attr_desc, data):
     return children[0]
 
 
-class Deserializer(object):
+class Deserializer:
     """Response object model deserializer.
 
     :param dict classes: Class type dictionary for deserializing complex types.
@@ -1363,9 +1382,9 @@ class Deserializer(object):
 
     basic_types = {str: "str", int: "int", bool: "bool", float: "float"}
 
-    valid_date = re.compile(r"\d{4}[-]\d{2}[-]\d{2}T\d{2}:\d{2}:\d{2}" r"\.?\d*Z?[-+]?[\d{2}]?:?[\d{2}]?")
+    valid_date = re.compile(r"\d{4}[-]\d{2}[-]\d{2}T\d{2}:\d{2}:\d{2}\.?\d*Z?[-+]?[\d{2}]?:?[\d{2}]?")
 
-    def __init__(self, classes: Optional[Mapping[str, type]] = None):
+    def __init__(self, classes: Optional[Mapping[str, type]] = None) -> None:
         self.deserialize_type = {
             "iso-8601": Deserializer.deserialize_iso,
             "rfc-1123": Deserializer.deserialize_rfc,
@@ -1401,27 +1420,29 @@ class Deserializer(object):
         :param str target_obj: Target data type to deserialize to.
         :param requests.Response response_data: REST response object.
         :param str content_type: Swagger "produces" if available.
-        :raises: DeserializationError if deserialization fails.
+        :raises DeserializationError: if deserialization fails.
         :return: Deserialized object.
+        :rtype: object
         """
         data = self._unpack_content(response_data, content_type)
         return self._deserialize(target_obj, data)
 
-    def _deserialize(self, target_obj, data):
+    def _deserialize(self, target_obj, data):  # pylint: disable=inconsistent-return-statements
         """Call the deserializer on a model.
 
         Data needs to be already deserialized as JSON or XML ElementTree
 
         :param str target_obj: Target data type to deserialize to.
         :param object data: Object to deserialize.
-        :raises: DeserializationError if deserialization fails.
+        :raises DeserializationError: if deserialization fails.
         :return: Deserialized object.
+        :rtype: object
         """
         # This is already a model, go recursive just in case
         if hasattr(data, "_attribute_map"):
             constants = [name for name, config in getattr(data, "_validation", {}).items() if config.get("constant")]
             try:
-                for attr, mapconfig in data._attribute_map.items():
+                for attr, mapconfig in data._attribute_map.items():  # pylint: disable=protected-access
                     if attr in constants:
                         continue
                     value = getattr(data, attr)
@@ -1440,13 +1461,13 @@ class Deserializer(object):
 
         if isinstance(response, str):
             return self.deserialize_data(data, response)
-        elif isinstance(response, type) and issubclass(response, Enum):
+        if isinstance(response, type) and issubclass(response, Enum):
             return self.deserialize_enum(data, response)
 
         if data is None or data is CoreNull:
             return data
         try:
-            attributes = response._attribute_map  # type: ignore
+            attributes = response._attribute_map  # type: ignore # pylint: disable=protected-access
             d_attrs = {}
             for attr, attr_desc in attributes.items():
                 # Check empty string. If it's not empty, someone has a real "additionalProperties"...
@@ -1476,9 +1497,8 @@ class Deserializer(object):
         except (AttributeError, TypeError, KeyError) as err:
             msg = "Unable to deserialize to object: " + class_name  # type: ignore
             raise DeserializationError(msg) from err
-        else:
-            additional_properties = self._build_additional_properties(attributes, data)
-            return self._instantiate_model(response, d_attrs, additional_properties)
+        additional_properties = self._build_additional_properties(attributes, data)
+        return self._instantiate_model(response, d_attrs, additional_properties)
 
     def _build_additional_properties(self, attribute_map, data):
         if not self.additional_properties_detection:
@@ -1505,6 +1525,8 @@ class Deserializer(object):
 
         :param str target: The target object type to deserialize to.
         :param str/dict data: The response data to deserialize.
+        :return: The classified target object and its class name.
+        :rtype: tuple
         """
         if target is None:
             return None, None
@@ -1516,7 +1538,7 @@ class Deserializer(object):
                 return target, target
 
         try:
-            target = target._classify(data, self.dependencies)  # type: ignore
+            target = target._classify(data, self.dependencies)  # type: ignore # pylint: disable=protected-access
         except AttributeError:
             pass  # Target is not a Model, no classify
         return target, target.__class__.__name__  # type: ignore
@@ -1531,10 +1553,12 @@ class Deserializer(object):
         :param str target_obj: The target object type to deserialize to.
         :param str/dict data: The response data to deserialize.
         :param str content_type: Swagger "produces" if available.
+        :return: Deserialized object.
+        :rtype: object
         """
         try:
             return self(target_obj, data, content_type=content_type)
-        except:
+        except:  # pylint: disable=bare-except
             _LOGGER.debug(
                 "Ran into a deserialization error. Ignoring since this is failsafe deserialization", exc_info=True
             )
@@ -1552,10 +1576,12 @@ class Deserializer(object):
 
         If raw_data is something else, bypass all logic and return it directly.
 
-        :param raw_data: Data to be processed.
-        :param content_type: How to parse if raw_data is a string/bytes.
+        :param obj raw_data: Data to be processed.
+        :param str content_type: How to parse if raw_data is a string/bytes.
         :raises JSONDecodeError: If JSON is requested and parsing is impossible.
         :raises UnicodeDecodeError: If bytes is not UTF8
+        :rtype: object
+        :return: Unpacked content.
         """
         # Assume this is enough to detect a Pipeline Response without importing it
         context = getattr(raw_data, "context", {})
@@ -1579,24 +1605,35 @@ class Deserializer(object):
     def _instantiate_model(self, response, attrs, additional_properties=None):
         """Instantiate a response model passing in deserialized args.
 
-        :param response: The response model class.
-        :param d_attrs: The deserialized response attributes.
+        :param Response response: The response model class.
+        :param dict attrs: The deserialized response attributes.
+        :param dict additional_properties: Additional properties to be set.
+        :rtype: Response
+        :return: The instantiated response model.
         """
         if callable(response):
             subtype = getattr(response, "_subtype_map", {})
             try:
-                readonly = [k for k, v in response._validation.items() if v.get("readonly")]
-                const = [k for k, v in response._validation.items() if v.get("constant")]
+                readonly = [
+                    k
+                    for k, v in response._validation.items()  # pylint: disable=protected-access  # type: ignore
+                    if v.get("readonly")
+                ]
+                const = [
+                    k
+                    for k, v in response._validation.items()  # pylint: disable=protected-access  # type: ignore
+                    if v.get("constant")
+                ]
                 kwargs = {k: v for k, v in attrs.items() if k not in subtype and k not in readonly + const}
                 response_obj = response(**kwargs)
                 for attr in readonly:
                     setattr(response_obj, attr, attrs.get(attr))
                 if additional_properties:
-                    response_obj.additional_properties = additional_properties
+                    response_obj.additional_properties = additional_properties  # type: ignore
                 return response_obj
             except TypeError as err:
                 msg = "Unable to deserialize {} into model {}. ".format(kwargs, response)  # type: ignore
-                raise DeserializationError(msg + str(err))
+                raise DeserializationError(msg + str(err)) from err
         else:
             try:
                 for attr, value in attrs.items():
@@ -1605,15 +1642,16 @@ class Deserializer(object):
             except Exception as exp:
                 msg = "Unable to populate response model. "
                 msg += "Type: {}, Error: {}".format(type(response), exp)
-                raise DeserializationError(msg)
+                raise DeserializationError(msg) from exp
 
-    def deserialize_data(self, data, data_type):
+    def deserialize_data(self, data, data_type):  # pylint: disable=too-many-return-statements
         """Process data for deserialization according to data type.
 
         :param str data: The response string to be deserialized.
         :param str data_type: The type to deserialize to.
-        :raises: DeserializationError if deserialization fails.
+        :raises DeserializationError: if deserialization fails.
         :return: Deserialized object.
+        :rtype: object
         """
         if data is None:
             return data
@@ -1627,7 +1665,11 @@ class Deserializer(object):
                 if isinstance(data, self.deserialize_expected_types.get(data_type, tuple())):
                     return data
 
-                is_a_text_parsing_type = lambda x: x not in ["object", "[]", r"{}"]
+                is_a_text_parsing_type = lambda x: x not in [  # pylint: disable=unnecessary-lambda-assignment
+                    "object",
+                    "[]",
+                    r"{}",
+                ]
                 if isinstance(data, ET.Element) and is_a_text_parsing_type(data_type) and not data.text:
                     return None
                 data_val = self.deserialize_type[data_type](data)
@@ -1647,14 +1689,14 @@ class Deserializer(object):
             msg = "Unable to deserialize response data."
             msg += " Data: {}, {}".format(data, data_type)
             raise DeserializationError(msg) from err
-        else:
-            return self._deserialize(obj_type, data)
+        return self._deserialize(obj_type, data)
 
     def deserialize_iter(self, attr, iter_type):
         """Deserialize an iterable.
 
         :param list attr: Iterable to be deserialized.
         :param str iter_type: The type of object in the iterable.
+        :return: Deserialized iterable.
         :rtype: list
         """
         if attr is None:
@@ -1671,6 +1713,7 @@ class Deserializer(object):
         :param dict/list attr: Dictionary to be deserialized. Also accepts
          a list of key, value pairs.
         :param str dict_type: The object type of the items in the dictionary.
+        :return: Deserialized dictionary.
         :rtype: dict
         """
         if isinstance(attr, list):
@@ -1681,13 +1724,14 @@ class Deserializer(object):
             attr = {el.tag: el.text for el in attr}
         return {k: self.deserialize_data(v, dict_type) for k, v in attr.items()}
 
-    def deserialize_object(self, attr, **kwargs):
+    def deserialize_object(self, attr, **kwargs):  # pylint: disable=too-many-return-statements
         """Deserialize a generic object.
         This will be handled as a dictionary.
 
         :param dict attr: Dictionary to be deserialized.
+        :return: Deserialized object.
         :rtype: dict
-        :raises: TypeError if non-builtin datatype encountered.
+        :raises TypeError: if non-builtin datatype encountered.
         """
         if attr is None:
             return None
@@ -1720,11 +1764,10 @@ class Deserializer(object):
                     pass
             return deserialized
 
-        else:
-            error = "Cannot deserialize generic object with type: "
-            raise TypeError(error + str(obj_type))
+        error = "Cannot deserialize generic object with type: "
+        raise TypeError(error + str(obj_type))
 
-    def deserialize_basic(self, attr, data_type):
+    def deserialize_basic(self, attr, data_type):  # pylint: disable=too-many-return-statements
         """Deserialize basic builtin data type from string.
         Will attempt to convert to str, int, float and bool.
         This function will also accept '1', '0', 'true' and 'false' as
@@ -1732,8 +1775,9 @@ class Deserializer(object):
 
         :param str attr: response string to be deserialized.
         :param str data_type: deserialization data type.
+        :return: Deserialized basic type.
         :rtype: str, int, float or bool
-        :raises: TypeError if string format is not valid.
+        :raises TypeError: if string format is not valid.
         """
         # If we're here, data is supposed to be a basic type.
         # If it's still an XML node, take the text
@@ -1743,24 +1787,23 @@ class Deserializer(object):
                 if data_type == "str":
                     # None or '', node <a/> is empty string.
                     return ""
-                else:
-                    # None or '', node <a/> with a strong type is None.
-                    # Don't try to model "empty bool" or "empty int"
-                    return None
+                # None or '', node <a/> with a strong type is None.
+                # Don't try to model "empty bool" or "empty int"
+                return None
 
         if data_type == "bool":
             if attr in [True, False, 1, 0]:
                 return bool(attr)
-            elif isinstance(attr, str):
+            if isinstance(attr, str):
                 if attr.lower() in ["true", "1"]:
                     return True
-                elif attr.lower() in ["false", "0"]:
+                if attr.lower() in ["false", "0"]:
                     return False
             raise TypeError("Invalid boolean value: {}".format(attr))
 
         if data_type == "str":
             return self.deserialize_unicode(attr)
-        return eval(data_type)(attr)  # nosec
+        return eval(data_type)(attr)  # nosec # pylint: disable=eval-used
 
     @staticmethod
     def deserialize_unicode(data):
@@ -1768,6 +1811,7 @@ class Deserializer(object):
         as a string.
 
         :param str data: response string to be deserialized.
+        :return: Deserialized string.
         :rtype: str or unicode
         """
         # We might be here because we have an enum modeled as string,
@@ -1781,8 +1825,7 @@ class Deserializer(object):
                 return data
         except NameError:
             return str(data)
-        else:
-            return str(data)
+        return str(data)
 
     @staticmethod
     def deserialize_enum(data, enum_obj):
@@ -1794,6 +1837,7 @@ class Deserializer(object):
         :param str data: Response string to be deserialized. If this value is
          None or invalid it will be returned as-is.
         :param Enum enum_obj: Enum object to deserialize to.
+        :return: Deserialized enum object.
         :rtype: Enum
         """
         if isinstance(data, enum_obj) or data is None:
@@ -1804,9 +1848,9 @@ class Deserializer(object):
             # Workaround. We might consider remove it in the future.
             try:
                 return list(enum_obj.__members__.values())[data]
-            except IndexError:
+            except IndexError as exc:
                 error = "{!r} is not a valid index for enum {!r}"
-                raise DeserializationError(error.format(data, enum_obj))
+                raise DeserializationError(error.format(data, enum_obj)) from exc
         try:
             return enum_obj(str(data))
         except ValueError:
@@ -1822,8 +1866,9 @@ class Deserializer(object):
         """Deserialize string into bytearray.
 
         :param str attr: response string to be deserialized.
+        :return: Deserialized bytearray
         :rtype: bytearray
-        :raises: TypeError if string format invalid.
+        :raises TypeError: if string format invalid.
         """
         if isinstance(attr, ET.Element):
             attr = attr.text
@@ -1834,8 +1879,9 @@ class Deserializer(object):
         """Deserialize base64 encoded string into string.
 
         :param str attr: response string to be deserialized.
+        :return: Deserialized base64 string
         :rtype: bytearray
-        :raises: TypeError if string format invalid.
+        :raises TypeError: if string format invalid.
         """
         if isinstance(attr, ET.Element):
             attr = attr.text
@@ -1849,8 +1895,9 @@ class Deserializer(object):
         """Deserialize string into Decimal object.
 
         :param str attr: response string to be deserialized.
-        :rtype: Decimal
-        :raises: DeserializationError if string format invalid.
+        :return: Deserialized decimal
+        :raises DeserializationError: if string format invalid.
+        :rtype: decimal
         """
         if isinstance(attr, ET.Element):
             attr = attr.text
@@ -1865,8 +1912,9 @@ class Deserializer(object):
         """Deserialize string into long (Py2) or int (Py3).
 
         :param str attr: response string to be deserialized.
+        :return: Deserialized int
         :rtype: long or int
-        :raises: ValueError if string format invalid.
+        :raises ValueError: if string format invalid.
         """
         if isinstance(attr, ET.Element):
             attr = attr.text
@@ -1877,8 +1925,9 @@ class Deserializer(object):
         """Deserialize ISO-8601 formatted string into TimeDelta object.
 
         :param str attr: response string to be deserialized.
+        :return: Deserialized duration
         :rtype: TimeDelta
-        :raises: DeserializationError if string format invalid.
+        :raises DeserializationError: if string format invalid.
         """
         if isinstance(attr, ET.Element):
             attr = attr.text
@@ -1887,16 +1936,16 @@ class Deserializer(object):
         except (ValueError, OverflowError, AttributeError) as err:
             msg = "Cannot deserialize duration object."
             raise DeserializationError(msg) from err
-        else:
-            return duration
+        return duration
 
     @staticmethod
     def deserialize_date(attr):
         """Deserialize ISO-8601 formatted string into Date object.
 
         :param str attr: response string to be deserialized.
+        :return: Deserialized date
         :rtype: Date
-        :raises: DeserializationError if string format invalid.
+        :raises DeserializationError: if string format invalid.
         """
         if isinstance(attr, ET.Element):
             attr = attr.text
@@ -1910,8 +1959,9 @@ class Deserializer(object):
         """Deserialize ISO-8601 formatted string into time object.
 
         :param str attr: response string to be deserialized.
+        :return: Deserialized time
         :rtype: datetime.time
-        :raises: DeserializationError if string format invalid.
+        :raises DeserializationError: if string format invalid.
         """
         if isinstance(attr, ET.Element):
             attr = attr.text
@@ -1924,31 +1974,32 @@ class Deserializer(object):
         """Deserialize RFC-1123 formatted string into Datetime object.
 
         :param str attr: response string to be deserialized.
+        :return: Deserialized RFC datetime
         :rtype: Datetime
-        :raises: DeserializationError if string format invalid.
+        :raises DeserializationError: if string format invalid.
         """
         if isinstance(attr, ET.Element):
             attr = attr.text
         try:
             parsed_date = email.utils.parsedate_tz(attr)  # type: ignore
             date_obj = datetime.datetime(
-                *parsed_date[:6], tzinfo=_FixedOffset(datetime.timedelta(minutes=(parsed_date[9] or 0) / 60))
+                *parsed_date[:6], tzinfo=datetime.timezone(datetime.timedelta(minutes=(parsed_date[9] or 0) / 60))
             )
             if not date_obj.tzinfo:
                 date_obj = date_obj.astimezone(tz=TZ_UTC)
         except ValueError as err:
             msg = "Cannot deserialize to rfc datetime object."
             raise DeserializationError(msg) from err
-        else:
-            return date_obj
+        return date_obj
 
     @staticmethod
     def deserialize_iso(attr):
         """Deserialize ISO-8601 formatted string into Datetime object.
 
         :param str attr: response string to be deserialized.
+        :return: Deserialized ISO datetime
         :rtype: Datetime
-        :raises: DeserializationError if string format invalid.
+        :raises DeserializationError: if string format invalid.
         """
         if isinstance(attr, ET.Element):
             attr = attr.text
@@ -1976,8 +2027,7 @@ class Deserializer(object):
         except (ValueError, OverflowError, AttributeError) as err:
             msg = "Cannot deserialize datetime object."
             raise DeserializationError(msg) from err
-        else:
-            return date_obj
+        return date_obj
 
     @staticmethod
     def deserialize_unix(attr):
@@ -1985,8 +2035,9 @@ class Deserializer(object):
         This is represented as seconds.
 
         :param int attr: Object to be serialized.
+        :return: Deserialized datetime
         :rtype: Datetime
-        :raises: DeserializationError if format invalid
+        :raises DeserializationError: if format invalid
         """
         if isinstance(attr, ET.Element):
             attr = int(attr.text)  # type: ignore
@@ -1996,5 +2047,4 @@ class Deserializer(object):
         except ValueError as err:
             msg = "Cannot deserialize to unix datetime object."
             raise DeserializationError(msg) from err
-        else:
-            return date_obj
+        return date_obj

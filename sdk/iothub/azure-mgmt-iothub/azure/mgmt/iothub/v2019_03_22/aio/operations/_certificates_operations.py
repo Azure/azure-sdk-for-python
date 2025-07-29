@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
+import sys
 from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
 
 from azure.core.exceptions import (
@@ -18,14 +18,12 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
-from ..._vendor import _convert_request
 from ...operations._certificates_operations import (
     build_create_or_update_request,
     build_delete_request,
@@ -35,6 +33,10 @@ from ...operations._certificates_operations import (
     build_verify_request,
 )
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -71,12 +73,11 @@ class CertificatesOperations:
         :type resource_group_name: str
         :param resource_name: The name of the IoT hub. Required.
         :type resource_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateListDescription or the result of cls(response)
         :rtype: ~azure.mgmt.iothub.v2019_03_22.models.CertificateListDescription
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -90,21 +91,19 @@ class CertificatesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-03-22"))
         cls: ClsType[_models.CertificateListDescription] = kwargs.pop("cls", None)
 
-        request = build_list_by_iot_hub_request(
+        _request = build_list_by_iot_hub_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.list_by_iot_hub.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -114,16 +113,12 @@ class CertificatesOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("CertificateListDescription", pipeline_response)
+        deserialized = self._deserialize("CertificateListDescription", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    list_by_iot_hub.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/certificates"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get(
@@ -139,12 +134,11 @@ class CertificatesOperations:
         :type resource_name: str
         :param certificate_name: The name of the certificate. Required.
         :type certificate_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateDescription or the result of cls(response)
         :rtype: ~azure.mgmt.iothub.v2019_03_22.models.CertificateDescription
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -158,22 +152,20 @@ class CertificatesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-03-22"))
         cls: ClsType[_models.CertificateDescription] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             certificate_name=certificate_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -183,16 +175,12 @@ class CertificatesOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("CertificateDescription", pipeline_response)
+        deserialized = self._deserialize("CertificateDescription", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/certificates/{certificateName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def create_or_update(
@@ -224,7 +212,6 @@ class CertificatesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateDescription or the result of cls(response)
         :rtype: ~azure.mgmt.iothub.v2019_03_22.models.CertificateDescription
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -236,7 +223,7 @@ class CertificatesOperations:
         resource_group_name: str,
         resource_name: str,
         certificate_name: str,
-        certificate_description: IO,
+        certificate_description: IO[bytes],
         if_match: Optional[str] = None,
         *,
         content_type: str = "application/json",
@@ -253,14 +240,13 @@ class CertificatesOperations:
         :param certificate_name: The name of the certificate. Required.
         :type certificate_name: str
         :param certificate_description: The certificate body. Required.
-        :type certificate_description: IO
+        :type certificate_description: IO[bytes]
         :param if_match: ETag of the Certificate. Do not specify for creating a brand new certificate.
          Required to update an existing certificate. Default value is None.
         :type if_match: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateDescription or the result of cls(response)
         :rtype: ~azure.mgmt.iothub.v2019_03_22.models.CertificateDescription
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -272,7 +258,7 @@ class CertificatesOperations:
         resource_group_name: str,
         resource_name: str,
         certificate_name: str,
-        certificate_description: Union[_models.CertificateBodyDescription, IO],
+        certificate_description: Union[_models.CertificateBodyDescription, IO[bytes]],
         if_match: Optional[str] = None,
         **kwargs: Any
     ) -> _models.CertificateDescription:
@@ -287,21 +273,17 @@ class CertificatesOperations:
         :param certificate_name: The name of the certificate. Required.
         :type certificate_name: str
         :param certificate_description: The certificate body. Is either a CertificateBodyDescription
-         type or a IO type. Required.
+         type or a IO[bytes] type. Required.
         :type certificate_description: ~azure.mgmt.iothub.v2019_03_22.models.CertificateBodyDescription
-         or IO
+         or IO[bytes]
         :param if_match: ETag of the Certificate. Do not specify for creating a brand new certificate.
          Required to update an existing certificate. Default value is None.
         :type if_match: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateDescription or the result of cls(response)
         :rtype: ~azure.mgmt.iothub.v2019_03_22.models.CertificateDescription
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -324,7 +306,7 @@ class CertificatesOperations:
         else:
             _json = self._serialize.body(certificate_description, "CertificateBodyDescription")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             certificate_name=certificate_name,
@@ -334,16 +316,14 @@ class CertificatesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -353,23 +333,15 @@ class CertificatesOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("CertificateDescription", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("CertificateDescription", pipeline_response)
+        deserialized = self._deserialize("CertificateDescription", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/certificates/{certificateName}"
-    }
-
     @distributed_trace_async
-    async def delete(  # pylint: disable=inconsistent-return-statements
+    async def delete(
         self, resource_group_name: str, resource_name: str, certificate_name: str, if_match: str, **kwargs: Any
     ) -> None:
         """Delete an X509 certificate.
@@ -384,12 +356,11 @@ class CertificatesOperations:
         :type certificate_name: str
         :param if_match: ETag of the Certificate. Required.
         :type if_match: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -403,23 +374,21 @@ class CertificatesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-03-22"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             certificate_name=certificate_name,
             subscription_id=self._config.subscription_id,
             if_match=if_match,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -430,11 +399,7 @@ class CertificatesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/certificates/{certificateName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def generate_verification_code(
@@ -453,12 +418,11 @@ class CertificatesOperations:
         :type certificate_name: str
         :param if_match: ETag of the Certificate. Required.
         :type if_match: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateWithNonceDescription or the result of cls(response)
         :rtype: ~azure.mgmt.iothub.v2019_03_22.models.CertificateWithNonceDescription
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -472,23 +436,21 @@ class CertificatesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-03-22"))
         cls: ClsType[_models.CertificateWithNonceDescription] = kwargs.pop("cls", None)
 
-        request = build_generate_verification_code_request(
+        _request = build_generate_verification_code_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             certificate_name=certificate_name,
             subscription_id=self._config.subscription_id,
             if_match=if_match,
             api_version=api_version,
-            template_url=self.generate_verification_code.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -498,16 +460,12 @@ class CertificatesOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("CertificateWithNonceDescription", pipeline_response)
+        deserialized = self._deserialize("CertificateWithNonceDescription", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    generate_verification_code.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/certificates/{certificateName}/generateVerificationCode"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def verify(
@@ -540,7 +498,6 @@ class CertificatesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateDescription or the result of cls(response)
         :rtype: ~azure.mgmt.iothub.v2019_03_22.models.CertificateDescription
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -553,7 +510,7 @@ class CertificatesOperations:
         resource_name: str,
         certificate_name: str,
         if_match: str,
-        certificate_verification_body: IO,
+        certificate_verification_body: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -572,11 +529,10 @@ class CertificatesOperations:
         :param if_match: ETag of the Certificate. Required.
         :type if_match: str
         :param certificate_verification_body: The name of the certificate. Required.
-        :type certificate_verification_body: IO
+        :type certificate_verification_body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateDescription or the result of cls(response)
         :rtype: ~azure.mgmt.iothub.v2019_03_22.models.CertificateDescription
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -589,7 +545,7 @@ class CertificatesOperations:
         resource_name: str,
         certificate_name: str,
         if_match: str,
-        certificate_verification_body: Union[_models.CertificateVerificationDescription, IO],
+        certificate_verification_body: Union[_models.CertificateVerificationDescription, IO[bytes]],
         **kwargs: Any
     ) -> _models.CertificateDescription:
         """Verify certificate's private key possession.
@@ -606,18 +562,14 @@ class CertificatesOperations:
         :param if_match: ETag of the Certificate. Required.
         :type if_match: str
         :param certificate_verification_body: The name of the certificate. Is either a
-         CertificateVerificationDescription type or a IO type. Required.
+         CertificateVerificationDescription type or a IO[bytes] type. Required.
         :type certificate_verification_body:
-         ~azure.mgmt.iothub.v2019_03_22.models.CertificateVerificationDescription or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.iothub.v2019_03_22.models.CertificateVerificationDescription or IO[bytes]
         :return: CertificateDescription or the result of cls(response)
         :rtype: ~azure.mgmt.iothub.v2019_03_22.models.CertificateDescription
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -640,7 +592,7 @@ class CertificatesOperations:
         else:
             _json = self._serialize.body(certificate_verification_body, "CertificateVerificationDescription")
 
-        request = build_verify_request(
+        _request = build_verify_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             certificate_name=certificate_name,
@@ -650,16 +602,14 @@ class CertificatesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.verify.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -669,13 +619,9 @@ class CertificatesOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("CertificateDescription", pipeline_response)
+        deserialized = self._deserialize("CertificateDescription", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    verify.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/certificates/{certificateName}/verify"
-    }
+        return deserialized  # type: ignore

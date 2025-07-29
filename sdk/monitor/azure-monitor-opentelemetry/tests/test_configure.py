@@ -250,9 +250,6 @@ class TestConfigure(unittest.TestCase):
         instrumentation_mock.assert_called_once_with(configurations)
 
     @patch(
-        "azure.monitor.opentelemetry._configure.settings",
-    )
-    @patch(
         "azure.monitor.opentelemetry._configure.BatchSpanProcessor",
     )
     @patch(
@@ -275,7 +272,6 @@ class TestConfigure(unittest.TestCase):
         set_tracer_provider_mock,
         trace_exporter_mock,
         bsp_mock,
-        azure_core_mock,
     ):
         sampler_init_mock = Mock()
         sampler_mock.return_value = sampler_init_mock
@@ -287,6 +283,9 @@ class TestConfigure(unittest.TestCase):
         bsp_mock.return_value = bsp_init_mock
         custom_sp = Mock()
 
+        settings_mock = Mock()
+        opentelemetry_span_mock = Mock()
+
         configurations = {
             "connection_string": "test_cs",
             "instrumentation_options": {"azure_sdk": {"enabled": True}},
@@ -294,139 +293,143 @@ class TestConfigure(unittest.TestCase):
             "span_processors": [custom_sp],
             "resource": TEST_RESOURCE,
         }
-        _setup_tracing(configurations)
-        sampler_mock.assert_called_once_with(sampling_ratio=0.5)
-        tp_mock.assert_called_once_with(sampler=sampler_init_mock, resource=TEST_RESOURCE)
-        set_tracer_provider_mock.assert_called_once_with(tp_init_mock)
-        trace_exporter_mock.assert_called_once_with(**configurations)
-        bsp_mock.assert_called_once_with(trace_exp_init_mock)
-        self.assertEqual(tp_init_mock.add_span_processor.call_count, 2)
-        tp_init_mock.add_span_processor.assert_has_calls([call(custom_sp), call(bsp_init_mock)])
-        self.assertEqual(azure_core_mock.tracing_implementation, OpenTelemetrySpan)
+        with patch("azure.monitor.opentelemetry._configure._is_instrumentation_enabled") as instr_mock:
+            instr_mock.return_value = True
+            with patch.dict('sys.modules', {
+                'azure.core.settings': Mock(settings=settings_mock),
+                'azure.core.tracing.ext.opentelemetry_span': Mock(OpenTelemetrySpan=opentelemetry_span_mock)
+            }):
+                _setup_tracing(configurations)
+                sampler_mock.assert_called_once_with(sampling_ratio=0.5)
+                tp_mock.assert_called_once_with(sampler=sampler_init_mock, resource=TEST_RESOURCE)
+                set_tracer_provider_mock.assert_called_once_with(tp_init_mock)
+                trace_exporter_mock.assert_called_once_with(**configurations)
+                bsp_mock.assert_called_once_with(trace_exp_init_mock)
+                self.assertEqual(tp_init_mock.add_span_processor.call_count, 2)
+                tp_init_mock.add_span_processor.assert_has_calls([call(custom_sp), call(bsp_init_mock)])
+                self.assertEqual(settings_mock.tracing_implementation, opentelemetry_span_mock)
 
-    @patch(
-        "azure.monitor.opentelemetry._configure._set_event_logger_provider",
-    )
-    @patch(
-        "azure.monitor.opentelemetry._configure.EventLoggerProvider",
-        autospec=True,
-    )
-    @patch(
-        "azure.monitor.opentelemetry._configure.getLogger",
-    )
-    @patch(
-        "azure.monitor.opentelemetry._configure.LoggingHandler",
-    )
-    @patch(
-        "azure.monitor.opentelemetry._configure.BatchLogRecordProcessor",
-    )
-    @patch(
-        "azure.monitor.opentelemetry._configure.AzureMonitorLogExporter",
-    )
-    @patch(
-        "azure.monitor.opentelemetry._configure.set_logger_provider",
-    )
-    @patch(
-        "azure.monitor.opentelemetry._configure.LoggerProvider",
-        autospec=True,
-    )
-    def test_setup_logging(
-        self,
-        lp_mock,
-        set_logger_provider_mock,
-        log_exporter_mock,
-        blrp_mock,
-        logging_handler_mock,
-        get_logger_mock,
-        elp_mock,
-        set_elp_mock,
-    ):
+
+    @patch("azure.monitor.opentelemetry._configure.getLogger")
+    def test_setup_logging(self, get_logger_mock):
+        lp_mock = Mock()
+        set_logger_provider_mock = Mock()
+        log_exporter_mock = Mock()
+        blrp_mock = Mock()
+        logging_handler_mock = Mock()
+        elp_mock = Mock()
+        set_elp_mock = Mock()
+
         lp_init_mock = Mock()
         lp_mock.return_value = lp_init_mock
         log_exp_init_mock = Mock()
-        elp_init_mock = Mock()
-        elp_mock.return_value = elp_init_mock
         log_exporter_mock.return_value = log_exp_init_mock
         blrp_init_mock = Mock()
         blrp_mock.return_value = blrp_init_mock
+
         logging_handler_init_mock = Mock()
         logging_handler_mock.return_value = logging_handler_init_mock
         logger_mock = Mock()
         logger_mock.handlers = []
         get_logger_mock.return_value = logger_mock
+        formatter_init_mock = Mock()
+        elp_init_mock = Mock()
+        elp_mock.return_value = elp_init_mock
 
         configurations = {
             "connection_string": "test_cs",
             "logger_name": "test",
             "resource": TEST_RESOURCE,
+            "logging_formatter": formatter_init_mock
         }
-        _setup_logging(configurations)
 
+        # Patch all the necessary modules and imports
+        with patch.dict('sys.modules', {
+            'opentelemetry._logs': Mock(set_logger_provider=set_logger_provider_mock),
+            'opentelemetry.sdk._logs': Mock(
+                LoggerProvider=lp_mock,
+                LoggingHandler=logging_handler_mock
+            ),
+            'opentelemetry.sdk._logs.export': Mock(BatchLogRecordProcessor=blrp_mock),
+            'azure.monitor.opentelemetry.exporter': Mock(AzureMonitorLogExporter=log_exporter_mock),
+            'opentelemetry._events': Mock(_set_event_logger_provider=set_elp_mock),
+            'opentelemetry.sdk._events': Mock(EventLoggerProvider=elp_mock)
+        }):
+            _setup_logging(configurations)
+
+        # Verify the correct behavior
         lp_mock.assert_called_once_with(resource=TEST_RESOURCE)
         set_logger_provider_mock.assert_called_once_with(lp_init_mock)
         log_exporter_mock.assert_called_once_with(**configurations)
-        blrp_mock.assert_called_once_with(
-            log_exp_init_mock,
-        )
+        blrp_mock.assert_called_once_with(log_exp_init_mock)
         lp_init_mock.add_log_record_processor.assert_called_once_with(blrp_init_mock)
         logging_handler_mock.assert_called_once_with(logger_provider=lp_init_mock)
+        logging_handler_init_mock.setFormatter.assert_called_once_with(formatter_init_mock)
         get_logger_mock.assert_called_once_with("test")
         logger_mock.addHandler.assert_called_once_with(logging_handler_init_mock)
         elp_mock.assert_called_once_with(lp_init_mock)
         set_elp_mock.assert_called_once_with(elp_init_mock, False)
 
-    @patch(
-        "azure.monitor.opentelemetry._configure.getLogger",
-    )
-    @patch(
-        "azure.monitor.opentelemetry._configure.BatchLogRecordProcessor",
-    )
-    @patch(
-        "azure.monitor.opentelemetry._configure.AzureMonitorLogExporter",
-    )
-    @patch(
-        "azure.monitor.opentelemetry._configure.set_logger_provider",
-    )
-    @patch(
-        "azure.monitor.opentelemetry._configure.LoggerProvider",
-        autospec=True,
-    )
-    def test_setup_logging_duplicate_logger(
-        self,
-        lp_mock,
-        set_logger_provider_mock,
-        log_exporter_mock,
-        blrp_mock,
-        get_logger_mock,
-    ):
+    @patch("azure.monitor.opentelemetry._configure.isinstance")
+    @patch("azure.monitor.opentelemetry._configure.getLogger")
+    def test_setup_logging_duplicate_logger(self, get_logger_mock, instance_mock):
+        # Create all the necessary mocks
+        lp_mock = Mock()
+        set_logger_provider_mock = Mock()
+        log_exporter_mock = Mock()
+        blrp_mock = Mock()
+        elp_mock = Mock()
+        set_elp_mock = Mock()
+
+        # Create mock instances
         lp_init_mock = Mock()
         lp_mock.return_value = lp_init_mock
         log_exp_init_mock = Mock()
         log_exporter_mock.return_value = log_exp_init_mock
         blrp_init_mock = Mock()
         blrp_mock.return_value = blrp_init_mock
-        logging_handler_init_mock = Mock(spec=LoggingHandler)
+
+        # Create a mock handler that looks like LoggingHandler
+        logging_handler_init_mock = Mock()
+        
+        # Set up the logger to already have a LoggingHandler
         logger_mock = Mock()
         logger_mock.handlers = [logging_handler_init_mock]
         get_logger_mock.return_value = logger_mock
+        instance_mock.return_value = True
 
+        elp_init_mock = Mock()
+        elp_mock.return_value = elp_init_mock
+        
         configurations = {
             "connection_string": "test_cs",
             "logger_name": "test",
             "resource": TEST_RESOURCE,
+            "logging_formatter": None,
         }
-        _setup_logging(configurations)
-
+        
+        # Patch all the necessary modules and imports
+        with patch.dict('sys.modules', {
+            'opentelemetry._logs': Mock(set_logger_provider=set_logger_provider_mock),
+            'opentelemetry.sdk._logs': Mock(LoggerProvider=lp_mock),
+            'opentelemetry.sdk._logs.export': Mock(BatchLogRecordProcessor=blrp_mock),
+            'azure.monitor.opentelemetry.exporter': Mock(AzureMonitorLogExporter=log_exporter_mock),
+            'opentelemetry._events': Mock(_set_event_logger_provider=set_elp_mock),
+            'opentelemetry.sdk._events': Mock(EventLoggerProvider=elp_mock)
+        }):
+            _setup_logging(configurations)
+        
+        # Verify the correct behavior
         lp_mock.assert_called_once_with(resource=TEST_RESOURCE)
         set_logger_provider_mock.assert_called_once_with(lp_init_mock)
         log_exporter_mock.assert_called_once_with(**configurations)
-        blrp_mock.assert_called_once_with(
-            log_exp_init_mock,
-        )
+        blrp_mock.assert_called_once_with(log_exp_init_mock)
         lp_init_mock.add_log_record_processor.assert_called_once_with(blrp_init_mock)
-        # logging_handler_mock.assert_not_called()
         get_logger_mock.assert_called_once_with("test")
+        # The logger already has a LoggingHandler, so addHandler should not be called
         logger_mock.addHandler.assert_not_called()
+        elp_mock.assert_called_once_with(lp_init_mock)
+        set_elp_mock.assert_called_once_with(elp_init_mock, False)
 
     @patch(
         "azure.monitor.opentelemetry._configure.PeriodicExportingMetricReader",
@@ -660,13 +663,16 @@ class TestConfigure(unittest.TestCase):
         logger_mock.debug.assert_called_once()
 
     @patch("azure.monitor.opentelemetry._configure.AzureDiagnosticLogging")
+    @patch("azure.monitor.opentelemetry._configure._is_on_functions")
     @patch("azure.monitor.opentelemetry._configure._is_attach_enabled")
     def test_send_attach_warning_true(
         self,
         is_attach_enabled_mock,
+        is_on_functions_mock,
         mock_diagnostics,
     ):
         is_attach_enabled_mock.return_value = True
+        is_on_functions_mock.return_value = False
         _send_attach_warning()
         mock_diagnostics.warning.assert_called_once_with(
             "Distro detected that automatic attach may have occurred. Check your data to ensure that telemetry is not being duplicated. This may impact your cost.",
@@ -674,12 +680,29 @@ class TestConfigure(unittest.TestCase):
         )
 
     @patch("azure.monitor.opentelemetry._configure.AzureDiagnosticLogging")
+    @patch("azure.monitor.opentelemetry._configure._is_on_functions")
     @patch("azure.monitor.opentelemetry._configure._is_attach_enabled")
     def test_send_attach_warning_false(
         self,
         is_attach_enabled_mock,
+        is_on_functions_mock,
         mock_diagnostics,
     ):
         is_attach_enabled_mock.return_value = False
+        is_on_functions_mock.return_value = False
+        _send_attach_warning()
+        mock_diagnostics.warning.assert_not_called()
+
+    @patch("azure.monitor.opentelemetry._configure.AzureDiagnosticLogging")
+    @patch("azure.monitor.opentelemetry._configure._is_on_functions")
+    @patch("azure.monitor.opentelemetry._configure._is_attach_enabled")
+    def test_send_attach_warning_false_on_functions(
+        self,
+        is_attach_enabled_mock,
+        is_on_functions_mock,
+        mock_diagnostics,
+    ):
+        is_attach_enabled_mock.return_value = True
+        is_on_functions_mock.return_value = True
         _send_attach_warning()
         mock_diagnostics.warning.assert_not_called()

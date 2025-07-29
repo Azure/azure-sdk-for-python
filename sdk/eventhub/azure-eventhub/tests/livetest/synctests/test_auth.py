@@ -21,7 +21,7 @@ from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 
 
 @pytest.mark.liveTest
-def test_client_token_credential(live_eventhub, get_credential, uamqp_transport):
+def test_client_token_credential(live_eventhub, get_credential, uamqp_transport, client_args):
     credential = get_credential()
     producer_client = EventHubProducerClient(
         fully_qualified_namespace=live_eventhub["hostname"],
@@ -29,6 +29,7 @@ def test_client_token_credential(live_eventhub, get_credential, uamqp_transport)
         credential=credential,
         user_agent="customized information",
         uamqp_transport=uamqp_transport,
+        **client_args
     )
     consumer_client = EventHubConsumerClient(
         fully_qualified_namespace=live_eventhub["hostname"],
@@ -37,6 +38,7 @@ def test_client_token_credential(live_eventhub, get_credential, uamqp_transport)
         credential=credential,
         user_agent="customized information",
         uamqp_transport=uamqp_transport,
+        **client_args
     )
     with producer_client:
         batch = producer_client.create_batch(partition_id="0")
@@ -65,13 +67,14 @@ def test_client_token_credential(live_eventhub, get_credential, uamqp_transport)
 
 
 @pytest.mark.liveTest
-def test_client_sas_credential(live_eventhub, uamqp_transport):
+def test_client_sas_credential(live_eventhub, uamqp_transport, client_args):
     # This should "just work" to validate known-good.
     hostname = live_eventhub["hostname"]
     producer_client = EventHubProducerClient.from_connection_string(
         live_eventhub["connection_str"],
         eventhub_name=live_eventhub["event_hub"],
         uamqp_transport=uamqp_transport,
+        **client_args
     )
 
     with producer_client:
@@ -88,6 +91,7 @@ def test_client_sas_credential(live_eventhub, uamqp_transport):
         eventhub_name=live_eventhub["event_hub"],
         credential=EventHubSASTokenCredential(token, time.time() + 3000),
         uamqp_transport=uamqp_transport,
+        **client_args
     )
 
     with producer_client:
@@ -101,6 +105,7 @@ def test_client_sas_credential(live_eventhub, uamqp_transport):
         token_conn_str,
         eventhub_name=live_eventhub["event_hub"],
         uamqp_transport=uamqp_transport,
+        **client_args
     )
 
     with conn_str_producer_client:
@@ -110,13 +115,14 @@ def test_client_sas_credential(live_eventhub, uamqp_transport):
 
 
 @pytest.mark.liveTest
-def test_client_azure_sas_credential(live_eventhub, uamqp_transport):
+def test_client_azure_sas_credential(live_eventhub, uamqp_transport, client_args):
     # This should "just work" to validate known-good.
     hostname = live_eventhub["hostname"]
     producer_client = EventHubProducerClient.from_connection_string(
         live_eventhub["connection_str"],
         eventhub_name=live_eventhub["event_hub"],
         uamqp_transport=uamqp_transport,
+        **client_args
     )
 
     with producer_client:
@@ -134,6 +140,7 @@ def test_client_azure_sas_credential(live_eventhub, uamqp_transport):
         credential=AzureSasCredential(token),
         auth_timeout=30,
         uamqp_transport=uamqp_transport,
+        **client_args
     )
 
     with producer_client:
@@ -145,7 +152,7 @@ def test_client_azure_sas_credential(live_eventhub, uamqp_transport):
 
 
 @pytest.mark.liveTest
-def test_client_azure_named_key_credential(live_eventhub, uamqp_transport):
+def test_client_azure_named_key_credential(live_eventhub, uamqp_transport, client_args):
     credential = AzureNamedKeyCredential(live_eventhub["key_name"], live_eventhub["access_key"])
     consumer_client = EventHubConsumerClient(
         fully_qualified_namespace=live_eventhub["hostname"],
@@ -155,6 +162,7 @@ def test_client_azure_named_key_credential(live_eventhub, uamqp_transport):
         user_agent="customized information",
         auth_timeout=30,
         uamqp_transport=uamqp_transport,
+        **client_args
     )
 
     assert consumer_client.get_eventhub_properties() is not None
@@ -170,6 +178,7 @@ def test_client_azure_named_key_credential(live_eventhub, uamqp_transport):
 
 # New feature only for Pure Python AMQP, not uamqp.
 @pytest.mark.liveTest
+@pytest.mark.no_amqpproxy # testing ssl_context
 def test_client_with_ssl_context(auth_credentials, socket_transport):
     fully_qualified_namespace, eventhub_name, credential = auth_credentials
 

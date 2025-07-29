@@ -1,5 +1,21 @@
 # Release History
 
+## 2.1.0b1 (2025-05-12)
+
+### Features Added
+
+  - Model `FrontendProperties` added property `security_policy_configurations`
+  - Model `FrontendUpdate` added property `properties`
+  - Enum `PolicyType` added member `IP_ACCESS_RULES`
+  - Model `SecurityPolicyConfigurations` added property `ip_access_rules_security_policy`
+  - Model `SecurityPolicyProperties` added property `ip_access_rules_policy`
+  - Model `SecurityPolicyUpdateProperties` added property `ip_access_rules_policy`
+  - Added model `FrontendUpdateProperties`
+  - Added model `IpAccessRule`
+  - Added enum `IpAccessRuleAction`
+  - Added model `IpAccessRulesPolicy`
+  - Added model `IpAccessRulesSecurityPolicy`
+
 ## 2.0.0 (2025-02-05)
 
 ### Features Added

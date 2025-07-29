@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -36,8 +37,8 @@ def main():
         parameters={
             "location": "westus",
             "properties": {
-                "administratorLogin": "cloudsa",
-                "administratorLoginPassword": "password",
+                "administratorLogin": "login",
+                "administratorLoginPassword": "Password1",
                 "backup": {"backupRetentionDays": 7, "geoRedundantBackup": "Disabled"},
                 "cluster": {"clusterSize": 2},
                 "createMode": "Create",
@@ -46,12 +47,12 @@ def main():
                 "storage": {"autoGrow": "Disabled", "storageSizeGB": 256, "tier": "P15"},
                 "version": "16",
             },
-            "sku": {"name": "Standard_D4s_v3", "tier": "GeneralPurpose"},
+            "sku": {"name": "Standard_D4ds_v5", "tier": "GeneralPurpose"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2024-11-01-preview/examples/ClusterCreate.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2025-01-01-preview/examples/ClusterCreate.json
 if __name__ == "__main__":
     main()

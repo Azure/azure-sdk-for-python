@@ -5,7 +5,12 @@
 import os
 
 from azure.identity import DefaultAzureCredential
-from azure.keyvault.certificates import CertificateClient, CertificatePolicy, CertificateContentType, WellKnownIssuerNames
+from azure.keyvault.certificates import (
+    CertificateClient,
+    CertificatePolicy,
+    CertificateContentType,
+    WellKnownIssuerNames,
+)
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
@@ -64,9 +69,7 @@ cert_name = "HelloWorldCertificate"
 # as a KeyVaultCertificate if creation is successful, and the CertificateOperation if not. The wait()
 # call on the poller will wait until the long running operation is complete.
 # [START create_a_certificate]
-new_certificate = client.begin_create_certificate(
-    certificate_name=cert_name, policy=cert_policy
-).result()
+new_certificate = client.begin_create_certificate(certificate_name=cert_name, policy=cert_policy).result()
 # [END create_a_certificate]
 print(f"Certificate with name '{new_certificate.name}' created")
 
@@ -83,17 +86,11 @@ print(f"Certificate with name '{certificate.name}' was found'.")
 print("\n.. Update a certificate by name")
 # [START update_certificate]
 tags = {"a": "b"}
-updated_certificate = client.update_certificate_properties(
-    certificate_name=certificate.name, tags=tags
-)
+updated_certificate = client.update_certificate_properties(certificate_name=certificate.name, tags=tags)
 # [END update_certificate]
 assert updated_certificate.properties
-print(
-    f"Certificate with name '{certificate.name}' was updated on date '{updated_certificate.properties.updated_on}'"
-)
-print(
-    f"Certificate with name '{certificate.name}' was updated with tags '{updated_certificate.properties.tags}'"
-)
+print(f"Certificate with name '{certificate.name}' was updated on date '{updated_certificate.properties.updated_on}'")
+print(f"Certificate with name '{certificate.name}' was updated with tags '{updated_certificate.properties.tags}'")
 
 # The account was closed, need to delete its credentials from the Key Vault.
 print("\n.. Delete certificate")

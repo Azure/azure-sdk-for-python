@@ -20,11 +20,11 @@ class TestContainerAppsAPIManagedEnvironmentUsagesOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_managed_environment_usages_list(self, resource_group):
         response = self.client.managed_environment_usages.list(
             resource_group_name=resource_group.name,
             environment_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

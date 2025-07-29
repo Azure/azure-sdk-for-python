@@ -27,17 +27,17 @@ from azure.mgmt.apimanagement import ApiManagementClient
 def main():
     client = ApiManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    client.api.delete(
+    client.api.begin_delete(
         resource_group_name="rg1",
         service_name="apimService1",
         api_id="echo-api",
         if_match="*",
-    )
+    ).result()
 
 
-# x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2022-08-01/examples/ApiManagementDeleteApi.json
+# x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2024-05-01/examples/ApiManagementDeleteApi.json
 if __name__ == "__main__":
     main()

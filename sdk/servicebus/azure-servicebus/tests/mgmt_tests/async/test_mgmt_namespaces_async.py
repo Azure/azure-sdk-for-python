@@ -9,7 +9,7 @@ from azure.servicebus.aio.management import ServiceBusAdministrationClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, get_credential
 from devtools_testutils.aio import recorded_by_proxy_async
-from tests.sb_env_loader import ServiceBusPreparer
+from sb_env_loader import ServiceBusPreparer
 
 
 class TestServiceBusManagementClientNamespaceAsync(AzureMgmtRecordedTestCase):

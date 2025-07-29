@@ -43,16 +43,16 @@ def main():
                         "unusedSizeTiB": 24,
                     }
                 },
-                "baseSizeTiB": 21,
-                "extendedCapacitySizeTiB": 10,
+                "baseSizeTiB": 13,
+                "extendedCapacitySizeTiB": 29,
                 "publicNetworkAccess": "Enabled",
             },
-            "tags": {"key5945": "eufqmxresekerilkgvfzddolxzas"},
+            "tags": {"key1931": "yhjwkgmrrwrcoxblgwgzjqusch"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/preview/2024-06-01-preview/examples/ElasticSans_Update_MaximumSet_Gen.json
+# x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/preview/2024-07-01-preview/examples/ElasticSans_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -1,4 +1,0 @@
-include *.md
-
-include azure/__init__.py
-recursive-include tests *.py

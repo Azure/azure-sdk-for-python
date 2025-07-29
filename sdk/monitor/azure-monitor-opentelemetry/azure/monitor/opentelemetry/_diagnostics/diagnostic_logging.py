@@ -11,10 +11,10 @@ from os.path import exists, join
 
 from azure.monitor.opentelemetry._utils import (
     _EXTENSION_VERSION,
-    _IS_DIAGNOSTICS_ENABLED,
     _env_var_or_default,
     _get_customer_ikey_from_env_var,
     _get_log_path,
+    _is_diagnostics_enabled,
 )
 from azure.monitor.opentelemetry._version import VERSION
 
@@ -24,14 +24,23 @@ _SUBSCRIPTION_ID_ENV_VAR = _env_var_or_default("WEBSITE_OWNER_NAME")
 _SUBSCRIPTION_ID = _SUBSCRIPTION_ID_ENV_VAR.split("+")[0] if _SUBSCRIPTION_ID_ENV_VAR else None
 _logger = logging.getLogger(__name__)
 _logger.propagate = False
-_logger.setLevel(logging.INFO)
+_logger.setLevel(logging.DEBUG)
 _DIAGNOSTIC_LOG_PATH = _get_log_path()
+
 _DISTRO_DETECTS_ATTACH = "4100"
+_INFO = "4101"
+_INSTRUMENTATION_SKIPPED = "4101"
+
 _ATTACH_SUCCESS_DISTRO = "4200"
 _ATTACH_SUCCESS_CONFIGURATOR = "4201"
+_INSTRUMENTATION_SUCCEEDED = "4202"
+
+_DEPENDENCY_OVERLAP = "4300"
+
 _ATTACH_FAILURE_DISTRO = "4400"
 _ATTACH_FAILURE_CONFIGURATOR = "4401"
 _ATTACH_DETECTS_SDK = "4402"
+_INSTRUMENTATION_FAILED = "4403"
 
 
 class AzureDiagnosticLogging:
@@ -42,7 +51,7 @@ class AzureDiagnosticLogging:
     def _initialize(cls):
         with AzureDiagnosticLogging._lock:
             if not AzureDiagnosticLogging._initialized:
-                if _IS_DIAGNOSTICS_ENABLED and _DIAGNOSTIC_LOG_PATH:
+                if _is_diagnostics_enabled() and _DIAGNOSTIC_LOG_PATH:
                     log_format = (
                         "{"
                         + '"time":"%(asctime)s.%(msecs)03d", '
@@ -68,6 +77,11 @@ class AzureDiagnosticLogging:
                     f_handler.setFormatter(formatter)
                     _logger.addHandler(f_handler)
                     AzureDiagnosticLogging._initialized = True
+
+    @classmethod
+    def debug(cls, message: str, message_id: str):
+        AzureDiagnosticLogging._initialize()
+        _logger.debug(message, extra={"msgId": message_id})
 
     @classmethod
     def info(cls, message: str, message_id: str):

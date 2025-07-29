@@ -20,12 +20,12 @@ class TestSqlManagementManagedDatabaseColumnsOperations(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_database(self, resource_group):
+    def test_managed_database_columns_list_by_database(self, resource_group):
         response = self.client.managed_database_columns.list_by_database(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             database_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,14 +33,14 @@ class TestSqlManagementManagedDatabaseColumnsOperations(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_table(self, resource_group):
+    def test_managed_database_columns_list_by_table(self, resource_group):
         response = self.client.managed_database_columns.list_by_table(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             database_name="str",
             schema_name="str",
             table_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -48,7 +48,7 @@ class TestSqlManagementManagedDatabaseColumnsOperations(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_managed_database_columns_get(self, resource_group):
         response = self.client.managed_database_columns.get(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
@@ -56,7 +56,7 @@ class TestSqlManagementManagedDatabaseColumnsOperations(AzureMgmtRecordedTestCas
             schema_name="str",
             table_name="str",
             column_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself

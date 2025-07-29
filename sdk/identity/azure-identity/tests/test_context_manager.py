@@ -4,7 +4,6 @@
 # ------------------------------------
 from unittest.mock import MagicMock, patch
 
-from azure.identity._credentials.application import AzureApplicationCredential
 from azure.identity import (
     AzureCliCredential,
     AzureDeveloperCliCredential,
@@ -25,7 +24,6 @@ from azure.identity._constants import EnvironmentVariables
 import pytest
 
 from test_certificate_credential import PEM_CERT_PATH
-from test_vscode_credential import GET_USER_SETTINGS
 
 
 class CredentialFixture:
@@ -63,7 +61,6 @@ FIXTURES = (
         {kwarg: "..." for kwarg in ("tenant_id", "client_id", "client_secret", "user_assertion")},
     ),
     CredentialFixture(UsernamePasswordCredential, {"client_id": "...", "username": "...", "password": "..."}),
-    CredentialFixture(VisualStudioCodeCredential, ctor_patch_factory=lambda: patch(GET_USER_SETTINGS, lambda: {})),
 )
 
 all_fixtures = pytest.mark.parametrize("fixture", FIXTURES, ids=lambda fixture: fixture.cls.__name__)
@@ -108,7 +105,6 @@ def test_exit_args(fixture):
     (
         AzureCliCredential,
         AzureDeveloperCliCredential,
-        AzureApplicationCredential,
         AzurePowerShellCredential,
         EnvironmentCredential,
         SharedTokenCacheCredential,

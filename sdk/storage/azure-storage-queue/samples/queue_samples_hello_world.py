@@ -17,9 +17,8 @@ USAGE:
     python queue_samples_hello_world.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
-
 
 import os
 import sys
@@ -27,16 +26,20 @@ import sys
 
 class QueueHelloWorldSamples(object):
 
-    connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+    connection_string = os.getenv("STORAGE_CONNECTION_STRING")
 
     def create_client_with_connection_string(self):
         if self.connection_string is None:
-            print("Missing required environment variable(s). Please see specific test for more details." + '\n' +
-                  "Test: create_client_with_connection_string")
+            print(
+                "Missing required environment variable(s). Please see specific test for more details."
+                + "\n"
+                + "Test: create_client_with_connection_string"
+            )
             sys.exit(1)
 
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue import QueueServiceClient
+
         queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
 
         # Get queue service properties
@@ -44,12 +47,16 @@ class QueueHelloWorldSamples(object):
 
     def queue_and_messages_example(self):
         if self.connection_string is None:
-            print("Missing required environment variable(s). Please see specific test for more details." + '\n' +
-                  "Test: queue_and_messages_example")
+            print(
+                "Missing required environment variable(s). Please see specific test for more details."
+                + "\n"
+                + "Test: queue_and_messages_example"
+            )
             sys.exit(1)
 
         # Instantiate the QueueClient from a connection string
         from azure.storage.queue import QueueClient
+
         queue = QueueClient.from_connection_string(conn_str=self.connection_string, queue_name="myqueue")
 
         # Create the queue
@@ -75,7 +82,7 @@ class QueueHelloWorldSamples(object):
             # [END delete_queue]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample = QueueHelloWorldSamples()
     sample.create_client_with_connection_string()
     sample.queue_and_messages_example()

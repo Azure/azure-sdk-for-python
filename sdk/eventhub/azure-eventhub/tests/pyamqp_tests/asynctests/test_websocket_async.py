@@ -11,6 +11,7 @@ from azure.eventhub._pyamqp.aio import _authentication_async
 from azure.eventhub._pyamqp.aio import ReceiveClientAsync, SendClientAsync
 from azure.eventhub._pyamqp.constants import TransportType
 from azure.eventhub._pyamqp.message import Message
+import sys
 
 
 async def send_message(live_eventhub):

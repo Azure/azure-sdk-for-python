@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -27,7 +28,7 @@ from azure.mgmt.servicebus import ServiceBusManagementClient
 def main():
     client = ServiceBusManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="5f750a97-50d9-4e36-8081-c9ee4c0210d4",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
     client.namespaces.begin_delete(
@@ -36,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: specification/servicebus/resource-manager/Microsoft.ServiceBus/stable/2021-11-01/examples/NameSpaces/SBNameSpaceDelete.json
+# x-ms-original-file: specification/servicebus/resource-manager/Microsoft.ServiceBus/preview/2022-10-01-preview/examples/NameSpaces/SBNameSpaceDelete.json
 if __name__ == "__main__":
     main()

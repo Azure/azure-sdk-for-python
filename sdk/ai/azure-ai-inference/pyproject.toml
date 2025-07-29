@@ -1,2 +1,0 @@
-[tool.generate]
-autorest-post-process = true

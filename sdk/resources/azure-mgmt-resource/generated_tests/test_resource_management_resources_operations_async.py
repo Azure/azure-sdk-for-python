@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.resource.aio import ResourceManagementClient
+from azure.mgmt.resource.resources.aio import ResourceManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -21,10 +21,10 @@ class TestResourceManagementResourcesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_resources_list_by_resource_group(self, resource_group):
         response = self.client.resources.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -32,12 +32,12 @@ class TestResourceManagementResourcesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_move_resources(self, resource_group):
+    async def test_resources_begin_move_resources(self, resource_group):
         response = await (
             await self.client.resources.begin_move_resources(
                 source_resource_group_name="str",
                 parameters={"resources": ["str"], "targetResourceGroup": "str"},
-                api_version="2022-09-01",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -46,12 +46,12 @@ class TestResourceManagementResourcesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_validate_move_resources(self, resource_group):
+    async def test_resources_begin_validate_move_resources(self, resource_group):
         response = await (
             await self.client.resources.begin_validate_move_resources(
                 source_resource_group_name="str",
                 parameters={"resources": ["str"], "targetResourceGroup": "str"},
-                api_version="2022-09-01",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -60,9 +60,9 @@ class TestResourceManagementResourcesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_resources_list(self, resource_group):
         response = self.client.resources.list(
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -70,7 +70,7 @@ class TestResourceManagementResourcesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_check_existence(self, resource_group):
+    async def test_resources_check_existence(self, resource_group):
         response = await self.client.resources.check_existence(
             resource_group_name=resource_group.name,
             resource_provider_namespace="str",
@@ -85,7 +85,7 @@ class TestResourceManagementResourcesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_resources_begin_delete(self, resource_group):
         response = await (
             await self.client.resources.begin_delete(
                 resource_group_name=resource_group.name,
@@ -102,7 +102,7 @@ class TestResourceManagementResourcesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_resources_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.resources.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -151,7 +151,7 @@ class TestResourceManagementResourcesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_resources_begin_update(self, resource_group):
         response = await (
             await self.client.resources.begin_update(
                 resource_group_name=resource_group.name,
@@ -200,7 +200,7 @@ class TestResourceManagementResourcesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_resources_get(self, resource_group):
         response = await self.client.resources.get(
             resource_group_name=resource_group.name,
             resource_provider_namespace="str",
@@ -215,7 +215,7 @@ class TestResourceManagementResourcesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_check_existence_by_id(self, resource_group):
+    async def test_resources_check_existence_by_id(self, resource_group):
         response = await self.client.resources.check_existence_by_id(
             resource_id="str",
             api_version="str",
@@ -226,7 +226,7 @@ class TestResourceManagementResourcesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete_by_id(self, resource_group):
+    async def test_resources_begin_delete_by_id(self, resource_group):
         response = await (
             await self.client.resources.begin_delete_by_id(
                 resource_id="str",
@@ -239,7 +239,7 @@ class TestResourceManagementResourcesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update_by_id(self, resource_group):
+    async def test_resources_begin_create_or_update_by_id(self, resource_group):
         response = await (
             await self.client.resources.begin_create_or_update_by_id(
                 resource_id="str",
@@ -284,7 +284,7 @@ class TestResourceManagementResourcesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update_by_id(self, resource_group):
+    async def test_resources_begin_update_by_id(self, resource_group):
         response = await (
             await self.client.resources.begin_update_by_id(
                 resource_id="str",
@@ -329,7 +329,7 @@ class TestResourceManagementResourcesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_by_id(self, resource_group):
+    async def test_resources_get_by_id(self, resource_group):
         response = await self.client.resources.get_by_id(
             resource_id="str",
             api_version="str",

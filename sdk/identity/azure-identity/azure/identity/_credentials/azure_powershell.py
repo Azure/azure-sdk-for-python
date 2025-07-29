@@ -41,15 +41,25 @@ if ($tenantId.Length -gt 0) {{
     $params['TenantId'] = $tenantId
 }}
 
-$useSecureString = $m.Version -ge [version]'2.17.0'
-if ($useSecureString) {{
+if ($m.Version -ge [version]'2.17.0' -and $m.Version -lt [version]'5.0.0') {{
     $params['AsSecureString'] = $true
 }}
 
 $token = Get-AzAccessToken @params
 $tokenValue = $token.Token
-if ($useSecureString) {{
-    $tokenValue = $tokenValue | ConvertFrom-SecureString -AsPlainText
+if ($tokenValue -is [System.Security.SecureString]) {{
+    if ($PSVersionTable.PSVersion.Major -lt 7) {{
+        $ssPtr = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($tokenValue)
+        try {{
+            $tokenValue = [System.Runtime.InteropServices.Marshal]::PtrToStringBSTR($ssPtr)
+        }}
+        finally {{
+            [System.Runtime.InteropServices.Marshal]::ZeroFreeBSTR($ssPtr)
+        }}
+    }}
+    else {{
+        $tokenValue = $tokenValue | ConvertFrom-SecureString -AsPlainText
+    }}
 }}
 Write-Output "`nazsdk%$($tokenValue)%$($token.ExpiresOn.ToUnixTimeSeconds())`n"
 """
@@ -146,7 +156,7 @@ class AzurePowerShellCredential:
         :keyword options: A dictionary of options for the token request. Unknown options will be ignored. Optional.
         :paramtype options: ~azure.core.credentials.TokenRequestOptions
 
-        :rtype: AccessTokenInfo
+        :rtype: ~azure.core.credentials.AccessTokenInfo
         :return: An AccessTokenInfo instance containing information about the token.
 
         :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke Azure PowerShell, or

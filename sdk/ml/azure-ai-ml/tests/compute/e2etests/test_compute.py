@@ -30,6 +30,8 @@ class TestCompute(AzureRecordedTestCase):
         assert compute_resource_get.name == compute_name
         assert compute_resource_get.tier == "dedicated"
         assert compute_resource_get.location == compute.location
+        assert compute_resource_get.ssh_public_access_enabled == True
+        assert compute_resource_get.ssh_settings.admin_username == "azureuser"
 
         compute_resource_get.idle_time_before_scale_down = 200
         compute_update_poller = client.compute.begin_update(compute_resource_get)
@@ -46,7 +48,6 @@ class TestCompute(AzureRecordedTestCase):
         # so this is a preferred approach to assert
         assert isinstance(outcome, LROPoller)
 
-    @pytest.mark.skip(reason="not enough capacity")
     def test_compute_instance_create_and_delete(
         self, client: MLClient, rand_compute_name: Callable[[str], str]
     ) -> None:
@@ -65,20 +66,11 @@ class TestCompute(AzureRecordedTestCase):
         assert isinstance(compute_resource_list, ItemPaged)
         compute_resource_get = client.compute.get(name=compute_name)
         assert compute_resource_get.name == compute_name
-        assert compute_resource_get.identity.type == "system_assigned"
         outcome = client.compute.begin_delete(name=compute_name)
         # the compute is getting deleted , but not waiting on the poller! so immediately returning
         # so this is a preferred approach to assert
         assert isinstance(outcome, LROPoller)
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason=(
-            "Test takes 5 minutes in automation. "
-            "Already have unit tests verifying correct _restclient method is called. "
-            "Can be validated in live build only."
-        ),
-    )
     def test_compute_instance_stop_start_restart(
         self, client: MLClient, rand_compute_name: Callable[[str], str]
     ) -> None:

@@ -42,6 +42,8 @@ Note that the metadata under `products` must match an existing product slug foun
 
 ## Capturing code snippets in reference documentation
 Code snippets from samples can be captured as [examples][qa_example] in our reference documentation.
+See [code snippets documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/code_snippets.md) for more details on how to define and reference code snippets in Markdown files.
+
 To do this, place `# [START <keyword>]` and `# [END <keyword>]` comments which span the lines you want to show up in the reference documentation example.
 Note that the <keyword> used should be unique across all sync/async samples added to a client library.
 

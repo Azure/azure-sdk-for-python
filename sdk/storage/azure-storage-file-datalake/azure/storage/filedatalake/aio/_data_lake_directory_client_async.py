@@ -3,13 +3,14 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=invalid-overridden-method, docstring-keyword-should-match-keyword-only
+# pylint: disable=docstring-keyword-should-match-keyword-only
 
 import functools
 from typing import (
-    Any, Dict, Optional, Union,
+    Any, cast, Dict, Optional, Union,
     TYPE_CHECKING
 )
+from typing_extensions import Self
 
 try:
     from urllib.parse import quote, unquote
@@ -20,10 +21,10 @@ from azure.core.async_paging import AsyncItemPaged
 from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from .._data_lake_directory_client import DataLakeDirectoryClient as DataLakeDirectoryClientBase
 from .._deserialize import deserialize_dir_properties
 from .._models import DirectoryProperties, FileProperties
-from .._shared.base_client_async import AsyncTransportWrapper
+from .._path_client_helpers import _parse_rename_path
+from .._shared.base_client_async import AsyncTransportWrapper, parse_connection_str
 from ._data_lake_file_client_async import DataLakeFileClient
 from ._list_paths_helper import PathPropertiesPaged
 from ._path_client_async import PathClient
@@ -35,18 +36,12 @@ if TYPE_CHECKING:
     from .._models import PathProperties
 
 
-class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
+class DataLakeDirectoryClient(PathClient):
     """A client to interact with the DataLake directory, even if the directory may not yet exist.
 
     For operations relating to a specific subdirectory or file under the directory, a directory client or file client
     can be retrieved using the :func:`~get_sub_directory_client` or :func:`~get_file_client` functions.
 
-    :ivar str url:
-        The full endpoint URL to the file system, including SAS token if used.
-    :ivar str primary_endpoint:
-        The full primary endpoint URL.
-    :ivar str primary_hostname:
-        The hostname of the primary endpoint.
     :param str account_url:
         The URI to the storage account.
     :param file_system_name:
@@ -68,12 +63,12 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         ~azure.core.credentials.AzureNamedKeyCredential or
         ~azure.core.credentials.AzureSasCredential or
         ~azure.core.credentials_async.AsyncTokenCredential or
-        str or dict[str, str] or None
+        str or Dict[str, str] or None
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
     :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
-        authentication. Only has an effect when credential is of type TokenCredential. The value could be
+        authentication. Only has an effect when credential is of type AsyncTokenCredential. The value could be
         https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
 
     .. admonition:: Example:
@@ -86,6 +81,13 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             :caption: Creating the DataLakeServiceClient from connection string.
     """
 
+    url: str
+    """The full endpoint URL to the file system, including SAS token if used."""
+    primary_endpoint: str
+    """The full primary endpoint URL."""
+    primary_hostname: str
+    """The hostname of the primary endpoint."""
+
     def __init__(
         self, account_url: str,
         file_system_name: str,
@@ -93,19 +95,64 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
     ) -> None:
-        super(DataLakeDirectoryClient, self).__init__(account_url, file_system_name, directory_name, # pylint: disable=specify-parameter-names-in-call
+        super(DataLakeDirectoryClient, self).__init__(account_url, file_system_name, path_name=directory_name,
                                                       credential=credential, **kwargs)
 
+    @classmethod
+    def from_connection_string(
+        cls, conn_str: str,
+        file_system_name: str,
+        directory_name: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> Self:
+        """
+        Create DataLakeDirectoryClient from a Connection String.
+
+        :param str conn_str:
+            A connection string to an Azure Storage account.
+        :param file_system_name:
+            The name of file system to interact with.
+        :type file_system_name: str
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token. The value can be a SAS token string,
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+            If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+            - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
+        :type credential:
+            ~azure.core.credentials.AzureNamedKeyCredential or
+            ~azure.core.credentials.AzureSasCredential or
+            ~azure.core.credentials_async.AsyncTokenCredential or
+            str or Dict[str, str] or None
+        :param directory_name:
+            The name of directory to interact with. The directory is under file system.
+        :type directory_name: str
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type AsyncTokenCredential. The value could be
+            https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
+        :return: A DataLakeDirectoryClient.
+        :rtype: ~azure.storage.filedatalake.aio.DataLakeDirectoryClient
+        """
+        account_url, _, credential = parse_connection_str(conn_str, credential, 'dfs')
+        return cls(
+            account_url, file_system_name=file_system_name, directory_name=directory_name,
+            credential=credential, **kwargs)
+
     @distributed_trace_async
-    async def create_directory(self, metadata=None,  # type: Optional[Dict[str, str]]
-                               **kwargs):
-        # type: (...) -> Dict[str, Union[str, datetime]]
+    async def create_directory(
+        self, metadata: Optional[Dict[str, str]] = None,
+        **kwargs
+    ) -> Dict[str, Union[str, "datetime"]]:
         """
         Create a new directory.
 
         :param metadata:
             Name-value pairs associated with the directory as metadata.
-        :type metadata: dict(str, str)
+        :type metadata: Dict[str, str]
         :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
             ContentSettings object used to set path properties.
         :keyword lease:
@@ -171,7 +218,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :return: A dictionary of response headers.
-        :rtype: dict[str, str] or dict[str, ~datetime.datetime]
+        :rtype: Dict[str, Union[str, ~datetime.datetime]]
 
         .. admonition:: Example:
 
@@ -185,8 +232,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         return await self._create('directory', metadata=metadata, **kwargs)
 
     @distributed_trace_async
-    async def exists(self, **kwargs):
-        # type: (**Any) -> bool
+    async def exists(self, **kwargs: Any) -> bool:
         """
         Returns True if a directory exists and returns False otherwise.
 
@@ -202,8 +248,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         return await self._exists(**kwargs)
 
     @distributed_trace_async
-    async def delete_directory(self, **kwargs):
-        # type: (...) -> None
+    async def delete_directory(self, **kwargs: Any) -> None:
         """
         Marks the specified directory for deletion.
 
@@ -234,8 +279,8 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :returns: None.
-        :rtype: None
+        :returns: A dictionary of response headers.
+        :rtype: Dict[str, Any]
 
         .. admonition:: Example:
 
@@ -246,11 +291,10 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
                 :dedent: 4
                 :caption: Delete directory.
         """
-        return await self._delete(recursive=True, **kwargs)
+        return await self._delete(recursive=True, **kwargs)  # type: ignore [return-value]
 
     @distributed_trace_async
-    async def get_directory_properties(self, **kwargs):
-        # type: (**Any) -> DirectoryProperties
+    async def get_directory_properties(self, **kwargs: Any) -> DirectoryProperties:
         """Returns all user-defined metadata, standard HTTP properties, and
         system properties for the directory. It does not return the content of the directory.
 
@@ -311,12 +355,11 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             headers = kwargs.pop('headers', {})
             headers['x-ms-upn'] = str(upn)
             kwargs['headers'] = headers
-        return await self._get_path_properties(cls=deserialize_dir_properties, **kwargs)
+        props = await self._get_path_properties(cls=deserialize_dir_properties, **kwargs)
+        return cast(DirectoryProperties, props)
 
     @distributed_trace_async
-    async def rename_directory(self, new_name,  # type: str
-                               **kwargs):
-        # type: (...) -> DataLakeDirectoryClient
+    async def rename_directory(self, new_name: str, **kwargs: Any) -> "DataLakeDirectoryClient":
         """
         Rename the source directory.
 
@@ -384,7 +427,8 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
                 :dedent: 4
                 :caption: Rename the source directory.
         """
-        new_file_system, new_path, new_dir_sas = self._parse_rename_path(new_name)
+        new_file_system, new_path, new_dir_sas = _parse_rename_path(
+            new_name, self.file_system_name, self._query_str, self._raw_credential)
 
         new_directory_client = DataLakeDirectoryClient(
             f"{self.scheme}://{self.primary_hostname}", new_file_system, directory_name=new_path,
@@ -395,10 +439,11 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         return new_directory_client
 
     @distributed_trace_async
-    async def create_sub_directory(self, sub_directory,  # type: Union[DirectoryProperties, str]
-                                   metadata=None,  # type: Optional[Dict[str, str]]
-                                   **kwargs):
-        # type: (...) -> DataLakeDirectoryClient
+    async def create_sub_directory(
+        self, sub_directory: Union[DirectoryProperties, str],
+        metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> "DataLakeDirectoryClient":
         """
         Create a subdirectory and return the subdirectory client to be interacted with.
 
@@ -408,7 +453,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         :type sub_directory: str or ~azure.storage.filedatalake.DirectoryProperties
         :param metadata:
             Name-value pairs associated with the file as metadata.
-        :type metadata: dict(str, str)
+        :type metadata: Dict[str, str]
         :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
             ContentSettings object used to set path properties.
         :keyword lease:
@@ -481,9 +526,10 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         return subdir
 
     @distributed_trace_async
-    async def delete_sub_directory(self, sub_directory,  # type: Union[DirectoryProperties, str]
-                                   **kwargs):
-        # type: (...) -> DataLakeDirectoryClient
+    async def delete_sub_directory(
+        self, sub_directory: Union[DirectoryProperties, str],
+        **kwargs: Any
+    ) -> "DataLakeDirectoryClient":
         """
         Marks the specified subdirectory for deletion.
 
@@ -526,9 +572,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         return subdir
 
     @distributed_trace_async
-    async def create_file(self, file,  # type: Union[FileProperties, str]
-                          **kwargs):
-        # type: (...) -> DataLakeFileClient
+    async def create_file(self, file: Union[FileProperties, str], **kwargs: Any) -> DataLakeFileClient:
         """
         Create a new file and return the file client to be interacted with.
 
@@ -540,7 +584,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             ContentSettings object used to set path properties.
         :keyword metadata:
             Name-value pairs associated with the file as metadata.
-        :type metadata: dict(str, str)
+        :type metadata: Dict[str, str]
         :keyword lease:
             Required if the file has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.
@@ -648,9 +692,8 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_. The default value is None.
         :returns: An iterable (auto-paging) response of PathProperties.
-        :rtype: ~azure.core.paging.AsyncItemPaged[~azure.storage.filedatalake.PathProperties]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.filedatalake.PathProperties]
         """
-        timeout = kwargs.pop('timeout', None)
         hostname = self._hosts[self._location_mode]
         url = f"{self.scheme}://{hostname}/{quote(self.file_system_name)}"
         client = self._build_generated_client(url)
@@ -664,9 +707,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             command, recursive, path=self.path_name, max_results=max_results,
             upn=upn, page_iterator_class=PathPropertiesPaged, **kwargs)
 
-    def get_file_client(self, file  # type: Union[FileProperties, str]
-                        ):
-        # type: (...) -> DataLakeFileClient
+    def get_file_client(self, file: Union[FileProperties, str]) -> DataLakeFileClient:
         """Get a client to interact with the specified file.
 
         The file need not already exist.
@@ -678,23 +719,21 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         :returns: A DataLakeFileClient.
         :rtype: ~azure.storage.filedatalake.aio.DataLakeFileClient
         """
-        try:
+        if isinstance(file, FileProperties):
             file_path = file.get('name')
-        except AttributeError:
+        else:
             file_path = self.path_name + '/' + str(file)
 
         _pipeline = AsyncPipeline(
-            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies  # type: ignore [arg-type] # pylint: disable=protected-access
         )
         return DataLakeFileClient(
             self.url, self.file_system_name, file_path=file_path, credential=self._raw_credential,
             api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline)
 
-    def get_sub_directory_client(self, sub_directory  # type: Union[DirectoryProperties, str]
-                                 ):
-        # type: (...) -> DataLakeDirectoryClient
+    def get_sub_directory_client(self, sub_directory: Union[DirectoryProperties, str]) -> "DataLakeDirectoryClient":
         """Get a client to interact with the specified subdirectory of the current directory.
 
         The sub subdirectory need not already exist.
@@ -706,14 +745,14 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         :returns: A DataLakeDirectoryClient.
         :rtype: ~azure.storage.filedatalake.aio.DataLakeDirectoryClient
         """
-        try:
+        if isinstance(sub_directory, DirectoryProperties):
             subdir_path = sub_directory.get('name')
-        except AttributeError:
+        else:
             subdir_path = self.path_name + '/' + str(sub_directory)
 
         _pipeline = AsyncPipeline(
-            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies  # type: ignore [arg-type] # pylint: disable=protected-access
         )
         return DataLakeDirectoryClient(
             self.url, self.file_system_name, directory_name=subdir_path, credential=self._raw_credential,

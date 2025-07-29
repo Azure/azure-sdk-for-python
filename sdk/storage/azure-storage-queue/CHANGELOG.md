@@ -1,8 +1,31 @@
 # Release History
 
-## 12.13.0b1 (Unreleased)
+## 12.15.0b1 (Unreleased)
 
 ### Features Added
+
+## 12.13.0 (2025-07-16)
+
+### Features Added
+- Stable release of features from 12.13.0b1
+
+## 12.14.0b1 (2025-06-12)
+
+This version and all future versions will require Python 3.9+. Python 3.8 is no longer supported.
+
+### Features Added
+- Added support for service version 2025-11-05.
+
+## 12.13.0b1 (2025-05-06)
+
+### Features Added
+- Added support for service version 2025-07-05.
+- Added support for OAuth authentication in `QueueClient`'s `get_queue_access_policy` 
+and `set_queue_access_policy` APIs.
+
+### Other Changes
+- Migrated any previously documented `kwarg` arguments to be named keywords. 
+Some public types may have been adjusted if they were previously erroneous or incomplete.
 
 ## 12.12.0 (2024-09-17)
 

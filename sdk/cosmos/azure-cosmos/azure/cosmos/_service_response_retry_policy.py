@@ -12,15 +12,24 @@ from azure.cosmos.documents import _OperationType
 
 class ServiceResponseRetryPolicy(object):
 
-    def __init__(self, connection_policy, global_endpoint_manager, *args):
+    def __init__(self, connection_policy, global_endpoint_manager, pk_range_wrapper, *args):
         self.args = args
         self.global_endpoint_manager = global_endpoint_manager
-        self.total_retries = len(self.global_endpoint_manager.location_cache.read_regional_endpoints)
+        self.pk_range_wrapper = pk_range_wrapper
+        self.total_retries = len(self.global_endpoint_manager.location_cache.read_regional_routing_contexts)
         self.failover_retry_count = 0
         self.connection_policy = connection_policy
         self.request = args[0] if args else None
         if self.request:
-            self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request)
+            if self.request.retry_write:
+                # If the request is a write operation, we set the maximum retry count to be the number of
+                # write regional routing contexts available in the global endpoint manager.
+                # This ensures that we retry the write operation across all available regions.
+                # We also ensure that we retry at least once, hence the max is set to 2 by default.
+                self.max_write_retry_count = max(len(self.global_endpoint_manager.
+                                                 location_cache.write_regional_routing_contexts), 2)
+            self.location_endpoint = (self.global_endpoint_manager
+                                      .resolve_service_endpoint_for_partition(self.request, pk_range_wrapper))
         self.logger = logging.getLogger('azure.cosmos.ServiceResponseRetryPolicy')
 
     def ShouldRetry(self):
@@ -33,15 +42,21 @@ class ServiceResponseRetryPolicy(object):
             return False
 
         # Check if the next retry about to be done is safe
-        if (self.failover_retry_count + 1) >= self.total_retries:
+        if ((self.failover_retry_count + 1) >= self.total_retries and
+                _OperationType.IsReadOnlyOperation(self.request.operation_type)):
             return False
 
         if self.request:
-            if not _OperationType.IsReadOnlyOperation(self.request.operation_type):
-                return False
 
+            if not _OperationType.IsReadOnlyOperation(self.request.operation_type) and not self.request.retry_write:
+                return False
+            if self.request.retry_write and self.failover_retry_count + 1 >= self.max_write_retry_count:
+                # If we have already retried the write operation to the maximum allowed number of times,
+                # we do not retry further.
+                return False
             self.location_endpoint = self.resolve_next_region_service_endpoint()
             self.request.route_to_location(self.location_endpoint)
+
         return True
 
     # This function prepares the request to go to the next region
@@ -57,4 +72,4 @@ class ServiceResponseRetryPolicy(object):
         self.request.route_to_location_with_preferred_location_flag(self.failover_retry_count, True)
         # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
         # This enables marking the endpoint unavailability on endpoint failover/unreachability
-        return self.global_endpoint_manager.resolve_service_endpoint(self.request)
+        return self.global_endpoint_manager.resolve_service_endpoint_for_partition(self.request, self.pk_range_wrapper)

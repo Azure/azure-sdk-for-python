@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.compute.aio import ComputeManagementClient
+from azure.mgmt.compute.v2024_11_01.aio import ComputeManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -24,7 +25,7 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
     async def test_virtual_machines_list_by_location(self, resource_group):
         response = self.client.virtual_machines.list_by_location(
             location="str",
-            api_version="2024-07-01",
+            api_version="2024-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -32,15 +33,33 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_virtual_machines_begin_capture(self, resource_group):
-        response = await (
-            await self.client.virtual_machines.begin_capture(
-                resource_group_name=resource_group.name,
-                vm_name="str",
-                parameters={"destinationContainerName": "str", "overwriteVhds": bool, "vhdPrefix": "str"},
-                api_version="2024-07-01",
-            )
-        ).result()  # call '.result()' to poll until service return final result
+    async def test_virtual_machines_list_all(self, resource_group):
+        response = self.client.virtual_machines.list_all(
+            api_version="2024-11-01",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machines_list(self, resource_group):
+        response = self.client.virtual_machines.list(
+            resource_group_name=resource_group.name,
+            api_version="2024-11-01",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machines_get(self, resource_group):
+        response = await self.client.virtual_machines.get(
+            resource_group_name=resource_group.name,
+            vm_name="str",
+            api_version="2024-11-01",
+        )
 
         # please add some check logic here by yourself
         # ...
@@ -348,6 +367,7 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
                             "winRM": {"listeners": [{"certificateUrl": "str", "protocol": "str"}]},
                         },
                     },
+                    "placement": {"excludeZones": ["str"], "includeZones": ["str"], "zonePlacementPolicy": "str"},
                     "plan": {"name": "str", "product": "str", "promotionCode": "str", "publisher": "str"},
                     "platformFaultDomain": 0,
                     "priority": "str",
@@ -355,6 +375,7 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
                     "proximityPlacementGroup": {"id": "str"},
                     "resources": [
                         {
+                            "location": "str",
                             "autoUpgradeMinorVersion": bool,
                             "enableAutomaticUpgrade": bool,
                             "forceUpdateTag": "str",
@@ -382,7 +403,6 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
                                 "type": "str",
                                 "typeHandlerVersion": "str",
                             },
-                            "location": "str",
                             "name": "str",
                             "protectedSettings": {},
                             "protectedSettingsFromKeyVault": {"secretUrl": "str", "sourceVault": {"id": "str"}},
@@ -391,6 +411,14 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
                             "publisher": "str",
                             "settings": {},
                             "suppressFailures": bool,
+                            "systemData": {
+                                "createdAt": "2020-02-20 00:00:00",
+                                "createdBy": "str",
+                                "createdByType": "str",
+                                "lastModifiedAt": "2020-02-20 00:00:00",
+                                "lastModifiedBy": "str",
+                                "lastModifiedByType": "str",
+                            },
                             "tags": {"str": "str"},
                             "type": "str",
                             "typeHandlerVersion": "str",
@@ -408,11 +436,18 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
                     "securityProfile": {
                         "encryptionAtHost": bool,
                         "encryptionIdentity": {"userAssignedIdentityResourceId": "str"},
-                        "proxyAgentSettings": {"enabled": bool, "keyIncarnationId": 0, "mode": "str"},
+                        "proxyAgentSettings": {
+                            "enabled": bool,
+                            "imds": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
+                            "keyIncarnationId": 0,
+                            "mode": "str",
+                            "wireServer": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
+                        },
                         "securityType": "str",
                         "uefiSettings": {"secureBootEnabled": bool, "vTpmEnabled": bool},
                     },
                     "storageProfile": {
+                        "alignRegionalDisksToVMZone": bool,
                         "dataDisks": [
                             {
                                 "createOption": "str",
@@ -478,6 +513,14 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
                             "writeAcceleratorEnabled": bool,
                         },
                     },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str",
+                    },
                     "tags": {"str": "str"},
                     "timeCreated": "2020-02-20 00:00:00",
                     "type": "str",
@@ -486,7 +529,7 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
                     "vmId": "str",
                     "zones": ["str"],
                 },
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -807,11 +850,18 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
                     "securityProfile": {
                         "encryptionAtHost": bool,
                         "encryptionIdentity": {"userAssignedIdentityResourceId": "str"},
-                        "proxyAgentSettings": {"enabled": bool, "keyIncarnationId": 0, "mode": "str"},
+                        "proxyAgentSettings": {
+                            "enabled": bool,
+                            "imds": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
+                            "keyIncarnationId": 0,
+                            "mode": "str",
+                            "wireServer": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
+                        },
                         "securityType": "str",
                         "uefiSettings": {"secureBootEnabled": bool, "vTpmEnabled": bool},
                     },
                     "storageProfile": {
+                        "alignRegionalDisksToVMZone": bool,
                         "dataDisks": [
                             {
                                 "createOption": "str",
@@ -884,7 +934,7 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
                     "vmId": "str",
                     "zones": ["str"],
                 },
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -898,228 +948,9 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
             await self.client.virtual_machines.begin_delete(
                 resource_group_name=resource_group.name,
                 vm_name="str",
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machines_get(self, resource_group):
-        response = await self.client.virtual_machines.get(
-            resource_group_name=resource_group.name,
-            vm_name="str",
-            api_version="2024-07-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machines_instance_view(self, resource_group):
-        response = await self.client.virtual_machines.instance_view(
-            resource_group_name=resource_group.name,
-            vm_name="str",
-            api_version="2024-07-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machines_begin_convert_to_managed_disks(self, resource_group):
-        response = await (
-            await self.client.virtual_machines.begin_convert_to_managed_disks(
-                resource_group_name=resource_group.name,
-                vm_name="str",
-                api_version="2024-07-01",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machines_begin_deallocate(self, resource_group):
-        response = await (
-            await self.client.virtual_machines.begin_deallocate(
-                resource_group_name=resource_group.name,
-                vm_name="str",
-                api_version="2024-07-01",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machines_generalize(self, resource_group):
-        response = await self.client.virtual_machines.generalize(
-            resource_group_name=resource_group.name,
-            vm_name="str",
-            api_version="2024-07-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machines_list(self, resource_group):
-        response = self.client.virtual_machines.list(
-            resource_group_name=resource_group.name,
-            api_version="2024-07-01",
-        )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machines_list_all(self, resource_group):
-        response = self.client.virtual_machines.list_all(
-            api_version="2024-07-01",
-        )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machines_list_available_sizes(self, resource_group):
-        response = self.client.virtual_machines.list_available_sizes(
-            resource_group_name=resource_group.name,
-            vm_name="str",
-            api_version="2024-07-01",
-        )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machines_begin_power_off(self, resource_group):
-        response = await (
-            await self.client.virtual_machines.begin_power_off(
-                resource_group_name=resource_group.name,
-                vm_name="str",
-                api_version="2024-07-01",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machines_begin_reapply(self, resource_group):
-        response = await (
-            await self.client.virtual_machines.begin_reapply(
-                resource_group_name=resource_group.name,
-                vm_name="str",
-                api_version="2024-07-01",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machines_begin_restart(self, resource_group):
-        response = await (
-            await self.client.virtual_machines.begin_restart(
-                resource_group_name=resource_group.name,
-                vm_name="str",
-                api_version="2024-07-01",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machines_begin_start(self, resource_group):
-        response = await (
-            await self.client.virtual_machines.begin_start(
-                resource_group_name=resource_group.name,
-                vm_name="str",
-                api_version="2024-07-01",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machines_begin_redeploy(self, resource_group):
-        response = await (
-            await self.client.virtual_machines.begin_redeploy(
-                resource_group_name=resource_group.name,
-                vm_name="str",
-                api_version="2024-07-01",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machines_begin_reimage(self, resource_group):
-        response = await (
-            await self.client.virtual_machines.begin_reimage(
-                resource_group_name=resource_group.name,
-                vm_name="str",
-                api_version="2024-07-01",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machines_retrieve_boot_diagnostics_data(self, resource_group):
-        response = await self.client.virtual_machines.retrieve_boot_diagnostics_data(
-            resource_group_name=resource_group.name,
-            vm_name="str",
-            api_version="2024-07-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machines_begin_perform_maintenance(self, resource_group):
-        response = await (
-            await self.client.virtual_machines.begin_perform_maintenance(
-                resource_group_name=resource_group.name,
-                vm_name="str",
-                api_version="2024-07-01",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machines_simulate_eviction(self, resource_group):
-        response = await self.client.virtual_machines.simulate_eviction(
-            resource_group_name=resource_group.name,
-            vm_name="str",
-            api_version="2024-07-01",
-        )
 
         # please add some check logic here by yourself
         # ...
@@ -1131,38 +962,7 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
             await self.client.virtual_machines.begin_assess_patches(
                 resource_group_name=resource_group.name,
                 vm_name="str",
-                api_version="2024-07-01",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machines_begin_install_patches(self, resource_group):
-        response = await (
-            await self.client.virtual_machines.begin_install_patches(
-                resource_group_name=resource_group.name,
-                vm_name="str",
-                install_patches_input={
-                    "rebootSetting": "str",
-                    "linuxParameters": {
-                        "classificationsToInclude": ["str"],
-                        "maintenanceRunId": "str",
-                        "packageNameMasksToExclude": ["str"],
-                        "packageNameMasksToInclude": ["str"],
-                    },
-                    "maximumDuration": "str",
-                    "windowsParameters": {
-                        "classificationsToInclude": ["str"],
-                        "excludeKbsRequiringReboot": bool,
-                        "kbNumbersToExclude": ["str"],
-                        "kbNumbersToInclude": ["str"],
-                        "maxPatchPublishDate": "2020-02-20 00:00:00",
-                    },
-                },
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -1189,9 +989,217 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
                     ],
                     "dataDisksToDetach": [{"diskId": "str", "detachOption": "str"}],
                 },
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machines_begin_capture(self, resource_group):
+        response = await (
+            await self.client.virtual_machines.begin_capture(
+                resource_group_name=resource_group.name,
+                vm_name="str",
+                parameters={"destinationContainerName": "str", "overwriteVhds": bool, "vhdPrefix": "str"},
+                api_version="2024-11-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machines_begin_convert_to_managed_disks(self, resource_group):
+        response = await (
+            await self.client.virtual_machines.begin_convert_to_managed_disks(
+                resource_group_name=resource_group.name,
+                vm_name="str",
+                api_version="2024-11-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machines_begin_deallocate(self, resource_group):
+        response = await (
+            await self.client.virtual_machines.begin_deallocate(
+                resource_group_name=resource_group.name,
+                vm_name="str",
+                api_version="2024-11-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machines_generalize(self, resource_group):
+        response = await self.client.virtual_machines.generalize(
+            resource_group_name=resource_group.name,
+            vm_name="str",
+            api_version="2024-11-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machines_begin_install_patches(self, resource_group):
+        response = await (
+            await self.client.virtual_machines.begin_install_patches(
+                resource_group_name=resource_group.name,
+                vm_name="str",
+                install_patches_input={
+                    "rebootSetting": "str",
+                    "linuxParameters": {
+                        "classificationsToInclude": ["str"],
+                        "maintenanceRunId": "str",
+                        "packageNameMasksToExclude": ["str"],
+                        "packageNameMasksToInclude": ["str"],
+                    },
+                    "maximumDuration": "1 day, 0:00:00",
+                    "windowsParameters": {
+                        "classificationsToInclude": ["str"],
+                        "excludeKbsRequiringReboot": bool,
+                        "kbNumbersToExclude": ["str"],
+                        "kbNumbersToInclude": ["str"],
+                        "maxPatchPublishDate": "2020-02-20 00:00:00",
+                    },
+                },
+                api_version="2024-11-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machines_instance_view(self, resource_group):
+        response = await self.client.virtual_machines.instance_view(
+            resource_group_name=resource_group.name,
+            vm_name="str",
+            api_version="2024-11-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machines_begin_migrate_to_vm_scale_set(self, resource_group):
+        response = await (
+            await self.client.virtual_machines.begin_migrate_to_vm_scale_set(
+                resource_group_name=resource_group.name,
+                vm_name="str",
+                api_version="2024-11-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machines_begin_perform_maintenance(self, resource_group):
+        response = await (
+            await self.client.virtual_machines.begin_perform_maintenance(
+                resource_group_name=resource_group.name,
+                vm_name="str",
+                api_version="2024-11-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machines_begin_power_off(self, resource_group):
+        response = await (
+            await self.client.virtual_machines.begin_power_off(
+                resource_group_name=resource_group.name,
+                vm_name="str",
+                api_version="2024-11-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machines_begin_reapply(self, resource_group):
+        response = await (
+            await self.client.virtual_machines.begin_reapply(
+                resource_group_name=resource_group.name,
+                vm_name="str",
+                api_version="2024-11-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machines_begin_redeploy(self, resource_group):
+        response = await (
+            await self.client.virtual_machines.begin_redeploy(
+                resource_group_name=resource_group.name,
+                vm_name="str",
+                api_version="2024-11-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machines_begin_reimage(self, resource_group):
+        response = await (
+            await self.client.virtual_machines.begin_reimage(
+                resource_group_name=resource_group.name,
+                vm_name="str",
+                api_version="2024-11-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machines_begin_restart(self, resource_group):
+        response = await (
+            await self.client.virtual_machines.begin_restart(
+                resource_group_name=resource_group.name,
+                vm_name="str",
+                api_version="2024-11-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machines_retrieve_boot_diagnostics_data(self, resource_group):
+        response = await self.client.virtual_machines.retrieve_boot_diagnostics_data(
+            resource_group_name=resource_group.name,
+            vm_name="str",
+            api_version="2024-11-01",
+        )
 
         # please add some check logic here by yourself
         # ...
@@ -1204,9 +1212,47 @@ class TestComputeManagementVirtualMachinesOperationsAsync(AzureMgmtRecordedTestC
                 resource_group_name=resource_group.name,
                 vm_name="str",
                 parameters={"commandId": "str", "parameters": [{"name": "str", "value": "str"}], "script": ["str"]},
-                api_version="2024-07-01",
+                api_version="2024-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machines_simulate_eviction(self, resource_group):
+        response = await self.client.virtual_machines.simulate_eviction(
+            resource_group_name=resource_group.name,
+            vm_name="str",
+            api_version="2024-11-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machines_begin_start(self, resource_group):
+        response = await (
+            await self.client.virtual_machines.begin_start(
+                resource_group_name=resource_group.name,
+                vm_name="str",
+                api_version="2024-11-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machines_list_available_sizes(self, resource_group):
+        response = self.client.virtual_machines.list_available_sizes(
+            resource_group_name=resource_group.name,
+            vm_name="str",
+            api_version="2024-11-01",
+        )
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

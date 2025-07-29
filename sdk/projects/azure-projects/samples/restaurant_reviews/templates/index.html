@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Restaurant List{% endblock %}
+{% block head %}
+    {{ super() }}
+    <style>
+      body {
+          min-height: 75rem;
+          padding-top: 4.5rem;
+      }
+
+      .score {
+        display: block;
+        font-size: 16px;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .score-wrap {
+        display: inline-block;
+        position: relative;
+        height: 19px;
+      }
+      
+      .score .stars-active {
+        color: #EEBD01;
+        position: relative;
+        z-index: 10;
+        display: inline-block;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+      
+      .score .stars-inactive {
+        color: grey;
+        position: absolute;
+        top: 0;
+        left: 0;
+        -webkit-text-stroke: initial;
+        /* overflow: hidden; */
+      }
+  </style>
+{% endblock %}
+{% block content %}
+      <h1>Restaurants</h1>
+
+      {% if True %}
+          <table class="table">
+              <thead>
+                  <tr>
+                      <th>Name</th>
+                      <th>Rating</th>
+                      <th class="text-end">Details</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for restaurant in restaurants %}
+                      <tr>
+                          <td>{{ restaurant.name }}</td>
+                          <td>{% include "star_rating.html" %}</td>
+                          <td class="text-end"><a href="{{ url_for('details', id=restaurant.id) }}" class="btn btn-sm btn-primary">Details</a></td>
+                      </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+      {% else %}
+          <p>No restaurants exist.  Select Add new restaurant to add one.</p>
+      {% endif %}
+
+      <div class="d-flex justify-content-end">
+              <a href="{{ url_for('create_restaurant') }}" class="btn btn-success px-4 gap-3">Add new restaurant</a>
+      </div>
+{% endblock %}

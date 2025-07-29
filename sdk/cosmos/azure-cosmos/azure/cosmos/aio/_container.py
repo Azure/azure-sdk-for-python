@@ -21,10 +21,12 @@
 
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
+import asyncio # pylint: disable=do-not-import-asyncio
 from datetime import datetime
-from typing import Any, Dict, Mapping, Optional, Sequence, Type, Union, List, Tuple, cast, overload, AsyncIterable
+from typing import (Any, Dict, Mapping, Optional, Sequence, Type, Union, List, Tuple, cast, overload, AsyncIterable,
+                    Callable)
+import warnings
 from typing_extensions import Literal
-
 from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.tracing.decorator import distributed_trace
@@ -33,16 +35,18 @@ from azure.cosmos._change_feed.change_feed_utils import validate_kwargs
 
 from ._cosmos_client_connection_async import CosmosClientConnection
 from ._scripts import ScriptsProxy
+from .. import _utils as utils
 from .._base import (
     build_options as _build_options,
     validate_cache_staleness_value,
     _deserialize_throughput,
     _replace_throughput,
     GenerateGuidId,
-    _set_properties_cache
+    _build_properties_cache
 )
 from .._change_feed.feed_range_internal import FeedRangeInternalEpk
 from .._cosmos_responses import CosmosDict, CosmosList
+from .._constants import _Constants as Constants
 from .._routing.routing_range import Range
 from .._session_token_helpers import get_latest_session_token
 from ..offer import ThroughputProperties
@@ -50,7 +54,8 @@ from ..partition_key import (
     NonePartitionKeyValue,
     _return_undefined_or_empty_partition_key,
     _Empty,
-    _Undefined, PartitionKey
+    _Undefined,
+    _get_partition_key_from_partition_key_definition
 )
 
 __all__ = ("ContainerProxy",)
@@ -86,6 +91,7 @@ class ContainerProxy:
         properties: Optional[Dict[str, Any]] = None
     ) -> None:
         self.client_connection = client_connection
+        self.container_cache_lock = asyncio.Lock()
         self.id = id
         self.database_link = database_link
         self.container_link = "{}/colls/{}".format(database_link, self.id)
@@ -93,14 +99,23 @@ class ContainerProxy:
         self._scripts: Optional[ScriptsProxy] = None
         if properties:
             self.client_connection._set_container_properties_cache(self.container_link,
-                                                                   _set_properties_cache(properties))
+                                                                   _build_properties_cache(properties,
+                                                                                           self.container_link))
 
     def __repr__(self) -> str:
         return "<ContainerProxy [{}]>".format(self.container_link)[:1024]
 
-    async def _get_properties(self) -> Dict[str, Any]:
+    async def _get_properties_with_options(self, options: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        kwargs = {}
+        if options and "excludedLocations" in options:
+            kwargs['excluded_locations'] = options['excludedLocations']
+        return await self._get_properties(**kwargs)
+
+    async def _get_properties(self, **kwargs: Any) -> Dict[str, Any]:
         if self.container_link not in self.client_connection._container_properties_cache:
-            await self.read()
+            async with self.container_cache_lock:
+                if self.container_link not in self.client_connection._container_properties_cache:
+                    await self.read(**kwargs)
         return self.client_connection._container_properties_cache[self.container_link]
 
     @property
@@ -139,11 +154,13 @@ class ContainerProxy:
             return _return_undefined_or_empty_partition_key(await self.is_system_key)
         return cast(Union[str, int, float, bool, List[Union[str, int, float, bool]]], partition_key)
 
-    async def _get_epk_range_for_partition_key(self, partition_key_value: PartitionKeyType) -> Range:
-
-        container_properties = await self._get_properties()
+    async def _get_epk_range_for_partition_key(
+            self,
+            partition_key_value: PartitionKeyType,
+            feed_options: Optional[Dict[str, Any]] = None) -> Range:
+        container_properties = await self._get_properties_with_options(feed_options)
         partition_key_definition = container_properties["partitionKey"]
-        partition_key = PartitionKey(path=partition_key_definition["paths"], kind=partition_key_definition["kind"])
+        partition_key = _get_partition_key_from_partition_key_definition(partition_key_definition)
 
         return partition_key._get_epk_range_for_partition_key(partition_key_value)
 
@@ -153,7 +170,6 @@ class ContainerProxy:
         *,
         populate_partition_key_range_statistics: Optional[bool] = None,
         populate_quota_info: Optional[bool] = None,
-        session_token: Optional[str] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         initial_headers: Optional[Dict[str, str]] = None,
         **kwargs: Any
@@ -163,10 +179,9 @@ class ContainerProxy:
         :keyword bool populate_partition_key_range_statistics: Enable returning partition key
             range statistics in response headers.
         :keyword bool populate_quota_info: Enable returning collection storage quota information in response headers.
-        :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
+        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
@@ -175,8 +190,13 @@ class ContainerProxy:
         :returns: Dict representing the retrieved container.
         :rtype: Dict[str, Any]
         """
+        session_token = kwargs.get('session_token')
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            warnings.warn(
+                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
+                DeprecationWarning)
+
         if priority is not None:
             kwargs['priority'] = priority
         if initial_headers is not None:
@@ -188,7 +208,8 @@ class ContainerProxy:
             request_options["populateQuotaInfo"] = populate_quota_info
         container = await self.client_connection.ReadContainer(self.container_link, options=request_options, **kwargs)
         # Only cache Container Properties that will not change in the lifetime of the container
-        self.client_connection._set_container_properties_cache(self.container_link, _set_properties_cache(container))  # pylint: disable=protected-access, line-too-long
+        self.client_connection._set_container_properties_cache(self.container_link,  # pylint: disable=protected-access
+                                                               _build_properties_cache(container, self.container_link))
         return container
 
     @distributed_trace_async
@@ -202,10 +223,10 @@ class ContainerProxy:
         enable_automatic_id_generation: bool = False,
         session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
+        retry_write: Optional[bool] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> CosmosDict:
         """Create an item in the container.
@@ -222,22 +243,39 @@ class ContainerProxy:
         :keyword bool enable_automatic_id_generation: Enable automatic id generation if no id present.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
-            has changed, and act according to the condition specified by the `match_condition` parameter.
-        :keyword match_condition: The match condition to use upon the etag.
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
+            If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
+        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword bool no_response: Indicates whether service should be instructed to skip
             sending response payloads. When not specified explicitly here, the default value will be determined from
             client-level options.
+        :keyword bool retry_write: Indicates whether the SDK should automatically retry this write operation, even if
+            the operation is not guaranteed to be idempotent. This should only be enabled if the application can
+            tolerate such risks or has logic to safely detect and handle duplicate operations.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
         :returns: A CosmosDict representing the new item. The dict will be empty if `no_response` is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
+        etag = kwargs.get('etag')
+        if etag is not None:
+            warnings.warn(
+                "The 'etag' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
+                DeprecationWarning)
+        match_condition = kwargs.get('match_condition')
+        if match_condition is not None:
+            warnings.warn(
+                "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
+                DeprecationWarning)
+
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include
         if post_trigger_include is not None:
@@ -248,18 +286,18 @@ class ContainerProxy:
             kwargs['initial_headers'] = initial_headers
         if priority is not None:
             kwargs['priority'] = priority
-        if etag is not None:
-            kwargs['etag'] = etag
-        if match_condition is not None:
-            kwargs['match_condition'] = match_condition
         if no_response is not None:
             kwargs['no_response'] = no_response
+        if retry_write is not None:
+            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         request_options = _build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = not enable_automatic_id_generation
         if indexing_directive is not None:
             request_options["indexingDirective"] = indexing_directive
-        if self.container_link in self.__get_client_container_caches():
-            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        await self._get_properties_with_options(request_options)
+        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = await self.client_connection.CreateItem(
             database_or_container_link=self.container_link, document=body, options=request_options, **kwargs
@@ -277,6 +315,7 @@ class ContainerProxy:
         initial_headers: Optional[Dict[str, str]] = None,
         max_integrated_cache_staleness_in_ms: Optional[int] = None,
         priority: Optional[Literal["High", "Low"]] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> CosmosDict:
         """Get the item identified by `item`.
@@ -289,13 +328,18 @@ class ContainerProxy:
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
+        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
+            If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item couldn't be retrieved.
         :returns: A CosmosDict representing the retrieved item.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
@@ -319,14 +363,16 @@ class ContainerProxy:
             kwargs['initial_headers'] = initial_headers
         if priority is not None:
             kwargs['priority'] = priority
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         request_options = _build_options(kwargs)
 
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
         if max_integrated_cache_staleness_in_ms is not None:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
-        if self.container_link in self.__get_client_container_caches():
-            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        await self._get_properties_with_options(request_options)
+        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         return await self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
 
@@ -339,6 +385,7 @@ class ContainerProxy:
         initial_headers: Optional[Dict[str, str]] = None,
         max_integrated_cache_staleness_in_ms: Optional[int] = None,
         priority: Optional[Literal["High", "Low"]] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """List all the items in the container.
@@ -347,59 +394,67 @@ class ContainerProxy:
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], None]
+        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
+            If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
-        response_hook = kwargs.pop('response_hook', None)
         if session_token is not None:
             kwargs['session_token'] = session_token
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
         if priority is not None:
             kwargs['priority'] = priority
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         feed_options = _build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
         if max_integrated_cache_staleness_in_ms:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
-        if hasattr(response_hook, "clear"):
+        response_hook = kwargs.pop("response_hook", None)
+        if response_hook and hasattr(response_hook, "clear"):
             response_hook.clear()
         if self.container_link in self.__get_client_container_caches():
             feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        kwargs["containerProperties"] = self._get_properties_with_options
 
         items = self.client_connection.ReadItems(
             collection_link=self.container_link, feed_options=feed_options, response_hook=response_hook, **kwargs
         )
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, items)
         return items
 
-    @distributed_trace
+    @overload
     def query_items(
-        self,
-        query: str,
-        *,
-        parameters: Optional[List[Dict[str, object]]] = None,
-        partition_key: Optional[PartitionKeyType] = None,
-        max_item_count: Optional[int] = None,
-        enable_scan_in_query: Optional[bool] = None,
-        populate_query_metrics: Optional[bool] = None,
-        populate_index_metrics: Optional[bool] = None,
-        session_token: Optional[str] = None,
-        initial_headers: Optional[Dict[str, str]] = None,
-        max_integrated_cache_staleness_in_ms: Optional[int] = None,
-        priority: Optional[Literal["High", "Low"]] = None,
-        continuation_token_limit: Optional[int] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged[Dict[str, Any]]:
+            self,
+            query: str,
+            *,
+            continuation_token_limit: Optional[int] = None,
+            enable_scan_in_query: Optional[bool] = None,
+            initial_headers: Optional[Dict[str, str]] = None,
+            max_integrated_cache_staleness_in_ms: Optional[int] = None,
+            max_item_count: Optional[int] = None,
+            parameters: Optional[List[Dict[str, object]]] = None,
+            partition_key: Optional[PartitionKeyType] = None,
+            populate_index_metrics: Optional[bool] = None,
+            populate_query_metrics: Optional[bool] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
+            session_token: Optional[str] = None,
+            throughput_bucket: Optional[int] = None,
+            **kwargs: Any
+    ):
         """Return all results matching the given `query`.
 
         You can use any value for the container name in the FROM clause, but
@@ -408,35 +463,39 @@ class ContainerProxy:
         the WHERE clause.
 
         :param str query: The Azure Cosmos DB SQL query to execute.
-        :keyword parameters: Optional array of parameters to the query.
-            Each parameter is a dict() with 'name' and 'value' keys.
-            Ignored if no query is provided.
-        :paramtype parameters: List[Dict[str, Any]]
-        :keyword partition_key: Specifies the partition key value for the item. If none is provided,
-            a cross-partition query will be executed.
-        :paramtype partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
-        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
-        :keyword bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
-            indexing was opted out on the requested paths.
-        :keyword bool populate_query_metrics: Enable returning query metrics in response headers.
-        :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
-            existing indexes and how it could use potential new indexes. Please note that this options will incur
-            overhead, so it should be enabled only when debugging slow queries.
-        :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], None]
         :keyword int continuation_token_limit: The size limit in kb of the response continuation token in the query
             response. Valid values are positive integers.
             A value of 0 is the same as not passing a value (default no limit).
+        :keyword bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
+            indexing was opted out on the requested paths.
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the Azure Cosmos locations like, 'West US', 'East US' and so on.
+            If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
+        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword parameters: Optional array of parameters to the query.
+            Each parameter is a dict() with 'name' and 'value' keys.
+            Ignored if no query is provided.
+        :paramtype parameters: [List[Dict[str, object]]]
+        :keyword partition_key: Partition key at which the query request is targeted.
+        :paramtype partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
+        :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
+            existing indexes and how it could use potential new indexes. Please note that this option will incur
+            overhead, so it should be enabled only when debugging slow queries.
+        :keyword bool populate_query_metrics: Enable returning query metrics in response headers.
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :returns: An AsyncItemPaged of items (dicts).
-        :rtype: AsyncItemPaged[Dict[str, Any]]
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword int throughput_bucket: The desired throughput bucket for the client.
+        :returns: An Iterable of items (dicts).
+        :rtype: ItemPaged[Dict[str, Any]]
 
         .. admonition:: Example:
 
@@ -446,7 +505,6 @@ class ContainerProxy:
                 :language: python
                 :dedent: 0
                 :caption: Get all products that have not been discontinued:
-                :name: query_items
 
             .. literalinclude:: ../samples/examples_async.py
                 :start-after: [START query_items_param]
@@ -454,51 +512,210 @@ class ContainerProxy:
                 :language: python
                 :dedent: 0
                 :caption: Parameterized query to get all products that have been discontinued:
-                :name: query_items_param
         """
-        response_hook = kwargs.pop('response_hook', None)
-        if session_token is not None:
-            kwargs['session_token'] = session_token
-        if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
-        if priority is not None:
-            kwargs['priority'] = priority
+        ...
+
+    @overload
+    def query_items(
+            self,
+            query: str,
+            *,
+            continuation_token_limit: Optional[int] = None,
+            enable_scan_in_query: Optional[bool] = None,
+            feed_range: Optional[Dict[str, Any]] = None,
+            initial_headers: Optional[Dict[str, str]] = None,
+            max_integrated_cache_staleness_in_ms: Optional[int] = None,
+            max_item_count: Optional[int] = None,
+            parameters: Optional[List[Dict[str, object]]] = None,
+            populate_index_metrics: Optional[bool] = None,
+            populate_query_metrics: Optional[bool] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
+            session_token: Optional[str] = None,
+            throughput_bucket: Optional[int] = None,
+            **kwargs: Any
+    ):
+        """Return all results matching the given `query`.
+
+        You can use any value for the container name in the FROM clause, but
+        often the container name is used. In the examples below, the container
+        name is "products," and is aliased as "p" for easier referencing in
+        the WHERE clause.
+
+        :param str query: The Azure Cosmos DB SQL query to execute.
+        :keyword int continuation_token_limit: The size limit in kb of the response continuation token in the query
+            response. Valid values are positive integers.
+            A value of 0 is the same as not passing a value (default no limit).
+        :keyword bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
+            indexing was opted out on the requested paths.
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the Azure Cosmos locations like, 'West US', 'East US' and so on.
+            If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
+        :keyword Dict[str, Any] feed_range: The feed range that is used to define the scope.
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
+            milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
+            responses are guaranteed to be no staler than this value.
+        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword parameters: Optional array of parameters to the query.
+            Each parameter is a dict() with 'name' and 'value' keys.
+            Ignored if no query is provided.
+        :paramtype parameters: [List[Dict[str, object]]]
+        :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
+            existing indexes and how it could use potential new indexes. Please note that this option will incur
+            overhead, so it should be enabled only when debugging slow queries.
+        :keyword bool populate_query_metrics: Enable returning query metrics in response headers.
+        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
+            request. Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword int throughput_bucket: The desired throughput bucket for the client.
+        :returns: An Iterable of items (dicts).
+        :rtype: ItemPaged[Dict[str, Any]]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/examples_async.py
+                :start-after: [START query_items]
+                :end-before: [END query_items]
+                :language: python
+                :dedent: 0
+                :caption: Get all products that have not been discontinued:
+
+            .. literalinclude:: ../samples/examples_async.py
+                :start-after: [START query_items_param]
+                :end-before: [END query_items_param]
+                :language: python
+                :dedent: 0
+                :caption: Parameterized query to get all products that have been discontinued:
+        """
+        ...
+
+    @distributed_trace
+    def query_items(
+        self,
+        *args: Any,
+        **kwargs: Any
+    ) -> AsyncItemPaged[Dict[str, Any]]:
+        """Return all results matching the given `query`.
+
+        You can use any value for the container name in the FROM clause, but
+        often the container name is used. In the examples below, the container
+        name is "products," and is aliased as "p" for easier referencing in
+        the WHERE clause.
+
+        :param Any args: args
+        :keyword int continuation_token_limit: The size limit in kb of the response continuation token in the query
+            response. Valid values are positive integers.
+            A value of 0 is the same as not passing a value (default no limit).
+        :keyword bool enable_cross_partition_query: Allows sending of more than one request to
+            execute the query in the Azure Cosmos DB service.
+            More than one request is necessary if the query is not scoped to single partition key value.
+        :keyword bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
+            indexing was opted out on the requested paths.
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the Azure Cosmos locations like, 'West US', 'East US' and so on.
+            If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
+        :keyword Dict[str, Any] feed_range: The feed range that is used to define the scope.
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
+            milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
+            responses are guaranteed to be no staler than this value.
+        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword parameters: Optional array of parameters to the query.
+            Each parameter is a dict() with 'name' and 'value' keys.
+            Ignored if no query is provided.
+        :paramtype parameters: [List[Dict[str, object]]]
+        :keyword partition_key: Partition key at which the query request is targeted.
+        :paramtype partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
+        :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
+            existing indexes and how it could use potential new indexes. Please note that this option will incur
+            overhead, so it should be enabled only when debugging slow queries.
+        :keyword bool populate_query_metrics: Enable returning query metrics in response headers.
+        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
+            request. Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword str query: The Azure Cosmos DB SQL query to execute.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword int throughput_bucket: The desired throughput bucket for the client.
+        :returns: An Iterable of items (dicts).
+        :rtype: ItemPaged[Dict[str, Any]]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/examples_async.py
+                :start-after: [START query_items]
+                :end-before: [END query_items]
+                :language: python
+                :dedent: 0
+                :caption: Get all products that have not been discontinued:
+
+            .. literalinclude:: ../samples/examples_async.py
+                :start-after: [START query_items_param]
+                :end-before: [END query_items_param]
+                :language: python
+                :dedent: 0
+                :caption: Parameterized query to get all products that have been discontinued:
+        """
+        original_positional_arg_names = ["query"]
+        utils.add_args_to_kwargs(original_positional_arg_names, args, kwargs)
         feed_options = _build_options(kwargs)
-        if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
-        if populate_query_metrics is not None:
-            feed_options["populateQueryMetrics"] = populate_query_metrics
-        if populate_index_metrics is not None:
-            feed_options["populateIndexMetrics"] = populate_index_metrics
-        if enable_scan_in_query is not None:
-            feed_options["enableScanInQuery"] = enable_scan_in_query
-        if partition_key is not None:
-            feed_options["partitionKey"] = self._set_partition_key(partition_key)
-            kwargs["containerProperties"] = self._get_properties
-        else:
-            feed_options["enableCrossPartitionQuery"] = True
-        if max_integrated_cache_staleness_in_ms:
+
+        # Update 'feed_options' from 'kwargs'
+        if utils.valid_key_value_exist(kwargs, "max_item_count"):
+            feed_options["maxItemCount"] = kwargs.pop("max_item_count")
+        if utils.valid_key_value_exist(kwargs, "populate_query_metrics"):
+            feed_options["populateQueryMetrics"] = kwargs.pop("populate_query_metrics")
+        if utils.valid_key_value_exist(kwargs, "populate_index_metrics"):
+            feed_options["populateIndexMetrics"] = kwargs.pop("populate_index_metrics")
+        if utils.valid_key_value_exist(kwargs, "enable_scan_in_query"):
+            feed_options["enableScanInQuery"] = kwargs.pop("enable_scan_in_query")
+        if utils.valid_key_value_exist(kwargs, "max_integrated_cache_staleness_in_ms"):
+            max_integrated_cache_staleness_in_ms = kwargs.pop("max_integrated_cache_staleness_in_ms")
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
-        correlated_activity_id = GenerateGuidId()
-        feed_options["correlatedActivityId"] = correlated_activity_id
-        if continuation_token_limit is not None:
-            feed_options["responseContinuationTokenLimitInKb"] = continuation_token_limit
-        if hasattr(response_hook, "clear"):
+        if utils.valid_key_value_exist(kwargs, "continuation_token_limit"):
+            feed_options["responseContinuationTokenLimitInKb"] = kwargs.pop("continuation_token_limit")
+        feed_options["correlatedActivityId"] = GenerateGuidId()
+
+        # Set query with 'query' and 'parameters' from kwargs
+        if utils.valid_key_value_exist(kwargs, "parameters"):
+            query = {"query": kwargs.pop("query", None), "parameters": kwargs.pop("parameters", None)}
+        else:
+            query = kwargs.pop("query", None)
+
+        # Set method to get/cache container properties
+        kwargs["containerProperties"] = self._get_properties_with_options
+
+        utils.verify_exclusive_arguments(["feed_range", "partition_key"], **kwargs)
+        partition_key = None
+        # If 'partition_key' is provided, set 'partitionKey' in 'feed_options'
+        if utils.valid_key_value_exist(kwargs, "partition_key"):
+            partition_key = kwargs.pop("partition_key")
+            feed_options["partitionKey"] = self._set_partition_key(partition_key)
+        # If 'partition_key' or 'feed_range' is not provided, set 'enableCrossPartitionQuery' to True
+        elif not utils.valid_key_value_exist(kwargs, "feed_range"):
+            feed_options["enableCrossPartitionQuery"] = True
+
+        # Set 'response_hook'
+        response_hook = kwargs.pop("response_hook", None)
+        if response_hook and hasattr(response_hook, "clear"):
             response_hook.clear()
-        if self.container_link in self.__get_client_container_caches():
-            feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         items = self.client_connection.QueryItems(
             database_or_container_link=self.container_link,
-            query=query if parameters is None else {"query": query, "parameters": parameters},
+            query=query,
             options=feed_options,
             partition_key=partition_key,
             response_hook=response_hook,
             **kwargs
         )
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, items)
         return items
 
     @overload
@@ -510,6 +727,7 @@ class ContainerProxy:
             partition_key: PartitionKeyType,
             priority: Optional[Literal["High", "Low"]] = None,
             mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
+            response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
@@ -533,7 +751,12 @@ class ContainerProxy:
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
+            If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
@@ -548,6 +771,7 @@ class ContainerProxy:
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
+            response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
@@ -569,8 +793,12 @@ class ContainerProxy:
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
+            If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, Any], Mapping[str, Any]], None]
+        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
@@ -583,6 +811,7 @@ class ContainerProxy:
             continuation: str,
             max_item_count: Optional[int] = None,
             priority: Optional[Literal["High", "Low"]] = None,
+            response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
@@ -594,8 +823,12 @@ class ContainerProxy:
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :paramtype priority: Literal["High", "Low"]
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
+            If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, Any], Mapping[str, Any]], None]
+        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
@@ -610,6 +843,7 @@ class ContainerProxy:
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
+            response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed in the entire container,
@@ -631,8 +865,12 @@ class ContainerProxy:
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
+            If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, Any], Mapping[str, Any]], None]
+        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
@@ -667,8 +905,12 @@ class ContainerProxy:
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
+            If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, Any], Mapping[str, Any]], None]
+        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
@@ -686,16 +928,18 @@ class ContainerProxy:
         elif "start_time" in kwargs:
             change_feed_state_context["startTime"] = kwargs.pop("start_time")
         if "partition_key" in kwargs:
-            partition_key = kwargs.pop("partition_key")
-            change_feed_state_context["partitionKey"] = self._set_partition_key(cast(PartitionKeyType, partition_key))
-            change_feed_state_context["partitionKeyFeedRange"] = self._get_epk_range_for_partition_key(partition_key)
+            partition_key_value = kwargs.pop("partition_key")
+            change_feed_state_context["partitionKey"] = self._set_partition_key(
+                cast(PartitionKeyType, partition_key_value))
+            change_feed_state_context["partitionKeyFeedRange"] = self._get_epk_range_for_partition_key(
+                partition_key_value, feed_options)
         if "feed_range" in kwargs:
             change_feed_state_context["feedRange"] = kwargs.pop('feed_range')
         if "continuation" in feed_options:
             change_feed_state_context["continuation"] = feed_options.pop("continuation")
 
         feed_options["changeFeedStateContext"] = change_feed_state_context
-        feed_options["containerProperties"] = self._get_properties()
+        feed_options["containerProperties"] = self._get_properties_with_options(feed_options)
 
         response_hook = kwargs.pop("response_hook", None)
         if hasattr(response_hook, "clear"):
@@ -707,9 +951,6 @@ class ContainerProxy:
         result = self.client_connection.QueryItemsChangeFeed(
             self.container_link, options=feed_options, response_hook=response_hook, **kwargs
         )
-
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, result)
         return result
 
     @distributed_trace_async
@@ -725,6 +966,8 @@ class ContainerProxy:
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
+        retry_write: Optional[bool] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> CosmosDict:
         """Insert or update the specified item.
@@ -742,13 +985,21 @@ class ContainerProxy:
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
+        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword bool no_response: Indicates whether service should be instructed to skip
             sending response payloads. When not specified explicitly here, the default value will be determined from
             client-level options.
+        :keyword bool retry_write: Indicates whether the SDK should automatically retry this write operation, even if
+            the operation is not guaranteed to be idempotent. This should only be enabled if the application can
+            tolerate such risks or has logic to safely detect and handle duplicate operations.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
+            If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
         :returns: A CosmosDict representing the upserted item. The dict will be empty if
             `no_response` is specified.
@@ -770,10 +1021,14 @@ class ContainerProxy:
             kwargs['match_condition'] = match_condition
         if no_response is not None:
             kwargs['no_response'] = no_response
+        if retry_write is not None:
+            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         request_options = _build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
-        if self.container_link in self.__get_client_container_caches():
-            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        await self._get_properties_with_options(request_options)
+        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = await self.client_connection.UpsertItem(
             database_or_container_link=self.container_link,
@@ -797,6 +1052,8 @@ class ContainerProxy:
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
+        retry_write: Optional[bool] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> CosmosDict:
         """Replaces the specified item if it exists in the container.
@@ -815,13 +1072,21 @@ class ContainerProxy:
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
+        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword bool no_response: Indicates whether service should be instructed to skip
             sending response payloads. When not specified explicitly here, the default value will be determined from
             client-level options.
+        :keyword bool retry_write: Indicates whether the SDK should automatically retry this write operation, even if
+            the operation is not guaranteed to be idempotent. This should only be enabled if the application can
+            tolerate such risks or has logic to safely detect and handle duplicate operations.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
+            If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The replace operation failed or the item with
             given id does not exist.
         :returns: A CosmosDict representing the item after replace went through. The dict will be empty if `no_response`
@@ -845,10 +1110,14 @@ class ContainerProxy:
             kwargs['match_condition'] = match_condition
         if no_response is not None:
             kwargs['no_response'] = no_response
+        if retry_write is not None:
+            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         request_options = _build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
-        if self.container_link in self.__get_client_container_caches():
-            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        await self._get_properties_with_options(request_options)
+        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = await self.client_connection.ReplaceItem(
             document_link=item_link, new_document=body, options=request_options, **kwargs
@@ -870,6 +1139,8 @@ class ContainerProxy:
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
+        retry_write: Optional[bool] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> CosmosDict:
         """ Patches the specified item with the provided operations if it
@@ -890,13 +1161,22 @@ class ContainerProxy:
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword bool no_response: Indicates whether service should be instructed to skip
             sending response payloads. When not specified explicitly here, the default value will be determined from
             client-level options.
+        :keyword bool retry_write: Indicates whether the SDK should automatically retry this write operation, even if
+            the operation is not guaranteed to be idempotent. This should only be enabled if the application can
+            tolerate such risks or has logic to safely detect and handle duplicate operations.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
+            If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The patch operations failed or the item with
             given id does not exist.
         :returns: A CosmosDict representing the item after the patch operations went through. The dict will be empty if
@@ -917,13 +1197,17 @@ class ContainerProxy:
             kwargs['match_condition'] = match_condition
         if no_response is not None:
             kwargs['no_response'] = no_response
+        if retry_write is not None:
+            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         request_options = _build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
         if filter_predicate is not None:
             request_options["filterPredicate"] = filter_predicate
-        if self.container_link in self.__get_client_container_caches():
-            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        await self._get_properties_with_options(request_options)
+        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         item_link = self._get_document_link(item)
         result = await self.client_connection.PatchItem(
@@ -943,6 +1227,8 @@ class ContainerProxy:
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
+        retry_write: Optional[bool] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """Delete the specified item from the container.
@@ -964,8 +1250,16 @@ class ContainerProxy:
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
+            If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
+        :keyword bool retry_write: Indicates whether the SDK should automatically retry this write operation, even if
+            the operation is not guaranteed to be idempotent. This should only be enabled if the application can
+            tolerate such risks or has logic to safely detect and handle duplicate operations.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], None], None]
+        :paramtype response_hook: Callable[[Mapping[str, str], None], None]
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The item wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The item does not exist in the container.
         :rtype: None
@@ -984,16 +1278,25 @@ class ContainerProxy:
             kwargs['match_condition'] = match_condition
         if priority is not None:
             kwargs['priority'] = priority
+        if retry_write is not None:
+            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         request_options = _build_options(kwargs)
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
-        if self.container_link in self.__get_client_container_caches():
-            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        await self._get_properties_with_options(request_options)
+        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         document_link = self._get_document_link(item)
         await self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
 
     @distributed_trace_async
-    async def get_throughput(self, **kwargs: Any) -> ThroughputProperties:
+    async def get_throughput(
+            self,
+            *,
+            response_hook: Optional[Callable[[Mapping[str, Any], List[Dict[str, Any]]], None]] = None,
+            **kwargs: Any
+    ) -> ThroughputProperties:
         """Get the ThroughputProperties object for this container.
 
         If no ThroughputProperties already exists for the container, an exception is raised.
@@ -1005,7 +1308,6 @@ class ContainerProxy:
         :returns: ThroughputProperties for the container.
         :rtype: ~azure.cosmos.offer.ThroughputProperties
         """
-        response_hook = kwargs.pop('response_hook', None)
         throughput_properties: List[Dict[str, Any]]
         properties = await self._get_properties()
         link = properties["_self"]
@@ -1064,6 +1366,7 @@ class ContainerProxy:
         self,
         *,
         max_item_count: Optional[int] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """List all the conflicts in the container.
@@ -1075,7 +1378,6 @@ class ContainerProxy:
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
         feed_options = _build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
         if self.container_link in self.__get_client_container_caches():
@@ -1096,6 +1398,7 @@ class ContainerProxy:
         parameters: Optional[List[Dict[str, object]]] = None,
         partition_key: Optional[PartitionKeyType] = None,
         max_item_count: Optional[int] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all conflicts matching a given `query`.
@@ -1113,7 +1416,6 @@ class ContainerProxy:
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
         feed_options = _build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
         if partition_key is not None:
@@ -1197,8 +1499,7 @@ class ContainerProxy:
         pre_trigger_include: Optional[str] = None,
         post_trigger_include: Optional[str] = None,
         session_token: Optional[str] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """The delete by partition key feature is an asynchronous, background operation that allows you to delete all
@@ -1212,27 +1513,40 @@ class ContainerProxy:
         :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
-            has changed, and act according to the condition specified by the `match_condition` parameter.
-        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
+            If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :rtype: None
         """
+        etag = kwargs.get('etag')
+        if etag is not None:
+            warnings.warn(
+                "The 'etag' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
+                DeprecationWarning)
+        match_condition = kwargs.get('match_condition')
+        if match_condition is not None:
+            warnings.warn(
+                "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
+                DeprecationWarning)
+
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include
         if post_trigger_include is not None:
             kwargs['post_trigger_include'] = post_trigger_include
         if session_token is not None:
             kwargs['session_token'] = session_token
-        if etag is not None:
-            kwargs['etag'] = etag
-        if match_condition is not None:
-            kwargs['match_condition'] = match_condition
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         request_options = _build_options(kwargs)
         # regardless if partition key is valid we set it as invalid partition keys are set to a default empty value
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
-        if self.container_link in self.__get_client_container_caches():
-            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        await self._get_properties_with_options(request_options)
+        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         await self.client_connection.DeleteAllItemsByPartitionKey(collection_link=self.container_link,
                                                                   options=request_options, **kwargs)
@@ -1246,9 +1560,8 @@ class ContainerProxy:
         pre_trigger_include: Optional[str] = None,
         post_trigger_include: Optional[str] = None,
         session_token: Optional[str] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
+        throughput_bucket: Optional[int] = None,
         **kwargs: Any
     ) -> CosmosList:
         """ Executes the transactional batch for the specified partition key.
@@ -1260,35 +1573,48 @@ class ContainerProxy:
         :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
-            has changed, and act according to the condition specified by the `match_condition` parameter.
-        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
+            If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :returns: A CosmosList representing the items after the batch operations went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The batch failed to execute.
         :raises ~azure.cosmos.exceptions.CosmosBatchOperationError: A transactional batch operation failed in the batch.
         :rtype: ~azure.cosmos.CosmosList[Dict[str, Any]]
         """
+        etag = kwargs.get('etag')
+        if etag is not None:
+            warnings.warn(
+                "The 'etag' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
+                DeprecationWarning)
+        match_condition = kwargs.get('match_condition')
+        if match_condition is not None:
+            warnings.warn(
+                "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
+                " It will now be removed in the future.",
+                DeprecationWarning)
+
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include
         if post_trigger_include is not None:
             kwargs['post_trigger_include'] = post_trigger_include
         if session_token is not None:
             kwargs['session_token'] = session_token
-        if etag is not None:
-            kwargs['etag'] = etag
-        if match_condition is not None:
-            kwargs['match_condition'] = match_condition
         if priority is not None:
             kwargs['priority'] = priority
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
         request_options = _build_options(kwargs)
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
         request_options["disableAutomaticIdGeneration"] = True
-        if self.container_link in self.__get_client_container_caches():
-            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        await self._get_properties_with_options(request_options)
+        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         return await self.client_connection.Batch(
             collection_link=self.container_link, batch_operations=batch_operations, options=request_options, **kwargs)

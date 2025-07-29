@@ -17,6 +17,7 @@ resource servicebus 'Microsoft.ServiceBus/namespaces@2018-01-01-preview' = {
   }
   properties: {
     zoneRedundant: false
+    disableLocalAuth: true
   }
 }
 
@@ -26,6 +27,9 @@ resource servicebusPremium 'Microsoft.ServiceBus/namespaces@2018-01-01-preview' 
   sku: {
     name: 'Premium'
     tier: 'Premium'
+  }
+  properties: {
+    disableLocalAuth: true
   }
 }
 

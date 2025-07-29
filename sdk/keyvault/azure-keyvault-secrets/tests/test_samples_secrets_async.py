@@ -8,7 +8,6 @@ import asyncio
 import pytest
 from devtools_testutils import AzureRecordedTestCase, is_live
 from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils.sanitizers import set_custom_default_matcher
 
 from _async_test_case import AsyncSecretsClientPreparer
 from _shared.test_case_async import KeyVaultTestCase

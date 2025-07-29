@@ -17,7 +17,7 @@ from azure.servicebus.management import (
     SqlRuleAction,
 )
 from azure.servicebus.management._constants import INT32_MAX_VALUE
-from tests.utilities import get_logger
+from utilities import get_logger
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
 from devtools_testutils import (
@@ -27,7 +27,7 @@ from devtools_testutils import (
     set_bodiless_matcher,
     get_credential,
 )
-from tests.sb_env_loader import ServiceBusPreparer
+from sb_env_loader import ServiceBusPreparer
 
 from mgmt_test_utilities import clear_topics
 

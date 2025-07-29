@@ -1,0 +1,94 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "test-rg",
+    "registryName": "registryName",
+    "name": "string",
+    "version": "string",
+    "api-version": "2025-01-01-preview",
+    "body": {
+      "properties": {
+        "description": "string",
+        "tags": {
+          "string": "string"
+        },
+        "properties": {
+          "string": "string"
+        },
+        "isArchived": false,
+        "isAnonymous": false,
+        "dataUri": "string",
+        "dataType": "mltable",
+        "referencedUris": [
+          "string"
+        ]
+      }
+    }
+  },
+  "responses": {
+    "200": {
+      "headers": {},
+      "body": {
+        "id": "string",
+        "name": "string",
+        "type": "string",
+        "properties": {
+          "description": "string",
+          "tags": {
+            "string": "string"
+          },
+          "properties": {
+            "string": "string"
+          },
+          "isArchived": false,
+          "isAnonymous": false,
+          "dataUri": "string",
+          "dataType": "mltable",
+          "referencedUris": [
+            "string"
+          ]
+        },
+        "systemData": {
+          "createdAt": "2020-01-01T12:34:56.999+00:13",
+          "createdBy": "string",
+          "createdByType": "User",
+          "lastModifiedAt": "2020-01-01T12:34:56.999+00:13",
+          "lastModifiedBy": "string",
+          "lastModifiedByType": "User"
+        }
+      }
+    },
+    "201": {
+      "headers": {},
+      "body": {
+        "id": "string",
+        "name": "string",
+        "type": "string",
+        "properties": {
+          "description": "string",
+          "tags": {
+            "string": "string"
+          },
+          "properties": {
+            "string": "string"
+          },
+          "isArchived": false,
+          "isAnonymous": false,
+          "dataUri": "string",
+          "dataType": "mltable",
+          "referencedUris": [
+            "string"
+          ]
+        },
+        "systemData": {
+          "createdAt": "2020-01-01T12:34:56.999+00:13",
+          "createdBy": "string",
+          "createdByType": "ManagedIdentity",
+          "lastModifiedAt": "2020-01-01T12:34:56.999+00:13",
+          "lastModifiedBy": "string",
+          "lastModifiedByType": "Key"
+        }
+      }
+    }
+  }
+}

@@ -20,9 +20,9 @@ class TestSqlManagementVirtualClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_virtual_clusters_list(self, resource_group):
         response = self.client.virtual_clusters.list(
-            api_version="2022-05-01-preview",
+            api_version="2024-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -30,10 +30,10 @@ class TestSqlManagementVirtualClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_virtual_clusters_list_by_resource_group(self, resource_group):
         response = self.client.virtual_clusters.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2022-05-01-preview",
+            api_version="2024-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -41,11 +41,11 @@ class TestSqlManagementVirtualClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_virtual_clusters_get(self, resource_group):
         response = self.client.virtual_clusters.get(
             resource_group_name=resource_group.name,
             virtual_cluster_name="str",
-            api_version="2022-05-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -53,11 +53,11 @@ class TestSqlManagementVirtualClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_virtual_clusters_begin_delete(self, resource_group):
         response = self.client.virtual_clusters.begin_delete(
             resource_group_name=resource_group.name,
             virtual_cluster_name="str",
-            api_version="2022-05-01-preview",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -65,12 +65,12 @@ class TestSqlManagementVirtualClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update(self, resource_group):
+    def test_virtual_clusters_begin_update(self, resource_group):
         response = self.client.virtual_clusters.begin_update(
             resource_group_name=resource_group.name,
             virtual_cluster_name="str",
             parameters={"childResources": ["str"], "subnetId": "str", "tags": {"str": "str"}, "version": "str"},
-            api_version="2022-05-01-preview",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -78,11 +78,11 @@ class TestSqlManagementVirtualClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update_dns_servers(self, resource_group):
+    def test_virtual_clusters_begin_update_dns_servers(self, resource_group):
         response = self.client.virtual_clusters.begin_update_dns_servers(
             resource_group_name=resource_group.name,
             virtual_cluster_name="str",
-            api_version="2022-05-01-preview",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

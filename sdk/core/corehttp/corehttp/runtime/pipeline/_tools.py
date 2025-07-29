@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Callable, TypeVar
+from typing import Callable, TypeVar, Dict
 from typing_extensions import ParamSpec
 
 P = ParamSpec("P")
@@ -45,3 +45,19 @@ def await_result(func: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> T:
     if hasattr(result, "__await__"):
         raise TypeError("Policy {} returned awaitable object in non-async pipeline.".format(func))
     return result
+
+
+def sanitize_transport_options(options: Dict[str, str]) -> None:
+    """Remove options that could potentially make it to the transport layer.
+
+    - "tracing_options" is used in the DistributedHttpTracingPolicy and tracing decorators
+
+    :param options: The options.
+    :type options: dict
+    """
+    if not options:
+        return
+
+    options_to_remove = ["tracing_options"]
+    for key in options_to_remove:
+        options.pop(key, None)

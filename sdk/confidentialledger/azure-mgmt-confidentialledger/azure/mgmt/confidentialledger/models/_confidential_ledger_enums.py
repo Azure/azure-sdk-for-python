@@ -10,6 +10,15 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class ApplicationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Object representing the application type of the Confidential Ledger. Defaults to
+    ConfidentialLedger.
+    """
+
+    CONFIDENTIAL_LEDGER = "ConfidentialLedger"
+    CODE_TRANSPARENCY = "CodeTransparency"
+
+
 class CheckNameAvailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The reason why the given name is not available."""
 
@@ -24,6 +33,15 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
+
+
+class EnclavePlatform(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Object representing the enclave platform for the Confidential Ledger application. Defaults to
+    IntelSgx.
+    """
+
+    INTEL_SGX = "IntelSgx"
+    AMD_SEV_SNP = "AmdSevSnp"
 
 
 class LanguageRuntime(str, Enum, metaclass=CaseInsensitiveEnumMeta):

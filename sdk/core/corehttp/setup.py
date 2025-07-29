@@ -79,5 +79,8 @@ setup(
         "httpx": [
             "httpx>=0.25.0",
         ],
+        "tracing": [
+            "opentelemetry-api~=1.26",
+        ],
     },
 )

@@ -8,12 +8,9 @@
 from abc import ABC
 from typing import TYPE_CHECKING
 
-from azure.core.pipeline.transport import HttpRequest
-
 from ._configuration import ApiManagementClientConfiguration
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core import AsyncPipelineClient
 
     from .._serialization import Deserializer, Serializer

@@ -1,0 +1,17 @@
+-e ../../../tools/azure-sdk-tools
+../../core/azure-core
+
+# Aiohttp 3.8.6 triggers https://github.com/aio-libs/aiohttp/issues/4581 on pypy for some reasons
+aiohttp<3.8.6 ; platform_python_implementation == "PyPy"
+aiohttp ; platform_python_implementation != "PyPy"
+# TODO: Need to figure out why this is causing CI errors on Python 3.13
+openai ; python_version < "3.13"
+azure-identity
+azure-search-documents
+azure-storage-blob
+azure-data-tables
+azure-keyvault-keys
+azure-keyvault-secrets
+azure-ai-inference
+azure-appconfiguration
+azure-appconfiguration-provider

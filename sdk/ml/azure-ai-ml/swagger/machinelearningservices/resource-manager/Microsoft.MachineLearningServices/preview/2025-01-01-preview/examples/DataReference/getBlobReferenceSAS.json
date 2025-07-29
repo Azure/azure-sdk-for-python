@@ -1,0 +1,28 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "test-rg",
+    "registryName": "registryName",
+    "name": "string",
+    "version": "string",
+    "api-version": "2025-01-01-preview",
+    "body": {
+      "assetId": "string",
+      "blobUri": "https://www.contoso.com/example"
+    }
+  },
+  "responses": {
+    "200": {
+      "headers": {},
+      "body": {
+        "blobReferenceForConsumption": {
+          "blobUri": "https://www.contoso.com/example",
+          "storageAccountArmId": "string",
+          "credential": {
+            "credentialType": "NoCredentials"
+          }
+        }
+      }
+    }
+  }
+}

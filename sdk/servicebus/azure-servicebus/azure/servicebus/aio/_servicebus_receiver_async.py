@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-import asyncio
+import asyncio  # pylint:disable=do-not-import-asyncio
 from collections.abc import AsyncIterator
 import datetime
 import functools
@@ -748,7 +748,11 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
         if not sequence_number:
-            sequence_number = self._last_received_sequenced_number or 1
+            sequence_number = (
+                self._last_received_sequenced_number + 1
+                if self._last_received_sequenced_number
+                else 1
+            )
         if int(max_message_count) < 0:
             raise ValueError("max_message_count must be 1 or greater.")
 

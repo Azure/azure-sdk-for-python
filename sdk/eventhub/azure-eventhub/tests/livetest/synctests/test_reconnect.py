@@ -28,13 +28,14 @@ except (ModuleNotFoundError, ImportError):
 
 
 @pytest.mark.liveTest
-def test_send_with_long_interval_sync(live_eventhub, sleep, uamqp_transport, timeout_factor):
+def test_send_with_long_interval_sync(live_eventhub, sleep, uamqp_transport, timeout_factor, client_args):
     test_partition = "0"
     sender = EventHubProducerClient(
         live_eventhub["hostname"],
         live_eventhub["event_hub"],
         EventHubSharedKeyCredential(live_eventhub["key_name"], live_eventhub["access_key"]),
         uamqp_transport=uamqp_transport,
+        **client_args
     )
     with sender:
         batch = sender.create_batch(partition_id=test_partition)
@@ -99,7 +100,7 @@ def test_send_with_long_interval_sync(live_eventhub, sleep, uamqp_transport, tim
 
 
 @pytest.mark.liveTest
-def test_send_connection_idle_timeout_and_reconnect_sync(auth_credential_receivers, uamqp_transport, timeout_factor):
+def test_send_connection_idle_timeout_and_reconnect_sync(auth_credential_receivers, uamqp_transport, timeout_factor, client_args):
     fully_qualified_namespace, eventhub_name, credential, receivers = auth_credential_receivers
     if uamqp_transport:
         amqp_transport = UamqpTransport
@@ -116,6 +117,7 @@ def test_send_connection_idle_timeout_and_reconnect_sync(auth_credential_receive
         idle_timeout=10,
         retry_total=retry_total,
         uamqp_transport=uamqp_transport,
+        **client_args
     )
     with client:
         ed = EventData("data")
@@ -148,6 +150,7 @@ def test_send_connection_idle_timeout_and_reconnect_sync(auth_credential_receive
             credential=credential(),
             idle_timeout=10,
             uamqp_transport=uamqp_transport,
+            **client_args
         )
         with client:
             ed = EventData("data")
@@ -161,7 +164,7 @@ def test_send_connection_idle_timeout_and_reconnect_sync(auth_credential_receive
                 sender._send_event_data()
 
 @pytest.mark.liveTest
-def test_receive_connection_idle_timeout_and_reconnect_sync(auth_credential_senders, uamqp_transport):
+def test_receive_connection_idle_timeout_and_reconnect_sync(auth_credential_senders, uamqp_transport, client_args):
     fully_qualified_namespace, eventhub_name, credential, senders = auth_credential_senders
     client = EventHubConsumerClient(
         fully_qualified_namespace=fully_qualified_namespace,
@@ -170,6 +173,7 @@ def test_receive_connection_idle_timeout_and_reconnect_sync(auth_credential_send
         consumer_group="$default",
         idle_timeout=10,
         uamqp_transport=uamqp_transport,
+        **client_args
     )
 
     def on_event_received(event):

@@ -35,12 +35,12 @@ def main():
         elastic_san_name="elasticsanname",
         parameters={
             "location": "France Central",
-            "properties": {"baseSizeTiB": 1, "extendedCapacitySizeTiB": 3, "sku": {"name": "Premium_LRS"}},
+            "properties": {"baseSizeTiB": 15, "extendedCapacitySizeTiB": 27, "sku": {"name": "Premium_LRS"}},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/preview/2024-06-01-preview/examples/ElasticSans_Create_MinimumSet_Gen.json
+# x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/preview/2024-07-01-preview/examples/ElasticSans_Create_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

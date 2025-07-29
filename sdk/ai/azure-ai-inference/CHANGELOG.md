@@ -1,5 +1,20 @@
 # Release History
 
+## 1.0.0b9 (2025-02-14)
+
+### Features Added
+
+* Added support for chat completion messages with `developer` role.
+* Updated package document with an example of how to set custom HTTP request headers,
+and an example of providing chat completion "messages" as an array of Python `dict` objects.
+* Add a descriptive Exception error message when `load_client` function or
+`get_model_info` method fails to run on an endpoint that does not support the `/info` route.
+
+### Bugs Fixed
+
+* Fix for Exception raised while parsing Chat Completions streaming response, in some rare cases, for
+multibyte UTF-8 languages like Chinese ([GitHub Issue 39565](https://github.com/Azure/azure-sdk-for-python/issues/39565)).
+
 ## 1.0.0b8 (2025-01-29)
 
 ### Features Added
@@ -24,7 +39,7 @@ as "structured output". See new samples `sample_chat_completions_with_structured
 
 ### Breaking Changes
 
-* If you previously configured your `ChatCompletionClient.complete()` call to output JSON format without a scheme, you have this in your code: `response_format=ChatCompletionsResponseFormatJSON()`. To maintain the same functionality, replace this with `response_format="json-object"`. We however recommend that you now switch to output JSON format with a provided schema if your AI model supports it: `response_format=JsonSchemaFormat(...)`.
+* If you previously configured your `ChatCompletionClient.complete()` call to output JSON format without a scheme, you have this in your code: `response_format=ChatCompletionsResponseFormatJSON()`. To maintain the same functionality, replace this with `response_format="json_object"`. We however recommend that you now switch to output JSON format with a provided schema if your AI model supports it: `response_format=JsonSchemaFormat(...)`.
 
 ### Bugs Fixed
 

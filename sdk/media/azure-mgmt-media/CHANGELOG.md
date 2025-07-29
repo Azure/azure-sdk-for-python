@@ -1,5 +1,13 @@
 # Release History
 
+## 10.2.1 (2025-06-03)
+
+### Other Changes
+
+- Please note, this package has been deprecated and will no longer be maintained after 06/30/2024.
+  Refer to [Azure Media Services retirement guide](https://learn.microsoft.com/azure/media-services/latest/azure-media-services-retirement) for more retirement details and how to migrate to the new services.
+  Refer to our deprecation policy (https://aka.ms/azsdk/support-policies) for more details.
+
 ## 10.2.0 (2023-01-12)
 
 ### Features Added

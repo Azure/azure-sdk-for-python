@@ -37,8 +37,6 @@ def main():
         policy_name="default",
         parameters={
             "properties": {
-                "backupStorageAccessTier": "Hot",
-                "makeBackupsImmutable": True,
                 "monthlyRetention": "P1Y",
                 "weekOfYear": 5,
                 "weeklyRetention": "P1M",
@@ -49,6 +47,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2023-05-01-preview/examples/LongTermRetentionPolicyCreateOrUpdate.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2024-05-01-preview/examples/LongTermRetentionPolicyCreateOrUpdate.json
 if __name__ == "__main__":
     main()

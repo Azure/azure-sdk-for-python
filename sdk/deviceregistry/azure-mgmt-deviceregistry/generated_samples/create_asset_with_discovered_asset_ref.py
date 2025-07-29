@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -100,6 +101,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-09-01-preview/Create_Asset_With_DiscoveredAssetRef.json
+# x-ms-original-file: 2024-11-01/Create_Asset_With_DiscoveredAssetRef.json
 if __name__ == "__main__":
     main()

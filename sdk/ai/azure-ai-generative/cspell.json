@@ -1,4 +1,0 @@
-{
-    "ignoreWords": ["cmpl", "uqkvl", "redef", "datas", "unbatched", "endofprompt", "unlabel", "pydash", "raisvc", "tkey", "tparam", "punc", "ncols"],
-    "ignorePaths": ["sdk/ai/azure-ai-generative/azure/ai/generative/evaluate/pf_templates/**/*"]
-}

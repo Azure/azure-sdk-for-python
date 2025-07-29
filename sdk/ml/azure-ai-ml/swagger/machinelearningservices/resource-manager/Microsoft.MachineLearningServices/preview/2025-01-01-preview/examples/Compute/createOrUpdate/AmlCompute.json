@@ -1,0 +1,86 @@
+{
+  "parameters": {
+    "subscriptionId": "34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
+    "resourceGroupName": "testrg123",
+    "workspaceName": "workspaces123",
+    "computeName": "compute123",
+    "api-version": "2025-01-01-preview",
+    "parameters": {
+      "location": "eastus",
+      "properties": {
+        "computeType": "AmlCompute",
+        "description": "some compute",
+        "properties": {
+          "scaleSettings": {
+            "maxNodeCount": 4,
+            "minNodeCount": 4,
+            "nodeIdleTimeBeforeScaleDown": "PT5M"
+          }
+        }
+      }
+    }
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "id": "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourceGroups/testrg123/providers/Microsoft.MachineLearningServices/workspaces/workspaces123/computes/compute123",
+        "type": "Microsoft.MachineLearningServices/workspaces/computes",
+        "name": "compute123",
+        "location": "eastus2",
+        "properties": {
+          "description": "some compute",
+          "createdOn": "2021-04-01T22:00:00.0000000+00:00",
+          "modifiedOn": "2021-04-01T22:00:00.0000000+00:00",
+          "computeType": "AmlCompute",
+          "provisioningState": "Succeeded",
+          "properties": {
+            "vmSize": "STANDARD_NC6",
+            "vmPriority": "Dedicated",
+            "osType": "Windows",
+            "virtualMachineImage": null,
+            "isolatedNetwork": false,
+            "subnet": {
+              "id": "test-subnet-resource-id"
+            },
+            "scaleSettings": {
+              "maxNodeCount": 1,
+              "minNodeCount": 0,
+              "nodeIdleTimeBeforeScaleDown": "PT5M"
+            },
+            "remoteLoginPortPublicAccess": "Enabled",
+            "allocationState": "Resizing",
+            "allocationStateTransitionTime": "2017-09-27T22:28:08.998Z",
+            "errors": null,
+            "currentNodeCount": 0,
+            "targetNodeCount": 1,
+            "nodeStateCounts": {
+              "preparingNodeCount": 0,
+              "runningNodeCount": 0,
+              "idleNodeCount": 0,
+              "unusableNodeCount": 0,
+              "leavingNodeCount": 0,
+              "preemptedNodeCount": 0
+            },
+            "enableNodePublicIp": true
+          }
+        }
+      }
+    },
+    "201": {
+      "body": {
+        "id": "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourceGroups/testrg123/providers/Microsoft.MachineLearningServices/workspaces/workspaces123/computes/compute123",
+        "type": "Microsoft.MachineLearningServices/workspaces/computes",
+        "name": "compute123",
+        "location": "eastus2",
+        "properties": {
+          "description": "some compute",
+          "computeType": "AmlCompute",
+          "provisioningState": "Updating"
+        }
+      },
+      "headers": {
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/...pathToOperationStatus..."
+      }
+    }
+  }
+}

@@ -15,7 +15,7 @@ from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .. import models as _models
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 from ._configuration import AzureDataLakeStorageRESTAPIConfiguration
 from .operations import FileSystemOperations, PathOperations, ServiceOperations
 
@@ -42,7 +42,7 @@ class AzureDataLakeStorageRESTAPI:  # pylint: disable=client-accepts-api-version
      is "filesystem". Note that overriding this default value may result in unsupported behavior.
     :paramtype resource: str
     :keyword version: Specifies the version of the operation to use for this request. Default value
-     is "2025-01-05". Note that overriding this default value may result in unsupported behavior.
+     is "2025-05-05". Note that overriding this default value may result in unsupported behavior.
     :paramtype version: str
     """
 
@@ -52,6 +52,7 @@ class AzureDataLakeStorageRESTAPI:  # pylint: disable=client-accepts-api-version
         self._config = AzureDataLakeStorageRESTAPIConfiguration(
             url=url, x_ms_lease_duration=x_ms_lease_duration, **kwargs
         )
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [

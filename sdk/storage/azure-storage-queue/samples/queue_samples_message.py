@@ -19,7 +19,7 @@ USAGE:
     python queue_samples_message.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
 
@@ -30,7 +30,7 @@ import sys
 
 class QueueMessageSamples(object):
 
-    connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+    connection_string = os.getenv("STORAGE_CONNECTION_STRING")
 
     def set_access_policy(self):
         if self.connection_string is None:
@@ -39,10 +39,10 @@ class QueueMessageSamples(object):
 
         # [START create_queue_client_from_connection_string]
         from azure.storage.queue import QueueClient
+
         queue = QueueClient.from_connection_string(self.connection_string, "myqueue1")
         if queue.account_name is None:
-            print("Connection string did not provide an account name." + '\n' +
-                  "Test: set_access_policy")
+            print("Connection string did not provide an account name." + "\n" + "Test: set_access_policy")
             sys.exit(1)
         # [END create_queue_client_from_connection_string]
 
@@ -56,11 +56,12 @@ class QueueMessageSamples(object):
             # [START set_access_policy]
             # Create an access policy
             from azure.storage.queue import AccessPolicy, QueueSasPermissions
+
             access_policy = AccessPolicy()
             access_policy.start = datetime.utcnow() - timedelta(hours=1)
             access_policy.expiry = datetime.utcnow() + timedelta(hours=1)
             access_policy.permission = QueueSasPermissions(read=True)
-            identifiers = {'my-access-policy-id': access_policy}
+            identifiers = {"my-access-policy-id": access_policy}
 
             # Set the access policy
             queue.set_queue_access_policy(identifiers)
@@ -69,20 +70,15 @@ class QueueMessageSamples(object):
             # Use the access policy to generate a SAS token
             # [START queue_client_sas_token]
             from azure.storage.queue import generate_queue_sas
+
             sas_token = generate_queue_sas(
-                queue.account_name,
-                queue.queue_name,
-                queue.credential.account_key,
-                policy_id='my-access-policy-id'
+                queue.account_name, queue.queue_name, queue.credential.account_key, policy_id="my-access-policy-id"
             )
             # [END queue_client_sas_token]
 
             # Authenticate with the sas token
             # [START create_queue_client]
-            token_auth_queue = QueueClient.from_queue_url(
-                queue_url=queue.url,
-                credential=sas_token
-            )
+            token_auth_queue = QueueClient.from_queue_url(queue_url=queue.url, credential=sas_token)
             # [END create_queue_client]
 
             # Use the newly authenticated client to receive messages
@@ -99,6 +95,7 @@ class QueueMessageSamples(object):
 
         # Instantiate a queue client
         from azure.storage.queue import QueueClient
+
         queue = QueueClient.from_connection_string(self.connection_string, "myqueue2")
 
         # Create the queue
@@ -106,7 +103,7 @@ class QueueMessageSamples(object):
 
         try:
             # [START set_queue_metadata]
-            metadata = {'foo': 'val1', 'bar': 'val2', 'baz': 'val3'}
+            metadata = {"foo": "val1", "bar": "val2", "baz": "val3"}
             queue.set_queue_metadata(metadata=metadata)
             # [END set_queue_metadata]
 
@@ -125,6 +122,7 @@ class QueueMessageSamples(object):
 
         # Instantiate a queue client
         from azure.storage.queue import QueueClient
+
         queue = QueueClient.from_connection_string(self.connection_string, "myqueue3")
 
         # Create the queue
@@ -170,6 +168,7 @@ class QueueMessageSamples(object):
 
         # Instantiate a queue client
         from azure.storage.queue import QueueClient
+
         queue = QueueClient.from_connection_string(self.connection_string, "myqueue4")
 
         # Create the queue
@@ -207,6 +206,7 @@ class QueueMessageSamples(object):
 
         # Instantiate a queue client
         from azure.storage.queue import QueueClient
+
         queue = QueueClient.from_connection_string(self.connection_string, "myqueue5")
 
         # Create the queue
@@ -242,6 +242,7 @@ class QueueMessageSamples(object):
 
         # Instantiate a queue client
         from azure.storage.queue import QueueClient
+
         queue = QueueClient.from_connection_string(self.connection_string, "myqueue6")
 
         # Create the queue
@@ -278,6 +279,7 @@ class QueueMessageSamples(object):
 
         # Instantiate a queue client
         from azure.storage.queue import QueueClient
+
         queue = QueueClient.from_connection_string(self.connection_string, "myqueue7")
 
         # Create the queue
@@ -314,6 +316,7 @@ class QueueMessageSamples(object):
 
         # Instantiate a queue client
         from azure.storage.queue import QueueClient
+
         queue = QueueClient.from_connection_string(self.connection_string, "myqueue8")
 
         # Create the queue
@@ -330,10 +333,8 @@ class QueueMessageSamples(object):
             # Update the message
             list_result = next(messages)
             message = queue.update_message(
-                list_result.id,
-                pop_receipt=list_result.pop_receipt,
-                visibility_timeout=0,
-                content="updated")
+                list_result.id, pop_receipt=list_result.pop_receipt, visibility_timeout=0, content="updated"
+            )
             # [END update_message]
 
         finally:
@@ -347,6 +348,7 @@ class QueueMessageSamples(object):
 
         # Instantiate a queue client
         from azure.storage.queue import QueueClient
+
         queue = QueueClient.from_connection_string(self.connection_string, "myqueue9")
 
         # Create the queue
@@ -382,7 +384,7 @@ class QueueMessageSamples(object):
             queue.delete_queue()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample = QueueMessageSamples()
     sample.set_access_policy()
     sample.queue_metadata()

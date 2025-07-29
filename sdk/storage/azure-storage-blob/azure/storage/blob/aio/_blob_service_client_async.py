@@ -139,13 +139,29 @@ class BlobServiceClient(  # type: ignore [misc]
         self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
         self._configure_encryption(kwargs)
 
+    async def __aenter__(self) -> Self:
+        await self._client.__aenter__()
+        return self
+
+    async def __aexit__(self, *args) -> None:
+        await self._client.__aexit__(*args)
+
+    async def close(self) -> None:
+        """This method is to close the sockets opened by the client.
+        It need not be used when using with a context manager.
+
+        :return: None
+        :rtype: None
+        """
+        await self._client.close()
+
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location
         mode hostname.
 
         :param str hostname:
             The hostname of the current location mode.
-        :returns: A formatted endpoint URL including current location mode hostname.
+        :return: A formatted endpoint URL including current location mode hostname.
         :rtype: str
         """
         return f"{self.scheme}://{hostname}/{self._query_str}"
@@ -177,7 +193,7 @@ class BlobServiceClient(  # type: ignore [misc]
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
-        :returns: A Blob service client.
+        :return: A Blob service client.
         :rtype: ~azure.storage.blob.BlobServiceClient
 
         .. admonition:: Example:
@@ -235,7 +251,7 @@ class BlobServiceClient(  # type: ignore [misc]
         The information can also be retrieved if the user has a SAS to a container or blob.
         The keys in the returned dictionary include 'sku_name' and 'account_kind'.
 
-        :returns: A dict of account information (SKU and account type).
+        :return: A dict of account information (SKU and account type).
         :rtype: dict(str, str)
 
         .. admonition:: Example:
@@ -309,7 +325,7 @@ class BlobServiceClient(  # type: ignore [misc]
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: An object containing blob service properties such as
+        :return: An object containing blob service properties such as
             analytics logging, hour/minute metrics, cors rules, etc.
         :rtype: Dict[str, Any]
 
@@ -379,6 +395,7 @@ class BlobServiceClient(  # type: ignore [misc]
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
+        :return: None
         :rtype: None
 
         .. admonition:: Example:
@@ -443,7 +460,7 @@ class BlobServiceClient(  # type: ignore [misc]
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: An iterable (auto-paging) of ContainerProperties.
+        :return: An iterable (auto-paging) of ContainerProperties.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.blob.ContainerProperties]
 
         .. admonition:: Example:
@@ -496,7 +513,7 @@ class BlobServiceClient(  # type: ignore [misc]
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: An iterable (auto-paging) response of BlobProperties.
+        :return: An iterable (auto-paging) response of BlobProperties.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.blob.FilteredBlob]
         """
 
@@ -545,7 +562,7 @@ class BlobServiceClient(  # type: ignore [misc]
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: A container client to interact with the newly created container.
+        :return: A container client to interact with the newly created container.
         :rtype: ~azure.storage.blob.aio.ContainerClient
 
         .. admonition:: Example:
@@ -607,6 +624,7 @@ class BlobServiceClient(  # type: ignore [misc]
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
+        :return: None
         :rtype: None
 
         .. admonition:: Example:
@@ -646,7 +664,7 @@ class BlobServiceClient(  # type: ignore [misc]
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: A container client for the renamed container.
+        :return: A container client for the renamed container.
         :rtype: ~azure.storage.blob.ContainerClient
         """
         renamed_container = self.get_container_client(new_name)
@@ -685,7 +703,7 @@ class BlobServiceClient(  # type: ignore [misc]
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
-        :returns: The recovered soft-deleted ContainerClient.
+        :return: The recovered soft-deleted ContainerClient.
         :rtype: ~azure.storage.blob.aio.ContainerClient
         """
         new_name = kwargs.pop('new_name', None)
@@ -709,7 +727,7 @@ class BlobServiceClient(  # type: ignore [misc]
             The container. This can either be the name of the container,
             or an instance of ContainerProperties.
         :type container: str or ~azure.storage.blob.ContainerProperties
-        :returns: A ContainerClient.
+        :return: A ContainerClient.
         :rtype: ~azure.storage.blob.aio.ContainerClient
 
         .. admonition:: Example:
@@ -760,7 +778,7 @@ class BlobServiceClient(  # type: ignore [misc]
         :type snapshot: str or dict(str, Any)
         :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
             specifies the version of the blob to operate on.
-        :returns: A BlobClient.
+        :return: A BlobClient.
         :rtype: ~azure.storage.blob.aio.BlobClient
 
         .. admonition:: Example:

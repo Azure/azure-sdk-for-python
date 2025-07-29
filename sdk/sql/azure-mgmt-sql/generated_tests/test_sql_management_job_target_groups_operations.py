@@ -20,12 +20,12 @@ class TestSqlManagementJobTargetGroupsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_agent(self, resource_group):
+    def test_job_target_groups_list_by_agent(self, resource_group):
         response = self.client.job_target_groups.list_by_agent(
             resource_group_name=resource_group.name,
             server_name="str",
             job_agent_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,13 +33,13 @@ class TestSqlManagementJobTargetGroupsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_job_target_groups_get(self, resource_group):
         response = self.client.job_target_groups.get(
             resource_group_name=resource_group.name,
             server_name="str",
             job_agent_name="str",
             target_group_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -47,7 +47,7 @@ class TestSqlManagementJobTargetGroupsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_job_target_groups_create_or_update(self, resource_group):
         response = self.client.job_target_groups.create_or_update(
             resource_group_name=resource_group.name,
             server_name="str",
@@ -69,7 +69,7 @@ class TestSqlManagementJobTargetGroupsOperations(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "type": "str",
             },
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -77,13 +77,13 @@ class TestSqlManagementJobTargetGroupsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_job_target_groups_delete(self, resource_group):
         response = self.client.job_target_groups.delete(
             resource_group_name=resource_group.name,
             server_name="str",
             job_agent_name="str",
             target_group_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself

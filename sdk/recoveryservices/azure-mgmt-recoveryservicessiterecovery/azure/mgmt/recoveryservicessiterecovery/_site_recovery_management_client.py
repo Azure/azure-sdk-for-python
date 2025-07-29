@@ -8,14 +8,19 @@
 
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
+from typing_extensions import Self
 
+from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
+from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 
 from . import models as _models
 from ._configuration import SiteRecoveryManagementClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import (
+    ClusterRecoveryPointOperations,
+    ClusterRecoveryPointsOperations,
     MigrationRecoveryPointsOperations,
     Operations,
     RecoveryPointsOperations,
@@ -32,6 +37,7 @@ from .operations import (
     ReplicationPoliciesOperations,
     ReplicationProtectableItemsOperations,
     ReplicationProtectedItemsOperations,
+    ReplicationProtectionClustersOperations,
     ReplicationProtectionContainerMappingsOperations,
     ReplicationProtectionContainersOperations,
     ReplicationProtectionIntentsOperations,
@@ -47,11 +53,10 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class SiteRecoveryManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class SiteRecoveryManagementClient:  # pylint: disable=too-many-instance-attributes
     """SiteRecoveryManagementClient.
 
     :ivar operations: Operations operations
@@ -101,6 +106,15 @@ class SiteRecoveryManagementClient:  # pylint: disable=client-accepts-api-versio
     :ivar target_compute_sizes: TargetComputeSizesOperations operations
     :vartype target_compute_sizes:
      azure.mgmt.recoveryservicessiterecovery.operations.TargetComputeSizesOperations
+    :ivar replication_protection_clusters: ReplicationProtectionClustersOperations operations
+    :vartype replication_protection_clusters:
+     azure.mgmt.recoveryservicessiterecovery.operations.ReplicationProtectionClustersOperations
+    :ivar cluster_recovery_points: ClusterRecoveryPointsOperations operations
+    :vartype cluster_recovery_points:
+     azure.mgmt.recoveryservicessiterecovery.operations.ClusterRecoveryPointsOperations
+    :ivar cluster_recovery_point: ClusterRecoveryPointOperations operations
+    :vartype cluster_recovery_point:
+     azure.mgmt.recoveryservicessiterecovery.operations.ClusterRecoveryPointOperations
     :ivar replication_protection_container_mappings:
      ReplicationProtectionContainerMappingsOperations operations
     :vartype replication_protection_container_mappings:
@@ -152,7 +166,7 @@ class SiteRecoveryManagementClient:  # pylint: disable=client-accepts-api-versio
     :type resource_name: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-08-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2025-01-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -175,7 +189,25 @@ class SiteRecoveryManagementClient:  # pylint: disable=client-accepts-api-versio
             resource_name=resource_name,
             **kwargs
         )
-        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                ARMAutoResourceProviderRegistrationPolicy(),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -225,6 +257,15 @@ class SiteRecoveryManagementClient:  # pylint: disable=client-accepts-api-versio
         self.target_compute_sizes = TargetComputeSizesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.replication_protection_clusters = ReplicationProtectionClustersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.cluster_recovery_points = ClusterRecoveryPointsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.cluster_recovery_point = ClusterRecoveryPointOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.replication_protection_container_mappings = ReplicationProtectionContainerMappingsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -262,7 +303,7 @@ class SiteRecoveryManagementClient:  # pylint: disable=client-accepts-api-versio
             self._client, self._config, self._serialize, self._deserialize
         )
 
-    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -282,12 +323,12 @@ class SiteRecoveryManagementClient:  # pylint: disable=client-accepts-api-versio
 
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
-        return self._client.send_request(request_copy, **kwargs)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "SiteRecoveryManagementClient":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 

@@ -1,5 +1,21 @@
 # Release History
 
+## 2.0.0b5 (2025-05-19)
+
+### Features Added
+
+  - Model `LedgerProperties` added property `host_level`
+  - Model `LedgerProperties` added property `max_body_size_in_mb`
+  - Model `LedgerProperties` added property `subject_name`
+  - Model `LedgerProperties` added property `node_count`
+  - Model `LedgerProperties` added property `write_lb_address_prefix`
+  - Model `LedgerProperties` added property `worker_threads`
+  - Model `LedgerProperties` added property `enclave_platform`
+  - Model `LedgerProperties` added property `application_type`
+  - Model `ManagedCCFProperties` added property `enclave_platform`
+  - Added enum `ApplicationType`
+  - Added enum `EnclavePlatform`
+
 ## 2.0.0b4 (2024-04-22)
 
 ### Features Added

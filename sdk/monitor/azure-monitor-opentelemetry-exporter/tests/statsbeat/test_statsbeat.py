@@ -267,7 +267,13 @@ _StatsbeatMetrics_INSTRUMENTATION_ATTRIBUTES = dict(_StatsbeatMetrics._INSTRUMEN
 class TestStatsbeatMetrics(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        os.environ.clear()
+        os.environ.pop("WEBSITE_SITE_NAME", None)
+        os.environ.pop("WEBSITE_HOME_STAMPNAME", None)
+        os.environ.pop("FUNCTIONS_WORKER_RUNTIME", None)
+        os.environ.pop("WEBSITE_HOSTNAME", None)
+        os.environ.pop("AKS_ARM_NAMESPACE_ID", None)
+        os.environ.pop("KUBERNETES_SERVICE_HOST", None)
+
         mp = MeterProvider()
         ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
         endpoint = "https://westus-1.in.applicationinsights.azure.com/"
@@ -424,6 +430,8 @@ class TestStatsbeatMetrics(unittest.TestCase):
         os.environ,
         {
             "FUNCTIONS_WORKER_RUNTIME": "runtime",
+            # Functions can have WEBSITE_SITE_NAME
+            "WEBSITE_SITE_NAME": "site_name",
             "WEBSITE_HOSTNAME": "host_name",
         },
     )
@@ -447,13 +455,32 @@ class TestStatsbeatMetrics(unittest.TestCase):
         os.environ,
         {
             "AKS_ARM_NAMESPACE_ID": "namespace_id",
+            "KUBERNETES_SERVICE_HOST": "TEST_KUBERNETES_SERVICE_HOST",
         },
     )
-    def test_get_attach_metric_aks(self):
+    def test_get_attach_metric_aks_attach(self):
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
         self.assertEqual(attributes["rp"], _RP_Names.UNKNOWN.value)
         attributes["rp"] = _RP_Names.AKS.value
         attributes["rpId"] = "namespace_id"
+        observations = self._metric._get_attach_metric(options=None)
+        for obs in observations:
+            self.assertEqual(obs.value, 1)
+            self.assertEqual(obs.attributes, attributes)
+        self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["rp"], _RP_Names.AKS.value)
+
+    # pylint: disable=protected-access
+    @mock.patch.dict(
+        os.environ,
+        {
+            "KUBERNETES_SERVICE_HOST": "TEST_KUBERNETES_SERVICE_HOST",
+        },
+    )
+    def test_get_attach_metric_aks_manual(self):
+        attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
+        self.assertEqual(attributes["rp"], _RP_Names.UNKNOWN.value)
+        attributes["rp"] = _RP_Names.AKS.value
+        attributes["rpId"] = "TEST_KUBERNETES_SERVICE_HOST"
         observations = self._metric._get_attach_metric(options=None)
         for obs in observations:
             self.assertEqual(obs.value, 1)

@@ -32,21 +32,27 @@ DATABASE_ID = config.settings['database_id']
 CONTAINER_ID = config.settings['container_id']
 
 
-async def create_items(container, size):
-    print('Creating Items')
+async def create_items(container, size, partition_key_value):
+    print("Creating Items with partition key value: {}".format(partition_key_value))
 
-    for i in range(1, size):
+    for i in range(size):
         c = str(uuid.uuid4())
         item_definition = {'id': 'item' + c,
                            'address': {'street': '1 Microsoft Way' + c,
                                        'city': 'Redmond' + c,
-                                       'state': 'WA',
+                                       'state': partition_key_value,
                                        'zip code': 98052
                                        }
                            }
 
         await container.create_item(body=item_definition)
 
+async def clean_up(container):
+    print('\nClean up the container\n')
+
+    async for item in container.query_items(query='SELECT * FROM c'):
+        # Deleting the current item
+        await container.delete_item(item, partition_key=item['address']['state'])
 
 async def read_change_feed(container):
     print('\nReading Change Feed from the beginning\n')
@@ -54,76 +60,130 @@ async def read_change_feed(container):
     # For a particular Partition Key Range we can use partition_key_range_id]
     # 'is_start_from_beginning = True' will read from the beginning of the history of the container
     # If no is_start_from_beginning is specified, the read change feed loop will pickup the items that happen while the loop / process is active
-    response = container.query_items_change_feed(is_start_from_beginning=True)
+    await create_items(container, 10, 'WA')
+    response_iterator = container.query_items_change_feed(is_start_from_beginning=True)
 
     # Because the asynchronous client returns an asynchronous iterator object for methods using queries,
-    # we do not need to await the function. However, attempting to cast this object into a list directly 
+    # we do not need to await the function. However, attempting to cast this object into a list directly
     # will throw an error; instead, iterate over the result using an async for loop like shown here
-    async for doc in response:
+    async for doc in response_iterator:
         print(doc)
 
     print('\nFinished reading all the change feed\n')
 
 
-async def read_change_feed_with_start_time(container, start_time):
-    time = start_time.strftime('%a, %d %b %Y %H:%M:%S GMT')
-    print('\nReading Change Feed from start time of {}\n'.format(time))
-
+async def read_change_feed_with_start_time(container):
+    print('\nReading Change Feed from the start time\n')
     # You can read change feed from a specific time.
     # You must pass in a datetime object for the start_time field.
-    response = container.query_items_change_feed(start_time=start_time)
-    async for doc in response:
+
+    # Create items
+    await create_items(container, 10, 'WA')
+    start_time = datetime.now(timezone.utc)
+    time = start_time.strftime('%a, %d %b %Y %H:%M:%S GMT')
+    print('\nReading Change Feed from start time of {}\n'.format(time))
+    await create_items(container, 5, 'CA')
+    await create_items(container, 5, 'OR')
+
+    # Read change feed from the beginning
+    response_iterator = container.query_items_change_feed(start_time="Beginning")
+    async for doc in response_iterator:
         print(doc)
 
-    print('\nFinished reading all the change feed from start time of {}\n'.format(time))
+    # Read change feed from a start time
+    response_iterator = container.query_items_change_feed(start_time=start_time)
+    async for doc in response_iterator:
+        print(doc)
 
-async def read_change_feed_with_continuation(container, continuation):
-    print('\nReading change feed from continuation\n')
+async def read_change_feed_with_partition_key(container):
+    print('\nReading Change Feed from the beginning of the partition key\n')
+    # Create items
+    await create_items(container, 10, 'WA')
+    await create_items(container, 5, 'CA')
+    await create_items(container, 5, 'OR')
+
+    # Read change feed with partition key with LatestVersion mode.
+    # Should only return change feed for the created items with 'CA' partition key
+    response_iterator = container.query_items_change_feed(start_time="Beginning", partition_key="CA")
+    async for doc in response_iterator:
+        print(doc)
+
+async def read_change_feed_with_continuation(container):
+    print('\nReading Change Feed from the continuation\n')
+    # Create items
+    await create_items(container, 10, 'WA')
+    response_iterator = container.query_items_change_feed(start_time="Beginning")
+    async for doc in response_iterator:
+        print(doc)
+    continuation_token = container.client_connection.last_response_headers['etag']
+
+    # Create additional items
+    await create_items(container, 5, 'CA')
+    await create_items(container, 5, 'OR')
 
     # You can read change feed from a specific continuation token.
     # You must pass in a valid continuation token.
-    response = container.query_items_change_feed(continuation=continuation)
-    async for doc in response:
+    # From our continuation token above, you will get all items created after the continuation
+    response_iterator = container.query_items_change_feed(continuation=continuation_token)
+    async for doc in response_iterator:
         print(doc)
-
-    print('\nFinished reading all the change feed from continuation\n')
-
-async def delete_all_items(container):
-    print('\nDeleting all item\n')
-
-    async for item in container.query_items(query='SELECT * FROM c'):
-        # Deleting the current item
-        await container.delete_item(item, partition_key=item['address']['state'])
-
-    print('Deleted all items')
 
 async def read_change_feed_with_all_versions_and_delete_mode(container):
-    change_feed_mode = "AllVersionsAndDeletes"
-    print("\nReading change feed with 'AllVersionsAndDeletes' mode.\n")
+    print('\nReading Change Feed with AllVersionsAndDeletes mode\n')
+    # Read the initial change feed with 'AllVersionsAndDeletes' mode.
+    # This initial call was made to store a point in time in a 'continuation' token
+    response_iterator = container.query_items_change_feed(mode="AllVersionsAndDeletes")
+    async for doc in response_iterator:
+        print(doc)
+    continuation_token = container.client_connection.last_response_headers['etag']
 
-    # You can read change feed with a specific change feed mode.
-    # You must pass in a valid change feed mode: ["LatestVersion", "AllVersionsAndDeletes"].
-    response = container.query_items_change_feed(mode=change_feed_mode)
-    async for doc in response:
+    # Read all change feed with 'AllVersionsAndDeletes' mode after create items from a continuation
+    await create_items(container, 10, 'CA')
+    await create_items(container, 10, 'OR')
+    response_iterator = container.query_items_change_feed(mode="AllVersionsAndDeletes", continuation=continuation_token)
+    async for doc in response_iterator:
         print(doc)
 
-    print("\nFinished reading all the change feed with 'AllVersionsAndDeletes' mode.\n")
-
-async def read_change_feed_with_all_versions_and_delete_mode_from_continuation(container, continuation):
-    change_feed_mode = "AllVersionsAndDeletes"
-    print("\nReading change feed with 'AllVersionsAndDeletes' mode.\n")
-
-    # You can read change feed with a specific change feed mode from a specific continuation token.
-    # You must pass in a valid change feed mode: ["LatestVersion", "AllVersionsAndDeletes"].
-    # You must pass in a valid continuation token.
-    response = container.query_items_change_feed(mode=change_feed_mode, continuation=continuation)
-    async for doc in response:
+    # Read all change feed with 'AllVersionsAndDeletes' mode after delete items from a continuation
+    await clean_up(container)
+    response_iterator = container.query_items_change_feed(mode="AllVersionsAndDeletes", continuation=continuation_token)
+    async for doc in response_iterator:
         print(doc)
 
-    print("\nFinished reading all the change feed with 'AllVersionsAndDeletes' mode.\n")
+async def read_change_feed_with_all_versions_and_delete_mode_with_partition_key(container):
+    print('\nReading Change Feed with AllVersionsAndDeletes mode from the partition key\n')
+
+    # Read the initial change feed with 'AllVersionsAndDeletes' mode with partition key('CA').
+    # This initial call was made to store a point in time and 'partition_key' in a 'continuation' token
+    response_iterator = container.query_items_change_feed(mode="AllVersionsAndDeletes", partition_key="CA")
+    async for doc in response_iterator:
+        print(doc)
+    continuation_token = container.client_connection.last_response_headers['etag']
+
+    await create_items(container, 10, 'CA')
+    await create_items(container, 10, 'OR')
+    # Read change feed 'AllVersionsAndDeletes' mode with 'CA' partition key value from the previous continuation.
+    # Should only print the created items with 'CA' partition key value
+    response_iterator = container.query_items_change_feed(mode='AllVersionsAndDeletes', continuation=continuation_token)
+    async for doc in response_iterator:
+        print(doc)
+    continuation_token = container.client_connection.last_response_headers['etag']
+
+    await clean_up(container)
+    # Read change feed 'AllVersionsAndDeletes' mode with 'CA' partition key value from the previous continuation.
+    # Should only print the deleted items with 'CA' partition key value
+    response_iterator = container.query_items_change_feed(mode='AllVersionsAndDeletes', continuation=continuation_token)
+    async for doc in response_iterator:
+        print(doc)
 
 async def run_sample():
     async with CosmosClient(HOST, MASTER_KEY) as client:
+        # Delete pre-existing database
+        try:
+            await client.delete_database(DATABASE_ID)
+        except exceptions.CosmosResourceNotFoundError:
+            pass
+
         try:
             # setup database for this sample
             try:
@@ -135,34 +195,37 @@ async def run_sample():
             try:
                 container = await db.create_container(
                     id=CONTAINER_ID,
-                    partition_key=partition_key.PartitionKey(path='/address/state', kind=documents.PartitionKind.Hash)
+                    partition_key=partition_key.PartitionKey(path='/address/state', kind=documents.PartitionKind.Hash),
+                    offer_throughput = 11000
                 )
                 print('Container with id \'{0}\' created'.format(CONTAINER_ID))
 
             except exceptions.CosmosResourceExistsError:
                 raise RuntimeError("Container with id '{}' already exists".format(CONTAINER_ID))
 
-            # Create items
-            await create_items(container, 100)
-            # Timestamp post item creations
-            timestamp = datetime.now(timezone.utc)
-            # Create more items after time stamp
-            await create_items(container, 50)
             # Read change feed from beginning
             await read_change_feed(container)
+            await clean_up(container)
+
             # Read Change Feed from timestamp
-            await read_change_feed_with_start_time(container, timestamp)
-            # Delete all items from container
-            await delete_all_items(container)
-            # Read change feed with 'AllVersionsAndDeletes' mode
-            await read_change_feed_with_all_versions_and_delete_mode(container)
-            continuation_token = container.client_connection.last_response_headers['etag']
-            # Read change feed with 'AllVersionsAndDeletes' mode after create item
-            await create_items(container, 10)
-            await read_change_feed_with_all_versions_and_delete_mode_from_continuation(container, continuation_token)
+            await read_change_feed_with_start_time(container)
+            await clean_up(container)
+
+            # Read Change Feed from continuation
+            await read_change_feed_with_continuation(container)
+            await clean_up(container)
+
+            # Read Change Feed by partition_key
+            await read_change_feed_with_partition_key(container)
+            await clean_up(container)
+
             # Read change feed with 'AllVersionsAndDeletes' mode after create/delete item
-            await delete_all_items(container)
-            await read_change_feed_with_all_versions_and_delete_mode_from_continuation(container, continuation_token)
+            await read_change_feed_with_all_versions_and_delete_mode(container)
+            await clean_up(container)
+
+            # Read change feed with 'AllVersionsAndDeletes' mode with partition key for create/delete items.
+            await read_change_feed_with_all_versions_and_delete_mode_with_partition_key(container)
+            await clean_up(container)
 
             # cleanup database after sample
             try:

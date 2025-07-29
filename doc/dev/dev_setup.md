@@ -43,8 +43,7 @@ or execute the various commands available in the toolbox.
 
 5.  Create a .env file to store your secrets.
 
-    The recommended place to store your .env file is one directory higher than the `azure-sdk-for-python` location.
-    This ensures the secrets will be loaded by the interpreter and most importantly not be committed to Git history.
+    The recommended place to store your .env file in the root of the SDK repository, as it will be gitignored.
 
 ## Follow test-running guidance
 

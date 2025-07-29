@@ -5,11 +5,11 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, List, Optional, MutableMapping, Dict, Callable
+from typing import Any, List, Optional, MutableMapping, Dict, Callable, Union
 from enum import Enum
 from typing_extensions import Self
 from azure.core import CaseInsensitiveEnumMeta
-from .._generated import _serialization
+from .._generated._utils import serialization as _serialization
 from .._generated.models import (
     LexicalAnalyzer,
     LexicalTokenizer,
@@ -38,6 +38,7 @@ from .._generated.models import (
     IndexingParameters,
     FieldMapping,
     SearchIndexerCache,
+    IndexerPermissionOption,
 )
 
 DELIMITER = "|"
@@ -1060,7 +1061,7 @@ class SynonymMap(_serialization.Model):
         )
 
 
-class SearchIndexerDataSourceConnection(_serialization.Model):
+class SearchIndexerDataSourceConnection(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Represents a datasource connection definition, which can be used to configure an indexer.
 
     All required parameters must be populated in order to send to Azure.
@@ -1081,6 +1082,9 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
      not specified, the value remains unchanged. If "none" is specified, the value of this property
      is cleared.
     :vartype identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
+    :ivar indexer_permission_options: Ingestion options with various types of permission data.
+    :vartype indexer_permission_options: list[str or
+     ~azure.search.documents.indexes.models.IndexerPermissionOption]
     :ivar data_change_detection_policy: The data change detection policy for the datasource connection.
     :vartype data_change_detection_policy: ~azure.search.documents.models.DataChangeDetectionPolicy
     :ivar data_deletion_detection_policy: The data deletion detection policy for the datasource connection.
@@ -1109,6 +1113,7 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
         connection_string: str,
         container: SearchIndexerDataContainer,
         identity: Optional[SearchIndexerDataIdentity] = None,
+        indexer_permission_options: Optional[List[Union[str, IndexerPermissionOption]]] = None,
         data_change_detection_policy: Optional[DataChangeDetectionPolicy] = None,
         data_deletion_detection_policy: Optional[DataDeletionDetectionPolicy] = None,
         e_tag: Optional[str] = None,
@@ -1122,6 +1127,7 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
         self.connection_string = connection_string
         self.container = container
         self.identity = identity
+        self.indexer_permission_options = indexer_permission_options
         self.data_change_detection_policy = data_change_detection_policy
         self.data_deletion_detection_policy = data_deletion_detection_policy
         self.e_tag = e_tag
@@ -1146,6 +1152,7 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
                 self.encryption_key._to_generated() if self.encryption_key else None  # pylint: disable=protected-access
             ),
             identity=self.identity,
+            indexer_permission_options=self.indexer_permission_options,
         )
 
     @classmethod
@@ -1172,6 +1179,7 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
                 else None
             ),
             identity=search_indexer_data_source.identity,
+            indexer_permission_options=search_indexer_data_source.indexer_permission_options,
         )
 
     def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:

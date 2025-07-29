@@ -1,5 +1,64 @@
 # Release History
 
+## 1.24.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed an issue where CAE (Continuous Access Evaluation) caches were not properly used by `AuthorizationCodeCredential` and the asynchronous `OnBehalfOfCredential`. ([#42145](https://github.com/Azure/azure-sdk-for-python/pull/42145))
+
+### Other Changes
+
+## 1.24.0b1 (2025-07-17)
+
+### Features Added
+
+- Expanded the set of acceptable values for environment variable `AZURE_TOKEN_CREDENTIALS` to allow for selection of a specific credential in the `DefaultAzureCredential` chain. At runtime, only the specified credential will be used when acquiring tokens with `DefaultAzureCredential`. For example, setting `AZURE_TOKEN_CREDENTIALS=WorkloadIdentityCredential` will make `DefaultAzureCredential` use only `WorkloadIdentityCredential`.
+  - Valid values are `EnvironmentCredential`, `WorkloadIdentityCredential`, `ManagedIdentityCredential`, `AzureCliCredential`, `AzurePowershellCredential`, `AzureDeveloperCliCredential`, and `InteractiveBrowserCredential`. ([#41709](https://github.com/Azure/azure-sdk-for-python/pull/41709))
+- Re-enabled `VisualStudioCodeCredential` - Previously deprecated `VisualStudioCodeCredential` has been re-implemented to work with the VS Code Azure Resources extension instead of the deprecated Azure Account extension. This requires the `azure-identity-broker` package to be installed for authentication. ([#41822](https://github.com/Azure/azure-sdk-for-python/pull/41822))
+  - `VisualStudioCodeCredential` is now included in the `DefaultAzureCredential` token chain by default.
+- `DefaultAzureCredential` now supports authentication with the currently signed-in Windows account, provided the `azure-identity-broker` package is installed. This auth mechanism is added at the end of the `DefaultAzureCredential` credential chain.  ([#40335](https://github.com/Azure/azure-sdk-for-python/pull/40335))
+
+## 1.23.1 (2025-07-15)
+
+### Bugs Fixed
+
+- Fixed an issue with `AzurePowerShellCredential` not working correctly for users still using older versions of PowerShell (e.g., Windows PowerShell 5.1) where `-AsPlainText` is not supported in the `ConvertFrom-SecureString` cmdlet.  ([#41675](https://github.com/Azure/azure-sdk-for-python/pull/41675))
+- Fixed an issue with `AzureCliCredential` being unable to find the correct `az` executable for certain Python versions on Windows. ([#41806](https://github.com/Azure/azure-sdk-for-python/pull/41806))
+
+## 1.23.0 (2025-05-13)
+
+### Features Added
+
+- Added `AZURE_TOKEN_CREDENTIALS` environment variable to `DefaultAzureCredential` to allow for choosing groups of credentials.
+  - `prod` for `EnvironmentCredential`, `WorkloadIdentityCredential`,  and `ManagedIdentityCredential`.
+  - `dev` for `SharedTokenCacheCredential`, `AzureCliCredential`, `AzurePowershellCredential`, and `AzureDeveloperCliCredential`.
+
+## 1.22.0 (2025-05-06)
+
+### Breaking Changes
+
+- Previously, if a `client_id` or `identity_config` was specified in `ManagedIdentityCredential` for Service Fabric managed identity, which is not supported, the `client_id` (or `resource_id`/`object_id` specified `identity_config`) would be silently ignored. Now, an exception will be raised during a token request if a `client_id` or `identity_config` is specified for Service Fabric managed identity.
+
+### Bugs Fixed
+
+- Fixed an issue with error handling in MSAL-based credentials when the response content is a string rather than a dictionary. ([#40281](https://github.com/Azure/azure-sdk-for-python/pull/40281))
+
+### Other Changes
+
+- Deprecated `VisualStudioCodeCredential` as the VS Code Azure Account extension on which this credential depends on has been deprecated. See the Azure Account extension [deprecation notice](https://github.com/microsoft/vscode-azure-account/issues/964).  ([#40613](https://github.com/Azure/azure-sdk-for-python/pull/40613))
+- Python 3.8 is no longer supported. Please use Python version 3.9 or later.
+
+## 1.21.0 (2025-03-11)
+
+### Other Changes
+
+- Updated the asynchronous `CertificateCredential` to use the PS256 algorithm with PSS padding for certificate authentication in non-ADFS tenants. ([#39761](https://github.com/Azure/azure-sdk-for-python/pull/39761))
+- Deprecated `UsernamePasswordCredential`, as it doesn't support multifactor authentication (MFA). MFA will soon be enforced on all Microsoft Entra tenants. For more details, see [Planning for mandatory MFA](https://aka.ms/mfaforazure). ([#39785](https://github.com/Azure/azure-sdk-for-python/pull/39785))
+
 ## 1.20.0 (2025-02-11)
 
 ### Features Added
@@ -13,6 +72,7 @@
 ### Other Changes
 
 - `AzureCliCredential` and `AzureDeveloperCliCredential` will now call their corresponding executables directly instead of going through the shell. ([#38606](https://github.com/Azure/azure-sdk-for-python/pull/38606))
+- `ManagedIdentityCredential` will now log the configured user-assigned identity if one is set. ([#39621](https://github.com/Azure/azure-sdk-for-python/pull/39621))
 
 ## 1.19.0 (2024-10-08)
 

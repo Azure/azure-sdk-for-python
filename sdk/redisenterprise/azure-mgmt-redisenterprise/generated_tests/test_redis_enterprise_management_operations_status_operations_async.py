@@ -21,11 +21,11 @@ class TestRedisEnterpriseManagementOperationsStatusOperationsAsync(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_operations_status_get(self, resource_group):
         response = await self.client.operations_status.get(
             location="str",
             operation_id="str",
-            api_version="2024-09-01-preview",
+            api_version="2025-05-01-preview",
         )
 
         # please add some check logic here by yourself

@@ -39,7 +39,7 @@ class KeyVaultSettingsClient(KeyVaultClientBase):
         :rtype: ~azure.keyvault.administration.KeyVaultSetting
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        result = self._client.get_setting(vault_base_url=self._vault_url, setting_name=name, **kwargs)
+        result = self._client.get_setting(setting_name=name, **kwargs)
         return KeyVaultSetting._from_generated(result)
 
     @distributed_trace
@@ -50,7 +50,7 @@ class KeyVaultSettingsClient(KeyVaultClientBase):
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.administration.KeyVaultSetting]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        result = self._client.get_settings(vault_base_url=self._vault_url, *kwargs)
+        result = self._client.get_settings(*kwargs)
         converted_result = [KeyVaultSetting._from_generated(setting) for setting in result.settings]
 
         # We don't actually get a paged response from the generated method, so we mock the typical iteration methods
@@ -76,7 +76,6 @@ class KeyVaultSettingsClient(KeyVaultClientBase):
         """
         parameters = UpdateSettingRequest(value=setting.value)
         result = self._client.update_setting(
-            vault_base_url=self._vault_url,
             setting_name=setting.name,
             parameters=parameters,
             **kwargs

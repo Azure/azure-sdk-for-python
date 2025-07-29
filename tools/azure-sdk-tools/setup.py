@@ -41,8 +41,8 @@ setup(
             "perfstress=devtools_testutils.perfstress_tests:run_perfstress_cmd",
             "perfstressdebug=devtools_testutils.perfstress_tests:run_perfstress_debug_cmd",
             "sdk_generator=packaging_tools.sdk_generator:generate_main",
-            "sdk_package=packaging_tools.sdk_package:generate_main",
             "sdk_build=ci_tools.build:build",
+            "sdk_build_package=ci_tools.build:build_package",
             "sdk_build_conda=ci_tools.conda:entrypoint",
             "sdk_set_dev_version=ci_tools.versioning.version_set_dev:version_set_dev_main",
             "sdk_set_version=ci_tools.versioning.version_set:version_set_main",
@@ -55,7 +55,7 @@ setup(
     },
     extras_require={
         ":python_version>='3.5'": ["pytest-asyncio>=0.9.0"],
-        ":python_version<'3.11'": ["tomli==2.0.1"],
+        ":python_version<'3.11'": ["tomli"],
         "build": ["six", "setuptools", "pyparsing", "certifi", "cibuildwheel", "pkginfo", "build"],
         "conda": ["beautifulsoup4"],
         "systemperf": ["aiohttp>=3.0", "requests>=2.0", "tornado==6.0.3", "httpx>=0.21", "azure-core"],

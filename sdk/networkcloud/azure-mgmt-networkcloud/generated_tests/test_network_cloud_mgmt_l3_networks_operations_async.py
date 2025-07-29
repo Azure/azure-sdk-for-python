@@ -21,9 +21,9 @@ class TestNetworkCloudMgmtL3NetworksOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_subscription(self, resource_group):
+    async def test_l3_networks_list_by_subscription(self, resource_group):
         response = self.client.l3_networks.list_by_subscription(
-            api_version="2024-06-01-preview",
+            api_version="2025-02-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -31,10 +31,10 @@ class TestNetworkCloudMgmtL3NetworksOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_l3_networks_list_by_resource_group(self, resource_group):
         response = self.client.l3_networks.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-06-01-preview",
+            api_version="2025-02-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -42,11 +42,11 @@ class TestNetworkCloudMgmtL3NetworksOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_l3_networks_get(self, resource_group):
         response = await self.client.l3_networks.get(
             resource_group_name=resource_group.name,
             l3_network_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2025-02-01",
         )
 
         # please add some check logic here by yourself
@@ -54,7 +54,7 @@ class TestNetworkCloudMgmtL3NetworksOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_l3_networks_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.l3_networks.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -68,6 +68,7 @@ class TestNetworkCloudMgmtL3NetworksOperationsAsync(AzureMgmtRecordedTestCase):
                     "clusterId": "str",
                     "detailedStatus": "str",
                     "detailedStatusMessage": "str",
+                    "etag": "str",
                     "hybridAksClustersAssociatedIds": ["str"],
                     "hybridAksIpamEnabled": "True",
                     "hybridAksPluginType": "str",
@@ -90,7 +91,7 @@ class TestNetworkCloudMgmtL3NetworksOperationsAsync(AzureMgmtRecordedTestCase):
                     "type": "str",
                     "virtualMachinesAssociatedIds": ["str"],
                 },
-                api_version="2024-06-01-preview",
+                api_version="2025-02-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -99,12 +100,12 @@ class TestNetworkCloudMgmtL3NetworksOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_l3_networks_begin_delete(self, resource_group):
         response = await (
             await self.client.l3_networks.begin_delete(
                 resource_group_name=resource_group.name,
                 l3_network_name="str",
-                api_version="2024-06-01-preview",
+                api_version="2025-02-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -113,11 +114,11 @@ class TestNetworkCloudMgmtL3NetworksOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update(self, resource_group):
+    async def test_l3_networks_update(self, resource_group):
         response = await self.client.l3_networks.update(
             resource_group_name=resource_group.name,
             l3_network_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2025-02-01",
         )
 
         # please add some check logic here by yourself

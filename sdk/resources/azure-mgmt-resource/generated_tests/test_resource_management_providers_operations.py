@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.resource import ResourceManagementClient
+from azure.mgmt.resource.resources import ResourceManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -20,10 +20,10 @@ class TestResourceManagementProvidersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_unregister(self, resource_group):
+    def test_providers_unregister(self, resource_group):
         response = self.client.providers.unregister(
             resource_provider_namespace="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -31,11 +31,11 @@ class TestResourceManagementProvidersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_register_at_management_group_scope(self, resource_group):
+    def test_providers_register_at_management_group_scope(self, resource_group):
         response = self.client.providers.register_at_management_group_scope(
             resource_provider_namespace="str",
             group_id="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -43,10 +43,10 @@ class TestResourceManagementProvidersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_provider_permissions(self, resource_group):
+    def test_providers_provider_permissions(self, resource_group):
         response = self.client.providers.provider_permissions(
             resource_provider_namespace="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -54,10 +54,10 @@ class TestResourceManagementProvidersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_register(self, resource_group):
+    def test_providers_register(self, resource_group):
         response = self.client.providers.register(
             resource_provider_namespace="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -65,9 +65,9 @@ class TestResourceManagementProvidersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_providers_list(self, resource_group):
         response = self.client.providers.list(
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -75,9 +75,9 @@ class TestResourceManagementProvidersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_at_tenant_scope(self, resource_group):
+    def test_providers_list_at_tenant_scope(self, resource_group):
         response = self.client.providers.list_at_tenant_scope(
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -85,10 +85,10 @@ class TestResourceManagementProvidersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_providers_get(self, resource_group):
         response = self.client.providers.get(
             resource_provider_namespace="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -96,10 +96,10 @@ class TestResourceManagementProvidersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_at_tenant_scope(self, resource_group):
+    def test_providers_get_at_tenant_scope(self, resource_group):
         response = self.client.providers.get_at_tenant_scope(
             resource_provider_namespace="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself

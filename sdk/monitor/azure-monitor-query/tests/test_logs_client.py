@@ -19,6 +19,7 @@ from azure.monitor.query import (
     LogsQueryStatus,
 )
 from azure.monitor.query._helpers import native_col_type
+from azure.monitor.query._version import VERSION
 
 from base_testcase import AzureMonitorQueryLogsTestCase
 
@@ -302,3 +303,7 @@ class TestLogsClient(AzureMonitorQueryLogsTestCase):
 
         assert client._endpoint == endpoint
         assert "https://api.loganalytics.azure.cn/.default" in client._client._config.authentication_policy._scopes
+
+    def test_client_user_agent(self):
+        client: LogsQueryClient = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
+        assert f"monitor-query/{VERSION}" in client._client._config.user_agent_policy.user_agent

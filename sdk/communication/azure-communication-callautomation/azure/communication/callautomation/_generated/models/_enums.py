@@ -11,12 +11,12 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the audio format used for encoding, including sample rate and channel type."""
+    """The audio format used for encoding, including sample rate and channel type. The default is
+    Pcm16KMono.
+    """
 
-    PCM16_K_MONO = "Pcm16KMono"
-    """Pcm16KMono"""
-    PCM24_K_MONO = "Pcm24KMono"
-    """Pcm24KMono"""
+    PCM16_K_MONO = "pcm16KMono"
+    PCM24_K_MONO = "pcm24KMono"
 
 
 class CallConnectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -34,7 +34,6 @@ class CallConnectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class CallLocatorKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The call locator kind."""
 
-    UNKNOWN = "unknown"
     GROUP_CALL_LOCATOR = "groupCallLocator"
     SERVER_CALL_LOCATOR = "serverCallLocator"
     ROOM_CALL_LOCATOR = "roomCallLocator"
@@ -66,13 +65,6 @@ class CommunicationIdentifierModelKind(str, Enum, metaclass=CaseInsensitiveEnumM
     MICROSOFT_TEAMS_APP = "microsoftTeamsApp"
 
 
-class DialogInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Determines the type of the dialog."""
-
-    POWER_VIRTUAL_AGENTS = "powerVirtualAgents"
-    AZURE_OPEN_AI = "azureOpenAI"
-
-
 class DtmfTone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DtmfTone."""
 
@@ -95,14 +87,14 @@ class DtmfTone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class MediaStreamingAudioChannelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Audio channel type to stream, eg. unmixed audio, mixed audio."""
+    """The audio channel type to stream, e.g., unmixed audio, mixed audio."""
 
     MIXED = "mixed"
     UNMIXED = "unmixed"
 
 
 class MediaStreamingContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Content type to stream, eg. audio."""
+    """MediaStreamingContentType."""
 
     AUDIO = "audio"
 
@@ -142,12 +134,6 @@ class MediaStreamingSubscriptionState(str, Enum, metaclass=CaseInsensitiveEnumMe
     DISABLED = "disabled"
     INACTIVE = "inactive"
     ACTIVE = "active"
-
-
-class MediaStreamingTransportType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of transport to be used for media streaming, eg. Websocket."""
-
-    WEBSOCKET = "websocket"
 
 
 class PlaySourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -226,6 +212,14 @@ class RecordingStorageKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Storage managed by provided Azure blob"""
 
 
+class StreamingTransportType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the transport type used for streaming. Note that future values may be introduced that
+    are not currently documented.
+    """
+
+    WEBSOCKET = "websocket"
+
+
 class TranscriptionResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """TranscriptionResultType."""
 
@@ -270,12 +264,6 @@ class TranscriptionSubscriptionState(str, Enum, metaclass=CaseInsensitiveEnumMet
     DISABLED = "disabled"
     INACTIVE = "inactive"
     ACTIVE = "active"
-
-
-class TranscriptionTransportType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of transport to be used for live transcription, eg. Websocket."""
-
-    WEBSOCKET = "websocket"
 
 
 class VoiceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):

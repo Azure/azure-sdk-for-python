@@ -20,11 +20,11 @@ class TestContainerAppsAPIJobsExecutionsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_jobs_executions_list(self, resource_group):
         response = self.client.jobs_executions.list(
             resource_group_name=resource_group.name,
             job_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

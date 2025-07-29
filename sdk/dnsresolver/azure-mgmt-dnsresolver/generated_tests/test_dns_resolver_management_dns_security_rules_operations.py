@@ -20,13 +20,13 @@ class TestDnsResolverManagementDnsSecurityRulesOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_dns_security_rules_begin_create_or_update(self, resource_group):
         response = self.client.dns_security_rules.begin_create_or_update(
             resource_group_name=resource_group.name,
             dns_resolver_policy_name="str",
             dns_security_rule_name="str",
             parameters={
-                "action": {"actionType": "str", "blockResponseCode": "str"},
+                "action": {"actionType": "str"},
                 "dnsResolverDomainLists": [{"id": "str"}],
                 "location": "str",
                 "priority": 0,
@@ -46,7 +46,7 @@ class TestDnsResolverManagementDnsSecurityRulesOperations(AzureMgmtRecordedTestC
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2023-07-01-preview",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -54,19 +54,19 @@ class TestDnsResolverManagementDnsSecurityRulesOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update(self, resource_group):
+    def test_dns_security_rules_begin_update(self, resource_group):
         response = self.client.dns_security_rules.begin_update(
             resource_group_name=resource_group.name,
             dns_resolver_policy_name="str",
             dns_security_rule_name="str",
             parameters={
-                "action": {"actionType": "str", "blockResponseCode": "str"},
+                "action": {"actionType": "str"},
                 "dnsResolverDomainLists": [{"id": "str"}],
                 "dnsSecurityRuleState": "str",
                 "priority": 0,
                 "tags": {"str": "str"},
             },
-            api_version="2023-07-01-preview",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -74,12 +74,12 @@ class TestDnsResolverManagementDnsSecurityRulesOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_dns_security_rules_begin_delete(self, resource_group):
         response = self.client.dns_security_rules.begin_delete(
             resource_group_name=resource_group.name,
             dns_resolver_policy_name="str",
             dns_security_rule_name="str",
-            api_version="2023-07-01-preview",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -87,12 +87,12 @@ class TestDnsResolverManagementDnsSecurityRulesOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_dns_security_rules_get(self, resource_group):
         response = self.client.dns_security_rules.get(
             resource_group_name=resource_group.name,
             dns_resolver_policy_name="str",
             dns_security_rule_name="str",
-            api_version="2023-07-01-preview",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -100,11 +100,11 @@ class TestDnsResolverManagementDnsSecurityRulesOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_dns_security_rules_list(self, resource_group):
         response = self.client.dns_security_rules.list(
             resource_group_name=resource_group.name,
             dns_resolver_policy_name="str",
-            api_version="2023-07-01-preview",
+            api_version="2025-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

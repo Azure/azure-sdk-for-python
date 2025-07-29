@@ -11,7 +11,11 @@ from unittest import mock
 # pylint: disable=import-error
 from opentelemetry.trace import get_tracer_provider, set_tracer_provider
 from opentelemetry.sdk import trace, resources
+from opentelemetry.sdk.trace import TracerProvider
+
 from opentelemetry.sdk.trace.export import SpanExportResult
+from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 from opentelemetry.semconv.attributes.exception_attributes import (
     EXCEPTION_ESCAPED,
@@ -22,6 +26,14 @@ from opentelemetry.semconv.attributes.exception_attributes import (
 from opentelemetry.trace import Link, SpanContext, SpanKind
 from opentelemetry.trace.status import Status, StatusCode
 
+from azure.core.settings import settings
+from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
+
+try:
+    from azure.core.instrumentation import get_tracer as get_azure_sdk_tracer
+except ImportError:
+    # azure.core.instrumentation is not available in older versions of azure-core
+    get_azure_sdk_tracer = None
 from azure.monitor.opentelemetry.exporter.export._base import ExportResult
 from azure.monitor.opentelemetry.exporter.export.trace._exporter import (
     AzureMonitorTraceExporter,
@@ -31,6 +43,7 @@ from azure.monitor.opentelemetry.exporter.export.trace._exporter import (
 from azure.monitor.opentelemetry.exporter._constants import (
     _AZURE_SDK_NAMESPACE_NAME,
     _AZURE_SDK_OPENTELEMETRY_NAME,
+    _AZURE_AI_SDK_NAME,
 )
 from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys
 from azure.monitor.opentelemetry.exporter._utils import azure_monitor_context
@@ -49,7 +62,9 @@ def throw(exc_type, *args, **kwargs):
 class TestAzureTraceExporter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        os.environ.clear()
+        os.environ.pop("APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL", None)
+        os.environ.pop("APPINSIGHTS_INSTRUMENTATIONKEY", None)
+        os.environ.pop("APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED", None)
         os.environ["APPINSIGHTS_INSTRUMENTATIONKEY"] = "1234abcd-5678-4efa-8abc-1234567890ab"
         os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "true"
         os.environ["APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED"] = "true"
@@ -272,7 +287,10 @@ class TestAzureTraceExporter(unittest.TestCase):
             name="test",
             context=context,
             resource=resource,
-            attributes={"enduser.id": "testId"},
+            attributes={
+                "enduser.id": "testId",
+                "user_agent.synthetic.type": "bot",
+            },
             parent=context,
         )
         test_span.start()
@@ -288,10 +306,6 @@ class TestAzureTraceExporter(unittest.TestCase):
             envelope.tags.get(ContextTagKeys.AI_DEVICE_LOCALE), azure_monitor_context[ContextTagKeys.AI_DEVICE_LOCALE]
         )
         self.assertEqual(
-            envelope.tags.get(ContextTagKeys.AI_DEVICE_OS_VERSION),
-            azure_monitor_context[ContextTagKeys.AI_DEVICE_OS_VERSION],
-        )
-        self.assertEqual(
             envelope.tags.get(ContextTagKeys.AI_DEVICE_TYPE), azure_monitor_context[ContextTagKeys.AI_DEVICE_TYPE]
         )
         self.assertEqual(
@@ -304,6 +318,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_INTERNAL_NODE_NAME), "testServiceInstanceId")
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_ID), "{:032x}".format(context.trace_id))
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_USER_ID), "testId")
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE), "True")
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_PARENT_ID), "{:016x}".format(context.span_id))
 
     def test_span_to_envelope_partA_default(self):
@@ -432,6 +447,24 @@ class TestAzureTraceExporter(unittest.TestCase):
             "server.address": "www.example.com",
             "server.port": 80,
             "url.scheme": "http",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.target, "www.example.com")
+
+        span._attributes = {
+            "http.request.method": "GET",
+            "gen_ai.system": "az.ai.inference"
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.target, "az.ai.inference")
+        self.assertEqual(envelope.data.base_data.name, "GET /")
+
+        span._attributes = {
+            "http.request.method": "GET",
+            "server.address": "www.example.com",
+            "server.port": 80,
+            "url.scheme": "http",
+            "gen_ai.system": "az.ai.inference"
         }
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.target, "www.example.com")
@@ -758,8 +791,60 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.result_code, "0")
 
         self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
-        self.assertEqual(envelope.data.base_data.type, "az.ai.inference")
+        self.assertEqual(envelope.data.base_data.type, "GenAI | az.ai.inference")
+        self.assertEqual(envelope.data.base_data.target, "az.ai.inference")
         self.assertEqual(len(envelope.data.base_data.properties), 1)
+        
+    def test_span_to_envelope_client_internal_gen_ai_type(self):
+        exporter = self._exporter
+        start_time = 1575494316027613500
+        end_time = start_time + 1001000000
+
+        span = trace._Span(
+            name="test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557337,
+                is_remote=False,
+            ),
+            attributes={
+                "gen_ai.system": "az.ai.inference",
+            },
+            kind=SpanKind.INTERNAL,
+        )
+        span.start(start_time=start_time)
+        span.end(end_time=end_time)
+        span._status = Status(status_code=StatusCode.UNSET)
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.type, "GenAI | az.ai.inference")
+    
+    def test_span_to_envelope_client_multiple_types_with_gen_ai(self):
+        exporter = self._exporter
+        start_time = 1575494316027613500
+        end_time = start_time + 1001000000
+
+        span = trace._Span(
+            name="test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557337,
+                is_remote=False,
+            ),
+            attributes={
+                "gen_ai.system": "az.ai.inference",
+                "az.namespace": "Microsoft.EventHub",
+                "peer.address": "test_address",
+                "message_bus.destination": "test_destination",
+            },
+            kind=SpanKind.CLIENT,
+        )
+        span.start(start_time=start_time)
+        span.end(end_time=end_time)
+        span._status = Status(status_code=StatusCode.UNSET)
+        envelope = exporter._span_to_envelope(span)
+
+        self.assertEqual(envelope.data.base_data.type, "GenAI | az.ai.inference")
+        self.assertEqual(envelope.data.base_data.target, "test_address/test_destination")
 
     def test_span_to_envelope_client_azure(self):
         exporter = self._exporter
@@ -998,6 +1083,14 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.source, "Test_name//testdest")
 
+        span._attributes = {
+            "az.namespace": "Microsoft.EventHub",
+            "server.address": "Test_name",
+            "messaging.destination.name": "/testdest",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.source, "Test_name//testdest")
+
     def test_span_envelope_server_http(self):
         exporter = self._exporter
         start_time = 1575494316027613500
@@ -1033,11 +1126,11 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
         self.assertEqual(envelope.data.base_data.response_code, "200")
         self.assertTrue(envelope.data.base_data.success)
+        self.assertEqual(envelope.data.base_data.url, "https://www.wikipedia.org/wiki/Rabbit")
 
         self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit")
         self.assertEqual(envelope.tags["ai.user.userAgent"], "agent")
         self.assertEqual(envelope.tags[ContextTagKeys.AI_LOCATION_IP], "client_ip")
-        self.assertEqual(envelope.data.base_data.url, "https://www.wikipedia.org/wiki/Rabbit")
         self.assertEqual(len(envelope.data.base_data.properties), 0)
 
         # success
@@ -1118,7 +1211,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             "url.path": "/path",
             "url.query": "query",
             "server.address": "www.example.org",
-            "server.port": "80"
+            "server.port": "80",
         }
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.url, "https://www.example.org:80/path?query")
@@ -1437,10 +1530,6 @@ class TestAzureTraceExporter(unittest.TestCase):
             envelope.tags.get(ContextTagKeys.AI_DEVICE_LOCALE), azure_monitor_context[ContextTagKeys.AI_DEVICE_LOCALE]
         )
         self.assertEqual(
-            envelope.tags.get(ContextTagKeys.AI_DEVICE_OS_VERSION),
-            azure_monitor_context[ContextTagKeys.AI_DEVICE_OS_VERSION],
-        )
-        self.assertEqual(
             envelope.tags.get(ContextTagKeys.AI_DEVICE_TYPE), azure_monitor_context[ContextTagKeys.AI_DEVICE_TYPE]
         )
         self.assertEqual(
@@ -1497,10 +1586,6 @@ class TestAzureTraceExporter(unittest.TestCase):
         )
         self.assertEqual(
             envelope.tags.get(ContextTagKeys.AI_DEVICE_LOCALE), azure_monitor_context[ContextTagKeys.AI_DEVICE_LOCALE]
-        )
-        self.assertEqual(
-            envelope.tags.get(ContextTagKeys.AI_DEVICE_OS_VERSION),
-            azure_monitor_context[ContextTagKeys.AI_DEVICE_OS_VERSION],
         )
         self.assertEqual(
             envelope.tags.get(ContextTagKeys.AI_DEVICE_TYPE), azure_monitor_context[ContextTagKeys.AI_DEVICE_TYPE]
@@ -1561,10 +1646,6 @@ class TestAzureTraceExporter(unittest.TestCase):
         )
         self.assertEqual(
             envelope.tags.get(ContextTagKeys.AI_DEVICE_LOCALE), azure_monitor_context[ContextTagKeys.AI_DEVICE_LOCALE]
-        )
-        self.assertEqual(
-            envelope.tags.get(ContextTagKeys.AI_DEVICE_OS_VERSION),
-            azure_monitor_context[ContextTagKeys.AI_DEVICE_OS_VERSION],
         )
         self.assertEqual(
             envelope.tags.get(ContextTagKeys.AI_DEVICE_TYPE), azure_monitor_context[ContextTagKeys.AI_DEVICE_TYPE]
@@ -1689,8 +1770,89 @@ class TestAzureTraceExporterUtils(unittest.TestCase):
 
     def test_check_instrumentation_span_azure_sdk(self):
         span = mock.Mock()
-        span.attributes = {_AZURE_SDK_NAMESPACE_NAME: "Microsoft.EventHub"}
-        span.instrumentation_scope.name = "__main__"
+        span.attributes = {}
+        span.instrumentation_scope.name = "azure.foo.bar.__init__"
+
         with mock.patch("azure.monitor.opentelemetry.exporter._utils.add_instrumentation") as add:
             _check_instrumentation_span(span)
             add.assert_called_once_with(_AZURE_SDK_OPENTELEMETRY_NAME)
+
+    @mock.patch("opentelemetry.trace.get_tracer_provider")
+    def test_check_instrumentation_span_azure_sdk_otel_span(self, mock_get_tracer_provider):
+        mock_get_tracer_provider.return_value = self.get_tracer_provider()
+
+        with OpenTelemetrySpan() as azure_sdk_span:
+            with mock.patch("azure.monitor.opentelemetry.exporter._utils.add_instrumentation") as add:
+                _check_instrumentation_span(azure_sdk_span.span_instance)
+                add.assert_called_once_with(_AZURE_SDK_OPENTELEMETRY_NAME)
+
+            with mock.patch("azure.monitor.opentelemetry.exporter._utils.add_instrumentation") as add:
+                azure_sdk_span.add_attribute(_AZURE_SDK_NAMESPACE_NAME, "Microsoft.ServiceBus")
+                _check_instrumentation_span(azure_sdk_span.span_instance)
+                add.assert_called_once_with(_AZURE_SDK_OPENTELEMETRY_NAME)
+
+            with mock.patch("azure.monitor.opentelemetry.exporter._utils.add_instrumentation") as add:
+                azure_sdk_span.add_attribute(_AZURE_SDK_NAMESPACE_NAME, "Microsoft.CognitiveServices")
+                _check_instrumentation_span(azure_sdk_span.span_instance)
+                add.assert_called_once_with(_AZURE_AI_SDK_NAME)
+
+    @mock.patch("opentelemetry.trace.get_tracer_provider")
+    def test_check_instrumentation_span_azure_sdk_span_impl(self, mock_get_tracer_provider):
+        mock_get_tracer_provider.return_value = self.get_tracer_provider()
+
+        settings.tracing_implementation = "opentelemetry"
+        try:
+            azure_sdk_span = settings.tracing_implementation()(name="test")
+
+            with mock.patch("azure.monitor.opentelemetry.exporter._utils.add_instrumentation") as add:
+                _check_instrumentation_span(azure_sdk_span.span_instance)
+                add.assert_called_once_with(_AZURE_SDK_OPENTELEMETRY_NAME)
+
+            with mock.patch("azure.monitor.opentelemetry.exporter._utils.add_instrumentation") as add:
+                azure_sdk_span.add_attribute(_AZURE_SDK_NAMESPACE_NAME, "Microsoft.ServiceBus")
+                _check_instrumentation_span(azure_sdk_span.span_instance)
+                add.assert_called_once_with(_AZURE_SDK_OPENTELEMETRY_NAME)
+
+            with mock.patch("azure.monitor.opentelemetry.exporter._utils.add_instrumentation") as add:
+                azure_sdk_span.add_attribute(_AZURE_SDK_NAMESPACE_NAME, "Microsoft.CognitiveServices")
+                _check_instrumentation_span(azure_sdk_span.span_instance)
+                add.assert_called_once_with(_AZURE_AI_SDK_NAME)
+
+        finally:
+            settings.tracing_implementation = None
+
+    @mock.patch("opentelemetry.trace.get_tracer_provider")
+    def test_check_instrumentation_span_azure_sdk_get_tracer(self, mock_get_tracer_provider):
+        mock_get_tracer_provider.return_value = self.get_tracer_provider()
+
+        if not get_azure_sdk_tracer:
+            self.skipTest("azure.core.instrumentation is not available")
+
+        azure_sdk_tracer = get_azure_sdk_tracer(library_name="azure-foo-bar")
+        azure_sdk_span = azure_sdk_tracer.start_span(name="test")
+
+        with mock.patch("azure.monitor.opentelemetry.exporter._utils.add_instrumentation") as add:
+            _check_instrumentation_span(azure_sdk_span)
+            add.assert_called_once_with(_AZURE_SDK_OPENTELEMETRY_NAME)
+
+        with mock.patch("azure.monitor.opentelemetry.exporter._utils.add_instrumentation") as add:
+            azure_sdk_span.set_attribute(_AZURE_SDK_NAMESPACE_NAME, "Microsoft.ServiceBus")
+            _check_instrumentation_span(azure_sdk_span)
+            add.assert_called_once_with(_AZURE_SDK_OPENTELEMETRY_NAME)
+
+        with mock.patch("azure.monitor.opentelemetry.exporter._utils.add_instrumentation") as add:
+            azure_sdk_span.set_attribute(_AZURE_SDK_NAMESPACE_NAME, "Microsoft.CognitiveServices")
+            _check_instrumentation_span(azure_sdk_span)
+            add.assert_called_once_with(_AZURE_AI_SDK_NAME)
+
+        not_azure_sdk_span = get_azure_sdk_tracer(library_name="not-azure-foo-bar").start_span(name="test")
+        with mock.patch("azure.monitor.opentelemetry.exporter._utils.add_instrumentation") as add:
+            _check_instrumentation_span(not_azure_sdk_span)
+            add.assert_not_called()
+
+    def get_tracer_provider(self):
+        tracer_provider = TracerProvider()
+        span_exporter = InMemorySpanExporter()
+        processor = SimpleSpanProcessor(span_exporter)
+        tracer_provider.add_span_processor(processor)
+        return tracer_provider

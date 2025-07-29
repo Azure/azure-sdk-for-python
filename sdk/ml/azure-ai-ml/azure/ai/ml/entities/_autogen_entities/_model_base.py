@@ -4,27 +4,29 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=protected-access, broad-except
+# pylint: disable=protected-access, broad-except, no-member
 
-import calendar
-import decimal
-import functools
-import sys
-import logging
 import base64
-import re
+import calendar
 import copy
-import typing
-import enum
+import decimal
 import email.utils
-from datetime import datetime, date, time, timedelta, timezone
+import enum
+import functools
+import logging
+import re
+import sys
+import typing
+from datetime import date, datetime, time, timedelta, timezone
 from json import JSONEncoder
-from typing_extensions import Self
+
 import isodate
-from azure.core.exceptions import DeserializationError
+from typing_extensions import Self
+
 from azure.core import CaseInsensitiveEnumMeta
+from azure.core.exceptions import DeserializationError
 from azure.core.pipeline import PipelineResponse
-from azure.core.serialization import _Null
+from azure.core.serialization import NULL
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -145,7 +147,7 @@ class SdkJSONEncoder(JSONEncoder):
         try:
             return super(SdkJSONEncoder, self).default(o)
         except TypeError:
-            if isinstance(o, _Null):
+            if isinstance(o, type(NULL)):
                 return None
             if isinstance(o, decimal.Decimal):
                 return float(o)
@@ -516,7 +518,7 @@ class Model(_MyMutableMapping):
         annotations = {
             k: v
             for mro_class in mros
-            if hasattr(mro_class, "__annotations__")
+            if hasattr(mro_class, "__annotations__")  # pylint: disable=no-member
             for k, v in mro_class.__annotations__.items()
         }
         for attr, rf in attr_to_rest_field.items():
@@ -543,7 +545,7 @@ class Model(_MyMutableMapping):
 
     @classmethod
     def _deserialize(cls, data, exist_discriminators):
-        if not hasattr(cls, "__mapping__"):
+        if not hasattr(cls, "__mapping__"):  # pylint: disable=no-member
             return cls(data)
         discriminator = cls._get_discriminator(exist_discriminators)
         exist_discriminators.append(discriminator)
@@ -581,7 +583,7 @@ class Model(_MyMutableMapping):
 
     @staticmethod
     def _as_dict_value(v: typing.Any, exclude_readonly: bool = False) -> typing.Any:
-        if v is None or isinstance(v, _Null):
+        if v is None or isinstance(v, type(NULL)):
             return None
         if isinstance(v, (list, tuple, set)):
             return type(v)(Model._as_dict_value(x, exclude_readonly=exclude_readonly) for x in v)
@@ -754,7 +756,7 @@ def _deserialize_with_callable(
     value: typing.Any,
 ):
     try:
-        if value is None or isinstance(value, _Null):
+        if value is None or isinstance(value, type(NULL)):
             return None
         if deserializer is None:
             return value

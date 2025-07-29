@@ -111,6 +111,7 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
     path = sys.argv[1]
+
     _LOGGER.info(f"Path: {path}")
     for source in target_snippet_sources:
         for py_file in Path(path).rglob(source):

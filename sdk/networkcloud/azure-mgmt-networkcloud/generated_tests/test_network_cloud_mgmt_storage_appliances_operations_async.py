@@ -21,9 +21,9 @@ class TestNetworkCloudMgmtStorageAppliancesOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_subscription(self, resource_group):
+    async def test_storage_appliances_list_by_subscription(self, resource_group):
         response = self.client.storage_appliances.list_by_subscription(
-            api_version="2024-06-01-preview",
+            api_version="2025-02-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -31,10 +31,10 @@ class TestNetworkCloudMgmtStorageAppliancesOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_storage_appliances_list_by_resource_group(self, resource_group):
         response = self.client.storage_appliances.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-06-01-preview",
+            api_version="2025-02-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -42,11 +42,11 @@ class TestNetworkCloudMgmtStorageAppliancesOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_storage_appliances_get(self, resource_group):
         response = await self.client.storage_appliances.get(
             resource_group_name=resource_group.name,
             storage_appliance_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2025-02-01",
         )
 
         # please add some check logic here by yourself
@@ -54,7 +54,7 @@ class TestNetworkCloudMgmtStorageAppliancesOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_storage_appliances_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.storage_appliances.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -72,6 +72,7 @@ class TestNetworkCloudMgmtStorageAppliancesOperationsAsync(AzureMgmtRecordedTest
                     "clusterId": "str",
                     "detailedStatus": "str",
                     "detailedStatusMessage": "str",
+                    "etag": "str",
                     "id": "str",
                     "managementIpv4Address": "str",
                     "manufacturer": "str",
@@ -105,7 +106,7 @@ class TestNetworkCloudMgmtStorageAppliancesOperationsAsync(AzureMgmtRecordedTest
                     "type": "str",
                     "version": "str",
                 },
-                api_version="2024-06-01-preview",
+                api_version="2025-02-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -114,12 +115,12 @@ class TestNetworkCloudMgmtStorageAppliancesOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_storage_appliances_begin_delete(self, resource_group):
         response = await (
             await self.client.storage_appliances.begin_delete(
                 resource_group_name=resource_group.name,
                 storage_appliance_name="str",
-                api_version="2024-06-01-preview",
+                api_version="2025-02-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -128,12 +129,12 @@ class TestNetworkCloudMgmtStorageAppliancesOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_storage_appliances_begin_update(self, resource_group):
         response = await (
             await self.client.storage_appliances.begin_update(
                 resource_group_name=resource_group.name,
                 storage_appliance_name="str",
-                api_version="2024-06-01-preview",
+                api_version="2025-02-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -142,12 +143,12 @@ class TestNetworkCloudMgmtStorageAppliancesOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_disable_remote_vendor_management(self, resource_group):
+    async def test_storage_appliances_begin_disable_remote_vendor_management(self, resource_group):
         response = await (
             await self.client.storage_appliances.begin_disable_remote_vendor_management(
                 resource_group_name=resource_group.name,
                 storage_appliance_name="str",
-                api_version="2024-06-01-preview",
+                api_version="2025-02-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -156,12 +157,12 @@ class TestNetworkCloudMgmtStorageAppliancesOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_enable_remote_vendor_management(self, resource_group):
+    async def test_storage_appliances_begin_enable_remote_vendor_management(self, resource_group):
         response = await (
             await self.client.storage_appliances.begin_enable_remote_vendor_management(
                 resource_group_name=resource_group.name,
                 storage_appliance_name="str",
-                api_version="2024-06-01-preview",
+                api_version="2025-02-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

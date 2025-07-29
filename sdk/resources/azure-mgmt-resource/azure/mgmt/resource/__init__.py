@@ -7,25 +7,21 @@
 # --------------------------------------------------------------------------
 
 from .managedapplications import ApplicationClient
-from .deploymentscripts import DeploymentScriptsClient
 from .features import FeatureClient
 from .links import ManagementLinkClient
 from .locks import ManagementLockClient
 from .policy import PolicyClient
 from .resources import ResourceManagementClient
 from .subscriptions import SubscriptionClient
-from .deploymentstacks import DeploymentStacksClient
 from .databoundaries import DataBoundaryMgmtClient
 
 __all__ = [
     "ApplicationClient",
-    "DeploymentScriptsClient",
     "FeatureClient",
     "PolicyClient",
     "ManagementLinkClient",
     "ManagementLockClient",
     "ResourceManagementClient",
     "SubscriptionClient",
-    "DeploymentStacksClient",
     "DataBoundaryMgmtClient",
 ]

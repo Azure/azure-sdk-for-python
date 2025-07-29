@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, Callable, Dict, Optional, Type, TypeVar, Union
+from typing import Any, Callable, Dict, Optional, TypeVar, Union
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -29,7 +28,7 @@ from ...operations._capabilities_operations import build_list_by_location_reques
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -63,14 +62,14 @@ class CapabilitiesOperations:
         :type location_name: str
         :param include: If specified, restricts the response to only include the selected item. Known
          values are: "supportedEditions", "supportedElasticPoolEditions",
-         "supportedManagedInstanceVersions", "supportedInstancePoolEditions", and
-         "supportedManagedInstanceEditions". Default value is None.
+         "supportedManagedInstanceVersions", "supportedInstancePoolEditions",
+         "supportedManagedInstanceEditions", and "supportedJobAgentVersions". Default value is None.
         :type include: str or ~azure.mgmt.sql.models.CapabilityGroup
         :return: LocationCapabilities or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.LocationCapabilities
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -81,7 +80,7 @@ class CapabilitiesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.LocationCapabilities] = kwargs.pop("cls", None)
 
         _request = build_list_by_location_request(
@@ -103,7 +102,8 @@ class CapabilitiesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("LocationCapabilities", pipeline_response.http_response)
 

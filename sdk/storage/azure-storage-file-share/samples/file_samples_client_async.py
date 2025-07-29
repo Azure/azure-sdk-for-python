@@ -17,8 +17,8 @@ USAGE:
     python file_samples_client_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
-    2) AZURE_STORAGE_ACCOUNT_NAME - the name of the storage account
+    1) STORAGE_CONNECTION_STRING - the connection string to your storage account
+    2) STORAGE_ACCOUNT_NAME - the name of the storage account
 """
 
 
@@ -26,25 +26,25 @@ import asyncio
 import os
 import sys
 
-
-SOURCE_FILE = './SampleSource.txt'
-DEST_FILE = './SampleDestination.txt'
+current_dir = os.path.dirname(os.path.abspath(__file__))
+DEST_FILE = os.path.join(current_dir, "SampleDestination.txt")
+SOURCE_FILE = os.path.join(current_dir, "SampleSource.txt")
 
 
 class FileSamplesAsync(object):
 
-    connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
-    account_name = os.getenv("AZURE_STORAGE_ACCOUNT_NAME")
+    connection_string = os.getenv("STORAGE_CONNECTION_STRING")
+    account_name = os.getenv("STORAGE_ACCOUNT_NAME")
 
     async def simple_file_operations_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: simple_file_operations_async")
             sys.exit(1)
 
         # Instantiate the ShareClient from a connection string
         from azure.storage.fileshare.aio import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "filesamples1")
+        share = ShareClient.from_connection_string(self.connection_string, "filesamples1async")
 
         # Create the share
         async with share:
@@ -85,13 +85,13 @@ class FileSamplesAsync(object):
 
     async def copy_file_from_url_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: copy_file_from_url_async")
             sys.exit(1)
 
         # Instantiate the ShareClient from a connection string
         from azure.storage.fileshare.aio import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "filesamples2")
+        share = ShareClient.from_connection_string(self.connection_string, "filesamples2async")
 
         # Create the share
         async with share:
@@ -109,7 +109,7 @@ class FileSamplesAsync(object):
                 # Build the url from which to copy the file
                 source_url = "https://{}.file.core.windows.net/{}/{}".format(
                     self.account_name,
-                    'filesamples2',
+                    'filesamples2async',
                     'sourcefile'
                 )
 

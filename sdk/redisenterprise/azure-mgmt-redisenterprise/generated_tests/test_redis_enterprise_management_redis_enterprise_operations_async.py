@@ -21,7 +21,7 @@ class TestRedisEnterpriseManagementRedisEnterpriseOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create(self, resource_group):
+    async def test_redis_enterprise_begin_create(self, resource_group):
         response = await (
             await self.client.redis_enterprise.begin_create(
                 resource_group_name=resource_group.name,
@@ -47,6 +47,7 @@ class TestRedisEnterpriseManagementRedisEnterpriseOperationsAsync(AzureMgmtRecor
                         "tenantId": "str",
                         "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                     },
+                    "kind": "str",
                     "minimumTlsVersion": "str",
                     "name": "str",
                     "privateEndpointConnections": [
@@ -71,7 +72,7 @@ class TestRedisEnterpriseManagementRedisEnterpriseOperationsAsync(AzureMgmtRecor
                     "type": "str",
                     "zones": ["str"],
                 },
-                api_version="2024-09-01-preview",
+                api_version="2025-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -80,7 +81,7 @@ class TestRedisEnterpriseManagementRedisEnterpriseOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_redis_enterprise_begin_update(self, resource_group):
         response = await (
             await self.client.redis_enterprise.begin_update(
                 resource_group_name=resource_group.name,
@@ -125,7 +126,7 @@ class TestRedisEnterpriseManagementRedisEnterpriseOperationsAsync(AzureMgmtRecor
                     "sku": {"name": "str", "capacity": 0},
                     "tags": {"str": "str"},
                 },
-                api_version="2024-09-01-preview",
+                api_version="2025-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -134,12 +135,12 @@ class TestRedisEnterpriseManagementRedisEnterpriseOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_redis_enterprise_begin_delete(self, resource_group):
         response = await (
             await self.client.redis_enterprise.begin_delete(
                 resource_group_name=resource_group.name,
                 cluster_name="str",
-                api_version="2024-09-01-preview",
+                api_version="2025-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -148,11 +149,11 @@ class TestRedisEnterpriseManagementRedisEnterpriseOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_redis_enterprise_get(self, resource_group):
         response = await self.client.redis_enterprise.get(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2025-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -160,10 +161,10 @@ class TestRedisEnterpriseManagementRedisEnterpriseOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_redis_enterprise_list_by_resource_group(self, resource_group):
         response = self.client.redis_enterprise.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-09-01-preview",
+            api_version="2025-05-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -171,10 +172,22 @@ class TestRedisEnterpriseManagementRedisEnterpriseOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_redis_enterprise_list(self, resource_group):
         response = self.client.redis_enterprise.list(
-            api_version="2024-09-01-preview",
+            api_version="2025-05-01-preview",
         )
         result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_redis_enterprise_list_skus_for_scaling(self, resource_group):
+        response = await self.client.redis_enterprise.list_skus_for_scaling(
+            resource_group_name=resource_group.name,
+            cluster_name="str",
+            api_version="2025-05-01-preview",
+        )
+
         # please add some check logic here by yourself
         # ...

@@ -5,12 +5,12 @@
 # -------------------------------------------------------------------------
 
 from datetime import timedelta
+from typing import Optional
 
 
 def convert_timedelta_to_mins(
-    duration,  # type: timedelta
-):
-    # type: (...) -> int
+    duration: Optional[timedelta],
+) -> Optional[int]:
     """
     Returns the total number of minutes contained in the duration.
     :param duration: Time duration

@@ -29,6 +29,7 @@ from ._authentication import (
     BearerTokenCredentialPolicy,
     ServiceKeyCredentialPolicy,
 )
+from ._distributed_tracing import DistributedHttpTracingPolicy
 from ._retry import RetryPolicy, RetryMode
 from ._universal import (
     HeadersPolicy,
@@ -57,4 +58,5 @@ __all__ = [
     "AsyncHTTPPolicy",
     "AsyncBearerTokenCredentialPolicy",
     "AsyncRetryPolicy",
+    "DistributedHttpTracingPolicy",
 ]

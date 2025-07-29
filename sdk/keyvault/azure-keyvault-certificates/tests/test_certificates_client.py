@@ -16,6 +16,7 @@ from azure.keyvault.certificates import (
     ApiVersion,
     CertificateClient,
     CertificateContact,
+    CertificateOperation,
     CertificatePolicyAction,
     CertificatePolicy,
     CertificateProperties,
@@ -27,9 +28,13 @@ from azure.keyvault.certificates import (
     LifetimeAction,
     CertificateIssuer,
     IssuerProperties,
-    WellKnownIssuerNames
+    WellKnownIssuerNames,
 )
 from azure.keyvault.certificates._client import NO_SAN_OR_SUBJECT
+from azure.keyvault.certificates._generated.models import (
+    CertificateOperation as _CertificateOperation,
+    KeyVaultErrorError,
+)
 from azure.keyvault.certificates._shared.client_base import DEFAULT_VERSION
 import pytest
 
@@ -126,7 +131,7 @@ class TestCertificateClient(KeyVaultTestCase):
         for a_entry in a:
             b_entry = next(x for x in b if x.action == a_entry.action)
             assert a_entry.lifetime_percentage == b_entry.lifetime_percentage
-            assert  a_entry.days_before_expiry == b_entry.days_before_expiry
+            assert a_entry.days_before_expiry == b_entry.days_before_expiry
 
     def _validate_certificate_list(self, a, b):
         # verify that all certificates in a exist in b
@@ -378,7 +383,9 @@ class TestCertificateClient(KeyVaultTestCase):
     @recorded_by_proxy
     def test_async_request_cancellation_and_deletion(self, client, **kwargs):
         if self.is_live:
-            pytest.skip("Skipping by default because of pipeline test flakiness: https://github.com/Azure/azure-sdk-for-python/issues/16333")
+            pytest.skip(
+                "Skipping by default because of pipeline test flakiness: https://github.com/Azure/azure-sdk-for-python/issues/16333"
+            )
 
         cert_name = self.get_resource_name("asyncCanceledDeletedCert")
         cert_policy = CertificatePolicy.get_default()
@@ -477,7 +484,6 @@ class TestCertificateClient(KeyVaultTestCase):
         pending_version_csr = client.get_certificate_operation(certificate_name=cert_name).csr
         assert client.get_certificate_operation(certificate_name=cert_name).csr == pending_version_csr
 
-    
     @pytest.mark.parametrize("api_version", exclude_2016_10_01)
     @CertificatesClientPreparer()
     @recorded_by_proxy
@@ -584,7 +590,7 @@ class TestCertificateClient(KeyVaultTestCase):
                 raise ex
 
     @pytest.mark.parametrize("api_version", all_api_versions)
-    @CertificatesClientPreparer(logging_enable = True)
+    @CertificatesClientPreparer(logging_enable=True)
     @recorded_by_proxy
     def test_logging_enabled(self, client, **kwargs):
         mock_handler = MockHandler()
@@ -618,7 +624,7 @@ class TestCertificateClient(KeyVaultTestCase):
         assert False, "Expected request body wasn't logged"
 
     @pytest.mark.parametrize("api_version", all_api_versions)
-    @CertificatesClientPreparer(logging_enable = False)
+    @CertificatesClientPreparer(logging_enable=False)
     @recorded_by_proxy
     def test_logging_disabled(self, client, **kwargs):
         mock_handler = MockHandler()
@@ -650,7 +656,6 @@ class TestCertificateClient(KeyVaultTestCase):
 
         mock_handler.close()
 
-    
     @pytest.mark.parametrize("api_version", only_2016_10_01)
     @CertificatesClientPreparer()
     @recorded_by_proxy
@@ -701,20 +706,44 @@ class TestCertificateClient(KeyVaultTestCase):
         with pytest.raises(NotImplementedError) as excinfo:
             [_ for _ in client.list_properties_of_certificates(include_pending=True)]
 
-        assert "The 'include_pending' parameter to `list_properties_of_certificates` is only available for API versions v7.0 and up" in str(excinfo.value)
+        assert (
+            "The 'include_pending' parameter to `list_properties_of_certificates` is only available for API versions v7.0 and up"
+            in str(excinfo.value)
+        )
 
     @pytest.mark.parametrize("api_version", only_2016_10_01)
     @CertificatesClientPreparer()
     @recorded_by_proxy
     def test_list_deleted_certificates(self, client, **kwargs):
         """Tests API version v2016_10_01"""
-        
+
         [_ for _ in client.list_deleted_certificates()]
 
         with pytest.raises(NotImplementedError) as excinfo:
             [_ for _ in client.list_deleted_certificates(include_pending=True)]
 
-        assert "The 'include_pending' parameter to `list_deleted_certificates` is only available for API versions v7.0 and up" in str(excinfo.value)
+        assert (
+            "The 'include_pending' parameter to `list_deleted_certificates` is only available for API versions v7.0 and up"
+            in str(excinfo.value)
+        )
+
+    @pytest.mark.parametrize("api_version", only_latest)
+    @CertificatesClientPreparer()
+    @recorded_by_proxy
+    def test_preserve_certificate_order(self, client, **kwargs):
+        """
+        Ensure that preserve_order works with begin_create_certificate and that the property appears in
+        models returned by the service.
+        """
+        cert_name = self.get_resource_name("cert")
+        cert_policy = CertificatePolicy.get_default()
+
+        # create certificate
+        certificate = client.begin_create_certificate(
+            certificate_name=cert_name, policy=cert_policy, preserve_order=True
+        ).result()
+
+        assert certificate.properties.preserve_order is True
 
     @pytest.mark.parametrize("api_version", only_latest)
     @CertificatesClientPreparer()
@@ -729,9 +758,38 @@ class TestCertificateClient(KeyVaultTestCase):
         # 409 is raised correctly (`begin_create_certificate` shouldn't actually trigger this, but for raising behavior)
         def run(*_, **__):
             return Mock(http_response=Mock(status_code=409))
+
         with patch.object(client._client._client._pipeline, "run", run):
             with pytest.raises(ResourceExistsError):
                 client.begin_create_certificate("...", CertificatePolicy.get_default())
+
+    @pytest.mark.parametrize("api_version", only_latest)
+    @CertificatesClientPreparer()
+    @recorded_by_proxy
+    def test_unknown_issuer_response(self, client, **kwargs):
+        """When a certificate is created with an unknown issuer, the poller result should be a CertificateOperation"""
+        cert_name = self.get_resource_name("unknownIssuer")
+
+        # create certificate with unknown issuer
+        cert_policy = CertificatePolicy(
+            issuer_name=WellKnownIssuerNames.unknown,
+            subject="CN=*.microsoft.com",
+            san_dns_names=["sdk.azure-int.net"],
+            exportable=True,
+            key_type="RSA",
+            key_size=2048,
+            reuse_key=False,
+            content_type=CertificateContentType.pkcs12,
+            validity_in_months=24,
+        )
+        create_certificate_poller = client.begin_create_certificate(
+            certificate_name=cert_name, policy=cert_policy
+        )
+        result = create_certificate_poller.result()
+        # The operation should indicate that certificate creation is in progress and requires a merge to complete
+        assert isinstance(result, CertificateOperation)
+        assert result.status and result.status.lower() == "inprogress"
+        assert result.status_details and "merge" in result.status_details.lower()
 
 
 def test_policy_expected_errors_for_create_cert():
@@ -780,3 +838,14 @@ def test_thumbprint_hex():
         x509_thumbprint=b"v\xe1\x81\x9f\xad\xf0jU\xefK\x12j.\xf7C\xc2\xba\xe8\xa1Q",
     )
     assert "76E1819FADF06A55EF4B126A2EF743C2BAE8A151" in str(properties)
+
+
+def test_certificate_operation_empty_inner_error():
+    """Ensure a CertificateOperation can be serialized when the generated model has no inner error.
+    See https://github.com/Azure/azure-cli/issues/31764.
+    """
+    error = KeyVaultErrorError(code="500", message="Bad Request", inner_error=None)
+    generated_operation = _CertificateOperation(error=error)
+    operation = CertificateOperation._from_certificate_operation_bundle(generated_operation)
+    assert operation.error
+    assert operation.error.inner_error is None

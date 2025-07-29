@@ -62,7 +62,7 @@ class ResourcesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["models.ResourceListResult"]
-        """Get all the resources for a resource group.
+        r"""Get all the resources for a resource group.
 
         :param resource_group_name: The resource group with the resources to get.
         :type resource_group_name: str
@@ -410,7 +410,7 @@ class ResourcesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["models.ResourceListResult"]
-        """Get all the resources in a subscription.
+        r"""Get all the resources in a subscription.
 
         :param filter: The filter to apply on the operation.:code:`<br>`:code:`<br>`The properties you
          can use for eq (equals) or ne (not equals) are: location, resourceType, name, resourceGroup,

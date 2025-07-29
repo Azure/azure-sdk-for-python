@@ -21,11 +21,11 @@ class TestContainerAppsAPIContainerAppsSourceControlsOperationsAsync(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_container_app(self, resource_group):
+    async def test_container_apps_source_controls_list_by_container_app(self, resource_group):
         response = self.client.container_apps_source_controls.list_by_container_app(
             resource_group_name=resource_group.name,
             container_app_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestContainerAppsAPIContainerAppsSourceControlsOperationsAsync(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_container_apps_source_controls_get(self, resource_group):
         response = await self.client.container_apps_source_controls.get(
             resource_group_name=resource_group.name,
             container_app_name="str",
             source_control_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestContainerAppsAPIContainerAppsSourceControlsOperationsAsync(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_container_apps_source_controls_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.container_apps_source_controls.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -62,9 +62,7 @@ class TestContainerAppsAPIContainerAppsSourceControlsOperationsAsync(AzureMgmtRe
                             "subscriptionId": "str",
                             "tenantId": "str",
                         },
-                        "buildEnvironmentVariables": [{"name": "str", "value": "str"}],
                         "contextPath": "str",
-                        "dockerfilePath": "str",
                         "githubPersonalAccessToken": "str",
                         "image": "str",
                         "os": "str",
@@ -87,7 +85,7 @@ class TestContainerAppsAPIContainerAppsSourceControlsOperationsAsync(AzureMgmtRe
                     },
                     "type": "str",
                 },
-                api_version="2024-08-02-preview",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -96,13 +94,13 @@ class TestContainerAppsAPIContainerAppsSourceControlsOperationsAsync(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_container_apps_source_controls_begin_delete(self, resource_group):
         response = await (
             await self.client.container_apps_source_controls.begin_delete(
                 resource_group_name=resource_group.name,
                 container_app_name="str",
                 source_control_name="str",
-                api_version="2024-08-02-preview",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

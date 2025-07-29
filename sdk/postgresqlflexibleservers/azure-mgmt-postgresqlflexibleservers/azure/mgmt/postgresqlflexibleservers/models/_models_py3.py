@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10,7 +10,7 @@
 import datetime
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -22,7 +22,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -51,10 +51,10 @@ class Resource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
 class ProxyResource(Resource):
@@ -64,7 +64,7 @@ class ProxyResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -78,12 +78,12 @@ class ProxyResource(Resource):
 
 
 class ActiveDirectoryAdministrator(ProxyResource):
-    """Represents an Active Directory administrator.
+    """Represents an Microsoft Entra Administrator.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -93,14 +93,14 @@ class ActiveDirectoryAdministrator(ProxyResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.postgresqlflexibleservers.models.SystemData
-    :ivar principal_type: The principal type used to represent the type of Active Directory
+    :ivar principal_type: The principal type used to represent the type of Microsoft Entra
      Administrator. Known values are: "Unknown", "User", "Group", and "ServicePrincipal".
     :vartype principal_type: str or ~azure.mgmt.postgresqlflexibleservers.models.PrincipalType
-    :ivar principal_name: Active Directory administrator principal name.
+    :ivar principal_name: Microsoft Entra Administrator principal name.
     :vartype principal_name: str
-    :ivar object_id: The objectId of the Active Directory administrator.
+    :ivar object_id: The objectId of the Microsoft Entra Administrator.
     :vartype object_id: str
-    :ivar tenant_id: The tenantId of the Active Directory administrator.
+    :ivar tenant_id: The tenantId of the Microsoft Entra Administrator.
     :vartype tenant_id: str
     """
 
@@ -132,14 +132,14 @@ class ActiveDirectoryAdministrator(ProxyResource):
         **kwargs: Any
     ) -> None:
         """
-        :keyword principal_type: The principal type used to represent the type of Active Directory
+        :keyword principal_type: The principal type used to represent the type of Microsoft Entra
          Administrator. Known values are: "Unknown", "User", "Group", and "ServicePrincipal".
         :paramtype principal_type: str or ~azure.mgmt.postgresqlflexibleservers.models.PrincipalType
-        :keyword principal_name: Active Directory administrator principal name.
+        :keyword principal_name: Microsoft Entra Administrator principal name.
         :paramtype principal_name: str
-        :keyword object_id: The objectId of the Active Directory administrator.
+        :keyword object_id: The objectId of the Microsoft Entra Administrator.
         :paramtype object_id: str
-        :keyword tenant_id: The tenantId of the Active Directory administrator.
+        :keyword tenant_id: The tenantId of the Microsoft Entra Administrator.
         :paramtype tenant_id: str
         """
         super().__init__(**kwargs)
@@ -150,14 +150,14 @@ class ActiveDirectoryAdministrator(ProxyResource):
 
 
 class ActiveDirectoryAdministratorAdd(_serialization.Model):
-    """Represents an Active Directory administrator.
+    """Represents an Microsoft Entra Administrator.
 
-    :ivar principal_type: The principal type used to represent the type of Active Directory
+    :ivar principal_type: The principal type used to represent the type of Microsoft Entra
      Administrator. Known values are: "Unknown", "User", "Group", and "ServicePrincipal".
     :vartype principal_type: str or ~azure.mgmt.postgresqlflexibleservers.models.PrincipalType
-    :ivar principal_name: Active Directory administrator principal name.
+    :ivar principal_name: Microsoft Entra Administrator principal name.
     :vartype principal_name: str
-    :ivar tenant_id: The tenantId of the Active Directory administrator.
+    :ivar tenant_id: The tenantId of the Microsoft Entra Administrator.
     :vartype tenant_id: str
     """
 
@@ -176,12 +176,12 @@ class ActiveDirectoryAdministratorAdd(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword principal_type: The principal type used to represent the type of Active Directory
+        :keyword principal_type: The principal type used to represent the type of Microsoft Entra
          Administrator. Known values are: "Unknown", "User", "Group", and "ServicePrincipal".
         :paramtype principal_type: str or ~azure.mgmt.postgresqlflexibleservers.models.PrincipalType
-        :keyword principal_name: Active Directory administrator principal name.
+        :keyword principal_name: Microsoft Entra Administrator principal name.
         :paramtype principal_name: str
-        :keyword tenant_id: The tenantId of the Active Directory administrator.
+        :keyword tenant_id: The tenantId of the Microsoft Entra Administrator.
         :paramtype tenant_id: str
         """
         super().__init__(**kwargs)
@@ -224,11 +224,11 @@ class AdminCredentials(_serialization.Model):
 
 
 class AdministratorListResult(_serialization.Model):
-    """A list of active directory administrators.
+    """A list of Microsoft Entra Administrators.
 
-    :ivar value: The list of active directory administrators.
+    :ivar value: The list of Microsoft Entra Administrators.
     :vartype value: list[~azure.mgmt.postgresqlflexibleservers.models.ActiveDirectoryAdministrator]
-    :ivar next_link: The link used to get the next page of active directory.
+    :ivar next_link: The link used to get the next page of Microsoft Entra administrators.
     :vartype next_link: str
     """
 
@@ -245,10 +245,10 @@ class AdministratorListResult(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword value: The list of active directory administrators.
+        :keyword value: The list of Microsoft Entra Administrators.
         :paramtype value:
          list[~azure.mgmt.postgresqlflexibleservers.models.ActiveDirectoryAdministrator]
-        :keyword next_link: The link used to get the next page of active directory.
+        :keyword next_link: The link used to get the next page of Microsoft Entra administrators.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -259,8 +259,8 @@ class AdministratorListResult(_serialization.Model):
 class AuthConfig(_serialization.Model):
     """Authentication configuration properties of a server.
 
-    :ivar active_directory_auth: If Enabled, Azure Active Directory authentication is enabled.
-     Known values are: "Enabled" and "Disabled".
+    :ivar active_directory_auth: If Enabled, Microsoft Entra authentication is enabled. Known
+     values are: "Enabled" and "Disabled".
     :vartype active_directory_auth: str or
      ~azure.mgmt.postgresqlflexibleservers.models.ActiveDirectoryAuthEnum
     :ivar password_auth: If Enabled, Password authentication is enabled. Known values are:
@@ -285,8 +285,8 @@ class AuthConfig(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword active_directory_auth: If Enabled, Azure Active Directory authentication is enabled.
-         Known values are: "Enabled" and "Disabled".
+        :keyword active_directory_auth: If Enabled, Microsoft Entra authentication is enabled. Known
+         values are: "Enabled" and "Disabled".
         :paramtype active_directory_auth: str or
          ~azure.mgmt.postgresqlflexibleservers.models.ActiveDirectoryAuthEnum
         :keyword password_auth: If Enabled, Password authentication is enabled. Known values are:
@@ -344,7 +344,7 @@ class Backup(_serialization.Model):
         super().__init__(**kwargs)
         self.backup_retention_days = backup_retention_days
         self.geo_redundant_backup = geo_redundant_backup
-        self.earliest_restore_date = None
+        self.earliest_restore_date: Optional[datetime.datetime] = None
 
 
 class BackupRequestBase(_serialization.Model):
@@ -451,8 +451,8 @@ class CapabilitiesListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[List["_models.FlexibleServerCapability"]] = None
+        self.next_link: Optional[str] = None
 
 
 class CapabilityBase(_serialization.Model):
@@ -480,8 +480,8 @@ class CapabilityBase(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.status = None
-        self.reason = None
+        self.status: Optional[Union[str, "_models.CapabilityStatus"]] = None
+        self.reason: Optional[str] = None
 
 
 class CheckNameAvailabilityRequest(_serialization.Model):
@@ -573,13 +573,60 @@ class Cluster(_serialization.Model):
         self.cluster_size = cluster_size
 
 
+class ConfigTuningRequestParameter(_serialization.Model):
+    """Config tuning request parameters.
+
+    :ivar server_name: The name of server.
+    :vartype server_name: str
+    :ivar allow_server_restarts: Indicates whether PG should be restarted during a tuning session.
+    :vartype allow_server_restarts: bool
+    :ivar target_improvement_metric: The target metric the tuning session is trying to improve.
+    :vartype target_improvement_metric: str
+    :ivar config_tuning_usage_mode: The mode with which the feature will be enabled.
+    :vartype config_tuning_usage_mode: bool
+    """
+
+    _attribute_map = {
+        "server_name": {"key": "serverName", "type": "str"},
+        "allow_server_restarts": {"key": "allowServerRestarts", "type": "bool"},
+        "target_improvement_metric": {"key": "targetImprovementMetric", "type": "str"},
+        "config_tuning_usage_mode": {"key": "configTuningUsageMode", "type": "bool"},
+    }
+
+    def __init__(
+        self,
+        *,
+        server_name: Optional[str] = None,
+        allow_server_restarts: Optional[bool] = None,
+        target_improvement_metric: Optional[str] = None,
+        config_tuning_usage_mode: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword server_name: The name of server.
+        :paramtype server_name: str
+        :keyword allow_server_restarts: Indicates whether PG should be restarted during a tuning
+         session.
+        :paramtype allow_server_restarts: bool
+        :keyword target_improvement_metric: The target metric the tuning session is trying to improve.
+        :paramtype target_improvement_metric: str
+        :keyword config_tuning_usage_mode: The mode with which the feature will be enabled.
+        :paramtype config_tuning_usage_mode: bool
+        """
+        super().__init__(**kwargs)
+        self.server_name = server_name
+        self.allow_server_restarts = allow_server_restarts
+        self.target_improvement_metric = target_improvement_metric
+        self.config_tuning_usage_mode = config_tuning_usage_mode
+
+
 class Configuration(ProxyResource):
     """Represents a Configuration.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -657,16 +704,16 @@ class Configuration(ProxyResource):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.description = None
-        self.default_value = None
-        self.data_type = None
-        self.allowed_values = None
+        self.description: Optional[str] = None
+        self.default_value: Optional[str] = None
+        self.data_type: Optional[Union[str, "_models.ConfigurationDataType"]] = None
+        self.allowed_values: Optional[str] = None
         self.source = source
-        self.is_dynamic_config = None
-        self.is_read_only = None
-        self.is_config_pending_restart = None
-        self.unit = None
-        self.documentation_link = None
+        self.is_dynamic_config: Optional[bool] = None
+        self.is_read_only: Optional[bool] = None
+        self.is_config_pending_restart: Optional[bool] = None
+        self.unit: Optional[str] = None
+        self.documentation_link: Optional[str] = None
 
 
 class ConfigurationForUpdate(_serialization.Model):
@@ -734,16 +781,16 @@ class ConfigurationForUpdate(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
-        self.description = None
-        self.default_value = None
-        self.data_type = None
-        self.allowed_values = None
+        self.description: Optional[str] = None
+        self.default_value: Optional[str] = None
+        self.data_type: Optional[Union[str, "_models.ConfigurationDataType"]] = None
+        self.allowed_values: Optional[str] = None
         self.source = source
-        self.is_dynamic_config = None
-        self.is_read_only = None
-        self.is_config_pending_restart = None
-        self.unit = None
-        self.documentation_link = None
+        self.is_dynamic_config: Optional[bool] = None
+        self.is_read_only: Optional[bool] = None
+        self.is_config_pending_restart: Optional[bool] = None
+        self.unit: Optional[str] = None
+        self.documentation_link: Optional[str] = None
 
 
 class ConfigurationListResult(_serialization.Model):
@@ -780,7 +827,7 @@ class Database(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1160,7 +1207,7 @@ class DbServerMetadata(_serialization.Model):
         :paramtype sku: ~azure.mgmt.postgresqlflexibleservers.models.ServerSku
         """
         super().__init__(**kwargs)
-        self.location = None
+        self.location: Optional[str] = None
         self.version = version
         self.storage_mb = storage_mb
         self.sku = sku
@@ -1190,8 +1237,8 @@ class DelegatedSubnetUsage(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.subnet_name = None
-        self.usage = None
+        self.subnet_name: Optional[str] = None
+        self.usage: Optional[int] = None
 
 
 class ErrorAdditionalInfo(_serialization.Model):
@@ -1218,8 +1265,8 @@ class ErrorAdditionalInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None
-        self.info = None
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
 
 
 class ErrorDetail(_serialization.Model):
@@ -1259,11 +1306,11 @@ class ErrorDetail(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = None
-        self.additional_info = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[List["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -1332,11 +1379,11 @@ class FastProvisioningEditionCapability(CapabilityBase):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.supported_tier = None
-        self.supported_sku = None
-        self.supported_storage_gb = None
-        self.supported_server_versions = None
-        self.server_count = None
+        self.supported_tier: Optional[str] = None
+        self.supported_sku: Optional[str] = None
+        self.supported_storage_gb: Optional[int] = None
+        self.supported_server_versions: Optional[str] = None
+        self.server_count: Optional[int] = None
 
 
 class FirewallRule(ProxyResource):
@@ -1347,7 +1394,7 @@ class FirewallRule(ProxyResource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1542,17 +1589,19 @@ class FlexibleServerCapability(CapabilityBase):
         """
         super().__init__(**kwargs)
         self.name = name
-        self.supported_server_editions = None
-        self.supported_server_versions = None
-        self.supported_features = None
-        self.fast_provisioning_supported = None
-        self.supported_fast_provisioning_editions = None
-        self.geo_backup_supported = None
-        self.zone_redundant_ha_supported = None
-        self.zone_redundant_ha_and_geo_backup_supported = None
-        self.storage_auto_growth_supported = None
-        self.online_resize_supported = None
-        self.restricted = None
+        self.supported_server_editions: Optional[List["_models.FlexibleServerEditionCapability"]] = None
+        self.supported_server_versions: Optional[List["_models.ServerVersionCapability"]] = None
+        self.supported_features: Optional[List["_models.SupportedFeature"]] = None
+        self.fast_provisioning_supported: Optional[Union[str, "_models.FastProvisioningSupportedEnum"]] = None
+        self.supported_fast_provisioning_editions: Optional[List["_models.FastProvisioningEditionCapability"]] = None
+        self.geo_backup_supported: Optional[Union[str, "_models.GeoBackupSupportedEnum"]] = None
+        self.zone_redundant_ha_supported: Optional[Union[str, "_models.ZoneRedundantHaSupportedEnum"]] = None
+        self.zone_redundant_ha_and_geo_backup_supported: Optional[
+            Union[str, "_models.ZoneRedundantHaAndGeoBackupSupportedEnum"]
+        ] = None
+        self.storage_auto_growth_supported: Optional[Union[str, "_models.StorageAutoGrowthSupportedEnum"]] = None
+        self.online_resize_supported: Optional[Union[str, "_models.OnlineResizeSupportedEnum"]] = None
+        self.restricted: Optional[Union[str, "_models.RestrictedEnum"]] = None
 
 
 class FlexibleServerEditionCapability(CapabilityBase):
@@ -1598,10 +1647,10 @@ class FlexibleServerEditionCapability(CapabilityBase):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.default_sku_name = None
-        self.supported_storage_editions = None
-        self.supported_server_skus = None
+        self.name: Optional[str] = None
+        self.default_sku_name: Optional[str] = None
+        self.supported_storage_editions: Optional[List["_models.StorageEditionCapability"]] = None
+        self.supported_server_skus: Optional[List["_models.ServerSkuCapability"]] = None
 
 
 class HighAvailability(_serialization.Model):
@@ -1645,7 +1694,7 @@ class HighAvailability(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.mode = mode
-        self.state = None
+        self.state: Optional[Union[str, "_models.ServerHAState"]] = None
         self.standby_availability_zone = standby_availability_zone
 
 
@@ -1710,8 +1759,10 @@ class IndexRecommendationDetails(_serialization.Model):
     :vartype index_type: str
     :ivar index_name: Index name.
     :vartype index_name: str
-    :ivar index_columns: Index columns. These will be semi-column separated.
-    :vartype index_columns: str
+    :ivar index_columns: Index columns.
+    :vartype index_columns: list[str]
+    :ivar included_columns: Index included columns.
+    :vartype included_columns: list[str]
     """
 
     _attribute_map = {
@@ -1720,7 +1771,8 @@ class IndexRecommendationDetails(_serialization.Model):
         "table": {"key": "table", "type": "str"},
         "index_type": {"key": "indexType", "type": "str"},
         "index_name": {"key": "indexName", "type": "str"},
-        "index_columns": {"key": "indexColumns", "type": "str"},
+        "index_columns": {"key": "indexColumns", "type": "[str]"},
+        "included_columns": {"key": "includedColumns", "type": "[str]"},
     }
 
     def __init__(
@@ -1731,7 +1783,8 @@ class IndexRecommendationDetails(_serialization.Model):
         table: Optional[str] = None,
         index_type: Optional[str] = None,
         index_name: Optional[str] = None,
-        index_columns: Optional[str] = None,
+        index_columns: Optional[List[str]] = None,
+        included_columns: Optional[List[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1745,8 +1798,10 @@ class IndexRecommendationDetails(_serialization.Model):
         :paramtype index_type: str
         :keyword index_name: Index name.
         :paramtype index_name: str
-        :keyword index_columns: Index columns. These will be semi-column separated.
-        :paramtype index_columns: str
+        :keyword index_columns: Index columns.
+        :paramtype index_columns: list[str]
+        :keyword included_columns: Index included columns.
+        :paramtype included_columns: list[str]
         """
         super().__init__(**kwargs)
         self.database_name = database_name
@@ -1755,6 +1810,7 @@ class IndexRecommendationDetails(_serialization.Model):
         self.index_type = index_type
         self.index_name = index_name
         self.index_columns = index_columns
+        self.included_columns = included_columns
 
 
 class IndexRecommendationListResult(_serialization.Model):
@@ -1798,7 +1854,7 @@ class IndexRecommendationResource(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1821,8 +1877,8 @@ class IndexRecommendationResource(ProxyResource):
     :vartype improved_query_ids: list[int]
     :ivar recommendation_reason: Reason for this recommendation.
     :vartype recommendation_reason: str
-    :ivar recommendation_type: Type for this recommendation. Known values are: "CreateIndex" and
-     "DropIndex".
+    :ivar recommendation_type: Type for this recommendation. Known values are: "CreateIndex",
+     "DropIndex", and "ReIndex".
     :vartype recommendation_type: str or
      ~azure.mgmt.postgresqlflexibleservers.models.RecommendationTypeEnum
     :ivar implementation_details: Stores implementation details for the recommended action.
@@ -1843,6 +1899,7 @@ class IndexRecommendationResource(ProxyResource):
         "type": {"readonly": True},
         "system_data": {"readonly": True},
         "estimated_impact": {"readonly": True},
+        "details": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1879,7 +1936,6 @@ class IndexRecommendationResource(ProxyResource):
         recommendation_type: Optional[Union[str, "_models.RecommendationTypeEnum"]] = None,
         implementation_details: Optional["_models.IndexRecommendationResourcePropertiesImplementationDetails"] = None,
         analyzed_workload: Optional["_models.IndexRecommendationResourcePropertiesAnalyzedWorkload"] = None,
-        details: Optional["_models.IndexRecommendationDetails"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1896,8 +1952,8 @@ class IndexRecommendationResource(ProxyResource):
         :paramtype improved_query_ids: list[int]
         :keyword recommendation_reason: Reason for this recommendation.
         :paramtype recommendation_reason: str
-        :keyword recommendation_type: Type for this recommendation. Known values are: "CreateIndex" and
-         "DropIndex".
+        :keyword recommendation_type: Type for this recommendation. Known values are: "CreateIndex",
+         "DropIndex", and "ReIndex".
         :paramtype recommendation_type: str or
          ~azure.mgmt.postgresqlflexibleservers.models.RecommendationTypeEnum
         :keyword implementation_details: Stores implementation details for the recommended action.
@@ -1906,8 +1962,6 @@ class IndexRecommendationResource(ProxyResource):
         :keyword analyzed_workload: Stores workload information for the recommended action.
         :paramtype analyzed_workload:
          ~azure.mgmt.postgresqlflexibleservers.models.IndexRecommendationResourcePropertiesAnalyzedWorkload
-        :keyword details: Stores recommendation details for the recommended action.
-        :paramtype details: ~azure.mgmt.postgresqlflexibleservers.models.IndexRecommendationDetails
         """
         super().__init__(**kwargs)
         self.initial_recommended_time = initial_recommended_time
@@ -1918,8 +1972,8 @@ class IndexRecommendationResource(ProxyResource):
         self.recommendation_type = recommendation_type
         self.implementation_details = implementation_details
         self.analyzed_workload = analyzed_workload
-        self.estimated_impact = None
-        self.details = details
+        self.estimated_impact: Optional[List["_models.ImpactRecord"]] = None
+        self.details: Optional["_models.IndexRecommendationDetails"] = None
 
 
 class IndexRecommendationResourcePropertiesAnalyzedWorkload(_serialization.Model):  # pylint: disable=name-too-long
@@ -1993,7 +2047,7 @@ class LogFile(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2216,8 +2270,8 @@ class LtrBackupResponse(_serialization.Model):
         self.start_time = start_time
         self.end_time = end_time
         self.percent_complete = percent_complete
-        self.error_code = None
-        self.error_message = None
+        self.error_code: Optional[str] = None
+        self.error_message: Optional[str] = None
 
 
 class LtrPreBackupRequest(BackupRequestBase):
@@ -2266,7 +2320,7 @@ class LtrServerBackupOperation(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2369,8 +2423,8 @@ class LtrServerBackupOperation(ProxyResource):
         self.start_time = start_time
         self.end_time = end_time
         self.percent_complete = percent_complete
-        self.error_code = None
-        self.error_message = None
+        self.error_code: Optional[str] = None
+        self.error_message: Optional[str] = None
 
 
 class LtrServerBackupOperationList(_serialization.Model):
@@ -2498,9 +2552,9 @@ class MigrationNameAvailabilityResource(_serialization.Model):
         super().__init__(**kwargs)
         self.name = name
         self.type = type
-        self.name_available = None
-        self.reason = None
-        self.message = None
+        self.name_available: Optional[bool] = None
+        self.reason: Optional[Union[str, "_models.MigrationNameAvailabilityReason"]] = None
+        self.message: Optional[str] = None
 
 
 class TrackedResource(Resource):
@@ -2512,7 +2566,7 @@ class TrackedResource(Resource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2565,7 +2619,7 @@ class MigrationResource(TrackedResource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2835,18 +2889,18 @@ class MigrationResource(TrackedResource):
         :paramtype dbs_to_cancel_migration_on: list[str]
         """
         super().__init__(tags=tags, location=location, **kwargs)
-        self.migration_id = None
-        self.current_status = None
+        self.migration_id: Optional[str] = None
+        self.current_status: Optional["_models.MigrationStatus"] = None
         self.migration_instance_resource_id = migration_instance_resource_id
         self.migration_mode = migration_mode
         self.migration_option = migration_option
         self.source_type = source_type
         self.ssl_mode = ssl_mode
-        self.source_db_server_metadata = None
-        self.target_db_server_metadata = None
+        self.source_db_server_metadata: Optional["_models.DbServerMetadata"] = None
+        self.target_db_server_metadata: Optional["_models.DbServerMetadata"] = None
         self.source_db_server_resource_id = source_db_server_resource_id
         self.source_db_server_fully_qualified_domain_name = source_db_server_fully_qualified_domain_name
-        self.target_db_server_resource_id = None
+        self.target_db_server_resource_id: Optional[str] = None
         self.target_db_server_fully_qualified_domain_name = target_db_server_fully_qualified_domain_name
         self.secret_parameters = secret_parameters
         self.dbs_to_migrate = dbs_to_migrate
@@ -3071,8 +3125,8 @@ class MigrationResourceListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[List["_models.MigrationResource"]] = None
+        self.next_link: Optional[str] = None
 
 
 class MigrationSecretParameters(_serialization.Model):
@@ -3154,9 +3208,9 @@ class MigrationStatus(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.state = None
-        self.error = None
-        self.current_sub_state_details = None
+        self.state: Optional[Union[str, "_models.MigrationState"]] = None
+        self.error: Optional[str] = None
+        self.current_sub_state_details: Optional["_models.MigrationSubStateDetails"] = None
 
 
 class MigrationSubStateDetails(_serialization.Model):
@@ -3203,7 +3257,7 @@ class MigrationSubStateDetails(_serialization.Model):
         :paramtype validation_details: ~azure.mgmt.postgresqlflexibleservers.models.ValidationDetails
         """
         super().__init__(**kwargs)
-        self.current_sub_state = None
+        self.current_sub_state: Optional[Union[str, "_models.MigrationSubState"]] = None
         self.db_details = db_details
         self.validation_details = validation_details
 
@@ -3259,8 +3313,8 @@ class NameAvailability(CheckNameAvailabilityResponse):
         :paramtype message: str
         """
         super().__init__(name_available=name_available, reason=reason, message=message, **kwargs)
-        self.name = None
-        self.type = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
 
 
 class NameProperty(_serialization.Model):
@@ -3379,11 +3433,11 @@ class Operation(_serialization.Model):
         :paramtype is_data_action: bool
         """
         super().__init__(**kwargs)
-        self.name = None
-        self.display = None
+        self.name: Optional[str] = None
+        self.display: Optional["_models.OperationDisplay"] = None
         self.is_data_action = is_data_action
-        self.origin = None
-        self.properties = None
+        self.origin: Optional[Union[str, "_models.OperationOrigin"]] = None
+        self.properties: Optional[Dict[str, JSON]] = None
 
 
 class OperationDisplay(_serialization.Model):
@@ -3418,10 +3472,10 @@ class OperationDisplay(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.provider = None
-        self.resource = None
-        self.operation = None
-        self.description = None
+        self.provider: Optional[str] = None
+        self.resource: Optional[str] = None
+        self.operation: Optional[str] = None
+        self.description: Optional[str] = None
 
 
 class OperationListResult(_serialization.Model):
@@ -3474,7 +3528,7 @@ class PrivateEndpoint(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
+        self.id: Optional[str] = None
 
 
 class PrivateEndpointConnection(Resource):
@@ -3483,7 +3537,7 @@ class PrivateEndpointConnection(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3546,10 +3600,10 @@ class PrivateEndpointConnection(Resource):
          ~azure.mgmt.postgresqlflexibleservers.models.PrivateLinkServiceConnectionState
         """
         super().__init__(**kwargs)
-        self.group_ids = None
+        self.group_ids: Optional[List[str]] = None
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.PrivateEndpointConnectionProvisioningState"]] = None
 
 
 class PrivateEndpointConnectionListResult(_serialization.Model):
@@ -3576,8 +3630,8 @@ class PrivateEndpointConnectionListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[List["_models.PrivateEndpointConnection"]] = None
+        self.next_link: Optional[str] = None
 
 
 class PrivateLinkResource(Resource):
@@ -3586,7 +3640,7 @@ class PrivateLinkResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3629,8 +3683,8 @@ class PrivateLinkResource(Resource):
         :paramtype required_zone_names: list[str]
         """
         super().__init__(**kwargs)
-        self.group_id = None
-        self.required_members = None
+        self.group_id: Optional[str] = None
+        self.required_members: Optional[List[str]] = None
         self.required_zone_names = required_zone_names
 
 
@@ -3658,8 +3712,8 @@ class PrivateLinkResourceListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[List["_models.PrivateLinkResource"]] = None
+        self.next_link: Optional[str] = None
 
 
 class PrivateLinkServiceConnectionState(_serialization.Model):
@@ -3785,8 +3839,8 @@ class QuotaUsagesListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[List["_models.QuotaUsage"]] = None
+        self.next_link: Optional[str] = None
 
 
 class Replica(_serialization.Model):
@@ -3851,8 +3905,8 @@ class Replica(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.role = role
-        self.capacity = None
-        self.replication_state = None
+        self.capacity: Optional[int] = None
+        self.replication_state: Optional[Union[str, "_models.ReplicationState"]] = None
         self.promote_mode = promote_mode
         self.promote_option = promote_option
 
@@ -3899,7 +3953,7 @@ class Server(TrackedResource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3929,7 +3983,8 @@ class Server(TrackedResource):
     :ivar minor_version: The minor version of the server.
     :vartype minor_version: str
     :ivar state: A state of a server that is visible to user. Known values are: "Ready",
-     "Dropping", "Disabled", "Starting", "Stopping", "Stopped", and "Updating".
+     "Dropping", "Disabled", "Starting", "Stopping", "Stopped", "Updating", "Restarting",
+     "Inaccessible", and "Provisioning".
     :vartype state: str or ~azure.mgmt.postgresqlflexibleservers.models.ServerState
     :ivar fully_qualified_domain_name: The fully qualified domain name of a server.
     :vartype fully_qualified_domain_name: str
@@ -4114,9 +4169,9 @@ class Server(TrackedResource):
         self.administrator_login = administrator_login
         self.administrator_login_password = administrator_login_password
         self.version = version
-        self.minor_version = None
-        self.state = None
-        self.fully_qualified_domain_name = None
+        self.minor_version: Optional[str] = None
+        self.state: Optional[Union[str, "_models.ServerState"]] = None
+        self.fully_qualified_domain_name: Optional[str] = None
         self.storage = storage
         self.auth_config = auth_config
         self.data_encryption = data_encryption
@@ -4128,10 +4183,10 @@ class Server(TrackedResource):
         self.point_in_time_utc = point_in_time_utc
         self.availability_zone = availability_zone
         self.replication_role = replication_role
-        self.replica_capacity = None
+        self.replica_capacity: Optional[int] = None
         self.replica = replica
         self.create_mode = create_mode
-        self.private_endpoint_connections = None
+        self.private_endpoint_connections: Optional[List["_models.PrivateEndpointConnection"]] = None
         self.cluster = cluster
 
 
@@ -4141,7 +4196,7 @@ class ServerBackup(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -4241,7 +4296,7 @@ class ServerForUpdate(_serialization.Model):
     :vartype administrator_login: str
     :ivar administrator_login_password: The password of the administrator login.
     :vartype administrator_login_password: str
-    :ivar version: PostgreSQL Server version. Version 16 is currently not supported for MVU. Known
+    :ivar version: PostgreSQL Server version. Version 17 is currently not supported for MVU. Known
      values are: "17", "16", "15", "14", "13", "12", and "11".
     :vartype version: str or ~azure.mgmt.postgresqlflexibleservers.models.ServerVersion
     :ivar storage: Storage properties of a server.
@@ -4327,7 +4382,7 @@ class ServerForUpdate(_serialization.Model):
         :paramtype administrator_login: str
         :keyword administrator_login_password: The password of the administrator login.
         :paramtype administrator_login_password: str
-        :keyword version: PostgreSQL Server version. Version 16 is currently not supported for MVU.
+        :keyword version: PostgreSQL Server version. Version 17 is currently not supported for MVU.
          Known values are: "17", "16", "15", "14", "13", "12", and "11".
         :paramtype version: str or ~azure.mgmt.postgresqlflexibleservers.models.ServerVersion
         :keyword storage: Storage properties of a server.
@@ -4494,14 +4549,14 @@ class ServerSkuCapability(CapabilityBase):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.v_cores = None
-        self.supported_iops = None
-        self.supported_memory_per_vcore_mb = None
-        self.supported_zones = None
-        self.supported_ha_mode = None
-        self.supported_features = None
-        self.security_profile = None
+        self.name: Optional[str] = None
+        self.v_cores: Optional[int] = None
+        self.supported_iops: Optional[int] = None
+        self.supported_memory_per_vcore_mb: Optional[int] = None
+        self.supported_zones: Optional[List[str]] = None
+        self.supported_ha_mode: Optional[List[Union[str, "_models.HaMode"]]] = None
+        self.supported_features: Optional[List["_models.SupportedFeature"]] = None
+        self.security_profile: Optional[str] = None
 
 
 class ServerThreatProtectionListResult(_serialization.Model):
@@ -4529,8 +4584,8 @@ class ServerThreatProtectionListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[List["_models.ServerThreatProtectionSettingsModel"]] = None
+        self.next_link: Optional[str] = None
 
 
 class ServerThreatProtectionSettingsModel(ProxyResource):
@@ -4539,7 +4594,7 @@ class ServerThreatProtectionSettingsModel(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -4583,7 +4638,7 @@ class ServerThreatProtectionSettingsModel(ProxyResource):
         """
         super().__init__(**kwargs)
         self.state = state
-        self.creation_time = None
+        self.creation_time: Optional[datetime.datetime] = None
 
 
 class ServerVersionCapability(CapabilityBase):
@@ -4624,9 +4679,200 @@ class ServerVersionCapability(CapabilityBase):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.supported_versions_to_upgrade = None
-        self.supported_features = None
+        self.name: Optional[str] = None
+        self.supported_versions_to_upgrade: Optional[List[str]] = None
+        self.supported_features: Optional[List["_models.SupportedFeature"]] = None
+
+
+class SessionDetailsListResult(_serialization.Model):
+    """A list of tuning configuration sessions.
+
+    :ivar value: A list of details of the session.
+    :vartype value: list[~azure.mgmt.postgresqlflexibleservers.models.SessionDetailsResource]
+    :ivar next_link: URL client should use to fetch the next page (per server side paging).
+     It's null for now, added for future use.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[SessionDetailsResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.SessionDetailsResource"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: A list of details of the session.
+        :paramtype value: list[~azure.mgmt.postgresqlflexibleservers.models.SessionDetailsResource]
+        :keyword next_link: URL client should use to fetch the next page (per server side paging).
+         It's null for now, added for future use.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class SessionDetailsResource(_serialization.Model):
+    """Session details properties.
+
+    :ivar iteration_id: Iteration id.
+    :vartype iteration_id: str
+    :ivar session_id: Session id.
+    :vartype session_id: str
+    :ivar applied_configuration: Applied configuration for the iteration.
+    :vartype applied_configuration: str
+    :ivar iteration_start_time: Iteration start time.
+    :vartype iteration_start_time: str
+    :ivar average_query_runtime_ms: The aqr for the iteration.
+    :vartype average_query_runtime_ms: str
+    :ivar transactions_per_second: The tps for the iteration.
+    :vartype transactions_per_second: str
+    """
+
+    _attribute_map = {
+        "iteration_id": {"key": "iterationId", "type": "str"},
+        "session_id": {"key": "sessionId", "type": "str"},
+        "applied_configuration": {"key": "appliedConfiguration", "type": "str"},
+        "iteration_start_time": {"key": "iterationStartTime", "type": "str"},
+        "average_query_runtime_ms": {"key": "averageQueryRuntimeMs", "type": "str"},
+        "transactions_per_second": {"key": "transactionsPerSecond", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        iteration_id: Optional[str] = None,
+        session_id: Optional[str] = None,
+        applied_configuration: Optional[str] = None,
+        iteration_start_time: Optional[str] = None,
+        average_query_runtime_ms: Optional[str] = None,
+        transactions_per_second: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword iteration_id: Iteration id.
+        :paramtype iteration_id: str
+        :keyword session_id: Session id.
+        :paramtype session_id: str
+        :keyword applied_configuration: Applied configuration for the iteration.
+        :paramtype applied_configuration: str
+        :keyword iteration_start_time: Iteration start time.
+        :paramtype iteration_start_time: str
+        :keyword average_query_runtime_ms: The aqr for the iteration.
+        :paramtype average_query_runtime_ms: str
+        :keyword transactions_per_second: The tps for the iteration.
+        :paramtype transactions_per_second: str
+        """
+        super().__init__(**kwargs)
+        self.iteration_id = iteration_id
+        self.session_id = session_id
+        self.applied_configuration = applied_configuration
+        self.iteration_start_time = iteration_start_time
+        self.average_query_runtime_ms = average_query_runtime_ms
+        self.transactions_per_second = transactions_per_second
+
+
+class SessionResource(_serialization.Model):
+    """Session resource properties.
+
+    :ivar session_start_time: the tuning session start time.
+    :vartype session_start_time: str
+    :ivar session_id: Session id.
+    :vartype session_id: str
+    :ivar status: The status of the tuning session.
+    :vartype status: str
+    :ivar pre_tuning_aqr: The pre tuning aqr.
+    :vartype pre_tuning_aqr: str
+    :ivar post_tuning_aqr: The post tuning aqr.
+    :vartype post_tuning_aqr: str
+    :ivar pre_tuning_tps: The pre tuning tps.
+    :vartype pre_tuning_tps: str
+    :ivar post_tuning_tps: The post tuning tps.
+    :vartype post_tuning_tps: str
+    """
+
+    _attribute_map = {
+        "session_start_time": {"key": "sessionStartTime", "type": "str"},
+        "session_id": {"key": "sessionId", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "pre_tuning_aqr": {"key": "preTuningAqr", "type": "str"},
+        "post_tuning_aqr": {"key": "postTuningAqr", "type": "str"},
+        "pre_tuning_tps": {"key": "preTuningTps", "type": "str"},
+        "post_tuning_tps": {"key": "postTuningTps", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        session_start_time: Optional[str] = None,
+        session_id: Optional[str] = None,
+        status: Optional[str] = None,
+        pre_tuning_aqr: Optional[str] = None,
+        post_tuning_aqr: Optional[str] = None,
+        pre_tuning_tps: Optional[str] = None,
+        post_tuning_tps: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword session_start_time: the tuning session start time.
+        :paramtype session_start_time: str
+        :keyword session_id: Session id.
+        :paramtype session_id: str
+        :keyword status: The status of the tuning session.
+        :paramtype status: str
+        :keyword pre_tuning_aqr: The pre tuning aqr.
+        :paramtype pre_tuning_aqr: str
+        :keyword post_tuning_aqr: The post tuning aqr.
+        :paramtype post_tuning_aqr: str
+        :keyword pre_tuning_tps: The pre tuning tps.
+        :paramtype pre_tuning_tps: str
+        :keyword post_tuning_tps: The post tuning tps.
+        :paramtype post_tuning_tps: str
+        """
+        super().__init__(**kwargs)
+        self.session_start_time = session_start_time
+        self.session_id = session_id
+        self.status = status
+        self.pre_tuning_aqr = pre_tuning_aqr
+        self.post_tuning_aqr = post_tuning_aqr
+        self.pre_tuning_tps = pre_tuning_tps
+        self.post_tuning_tps = post_tuning_tps
+
+
+class SessionsListResult(_serialization.Model):
+    """A list of tuning configuration sessions.
+
+    :ivar value: A list of tuning configuration sessions.
+    :vartype value: list[~azure.mgmt.postgresqlflexibleservers.models.SessionResource]
+    :ivar next_link: URL client should use to fetch the next page (per server side paging).
+     It's null for now, added for future use.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[SessionResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.SessionResource"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: A list of tuning configuration sessions.
+        :paramtype value: list[~azure.mgmt.postgresqlflexibleservers.models.SessionResource]
+        :keyword next_link: URL client should use to fetch the next page (per server side paging).
+         It's null for now, added for future use.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
 
 
 class Sku(_serialization.Model):
@@ -4678,7 +4924,7 @@ class Storage(_serialization.Model):
      "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", and "P80".
     :vartype tier: str or
      ~azure.mgmt.postgresqlflexibleservers.models.AzureManagedDiskPerformanceTiers
-    :ivar iops: Storage tier IOPS quantity. This property is required to be set for storage Type
+    :ivar iops: Storage IOPS quantity. This property is required to be set for storage Type
      PremiumV2_LRS and UltraSSD_LRS.
     :vartype iops: int
     :ivar throughput: Storage throughput for the server. This is required to be set for storage
@@ -4720,7 +4966,7 @@ class Storage(_serialization.Model):
          "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", and "P80".
         :paramtype tier: str or
          ~azure.mgmt.postgresqlflexibleservers.models.AzureManagedDiskPerformanceTiers
-        :keyword iops: Storage tier IOPS quantity. This property is required to be set for storage Type
+        :keyword iops: Storage IOPS quantity. This property is required to be set for storage Type
          PremiumV2_LRS and UltraSSD_LRS.
         :paramtype iops: int
         :keyword throughput: Storage throughput for the server. This is required to be set for storage
@@ -4778,9 +5024,9 @@ class StorageEditionCapability(CapabilityBase):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.default_storage_size_mb = None
-        self.supported_storage_mb = None
+        self.name: Optional[str] = None
+        self.default_storage_size_mb: Optional[int] = None
+        self.supported_storage_mb: Optional[List["_models.StorageMbCapability"]] = None
 
 
 class StorageMbCapability(CapabilityBase):
@@ -4842,14 +5088,14 @@ class StorageMbCapability(CapabilityBase):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.supported_iops = None
-        self.supported_maximum_iops = None
-        self.storage_size_mb = None
-        self.maximum_storage_size_mb = None
-        self.supported_throughput = None
-        self.supported_maximum_throughput = None
-        self.default_iops_tier = None
-        self.supported_iops_tiers = None
+        self.supported_iops: Optional[int] = None
+        self.supported_maximum_iops: Optional[int] = None
+        self.storage_size_mb: Optional[int] = None
+        self.maximum_storage_size_mb: Optional[int] = None
+        self.supported_throughput: Optional[int] = None
+        self.supported_maximum_throughput: Optional[int] = None
+        self.default_iops_tier: Optional[str] = None
+        self.supported_iops_tiers: Optional[List["_models.StorageTierCapability"]] = None
 
 
 class StorageTierCapability(CapabilityBase):
@@ -4885,8 +5131,8 @@ class StorageTierCapability(CapabilityBase):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.iops = None
+        self.name: Optional[str] = None
+        self.iops: Optional[int] = None
 
 
 class SupportedFeature(_serialization.Model):
@@ -4913,8 +5159,8 @@ class SupportedFeature(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.status = None
+        self.name: Optional[str] = None
+        self.status: Optional[Union[str, "_models.SupportedFeatureStatusEnum"]] = None
 
 
 class SystemData(_serialization.Model):
@@ -5023,7 +5269,7 @@ class TuningOptionsResource(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -5046,8 +5292,10 @@ class UserAssignedIdentity(_serialization.Model):
     :ivar user_assigned_identities: represents user assigned identities map.
     :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.postgresqlflexibleservers.models.UserIdentity]
+    :ivar principal_id: the identity principal Id of the server.
+    :vartype principal_id: str
     :ivar type: the types of identities associated with this resource. Required. Known values are:
-     "None", "UserAssigned", and "SystemAssigned".
+     "None", "UserAssigned", "SystemAssigned", and "SystemAssigned,UserAssigned".
     :vartype type: str or ~azure.mgmt.postgresqlflexibleservers.models.IdentityType
     :ivar tenant_id: Tenant id of the server.
     :vartype tenant_id: str
@@ -5060,6 +5308,7 @@ class UserAssignedIdentity(_serialization.Model):
 
     _attribute_map = {
         "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserIdentity}"},
+        "principal_id": {"key": "principalId", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "tenant_id": {"key": "tenantId", "type": "str"},
     }
@@ -5069,20 +5318,24 @@ class UserAssignedIdentity(_serialization.Model):
         *,
         type: Union[str, "_models.IdentityType"],
         user_assigned_identities: Optional[Dict[str, "_models.UserIdentity"]] = None,
+        principal_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword user_assigned_identities: represents user assigned identities map.
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.postgresqlflexibleservers.models.UserIdentity]
+        :keyword principal_id: the identity principal Id of the server.
+        :paramtype principal_id: str
         :keyword type: the types of identities associated with this resource. Required. Known values
-         are: "None", "UserAssigned", and "SystemAssigned".
+         are: "None", "UserAssigned", "SystemAssigned", and "SystemAssigned,UserAssigned".
         :paramtype type: str or ~azure.mgmt.postgresqlflexibleservers.models.IdentityType
         """
         super().__init__(**kwargs)
         self.user_assigned_identities = user_assigned_identities
+        self.principal_id = principal_id
         self.type = type
-        self.tenant_id = None
+        self.tenant_id: Optional[str] = None
 
 
 class UserIdentity(_serialization.Model):
@@ -5288,7 +5541,7 @@ class VirtualEndpointResourceForPatch(_serialization.Model):
         super().__init__(**kwargs)
         self.endpoint_type = endpoint_type
         self.members = members
-        self.virtual_endpoints = None
+        self.virtual_endpoints: Optional[List[str]] = None
 
 
 class VirtualEndpointResource(VirtualEndpointResourceForPatch, Resource):
@@ -5297,7 +5550,7 @@ class VirtualEndpointResource(VirtualEndpointResourceForPatch, Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -5348,13 +5601,13 @@ class VirtualEndpointResource(VirtualEndpointResourceForPatch, Resource):
         :paramtype members: list[str]
         """
         super().__init__(endpoint_type=endpoint_type, members=members, **kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
         self.endpoint_type = endpoint_type
         self.members = members
-        self.virtual_endpoints = None
+        self.virtual_endpoints: Optional[List[str]] = None
 
 
 class VirtualEndpointsListResult(_serialization.Model):
@@ -5438,6 +5691,6 @@ class VirtualNetworkSubnetUsageResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.delegated_subnets_usage = None
-        self.location = None
-        self.subscription_id = None
+        self.delegated_subnets_usage: Optional[List["_models.DelegatedSubnetUsage"]] = None
+        self.location: Optional[str] = None
+        self.subscription_id: Optional[str] = None

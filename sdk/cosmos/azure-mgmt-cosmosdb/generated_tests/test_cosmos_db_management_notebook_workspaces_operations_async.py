@@ -25,7 +25,7 @@ class TestCosmosDBManagementNotebookWorkspacesOperationsAsync(AzureMgmtRecordedT
         response = self.client.notebook_workspaces.list_by_database_account(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-12-01-preview",
+            api_version="2025-04-15",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestCosmosDBManagementNotebookWorkspacesOperationsAsync(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             account_name="str",
             notebook_workspace_name="str",
-            api_version="2024-12-01-preview",
+            api_version="2025-04-15",
         )
 
         # please add some check logic here by yourself
@@ -53,7 +53,7 @@ class TestCosmosDBManagementNotebookWorkspacesOperationsAsync(AzureMgmtRecordedT
                 account_name="str",
                 notebook_workspace_name="str",
                 notebook_create_update_parameters={"id": "str", "name": "str", "type": "str"},
-                api_version="2024-12-01-preview",
+                api_version="2025-04-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -68,7 +68,7 @@ class TestCosmosDBManagementNotebookWorkspacesOperationsAsync(AzureMgmtRecordedT
                 resource_group_name=resource_group.name,
                 account_name="str",
                 notebook_workspace_name="str",
-                api_version="2024-12-01-preview",
+                api_version="2025-04-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -82,7 +82,7 @@ class TestCosmosDBManagementNotebookWorkspacesOperationsAsync(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             account_name="str",
             notebook_workspace_name="str",
-            api_version="2024-12-01-preview",
+            api_version="2025-04-15",
         )
 
         # please add some check logic here by yourself
@@ -96,7 +96,7 @@ class TestCosmosDBManagementNotebookWorkspacesOperationsAsync(AzureMgmtRecordedT
                 resource_group_name=resource_group.name,
                 account_name="str",
                 notebook_workspace_name="str",
-                api_version="2024-12-01-preview",
+                api_version="2025-04-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -111,7 +111,7 @@ class TestCosmosDBManagementNotebookWorkspacesOperationsAsync(AzureMgmtRecordedT
                 resource_group_name=resource_group.name,
                 account_name="str",
                 notebook_workspace_name="str",
-                api_version="2024-12-01-preview",
+                api_version="2025-04-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 

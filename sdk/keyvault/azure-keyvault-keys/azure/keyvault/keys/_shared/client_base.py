@@ -16,7 +16,7 @@ from azure.core.tracing.decorator import distributed_trace
 from . import ChallengeAuthPolicy
 from .._generated import KeyVaultClient as _KeyVaultClient
 from .._generated import models as _models
-from .._generated._serialization import Serializer
+from .._generated._utils.serialization import Serializer
 from .._sdk_moniker import SDK_MONIKER
 
 
@@ -24,6 +24,7 @@ class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Key Vault API versions supported by this package"""
 
     #: this is the default version
+    V7_6 = "7.6"
     V7_5 = "7.5"
     V7_4 = "7.4"
     V7_3 = "7.3"
@@ -33,7 +34,7 @@ class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     V2016_10_01 = "2016-10-01"
 
 
-DEFAULT_VERSION = ApiVersion.V7_5
+DEFAULT_VERSION = ApiVersion.V7_6
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -100,11 +101,13 @@ class KeyVaultClientBase(object):
 
             verify_challenge = kwargs.pop("verify_challenge_resource", True)
             self._client = _KeyVaultClient(
+                credential=credential,
+                vault_base_url=self._vault_url,
                 api_version=self.api_version,
                 authentication_policy=ChallengeAuthPolicy(credential, verify_challenge_resource=verify_challenge),
                 sdk_moniker=SDK_MONIKER,
                 http_logging_policy=http_logging_policy,
-                **kwargs
+                **kwargs,
             )
             self._models = _models
         except ValueError as exc:

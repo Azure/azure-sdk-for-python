@@ -1,5 +1,15 @@
 # Release History
 
+## 9.8.0 (2025-05-07)
+
+### Features Added
+
+  - Model `RestorableSqlContainerPropertiesResourceContainer` added property `full_text_policy`
+  - Model `SqlContainerGetPropertiesResource` added property `full_text_policy`
+  - Model `SqlContainerResource` added property `full_text_policy`
+  - Added model `FullTextPath`
+  - Added model `FullTextPolicy`
+
 ## 10.0.0b5 (2024-12-23)
 
 ### Features Added

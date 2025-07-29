@@ -17,7 +17,6 @@ class TestCryptoExamples(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_encrypt_decrypt(self, key_client, **kwargs):
-        set_bodiless_matcher()
         credential = self.get_credential(CryptographyClient)
         key_name = self.get_resource_name("crypto-test-encrypt-key")
         key_client.create_rsa_key(key_name)
@@ -38,7 +37,7 @@ class TestCryptoExamples(KeyVaultTestCase, KeysTestCase):
         from azure.keyvault.keys.crypto import EncryptionAlgorithm
 
         # the result holds the ciphertext and identifies the encryption key and algorithm used
-        result = client.encrypt(EncryptionAlgorithm.rsa_oaep, b"plaintext")
+        result = client.encrypt(EncryptionAlgorithm.rsa_oaep_256, b"plaintext")
         ciphertext = result.ciphertext
         print(result.key_id)
         print(result.algorithm)
@@ -47,7 +46,7 @@ class TestCryptoExamples(KeyVaultTestCase, KeysTestCase):
         # [START decrypt]
         from azure.keyvault.keys.crypto import EncryptionAlgorithm
 
-        result = client.decrypt(EncryptionAlgorithm.rsa_oaep, ciphertext)
+        result = client.decrypt(EncryptionAlgorithm.rsa_oaep_256, ciphertext)
         print(result.plaintext)
         # [END decrypt]
 
@@ -55,19 +54,18 @@ class TestCryptoExamples(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_wrap_unwrap(self, key_client, **kwargs):
-        set_bodiless_matcher()
         credential = self.get_credential(CryptographyClient)
         key_name = self.get_resource_name("crypto-test-wrapping-key")
         key = key_client.create_rsa_key(key_name)
         client = CryptographyClient(key, credential, api_version=key_client.api_version)
 
-        key_bytes = b"5063e6aaa845f150200547944fd199679c98ed6f99da0a0b2dafeaf1f4684496fd532c1c229968cb9dee44957fcef7ccef59ceda0b362e56bcd78fd3faee5781c623c0bb22b35beabde0664fd30e0e824aba3dd1b0afffc4a3d955ede20cf6a854d52cfd"
+        key_bytes = b'\xc5\xb0\xfc\xf1C\x8a\x88pj\x11\x8d\xe5\x94\xe8\xff\x04\x0eY\xfeu\x8a\xe9<\x06(\xdb\x7f\xa9~\x85\x02\x04'
 
         # [START wrap_key]
         from azure.keyvault.keys.crypto import KeyWrapAlgorithm
 
         # the result holds the encrypted key and identifies the encryption key and algorithm used
-        result = client.wrap_key(KeyWrapAlgorithm.rsa_oaep, key_bytes)
+        result = client.wrap_key(KeyWrapAlgorithm.rsa_oaep_256, key_bytes)
         encrypted_key = result.encrypted_key
         print(result.key_id)
         print(result.algorithm)
@@ -76,7 +74,7 @@ class TestCryptoExamples(KeyVaultTestCase, KeysTestCase):
         # [START unwrap_key]
         from azure.keyvault.keys.crypto import KeyWrapAlgorithm
 
-        result = client.unwrap_key(KeyWrapAlgorithm.rsa_oaep, encrypted_key)
+        result = client.unwrap_key(KeyWrapAlgorithm.rsa_oaep_256, encrypted_key)
         key = result.key
         # [END unwrap_key]
 
@@ -84,7 +82,6 @@ class TestCryptoExamples(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_sign_verify(self, key_client, **kwargs):
-        set_bodiless_matcher()
         credential = self.get_credential(CryptographyClient)
         key_name = self.get_resource_name("crypto-test-wrapping-key")
         key = key_client.create_rsa_key(key_name)

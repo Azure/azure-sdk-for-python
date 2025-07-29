@@ -10,7 +10,6 @@ parameters:
     default: 'Test'
 
 stages:
-- ${{ if contains(variables['Build.DefinitionName'], 'tests-weekly')  }}:
   - stage:
     displayName: 'Analyze_${{ parameters.JobName }}'
     variables:
@@ -20,10 +19,6 @@ stages:
       - job: 'Analyze'
         timeoutInMinutes: 90
 
-        variables:
-          - name: PythonVersion
-            value: '3.8'
-
         pool:
           name: $(LINUXPOOL)
           image: $(LINUXVMIMAGE)
@@ -31,9 +26,9 @@ stages:
 
         steps:
           - task: UsePythonVersion@0
-            displayName: 'Use Python 3.8'
+            displayName: 'Use Python 3.9'
             inputs:
-              versionSpec: '3.8'
+              versionSpec: '3.9'
           - script: |
               python -m pip install -r eng/ci_tools.txt
             displayName: 'Prep Environment'
@@ -90,23 +85,40 @@ stages:
             env:
               GH_TOKEN: $(azuresdk-github-pat)
 
-          - task: UsePythonVersion@0
-            displayName: 'Use Python 3.11 for docs generation'
+          - script: |
+              python -m pip install PyGithub>=1.59.0
+              python -m pip install requests>=2.0
+            displayName: 'Prep Environment'
+          - task: PythonScript@0
+            displayName: 'Update vNext Issues with build errors'
+            continueOnError: true
             inputs:
-              versionSpec: '3.11'
+              scriptPath: 'tools/azure-sdk-tools/gh_tools/update_issue.py'
+              arguments: >-
+                ${{ parameters.BuildTargetingString }}
+                --service="${{ parameters.ServiceDirectory }}"
+                --disablecov
+            env:
+              GH_TOKEN: $(azuresdk-github-pat)
+              SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+
+          - task: UsePythonVersion@0
+            displayName: 'Use Python 3.13 for docs generation'
+            inputs:
+              versionSpec: '3.13'
 
           - script: |
               python -m pip install -r eng/ci_tools.txt
             displayName: 'Prep Environment'
 
           - task: PythonScript@0
-            displayName: 'Generate Docs'
+            displayName: 'Generate Docs Next'
             continueOnError: true
             inputs:
               scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
               arguments: >-
                 ${{ parameters.BuildTargetingString }}
                 --service="${{ parameters.ServiceDirectory }}"
-                --toxenv="sphinx"
+                --toxenv="next-sphinx"
             env:
               GH_TOKEN: $(azuresdk-github-pat)

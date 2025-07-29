@@ -21,7 +21,7 @@ class TestKeyVaultManagementKeysOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_if_not_exist(self, resource_group):
+    async def test_keys_create_if_not_exist(self, resource_group):
         response = await self.client.keys.create_if_not_exist(
             resource_group_name=resource_group.name,
             vault_name="str",
@@ -59,7 +59,7 @@ class TestKeyVaultManagementKeysOperationsAsync(AzureMgmtRecordedTestCase):
                 },
                 "tags": {"str": "str"},
             },
-            api_version="2023-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -67,12 +67,12 @@ class TestKeyVaultManagementKeysOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_keys_get(self, resource_group):
         response = await self.client.keys.get(
             resource_group_name=resource_group.name,
             vault_name="str",
             key_name="str",
-            api_version="2023-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -80,11 +80,11 @@ class TestKeyVaultManagementKeysOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_keys_list(self, resource_group):
         response = self.client.keys.list(
             resource_group_name=resource_group.name,
             vault_name="str",
-            api_version="2023-07-01",
+            api_version="2024-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -92,13 +92,13 @@ class TestKeyVaultManagementKeysOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_version(self, resource_group):
+    async def test_keys_get_version(self, resource_group):
         response = await self.client.keys.get_version(
             resource_group_name=resource_group.name,
             vault_name="str",
             key_name="str",
             key_version="str",
-            api_version="2023-07-01",
+            api_version="2024-11-01",
         )
 
         # please add some check logic here by yourself
@@ -106,12 +106,12 @@ class TestKeyVaultManagementKeysOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_versions(self, resource_group):
+    async def test_keys_list_versions(self, resource_group):
         response = self.client.keys.list_versions(
             resource_group_name=resource_group.name,
             vault_name="str",
             key_name="str",
-            api_version="2023-07-01",
+            api_version="2024-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

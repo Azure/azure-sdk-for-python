@@ -124,8 +124,8 @@ def __get_authorization_token_using_resource_token(resource_tokens, path, resour
         # used for creating the auth header as the service will accept any token in this case
         path = urllib.parse.unquote(path)
         if not path and not resource_id_or_fullname:
-            for value in resource_tokens.values():
-                return value
+            for resource_token in resource_tokens.values():
+                return resource_token
 
         if resource_tokens.get(resource_id_or_fullname):
             return resource_tokens[resource_id_or_fullname]
@@ -151,7 +151,9 @@ def __get_authorization_token_using_resource_token(resource_tokens, path, resour
         for i in range(len(path_parts), 1, -1):
             segment = path_parts[i - 1]
             sub_path = "/".join(path_parts[:i])
-            if not segment in resource_types and sub_path in resource_tokens:
-                return resource_tokens[sub_path]
+            if not segment in resource_types:
+                for resource_path, resource_token in resource_tokens.items():
+                    if sub_path in resource_path:
+                        return resource_tokens[resource_path]
 
     return None

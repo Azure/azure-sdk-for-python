@@ -1,5 +1,203 @@
 # Release History
 
+## 10.5.0b1 (2025-07-20)
+
+### Features Added
+
+  - Client `EventGridManagementClient` added operation group `partner_destinations`
+  - Client `EventGridManagementClient` added operation group `network_security_perimeter_configurations`
+  - Model `Channel` added property `partner_destination_info`
+  - Enum `ChannelProvisioningState` added member `IDLE_DUE_TO_MIRRORED_PARTNER_DESTINATION_DELETION`
+  - Enum `ChannelType` added member `PARTNER_DESTINATION`
+  - Model `ChannelUpdateParameters` added property `partner_destination_info`
+  - Model `Domain` added property `sku`
+  - Model `DomainUpdateParameters` added property `sku`
+  - Enum `EndpointType` added member `PARTNER_DESTINATION`
+  - Model `EventSubscriptionIdentity` added property `federated_identity_credential_info`
+  - Enum `PublicNetworkAccess` added member `SECURED_BY_PERIMETER`
+  - Model `Subscription` added property `tags`
+  - Model `SubscriptionUpdateParameters` added property `tags`
+  - Model `Topic` added property `sku`
+  - Model `Topic` added property `kind`
+  - Model `Topic` added property `extended_location`
+  - Model `TopicSpacesConfiguration` added property `client_authentication`
+  - Model `TopicUpdateParameters` added property `sku`
+  - Model `UpdateTopicSpacesConfigurationInfo` added property `client_authentication`
+  - Model `VerifiedPartner` added property `partner_destination_details`
+  - Added enum `AlternativeAuthenticationNameSource`
+  - Added model `AzureADPartnerClientAuthentication`
+  - Added model `ClientAuthenticationSettings`
+  - Added model `CustomJwtAuthenticationManagedIdentity`
+  - Added enum `CustomJwtAuthenticationManagedIdentityType`
+  - Added model `CustomJwtAuthenticationSettings`
+  - Added model `CustomWebhookAuthenticationManagedIdentity`
+  - Added enum `CustomWebhookAuthenticationManagedIdentityType`
+  - Added model `EncodedIssuerCertificateInfo`
+  - Added model `ExtendedLocation`
+  - Added model `FederatedIdentityCredentialInfo`
+  - Added model `IssuerCertificateInfo`
+  - Added enum `NetworkSecurityPerimeterAssociationAccessMode`
+  - Added enum `NetworkSecurityPerimeterConfigProvisioningState`
+  - Added model `NetworkSecurityPerimeterConfiguration`
+  - Added enum `NetworkSecurityPerimeterConfigurationIssueSeverity`
+  - Added enum `NetworkSecurityPerimeterConfigurationIssueType`
+  - Added model `NetworkSecurityPerimeterConfigurationIssues`
+  - Added model `NetworkSecurityPerimeterConfigurationList`
+  - Added model `NetworkSecurityPerimeterConfigurationProfile`
+  - Added model `NetworkSecurityPerimeterInfo`
+  - Added model `NetworkSecurityPerimeterProfileAccessRule`
+  - Added enum `NetworkSecurityPerimeterProfileAccessRuleDirection`
+  - Added enum `NetworkSecurityPerimeterResourceType`
+  - Added model `NetworkSecurityPerimeterSubscription`
+  - Added model `PartnerClientAuthentication`
+  - Added enum `PartnerClientAuthenticationType`
+  - Added model `PartnerDestination`
+  - Added enum `PartnerDestinationActivationState`
+  - Added model `PartnerDestinationInfo`
+  - Added enum `PartnerDestinationProvisioningState`
+  - Added model `PartnerDestinationUpdateParameters`
+  - Added model `PartnerDestinationsListResult`
+  - Added enum `PartnerEndpointType`
+  - Added model `PartnerEventSubscriptionDestination`
+  - Added model `PartnerUpdateDestinationInfo`
+  - Added model `ResourceAssociation`
+  - Added enum `ResourceKind`
+  - Added model `ResourceMoveChangeHistory`
+  - Added model `ResourceSku`
+  - Added enum `Sku`
+  - Added model `WebhookAuthenticationSettings`
+  - Added model `WebhookPartnerDestinationInfo`
+  - Added model `WebhookUpdatePartnerDestinationInfo`
+  - Added operation group `NetworkSecurityPerimeterConfigurationsOperations`
+  - Added operation group `PartnerDestinationsOperations`
+
+## 10.4.0 (2025-03-24)
+
+### Features Added
+
+  - Client `EventGridManagementClient` added operation group `ca_certificates`
+  - Client `EventGridManagementClient` added operation group `client_groups`
+  - Client `EventGridManagementClient` added operation group `clients`
+  - Client `EventGridManagementClient` added operation group `namespace_topic_event_subscriptions`
+  - Client `EventGridManagementClient` added operation group `namespaces`
+  - Client `EventGridManagementClient` added operation group `namespace_topics`
+  - Client `EventGridManagementClient` added operation group `permission_bindings`
+  - Client `EventGridManagementClient` added operation group `topic_spaces`
+  - Model `Domain` added property `minimum_tls_version_allowed`
+  - Model `Domain` added property `event_type_info`
+  - Model `DomainUpdateParameters` added property `minimum_tls_version_allowed`
+  - Model `DomainUpdateParameters` added property `event_type_info`
+  - Enum `EndpointType` added member `MONITOR_ALERT`
+  - Enum `EndpointType` added member `NAMESPACE_TOPIC`
+  - Model `PartnerNamespace` added property `minimum_tls_version_allowed`
+  - Model `PartnerNamespaceUpdateParameters` added property `minimum_tls_version_allowed`
+  - Enum `PrivateEndpointConnectionsParentType` added member `NAMESPACES`
+  - Model `Topic` added property `event_type_info`
+  - Model `Topic` added property `minimum_tls_version_allowed`
+  - Model `TopicTypeInfo` added property `are_regional_and_global_sources_supported`
+  - Model `TopicTypeInfo` added property `additional_enforced_permissions`
+  - Model `TopicUpdateParameters` added property `minimum_tls_version_allowed`
+  - Model `TopicUpdateParameters` added property `event_type_info`
+  - Model `WebHookEventSubscriptionDestination` added property `minimum_tls_version_allowed`
+  - Added model `BoolEqualsFilter`
+  - Added model `CaCertificate`
+  - Added enum `CaCertificateProvisioningState`
+  - Added model `CaCertificatesListResult`
+  - Added client `Client`
+  - Added model `ClientCertificateAuthentication`
+  - Added enum `ClientCertificateValidationScheme`
+  - Added model `ClientGroup`
+  - Added enum `ClientGroupProvisioningState`
+  - Added model `ClientGroupsListResult`
+  - Added enum `ClientProvisioningState`
+  - Added enum `ClientState`
+  - Added model `ClientsListResult`
+  - Added model `CustomDomainConfiguration`
+  - Added model `CustomDomainIdentity`
+  - Added enum `CustomDomainIdentityType`
+  - Added model `CustomDomainOwnershipValidationResult`
+  - Added enum `CustomDomainValidationState`
+  - Added model `DeliveryConfiguration`
+  - Added enum `DeliveryMode`
+  - Added enum `DeliverySchema`
+  - Added model `DynamicRoutingEnrichment`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `ErrorDetail`
+  - Added model `ErrorResponse`
+  - Added enum `EventInputSchema`
+  - Added model `Filter`
+  - Added enum `FilterOperatorType`
+  - Added model `FiltersConfiguration`
+  - Added model `IsNotNullFilter`
+  - Added model `IsNullOrUndefinedFilter`
+  - Added model `MonitorAlertEventSubscriptionDestination`
+  - Added enum `MonitorAlertSeverity`
+  - Added model `Namespace`
+  - Added enum `NamespaceProvisioningState`
+  - Added model `NamespaceRegenerateKeyRequest`
+  - Added model `NamespaceSharedAccessKeys`
+  - Added model `NamespaceSku`
+  - Added model `NamespaceTopic`
+  - Added model `NamespaceTopicEventSubscriptionDestination`
+  - Added enum `NamespaceTopicProvisioningState`
+  - Added model `NamespaceTopicUpdateParameters`
+  - Added model `NamespaceTopicsListResult`
+  - Added model `NamespaceUpdateParameters`
+  - Added model `NamespacesListResult`
+  - Added model `NumberGreaterThanFilter`
+  - Added model `NumberGreaterThanOrEqualsFilter`
+  - Added model `NumberInFilter`
+  - Added model `NumberInRangeFilter`
+  - Added model `NumberLessThanFilter`
+  - Added model `NumberLessThanOrEqualsFilter`
+  - Added model `NumberNotInFilter`
+  - Added model `NumberNotInRangeFilter`
+  - Added model `PermissionBinding`
+  - Added enum `PermissionBindingProvisioningState`
+  - Added model `PermissionBindingsListResult`
+  - Added enum `PermissionType`
+  - Added enum `PublisherType`
+  - Added model `PushInfo`
+  - Added model `QueueInfo`
+  - Added model `RoutingEnrichments`
+  - Added model `RoutingIdentityInfo`
+  - Added enum `RoutingIdentityType`
+  - Added enum `SkuName`
+  - Added model `StaticRoutingEnrichment`
+  - Added enum `StaticRoutingEnrichmentType`
+  - Added model `StaticStringRoutingEnrichment`
+  - Added model `StringBeginsWithFilter`
+  - Added model `StringContainsFilter`
+  - Added model `StringEndsWithFilter`
+  - Added model `StringInFilter`
+  - Added model `StringNotBeginsWithFilter`
+  - Added model `StringNotContainsFilter`
+  - Added model `StringNotEndsWithFilter`
+  - Added model `StringNotInFilter`
+  - Added model `Subscription`
+  - Added model `SubscriptionFullUrl`
+  - Added enum `SubscriptionProvisioningState`
+  - Added model `SubscriptionUpdateParameters`
+  - Added model `SubscriptionsListResult`
+  - Added enum `TlsVersion`
+  - Added model `TopicSpace`
+  - Added enum `TopicSpaceProvisioningState`
+  - Added model `TopicSpacesConfiguration`
+  - Added enum `TopicSpacesConfigurationState`
+  - Added model `TopicSpacesListResult`
+  - Added model `TopicTypeAdditionalEnforcedPermission`
+  - Added model `TopicsConfiguration`
+  - Added model `UpdateTopicSpacesConfigurationInfo`
+  - Added model `UpdateTopicsConfigurationInfo`
+  - Added operation group `CaCertificatesOperations`
+  - Added operation group `ClientGroupsOperations`
+  - Added operation group `ClientsOperations`
+  - Added operation group `NamespaceTopicEventSubscriptionsOperations`
+  - Added operation group `NamespaceTopicsOperations`
+  - Added operation group `NamespacesOperations`
+  - Added operation group `PermissionBindingsOperations`
+  - Added operation group `TopicSpacesOperations`
+
 ## 10.3.0b4 (2024-04-29)
 
 ### Features Added

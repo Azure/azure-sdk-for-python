@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -13,7 +13,6 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 from .. import _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -35,6 +34,68 @@ class AutoScaleProperties(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.scale_up_properties = scale_up_properties
+
+
+class DeleteRetentionPolicy(_serialization.Model):
+    """Response for Delete Retention Policy object.
+
+    :ivar policy_state: Known values are: "Enabled" and "Disabled".
+    :vartype policy_state: str or ~azure.mgmt.elasticsan.models.PolicyState
+    :ivar retention_period_days: The number of days to retain the resources after deletion.
+    :vartype retention_period_days: int
+    """
+
+    _validation = {
+        "retention_period_days": {"minimum": 0},
+    }
+
+    _attribute_map = {
+        "policy_state": {"key": "policyState", "type": "str"},
+        "retention_period_days": {"key": "retentionPeriodDays", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        policy_state: Optional[Union[str, "_models.PolicyState"]] = None,
+        retention_period_days: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword policy_state: Known values are: "Enabled" and "Disabled".
+        :paramtype policy_state: str or ~azure.mgmt.elasticsan.models.PolicyState
+        :keyword retention_period_days: The number of days to retain the resources after deletion.
+        :paramtype retention_period_days: int
+        """
+        super().__init__(**kwargs)
+        self.policy_state = policy_state
+        self.retention_period_days = retention_period_days
+
+
+class DiskSnapshotList(_serialization.Model):
+    """object to hold array of Disk Snapshot ARM IDs.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar disk_snapshot_ids: array of DiskSnapshot ARM IDs. Required.
+    :vartype disk_snapshot_ids: list[str]
+    """
+
+    _validation = {
+        "disk_snapshot_ids": {"required": True},
+    }
+
+    _attribute_map = {
+        "disk_snapshot_ids": {"key": "diskSnapshotIds", "type": "[str]"},
+    }
+
+    def __init__(self, *, disk_snapshot_ids: List[str], **kwargs: Any) -> None:
+        """
+        :keyword disk_snapshot_ids: array of DiskSnapshot ARM IDs. Required.
+        :paramtype disk_snapshot_ids: list[str]
+        """
+        super().__init__(**kwargs)
+        self.disk_snapshot_ids = disk_snapshot_ids
 
 
 class Resource(_serialization.Model):
@@ -227,7 +288,7 @@ class ElasticSanList(_serialization.Model):
         self.next_link = None
 
 
-class ElasticSanProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ElasticSanProperties(_serialization.Model):
     """Elastic San response properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -239,7 +300,8 @@ class ElasticSanProperties(_serialization.Model):  # pylint: disable=too-many-in
     :ivar availability_zones: Logical zone for Elastic San resource; example: ["1"].
     :vartype availability_zones: list[str]
     :ivar provisioning_state: State of the operation on the resource. Known values are: "Invalid",
-     "Succeeded", "Failed", "Canceled", "Pending", "Creating", "Updating", and "Deleting".
+     "Succeeded", "Failed", "Canceled", "Pending", "Creating", "Updating", "Deleting", "Deleted",
+     "Restoring", and "SoftDeleting".
     :vartype provisioning_state: str or ~azure.mgmt.elasticsan.models.ProvisioningStates
     :ivar base_size_ti_b: Base size of the Elastic San appliance in TiB. Required.
     :vartype base_size_ti_b: int
@@ -638,7 +700,8 @@ class IscsiTargetInfo(_serialization.Model):
     :ivar target_portal_port: iSCSI Target Portal Port.
     :vartype target_portal_port: int
     :ivar provisioning_state: State of the operation on the resource. Known values are: "Invalid",
-     "Succeeded", "Failed", "Canceled", "Pending", "Creating", "Updating", and "Deleting".
+     "Succeeded", "Failed", "Canceled", "Pending", "Creating", "Updating", "Deleting", "Deleted",
+     "Restoring", and "SoftDeleting".
     :vartype provisioning_state: str or ~azure.mgmt.elasticsan.models.ProvisioningStates
     :ivar status: Operational status of the iSCSI Target. Known values are: "Invalid", "Unknown",
      "Healthy", "Unhealthy", "Updating", "Running", "Stopped", and "Stopped (deallocated)".
@@ -904,6 +967,26 @@ class OperationListResult(_serialization.Model):
         self.next_link = None
 
 
+class PreValidationResponse(_serialization.Model):
+    """response object for pre validation api.
+
+    :ivar validation_status: a status value indicating success or failure of validation.
+    :vartype validation_status: str
+    """
+
+    _attribute_map = {
+        "validation_status": {"key": "validationStatus", "type": "str"},
+    }
+
+    def __init__(self, *, validation_status: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword validation_status: a status value indicating success or failure of validation.
+        :paramtype validation_status: str
+        """
+        super().__init__(**kwargs)
+        self.validation_status = validation_status
+
+
 class PrivateEndpoint(_serialization.Model):
     """Response for PrivateEndpoint.
 
@@ -1013,7 +1096,7 @@ class PrivateEndpointConnectionProperties(_serialization.Model):
 
     :ivar provisioning_state: Provisioning State of Private Endpoint connection resource. Known
      values are: "Invalid", "Succeeded", "Failed", "Canceled", "Pending", "Creating", "Updating",
-     and "Deleting".
+     "Deleting", "Deleted", "Restoring", and "SoftDeleting".
     :vartype provisioning_state: str or ~azure.mgmt.elasticsan.models.ProvisioningStates
     :ivar private_endpoint: Private Endpoint resource.
     :vartype private_endpoint: ~azure.mgmt.elasticsan.models.PrivateEndpoint
@@ -1589,7 +1672,8 @@ class SnapshotProperties(_serialization.Model):
     :ivar creation_data: Data used when creating a volume snapshot. Required.
     :vartype creation_data: ~azure.mgmt.elasticsan.models.SnapshotCreationData
     :ivar provisioning_state: State of the operation on the resource. Known values are: "Invalid",
-     "Succeeded", "Failed", "Canceled", "Pending", "Creating", "Updating", and "Deleting".
+     "Succeeded", "Failed", "Canceled", "Pending", "Creating", "Updating", "Deleting", "Deleted",
+     "Restoring", and "SoftDeleting".
     :vartype provisioning_state: str or ~azure.mgmt.elasticsan.models.ProvisioningStates
     :ivar source_volume_size_gi_b: Size of Source Volume.
     :vartype source_volume_size_gi_b: int
@@ -1928,7 +2012,8 @@ class VolumeGroupProperties(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar provisioning_state: State of the operation on the resource. Known values are: "Invalid",
-     "Succeeded", "Failed", "Canceled", "Pending", "Creating", "Updating", and "Deleting".
+     "Succeeded", "Failed", "Canceled", "Pending", "Creating", "Updating", "Deleting", "Deleted",
+     "Restoring", and "SoftDeleting".
     :vartype provisioning_state: str or ~azure.mgmt.elasticsan.models.ProvisioningStates
     :ivar protocol_type: Type of storage target. Known values are: "Iscsi" and "None".
     :vartype protocol_type: str or ~azure.mgmt.elasticsan.models.StorageTargetType
@@ -1947,6 +2032,9 @@ class VolumeGroupProperties(_serialization.Model):
     :ivar enforce_data_integrity_check_for_iscsi: A boolean indicating whether or not Data
      Integrity Check is enabled.
     :vartype enforce_data_integrity_check_for_iscsi: bool
+    :ivar delete_retention_policy: The retention policy for the soft deleted volume group and its
+     associated resources.
+    :vartype delete_retention_policy: ~azure.mgmt.elasticsan.models.DeleteRetentionPolicy
     """
 
     _validation = {
@@ -1962,6 +2050,7 @@ class VolumeGroupProperties(_serialization.Model):
         "network_acls": {"key": "networkAcls", "type": "NetworkRuleSet"},
         "private_endpoint_connections": {"key": "privateEndpointConnections", "type": "[PrivateEndpointConnection]"},
         "enforce_data_integrity_check_for_iscsi": {"key": "enforceDataIntegrityCheckForIscsi", "type": "bool"},
+        "delete_retention_policy": {"key": "deleteRetentionPolicy", "type": "DeleteRetentionPolicy"},
     }
 
     def __init__(
@@ -1972,6 +2061,7 @@ class VolumeGroupProperties(_serialization.Model):
         encryption_properties: Optional["_models.EncryptionProperties"] = None,
         network_acls: Optional["_models.NetworkRuleSet"] = None,
         enforce_data_integrity_check_for_iscsi: Optional[bool] = None,
+        delete_retention_policy: Optional["_models.DeleteRetentionPolicy"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1989,6 +2079,9 @@ class VolumeGroupProperties(_serialization.Model):
         :keyword enforce_data_integrity_check_for_iscsi: A boolean indicating whether or not Data
          Integrity Check is enabled.
         :paramtype enforce_data_integrity_check_for_iscsi: bool
+        :keyword delete_retention_policy: The retention policy for the soft deleted volume group and
+         its associated resources.
+        :paramtype delete_retention_policy: ~azure.mgmt.elasticsan.models.DeleteRetentionPolicy
         """
         super().__init__(**kwargs)
         self.provisioning_state = None
@@ -1998,6 +2091,7 @@ class VolumeGroupProperties(_serialization.Model):
         self.network_acls = network_acls
         self.private_endpoint_connections = None
         self.enforce_data_integrity_check_for_iscsi = enforce_data_integrity_check_for_iscsi
+        self.delete_retention_policy = delete_retention_policy
 
 
 class VolumeGroupUpdate(_serialization.Model):
@@ -2049,6 +2143,9 @@ class VolumeGroupUpdateProperties(_serialization.Model):
     :ivar enforce_data_integrity_check_for_iscsi: A boolean indicating whether or not Data
      Integrity Check is enabled.
     :vartype enforce_data_integrity_check_for_iscsi: bool
+    :ivar delete_retention_policy: The retention policy for the soft deleted volume group and its
+     associated resources.
+    :vartype delete_retention_policy: ~azure.mgmt.elasticsan.models.DeleteRetentionPolicy
     """
 
     _attribute_map = {
@@ -2057,6 +2154,7 @@ class VolumeGroupUpdateProperties(_serialization.Model):
         "encryption_properties": {"key": "encryptionProperties", "type": "EncryptionProperties"},
         "network_acls": {"key": "networkAcls", "type": "NetworkRuleSet"},
         "enforce_data_integrity_check_for_iscsi": {"key": "enforceDataIntegrityCheckForIscsi", "type": "bool"},
+        "delete_retention_policy": {"key": "deleteRetentionPolicy", "type": "DeleteRetentionPolicy"},
     }
 
     def __init__(
@@ -2067,6 +2165,7 @@ class VolumeGroupUpdateProperties(_serialization.Model):
         encryption_properties: Optional["_models.EncryptionProperties"] = None,
         network_acls: Optional["_models.NetworkRuleSet"] = None,
         enforce_data_integrity_check_for_iscsi: Optional[bool] = None,
+        delete_retention_policy: Optional["_models.DeleteRetentionPolicy"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2084,6 +2183,9 @@ class VolumeGroupUpdateProperties(_serialization.Model):
         :keyword enforce_data_integrity_check_for_iscsi: A boolean indicating whether or not Data
          Integrity Check is enabled.
         :paramtype enforce_data_integrity_check_for_iscsi: bool
+        :keyword delete_retention_policy: The retention policy for the soft deleted volume group and
+         its associated resources.
+        :paramtype delete_retention_policy: ~azure.mgmt.elasticsan.models.DeleteRetentionPolicy
         """
         super().__init__(**kwargs)
         self.protocol_type = protocol_type
@@ -2091,6 +2193,7 @@ class VolumeGroupUpdateProperties(_serialization.Model):
         self.encryption_properties = encryption_properties
         self.network_acls = network_acls
         self.enforce_data_integrity_check_for_iscsi = enforce_data_integrity_check_for_iscsi
+        self.delete_retention_policy = delete_retention_policy
 
 
 class VolumeList(_serialization.Model):
@@ -2123,6 +2226,32 @@ class VolumeList(_serialization.Model):
         self.next_link = None
 
 
+class VolumeNameList(_serialization.Model):
+    """object to hold array of volume names.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar volume_names: array of volume names. Required.
+    :vartype volume_names: list[str]
+    """
+
+    _validation = {
+        "volume_names": {"required": True},
+    }
+
+    _attribute_map = {
+        "volume_names": {"key": "volumeNames", "type": "[str]"},
+    }
+
+    def __init__(self, *, volume_names: List[str], **kwargs: Any) -> None:
+        """
+        :keyword volume_names: array of volume names. Required.
+        :paramtype volume_names: list[str]
+        """
+        super().__init__(**kwargs)
+        self.volume_names = volume_names
+
+
 class VolumeProperties(_serialization.Model):
     """Volume response properties.
 
@@ -2141,7 +2270,8 @@ class VolumeProperties(_serialization.Model):
     :ivar managed_by: Parent resource information.
     :vartype managed_by: ~azure.mgmt.elasticsan.models.ManagedByInfo
     :ivar provisioning_state: State of the operation on the resource. Known values are: "Invalid",
-     "Succeeded", "Failed", "Canceled", "Pending", "Creating", "Updating", and "Deleting".
+     "Succeeded", "Failed", "Canceled", "Pending", "Creating", "Updating", "Deleting", "Deleted",
+     "Restoring", and "SoftDeleting".
     :vartype provisioning_state: str or ~azure.mgmt.elasticsan.models.ProvisioningStates
     """
 

@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import List, Dict, Optional, cast
+from typing import List, Dict, Optional, cast, MutableMapping, Any
 
 from azure.core.paging import ReturnType
 from azure.core.async_paging import AsyncItemPaged, AsyncPageIterator
@@ -75,7 +75,7 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
         and answers are requested in the search query via the query_answer parameter.
 
         :return: Answers.
-        :rtype: list[~azure.search.documents.QueryAnswerResult]
+        :rtype: list[~azure.search.documents.models.QueryAnswerResult]
         """
         return cast(List[QueryAnswerResult], await self._first_iterator_instance().get_answers())
 
@@ -113,7 +113,7 @@ class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
         self._client = client
         self._initial_query = initial_query
         self._kwargs = kwargs
-        self._facets = None
+        self._facets: Optional[MutableMapping[str, List[MutableMapping[str, Any]]]] = None
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
 
     async def _get_next_cb(self, continuation_token):
@@ -130,7 +130,7 @@ class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
         return continuation_token, results
 
     @_ensure_response
-    async def get_facets(self) -> Optional[Dict]:
+    async def get_facets(self) -> Optional[MutableMapping[str, Any]]:
         self.continuation_token = None
         response = cast(SearchDocumentsResult, self._response)
         facets = response.facets

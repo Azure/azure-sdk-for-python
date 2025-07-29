@@ -5,8 +5,10 @@
 """
 DESCRIPTION:
     This sample demonstrates how to get a chat completions response from
-    the service using a synchronous client, and directly providing the 
-    JSON request body (containing input chat messages).
+    the service using a synchronous client, and directly providing the
+    full JSON request body (containing input chat messages) as a `dict`.
+    It also shows you can just provide the `messages` argument as a list
+    of `dicts`.
 
     This sample assumes the AI model is hosted on a Serverless API or
     Managed Compute endpoint. For GitHub Models or Azure OpenAI endpoints,
@@ -42,7 +44,7 @@ def sample_chat_completions_from_input_dict():
 
     client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
-    # [START chat_completions]
+    # [START chat_completions_full_request_as_dict]
     response = client.complete(
         {
             "messages": [
@@ -62,7 +64,24 @@ def sample_chat_completions_from_input_dict():
             ]
         }
     )
-    # [END chat_completions]
+    # [END chat_completions_full_request_as_dict]
+
+    print(response.choices[0].message.content)
+
+    # [START chat_completions_messages_as_dict]
+    response = client.complete(
+        messages=[
+            {
+                "role": "system",
+                "content": "You are an AI assistant that helps people find information.",
+            },
+            {
+                "role": "user",
+                "content": "How many feet are in a mile?",
+            },
+        ]
+    )
+    # [END chat_completions_messages_as_dict]
 
     print(response.choices[0].message.content)
 

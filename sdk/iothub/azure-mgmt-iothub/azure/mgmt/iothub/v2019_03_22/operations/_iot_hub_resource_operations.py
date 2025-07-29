@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, cast, overload
+import sys
+from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -16,13 +17,14 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
@@ -30,8 +32,11 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from ..._serialization import Serializer
-from .._vendor import _convert_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -283,7 +288,7 @@ def build_get_valid_skus_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_event_hub_consumer_groups_request(
+def build_list_event_hub_consumer_groups_request(  # pylint: disable=name-too-long
     resource_group_name: str, resource_name: str, event_hub_endpoint_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -315,7 +320,7 @@ def build_list_event_hub_consumer_groups_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_event_hub_consumer_group_request(
+def build_get_event_hub_consumer_group_request(  # pylint: disable=name-too-long
     resource_group_name: str,
     resource_name: str,
     event_hub_endpoint_name: str,
@@ -353,7 +358,7 @@ def build_get_event_hub_consumer_group_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_create_event_hub_consumer_group_request(
+def build_create_event_hub_consumer_group_request(  # pylint: disable=name-too-long
     resource_group_name: str,
     resource_name: str,
     event_hub_endpoint_name: str,
@@ -391,7 +396,7 @@ def build_create_event_hub_consumer_group_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_delete_event_hub_consumer_group_request(
+def build_delete_event_hub_consumer_group_request(  # pylint: disable=name-too-long
     resource_group_name: str,
     resource_name: str,
     event_hub_endpoint_name: str,
@@ -812,12 +817,11 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param resource_name: The name of the IoT hub. Required.
         :type resource_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IotHubDescription or the result of cls(response)
         :rtype: ~azure.mgmt.iothub.v2019_03_22.models.IotHubDescription
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -831,21 +835,19 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-03-22"))
         cls: ClsType[_models.IotHubDescription] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -855,26 +857,22 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("IotHubDescription", pipeline_response)
+        deserialized = self._deserialize("IotHubDescription", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}"
-    }
+        return deserialized  # type: ignore
 
     def _create_or_update_initial(
         self,
         resource_group_name: str,
         resource_name: str,
-        iot_hub_description: Union[_models.IotHubDescription, IO],
+        iot_hub_description: Union[_models.IotHubDescription, IO[bytes]],
         if_match: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.IotHubDescription:
-        error_map = {
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -887,7 +885,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-03-22"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.IotHubDescription] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -897,7 +895,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(iot_hub_description, "IotHubDescription")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             subscription_id=self._config.subscription_id,
@@ -906,39 +904,34 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("IotHubDescription", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("IotHubDescription", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}"
-    }
 
     @overload
     def begin_create_or_update(
@@ -971,14 +964,6 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either IotHubDescription or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.iothub.v2019_03_22.models.IotHubDescription]
@@ -990,7 +975,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         resource_name: str,
-        iot_hub_description: IO,
+        iot_hub_description: IO[bytes],
         if_match: Optional[str] = None,
         *,
         content_type: str = "application/json",
@@ -1009,21 +994,13 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :param resource_name: The name of the IoT hub. Required.
         :type resource_name: str
         :param iot_hub_description: The IoT hub metadata and security metadata. Required.
-        :type iot_hub_description: IO
+        :type iot_hub_description: IO[bytes]
         :param if_match: ETag of the IoT Hub. Do not specify for creating a brand new IoT Hub. Required
          to update an existing IoT Hub. Default value is None.
         :type if_match: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either IotHubDescription or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.iothub.v2019_03_22.models.IotHubDescription]
@@ -1035,7 +1012,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         resource_name: str,
-        iot_hub_description: Union[_models.IotHubDescription, IO],
+        iot_hub_description: Union[_models.IotHubDescription, IO[bytes]],
         if_match: Optional[str] = None,
         **kwargs: Any
     ) -> LROPoller[_models.IotHubDescription]:
@@ -1052,22 +1029,11 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :param resource_name: The name of the IoT hub. Required.
         :type resource_name: str
         :param iot_hub_description: The IoT hub metadata and security metadata. Is either a
-         IotHubDescription type or a IO type. Required.
-        :type iot_hub_description: ~azure.mgmt.iothub.v2019_03_22.models.IotHubDescription or IO
+         IotHubDescription type or a IO[bytes] type. Required.
+        :type iot_hub_description: ~azure.mgmt.iothub.v2019_03_22.models.IotHubDescription or IO[bytes]
         :param if_match: ETag of the IoT Hub. Do not specify for creating a brand new IoT Hub. Required
          to update an existing IoT Hub. Default value is None.
         :type if_match: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either IotHubDescription or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.iothub.v2019_03_22.models.IotHubDescription]
@@ -1095,12 +1061,13 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("IotHubDescription", pipeline_response)
+            deserialized = self._deserialize("IotHubDescription", pipeline_response.http_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1110,22 +1077,24 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.IotHubDescription].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}"
-    }
+        return LROPoller[_models.IotHubDescription](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     def _update_initial(
-        self, resource_group_name: str, resource_name: str, iot_hub_tags: Union[_models.TagsResource, IO], **kwargs: Any
-    ) -> _models.IotHubDescription:
-        error_map = {
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        iot_hub_tags: Union[_models.TagsResource, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1138,7 +1107,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-03-22"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.IotHubDescription] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1148,7 +1117,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(iot_hub_tags, "TagsResource")
 
-        request = build_update_request(
+        _request = build_update_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             subscription_id=self._config.subscription_id,
@@ -1156,34 +1125,33 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("IotHubDescription", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def begin_update(
@@ -1208,14 +1176,6 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either IotHubDescription or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.iothub.v2019_03_22.models.IotHubDescription]
@@ -1227,7 +1187,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         resource_name: str,
-        iot_hub_tags: IO,
+        iot_hub_tags: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1241,18 +1201,10 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :param resource_name: Name of iot hub to update. Required.
         :type resource_name: str
         :param iot_hub_tags: Updated tag information to set into the iot hub instance. Required.
-        :type iot_hub_tags: IO
+        :type iot_hub_tags: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either IotHubDescription or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.iothub.v2019_03_22.models.IotHubDescription]
@@ -1261,7 +1213,11 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def begin_update(
-        self, resource_group_name: str, resource_name: str, iot_hub_tags: Union[_models.TagsResource, IO], **kwargs: Any
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        iot_hub_tags: Union[_models.TagsResource, IO[bytes]],
+        **kwargs: Any
     ) -> LROPoller[_models.IotHubDescription]:
         """Update an existing IoT Hubs tags.
 
@@ -1272,19 +1228,8 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :param resource_name: Name of iot hub to update. Required.
         :type resource_name: str
         :param iot_hub_tags: Updated tag information to set into the iot hub instance. Is either a
-         TagsResource type or a IO type. Required.
-        :type iot_hub_tags: ~azure.mgmt.iothub.v2019_03_22.models.TagsResource or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         TagsResource type or a IO[bytes] type. Required.
+        :type iot_hub_tags: ~azure.mgmt.iothub.v2019_03_22.models.TagsResource or IO[bytes]
         :return: An instance of LROPoller that returns either IotHubDescription or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.iothub.v2019_03_22.models.IotHubDescription]
@@ -1311,12 +1256,13 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("IotHubDescription", pipeline_response)
+            deserialized = self._deserialize("IotHubDescription", pipeline_response.http_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1326,22 +1272,18 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.IotHubDescription].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[_models.IotHubDescription](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
-    begin_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}"
-    }
-
-    def _delete_initial(
-        self, resource_group_name: str, resource_name: str, **kwargs: Any
-    ) -> Union[_models.IotHubDescription, _models.ErrorDetails]:
-        error_map = {
+    def _delete_initial(self, resource_group_name: str, resource_name: str, **kwargs: Any) -> Iterator[bytes]:
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1353,50 +1295,41 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-03-22"))
-        cls: ClsType[Union[_models.IotHubDescription, _models.ErrorDetails]] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 204, 404]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize("IotHubDescription", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("IotHubDescription", pipeline_response)
-
-        if response.status_code == 404:
-            deserialized = self._deserialize("ErrorDetails", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def begin_delete(
@@ -1410,14 +1343,6 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param resource_name: The name of the IoT hub. Required.
         :type resource_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either IotHubDescription or An instance of
          LROPoller that returns either ErrorDetails or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.iothub.v2019_03_22.models.IotHubDescription]
@@ -1442,12 +1367,13 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("IotHubDescription", pipeline_response)
+            deserialized = self._deserialize("IotHubDescription", pipeline_response.http_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1457,17 +1383,15 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.IotHubDescription].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}"
-    }
+        return LROPoller[_models.IotHubDescription](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def list_by_subscription(self, **kwargs: Any) -> Iterable["_models.IotHubDescription"]:
@@ -1475,7 +1399,6 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
 
         Get all the IoT hubs in a subscription.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either IotHubDescription or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.iothub.v2019_03_22.models.IotHubDescription]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1486,7 +1409,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-03-22"))
         cls: ClsType[_models.IotHubDescriptionListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1497,15 +1420,13 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_subscription_request(
+                _request = build_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_subscription.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1516,14 +1437,13 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("IotHubDescriptionListResult", pipeline_response)
@@ -1533,11 +1453,11 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1549,8 +1469,6 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_subscription.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Devices/IotHubs"}
 
     @distributed_trace
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> Iterable["_models.IotHubDescription"]:
@@ -1560,7 +1478,6 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
 
         :param resource_group_name: The name of the resource group that contains the IoT hub. Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either IotHubDescription or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.iothub.v2019_03_22.models.IotHubDescription]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1571,7 +1488,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-03-22"))
         cls: ClsType[_models.IotHubDescriptionListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1582,16 +1499,14 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_resource_group_request(
+                _request = build_list_by_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_resource_group.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1602,14 +1517,13 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("IotHubDescriptionListResult", pipeline_response)
@@ -1619,11 +1533,11 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1635,10 +1549,6 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_resource_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs"
-    }
 
     @distributed_trace
     def get_stats(self, resource_group_name: str, resource_name: str, **kwargs: Any) -> _models.RegistryStatistics:
@@ -1650,12 +1560,11 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param resource_name: The name of the IoT hub. Required.
         :type resource_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RegistryStatistics or the result of cls(response)
         :rtype: ~azure.mgmt.iothub.v2019_03_22.models.RegistryStatistics
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1669,21 +1578,19 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-03-22"))
         cls: ClsType[_models.RegistryStatistics] = kwargs.pop("cls", None)
 
-        request = build_get_stats_request(
+        _request = build_get_stats_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_stats.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1693,16 +1600,12 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("RegistryStatistics", pipeline_response)
+        deserialized = self._deserialize("RegistryStatistics", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_stats.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/IotHubStats"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def get_valid_skus(
@@ -1716,7 +1619,6 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param resource_name: The name of the IoT hub. Required.
         :type resource_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either IotHubSkuDescription or the result of
          cls(response)
         :rtype:
@@ -1729,7 +1631,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-03-22"))
         cls: ClsType[_models.IotHubSkuDescriptionListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1740,17 +1642,15 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_get_valid_skus_request(
+                _request = build_get_valid_skus_request(
                     resource_group_name=resource_group_name,
                     resource_name=resource_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.get_valid_skus.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1761,14 +1661,13 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("IotHubSkuDescriptionListResult", pipeline_response)
@@ -1778,11 +1677,11 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1794,10 +1693,6 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    get_valid_skus.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/skus"
-    }
 
     @distributed_trace
     def list_event_hub_consumer_groups(
@@ -1815,7 +1710,6 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :type resource_name: str
         :param event_hub_endpoint_name: The name of the Event Hub-compatible endpoint. Required.
         :type event_hub_endpoint_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either EventHubConsumerGroupInfo or the result of
          cls(response)
         :rtype:
@@ -1828,7 +1722,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-03-22"))
         cls: ClsType[_models.EventHubConsumerGroupsListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1839,18 +1733,16 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_event_hub_consumer_groups_request(
+                _request = build_list_event_hub_consumer_groups_request(
                     resource_group_name=resource_group_name,
                     resource_name=resource_name,
                     event_hub_endpoint_name=event_hub_endpoint_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_event_hub_consumer_groups.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1861,14 +1753,13 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("EventHubConsumerGroupsListResult", pipeline_response)
@@ -1878,11 +1769,11 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1894,10 +1785,6 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_event_hub_consumer_groups.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/eventHubEndpoints/{eventHubEndpointName}/ConsumerGroups"
-    }
 
     @distributed_trace
     def get_event_hub_consumer_group(
@@ -1916,12 +1803,11 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :type event_hub_endpoint_name: str
         :param name: The name of the consumer group to retrieve. Required.
         :type name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: EventHubConsumerGroupInfo or the result of cls(response)
         :rtype: ~azure.mgmt.iothub.v2019_03_22.models.EventHubConsumerGroupInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1935,23 +1821,21 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-03-22"))
         cls: ClsType[_models.EventHubConsumerGroupInfo] = kwargs.pop("cls", None)
 
-        request = build_get_event_hub_consumer_group_request(
+        _request = build_get_event_hub_consumer_group_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             event_hub_endpoint_name=event_hub_endpoint_name,
             name=name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_event_hub_consumer_group.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1961,16 +1845,12 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("EventHubConsumerGroupInfo", pipeline_response)
+        deserialized = self._deserialize("EventHubConsumerGroupInfo", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_event_hub_consumer_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/eventHubEndpoints/{eventHubEndpointName}/ConsumerGroups/{name}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def create_event_hub_consumer_group(
@@ -1989,12 +1869,11 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :type event_hub_endpoint_name: str
         :param name: The name of the consumer group to add. Required.
         :type name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: EventHubConsumerGroupInfo or the result of cls(response)
         :rtype: ~azure.mgmt.iothub.v2019_03_22.models.EventHubConsumerGroupInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2008,23 +1887,21 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-03-22"))
         cls: ClsType[_models.EventHubConsumerGroupInfo] = kwargs.pop("cls", None)
 
-        request = build_create_event_hub_consumer_group_request(
+        _request = build_create_event_hub_consumer_group_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             event_hub_endpoint_name=event_hub_endpoint_name,
             name=name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.create_event_hub_consumer_group.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2034,16 +1911,12 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("EventHubConsumerGroupInfo", pipeline_response)
+        deserialized = self._deserialize("EventHubConsumerGroupInfo", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    create_event_hub_consumer_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/eventHubEndpoints/{eventHubEndpointName}/ConsumerGroups/{name}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def delete_event_hub_consumer_group(  # pylint: disable=inconsistent-return-statements
@@ -2062,12 +1935,11 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :type event_hub_endpoint_name: str
         :param name: The name of the consumer group to delete. Required.
         :type name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2081,23 +1953,21 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-03-22"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_event_hub_consumer_group_request(
+        _request = build_delete_event_hub_consumer_group_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             event_hub_endpoint_name=event_hub_endpoint_name,
             name=name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete_event_hub_consumer_group.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2108,11 +1978,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete_event_hub_consumer_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/eventHubEndpoints/{eventHubEndpointName}/ConsumerGroups/{name}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def list_jobs(self, resource_group_name: str, resource_name: str, **kwargs: Any) -> Iterable["_models.JobResponse"]:
@@ -2126,7 +1992,6 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param resource_name: The name of the IoT hub. Required.
         :type resource_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either JobResponse or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.iothub.v2019_03_22.models.JobResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2137,7 +2002,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-03-22"))
         cls: ClsType[_models.JobResponseListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2148,17 +2013,15 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_jobs_request(
+                _request = build_list_jobs_request(
                     resource_group_name=resource_group_name,
                     resource_name=resource_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_jobs.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -2169,14 +2032,13 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("JobResponseListResult", pipeline_response)
@@ -2186,11 +2048,11 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2202,10 +2064,6 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_jobs.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/jobs"
-    }
 
     @distributed_trace
     def get_job(self, resource_group_name: str, resource_name: str, job_id: str, **kwargs: Any) -> _models.JobResponse:
@@ -2221,12 +2079,11 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :type resource_name: str
         :param job_id: The job identifier. Required.
         :type job_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: JobResponse or the result of cls(response)
         :rtype: ~azure.mgmt.iothub.v2019_03_22.models.JobResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2240,22 +2097,20 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-03-22"))
         cls: ClsType[_models.JobResponse] = kwargs.pop("cls", None)
 
-        request = build_get_job_request(
+        _request = build_get_job_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             job_id=job_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_job.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2265,16 +2120,12 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("JobResponse", pipeline_response)
+        deserialized = self._deserialize("JobResponse", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_job.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/jobs/{jobId}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def get_quota_metrics(
@@ -2288,7 +2139,6 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param resource_name: The name of the IoT hub. Required.
         :type resource_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either IotHubQuotaMetricInfo or the result of
          cls(response)
         :rtype:
@@ -2301,7 +2151,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-03-22"))
         cls: ClsType[_models.IotHubQuotaMetricInfoListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2312,17 +2162,15 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_get_quota_metrics_request(
+                _request = build_get_quota_metrics_request(
                     resource_group_name=resource_group_name,
                     resource_name=resource_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.get_quota_metrics.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -2333,14 +2181,13 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("IotHubQuotaMetricInfoListResult", pipeline_response)
@@ -2350,11 +2197,11 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2366,10 +2213,6 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    get_quota_metrics.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/quotaMetrics"
-    }
 
     @distributed_trace
     def get_endpoint_health(
@@ -2383,7 +2226,6 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param iot_hub_name: Required.
         :type iot_hub_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either EndpointHealthData or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.iothub.v2019_03_22.models.EndpointHealthData]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2394,7 +2236,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-03-22"))
         cls: ClsType[_models.EndpointHealthDataListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2405,17 +2247,15 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_get_endpoint_health_request(
+                _request = build_get_endpoint_health_request(
                     resource_group_name=resource_group_name,
                     iot_hub_name=iot_hub_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.get_endpoint_health.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -2426,14 +2266,13 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("EndpointHealthDataListResult", pipeline_response)
@@ -2443,11 +2282,11 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2459,10 +2298,6 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    get_endpoint_health.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{iotHubName}/routingEndpointsHealth"
-    }
 
     @overload
     def check_name_availability(
@@ -2478,7 +2313,6 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IotHubNameAvailabilityInfo or the result of cls(response)
         :rtype: ~azure.mgmt.iothub.v2019_03_22.models.IotHubNameAvailabilityInfo
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2486,7 +2320,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def check_name_availability(
-        self, operation_inputs: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, operation_inputs: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.IotHubNameAvailabilityInfo:
         """Check if an IoT hub name is available.
 
@@ -2494,11 +2328,10 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
 
         :param operation_inputs: Set the name parameter in the OperationInputs structure to the name of
          the IoT hub to check. Required.
-        :type operation_inputs: IO
+        :type operation_inputs: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IotHubNameAvailabilityInfo or the result of cls(response)
         :rtype: ~azure.mgmt.iothub.v2019_03_22.models.IotHubNameAvailabilityInfo
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2506,24 +2339,20 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def check_name_availability(
-        self, operation_inputs: Union[_models.OperationInputs, IO], **kwargs: Any
+        self, operation_inputs: Union[_models.OperationInputs, IO[bytes]], **kwargs: Any
     ) -> _models.IotHubNameAvailabilityInfo:
         """Check if an IoT hub name is available.
 
         Check if an IoT hub name is available.
 
         :param operation_inputs: Set the name parameter in the OperationInputs structure to the name of
-         the IoT hub to check. Is either a OperationInputs type or a IO type. Required.
-        :type operation_inputs: ~azure.mgmt.iothub.v2019_03_22.models.OperationInputs or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         the IoT hub to check. Is either a OperationInputs type or a IO[bytes] type. Required.
+        :type operation_inputs: ~azure.mgmt.iothub.v2019_03_22.models.OperationInputs or IO[bytes]
         :return: IotHubNameAvailabilityInfo or the result of cls(response)
         :rtype: ~azure.mgmt.iothub.v2019_03_22.models.IotHubNameAvailabilityInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2546,22 +2375,20 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(operation_inputs, "OperationInputs")
 
-        request = build_check_name_availability_request(
+        _request = build_check_name_availability_request(
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.check_name_availability.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2571,16 +2398,12 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("IotHubNameAvailabilityInfo", pipeline_response)
+        deserialized = self._deserialize("IotHubNameAvailabilityInfo", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    check_name_availability.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Devices/checkNameAvailability"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def test_all_routes(
@@ -2605,7 +2428,6 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TestAllRoutesResult or the result of cls(response)
         :rtype: ~azure.mgmt.iothub.v2019_03_22.models.TestAllRoutesResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2616,7 +2438,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         self,
         iot_hub_name: str,
         resource_group_name: str,
-        input: IO,
+        input: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2630,11 +2452,10 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :param resource_group_name: resource group which Iot Hub belongs to. Required.
         :type resource_group_name: str
         :param input: Input for testing all routes. Required.
-        :type input: IO
+        :type input: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TestAllRoutesResult or the result of cls(response)
         :rtype: ~azure.mgmt.iothub.v2019_03_22.models.TestAllRoutesResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2642,7 +2463,11 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def test_all_routes(
-        self, iot_hub_name: str, resource_group_name: str, input: Union[_models.TestAllRoutesInput, IO], **kwargs: Any
+        self,
+        iot_hub_name: str,
+        resource_group_name: str,
+        input: Union[_models.TestAllRoutesInput, IO[bytes]],
+        **kwargs: Any
     ) -> _models.TestAllRoutesResult:
         """Test all routes.
 
@@ -2652,18 +2477,14 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :type iot_hub_name: str
         :param resource_group_name: resource group which Iot Hub belongs to. Required.
         :type resource_group_name: str
-        :param input: Input for testing all routes. Is either a TestAllRoutesInput type or a IO type.
-         Required.
-        :type input: ~azure.mgmt.iothub.v2019_03_22.models.TestAllRoutesInput or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param input: Input for testing all routes. Is either a TestAllRoutesInput type or a IO[bytes]
+         type. Required.
+        :type input: ~azure.mgmt.iothub.v2019_03_22.models.TestAllRoutesInput or IO[bytes]
         :return: TestAllRoutesResult or the result of cls(response)
         :rtype: ~azure.mgmt.iothub.v2019_03_22.models.TestAllRoutesResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2686,7 +2507,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(input, "TestAllRoutesInput")
 
-        request = build_test_all_routes_request(
+        _request = build_test_all_routes_request(
             iot_hub_name=iot_hub_name,
             resource_group_name=resource_group_name,
             subscription_id=self._config.subscription_id,
@@ -2694,16 +2515,14 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.test_all_routes.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2713,16 +2532,12 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("TestAllRoutesResult", pipeline_response)
+        deserialized = self._deserialize("TestAllRoutesResult", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    test_all_routes.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{iotHubName}/routing/routes/$testall"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def test_route(
@@ -2747,7 +2562,6 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TestRouteResult or the result of cls(response)
         :rtype: ~azure.mgmt.iothub.v2019_03_22.models.TestRouteResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2758,7 +2572,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         self,
         iot_hub_name: str,
         resource_group_name: str,
-        input: IO,
+        input: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2772,11 +2586,10 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :param resource_group_name: resource group which Iot Hub belongs to. Required.
         :type resource_group_name: str
         :param input: Route that needs to be tested. Required.
-        :type input: IO
+        :type input: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TestRouteResult or the result of cls(response)
         :rtype: ~azure.mgmt.iothub.v2019_03_22.models.TestRouteResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2784,7 +2597,11 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def test_route(
-        self, iot_hub_name: str, resource_group_name: str, input: Union[_models.TestRouteInput, IO], **kwargs: Any
+        self,
+        iot_hub_name: str,
+        resource_group_name: str,
+        input: Union[_models.TestRouteInput, IO[bytes]],
+        **kwargs: Any
     ) -> _models.TestRouteResult:
         """Test the new route.
 
@@ -2794,18 +2611,14 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :type iot_hub_name: str
         :param resource_group_name: resource group which Iot Hub belongs to. Required.
         :type resource_group_name: str
-        :param input: Route that needs to be tested. Is either a TestRouteInput type or a IO type.
-         Required.
-        :type input: ~azure.mgmt.iothub.v2019_03_22.models.TestRouteInput or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param input: Route that needs to be tested. Is either a TestRouteInput type or a IO[bytes]
+         type. Required.
+        :type input: ~azure.mgmt.iothub.v2019_03_22.models.TestRouteInput or IO[bytes]
         :return: TestRouteResult or the result of cls(response)
         :rtype: ~azure.mgmt.iothub.v2019_03_22.models.TestRouteResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2828,7 +2641,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(input, "TestRouteInput")
 
-        request = build_test_route_request(
+        _request = build_test_route_request(
             iot_hub_name=iot_hub_name,
             resource_group_name=resource_group_name,
             subscription_id=self._config.subscription_id,
@@ -2836,16 +2649,14 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.test_route.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2855,16 +2666,12 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("TestRouteResult", pipeline_response)
+        deserialized = self._deserialize("TestRouteResult", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    test_route.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{iotHubName}/routing/routes/$testnew"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_keys(
@@ -2880,7 +2687,6 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param resource_name: The name of the IoT hub. Required.
         :type resource_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SharedAccessSignatureAuthorizationRule or the
          result of cls(response)
         :rtype:
@@ -2893,7 +2699,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-03-22"))
         cls: ClsType[_models.SharedAccessSignatureAuthorizationRuleListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2904,17 +2710,15 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_keys_request(
+                _request = build_list_keys_request(
                     resource_group_name=resource_group_name,
                     resource_name=resource_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_keys.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -2925,14 +2729,13 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("SharedAccessSignatureAuthorizationRuleListResult", pipeline_response)
@@ -2942,11 +2745,11 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2958,10 +2761,6 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_keys.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/listkeys"
-    }
 
     @distributed_trace
     def get_keys_for_key_name(
@@ -2979,12 +2778,11 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :type resource_name: str
         :param key_name: The name of the shared access policy. Required.
         :type key_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SharedAccessSignatureAuthorizationRule or the result of cls(response)
         :rtype: ~azure.mgmt.iothub.v2019_03_22.models.SharedAccessSignatureAuthorizationRule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2998,22 +2796,20 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-03-22"))
         cls: ClsType[_models.SharedAccessSignatureAuthorizationRule] = kwargs.pop("cls", None)
 
-        request = build_get_keys_for_key_name_request(
+        _request = build_get_keys_for_key_name_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             key_name=key_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_keys_for_key_name.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3023,16 +2819,12 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SharedAccessSignatureAuthorizationRule", pipeline_response)
+        deserialized = self._deserialize("SharedAccessSignatureAuthorizationRule", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_keys_for_key_name.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/IotHubKeys/{keyName}/listkeys"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def export_devices(
@@ -3062,7 +2854,6 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: JobResponse or the result of cls(response)
         :rtype: ~azure.mgmt.iothub.v2019_03_22.models.JobResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3073,7 +2864,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         resource_name: str,
-        export_devices_parameters: IO,
+        export_devices_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3092,11 +2883,10 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :type resource_name: str
         :param export_devices_parameters: The parameters that specify the export devices operation.
          Required.
-        :type export_devices_parameters: IO
+        :type export_devices_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: JobResponse or the result of cls(response)
         :rtype: ~azure.mgmt.iothub.v2019_03_22.models.JobResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3107,7 +2897,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         resource_name: str,
-        export_devices_parameters: Union[_models.ExportDevicesRequest, IO],
+        export_devices_parameters: Union[_models.ExportDevicesRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.JobResponse:
         """Exports all the device identities in the IoT hub identity registry to an Azure Storage blob
@@ -3123,18 +2913,14 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :param resource_name: The name of the IoT hub. Required.
         :type resource_name: str
         :param export_devices_parameters: The parameters that specify the export devices operation. Is
-         either a ExportDevicesRequest type or a IO type. Required.
+         either a ExportDevicesRequest type or a IO[bytes] type. Required.
         :type export_devices_parameters: ~azure.mgmt.iothub.v2019_03_22.models.ExportDevicesRequest or
-         IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         IO[bytes]
         :return: JobResponse or the result of cls(response)
         :rtype: ~azure.mgmt.iothub.v2019_03_22.models.JobResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3157,7 +2943,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(export_devices_parameters, "ExportDevicesRequest")
 
-        request = build_export_devices_request(
+        _request = build_export_devices_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             subscription_id=self._config.subscription_id,
@@ -3165,16 +2951,14 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.export_devices.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3184,16 +2968,12 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("JobResponse", pipeline_response)
+        deserialized = self._deserialize("JobResponse", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    export_devices.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/exportDevices"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def import_devices(
@@ -3223,7 +3003,6 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: JobResponse or the result of cls(response)
         :rtype: ~azure.mgmt.iothub.v2019_03_22.models.JobResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3234,7 +3013,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         resource_name: str,
-        import_devices_parameters: IO,
+        import_devices_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3253,11 +3032,10 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :type resource_name: str
         :param import_devices_parameters: The parameters that specify the import devices operation.
          Required.
-        :type import_devices_parameters: IO
+        :type import_devices_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: JobResponse or the result of cls(response)
         :rtype: ~azure.mgmt.iothub.v2019_03_22.models.JobResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3268,7 +3046,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         resource_name: str,
-        import_devices_parameters: Union[_models.ImportDevicesRequest, IO],
+        import_devices_parameters: Union[_models.ImportDevicesRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.JobResponse:
         """Import, update, or delete device identities in the IoT hub identity registry from a blob. For
@@ -3284,18 +3062,14 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         :param resource_name: The name of the IoT hub. Required.
         :type resource_name: str
         :param import_devices_parameters: The parameters that specify the import devices operation. Is
-         either a ImportDevicesRequest type or a IO type. Required.
+         either a ImportDevicesRequest type or a IO[bytes] type. Required.
         :type import_devices_parameters: ~azure.mgmt.iothub.v2019_03_22.models.ImportDevicesRequest or
-         IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         IO[bytes]
         :return: JobResponse or the result of cls(response)
         :rtype: ~azure.mgmt.iothub.v2019_03_22.models.JobResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3318,7 +3092,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(import_devices_parameters, "ImportDevicesRequest")
 
-        request = build_import_devices_request(
+        _request = build_import_devices_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             subscription_id=self._config.subscription_id,
@@ -3326,16 +3100,14 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.import_devices.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3345,13 +3117,9 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("JobResponse", pipeline_response)
+        deserialized = self._deserialize("JobResponse", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    import_devices.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{resourceName}/importDevices"
-    }
+        return deserialized  # type: ignore

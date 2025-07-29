@@ -20,11 +20,11 @@ class TestServiceBusManagementMigrationConfigsOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_migration_configs_list(self, resource_group):
         response = self.client.migration_configs.list(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,7 +32,7 @@ class TestServiceBusManagementMigrationConfigsOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_and_start_migration(self, resource_group):
+    def test_migration_configs_begin_create_and_start_migration(self, resource_group):
         response = self.client.migration_configs.begin_create_and_start_migration(
             resource_group_name=resource_group.name,
             namespace_name="str",
@@ -56,7 +56,7 @@ class TestServiceBusManagementMigrationConfigsOperations(AzureMgmtRecordedTestCa
                 "targetNamespace": "str",
                 "type": "str",
             },
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -64,12 +64,12 @@ class TestServiceBusManagementMigrationConfigsOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_migration_configs_delete(self, resource_group):
         response = self.client.migration_configs.delete(
             resource_group_name=resource_group.name,
             namespace_name="str",
             config_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -77,12 +77,12 @@ class TestServiceBusManagementMigrationConfigsOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_migration_configs_get(self, resource_group):
         response = self.client.migration_configs.get(
             resource_group_name=resource_group.name,
             namespace_name="str",
             config_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -90,12 +90,12 @@ class TestServiceBusManagementMigrationConfigsOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_complete_migration(self, resource_group):
+    def test_migration_configs_complete_migration(self, resource_group):
         response = self.client.migration_configs.complete_migration(
             resource_group_name=resource_group.name,
             namespace_name="str",
             config_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -103,12 +103,12 @@ class TestServiceBusManagementMigrationConfigsOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_revert(self, resource_group):
+    def test_migration_configs_revert(self, resource_group):
         response = self.client.migration_configs.revert(
             resource_group_name=resource_group.name,
             namespace_name="str",
             config_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself

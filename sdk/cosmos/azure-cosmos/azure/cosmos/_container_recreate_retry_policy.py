@@ -28,7 +28,7 @@ from typing import Optional, Dict, Any, List, Union
 from azure.core.pipeline.transport._base import HttpRequest
 
 from . import http_constants
-from .partition_key import _Empty, _Undefined
+from .partition_key import _Empty, _Undefined, _PartitionKeyKind
 
 
 # pylint: disable=protected-access
@@ -72,10 +72,8 @@ class ContainerRecreateRetryPolicy:
     def __find_container_link_with_rid(self, container_properties_caches: Optional[Dict[str, Any]], rid: str) -> \
             Optional[str]:
         if container_properties_caches:
-            for key, inner_dict in container_properties_caches.items():
-                is_match = next((k for k, v in inner_dict.items() if v == rid), None)
-                if is_match:
-                    return key
+            if rid in container_properties_caches:
+                return container_properties_caches[rid]["container_link"]
         # If we cannot get the container link at all it might mean the cache was somehow deleted, this isn't
         # a container request so this retry is not needed. Return None.
         return None
@@ -90,7 +88,7 @@ class ContainerRecreateRetryPolicy:
         if self._headers and http_constants.HttpHeaders.PartitionKey in self._headers:
             current_partition_key = self._headers[http_constants.HttpHeaders.PartitionKey]
             partition_key_definition = container_cache["partitionKey"] if container_cache else None
-            if partition_key_definition and partition_key_definition["kind"] == "MultiHash":
+            if partition_key_definition and partition_key_definition["kind"] == _PartitionKeyKind.MULTI_HASH:
                 # A null in the multihash partition key indicates a failure in extracting partition keys
                 # from the document definition
                 return 'null' in current_partition_key
@@ -112,7 +110,7 @@ class ContainerRecreateRetryPolicy:
             elif options and isinstance(options["partitionKey"], _Empty):
                 new_partition_key = []
             # else serialize using json dumps method which apart from regular values will serialize None into null
-            elif partition_key_definition and partition_key_definition["kind"] == "MultiHash":
+            elif partition_key_definition and partition_key_definition["kind"] == _PartitionKeyKind.MULTI_HASH:
                 new_partition_key = json.dumps(options["partitionKey"], separators=(',', ':'))
             else:
                 new_partition_key = json.dumps([options["partitionKey"]])
@@ -133,7 +131,7 @@ class ContainerRecreateRetryPolicy:
             elif isinstance(options["partitionKey"], _Empty):
                 new_partition_key = []
             # else serialize using json dumps method which apart from regular values will serialize None into null
-            elif partition_key_definition and partition_key_definition["kind"] == "MultiHash":
+            elif partition_key_definition and partition_key_definition["kind"] == _PartitionKeyKind.MULTI_HASH:
                 new_partition_key = json.dumps(options["partitionKey"], separators=(',', ':'))
             else:
                 new_partition_key = json.dumps([options["partitionKey"]])

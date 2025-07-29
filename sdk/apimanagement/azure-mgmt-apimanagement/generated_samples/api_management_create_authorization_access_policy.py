@@ -6,8 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, IO, Union
-
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.apimanagement import ApiManagementClient
@@ -29,7 +27,7 @@ from azure.mgmt.apimanagement import ApiManagementClient
 def main():
     client = ApiManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
     response = client.authorization_access_policy.create_or_update(
@@ -40,6 +38,7 @@ def main():
         authorization_access_policy_id="fe0bed83-631f-4149-bd0b-0464b1bc7cab",
         parameters={
             "properties": {
+                "appIds": ["d5f04bb0-ba78-4878-a43e-35a0b74fe315"],
                 "objectId": "fe0bed83-631f-4149-bd0b-0464b1bc7cab",
                 "tenantId": "13932a0d-5c63-4d37-901d-1df9c97722ff",
             }
@@ -48,6 +47,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2022-08-01/examples/ApiManagementCreateAuthorizationAccessPolicy.json
+# x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2024-05-01/examples/ApiManagementCreateAuthorizationAccessPolicy.json
 if __name__ == "__main__":
     main()

@@ -5,6 +5,7 @@
   - [Skipping a tox test environment at build queue time](#skipping-a-tox-test-environment-at-build-queue-time)
   - [Skipping entire sections of builds](#skipping-entire-sections-of-builds)
   - [The pyproject.toml](#the-pyprojecttoml)
+    - [Coverage Enforcement](#coverage-enforcement)
   - [Environment variables important to CI](#environment-variables-important-to-ci)
     - [Atomic Overrides](#atomic-overrides)
     - [Enable test logging in CI pipelines](#enable-test-logging-in-ci-pipelines)
@@ -13,6 +14,7 @@
     - [Pyright](#pyright)
     - [Verifytypes](#verifytypes)
     - [Pylint](#pylint)
+    - [Sphinx and docstring checker](#sphinx-and-docstring-checker)
     - [Bandit](#bandit)
     - [ApiStubGen](#apistubgen)
     - [black](#black)
@@ -137,6 +139,18 @@ sphinx = false
 ```
 
 If a package does not yet have a `pyproject.toml`, creating one with just the section `[tool.azure-sdk-build]` will do no harm to the release of the package in question.
+
+### Coverage Enforcement
+
+This repository supports enforcement of an absolute coverage % per package. Set:
+
+```
+[tool.azure-sdk-build]
+absolute_cov = true
+absolute_cov_percent = 75.00
+```
+
+After it is implemented, the `relative_cov` key will enable the prevention of **negative** code coverage contributions.
 
 ## Environment variables important to CI
 

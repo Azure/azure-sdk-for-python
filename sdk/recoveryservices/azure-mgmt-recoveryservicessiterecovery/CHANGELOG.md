@@ -1,5 +1,70 @@
 # Release History
 
+## 1.3.0 (2025-04-23)
+
+### Features Added
+
+  - Added operation ReplicationProtectionContainersOperations.begin_switch_cluster_protection
+  - Added operation group ClusterRecoveryPointOperations
+  - Added operation group ClusterRecoveryPointsOperations
+  - Added operation group ReplicationProtectionClustersOperations
+  - Model A2AEnableProtectionInput has a new parameter protection_cluster_id
+  - Model A2AReplicationDetails has a new parameter is_cluster_infra_ready
+  - Model A2AReplicationDetails has a new parameter protection_cluster_id
+  - Model HyperVReplicaAzureDiskInputDetails has a new parameter sector_size_in_bytes
+  - Model HyperVReplicaAzureEnableProtectionInput has a new parameter linux_license_type
+  - Model HyperVReplicaAzureEnableProtectionInput has a new parameter target_vm_security_profile
+  - Model HyperVReplicaAzureEnableProtectionInput has a new parameter user_selected_os_name
+  - Model HyperVReplicaAzureManagedDiskDetails has a new parameter sector_size_in_bytes
+  - Model HyperVReplicaAzureManagedDiskDetails has a new parameter target_disk_account_type
+  - Model HyperVReplicaAzureReplicationDetails has a new parameter linux_license_type
+  - Model HyperVReplicaAzureReplicationDetails has a new parameter target_vm_security_profile
+  - Model HyperVReplicaAzureUpdateReplicationProtectedItemInput has a new parameter linux_license_type
+  - Model HyperVReplicaAzureUpdateReplicationProtectedItemInput has a new parameter user_selected_os_name
+  - Model InMageRcmDiskInput has a new parameter sector_size_in_bytes
+  - Model InMageRcmDisksDefaultInput has a new parameter sector_size_in_bytes
+  - Model InMageRcmEnableProtectionInput has a new parameter linux_license_type
+  - Model InMageRcmEnableProtectionInput has a new parameter seed_managed_disk_tags
+  - Model InMageRcmEnableProtectionInput has a new parameter sql_server_license_type
+  - Model InMageRcmEnableProtectionInput has a new parameter target_managed_disk_tags
+  - Model InMageRcmEnableProtectionInput has a new parameter target_nic_tags
+  - Model InMageRcmEnableProtectionInput has a new parameter target_vm_security_profile
+  - Model InMageRcmEnableProtectionInput has a new parameter target_vm_tags
+  - Model InMageRcmEnableProtectionInput has a new parameter user_selected_os_name
+  - Model InMageRcmNicDetails has a new parameter target_nic_name
+  - Model InMageRcmNicInput has a new parameter target_nic_name
+  - Model InMageRcmProtectedDiskDetails has a new parameter custom_target_disk_name
+  - Model InMageRcmProtectedDiskDetails has a new parameter disk_state
+  - Model InMageRcmProtectedDiskDetails has a new parameter sector_size_in_bytes
+  - Model InMageRcmReplicationDetails has a new parameter linux_license_type
+  - Model InMageRcmReplicationDetails has a new parameter os_name
+  - Model InMageRcmReplicationDetails has a new parameter seed_managed_disk_tags
+  - Model InMageRcmReplicationDetails has a new parameter sql_server_license_type
+  - Model InMageRcmReplicationDetails has a new parameter supported_os_versions
+  - Model InMageRcmReplicationDetails has a new parameter target_managed_disk_tags
+  - Model InMageRcmReplicationDetails has a new parameter target_nic_tags
+  - Model InMageRcmReplicationDetails has a new parameter target_vm_security_profile
+  - Model InMageRcmReplicationDetails has a new parameter target_vm_tags
+  - Model InMageRcmReplicationDetails has a new parameter unprotected_disks
+  - Model InMageRcmTestFailoverInput has a new parameter os_upgrade_version
+  - Model InMageRcmUnplannedFailoverInput has a new parameter os_upgrade_version
+  - Model InMageRcmUpdateReplicationProtectedItemInput has a new parameter linux_license_type
+  - Model InMageRcmUpdateReplicationProtectedItemInput has a new parameter sql_server_license_type
+  - Model InMageRcmUpdateReplicationProtectedItemInput has a new parameter target_managed_disk_tags
+  - Model InMageRcmUpdateReplicationProtectedItemInput has a new parameter target_nic_tags
+  - Model InMageRcmUpdateReplicationProtectedItemInput has a new parameter target_vm_tags
+  - Model InMageRcmUpdateReplicationProtectedItemInput has a new parameter user_selected_os_name
+  - Model OSDetails has a new parameter user_selected_os_name
+  - Model VMwareCbtDiskInput has a new parameter sector_size_in_bytes
+  - Model VMwareCbtEnableMigrationInput has a new parameter linux_license_type
+  - Model VMwareCbtEnableMigrationInput has a new parameter user_selected_os_name
+  - Model VMwareCbtMigrateInput has a new parameter post_migration_steps
+  - Model VMwareCbtMigrationDetails has a new parameter linux_license_type
+  - Model VMwareCbtProtectedDiskDetails has a new parameter sector_size_in_bytes
+  - Model VMwareCbtTestMigrateInput has a new parameter post_migration_steps
+  - Model VMwareCbtUpdateMigrationItemInput has a new parameter linux_license_type
+  - Model VMwareCbtUpdateMigrationItemInput has a new parameter user_selected_os_name
+
 ## 1.2.0 (2024-02-22)
 
 ### Features Added

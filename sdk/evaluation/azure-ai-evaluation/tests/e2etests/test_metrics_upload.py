@@ -7,7 +7,6 @@ from unittest.mock import MagicMock, patch
 import pytest
 from devtools_testutils import is_live
 from ci_tools.variables import in_ci
-from promptflow.tracing import _start_trace
 
 from azure.ai.evaluation import F1ScoreEvaluator
 from azure.ai.evaluation._evaluate import _utils as ev_utils
@@ -96,6 +95,8 @@ class TestMetricsUpload(object):
         # as a parent. This logger does not propagate the logs and cannot be
         # captured by caplog. Here we will skip this logger to capture logs.
         logger.parent = logging.root
+        caplog.set_level(logging.DEBUG)
+
         with EvalRun(
             run_name="test",
             tracking_uri=_get_tracking_uri(azure_ml_client, project_scope),
@@ -126,6 +127,8 @@ class TestMetricsUpload(object):
         # as a parent. This logger does not propagate the logs and cannot be
         # captured by caplog. Here we will skip this logger to capture logs.
         logger.parent = logging.root
+
+        caplog.set_level(logging.DEBUG)
 
         project_scope = datastore_project_scopes[config_name]
         azure_ml_client = LiteMLClient(
@@ -185,7 +188,12 @@ class TestMetricsUpload(object):
         # Switch off tracing as it is running in the second thread, wile
         # thread pool executor is not compatible with VCR.py.
         if not is_live():
-            monkeypatch.setattr(_start_trace, "_is_devkit_installed", lambda: False)
+            try:
+                from promptflow.tracing import _start_trace
+
+                monkeypatch.setattr(_start_trace, "_is_devkit_installed", lambda: False)
+            except ImportError:
+                pass
         # All loggers, having promptflow. prefix will have "promptflow" logger
         # as a parent. This logger does not propagate the logs and cannot be
         # captured by caplog. Here we will skip this logger to capture logs.
@@ -224,7 +232,12 @@ class TestMetricsUpload(object):
         # Switch off tracing as it is running in the second thread, wile
         # thread pool executor is not compatible with VCR.py.
         if not is_live():
-            monkeypatch.setattr(_start_trace, "_is_devkit_installed", lambda: False)
+            try:
+                from promptflow.tracing import _start_trace
+
+                monkeypatch.setattr(_start_trace, "_is_devkit_installed", lambda: False)
+            except ImportError:
+                pass
         f1_score_eval = F1ScoreEvaluator()
         evaluate(
             data=questions_answers_file,

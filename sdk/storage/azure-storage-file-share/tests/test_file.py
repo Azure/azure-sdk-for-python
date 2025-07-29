@@ -32,7 +32,7 @@ from azure.storage.fileshare import (
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import FileSharePreparer
-from test_helpers import ProgressTracker
+from test_helpers import MockStorageTransport, ProgressTracker
 
 # ------------------------------------------------------------------------------
 TEST_SHARE_PREFIX = 'share'
@@ -3846,5 +3846,85 @@ class TestStorageFile(StorageRecordedTestCase):
 
         new_file.delete_file()
         file_client.delete_file()
+
+    @FileSharePreparer()
+    def test_legacy_transport(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+
+        transport = MockStorageTransport()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path="filemocktransport",
+            credential=storage_account_key,
+            transport=transport,
+            retry_total=0
+        )
+
+        data = file_client.download_file()
+        assert data is not None
+
+        props = file_client.get_file_properties()
+        assert props is not None
+
+        data = b"Hello World!"
+        resp = file_client.upload_file(data)
+        assert resp is not None
+
+        file_data = file_client.download_file().readall()
+        assert file_data == b"Hello World!"  # data is fixed by mock transport
+
+    @FileSharePreparer()
+    def test_legacy_transport_with_content_validation(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+
+        transport = MockStorageTransport()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path="filemocktransport",
+            credential=storage_account_key,
+            transport=transport,
+            retry_total=0
+        )
+
+        data = b"Hello World!"
+        resp = file_client.upload_file(data, validate_content=True)
+        assert resp is not None
+
+        file_data = file_client.download_file(validate_content=True).readall()
+        assert file_data == b"Hello World!"  # data is fixed by mock transport
+
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_upload_range_copy_source_error_and_status_code(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+
+        try:
+            source_file_client = self._create_file(file_name='sourcefile')
+            source_file_client.upload_range(b'abcdefghijklmnop' * 32, offset=0, length=512)
+            target_file_client = self._create_empty_file(file_name='targetfile')
+
+            with pytest.raises(HttpResponseError) as e:
+                target_file_client.upload_range_from_url(
+                    source_file_client.url,
+                    offset=0,
+                    length=512,
+                    source_offset=0
+                )
+
+            assert e.value.response.headers["x-ms-copy-source-status-code"] == "401"
+            assert e.value.response.headers["x-ms-copy-source-error-code"] == "NoAuthenticationInformation"
+        finally:
+            self.fsc.delete_share(self.share_name)
 
 # ------------------------------------------------------------------------------

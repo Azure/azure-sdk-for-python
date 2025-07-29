@@ -15,8 +15,8 @@ from azure.servicebus._common.utils import utc_now
 
 from devtools_testutils import AzureMgmtRecordedTestCase, get_credential
 from devtools_testutils.aio import recorded_by_proxy_async
-from tests.sb_env_loader import ServiceBusPreparer
-from tests.servicebus_preparer import SERVICEBUS_ENDPOINT_SUFFIX
+from sb_env_loader import ServiceBusPreparer
+from servicebus_preparer import SERVICEBUS_ENDPOINT_SUFFIX
 
 from mgmt_test_utilities_async import (
     AsyncMgmtQueueListTestHelper,

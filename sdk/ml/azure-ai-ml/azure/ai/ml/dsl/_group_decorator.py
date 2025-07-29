@@ -5,7 +5,7 @@
 # disable redefined-builtin to use globals/locals as argument name
 
 # Attribute on customized group class to mark a value type as a group of inputs/outputs.
-import _thread
+import threading
 import functools
 from typing import Any, Callable, Dict, List, Optional, Type, TypeVar, Union
 
@@ -271,7 +271,7 @@ def group(_cls: Type[T]) -> Type[T]:
 
             @functools.wraps(user_function)
             def wrapper(self: Any) -> Any:
-                key = id(self), _thread.get_ident()
+                key = id(self), threading.get_ident()
                 if key in repr_running:
                     return "..."
                 repr_running.add(key)

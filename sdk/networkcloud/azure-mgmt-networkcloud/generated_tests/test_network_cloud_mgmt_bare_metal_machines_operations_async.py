@@ -21,9 +21,9 @@ class TestNetworkCloudMgmtBareMetalMachinesOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_subscription(self, resource_group):
+    async def test_bare_metal_machines_list_by_subscription(self, resource_group):
         response = self.client.bare_metal_machines.list_by_subscription(
-            api_version="2024-06-01-preview",
+            api_version="2025-02-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -31,10 +31,10 @@ class TestNetworkCloudMgmtBareMetalMachinesOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_bare_metal_machines_list_by_resource_group(self, resource_group):
         response = self.client.bare_metal_machines.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-06-01-preview",
+            api_version="2025-02-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -42,11 +42,11 @@ class TestNetworkCloudMgmtBareMetalMachinesOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_bare_metal_machines_get(self, resource_group):
         response = await self.client.bare_metal_machines.get(
             resource_group_name=resource_group.name,
             bare_metal_machine_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2025-02-01",
         )
 
         # please add some check logic here by yourself
@@ -54,7 +54,7 @@ class TestNetworkCloudMgmtBareMetalMachinesOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_bare_metal_machines_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.bare_metal_machines.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -77,6 +77,7 @@ class TestNetworkCloudMgmtBareMetalMachinesOperationsAsync(AzureMgmtRecordedTest
                     "cordonStatus": "str",
                     "detailedStatus": "str",
                     "detailedStatusMessage": "str",
+                    "etag": "str",
                     "hardwareInventory": {
                         "additionalHostInformation": "str",
                         "interfaces": [
@@ -142,7 +143,7 @@ class TestNetworkCloudMgmtBareMetalMachinesOperationsAsync(AzureMgmtRecordedTest
                     "type": "str",
                     "virtualMachinesAssociatedIds": ["str"],
                 },
-                api_version="2024-06-01-preview",
+                api_version="2025-02-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -151,12 +152,12 @@ class TestNetworkCloudMgmtBareMetalMachinesOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_bare_metal_machines_begin_delete(self, resource_group):
         response = await (
             await self.client.bare_metal_machines.begin_delete(
                 resource_group_name=resource_group.name,
                 bare_metal_machine_name="str",
-                api_version="2024-06-01-preview",
+                api_version="2025-02-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -165,12 +166,12 @@ class TestNetworkCloudMgmtBareMetalMachinesOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_bare_metal_machines_begin_update(self, resource_group):
         response = await (
             await self.client.bare_metal_machines.begin_update(
                 resource_group_name=resource_group.name,
                 bare_metal_machine_name="str",
-                api_version="2024-06-01-preview",
+                api_version="2025-02-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -179,12 +180,12 @@ class TestNetworkCloudMgmtBareMetalMachinesOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_cordon(self, resource_group):
+    async def test_bare_metal_machines_begin_cordon(self, resource_group):
         response = await (
             await self.client.bare_metal_machines.begin_cordon(
                 resource_group_name=resource_group.name,
                 bare_metal_machine_name="str",
-                api_version="2024-06-01-preview",
+                api_version="2025-02-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -193,12 +194,12 @@ class TestNetworkCloudMgmtBareMetalMachinesOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_power_off(self, resource_group):
+    async def test_bare_metal_machines_begin_power_off(self, resource_group):
         response = await (
             await self.client.bare_metal_machines.begin_power_off(
                 resource_group_name=resource_group.name,
                 bare_metal_machine_name="str",
-                api_version="2024-06-01-preview",
+                api_version="2025-02-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -207,12 +208,12 @@ class TestNetworkCloudMgmtBareMetalMachinesOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_reimage(self, resource_group):
+    async def test_bare_metal_machines_begin_reimage(self, resource_group):
         response = await (
             await self.client.bare_metal_machines.begin_reimage(
                 resource_group_name=resource_group.name,
                 bare_metal_machine_name="str",
-                api_version="2024-06-01-preview",
+                api_version="2025-02-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -221,12 +222,12 @@ class TestNetworkCloudMgmtBareMetalMachinesOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_replace(self, resource_group):
+    async def test_bare_metal_machines_begin_replace(self, resource_group):
         response = await (
             await self.client.bare_metal_machines.begin_replace(
                 resource_group_name=resource_group.name,
                 bare_metal_machine_name="str",
-                api_version="2024-06-01-preview",
+                api_version="2025-02-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -235,12 +236,12 @@ class TestNetworkCloudMgmtBareMetalMachinesOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_restart(self, resource_group):
+    async def test_bare_metal_machines_begin_restart(self, resource_group):
         response = await (
             await self.client.bare_metal_machines.begin_restart(
                 resource_group_name=resource_group.name,
                 bare_metal_machine_name="str",
-                api_version="2024-06-01-preview",
+                api_version="2025-02-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -249,7 +250,7 @@ class TestNetworkCloudMgmtBareMetalMachinesOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_run_command(self, resource_group):
+    async def test_bare_metal_machines_begin_run_command(self, resource_group):
         response = await (
             await self.client.bare_metal_machines.begin_run_command(
                 resource_group_name=resource_group.name,
@@ -259,7 +260,7 @@ class TestNetworkCloudMgmtBareMetalMachinesOperationsAsync(AzureMgmtRecordedTest
                     "script": "str",
                     "arguments": ["str"],
                 },
-                api_version="2024-06-01-preview",
+                api_version="2025-02-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -268,7 +269,7 @@ class TestNetworkCloudMgmtBareMetalMachinesOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_run_data_extracts(self, resource_group):
+    async def test_bare_metal_machines_begin_run_data_extracts(self, resource_group):
         response = await (
             await self.client.bare_metal_machines.begin_run_data_extracts(
                 resource_group_name=resource_group.name,
@@ -277,7 +278,7 @@ class TestNetworkCloudMgmtBareMetalMachinesOperationsAsync(AzureMgmtRecordedTest
                     "commands": [{"command": "str", "arguments": ["str"]}],
                     "limitTimeSeconds": 0,
                 },
-                api_version="2024-06-01-preview",
+                api_version="2025-02-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -286,7 +287,7 @@ class TestNetworkCloudMgmtBareMetalMachinesOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_run_read_commands(self, resource_group):
+    async def test_bare_metal_machines_begin_run_read_commands(self, resource_group):
         response = await (
             await self.client.bare_metal_machines.begin_run_read_commands(
                 resource_group_name=resource_group.name,
@@ -295,7 +296,7 @@ class TestNetworkCloudMgmtBareMetalMachinesOperationsAsync(AzureMgmtRecordedTest
                     "commands": [{"command": "str", "arguments": ["str"]}],
                     "limitTimeSeconds": 0,
                 },
-                api_version="2024-06-01-preview",
+                api_version="2025-02-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -304,12 +305,12 @@ class TestNetworkCloudMgmtBareMetalMachinesOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_start(self, resource_group):
+    async def test_bare_metal_machines_begin_start(self, resource_group):
         response = await (
             await self.client.bare_metal_machines.begin_start(
                 resource_group_name=resource_group.name,
                 bare_metal_machine_name="str",
-                api_version="2024-06-01-preview",
+                api_version="2025-02-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -318,12 +319,12 @@ class TestNetworkCloudMgmtBareMetalMachinesOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_uncordon(self, resource_group):
+    async def test_bare_metal_machines_begin_uncordon(self, resource_group):
         response = await (
             await self.client.bare_metal_machines.begin_uncordon(
                 resource_group_name=resource_group.name,
                 bare_metal_machine_name="str",
-                api_version="2024-06-01-preview",
+                api_version="2025-02-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

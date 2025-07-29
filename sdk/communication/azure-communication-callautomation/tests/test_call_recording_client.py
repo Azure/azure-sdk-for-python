@@ -20,10 +20,12 @@ from unittest.mock import Mock
 
 class TestCallRecordingClient(unittest.TestCase):
     recording_id = "123"
+    call_connection_id = "10000000-0000-0000-0000-000000000000"
 
     def test_start_recording(self):
         def mock_send(_, **kwargs):
             kwargs.pop("stream", None)
+            kwargs.pop("call_locator", None)
             if kwargs:
                 raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
             return mock_response(status_code=200, json_payload={"recording_id": "1", "recording_state": "2"})
