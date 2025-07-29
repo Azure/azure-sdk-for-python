@@ -9,7 +9,7 @@
 - Added support for PiiRedaction and summarization in transcription.
 - Added support for sentiments analysis in speech and choice recognition.
 
-## 1.5.0 (Unreleased)
+## 1.5.0 (2025-07-25)
 
 ### Features Added
 

@@ -11,15 +11,14 @@
 import datetime
 from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from .. import _model_base
-from .._model_base import rest_discriminator, rest_field
+from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import ReportTypeEnum, ResponseDataTypeEnum
 
 if TYPE_CHECKING:
     from .. import models as _models
 
 
-class CarbonEmissionData(_model_base.Model):
+class CarbonEmissionData(_Model):
     """The basic response for different query report, all query report result will have these
     information.
 
@@ -56,7 +55,7 @@ class CarbonEmissionData(_model_base.Model):
     :vartype monthly_emissions_change_value: float
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
+    __mapping__: Dict[str, _Model] = {}
     data_type: str = rest_discriminator(name="dataType", visibility=["read", "create", "update", "delete", "query"])
     """The data type of the query result, indicating the format of the returned response. Required.
      Known values are: \"OverallSummaryData\", \"MonthlySummaryData\", \"TopItemsSummaryData\",
@@ -108,7 +107,7 @@ class CarbonEmissionData(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class CarbonEmissionDataAvailableDateRange(_model_base.Model):
+class CarbonEmissionDataAvailableDateRange(_Model):
     """Response for available date range of carbon emission data.
 
     :ivar start_date: Start date parameter, format is yyyy-MM-dd. Required.
@@ -141,7 +140,7 @@ class CarbonEmissionDataAvailableDateRange(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class CarbonEmissionDataListResult(_model_base.Model):
+class CarbonEmissionDataListResult(_Model):
     """List of carbon emission results.
 
     :ivar value: The CarbonEmissionData items on this page. Required.
@@ -503,7 +502,7 @@ class CarbonEmissionTopItemsSummaryData(CarbonEmissionData, discriminator="TopIt
         super().__init__(*args, data_type=ResponseDataTypeEnum.TOP_ITEMS_SUMMARY_DATA, **kwargs)
 
 
-class DateRange(_model_base.Model):
+class DateRange(_Model):
     """Date range to be used with QueryParameter, it should be within 12 months between start and end
     date. In certain cases, start and end dates must be the same date.
 
@@ -541,7 +540,7 @@ class DateRange(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorAdditionalInfo(_model_base.Model):
+class ErrorAdditionalInfo(_Model):
     """The resource management error additional info.
 
     :ivar type: The additional info type.
@@ -556,7 +555,7 @@ class ErrorAdditionalInfo(_model_base.Model):
     """The additional info."""
 
 
-class ErrorDetail(_model_base.Model):
+class ErrorDetail(_Model):
     """The error detail.
 
     :ivar code: The error code.
@@ -585,9 +584,8 @@ class ErrorDetail(_model_base.Model):
     """The error additional info."""
 
 
-class ErrorResponse(_model_base.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed
-    operations.
+class ErrorResponse(_Model):
+    """Error response.
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.carbonoptimization.models.ErrorDetail
@@ -614,7 +612,7 @@ class ErrorResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class QueryFilter(_model_base.Model):
+class QueryFilter(_Model):
     """Shared query filter parameter to configure carbon emissions data queries for all different
     report type defined in ReportTypeEnum.
 
@@ -656,7 +654,7 @@ class QueryFilter(_model_base.Model):
      ~azure.mgmt.carbonoptimization.models.EmissionScopeEnum]
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
+    __mapping__: Dict[str, _Model] = {}
     report_type: str = rest_discriminator(name="reportType", visibility=["read", "create", "update", "delete", "query"])
     """The ReportType requested for carbon emissions data. Required. Specifies how data is aggregated
      and displayed in the output, as explained in the ReportTypeEnum. Required. Known values are:
@@ -902,8 +900,8 @@ class MonthlySummaryReportQueryFilter(QueryFilter, discriminator="MonthlySummary
         super().__init__(*args, report_type=ReportTypeEnum.MONTHLY_SUMMARY_REPORT, **kwargs)
 
 
-class Operation(_model_base.Model):
-    """Details of a REST API operation, returned from the Resource Provider Operations API.
+class Operation(_Model):
+    """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
      "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
@@ -959,7 +957,7 @@ class Operation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationDisplay(_model_base.Model):
+class OperationDisplay(_Model):
     """Localized display information for and operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
@@ -1575,7 +1573,7 @@ class ResourceGroupCarbonEmissionTopItemsSummaryData(
         super().__init__(*args, data_type=ResponseDataTypeEnum.RESOURCE_GROUP_TOP_ITEMS_SUMMARY_DATA, **kwargs)
 
 
-class SubscriptionAccessDecision(_model_base.Model):
+class SubscriptionAccessDecision(_Model):
     """Access Decision for each Subscription.
 
     :ivar subscription_id: Id of Subscription. Required.
