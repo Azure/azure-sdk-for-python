@@ -155,7 +155,22 @@ class TestChatTargetFunctions:
 
         result = get_chat_target(callback_fn)
 
-        mock_callback_chat_target.assert_called_once_with(callback=callback_fn)
+        mock_callback_chat_target.assert_called_once_with(callback=callback_fn, prompt_to_context=None)
+        assert result == mock_instance
+
+    @patch("azure.ai.evaluation.red_team._utils.strategy_utils._CallbackChatTarget")
+    def test_get_chat_target_callback_function_with_context(self, mock_callback_chat_target):
+        """Test getting chat target from a callback function with context mapping."""
+        mock_instance = MagicMock()
+        mock_callback_chat_target.return_value = mock_instance
+
+        def callback_fn(messages, stream, session_state, context):
+            return {"role": "assistant", "content": "test"}
+
+        prompt_to_context = {"test prompt": "test context"}
+        result = get_chat_target(callback_fn, prompt_to_context=prompt_to_context)
+
+        mock_callback_chat_target.assert_called_once_with(callback=callback_fn, prompt_to_context=prompt_to_context)
         assert result == mock_instance
 
     @patch("azure.ai.evaluation.red_team._utils.strategy_utils._CallbackChatTarget")
@@ -172,6 +187,49 @@ class TestChatTargetFunctions:
         # Verify that _CallbackChatTarget was called with a function that has been adapted
         mock_callback_chat_target.assert_called_once()
         assert result == mock_instance
+
+    @patch("azure.ai.evaluation.red_team._utils.strategy_utils._CallbackChatTarget")
+    def test_get_chat_target_simple_function_with_context(self, mock_callback_chat_target):
+        """Test getting chat target from a simple function with context mapping."""
+        mock_instance = MagicMock()
+        mock_callback_chat_target.return_value = mock_instance
+
+        def simple_fn(query):
+            return "test response"
+
+        prompt_to_context = {"test prompt": "test context"}
+        result = get_chat_target(simple_fn, prompt_to_context=prompt_to_context)
+
+        # Verify that _CallbackChatTarget was called with context
+        mock_callback_chat_target.assert_called_once()
+        call_args = mock_callback_chat_target.call_args
+        assert call_args[1]["prompt_to_context"] == prompt_to_context
+        assert result == mock_instance
+
+    def test_get_chat_target_simple_function_context_support(self):
+        """Test that simple function with context parameter receives context."""
+        def simple_fn_with_context(query, context=None):
+            # Function that accepts context parameter
+            if context:
+                return f"Response with context: {context}"
+            return "Response without context"
+
+        prompt_to_context = {"test prompt": "test context"}
+        result = get_chat_target(simple_fn_with_context, prompt_to_context=prompt_to_context)
+        
+        # Verify we get a callback target
+        assert isinstance(result, _CallbackChatTarget)
+
+    def test_get_chat_target_simple_function_no_context_support(self):
+        """Test that simple function without context parameter works normally."""
+        def simple_fn(query):
+            return "test response"
+
+        prompt_to_context = {"test prompt": "test context"}
+        result = get_chat_target(simple_fn, prompt_to_context=prompt_to_context)
+        
+        # Verify we get a callback target
+        assert isinstance(result, _CallbackChatTarget)
 
 
 @pytest.mark.unittest

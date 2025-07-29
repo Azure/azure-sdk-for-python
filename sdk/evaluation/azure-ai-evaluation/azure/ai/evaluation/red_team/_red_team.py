@@ -1906,7 +1906,7 @@ class RedTeam:
         """
         from ._utils.strategy_utils import get_chat_target
 
-        return get_chat_target(target)
+        return get_chat_target(target, prompt_to_context=self.prompt_to_context)
 
     # Replace with utility function
     def _get_orchestrator_for_attack_strategy(
@@ -3159,8 +3159,6 @@ class RedTeam:
             self.logger.info(f"Starting RED TEAM SCAN: {scan_name}")
             self.logger.info(f"Output directory: {self.scan_output_dir}")
 
-            chat_target = self._get_chat_target(target)
-            self.chat_target = chat_target
             self.application_scenario = application_scenario or ""
 
             if not self.attack_objective_generator:
@@ -3387,6 +3385,9 @@ class RedTeam:
                     all_objectives[strategy_name][risk_category.value] = objectives
 
             self.logger.info("Completed fetching all attack objectives")
+
+            chat_target = self._get_chat_target(target)
+            self.chat_target = chat_target
 
             log_section_header(self.logger, "Starting orchestrator processing")
 
