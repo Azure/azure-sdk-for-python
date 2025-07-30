@@ -32,7 +32,9 @@ USAGE:
        in the Management Center of your AI Foundry project.
 """
 
-import os, time, re
+import os
+import time
+import re
 from typing import Optional
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
