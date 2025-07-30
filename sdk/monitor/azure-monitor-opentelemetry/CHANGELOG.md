@@ -3,7 +3,7 @@
 ## 1.6.14 (Unreleased)
 
 ### Features Added
-- Added RateLimited Sampler Config changes
+- Added configuration changes for RateLimited Sampler
   ([#41976](https://github.com/Azure/azure-sdk-for-python/pull/41976))
 
 ### Breaking Changes
