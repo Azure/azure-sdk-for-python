@@ -95,7 +95,7 @@ class SipRoutingClient(object):
         config = self._rest_service.sip_routing.get(**kwargs)
 
         if config.trunks is None:
-            raise KeyError(f"Trunk with FQDN '{trunk_fqdn}' not found.")
+            raise KeyError("No SIP trunks are configured.")
 
         if trunk_fqdn not in config.trunks:
             raise KeyError(f"Trunk with FQDN '{trunk_fqdn}' not found.")
