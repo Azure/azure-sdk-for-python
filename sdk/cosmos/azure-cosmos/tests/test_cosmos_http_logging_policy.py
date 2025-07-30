@@ -103,7 +103,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
                                                                     enable_diagnostics_logging=True)
 
         # Create a root logger with a mock handler and a filter for status codes above 400
-        cls.root_mock_handler = MockHandler()
+        cls.root_mock_handler = test_config.MockHandler()
         cls.root_mock_handler.addFilter(FilterStatusCode())
         cls.root_logger = create_logger("rootLogger", cls.root_mock_handler)
 
@@ -349,7 +349,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
 
     def test_logging_exceptions_with_no_response(self):
         # Create a mock handler and logger for capturing logs
-        mock_handler = MockHandler()
+        mock_handler = test_config.MockHandler()
         logger = create_logger("test_logger_fault_injection", mock_handler)
 
         # Set up FaultInjectionTransport to inject a 502 error

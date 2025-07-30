@@ -317,7 +317,7 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_logging_exceptions_with_no_response_async(self):
         # Create a mock handler and logger for capturing logs
-        mock_handler = MockHandler()
+        mock_handler = test_config.MockHandler()
         logger = create_logger("test_logger_fault_injection_async", mock_handler)
 
         # Set up FaultInjectionTransportAsync to inject a 502 error
@@ -364,7 +364,7 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_hierarchical_logger_with_filter_async(self):
         # Create a root logger with a mock handler and a filter for status codes above 400
-        root_mock_handler = MockHandler()
+        root_mock_handler = test_config.MockHandler()
         root_mock_handler.addFilter(FilterStatusCode())
         root_logger = create_logger("rootLogger", root_mock_handler)
 

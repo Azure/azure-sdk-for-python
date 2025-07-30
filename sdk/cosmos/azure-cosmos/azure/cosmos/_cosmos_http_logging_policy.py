@@ -62,27 +62,29 @@ HTTPResponseType = Union["LegacyHttpResponse", "HttpResponse", "LegacyAsyncHttpR
 def _populate_logger_attributes(  # type: ignore[attr-defined, union-attr]
                                 logger_attributes: Optional[Dict] = None,
                                 request: Optional[Union[PipelineRequest[HTTPRequestType], Any]] = None,
-                                response_headers: Optional[Dict] = None,
                                 exception: Optional[Union[CosmosHttpResponseError,
                                 ServiceRequestError, ServiceResponseError]] = None) -> Dict:
     """Populates the logger attributes with the request and response details.
 
-    :param logger_attributes: Optional[Dict], The logger attributes to populate.
-    :param request: PipelineRequest[HTTPRequestType], The request object containing HTTP details.
-    :param response_headers: Optional[Dict], The response headers from the HTTP response.
-    :param exception: Optional[Union[CosmosHttpResponseError, ServiceRequestError, ServiceResponseError]], The exception object, if any.
-    :return: Dict, The logger attributes populated with the request and response details.
+    :param logger_attributes: Optional[Dict[str, Any]], The logger attributes to populate.
+    :param request: Optional[Union[PipelineRequest[HTTPRequestType], Any]], The request object containing HTTP details.
+    :param exception: Optional[Union[CosmosHttpResponseError, ServiceRequestError, ServiceResponseError]],
+        The exception object, if any.
+    :return: Dict[str, Any], The logger attributes populated with the request and response details.
     """
+
     if not logger_attributes:
         logger_attributes = {}
 
-    if request:
-        logger_attributes["activity_id"] = request.headers.get(HttpHeaders.ActivityId, "")
-        logger_attributes["verb"] = request.method
-        logger_attributes["url"] = request.url
-        logger_attributes["operation_type"] = request.headers.get(
+    http_request = request.http_request if isinstance(request, PipelineRequest) else None
+
+    if http_request:
+        logger_attributes["activity_id"] = http_request.headers.get(HttpHeaders.ActivityId, "")
+        logger_attributes["verb"] = http_request.method
+        logger_attributes["url"] = http_request.url
+        logger_attributes["operation_type"] = http_request.headers.get(
             'x-ms-thinclient-proxy-operation-type')
-        logger_attributes["resource_type"] = request.headers.get(
+        logger_attributes["resource_type"] = http_request.headers.get(
             'x-ms-thinclient-proxy-resource-type')
         if logger_attributes["url"]:
             url_parts = logger_attributes["url"].split('/')
@@ -136,12 +138,13 @@ def _log_diagnostics_error(  # type: ignore[attr-defined, union-attr]
                                                         request, response_headers, error)
         log_string: str = _get_client_settings(global_endpoint_manager)
         log_string += _get_database_account_settings(global_endpoint_manager)
-        if request:
-            log_string += f"\nRequest URL: {request.url}"
-            log_string += f"\nRequest method: {request.method}"
-            log_string += "\nRequest Activity ID: {}".format(request.headers.get(HttpHeaders.ActivityId))
+        http_request = request.http_request if request else None
+        if http_request:
+            log_string += f"\nRequest URL: {http_request.url}"
+            log_string += f"\nRequest method: {http_request.method}"
+            log_string += "\nRequest Activity ID: {}".format(http_request.headers.get(HttpHeaders.ActivityId))
             log_string += "\nRequest headers:"
-            for header, value in request.headers.items():
+            for header, value in http_request.headers.items():
                 value = _redact_header(header, value)
                 if value and value != "REDACTED":
                     log_string += "\n    '{}': '{}'".format(header, value)
@@ -164,7 +167,7 @@ def _log_diagnostics_error(  # type: ignore[attr-defined, union-attr]
 def _get_client_settings(global_endpoint_manager: Optional[_GlobalEndpointManager]) -> str:
     # Place any client settings we want to log here
     client_preferred_regions = []
-    client_excluded_regions = []
+    client_excluded_regions: Optional[list[str]] = []
     client_account_read_regions = []
     client_account_write_regions = []
 
@@ -192,10 +195,10 @@ def _get_client_settings(global_endpoint_manager: Optional[_GlobalEndpointManage
 
 def _get_database_account_settings(global_endpoint_manager: Optional[_GlobalEndpointManager]) \
         -> str:
+    database_account: Optional["DatabaseAccount"] = None
     if global_endpoint_manager and hasattr(global_endpoint_manager, '_database_account_cache'):
-        database_account: DatabaseAccount = global_endpoint_manager._database_account_cache  # pylint: disable=protected-access, line-too-long
-    else:
-        database_account = None
+        database_account = global_endpoint_manager._database_account_cache  # pylint: disable=protected-access, line-too-long
+
     logger_str = "\nDatabase Account Settings: \n"
     if database_account and database_account.ConsistencyPolicy:
         logger_str += f"\tConsistency Level: {database_account.ConsistencyPolicy.get('defaultConsistencyLevel')}\n"
@@ -424,7 +427,9 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                         "exception_type": "",
                         "is_request": False}  # type: ignore[assignment]
             log_data["exception_type"] = CosmosHttpResponseError.__name__ if log_data["status_code"] and \
-                type(log_data["status_code"]) is int and log_data["status_code"] >= 400 else ""
+                                                                             isinstance(log_data["status_code"],
+                                                                                        int) and log_data[
+                                                                                 "status_code"] >= 400 else ""
             if log_data["url"]:
                 url_parts: List[str] = log_data["url"].split('/')  # type: ignore[union-attr]
                 if 'dbs' in url_parts:
@@ -492,9 +497,9 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
             return
         super().on_response(request, response)
 
-    def on_exception(
+    def on_exception( # pylint: disable=too-many-statements
             self,
-            request: PipelineRequest[HTTPRequestType],  # pylint: disable=unused-argument
+            request: PipelineRequest[HTTPRequestType],
     ) -> None:
 
         """Handles exceptions raised during the pipeline request.
