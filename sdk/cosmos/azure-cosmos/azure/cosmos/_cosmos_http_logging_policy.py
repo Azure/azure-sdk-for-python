@@ -135,7 +135,7 @@ def _log_diagnostics_error(  # type: ignore[attr-defined, union-attr]
     if diagnostics_enabled:
         logger = logger or logging.getLogger("azure.cosmos._cosmos_http_logging_policy")
         logger_attributes = _populate_logger_attributes(logger_attributes,
-                                                        request, response_headers, error)
+                                                        request, error)
         log_string: str = _get_client_settings(global_endpoint_manager)
         log_string += _get_database_account_settings(global_endpoint_manager)
         http_request = request.http_request if request else None
