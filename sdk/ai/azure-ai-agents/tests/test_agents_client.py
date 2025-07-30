@@ -34,6 +34,7 @@ from azure.ai.agents.models import (
     AzureFunctionTool,
     CodeInterpreterTool,
     CodeInterpreterToolResource,
+    DeepResearchTool,
     FilePurpose,
     FileSearchTool,
     FileSearchToolCallContent,
@@ -93,6 +94,8 @@ agentClientPreparer = functools.partial(
     azure_ai_agents_tests_storage_queue="https://foobar.queue.core.windows.net",
     azure_ai_agents_tests_search_index_name="sample_index",
     azure_ai_agents_tests_search_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/someindex",
+    azure_ai_agents_tests_bing_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/bing-search",
+    azure_ai_agents_tests_deep_research_model="gpt-4o-deep-research",
     azure_ai_agents_tests_is_test_run="True",
 )
 
@@ -3150,6 +3153,115 @@ class TestAgentClient(AzureRecordedTestCase):
 
             # Delete the agent once done
             client.delete_agent(agent.id)
+
+    @agentClientPreparer()
+    @recorded_by_proxy
+    def test_deep_research_tool(self, **kwargs):
+        """Test using the DeepResearchTool with an agent."""
+        # create client
+        with self.create_client(**kwargs) as client:
+            assert isinstance(client, AgentsClient)
+
+            # Get connection ID and model name from test environment
+            bing_conn_id = kwargs.pop(
+                "azure_ai_agents_tests_bing_connection_id",
+                "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/bing-search",
+            )
+            deep_research_model = kwargs.pop("azure_ai_agents_tests_deep_research_model", "gpt-4o-deep-research")
+
+            # Create DeepResearchTool
+            deep_research_tool = DeepResearchTool(
+                bing_grounding_connection_id=bing_conn_id,
+                deep_research_model=deep_research_model,
+            )
+
+            # Create agent with the deep research tool
+            agent = client.create_agent(
+                model="gpt-4o",
+                name="deep-research-agent",
+                instructions="You are a helpful agent that assists in researching scientific topics.",
+                tools=deep_research_tool.definitions,
+            )
+            assert agent.id
+            print(f"Created agent with ID: {agent.id}")
+
+            # Create thread
+            thread = client.threads.create()
+            assert thread.id
+            print(f"Created thread with ID: {thread.id}")
+
+            # Create message with a simple research query
+            message = client.messages.create(
+                thread_id=thread.id,
+                role="user",
+                content="Research the benefits of renewable energy sources. Keep the response brief.",
+            )
+            assert message.id
+            print(f"Created message with ID: {message.id}")
+
+            # Create and process run
+            print("Starting deep research... this may take several minutes.")
+            run = client.runs.create(thread_id=thread.id, agent_id=agent.id)
+
+            # Poll the run until completion
+            while run.status in ("queued", "in_progress"):
+                if os.environ.get("AZURE_TEST_RUN_LIVE", "false") == "false":
+                    print(f"Update in a min. Current run status: {run.status}")
+                    time.sleep(60)  # Check every 1 minute
+                run = client.runs.get(thread_id=thread.id, run_id=run.id)
+
+            # Verify the run completed successfully
+            if run.status == RunStatus.COMPLETED:
+                print("Deep research completed successfully")
+
+                # List messages to verify the tool was used and got a response
+                messages = list(client.messages.list(thread_id=thread.id))
+                assert len(messages) >= 2  # At least user message + agent response
+
+                # Find the agent's response
+                agent_messages = [msg for msg in messages if msg.role == MessageRole.AGENT]
+                assert len(agent_messages) > 0, "No agent response found"
+
+                # Verify the response contains some content
+                agent_response = agent_messages[0]
+                assert agent_response.content, "Agent response has no content"
+
+                # Check if response has text content
+                text_messages = agent_response.text_messages
+                assert len(text_messages) > 0, "No text content in agent response"
+                assert len(text_messages[0].text.value) > 50, "Response too short - may not have completed research"
+
+                print(f"Research completed with {len(text_messages)} text blocks")
+
+                # Verify that DeepResearchTool was actually used by checking run steps
+                run_steps = list(client.run_steps.list(thread_id=thread.id, run_id=run.id))
+                assert len(run_steps) > 0, "No run steps found"
+
+                # Look for tool calls in the run steps
+                tool_calls_found = False
+                deep_research_tool_used = False
+                for step in run_steps:
+                    if hasattr(step.step_details, "tool_calls") and step.step_details.tool_calls:
+                        tool_calls_found = True
+                        for tool_call in step.step_details.tool_calls:
+                            if hasattr(tool_call, "type") and tool_call.type == "deep_research":
+                                deep_research_tool_used = True
+                                print(f"Found DeepResearchTool usage in step {step.id}")
+                                break
+
+                assert tool_calls_found, "No tool calls found in run steps"
+                assert deep_research_tool_used, "DeepResearchTool was not used during the run"
+                print("Verified DeepResearchTool was used successfully")
+
+            elif run.status == RunStatus.FAILED:
+                pytest.fail(f"Deep research run failed: {run.last_error}")
+            else:
+                # Handle unexpected status
+                pytest.fail(f"Deep research run ended with unexpected status: {run.status}")
+
+            # Clean up
+            client.delete_agent(agent.id)
+            print("Deleted agent")
 
     @agentClientPreparer()
     @pytest.mark.skip("Recordings not yet implemented.")
