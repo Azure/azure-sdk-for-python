@@ -46,11 +46,10 @@ async def browse_and_reserve_phone_numbers():
     )
 
     # Check if any errors occurred during reservation
-    numbers_with_error = []
     if reservation.phone_numbers:
         numbers_with_error = [
             n for n in reservation.phone_numbers.values() if n.status == "error"]
-    if any(numbers_with_error):
+    if reservation.phone_numbers and any(numbers_with_error):
         print("Errors occurred during reservation:")
         for number in numbers_with_error:
             error_code = number.error.code if number.error and number.error.code else "Unknown"
