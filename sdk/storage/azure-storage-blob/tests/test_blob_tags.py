@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 from enum import Enum
 from time import sleep
 
+from azure.core import MatchConditions
 from azure.core.exceptions import ResourceExistsError, ResourceModifiedError, HttpResponseError
 from azure.storage.blob import (
     AccountSasPermissions,
@@ -542,20 +543,21 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         late_test_datetime = self.get_datetime_variable(
             variables, "late_test_dt", (datetime.utcnow() + timedelta(minutes=15))
         )
-        sas = self.generate_sas(
-            generate_blob_sas,
-            account_name=storage_account_name,
-            account_key=storage_account_key,
-            container_name=self.container_name,
-            blob_name=blob.blob_name,
-            permission=BlobSasPermissions(read=True),
-            expiry=datetime.utcnow() + timedelta(hours=1)
-        )
-        blob_url = '{0}/{1}/{2}?{3}'.format(
-            self.account_url(storage_account_name, "blob"), self.container_name, blob_name, sas)
+        first_tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
+        second_tags = {"tag4": "fourthtag", "tag5": "fifthtag", "tag6": "sixthtag"}
+
+        resp = blob.set_blob_tags(first_tags, if_modified_since=early_test_datetime)
+        assert resp is not None
+
+        tags = blob.get_blob_tags(if_modified_since=early_test_datetime)
+        assert tags == first_tags
 
         props = blob.get_blob_properties()
-        assert props is not None
+        resp = blob.set_blob_tags(second_tags, etag=props.etag, match_condition=MatchConditions.IfModified)
+        assert resp is not None
+
+        tags = blob.get_blob_tags()
+        assert tags == second_tags
 
         return variables
 
