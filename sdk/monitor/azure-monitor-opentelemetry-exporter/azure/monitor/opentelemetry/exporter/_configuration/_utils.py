@@ -66,20 +66,20 @@ def _parse_onesettings_response(response) -> OneSettingsResponse:
     """
     etag = None
     refresh_interval = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
-    settings = {}
+    settings: Dict[str, str] = {}
     status_code = response.status_code
     version = None
     
     if not response:
         logger.warning("No settings found in OneSettings response")
-        return OneSettingsResponse(etag, refresh_interval, settings, status_code)
+        return OneSettingsResponse(etag, refresh_interval, settings, version)
     
     # Extract headers
     if response.headers:
         etag = response.headers.get("ETag")
         refresh_interval_header = response.headers.get("x-ms-onesetinterval")
         try:
-            refresh_interval = float(refresh_interval_header) if refresh_interval_header else refresh_interval
+            refresh_interval = int(refresh_interval_header) if refresh_interval_header else refresh_interval
         except (ValueError, TypeError):
             logger.warning("Invalid refresh interval format: %s", refresh_interval_header)
             refresh_interval = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS

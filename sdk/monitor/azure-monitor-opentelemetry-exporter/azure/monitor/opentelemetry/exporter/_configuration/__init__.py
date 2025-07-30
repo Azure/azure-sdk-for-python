@@ -73,7 +73,7 @@ class _ConfigurationManager:
         if response.settings:
             with self._version_lock:
                 if response.version is not None:
-                    # New config published sucessfully, make a call to config endpoint
+                    # New config published successfully, make a call to config endpoint
                     if response.version > self._version_cache:
                         # TODO: Call config endpoint to pull new config
                         # Update latest version

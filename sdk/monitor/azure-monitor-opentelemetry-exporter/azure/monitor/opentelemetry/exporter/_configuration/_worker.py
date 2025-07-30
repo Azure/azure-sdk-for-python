@@ -38,8 +38,7 @@ class _ConfigurationWorker:
                 return
 
             self._running = False
-            if self._shutdown_event:
-                self._shutdown_event.set()
+            self._shutdown_event.set()
             if self._refresh_thread and self._refresh_thread.is_alive():
                 self._refresh_thread.join()
 
@@ -57,14 +56,13 @@ class _ConfigurationWorker:
         This method will be called periodically to refresh the configuration.
 
         """
-        if self._shutdown_event:
-            while not self._shutdown_event.is_set():
-                try:
-                    # Perform the refresh operation
-                    with self._interval_lock:
-                        self._refresh_interval = _update_configuration_and_get_refresh_interval()  
-                except Exception as ex:
-                    logger.warning("Configuration refresh failed: %s", ex)
-                
-                # Wait until next refresh or shutdown
-                self._shutdown_event.wait(self.get_refresh_interval())
+        while not self._shutdown_event.is_set():
+            try:
+                # Perform the refresh operation
+                with self._interval_lock:
+                    self._refresh_interval = _update_configuration_and_get_refresh_interval()  
+            except Exception as ex:
+                logger.warning("Configuration refresh failed: %s", ex)
+            
+            # Wait until next refresh or shutdown
+            self._shutdown_event.wait(self.get_refresh_interval())
