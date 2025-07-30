@@ -225,7 +225,8 @@ class CheckFile:
 
         # add `title` and update `is_stable` in sdk_packaging.toml
         toml = Path(self.whole_package_name) / "sdk_packaging.toml"
-        stable_config = f'is_stable = {"true" if self.tag_is_stable and self.next_version != "1.0.0b1" else "false"}\n'
+        is_stable = self.tag_is_stable and self.next_version != "1.0.0b1"
+        stable_config = f'is_stable = {"true" if is_stable else "false"}\n'
         if toml.exists():
 
             def edit_toml(content: List[str]):
@@ -246,8 +247,32 @@ class CheckFile:
         else:
             _LOGGER.info(f"{os.getcwd()}/{toml} does not exist")
 
-        build_packaging(output_folder=".", packages=[self.whole_package_name], build_conf=True)
+        build_packaging(
+            output_folder=".", packages=[self.whole_package_name], build_conf=True, template_names=["README.md"]
+        )
         _LOGGER.info("packaging_tools --build-conf successfully")
+
+        stable_classifier = "Development Status :: 5 - Production/Stable"
+        beta_classifier = "Development Status :: 4 - Beta"
+        for item in ["setup.py", "pyproject.toml"]:
+            file_path = Path(self.whole_package_name) / item
+            if not file_path.exists():
+                _LOGGER.info(f"{file_path} does not exist, skip check")
+                continue
+
+            def edit_file(content: List[str]):
+                for i in range(0, len(content)):
+                    if "Development Status" in content[i]:
+                        if is_stable and beta_classifier in content[i]:
+                            content[i] = content[i].replace(beta_classifier, stable_classifier)
+                            _LOGGER.info(f"Replace '{beta_classifier}' with '{stable_classifier}' in {file_path}")
+                        if (not is_stable) and stable_classifier in content[i]:
+                            content[i] = content[i].replace(stable_classifier, beta_classifier)
+                            _LOGGER.info(f"Replace '{stable_classifier}' with '{beta_classifier}' in {file_path}")
+                        break
+
+            modify_file(str(file_path), edit_file)
+            _LOGGER.info(f"Check {file_path} for classifiers successfully")
 
     def sdk_code_path(self) -> str:
         return str(Path(f"sdk/{self.sdk_folder}/{self.whole_package_name}"))
