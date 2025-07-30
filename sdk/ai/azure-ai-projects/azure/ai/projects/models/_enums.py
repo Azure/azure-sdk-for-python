@@ -10,6 +10,69 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AttackStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Strategies for attacks."""
+
+    EASY = "easy"
+    """Represents a default set of easy complexity attacks. Easy complexity attacks require less
+    effort, such as translation of a prompt into some encoding, and does not require any Large
+    Language Model to convert or orchestrate."""
+    MODERATE = "moderate"
+    """Represents a default set of moderate complexity attacks. Moderate complexity attacks require
+    having access to resources such as another generative AI model."""
+    DIFFICULT = "difficult"
+    """Represents a default set of difficult complexity attacks. Difficult complexity attacks include
+    attacks that require access to significant resources and effort to execute an attack such as
+    knowledge of search-based algorithms in addition to a generative AI model."""
+    ASCII_ART = "ascii_art"
+    """Generates visual art using ASCII characters, often used for creative or obfuscation purposes."""
+    ASCII_SMUGGLER = "ascii_smuggler"
+    """Conceals data within ASCII characters, making it harder to detect."""
+    ATBASH = "atbash"
+    """Implements the Atbash cipher, a simple substitution cipher where each letter is mapped to its
+    reverse."""
+    BASE64 = "base64"
+    """Encodes binary data into a text format using Base64, commonly used for data transmission."""
+    BINARY = "binary"
+    """Converts text into binary code, representing data in a series of 0s and 1s."""
+    CAESAR = "caesar"
+    """Applies the Caesar cipher, a substitution cipher that shifts characters by a fixed number of
+    positions."""
+    CHARACTER_SPACE = "character_space"
+    """Alters text by adding spaces between characters, often used for obfuscation."""
+    JAILBREAK = "jailbreak"
+    """Injects specially crafted prompts to bypass AI safeguards, known as User Injected Prompt
+    Attacks (UPIA)."""
+    ANSII_ATTACK = "ansii_attack"
+    """Utilizes ANSI escape sequences to manipulate text appearance and behavior."""
+    CHARACTER_SWAP = "character_swap"
+    """Swaps characters within text to create variations or obfuscate the original content."""
+    SUFFIX_APPEND = "suffix_append"
+    """Appends an adversarial suffix to the prompt."""
+    STRING_JOIN = "string_join"
+    """Joins multiple strings together, often used for concatenation or obfuscation."""
+    UNICODE_CONFUSABLE = "unicode_confusable"
+    """Uses Unicode characters that look similar to standard characters, creating visual confusion."""
+    UNICODE_SUBSTITUTION = "unicode_substitution"
+    """Substitutes standard characters with Unicode equivalents, often for obfuscation."""
+    DIACRITIC = "diacritic"
+    """Adds diacritical marks to characters, changing their appearance and sometimes their meaning."""
+    FLIP = "flip"
+    """Flips characters from front to back, creating a mirrored effect."""
+    LEETSPEAK = "leetspeak"
+    """Transforms text into Leetspeak, a form of encoding that replaces letters with similar-looking
+    numbers or symbols."""
+    ROT13 = "rot13"
+    """Applies the ROT13 cipher, a simple substitution cipher that shifts characters by 13 positions."""
+    MORSE = "morse"
+    """Encodes text into Morse code, using dots and dashes to represent characters."""
+    URL = "url"
+    """Encodes text into URL format."""
+    BASELINE = "baseline"
+    """Represents the baseline direct adversarial probing, which is used by attack strategies as the
+    attack objective."""
+
+
 class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Type (or category) of the connection."""
 
@@ -64,6 +127,13 @@ class DeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Model deployment"""
 
 
+class EvaluationTargetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Allowed types of evaluation targets."""
+
+    MODEL_RESPONSE_GENERATION = "modelResponseGeneration"
+    """Evaluation target that uses a model for response generation."""
+
+
 class IndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of IndexType."""
 
@@ -82,3 +152,16 @@ class PendingUploadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """No pending upload."""
     BLOB_REFERENCE = "BlobReference"
     """Blob Reference is the only supported type."""
+
+
+class RiskCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Risk category for the attack objective."""
+
+    HATE_UNFAIRNESS = "HateUnfairness"
+    """Represents content related to hate or unfairness."""
+    VIOLENCE = "Violence"
+    """Represents content related to violence."""
+    SEXUAL = "Sexual"
+    """Represents content of a sexual nature."""
+    SELF_HARM = "SelfHarm"
+    """Represents content related to self-harm."""
