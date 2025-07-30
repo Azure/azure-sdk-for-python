@@ -241,7 +241,7 @@ class TestExamplesTests(KeyVaultTestCase):
         # List all account settings
         settings = settings_client.list_settings()
         
-        # Get first setting for the get_setting example  
+        # Get first setting for the get_setting example
         first_setting = None
         async for setting in settings:
             print(f"Setting: {setting.name} = {setting.value}")
