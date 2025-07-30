@@ -49,7 +49,6 @@ def browse_and_reserve_numbers_bulk():
     )
 
     # Check if any errors occurred during reservation
-    numbers_with_error = []
     if reservation.phone_numbers:
         numbers_with_error = [
             n for n in reservation.phone_numbers.values() if n.status == "error"]
