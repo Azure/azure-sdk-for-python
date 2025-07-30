@@ -33,14 +33,12 @@ async def sample_export_project():
     clu_key = os.environ["AZURE_CONVERSATIONS_KEY"]
     existing_project_name = os.environ["AZURE_CONVERSATIONS_PROJECT_NAME"]
 
-    client = ConversationAuthoringClient(
-        clu_endpoint, AzureKeyCredential(clu_key)
-    )
+    client = ConversationAuthoringClient(clu_endpoint, AzureKeyCredential(clu_key))
     async with client:
         poller = await client.begin_export_project(
             project_name=existing_project_name,
             string_index_type="Utf16CodeUnit",
-            exported_project_format="Conversation"
+            exported_project_format="Conversation",
         )
         job_state = await poller.result()
         print(f"Export project status: {job_state['status']}")
@@ -59,14 +57,9 @@ async def sample_import_project(exported_project, project_name):
     clu_key = os.environ["AZURE_CONVERSATIONS_KEY"]
 
     print(f"Importing project as '{project_name}'")
-    client = ConversationAuthoringClient(
-        clu_endpoint, AzureKeyCredential(clu_key)
-    )
+    client = ConversationAuthoringClient(clu_endpoint, AzureKeyCredential(clu_key))
     async with client:
-        poller = await client.begin_import_project(
-            project_name=project_name,
-            project=exported_project
-        )
+        poller = await client.begin_import_project(project_name=project_name, project=exported_project)
         response = await poller.result()
         print(f"Import project status: {response['status']}")
         return project_name
@@ -80,9 +73,7 @@ async def sample_train_model(project_name):
     clu_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     clu_key = os.environ["AZURE_CONVERSATIONS_KEY"]
 
-    client = ConversationAuthoringClient(
-        clu_endpoint, AzureKeyCredential(clu_key)
-    )
+    client = ConversationAuthoringClient(clu_endpoint, AzureKeyCredential(clu_key))
     print(f"Training model under label 'sample'.")
     async with client:
         poller = await client.begin_train(
@@ -104,9 +95,7 @@ async def sample_deploy_model(project_name):
 
     deployment_name = "production"
 
-    client = ConversationAuthoringClient(
-        clu_endpoint, AzureKeyCredential(clu_key)
-    )
+    client = ConversationAuthoringClient(clu_endpoint, AzureKeyCredential(clu_key))
 
     print(f"Deploying 'sample' model to 'production'.")
     async with client:
@@ -127,13 +116,9 @@ async def sample_delete_project(project_name):
     clu_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     clu_key = os.environ["AZURE_CONVERSATIONS_KEY"]
 
-    client = ConversationAuthoringClient(
-        clu_endpoint, AzureKeyCredential(clu_key)
-    )
+    client = ConversationAuthoringClient(clu_endpoint, AzureKeyCredential(clu_key))
     async with client:
-        poller = await client.begin_delete_project(
-            project_name=project_name
-        )
+        poller = await client.begin_delete_project(project_name=project_name)
         await poller.result()
         print(f"Deleted project {project_name}")
 
@@ -153,5 +138,6 @@ async def main():
         print("Deleting project...")
         await sample_delete_project(project_name)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())
