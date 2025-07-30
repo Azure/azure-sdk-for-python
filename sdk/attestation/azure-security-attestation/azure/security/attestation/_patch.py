@@ -8,8 +8,35 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import List
+from ._administration_client import AttestationAdministrationClient
+from .models import AttestationType
+from ._models import (
+    AttestationSigner,
+    AttestationToken,
+    AttestationPolicyResult,
+    AttestationResult,
+    AttestationTokenValidationException,
+    AttestationPolicyCertificateResult,
+    PolicyModification,
+    CertificateModification,
+    AttestationPolicyToken,
+    TpmAttestationResult,
+)
 
-__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = [
+    'AttestationAdministrationClient',
+    'AttestationType',
+    'AttestationSigner',
+    'AttestationToken',
+    'AttestationPolicyResult',
+    'AttestationResult',
+    'AttestationTokenValidationException',
+    'AttestationPolicyCertificateResult',
+    'PolicyModification',
+    'CertificateModification',
+    'AttestationPolicyToken',
+    'TpmAttestationResult',
+]  # Add all objects you want publicly available to users at this package level
 
 def patch_sdk():
     """Do not remove from this file.
