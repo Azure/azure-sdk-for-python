@@ -24,7 +24,7 @@ class TestSqlManagementManagedDatabasesOperations(AzureMgmtRecordedTestCase):
         response = self.client.managed_databases.list_by_instance(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestSqlManagementManagedDatabasesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             database_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -62,6 +62,12 @@ class TestSqlManagementManagedDatabasesOperations(AzureMgmtRecordedTestCase):
                 "crossSubscriptionTargetManagedInstanceId": "str",
                 "defaultSecondaryLocation": "str",
                 "earliestRestorePoint": "2020-02-20 00:00:00",
+                "extendedAccessibilityInfo": {
+                    "inaccessibilityReasonDescription": "str",
+                    "inaccessibilityReasonErrorCode": "str",
+                    "inaccessibilityReasonKind": "str",
+                    "inaccessibilityReasonTdeKeyUri": "str",
+                },
                 "failoverGroupId": "str",
                 "id": "str",
                 "isLedgerOn": bool,
@@ -79,7 +85,7 @@ class TestSqlManagementManagedDatabasesOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -92,7 +98,7 @@ class TestSqlManagementManagedDatabasesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             database_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -116,6 +122,12 @@ class TestSqlManagementManagedDatabasesOperations(AzureMgmtRecordedTestCase):
                 "crossSubscriptionTargetManagedInstanceId": "str",
                 "defaultSecondaryLocation": "str",
                 "earliestRestorePoint": "2020-02-20 00:00:00",
+                "extendedAccessibilityInfo": {
+                    "inaccessibilityReasonDescription": "str",
+                    "inaccessibilityReasonErrorCode": "str",
+                    "inaccessibilityReasonKind": "str",
+                    "inaccessibilityReasonTdeKeyUri": "str",
+                },
                 "failoverGroupId": "str",
                 "isLedgerOn": bool,
                 "lastBackupName": "str",
@@ -130,7 +142,7 @@ class TestSqlManagementManagedDatabasesOperations(AzureMgmtRecordedTestCase):
                 "storageContainerUri": "str",
                 "tags": {"str": "str"},
             },
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -144,7 +156,7 @@ class TestSqlManagementManagedDatabasesOperations(AzureMgmtRecordedTestCase):
             managed_instance_name="str",
             database_name="str",
             parameters={"destinationManagedDatabaseId": "str"},
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -158,7 +170,7 @@ class TestSqlManagementManagedDatabasesOperations(AzureMgmtRecordedTestCase):
             managed_instance_name="str",
             database_name="str",
             parameters={"destinationManagedDatabaseId": "str"},
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -172,7 +184,20 @@ class TestSqlManagementManagedDatabasesOperations(AzureMgmtRecordedTestCase):
             managed_instance_name="str",
             database_name="str",
             parameters={"lastBackupName": "str"},
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_managed_databases_begin_reevaluate_inaccessible_database_state(self, resource_group):
+        response = self.client.managed_databases.begin_reevaluate_inaccessible_database_state(
+            resource_group_name=resource_group.name,
+            managed_instance_name="str",
+            database_name="str",
+            api_version="2024-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -186,7 +211,7 @@ class TestSqlManagementManagedDatabasesOperations(AzureMgmtRecordedTestCase):
             managed_instance_name="str",
             database_name="str",
             parameters={"destinationManagedDatabaseId": "str", "operationMode": "str"},
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -198,7 +223,7 @@ class TestSqlManagementManagedDatabasesOperations(AzureMgmtRecordedTestCase):
         response = self.client.managed_databases.list_inaccessible_by_instance(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
