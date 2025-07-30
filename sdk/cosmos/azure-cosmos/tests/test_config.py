@@ -75,8 +75,10 @@ class TestConfig(object):
     TEST_CONTAINER_PREFIX_PARTITION_KEY = ["pk1", "pk2"]
     TEST_CONTAINER_PREFIX_PARTITION_KEY_PATH = ['/pk1', '/pk2']
 
+    # these will be populated by the get_account_info method
     WRITE_LOCATION = ""
-    READ_LOCATION = ""
+    # some default value that is needed for emulator tests
+    READ_LOCATION = "West US"
 
     @classmethod
     def get_account_info(cls, client: CosmosClient):
