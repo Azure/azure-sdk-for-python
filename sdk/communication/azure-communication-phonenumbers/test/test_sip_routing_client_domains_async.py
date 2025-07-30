@@ -26,6 +26,25 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
         setup_configuration(self.connection_str, domains=[self.domain, self.additional_domain])
 
     @recorded_by_proxy_async
+    async def test_set_domain(self, **kwargs):
+        async with self._sip_routing_client:
+            await self._sip_routing_client.set_domain(self.second_additional_domain)
+            result_domains = self._sip_routing_client.list_domains()
+            domains_list =  await self._get_as_list(result_domains)
+
+        assert_domains_are_equal(domains_list, [self.domain, self.additional_domain, self.second_additional_domain])
+
+    @recorded_by_proxy_async
+    async def test_set_domain_with_managed_identity(self, **kwargs):
+        self._sip_routing_client = get_async_sip_client_managed_identity(self.connection_str)
+        async with self._sip_routing_client:
+            await self._sip_routing_client.set_domain(self.second_additional_domain)
+            result_domains =  self._sip_routing_client.list_domains()
+            domains_list =  await self._get_as_list(result_domains)
+            
+        assert_domains_are_equal(domains_list, [self.domain, self.additional_domain, self.second_additional_domain])
+
+    @recorded_by_proxy_async
     async def test_list_domains(self, **kwargs):
         async with self._sip_routing_client:
             domains = self._sip_routing_client.list_domains()
@@ -62,35 +81,6 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
             domains_list = await self._get_as_list(new_domains)
 
         assert_domains_are_equal(domains_list, [self.domain]), "Domain was not deleted."
-
-    async def test_set_trunk_from_managed_identity(self):
-        modified_trunk = SipTrunk(fqdn=self.second_trunk.fqdn, sip_signaling_port=7777, enabled=True,
-                                  direct_transfer=True, privacy_header="none", ip_address_version="ipv6")
-        self._sip_routing_client = get_async_sip_client_managed_identity(self.connection_str)
-        async with self._sip_routing_client:
-            await self._sip_routing_client.set_trunk(modified_trunk)
-            new_trunks = self._sip_routing_client.list_trunks()
-            new_trunks_list = await self._get_as_list(new_trunks)
-        assert_trunks_are_equal(new_trunks_list, [self.first_trunk, modified_trunk])
-
-    @recorded_by_proxy_async
-    async def test_set_domains(self, **kwargs):
-        async with self._sip_routing_client:
-            await self._sip_routing_client.set_domains([self.second_additional_domain])
-            result_domains = self._sip_routing_client.list_domains()
-            domains_list =  await self._get_as_list(result_domains)
-
-        assert_domains_are_equal(domains_list, [self.second_additional_domain])
-
-    @recorded_by_proxy_async
-    async def test_set_domains_with_managed_identity(self, **kwargs):
-        self._sip_routing_client = get_async_sip_client_managed_identity(self.connection_str)
-        async with self._sip_routing_client:
-            await self._sip_routing_client.set_domains([self.second_additional_domain])
-            result_domains =  self._sip_routing_client.list_domains()
-            domains_list =  await self.get_as_list(result_domains)
-            
-        assert_domains_are_equal(domains_list, [self.second_additional_domain])
 
 
     async def _get_as_list(self, iter):

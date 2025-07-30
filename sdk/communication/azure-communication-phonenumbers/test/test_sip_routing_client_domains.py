@@ -24,6 +24,22 @@ class TestSipRoutingClientE2E(PhoneNumbersTestCase):
         setup_configuration(self.connection_str, domains=[self.domain, self.additional_domain])
 
     @recorded_by_proxy
+    def test_set_domain(self, **kwargs):
+        self._sip_routing_client.set_domain(self.second_additional_domain)
+        result_domains = self._sip_routing_client.list_domains()
+        domains_list = get_as_list(result_domains)
+        assert_domains_are_equal(domains_list, [self.domain, self.additional_domain, self.second_additional_domain])
+
+    @recorded_by_proxy
+    def test_set_domain_with_managed_identity(self, **kwargs):
+        client = get_sip_client_managed_identity(self.connection_str)
+        client.set_domain(self.second_additional_domain)
+        result_domains = client.list_domains()
+        domains_list = get_as_list(result_domains)
+        assert_domains_are_equal(domains_list, [self.domain, self.additional_domain, self.second_additional_domain])
+
+
+    @recorded_by_proxy
     def test_list_domains(self, **kwargs):
         domains = self._sip_routing_client.list_domains()
         domains_list = get_as_list(domains)
@@ -53,17 +69,4 @@ class TestSipRoutingClientE2E(PhoneNumbersTestCase):
         domains_list = get_as_list(new_domains)
         assert_domains_are_equal(domains_list, [self.domain])
 
-    @recorded_by_proxy
-    def test_set_domains(self, **kwargs):
-        self._sip_routing_client.set_domains([self.second_additional_domain])
-        result_domains = self._sip_routing_client.list_domains()
-        domains_list = get_as_list(result_domains)
-        assert_domains_are_equal(domains_list, [self.second_additional_domain])
-
-    @recorded_by_proxy
-    def test_set_domains_with_managed_identity(self, **kwargs):
-        client = get_sip_client_managed_identity(self.connection_str)
-        client.set_domains([self.second_additional_domain])
-        result_domains = client.list_domains()
-        domains_list = get_as_list(result_domains)
-        assert_domains_are_equal(domains_list, [self.second_additional_domain])
+    

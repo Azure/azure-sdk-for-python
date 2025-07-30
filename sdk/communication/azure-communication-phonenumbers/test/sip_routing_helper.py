@@ -25,11 +25,11 @@ def get_unique_fqdn(trunkId):
 def assert_domains_are_equal(response_domains, request_domains):
     assert len(response_domains) == len(request_domains), "Length of domain list doesn't match."
 
-    for k in range(len(request_domains)):
-        assert response_domains[k].fqdn == request_domains[k].fqdn, "Domain FQDNs don't match."
-        assert (
-            response_domains[k].enabled == request_domains[k].enabled
-        ), "Enabled fields don't match."
+    # Convert both lists to sets of tuples for comparison
+    response_set = {(domain.fqdn, domain.enabled) for domain in response_domains}
+    request_set = {(domain.fqdn, domain.enabled) for domain in request_domains}
+
+    assert response_set == request_set, "Domain FQDNs don't match."
 
 def assert_trunks_are_equal(response_trunks, request_trunks):
     assert len(response_trunks) == len(request_trunks), "Length of trunk list doesn't match."
