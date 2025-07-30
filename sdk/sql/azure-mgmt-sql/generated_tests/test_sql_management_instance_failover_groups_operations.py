@@ -24,7 +24,7 @@ class TestSqlManagementInstanceFailoverGroupsOperations(AzureMgmtRecordedTestCas
         response = self.client.instance_failover_groups.list_by_location(
             resource_group_name=resource_group.name,
             location_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2022-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestSqlManagementInstanceFailoverGroupsOperations(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             location_name="str",
             failover_group_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2022-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -62,7 +62,7 @@ class TestSqlManagementInstanceFailoverGroupsOperations(AzureMgmtRecordedTestCas
                 "secondaryType": "str",
                 "type": "str",
             },
-            api_version="2024-11-01-preview",
+            api_version="2022-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -75,7 +75,7 @@ class TestSqlManagementInstanceFailoverGroupsOperations(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             location_name="str",
             failover_group_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2022-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -88,7 +88,7 @@ class TestSqlManagementInstanceFailoverGroupsOperations(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             location_name="str",
             failover_group_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2022-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -101,7 +101,7 @@ class TestSqlManagementInstanceFailoverGroupsOperations(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             location_name="str",
             failover_group_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2022-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

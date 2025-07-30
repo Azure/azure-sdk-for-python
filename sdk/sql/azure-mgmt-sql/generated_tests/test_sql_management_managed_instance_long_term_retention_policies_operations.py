@@ -20,26 +20,13 @@ class TestSqlManagementManagedInstanceLongTermRetentionPoliciesOperations(AzureM
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_managed_instance_long_term_retention_policies_list_by_database(self, resource_group):
-        response = self.client.managed_instance_long_term_retention_policies.list_by_database(
-            resource_group_name=resource_group.name,
-            managed_instance_name="str",
-            database_name="str",
-            api_version="2024-11-01-preview",
-        )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
     def test_managed_instance_long_term_retention_policies_get(self, resource_group):
         response = self.client.managed_instance_long_term_retention_policies.get(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             database_name="str",
             policy_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2020-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -54,7 +41,6 @@ class TestSqlManagementManagedInstanceLongTermRetentionPoliciesOperations(AzureM
             database_name="str",
             policy_name="str",
             parameters={
-                "backupStorageAccessTier": "str",
                 "id": "str",
                 "monthlyRetention": "str",
                 "name": "str",
@@ -63,7 +49,7 @@ class TestSqlManagementManagedInstanceLongTermRetentionPoliciesOperations(AzureM
                 "weeklyRetention": "str",
                 "yearlyRetention": "str",
             },
-            api_version="2024-11-01-preview",
+            api_version="2020-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -71,14 +57,13 @@ class TestSqlManagementManagedInstanceLongTermRetentionPoliciesOperations(AzureM
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_managed_instance_long_term_retention_policies_begin_delete(self, resource_group):
-        response = self.client.managed_instance_long_term_retention_policies.begin_delete(
+    def test_managed_instance_long_term_retention_policies_list_by_database(self, resource_group):
+        response = self.client.managed_instance_long_term_retention_policies.list_by_database(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             database_name="str",
-            policy_name="str",
-            api_version="2024-11-01-preview",
-        ).result()  # call '.result()' to poll until service return final result
-
+            api_version="2020-11-01-preview",
+        )
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

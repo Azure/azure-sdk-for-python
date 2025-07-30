@@ -27,7 +27,7 @@ class TestSqlManagementJobVersionsOperationsAsync(AzureMgmtRecordedTestCase):
             server_name="str",
             job_agent_name="str",
             job_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2020-11-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -42,7 +42,7 @@ class TestSqlManagementJobVersionsOperationsAsync(AzureMgmtRecordedTestCase):
             job_agent_name="str",
             job_name="str",
             job_version=0,
-            api_version="2024-11-01-preview",
+            api_version="2020-11-01-preview",
         )
 
         # please add some check logic here by yourself

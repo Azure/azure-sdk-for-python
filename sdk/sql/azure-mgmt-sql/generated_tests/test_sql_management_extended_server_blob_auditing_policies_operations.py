@@ -24,7 +24,7 @@ class TestSqlManagementExtendedServerBlobAuditingPoliciesOperations(AzureMgmtRec
         response = self.client.extended_server_blob_auditing_policies.list_by_server(
             resource_group_name=resource_group.name,
             server_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2021-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestSqlManagementExtendedServerBlobAuditingPoliciesOperations(AzureMgmtRec
             resource_group_name=resource_group.name,
             server_name="str",
             blob_auditing_policy_name="default",
-            api_version="2024-11-01-preview",
+            api_version="2021-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -67,7 +67,7 @@ class TestSqlManagementExtendedServerBlobAuditingPoliciesOperations(AzureMgmtRec
                 "type": "str",
             },
             blob_auditing_policy_name="default",
-            api_version="2024-11-01-preview",
+            api_version="2021-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
