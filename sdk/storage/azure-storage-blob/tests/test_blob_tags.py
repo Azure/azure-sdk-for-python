@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 from enum import Enum
 from time import sleep
 
+from azure.core import MatchConditions
 from azure.core.exceptions import ResourceExistsError, ResourceModifiedError, HttpResponseError
 from azure.storage.blob import (
     AccountSasPermissions,
@@ -522,4 +523,42 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         first_page = next(blob_list)
         items_on_page1 = list(first_page)
         assert 1 == len(items_on_page1)
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_blob_tags_conditional_headers(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        # Act
+        self._setup(storage_account_name, storage_account_key)
+
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(b'hello world', overwrite=True)
+        early_test_datetime = self.get_datetime_variable(
+            variables, "early_test_dt", (datetime.utcnow() - timedelta(minutes=15))
+        )
+        late_test_datetime = self.get_datetime_variable(
+            variables, "late_test_dt", (datetime.utcnow() + timedelta(minutes=15))
+        )
+        first_tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
+        second_tags = {"tag4": "fourthtag", "tag5": "fifthtag", "tag6": "sixthtag"}
+
+        resp = blob.set_blob_tags(first_tags, if_modified_since=early_test_datetime)
+        assert resp is not None
+
+        tags = blob.get_blob_tags(if_modified_since=early_test_datetime)
+        assert tags == first_tags
+
+        props = blob.get_blob_properties()
+        resp = blob.set_blob_tags(second_tags, etag=props.etag, match_condition=MatchConditions.IfModified)
+        assert resp is not None
+
+        tags = blob.get_blob_tags()
+        assert tags == second_tags
+
+        return variables
+
 #------------------------------------------------------------------------------
