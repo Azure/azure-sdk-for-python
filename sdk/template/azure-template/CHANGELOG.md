@@ -2,23 +2,23 @@
 
 [comment]: # (Change log guidance: https://azure.github.io/azure-sdk/policies_releases.html#changelog-guidance)
 
-## 0.0.18b3 (Unreleased)
+## 0.0.18b3 (2024-07-30)
 
 ### Features Added
 
-- Some feature
+- Template package improvements
 
 ### Breaking Changes
 
-- Some breaking change
+- None
 
 ### Bugs Fixed
 
-- Some bug fix
+- Template package fixes
 
 ### Other Changes
 
-- Some other change
+- Package maintenance
 
 ## 0.0.18b2 (2020-09-04)
 
