@@ -2,6 +2,37 @@
 
 The instructions below are for running tests locally, on a Windows machine, against the live service using a local build of the client library.
 
+## Setup an Azure AI Foundry project to use for testing
+
+If you don't already have one, follow the instructions here to create a new Foundry project with all the necessary resources to run all tests.
+
+The foundry project should contain the following:
+
+* The following 3 AI models deployed to the Foundry resource (not a connected Azure OpenAI resource):
+  * gpt-4o model deployed using a model deployment named "gpt-4o".
+  * A model deployment named "DeepSeek-V3". It can be any model.
+  * Any Cohere model. The  "model publisher" should be "Cohere". Model name or deployment name does not matter.
+* A connection of type "Azure OpenAI" named "connection1", that uses api key auth, with  "model_deployment_name": "gpt-4o".
+* A connection of type "Azure OpenAI" named "connection2", that uses Entra ID auth, with "model_deployment_name": "gpt-4o" (it can be the same service as above).
+* A connection of type "AzureStorageAccount" named "balapvbyostoragecanary".
+* An Application Insights resource enabled (per "Tracing" tab in Foundry UI)
+
+Steps to deploy a new Foundry project:
+
+* Clone this repository
+* Change directory to this folder:<br>
+`cd sdk\ai\azure-ai-projects\tests\setup`
+* Log in to Azure and select a subscription:<br>
+`az login`
+* Create a new resource group in your subscription (update resource group name and location as needed):<br>
+`az group create --name dcohen-rg-projects-sdk-tests --location eastus`
+* Create a Foundry project in the resource group (update resouce group name, AI service name and AI Foundry project name as needed):<br>
+`az deployment group create --resource-group dcohen-rg-azure-ai-projects-sdk-tests --template-file main.bicep --parameters aiFoundryName=dcohen-foundry-azure-ai-projects-tests aiProjectName=dcohen-foundry-project-azure-ai-projects-sdk-tests`
+
+The above instructions were inspired by these articles
+* ["Quickstart: Create an Azure AI Foundry project using a Bicep file"](https://learn.microsoft.com/azure/ai-foundry/how-to/create-azure-ai-project-template)
+* ["Azure AI Foundry Agent Service: Standard Agent Setup with Public Networking"](https://github.com/azure-ai-foundry/foundry-samples/tree/main/samples/microsoft/infrastructure-setup/41-standard-agent-setup)
+
 ## Build and install the client library
 
 - Clone or download this sample repository.
