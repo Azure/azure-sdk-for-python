@@ -18,8 +18,12 @@ from azure.core.rest import HttpRequest, HttpResponse
 from . import models as _models
 from ._configuration import AzureCommunicationCallAutomationServiceConfiguration
 from ._utils.serialization import Deserializer, Serializer
-from .operations import CallConnectionOperations, CallMediaOperations, CallRecordingOperations
-from .operations._operations import _AzureCommunicationCallAutomationServiceOperationsMixin
+from .operations import (
+    CallConnectionOperations,
+    CallMediaOperations,
+    CallRecordingOperations,
+    _AzureCommunicationCallAutomationServiceOperationsMixin,
+)
 
 
 class AzureCommunicationCallAutomationService(_AzureCommunicationCallAutomationServiceOperationsMixin):
