@@ -16,6 +16,7 @@ import uuid
 from datetime import datetime
 from typing import Dict, List, Optional, Union
 from pathlib import Path
+from tqdm import tqdm
 
 # Retry imports
 import httpx
@@ -309,7 +310,7 @@ class EvaluationProcessor:
                 json.dump(evaluation_result, f, indent=2)
             
             # Log the full path for debugging
-            print(f"Evaluation results saved to \"{result_path}\".")
+            tqdm.write(f"Evaluation results saved to \"{result_path}\".")
             
             eval_duration = (datetime.now() - eval_start_time).total_seconds()
             self.logger.debug(

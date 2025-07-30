@@ -96,7 +96,7 @@ class OrchestratorManager:
         red_team_info: Dict = None,
         task_statuses: Dict = None,
     ) -> Orchestrator:
-        """Send prompts via the PromptSendingOrchestrator with optimized performance.
+        """Send prompts via the PromptSendingOrchestrator.
 
         :param chat_target: The target to send prompts to
         :type chat_target: PromptChatTarget
@@ -140,7 +140,7 @@ class OrchestratorManager:
         else:
             self.logger.debug("No converters specified")
 
-        # Optimized orchestrator initialization
+        # Initialize orchestrator
         try:
             orchestrator = PromptSendingOrchestrator(objective_target=chat_target, prompt_converters=converter_list)
 
@@ -152,10 +152,6 @@ class OrchestratorManager:
 
             # Debug log the first few characters of each prompt
             self.logger.debug(f"First prompt (truncated): {all_prompts[0][:50]}...")
-
-            # Use a batched approach for send_prompts_async to prevent overwhelming
-            # the model with too many concurrent requests
-            batch_size = min(len(all_prompts), 3)  # Process 3 prompts at a time max
 
             # Initialize output path for memory labelling
             base_path = str(uuid.uuid4())
@@ -169,149 +165,67 @@ class OrchestratorManager:
             if red_team_info:
                 red_team_info[strategy_name][risk_category_name]["data_file"] = output_path
 
-            # Process prompts concurrently within each batch
-            if len(all_prompts) > batch_size:
-                self.logger.debug(
-                    f"Processing {len(all_prompts)} prompts in batches of {batch_size} for {strategy_name}/{risk_category_name}"
-                )
-                batches = [all_prompts[i : i + batch_size] for i in range(0, len(all_prompts), batch_size)]
-
-                for batch_idx, batch in enumerate(batches):
-                    self.logger.debug(
-                        f"Processing batch {batch_idx+1}/{len(batches)} with {len(batch)} prompts for {strategy_name}/{risk_category_name}"
-                    )
-
-                    batch_start_time = datetime.now()
+            # Process all prompts at once
+            self.logger.debug(
+                f"Processing {len(all_prompts)} prompts for {strategy_name}/{risk_category_name}"
+            )
+            start_time = datetime.now()
+            try:
+                @retry(**self.retry_config["network_retry"])
+                async def send_all_with_retry():
                     try:
-                        @retry(**self.retry_config["network_retry"])
-                        async def send_batch_with_retry():
-                            try:
-                                return await asyncio.wait_for(
-                                    orchestrator.send_prompts_async(
-                                        prompt_list=batch,
-                                        memory_labels={
-                                            "risk_strategy_path": output_path,
-                                            "batch": batch_idx + 1,
-                                        },
-                                    ),
-                                    timeout=timeout,
-                                )
-                            except (
-                                httpx.ConnectTimeout,
-                                httpx.ReadTimeout,
-                                httpx.ConnectError,
-                                httpx.HTTPError,
-                                ConnectionError,
-                                TimeoutError,
-                                asyncio.TimeoutError,
-                                httpcore.ReadTimeout,
-                                httpx.HTTPStatusError,
-                            ) as e:
-                                self.logger.warning(
-                                    f"Network error in batch {batch_idx+1} for {strategy_name}/{risk_category_name}: {type(e).__name__}: {str(e)}"
-                                )
-                                await asyncio.sleep(1)
-                                raise
-
-                        # Execute the retry-enabled function
-                        await send_batch_with_retry()
-                        batch_duration = (datetime.now() - batch_start_time).total_seconds()
-                        self.logger.debug(
-                            f"Successfully processed batch {batch_idx+1} for {strategy_name}/{risk_category_name} in {batch_duration:.2f} seconds"
+                        return await asyncio.wait_for(
+                            orchestrator.send_prompts_async(
+                                prompt_list=all_prompts,
+                                memory_labels={
+                                    "risk_strategy_path": output_path,
+                                    "batch": 1,
+                                },
+                            ),
+                            timeout=timeout,
                         )
-
-                        # Print progress to console
-                        if batch_idx < len(batches) - 1:  # Don't print for the last batch
-                            tqdm.write(
-                                f"Strategy {strategy_name}, Risk {risk_category_name}: Processed batch {batch_idx+1}/{len(batches)}"
-                            )
-
-                    except (asyncio.TimeoutError, tenacity.RetryError):
+                    except (
+                        httpx.ConnectTimeout,
+                        httpx.ReadTimeout,
+                        httpx.ConnectError,
+                        httpx.HTTPError,
+                        ConnectionError,
+                        TimeoutError,
+                        OSError,
+                        asyncio.TimeoutError,
+                        httpcore.ReadTimeout,
+                        httpx.HTTPStatusError,
+                    ) as e:
                         self.logger.warning(
-                            f"Batch {batch_idx+1} for {strategy_name}/{risk_category_name} timed out after {timeout} seconds, continuing with partial results"
+                            f"Network error for {strategy_name}/{risk_category_name}: {type(e).__name__}: {str(e)}"
                         )
-                        tqdm.write(
-                            f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category_name}, Batch {batch_idx+1}"
-                        )
-                        # Set task status to TIMEOUT
-                        batch_task_key = f"{strategy_name}_{risk_category_name}_batch_{batch_idx+1}"
-                        if task_statuses:
-                            task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
-                            red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
-                        continue
-                    except Exception as e:
-                        log_error(
-                            self.logger,
-                            f"Error processing batch {batch_idx+1}",
-                            e,
-                            f"{strategy_name}/{risk_category_name}",
-                        )
-                        if red_team_info:
-                            red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
-                        continue
-            else:
-                # Small number of prompts, process all at once
-                self.logger.debug(
-                    f"Processing {len(all_prompts)} prompts in a single batch for {strategy_name}/{risk_category_name}"
-                )
-                batch_start_time = datetime.now()
-                try:
-                    @retry(**self.retry_config["network_retry"])
-                    async def send_all_with_retry():
-                        try:
-                            return await asyncio.wait_for(
-                                orchestrator.send_prompts_async(
-                                    prompt_list=all_prompts,
-                                    memory_labels={
-                                        "risk_strategy_path": output_path,
-                                        "batch": 1,
-                                    },
-                                ),
-                                timeout=timeout,
-                            )
-                        except (
-                            httpx.ConnectTimeout,
-                            httpx.ReadTimeout,
-                            httpx.ConnectError,
-                            httpx.HTTPError,
-                            ConnectionError,
-                            TimeoutError,
-                            OSError,
-                            asyncio.TimeoutError,
-                            httpcore.ReadTimeout,
-                            httpx.HTTPStatusError,
-                        ) as e:
-                            self.logger.warning(
-                                f"Network error in single batch for {strategy_name}/{risk_category_name}: {type(e).__name__}: {str(e)}"
-                            )
-                            await asyncio.sleep(2)
-                            raise
+                        await asyncio.sleep(2)
+                        raise
 
-                    # Execute the retry-enabled function
-                    await send_all_with_retry()
-                    batch_duration = (datetime.now() - batch_start_time).total_seconds()
-                    self.logger.debug(
-                        f"Successfully processed single batch for {strategy_name}/{risk_category_name} in {batch_duration:.2f} seconds"
-                    )
-                except (asyncio.TimeoutError, tenacity.RetryError):
-                    self.logger.warning(
-                        f"Prompt processing for {strategy_name}/{risk_category_name} timed out after {timeout} seconds, continuing with partial results"
-                    )
-                    tqdm.write(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category_name}")
-                    if task_statuses:
-                        single_batch_task_key = f"{strategy_name}_{risk_category_name}_single_batch"
-                        task_statuses[single_batch_task_key] = TASK_STATUS["TIMEOUT"]
-                    if red_team_info:
-                        red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
-                except Exception as e:
-                    log_error(
-                        self.logger,
-                        "Error processing prompts",
-                        e,
-                        f"{strategy_name}/{risk_category_name}",
-                    )
-                    if red_team_info:
-                        red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
+                # Execute the retry-enabled function
+                await send_all_with_retry()
+                duration = (datetime.now() - start_time).total_seconds()
+                self.logger.debug(
+                    f"Successfully processed all prompts for {strategy_name}/{risk_category_name} in {duration:.2f} seconds"
+                )
+            except (asyncio.TimeoutError, tenacity.RetryError):
+                self.logger.warning(
+                    f"Prompt processing for {strategy_name}/{risk_category_name} timed out after {timeout} seconds, continuing with partial results"
+                )
+                print(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category_name}")
+                if task_statuses:
+                    task_statuses[task_key] = TASK_STATUS["TIMEOUT"]
+                if red_team_info:
+                    red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
+            except Exception as e:
+                log_error(
+                    self.logger,
+                    "Error processing prompts",
+                    e,
+                    f"{strategy_name}/{risk_category_name}",
+                )
+                if red_team_info:
+                    red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
 
             if task_statuses:
                 task_statuses[task_key] = TASK_STATUS["COMPLETED"]

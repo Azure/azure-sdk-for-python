@@ -89,7 +89,7 @@ def get_attack_success(result: str) -> bool:
     """
     Based on EVALUATION_PASS_FAIL_MAPPING, returns True denoting attack success if result matches the value of the EVALUATION_PASS_FAIL_MAPPING key False.
     """
-    from .._red_team import EVALUATION_PASS_FAIL_MAPPING
+    from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 
     return result == EVALUATION_PASS_FAIL_MAPPING.get(False, "true")
 
