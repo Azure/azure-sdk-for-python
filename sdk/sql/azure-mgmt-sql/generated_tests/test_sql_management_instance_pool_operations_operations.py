@@ -24,7 +24,7 @@ class TestSqlManagementInstancePoolOperationsOperations(AzureMgmtRecordedTestCas
         response = self.client.instance_pool_operations.list_by_instance_pool(
             resource_group_name=resource_group.name,
             instance_pool_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestSqlManagementInstancePoolOperationsOperations(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             instance_pool_name="str",
             operation_id="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself
