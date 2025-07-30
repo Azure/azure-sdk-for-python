@@ -94,7 +94,7 @@ agentClientPreparer = functools.partial(
     azure_ai_agents_tests_storage_queue="https://foobar.queue.core.windows.net",
     azure_ai_agents_tests_search_index_name="sample_index",
     azure_ai_agents_tests_search_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/someindex",
-    azure_ai_agents_tests_bing_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/bing-search",
+    azure_ai_agents_tests_bing_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.CognitiveServices/accounts/00000/projects/00000/connections/00000",
     azure_ai_agents_tests_deep_research_model="gpt-4o-deep-research",
     azure_ai_agents_tests_is_test_run="True",
 )
@@ -3165,7 +3165,7 @@ class TestAgentClient(AzureRecordedTestCase):
             # Get connection ID and model name from test environment
             bing_conn_id = kwargs.pop(
                 "azure_ai_agents_tests_bing_connection_id",
-                "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/bing-search",
+                "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.CognitiveServices/accounts/00000/projects/00000/connections/00000",
             )
             deep_research_model = kwargs.pop("azure_ai_agents_tests_deep_research_model", "gpt-4o-deep-research")
 
