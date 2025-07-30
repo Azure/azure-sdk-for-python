@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.compute import ComputeManagementClient
+from azure.mgmt.compute.v2024_11_01 import ComputeManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -41,6 +41,18 @@ class TestComputeManagementSshPublicKeysOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
+    def test_ssh_public_keys_get(self, resource_group):
+        response = self.client.ssh_public_keys.get(
+            resource_group_name=resource_group.name,
+            ssh_public_key_name="str",
+            api_version="2024-11-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_ssh_public_keys_create(self, resource_group):
         response = self.client.ssh_public_keys.create(
             resource_group_name=resource_group.name,
@@ -50,6 +62,14 @@ class TestComputeManagementSshPublicKeysOperations(AzureMgmtRecordedTestCase):
                 "id": "str",
                 "name": "str",
                 "publicKey": "str",
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
                 "tags": {"str": "str"},
                 "type": "str",
             },
@@ -76,18 +96,6 @@ class TestComputeManagementSshPublicKeysOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_ssh_public_keys_delete(self, resource_group):
         response = self.client.ssh_public_keys.delete(
-            resource_group_name=resource_group.name,
-            ssh_public_key_name="str",
-            api_version="2024-11-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_ssh_public_keys_get(self, resource_group):
-        response = self.client.ssh_public_keys.get(
             resource_group_name=resource_group.name,
             ssh_public_key_name="str",
             api_version="2024-11-01",

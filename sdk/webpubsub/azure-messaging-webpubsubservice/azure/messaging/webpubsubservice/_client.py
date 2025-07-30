@@ -16,16 +16,13 @@ from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import WebPubSubServiceClientConfiguration
 from ._operations import WebPubSubServiceClientOperationsMixin
-from ._serialization import Deserializer, Serializer
+from ._utils.serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class WebPubSubServiceClient(
-    WebPubSubServiceClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword
+class WebPubSubServiceClient(WebPubSubServiceClientOperationsMixin):
     """WebPubSubServiceClient.
 
     :param hub: Target hub name, which should start with alphabetic characters and only contain
@@ -35,7 +32,7 @@ class WebPubSubServiceClient(
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: Api Version. Default value is "2024-01-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2024-12-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -43,6 +40,7 @@ class WebPubSubServiceClient(
     def __init__(self, hub: str, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
         _endpoint = "{endpoint}"
         self._config = WebPubSubServiceClientConfiguration(hub=hub, endpoint=endpoint, credential=credential, **kwargs)
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [

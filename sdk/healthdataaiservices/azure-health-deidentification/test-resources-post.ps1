@@ -45,15 +45,14 @@ Start-Sleep -Seconds 30
 Get-AzStorageContainer -Name $containerName -Context $storageContext
 
 # Upload the folder and its contents to the container
-# Gets last folder name + filename. example_patient_1\doctor_dictation.txt
+# Gets last folder name + filename. example_patient_1/doctor_dictation.txt
 Get-ChildItem -Path $localFolderPath -Recurse | ForEach-Object {
     $relativePath = $_.FullName
-    $relativePath = $relativePath.Replace("\\", "\")
-    $folderName = ($relativePath -split "\\")[-2]  # Get only the folder name.
-    $blobName = ($relativePath -split "\\")[-1]  # Get only the file name.
+    $folderName = Split-Path -Path (Split-Path -Path $relativePath -Parent) -Leaf
+    $blobName = Split-Path -Path $relativePath -Leaf
     $destinationBlob = $blobName -replace ":", ""
 
-    $destinationBlob = "$folderName\$destinationBlob"
+    $destinationBlob = "$folderName/$destinationBlob"
     Write-Host "Uploading file '$destinationBlob'"
     Set-AzStorageBlobContent -File $_.FullName -Container $containerName -Blob $destinationBlob -Context $storageContext -Force
 }

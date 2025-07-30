@@ -36,7 +36,7 @@ import test_config
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 
-from azure.cosmos.http_constants import ResourceType, HttpHeaders
+from azure.cosmos.http_constants import ResourceType, HttpHeaders, StatusCodes, SubStatusCodes
 from _fault_injection_transport import ERROR_WITH_COUNTER
 
 class FaultInjectionTransportAsync(AioHttpTransport):
@@ -210,10 +210,26 @@ class FaultInjectionTransportAsync(AioHttpTransport):
     @staticmethod
     async def error_write_forbidden() -> Exception:
         return CosmosHttpResponseError(
-            status_code=403,
+            status_code=StatusCodes.FORBIDDEN,
             message="Injected error disallowing writes in this region.",
             response=None,
-            sub_status_code=3,
+            sub_status_code=SubStatusCodes.WRITE_FORBIDDEN,
+        )
+
+    @staticmethod
+    async def error_request_timeout() -> Exception:
+        return CosmosHttpResponseError(
+            status_code=StatusCodes.REQUEST_TIMEOUT,
+            message="Injected request timeout error.",
+            response=None
+        )
+
+    @staticmethod
+    async def error_internal_server_error() -> Exception:
+        return CosmosHttpResponseError(
+            status_code=StatusCodes.INTERNAL_SERVER_ERROR,
+            message="Injected request timeout error.",
+            response=None
         )
 
     @staticmethod

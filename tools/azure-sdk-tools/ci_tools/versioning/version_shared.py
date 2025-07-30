@@ -79,6 +79,10 @@ def get_packages(
 def set_version_py(setup_path, new_version):
     version_py_location = get_version_py(setup_path)
 
+    if not version_py_location:
+        logging.error("No version.py file found in {}".format(setup_path))
+        sys.exit(1)
+
     version_contents = ""
     with open(version_py_location, "r") as version_py_file:
         version_contents = version_py_file.read()

@@ -135,13 +135,18 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                     and request.method == 'POST':
                 # Grab the link used for getting throughput properties to add to message.
                 link = json.loads(request.body)["parameters"][0]["value"]
+                response = exceptions.InternalException(status_code=StatusCodes.NOT_FOUND,
+                                                        headers={HttpHeaders.SubStatus:
+                                                                     SubStatusCodes.THROUGHPUT_OFFER_NOT_FOUND})
                 raise exceptions.CosmosResourceNotFoundError(
                     status_code=StatusCodes.NOT_FOUND,
                     message="Could not find ThroughputProperties for container " + link,
-                    sub_status_code=SubStatusCodes.THROUGHPUT_OFFER_NOT_FOUND)
-
+                    response=response)
             return result
         except exceptions.CosmosHttpResponseError as e:
+            if request:
+                # update session token for relevant operations
+                client._UpdateSessionIfRequired(request.headers, {}, e.headers)
             if request and _has_database_account_header(request.headers):
                 retry_policy = database_account_retry_policy
             elif e.status_code == StatusCodes.FORBIDDEN and e.sub_status in \
