@@ -37,7 +37,7 @@ setup(
     author="Microsoft Corporation",
     author_email="azpysdkhelp@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects",
-    keywords="azure sdk, azure, ai, agents, foundry, inference, chat completion, project, evaluation",
+    keywords="azure sdk, azure, ai, agents, foundry, inference, chat completion, project",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Programming Language :: Python",
@@ -74,7 +74,4 @@ setup(
         "azure-ai-agents>=1.0.0",
     ],
     python_requires=">=3.9",
-    extras_require={
-        "prompts": ["prompty"],
-    },
 )
