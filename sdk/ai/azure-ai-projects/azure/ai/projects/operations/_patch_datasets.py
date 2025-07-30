@@ -17,12 +17,11 @@ from azure.storage.blob import ContainerClient
 from azure.core.tracing.decorator import distributed_trace
 from ._operations import DatasetsOperations as DatasetsOperationsGenerated
 from ..models._models import (
-    DatasetVersion,
     FileDatasetVersion,
     FolderDatasetVersion,
     PendingUploadRequest,
-    PendingUploadType,
     PendingUploadResponse,
+    PendingUploadType,
 )
 
 logger = logging.getLogger(__name__)
@@ -47,7 +46,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         connection_name: Optional[str] = None,
     ) -> Tuple[ContainerClient, str]:
 
-        pending_upload_response: PendingUploadResponse = self.pending_upload(
+        pending_upload_result: PendingUploadResponse = self.pending_upload(
             name=name,
             version=input_version,
             pending_upload_request=PendingUploadRequest(
@@ -57,11 +56,11 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         )
         output_version: str = input_version
 
-        if not pending_upload_response.blob_reference:
+        if not pending_upload_result.blob_reference:
             raise ValueError("Blob reference is not present")
-        if not pending_upload_response.blob_reference.credential:
+        if not pending_upload_result.blob_reference.credential:
             raise ValueError("SAS credential are not present")
-        if not pending_upload_response.blob_reference.credential.sas_uri:
+        if not pending_upload_result.blob_reference.credential.sas_uri:
             raise ValueError("SAS URI is missing or empty")
 
         # For overview on Blob storage SDK in Python see:
@@ -71,7 +70,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         # See https://learn.microsoft.com/python/api/azure-storage-blob/azure.storage.blob.containerclient?view=azure-python#azure-storage-blob-containerclient-from-container-url
         return (
             ContainerClient.from_container_url(
-                container_url=pending_upload_response.blob_reference.credential.sas_uri  # Of the form: "https://<account>.blob.core.windows.net/<container>?<sasToken>"
+                container_url=pending_upload_result.blob_reference.credential.sas_uri  # Of the form: "https://<account>.blob.core.windows.net/<container>?<sasToken>"
             ),
             output_version,
         )
@@ -79,7 +78,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
     @distributed_trace
     def upload_file(
         self, *, name: str, version: str, file_path: str, connection_name: Optional[str] = None, **kwargs: Any
-    ) -> DatasetVersion:
+    ) -> FileDatasetVersion:
         """Upload file to a blob storage, and create a dataset that references this file.
         This method uses the `ContainerClient.upload_blob` method from the azure-storage-blob package
         to upload the file. Any keyword arguments provided will be passed to the `upload_blob` method.
@@ -94,7 +93,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
          If not specified, the default Azure Storage Account connection will be used. Optional.
         :paramtype connection_name: str
         :return: The created dataset version.
-        :rtype: ~azure.ai.projects.models.DatasetVersion
+        :rtype: ~azure.ai.projects.models.FileDatasetVersion
         :raises ~azure.core.exceptions.HttpResponseError: If an error occurs during the HTTP request.
         """
 
@@ -137,7 +136,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
                         ),
                     )
 
-        return dataset_version
+        return dataset_version  # type: ignore
 
     @distributed_trace
     def upload_folder(
@@ -149,7 +148,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         connection_name: Optional[str] = None,
         file_pattern: Optional[re.Pattern] = None,
         **kwargs: Any,
-    ) -> DatasetVersion:
+    ) -> FolderDatasetVersion:
         """Upload all files in a folder and its sub folders to a blob storage, while maintaining
         relative paths, and create a dataset that references this folder.
         This method uses the `ContainerClient.upload_blob` method from the azure-storage-blob package
@@ -168,7 +167,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
          will be uploaded. Optional.
         :paramtype file_pattern: re.Pattern
         :return: The created dataset version.
-        :rtype: ~azure.ai.projects.models.DatasetVersion
+        :rtype: ~azure.ai.projects.models.FolderDatasetVersion
         :raises ~azure.core.exceptions.HttpResponseError: If an error occurs during the HTTP request.
         """
         path_folder = Path(folder)
@@ -219,4 +218,4 @@ class DatasetsOperations(DatasetsOperationsGenerated):
                 dataset_version=FolderDatasetVersion(data_uri=data_uri),
             )
 
-        return dataset_version
+        return dataset_version  # type: ignore

@@ -30,7 +30,7 @@ class TelemetryOperations:
         self._outer_instance = outer_instance
 
     @distributed_trace
-    def get_connection_string(self) -> str:
+    def get_application_insights_connection_string(self) -> str:  # pylint: disable=name-too-long
         """Get the Application Insights connection string associated with the Project's Application Insights resource.
 
         :return: The Application Insights connection string if a the resource was enabled for the Project.
