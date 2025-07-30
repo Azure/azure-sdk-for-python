@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 class _ConfigurationManager:
     """Singleton class to manage configuration settings."""
-    
+
     _instance = None
     _configuration_worker = None
     _instance_lock = Lock()
@@ -28,7 +28,7 @@ class _ConfigurationManager:
     _refresh_interval = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
     _settings_cache: Dict[str, str] = {}
     _version_cache = 0
-    
+
     def __new__(cls):
         with cls._instance_lock:
             if cls._instance is None:
@@ -36,34 +36,54 @@ class _ConfigurationManager:
                 # Initialize the instance here to avoid re-initialization
                 cls._instance._initialize_worker()
             return cls._instance
-    
+
     def _initialize_worker(self):
         """Initialize the ConfigurationManager and start the configuration worker."""
         # Lazy import to avoid circular import
         from azure.monitor.opentelemetry.exporter._configuration._worker import _ConfigurationWorker
         self._configuration_worker = _ConfigurationWorker(self._refresh_interval)
-    
-    def get_configuration_and_refresh_interval(self, query_dict: Optional[Dict[str, str]] = None) -> float:
-        """Get configuration from OneSettings with optional query parameters.
-        The cache will be updated with the latest settings if available.
+
+    def get_configuration_and_refresh_interval(self, query_dict: Optional[Dict[str, str]] = None) -> int:
+        """Fetch configuration from OneSettings and update local cache.
+        
+        This method performs a conditional HTTP request to OneSettings using the
+        current ETag for efficient caching. It updates the local configuration
+        cache with any new settings and manages version tracking for change detection.
+        
+        The method handles version comparison logic:
+        - Version increase: New configuration available, cache updated
+        - Version same: No changes, cache remains unchanged  
+        - Version decrease: Unexpected state, logged as warning
         
         Args:
-            query_dict (Optional[Dict[str, str]]): Optional dictionary of query parameters to include
-
+            query_dict (Optional[Dict[str, str]]): Optional query parameters to include
+                in the OneSettings request. Commonly used for targeting specific
+                configuration namespaces or environments.
+        
+        Returns:
+            float: Updated refresh interval in seconds for the next configuration check.
+        
+        Thread Safety:
+            This method is thread-safe and uses multiple locks to ensure consistent
+            state across concurrent access to configuration data.
+        
+        Note:
+            The method automatically handles ETag-based conditional requests to
+            minimize unnecessary data transfer when configuration hasn't changed.
         """
         query_dict = query_dict or {}
         headers = {}
-        
+
         # Prepare headers with current etag and refresh interval
         with self._config_lock:
             if self._etag:
                 headers["If-None-Match"] = self._etag
             if self._refresh_interval:
                 headers["x-ms-onesetinterval"] = str(self._refresh_interval)
-        
+
         # Make the OneSettings request
         response = make_onesettings_request(_ONE_SETTINGS_CHANGE_URL, query_dict, headers)
-        
+
         # Update configuration state based on response
         with self._config_lock:
             self._etag = response.etag
@@ -97,7 +117,7 @@ class _ConfigurationManager:
             self._instance = None
 
 
-def _update_configuration_and_get_refresh_interval() -> float:
+def _update_configuration_and_get_refresh_interval() -> int:
     targeting = {
         "namespaces": _ONE_SETTINGS_PYTHON_KEY,
     }

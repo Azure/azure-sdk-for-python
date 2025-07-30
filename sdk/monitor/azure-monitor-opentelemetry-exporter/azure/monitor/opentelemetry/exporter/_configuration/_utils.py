@@ -14,37 +14,73 @@ logger = logging.getLogger(__name__)
 
 
 class OneSettingsResponse:
-    """Response object containing OneSettings response data."""
-    
-    def __init__(self, etag: Optional[str] = None, refresh_interval: float = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS, 
-                 settings: Optional[Dict[str, str]] = None, version: Optional[int] = None):
+    """Response object containing OneSettings API response data.
+
+    This class encapsulates the parsed response from a OneSettings API call,
+    including configuration settings, version information, and metadata.
+
+    Attributes:
+        etag (Optional[str]): ETag header value for caching and conditional requests
+        refresh_interval (float): Interval in seconds for the next configuration refresh
+        settings (Dict[str, str]): Dictionary of configuration key-value pairs
+        version (Optional[int]): Configuration version number for change tracking
+    """
+
+    def __init__(
+        self,
+        etag: Optional[str] = None,
+        refresh_interval: int = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS,
+        settings: Optional[Dict[str, str]] = None,
+        version: Optional[int] = None
+    ):
+        """Initialize OneSettingsResponse with configuration data.
+
+        Args:
+            etag (Optional[str], optional): ETag header value for caching. Defaults to None.
+            refresh_interval (float, optional): Refresh interval in seconds.
+                Defaults to _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS.
+            settings (Optional[Dict[str, str]], optional): Configuration settings dictionary.
+                Defaults to empty dict if None.
+            version (Optional[int], optional): Configuration version number. Defaults to None.
+        """
         self.etag = etag
         self.refresh_interval = refresh_interval
         self.settings = settings or {}
         self.version = version
 
 
-def make_onesettings_request(url: str, query_dict: Optional[Dict[str, str]] = None, 
+def make_onesettings_request(url: str, query_dict: Optional[Dict[str, str]] = None,
                            headers: Optional[Dict[str, str]] = None) -> OneSettingsResponse:
-    """Make a request to OneSettings and handle the response.
-    
+    """Make an HTTP request to the OneSettings API and parse the response.
+
+    This function handles the complete OneSettings request lifecycle including:
+    - Making the HTTP GET request with optional query parameters and headers
+    - Error handling for network, HTTP, and JSON parsing errors
+    - Parsing the response into a structured OneSettingsResponse object
+
     Args:
-        url (str): The OneSettings URL to request
-        query_dict (Optional[Dict[str, str]]): Optional query parameters
-        headers (Optional[Dict[str, str]]): Optional request headers
-        
+        url (str): The OneSettings API endpoint URL to request
+        query_dict (Optional[Dict[str, str]], optional): Query parameters to include
+            in the request URL. Defaults to None.
+        headers (Optional[Dict[str, str]], optional): HTTP headers to include in the request.
+            Common headers include 'If-None-Match' for ETag caching. Defaults to None.
+
     Returns:
-        OneSettingsResponse: Parsed response with settings and metadata
+        OneSettingsResponse: Parsed response containing configuration data and metadata.
+            Returns a default response object if the request fails.
+
+    Raises:
+        Does not raise exceptions - all errors are caught and logged, returning a
+        default OneSettingsResponse object.
     """
     query_dict = query_dict or {}
     headers = headers or {}
-    
+
     try:
         result = requests.get(url, params=query_dict, headers=headers, timeout=10)
         result.raise_for_status()  # Raises an exception for 4XX/5XX responses
-        
+
         return _parse_onesettings_response(result)
-        
     except requests.exceptions.RequestException as ex:
         logger.warning("Failed to fetch configuration from OneSettings: %s", str(ex))
         return OneSettingsResponse()
@@ -56,24 +92,43 @@ def make_onesettings_request(url: str, query_dict: Optional[Dict[str, str]] = No
         return OneSettingsResponse()
 
 def _parse_onesettings_response(response) -> OneSettingsResponse:
-    """Parse a OneSettings HTTP response into a structured response object.
-    
+    """Parse an HTTP response from OneSettings into a structured response object.
+
+    This function processes the OneSettings API response and extracts:
+    - HTTP headers (ETag, refresh interval)
+    - Response body (configuration settings, version)
+    - Status code handling (200, 304, 4xx, 5xx)
+
+    The parser handles different HTTP status codes appropriately:
+    - 200: New configuration data available, parse settings and version
+    - 304: Not modified, configuration unchanged (empty settings)
+    - 400/404/414/500: Various error conditions, logged with warnings
+
     Args:
-        response: HTTP response object from requests
-        
+        response: HTTP response object from the requests library containing
+            the OneSettings API response with headers, status code, and content.
+
     Returns:
-        OneSettingsResponse: Parsed response data
+        OneSettingsResponse: Structured response object containing:
+            - etag: ETag header value for conditional requests
+            - refresh_interval: Next refresh interval from headers
+            - settings: Configuration key-value pairs (empty for 304/errors)
+            - version: Configuration version number for change tracking
+
+    Note:
+        This function logs warnings for various error conditions but does not
+        raise exceptions, always returning a valid OneSettingsResponse object.
     """
     etag = None
     refresh_interval = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
     settings: Dict[str, str] = {}
     status_code = response.status_code
     version = None
-    
+
     if not response:
         logger.warning("No settings found in OneSettings response")
         return OneSettingsResponse(etag, refresh_interval, settings, version)
-    
+
     # Extract headers
     if response.headers:
         etag = response.headers.get("ETag")
@@ -83,7 +138,7 @@ def _parse_onesettings_response(response) -> OneSettingsResponse:
         except (ValueError, TypeError):
             logger.warning("Invalid refresh interval format: %s", refresh_interval_header)
             refresh_interval = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
-    
+
     # Handle different status codes
     if status_code == 304:
         # 304 Not Modified - cache stays the same
@@ -96,7 +151,7 @@ def _parse_onesettings_response(response) -> OneSettingsResponse:
                 config = json.loads(decoded_string)
                 settings = config.get("settings", {})
                 if settings and settings.get(_ONE_SETTINGS_CHANGE_VERSION_KEY) is not None:
-                   version = int(settings.get(_ONE_SETTINGS_CHANGE_VERSION_KEY))
+                    version = int(settings.get(_ONE_SETTINGS_CHANGE_VERSION_KEY))  # type: ignore
             except (UnicodeDecodeError, json.JSONDecodeError) as ex:
                 logger.warning("Failed to decode OneSettings response content: %s", str(ex))
             except ValueError as ex:
@@ -109,5 +164,5 @@ def _parse_onesettings_response(response) -> OneSettingsResponse:
         logger.warning("OneSettings request URI too long: %s", response.content)
     elif status_code == 500:
         logger.warning("Internal server error from OneSettings: %s", response.content)
-    
+
     return OneSettingsResponse(etag, refresh_interval, settings, version)

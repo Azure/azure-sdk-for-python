@@ -8,18 +8,43 @@ from azure.monitor.opentelemetry.exporter._configuration import _update_configur
 logger = logging.getLogger(__name__)
 
 class _ConfigurationWorker:
-    """Worker that periodically refreshes configuration in a background thread.
-    
-    This class manages a daemon thread that periodically calls a configuration refresh function
-    and updates the refresh interval dynamically based on configuration responses.
+    """Background worker thread for periodic configuration refresh from OneSettings.
+
+    This class manages a daemon background thread that periodically fetches configuration
+    updates from the OneSettings service. The worker automatically adjusts its refresh
+    interval based on server responses and provides graceful shutdown capabilities.
+
+    The worker operates independently once started and handles all configuration refresh
+    operations in the background, including error handling and dynamic interval adjustment.
+
+    Attributes:
+        _default_refresh_interval (float): Default refresh interval (3600 seconds/1 hour)
+        _interval_lock (threading.Lock): Thread lock for refresh interval access
+        _state_lock (threading.Lock): Thread lock for worker state management
+        _shutdown_event (threading.Event): Event for coordinating graceful shutdown
+        _refresh_thread (threading.Thread): Background daemon thread for configuration refresh
+        _refresh_interval (float): Current refresh interval in seconds
+        _running (bool): Flag indicating if the worker is currently running
     """
 
     def __init__(self, refresh_interval=None) -> None:
-        """Initialize the ConfigurationWorker."""
-        self._default_refresh_interval = 3600.0  # Default to 60 minutes in seconds
+        """Initialize and start the configuration worker thread.
+
+        Creates and starts a background daemon thread that will periodically refresh
+        configuration from OneSettings. The thread starts immediately upon initialization.
+
+        Args:
+            refresh_interval (Optional[float]): Initial refresh interval in seconds.
+                If None, defaults to 3600 seconds (1 hour).
+
+        Note:
+            The background thread is created as a daemon thread, which means it will
+            not prevent the main program from exiting.
+        """
+        self._default_refresh_interval = 3600  # Default to 60 minutes in seconds
         self._interval_lock = threading.Lock()
         self._state_lock = threading.Lock()
-        
+
         self._shutdown_event = threading.Event()
         self._refresh_thread = threading.Thread(
             target=self._get_configuration,
@@ -32,7 +57,20 @@ class _ConfigurationWorker:
         self._running = True
 
     def shutdown(self) -> None:
-        """Shut down the configuration refresh worker thread."""
+        """Gracefully shut down the configuration refresh worker thread.
+
+        This method signals the background thread to stop and waits for it to
+        complete its current operation before returning. The shutdown is coordinated
+        using a threading.Event to ensure the thread can exit cleanly.
+
+        The method is thread-safe and can be called multiple times. Subsequent calls
+        after the first shutdown will have no effect.
+
+        Note:
+            This method blocks until the background thread has fully stopped.
+            If the thread is in the middle of a configuration refresh, it will
+            complete that operation before shutting down.
+        """
         with self._state_lock:
             if not self._running:
                 return
@@ -42,27 +80,52 @@ class _ConfigurationWorker:
             if self._refresh_thread and self._refresh_thread.is_alive():
                 self._refresh_thread.join()
 
-    def get_refresh_interval(self) -> float:
-        """Get the current refresh interval.
+    def get_refresh_interval(self) -> int:
+        """Get the current configuration refresh interval.
 
-        :return: Current refresh interval in seconds.
+        Returns the current refresh interval that determines how often the worker
+        fetches configuration updates from OneSettings. This value can change
+        dynamically based on server responses.
+
+        Returns:
+            int: Current refresh interval in seconds.
+
+        Note:
+            This method is thread-safe and can be called from any thread.
         """
         with self._interval_lock:
             return self._refresh_interval
 
     def _get_configuration(self) -> None:
-        """Update configuration loop that runs in the background thread.
+        """Main configuration refresh loop executed in the background thread.
 
-        This method will be called periodically to refresh the configuration.
+        This method implements the core logic of the configuration worker:
+        1. Continuously loops until shutdown is requested
+        2. Calls the configuration update function to fetch new settings
+        3. Updates the refresh interval based on the server response
+        4. Waits for the next refresh cycle or shutdown signal
 
+        The loop handles exceptions gracefully by logging warnings and continuing
+        operation. The wait operation uses the shutdown event to enable immediate
+        response to shutdown requests even during long wait periods.
+
+        Error Handling:
+            - All exceptions are caught and logged as warnings
+            - Errors do not stop the worker from continuing its refresh cycle
+            - The worker maintains operation even if individual requests fail
+
+        Shutdown Coordination:
+            - Uses _shutdown_event.is_set() to check for shutdown requests
+            - Uses _shutdown_event.wait() for interruptible sleep periods
+            - Exits cleanly when shutdown is requested
         """
         while not self._shutdown_event.is_set():
             try:
                 # Perform the refresh operation
                 with self._interval_lock:
-                    self._refresh_interval = _update_configuration_and_get_refresh_interval()  
-            except Exception as ex:
+                    self._refresh_interval = _update_configuration_and_get_refresh_interval()
+            except Exception as ex:  # pylint: disable=broad-exception-caught
                 logger.warning("Configuration refresh failed: %s", ex)
-            
+
             # Wait until next refresh or shutdown
             self._shutdown_event.wait(self.get_refresh_interval())
