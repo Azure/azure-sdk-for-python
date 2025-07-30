@@ -122,7 +122,7 @@ def fetch_and_print_new_agent_response(
     if not response or response.id == last_message_id:
         return last_message_id  # No new content
 
-    # if not a "cot_summary" return
+    # If not a "cot_summary", return.
     if not any(t.text.value.startswith("cot_summary:") for t in response.text_messages):
         return last_message_id
 
