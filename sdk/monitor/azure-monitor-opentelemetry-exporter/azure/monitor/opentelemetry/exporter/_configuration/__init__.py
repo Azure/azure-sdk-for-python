@@ -90,8 +90,11 @@ class _ConfigurationManager:
 
     def shutdown(self) -> None:
         """Shutdown the configuration worker."""
-        if self._configuration_worker:
-            self._configuration_worker.shutdown()
+        with self._instance_lock:
+            if self._configuration_worker:
+                self._configuration_worker.shutdown()
+                self._configuration_worker = None
+            self._instance = None
 
 
 def _update_configuration_and_get_refresh_interval() -> float:
