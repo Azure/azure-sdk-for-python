@@ -1,3 +1,25 @@
+# The MIT License (MIT)
+# Copyright (c) 2014 Microsoft Corporation
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Dict, List, Tuple, Any, Mapping, Optional, TYPE_CHECKING
 
@@ -9,7 +31,7 @@ from azure.cosmos.partition_key import _get_partition_key_from_partition_key_def
 from azure.cosmos import CosmosList
 if TYPE_CHECKING:
     from azure.cosmos._cosmos_client_connection import _PartitionKeyType , CosmosClientConnection
-import logging
+
 
 
 class ReadManyItemsHelperSync:
@@ -35,7 +57,12 @@ class ReadManyItemsHelperSync:
         self.max_items_per_query = 1000
 
     def read_many_items(self) -> CosmosList:
-        """Reads many items synchronously using a query-based approach with a thread pool."""
+        """Reads many items synchronously using a query-based approach with a thread pool.
+
+        :return: A list of the retrieved items.
+        :rtype: ~azure.cosmos.CosmosList
+        """
+
         if not self.items:
             return CosmosList([], response_headers=CaseInsensitiveDict())
 
@@ -68,7 +95,12 @@ class ReadManyItemsHelperSync:
         return CosmosList(results, response_headers=final_headers)
 
     def _partition_items_by_range(self) -> Dict[str, List[Tuple[str, "_PartitionKeyType"]]]:
-        """Groups items by their partition key range ID efficiently."""
+        # pylint: disable=protected-access
+        """Groups items by their partition key range ID efficiently.
+
+        :return: A dictionary of items grouped by partition key range ID.
+        :rtype: dict[str, list[tuple[str, any]]]
+        """
         collection_rid = _base.GetResourceIdOrFullNameFromLink(self.collection_link)
         partition_key = _get_partition_key_from_partition_key_definition(self.partition_key_definition)
         items_by_partition: Dict[str, List[Tuple[str, "_PartitionKeyType"]]] = {}
@@ -101,7 +133,13 @@ class ReadManyItemsHelperSync:
     def _execute_query_chunk_worker(
             self, partition_id: str, chunk_partition_items: List[Tuple[str, "_PartitionKeyType"]]
     ) -> Tuple[List[Dict[str, Any]], float]:
-        """Synchronous worker to build and execute a query for a chunk of items."""
+        """Synchronous worker to build and execute a query for a chunk of items.
+
+        :param str partition_id: The ID of the partition to query.
+        :param list[tuple[str, any]] chunk_partition_items: A chunk of items to be queried.
+        :return: A tuple containing the list of query results and the request charge.
+        :rtype: tuple[list[dict[str, any]], float]
+        """
         captured_headers = {}
 
         # Define the response hook function
@@ -133,6 +171,6 @@ class ReadManyItemsHelperSync:
             try:
                 total_ru_charge = float(charge)
             except (ValueError, TypeError):
-                self.logger.warning(f"Invalid request charge format: {charge}")
+                self.logger.warning("Invalid request charge format: %s", charge)
 
         return results, total_ru_charge

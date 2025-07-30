@@ -1,4 +1,24 @@
-# azure/cosmos/_query_builder.py
+# The MIT License (MIT)
+# Copyright (c) 2014 Microsoft Corporation
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 """Internal query builder for multi-item operations."""
 
 from typing import Dict, List, Tuple, Any, TYPE_CHECKING
@@ -13,7 +33,12 @@ class _QueryBuilder:
 
     @staticmethod
     def _get_field_expression(path: str) -> str:
-        """Converts a path string into a query field expression."""
+        """Converts a path string into a query field expression.
+
+        :param str path: The path string to convert.
+        :return: The query field expression.
+        :rtype: str
+        """
         field_name = path.lstrip("/")
         if "/" in field_name:
             # Handle nested paths like "a/b" -> c["a"]["b"]
@@ -27,7 +52,13 @@ class _QueryBuilder:
             items: List[Tuple[str, "_PartitionKeyType"]],
             partition_key_definition: Dict[str, Any]
     ) -> bool:
-        """Check if we can use the optimized ID IN query."""
+        """Check if we can use the optimized ID IN query.
+
+        :param list[tuple[str, any]] items: The list of items to check.
+        :param dict[str, any] partition_key_definition: The partition key definition of the container.
+        :return: True if the optimized ID IN query can be used, False otherwise.
+        :rtype: bool
+        """
         partition_key_paths = partition_key_definition.get("paths", [])
         if len(partition_key_paths) != 1 or partition_key_paths[0] != "/id":
             return False
@@ -42,8 +73,13 @@ class _QueryBuilder:
     def is_single_logical_partition_query(
             items: List[Tuple[str, "_PartitionKeyType"]]
     ) -> bool:
-        """
-        Check if all items in a chunk belong to the same logical partition and would benefit from an IN clause.
+        """Check if all items in a chunk belong to the same logical partition.
+
+        This is used to determine if an optimized query with an IN clause can be used.
+
+        :param list[tuple[str, any]] items: The list of items to check.
+        :return: True if all items belong to the same logical partition, False otherwise.
+        :rtype: bool
         """
         if not items or len(items) <= 1:
             return False
@@ -55,9 +91,14 @@ class _QueryBuilder:
             items: List[Tuple[str, "_PartitionKeyType"]],
             partition_key_definition: Dict[str, Any]
     ) -> Dict[str, Any]:
-        """
-        Build a query for items in a single logical partition using an IN clause for IDs.
+        """Build a query for items in a single logical partition using an IN clause for IDs.
+
         e.g., SELECT * FROM c WHERE c.pk = @pk AND c.id IN (@id1, @id2)
+
+        :param list[tuple[str, any]] items: The list of items to build the query for.
+        :param dict[str, any] partition_key_definition: The partition key definition of the container.
+        :return: A dictionary containing the query text and parameters.
+        :rtype: dict[str, any]
         """
         partition_key_path = partition_key_definition['paths'][0].lstrip('/')
         partition_key_value = items[0][1]
@@ -74,7 +115,12 @@ class _QueryBuilder:
 
     @staticmethod
     def build_id_in_query(items: List[Tuple[str, "_PartitionKeyType"]]) -> Dict[str, Any]:
-        """Build optimized query using ID IN clause when ID equals partition key."""
+        """Build optimized query using ID IN clause when ID equals partition key.
+
+        :param list[tuple[str, any]] items: The list of items to build the query for.
+        :return: A dictionary containing the query text and parameters.
+        :rtype: dict[str, any]
+        """
         id_params = {f"@param_id{i}": item_id for i, (item_id, _) in enumerate(items)}
         param_names = ", ".join(id_params.keys())
         parameters = [{"name": name, "value": value} for name, value in id_params.items()]
@@ -88,7 +134,13 @@ class _QueryBuilder:
             items_by_partition: Dict[str, List[Tuple[str, "_PartitionKeyType"]]],
             partition_key_definition: Dict[str, Any]
     ) -> Dict[str, Any]:
-        """Builds a parameterized SQL query for reading multiple items."""
+        """Builds a parameterized SQL query for reading multiple items.
+
+        :param dict[str, list[tuple[str, any]]] items_by_partition: A dictionary of items grouped by partition key.
+        :param dict[str, any] partition_key_definition: The partition key definition of the container.
+        :return: A dictionary containing the query text and parameters.
+        :rtype: dict[str, any]
+        """
         all_items = [item for partition_items in items_by_partition.values() for item in partition_items]
 
         if not all_items:

@@ -1,17 +1,44 @@
+# The MIT License (MIT)
+# Copyright (c) 2018 Microsoft Corporation
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+import logging
 import asyncio
-from typing import Dict, List, Tuple, Any, Union, Mapping, Optional
+from typing import (
+    Dict,
+    List,
+    Tuple,
+    Any,
+    Mapping,
+    Optional,
+    TYPE_CHECKING
+)
 
 from azure.cosmos import _base
 from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos._query_builder import _QueryBuilder
-from azure.cosmos.partition_key import _Undefined, _Empty, NonePartitionKeyValue, _get_partition_key_from_partition_key_definition
+from azure.cosmos.partition_key import _get_partition_key_from_partition_key_definition
 from azure.cosmos import CosmosList
-import logging
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from azure.cosmos.aio._cosmos_client_connection_async import PartitionKeyType, CosmosClientConnection
-
 
 class ReadManyItemsHelper:
     """Helper class for handling read many items operations."""
@@ -36,7 +63,11 @@ class ReadManyItemsHelper:
         self.max_items_per_query = 1000
 
     async def read_many_items(self) -> 'CosmosList':
-        """Executes the read-many operation."""
+        """Executes the read-many operation.
+
+        :return: A list of the retrieved items.
+        :rtype: ~azure.cosmos.CosmosList
+        """
         # Group items by partition key range
         items_by_partition = await self.partition_items_by_range(
             self.items, self.collection_link, self.partition_key_definition
@@ -63,7 +94,16 @@ class ReadManyItemsHelper:
             collection_link: str,
             partition_key_definition: Dict[str, Any]
     ) -> Dict[str, List[Tuple[str, "PartitionKeyType"]]]:
-        """Groups items by their partition key range ID efficiently."""
+        # pylint: disable=protected-access
+        """Groups items by their partition key range ID efficiently.
+
+        :param items: A list of tuples, each containing an item ID and its partition key.
+        :type items: list[tuple[str, azure.cosmos.aio._cosmos_client_connection_async.PartitionKeyType]]
+        :param str collection_link: The link to the collection.
+        :param dict partition_key_definition: The partition key definition of the collection.
+        :return: A dictionary mapping partition key range IDs to lists of items.
+        :rtype: dict[str, list[tuple[str, azure.cosmos.aio._cosmos_client_connection_async.PartitionKeyType]]]
+        """
         collection_rid = _base.GetResourceIdOrFullNameFromLink(collection_link)
         partition_key = _get_partition_key_from_partition_key_definition(partition_key_definition)
         items_by_partition: Dict[str, List[Tuple[str, "PartitionKeyType"]]] = {}
@@ -97,7 +137,13 @@ class ReadManyItemsHelper:
             self,
             items_by_partition: Dict[str, List[Tuple[str, "PartitionKeyType"]]]
     ) -> List[Dict[str, List[Tuple[str, "PartitionKeyType"]]]]:
-        """Create query chunks for concurrency control."""
+        """Create query chunks for concurrency control.
+
+        :param items_by_partition: A dictionary mapping partition key range IDs to lists of items.
+        :type items_by_partition: dict[str, list[tuple[str, azure.cosmos.aio._cosmos_client_connection_async.PartitionKeyType]]]
+        :return: A list of query chunks, where each chunk is a dictionary with a single partition.
+        :rtype: list[dict[str, list[tuple[str, azure.cosmos.aio._cosmos_client_connection_async.PartitionKeyType]]]]
+        """
         query_chunks = []
         for partition_id, partition_items in items_by_partition.items():
             # Split large partitions into chunks of self.max_items_per_query
@@ -115,7 +161,18 @@ class ReadManyItemsHelper:
             max_concurrency: int = 10,
             **kwargs: Any
     ) -> Tuple[List[Any], CaseInsensitiveDict]:
-        """Execute query chunks concurrently and return aggregated results."""
+        """Execute query chunks concurrently and return aggregated results.
+
+        :param query_chunks: A list of query chunks to be executed.
+        :type query_chunks: list[dict[str, list[tuple[str, azure.cosmos.aio._cosmos_client_connection_async.PartitionKeyType]]]]
+        :param str collection_link: The link to the collection.
+        :param dict partition_key_definition: The partition key definition of the collection.
+        :param options: Query options.
+        :type options: mapping[str, any]
+        :param int max_concurrency: The maximum number of concurrent queries.
+        :return: A tuple containing the aggregated results and the combined response headers.
+        :rtype: tuple[list[any], ~azure.core.utils.CaseInsensitiveDict]
+        """
         if not query_chunks:
             return [], CaseInsensitiveDict()
 
@@ -153,7 +210,7 @@ class ReadManyItemsHelper:
                     try:
                         total_ru_charge = float(charge)
                     except (ValueError, TypeError):
-                        self.logger.warning(f"Invalid request charge format: {charge}")
+                        self.logger.warning("Invalid request charge format: %s", charge)
 
                 return individual_chunk_results, total_ru_charge
 

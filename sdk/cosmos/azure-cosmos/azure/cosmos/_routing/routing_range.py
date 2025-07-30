@@ -66,8 +66,10 @@ class Range(object):
 
     @classmethod
     def get_full_range(cls):
-        """
-        Returns a Range object that covers the entire possible range of partition key values.
+        """Gets a Range object that covers the entire possible range of partition key values.
+
+        :return: A Range object that covers the entire possible range of partition key values.
+        :rtype: ~azure.cosmos._routing.routing_range.Range
         """
         return cls(range_min="", range_max="FF", isMinInclusive=True, isMaxInclusive=False)
 
