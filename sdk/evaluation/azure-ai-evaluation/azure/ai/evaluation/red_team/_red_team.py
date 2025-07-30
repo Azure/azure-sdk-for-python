@@ -12,14 +12,10 @@ import time
 import uuid
 from datetime import datetime
 from typing import Callable, Dict, List, Optional, Union, cast, Any
-from pathlib import Path
 from tqdm import tqdm
 
 # Azure AI Evaluation imports
-from azure.ai.evaluation._common.constants import Tasks, _InternalAnnotationTasks
-from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.ai.evaluation._constants import TokenScope
-from azure.ai.evaluation._version import VERSION
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._model_configurations import EvaluationResult
 from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenManager
@@ -57,12 +53,6 @@ from ._attack_objective_generator import (
 from pyrit.common import initialize_pyrit, DUCK_DB
 from pyrit.prompt_target import PromptChatTarget
 
-# Retry imports
-import httpx
-import httpcore
-from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception
-from azure.core.exceptions import ServiceRequestError, ServiceResponseError
-
 # Local imports - constants and utilities
 from ._utils.constants import TASK_STATUS
 from ._utils.logging_utils import (
@@ -74,10 +64,12 @@ from ._utils.formatting_utils import (
     get_strategy_name,
     get_flattened_attack_strategies,
     write_pyrit_outputs_to_file,
+    format_scorecard
 )
 from ._utils.strategy_utils import get_chat_target, get_converter_for_strategy
+from ._utils.retry_utils import create_standard_retry_manager
+from ._utils.file_utils import create_file_manager
 
-# Import the new modules
 from ._orchestrator_manager import OrchestratorManager
 from ._evaluation_processor import EvaluationProcessor
 from ._mlflow_integration import MLflowIntegration
@@ -111,11 +103,6 @@ class RedTeam:
         When using thresholds, scores >= threshold are considered successful attacks.
     :type attack_success_thresholds: Optional[Dict[Union[RiskCategory, _InternalRiskCategory], int]]
     """
-
-    # Retry configuration constants
-    MAX_RETRY_ATTEMPTS = 5
-    MIN_RETRY_WAIT_SECONDS = 2
-    MAX_RETRY_WAIT_SECONDS = 30
 
     def __init__(
         self,
@@ -225,69 +212,12 @@ class RedTeam:
         self.evaluation_processor = None
         self.mlflow_integration = None
         self.result_processor = None
+        
+        # Initialize utility managers
+        self.retry_manager = create_standard_retry_manager(logger=self.logger)
+        self.file_manager = create_file_manager(base_output_dir=self.output_dir, logger=self.logger)
 
         self.logger.debug("RedTeam initialized successfully")
-
-    def _create_retry_config(self):
-        """Create a standard retry configuration for connection-related issues."""
-        return {
-            "network_retry": {
-                "retry": retry_if_exception(
-                    lambda e: isinstance(
-                        e,
-                        (
-                            httpx.ConnectTimeout,
-                            httpx.ReadTimeout,
-                            httpx.ConnectError,
-                            httpx.HTTPError,
-                            httpx.TimeoutException,
-                            httpx.HTTPStatusError,
-                            httpcore.ReadTimeout,
-                            ConnectionError,
-                            ConnectionRefusedError,
-                            ConnectionResetError,
-                            TimeoutError,
-                            OSError,
-                            IOError,
-                            asyncio.TimeoutError,
-                            ServiceRequestError,
-                            ServiceResponseError,
-                        ),
-                    )
-                    or (
-                        isinstance(e, httpx.HTTPStatusError)
-                        and (e.response.status_code == 500 or "model_error" in str(e))
-                    )
-                ),
-                "stop": stop_after_attempt(self.MAX_RETRY_ATTEMPTS),
-                "wait": wait_exponential(
-                    multiplier=1.5,
-                    min=self.MIN_RETRY_WAIT_SECONDS,
-                    max=self.MAX_RETRY_WAIT_SECONDS,
-                ),
-                "retry_error_callback": self._log_retry_error,
-                "before_sleep": self._log_retry_attempt,
-            }
-        }
-
-    def _log_retry_attempt(self, retry_state):
-        """Log retry attempts for better visibility."""
-        exception = retry_state.outcome.exception()
-        if exception:
-            self.logger.warning(
-                f"Connection issue: {exception.__class__.__name__}. "
-                f"Retrying in {retry_state.next_action.sleep} seconds... "
-                f"(Attempt {retry_state.attempt_number}/{self.MAX_RETRY_ATTEMPTS})"
-            )
-
-    def _log_retry_error(self, retry_state):
-        """Log the final error after all retries have been exhausted."""
-        exception = retry_state.outcome.exception()
-        self.logger.error(
-            f"All retries failed after {retry_state.attempt_number} attempts. "
-            f"Last error: {exception.__class__.__name__}: {str(exception)}"
-        )
-        return exception
 
     def _configure_attack_success_thresholds(
         self, attack_success_thresholds: Optional[Dict[Union[RiskCategory, _InternalRiskCategory], int]]
@@ -325,7 +255,7 @@ class RedTeam:
 
     def _setup_component_managers(self):
         """Initialize component managers with shared configuration."""
-        retry_config = self._create_retry_config()
+        retry_config = self.retry_manager.get_retry_config()
         
         # Initialize orchestrator manager
         self.orchestrator_manager = OrchestratorManager(
@@ -391,15 +321,6 @@ class RedTeam:
         :rtype: List[str]
         """
         attack_objective_generator = self.attack_objective_generator
-        # TODO: is this necessary?
-        if not risk_category:
-            self.logger.warning("No risk category provided, using the first category from the generator")
-            risk_category = (
-                attack_objective_generator.risk_categories[0] if attack_objective_generator.risk_categories else None
-            )
-            if not risk_category:
-                self.logger.error("No risk categories found in generator")
-                return []
 
         # Convert risk category to lowercase for consistent caching
         risk_cat_value = risk_category.value.lower()
@@ -541,19 +462,10 @@ class RedTeam:
         """Apply jailbreak prefixes to objectives."""
         self.logger.debug("Applying jailbreak prefixes to objectives")
         try:
-            @retry(**self._create_retry_config()["network_retry"])
+            # Use centralized retry decorator
+            @self.retry_manager.create_retry_decorator(context="jailbreak_prefixes")
             async def get_jailbreak_prefixes_with_retry():
-                try:
-                    return await self.generated_rai_client.get_jailbreak_prefixes()
-                except (
-                    httpx.ConnectTimeout,
-                    httpx.ReadTimeout,
-                    httpx.ConnectError,
-                    httpx.HTTPError,
-                    ConnectionError,
-                ) as e:
-                    self.logger.warning(f"Network error when fetching jailbreak prefixes: {type(e).__name__}: {str(e)}")
-                    raise
+                return await self.generated_rai_client.get_jailbreak_prefixes()
 
             jailbreak_prefixes = await get_jailbreak_prefixes_with_retry()
             for objective in objectives_list:
@@ -925,16 +837,8 @@ class RedTeam:
 
     def _setup_scan_environment(self):
         """Setup scan output directory and logging."""
-        # Create output directory for this scan
-        is_debug = os.environ.get("DEBUG", "").lower() in ("true", "1", "yes", "y")
-        folder_prefix = "" if is_debug else "."
-        self.scan_output_dir = os.path.join(self.output_dir or ".", f"{folder_prefix}{self.scan_id}")
-        os.makedirs(self.scan_output_dir, exist_ok=True)
-
-        if not is_debug:
-            gitignore_path = os.path.join(self.scan_output_dir, ".gitignore")
-            with open(gitignore_path, "w", encoding="utf-8") as f:
-                f.write("*\n")
+        # Use file manager to create scan output directory
+        self.scan_output_dir = self.file_manager.get_scan_output_path(self.scan_id)
 
         # Re-initialize logger with the scan output directory
         self.logger = setup_logger(output_dir=self.scan_output_dir)
@@ -1168,7 +1072,6 @@ class RedTeam:
 
         # Display final scorecard and results
         if output.scan_result:
-            from ._utils.formatting_utils import format_scorecard
             scorecard = format_scorecard(output.scan_result)
             tqdm.write(scorecard)
 
