@@ -1,14 +1,11 @@
 # Release History
 
-## 1.6.13 (Unreleased)
+## 1.6.13 (2025-07-30)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Update to latest OpenTelemetry version after instrumentation breaking change fix. Remove Python 3.8 support.
+    ([#42247](https://github.com/Azure/azure-sdk-for-python/pull/42247))
 
 ## 1.6.12 (2025-07-21)
 
