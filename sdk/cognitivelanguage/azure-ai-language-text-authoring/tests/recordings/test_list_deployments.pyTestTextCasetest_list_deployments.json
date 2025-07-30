@@ -1,0 +1,83 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-text/projects/single-class-project/deployments?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-language-text-authoring/1.0.0b1 Python/3.13.5 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "6f33564b-d0de-4da9-a67b-9fa6189212b9",
+        "Content-Length": "1754",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 28 Jul 2025 18:55:48 GMT",
+        "request-id": "6f33564b-d0de-4da9-a67b-9fa6189212b9",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "32",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "deploymentName": "deniz-model1",
+            "modelId": "model1-20250528T050929-050a975a42b14557af5951c9f3e3fd6b",
+            "lastTrainedDateTime": "2025-05-28T17:09:29.5587436Z",
+            "lastDeployedDateTime": "2025-06-04T22:38:07Z",
+            "deploymentExpirationDate": "2027-04-30",
+            "modelTrainingConfigVersion": "2022-05-01"
+          },
+          {
+            "deploymentName": "deployment0728",
+            "modelId": "model1-20250627T052846-829bed4c9fc94643941617052f9bc99e",
+            "lastTrainedDateTime": "2025-06-27T17:28:46.7961946Z",
+            "lastDeployedDateTime": "2025-07-28T17:33:31Z",
+            "deploymentExpirationDate": "2027-04-30",
+            "modelTrainingConfigVersion": "2022-05-01"
+          },
+          {
+            "deploymentName": "deployment1",
+            "modelId": "model1-20250627T052846-829bed4c9fc94643941617052f9bc99e",
+            "lastTrainedDateTime": "2025-06-27T17:28:46.7961946Z",
+            "lastDeployedDateTime": "2025-06-27T17:29:54Z",
+            "deploymentExpirationDate": "2027-04-30",
+            "modelTrainingConfigVersion": "2022-05-01"
+          },
+          {
+            "deploymentName": "deployment2",
+            "modelId": "model1-20250627T052846-829bed4c9fc94643941617052f9bc99e",
+            "lastTrainedDateTime": "2025-06-27T17:28:46.7961946Z",
+            "lastDeployedDateTime": "2025-06-27T17:32:12Z",
+            "deploymentExpirationDate": "2027-04-30",
+            "modelTrainingConfigVersion": "2022-05-01"
+          },
+          {
+            "deploymentName": "deploymentWithAssignedResource",
+            "modelId": "model1-20250528T050929-050a975a42b14557af5951c9f3e3fd6b",
+            "lastTrainedDateTime": "2025-05-28T17:09:29.5587436Z",
+            "lastDeployedDateTime": "2025-06-04T05:49:15Z",
+            "deploymentExpirationDate": "2027-04-30",
+            "modelTrainingConfigVersion": "2022-05-01"
+          },
+          {
+            "deploymentName": "single-class-deployment",
+            "modelId": "model1-20250528T050929-050a975a42b14557af5951c9f3e3fd6b",
+            "lastTrainedDateTime": "2025-05-28T17:09:29.5587436Z",
+            "lastDeployedDateTime": "2025-06-18T23:23:44Z",
+            "deploymentExpirationDate": "2027-04-30",
+            "modelTrainingConfigVersion": "2022-05-01"
+          }
+        ],
+        "nextLink": null
+      }
+    }
+  ],
+  "Variables": {}
+}
