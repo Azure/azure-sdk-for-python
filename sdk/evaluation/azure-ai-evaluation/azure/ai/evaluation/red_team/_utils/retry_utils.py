@@ -26,6 +26,7 @@ import httpcore
 # Import Azure exceptions if available
 try:
     from azure.core.exceptions import ServiceRequestError, ServiceResponseError
+
     AZURE_EXCEPTIONS = (ServiceRequestError, ServiceResponseError)
 except ImportError:
     AZURE_EXCEPTIONS = ()
@@ -37,13 +38,13 @@ T = TypeVar("T")
 
 class RetryManager:
     """Centralized retry management for Red Team operations."""
-    
+
     # Default retry configuration
     DEFAULT_MAX_ATTEMPTS = 5
     DEFAULT_MIN_WAIT = 2
     DEFAULT_MAX_WAIT = 30
     DEFAULT_MULTIPLIER = 1.5
-    
+
     # Network-related exceptions that should trigger retries
     NETWORK_EXCEPTIONS = (
         httpx.ConnectTimeout,
@@ -71,7 +72,7 @@ class RetryManager:
         multiplier: float = DEFAULT_MULTIPLIER,
     ):
         """Initialize retry manager.
-        
+
         :param logger: Logger instance for retry messages
         :param max_attempts: Maximum number of retry attempts
         :param min_wait: Minimum wait time between retries (seconds)
@@ -86,25 +87,22 @@ class RetryManager:
 
     def should_retry_exception(self, exception: Exception) -> bool:
         """Determine if an exception should trigger a retry.
-        
+
         :param exception: The exception to check
         :return: True if the exception should trigger a retry
         """
         if isinstance(exception, self.NETWORK_EXCEPTIONS):
             return True
-        
+
         # Special case for HTTP status errors
         if isinstance(exception, httpx.HTTPStatusError):
-            return (
-                exception.response.status_code == 500 
-                or "model_error" in str(exception)
-            )
-        
+            return exception.response.status_code == 500 or "model_error" in str(exception)
+
         return False
 
     def log_retry_attempt(self, retry_state) -> None:
         """Log retry attempts for visibility.
-        
+
         :param retry_state: The retry state object from tenacity
         """
         exception = retry_state.outcome.exception()
@@ -117,7 +115,7 @@ class RetryManager:
 
     def log_retry_error(self, retry_state) -> Exception:
         """Log the final error after all retries failed.
-        
+
         :param retry_state: The retry state object from tenacity
         :return: The final exception
         """
@@ -130,12 +128,12 @@ class RetryManager:
 
     def create_retry_decorator(self, context: str = "") -> Callable:
         """Create a retry decorator with the configured settings.
-        
+
         :param context: Optional context string for logging
         :return: Configured retry decorator
         """
         context_prefix = f"[{context}] " if context else ""
-        
+
         def log_attempt(retry_state):
             exception = retry_state.outcome.exception()
             if exception:
@@ -167,7 +165,7 @@ class RetryManager:
 
     def get_retry_config(self) -> Dict[str, Any]:
         """Get retry configuration dictionary for backward compatibility.
-        
+
         :return: Dictionary containing retry configuration
         """
         return {
@@ -187,7 +185,7 @@ class RetryManager:
 
 def create_standard_retry_manager(logger: Optional[logging.Logger] = None) -> RetryManager:
     """Create a standard retry manager with default settings.
-    
+
     :param logger: Optional logger instance
     :return: Configured RetryManager instance
     """
@@ -203,7 +201,7 @@ def create_retry_decorator(
     max_wait: int = RetryManager.DEFAULT_MAX_WAIT,
 ) -> Callable:
     """Create a retry decorator with specified parameters.
-    
+
     :param logger: Optional logger instance
     :param context: Optional context for logging
     :param max_attempts: Maximum retry attempts

@@ -24,8 +24,7 @@ from ._utils.formatting_utils import list_mean_nan_safe, is_none_or_nan, get_att
 class ResultProcessor:
     """Handles processing and formatting of red team evaluation results."""
 
-    def __init__(self, logger, attack_success_thresholds, application_scenario, 
-                 risk_categories, ai_studio_url=None):
+    def __init__(self, logger, attack_success_thresholds, application_scenario, risk_categories, ai_studio_url=None):
         """Initialize the result processor.
 
         :param logger: Logger instance for logging
@@ -132,7 +131,7 @@ class ResultProcessor:
                                             attack_successes.append(1 if attack_success else 0)
                                         else:
                                             attack_successes.append(None)
-                                        
+
                                         # Determine the threshold used for this attack
                                         attack_threshold = None
 
@@ -200,9 +199,13 @@ class ResultProcessor:
         if "attack_success" not in results_df.columns or results_df.empty:
             # If we don't have evaluation results or the DataFrame is empty, create a default scorecard
             self.logger.info("No evaluation results available or no data found, creating default scorecard")
-            scorecard, redteaming_parameters = self._create_default_scorecard(conversations, complexity_levels, converters)
+            scorecard, redteaming_parameters = self._create_default_scorecard(
+                conversations, complexity_levels, converters
+            )
         else:
-            scorecard, redteaming_parameters = self._create_detailed_scorecard(results_df, complexity_levels, converters)
+            scorecard, redteaming_parameters = self._create_detailed_scorecard(
+                results_df, complexity_levels, converters
+            )
 
         self.logger.info("RedTeamResult creation completed")
 
@@ -281,7 +284,7 @@ class ResultProcessor:
         except:
             self.logger.debug("All values in overall attack success array were None or NaN, setting ASR to NaN")
             overall_asr = math.nan
-        
+
         overall_total = len(results_df)
         overall_successful_attacks = (
             sum([s for s in results_df["attack_success"].tolist() if not is_none_or_nan(s)])
@@ -309,11 +312,9 @@ class ResultProcessor:
                     else 0.0
                 )
             except:
-                self.logger.debug(
-                    f"All values in attack success array for {risk} were None or NaN, setting ASR to NaN"
-                )
+                self.logger.debug(f"All values in attack success array for {risk} were None or NaN, setting ASR to NaN")
                 asr = math.nan
-            
+
             total = len(group)
             successful_attacks = (
                 sum([s for s in group["attack_success"].tolist() if not is_none_or_nan(s)])
@@ -338,8 +339,12 @@ class ResultProcessor:
         attack_technique_summary_dict = {}
 
         # Process each complexity level
-        for complexity, mask in [("baseline", baseline_mask), ("easy", easy_mask), 
-                                ("moderate", moderate_mask), ("difficult", difficult_mask)]:
+        for complexity, mask in [
+            ("baseline", baseline_mask),
+            ("easy", easy_mask),
+            ("moderate", moderate_mask),
+            ("difficult", difficult_mask),
+        ]:
             complexity_df = results_df[mask]
             if not complexity_df.empty:
                 try:
@@ -356,7 +361,7 @@ class ResultProcessor:
                         f"All values in {complexity} attack success array were None or NaN, setting ASR to NaN"
                     )
                     asr = math.nan
-                
+
                 attack_technique_summary_dict.update(
                     {
                         f"{complexity}_asr": asr,
@@ -393,7 +398,7 @@ class ResultProcessor:
 
         # Create redteaming parameters
         unique_complexities = sorted([c for c in results_df["complexity_level"].unique() if c != "baseline"])
-        
+
         redteaming_parameters = {
             "attack_objective_generated_from": {
                 "application_scenario": self.application_scenario,
@@ -432,8 +437,12 @@ class ResultProcessor:
             joint_risk_dict = {"risk_category": risk_key}
 
             # Calculate ASR for each complexity level
-            for complexity, mask in [("baseline", baseline_mask), ("easy_complexity", easy_mask), 
-                                   ("moderate_complexity", moderate_mask), ("difficult_complexity", difficult_mask)]:
+            for complexity, mask in [
+                ("baseline", baseline_mask),
+                ("easy_complexity", easy_mask),
+                ("moderate_complexity", moderate_mask),
+                ("difficult_complexity", difficult_mask),
+            ]:
                 complexity_risk_df = results_df[risk_mask & mask]
                 if not complexity_risk_df.empty:
                     try:

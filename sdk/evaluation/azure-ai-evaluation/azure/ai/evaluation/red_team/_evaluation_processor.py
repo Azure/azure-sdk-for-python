@@ -40,8 +40,16 @@ from ._utils.formatting_utils import get_strategy_name
 class EvaluationProcessor:
     """Handles evaluation of red team attack conversations."""
 
-    def __init__(self, logger, azure_ai_project, credential, attack_success_thresholds, 
-                 retry_config, scan_session_id=None, scan_output_dir=None):
+    def __init__(
+        self,
+        logger,
+        azure_ai_project,
+        credential,
+        attack_success_thresholds,
+        retry_config,
+        scan_session_id=None,
+        scan_output_dir=None,
+    ):
         """Initialize the evaluation processor.
 
         :param logger: Logger instance for logging
@@ -96,9 +104,7 @@ class EvaluationProcessor:
                 "response": " ".join(assistant_messages),
             }
             try:
-                self.logger.debug(
-                    f"Evaluating conversation {idx+1} for {risk_category.value}/{strategy_name}"
-                )
+                self.logger.debug(f"Evaluating conversation {idx+1} for {risk_category.value}/{strategy_name}")
 
                 @retry(**self.retry_config["network_retry"])
                 async def evaluate_with_rai_service_with_retry():
@@ -230,7 +236,7 @@ class EvaluationProcessor:
             f"Evaluate called with data_path={data_path}, risk_category={risk_category.value}, strategy={strategy_name}, output_path={output_path}, skip_evals={_skip_evals}, scan_name={scan_name}"
         )
         self.logger.debug(f"EvaluationProcessor scan_output_dir: {self.scan_output_dir}")
-        
+
         if _skip_evals:
             return None
 
@@ -251,7 +257,7 @@ class EvaluationProcessor:
             if not os.path.isabs(result_path):
                 result_path = os.path.abspath(result_path)
             self.logger.debug(f"Using fallback path: {result_path}")
-        
+
         self.logger.debug(f"Final result_path: {result_path}")
 
         try:
@@ -308,10 +314,10 @@ class EvaluationProcessor:
             os.makedirs(os.path.dirname(result_path), exist_ok=True)
             with open(result_path, "w", encoding="utf-8") as f:
                 json.dump(evaluation_result, f, indent=2)
-            
+
             # Log the full path for debugging
-            tqdm.write(f"Evaluation results saved to \"{result_path}\".")
-            
+            tqdm.write(f'Evaluation results saved to "{result_path}".')
+
             eval_duration = (datetime.now() - eval_start_time).total_seconds()
             self.logger.debug(
                 f"Evaluation of {len(rows)} conversations for {risk_category.value}/{strategy_name} completed in {eval_duration} seconds"
@@ -355,4 +361,5 @@ class EvaluationProcessor:
 
         # Fall back to binary string evaluation for all other cases
         from ._utils.formatting_utils import get_attack_success
+
         return get_attack_success(str(result))

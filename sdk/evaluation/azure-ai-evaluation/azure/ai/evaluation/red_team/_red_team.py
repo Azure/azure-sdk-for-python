@@ -64,7 +64,7 @@ from ._utils.formatting_utils import (
     get_strategy_name,
     get_flattened_attack_strategies,
     write_pyrit_outputs_to_file,
-    format_scorecard
+    format_scorecard,
 )
 from ._utils.strategy_utils import get_chat_target, get_converter_for_strategy
 from ._utils.retry_utils import create_standard_retry_manager
@@ -152,7 +152,7 @@ class RedTeam:
         # Initialize basic logger without file handler (will be properly set up during scan)
         self.logger = logging.getLogger("RedTeamLogger")
         self.logger.setLevel(logging.DEBUG)
-        
+
         # Only add console handler for now - file handler will be added during scan setup
         if not any(isinstance(h, logging.StreamHandler) for h in self.logger.handlers):
             console_handler = logging.StreamHandler()
@@ -186,8 +186,7 @@ class RedTeam:
 
         # Initialize RAI client
         self.generated_rai_client = GeneratedRAIClient(
-            azure_ai_project=self.azure_ai_project, 
-            token_manager=self.token_manager.credential
+            azure_ai_project=self.azure_ai_project, token_manager=self.token_manager.credential
         )
 
         # Initialize a cache for attack objectives by risk category and strategy
@@ -212,7 +211,7 @@ class RedTeam:
         self.evaluation_processor = None
         self.mlflow_integration = None
         self.result_processor = None
-        
+
         # Initialize utility managers
         self.retry_manager = create_standard_retry_manager(logger=self.logger)
         self.file_manager = create_file_manager(base_output_dir=self.output_dir, logger=self.logger)
@@ -256,7 +255,7 @@ class RedTeam:
     def _setup_component_managers(self):
         """Initialize component managers with shared configuration."""
         retry_config = self.retry_manager.get_retry_config()
-        
+
         # Initialize orchestrator manager
         self.orchestrator_manager = OrchestratorManager(
             logger=self.logger,
@@ -292,9 +291,9 @@ class RedTeam:
         self.result_processor = ResultProcessor(
             logger=self.logger,
             attack_success_thresholds=self.attack_success_thresholds,
-            application_scenario=getattr(self, 'application_scenario', ''),
-            risk_categories=getattr(self, 'risk_categories', []),
-            ai_studio_url=getattr(self.mlflow_integration, 'ai_studio_url', None),
+            application_scenario=getattr(self, "application_scenario", ""),
+            risk_categories=getattr(self, "risk_categories", []),
+            ai_studio_url=getattr(self.mlflow_integration, "ai_studio_url", None),
         )
 
     async def _get_attack_objectives(
@@ -338,13 +337,17 @@ class RedTeam:
 
         # Check if custom attack seed prompts are provided in the generator
         if attack_objective_generator.custom_attack_seed_prompts and attack_objective_generator.validated_prompts:
-            return await self._get_custom_attack_objectives(
-                risk_cat_value, num_objectives, strategy, current_key
-            )
+            return await self._get_custom_attack_objectives(risk_cat_value, num_objectives, strategy, current_key)
         else:
             return await self._get_rai_attack_objectives(
-                risk_category, risk_cat_value, application_scenario, strategy, 
-                baseline_objectives_exist, baseline_key, current_key, num_objectives
+                risk_category,
+                risk_cat_value,
+                application_scenario,
+                strategy,
+                baseline_objectives_exist,
+                baseline_key,
+                current_key,
+                num_objectives,
             )
 
     async def _get_custom_attack_objectives(
@@ -352,7 +355,7 @@ class RedTeam:
     ) -> List[str]:
         """Get attack objectives from custom seed prompts."""
         attack_objective_generator = self.attack_objective_generator
-        
+
         self.logger.info(
             f"Using custom attack seed prompts from {attack_objective_generator.custom_attack_seed_prompts}"
         )
@@ -393,9 +396,15 @@ class RedTeam:
         return selected_prompts
 
     async def _get_rai_attack_objectives(
-        self, risk_category: RiskCategory, risk_cat_value: str, application_scenario: str,
-        strategy: str, baseline_objectives_exist: bool, baseline_key: tuple, 
-        current_key: tuple, num_objectives: int
+        self,
+        risk_category: RiskCategory,
+        risk_cat_value: str,
+        application_scenario: str,
+        strategy: str,
+        baseline_objectives_exist: bool,
+        baseline_key: tuple,
+        current_key: tuple,
+        num_objectives: int,
     ) -> List[str]:
         """Get attack objectives from the RAI service."""
         content_harm_risk = None
@@ -409,7 +418,7 @@ class RedTeam:
             self.logger.debug(
                 f"API call: get_attack_objectives({risk_cat_value}, app: {application_scenario}, strategy: {strategy})"
             )
-            
+
             # Get objectives from RAI service
             if "tense" in strategy:
                 objectives_response = await self.generated_rai_client.get_attack_objectives(
@@ -455,7 +464,7 @@ class RedTeam:
         # Extract content and cache
         selected_prompts = self._extract_objective_content(selected_cat_objectives)
         self._cache_attack_objectives(current_key, risk_cat_value, strategy, selected_prompts, selected_cat_objectives)
-        
+
         return selected_prompts
 
     async def _apply_jailbreak_prefixes(self, objectives_list: List) -> List:
@@ -475,12 +484,16 @@ class RedTeam:
                         message["content"] = f"{random.choice(jailbreak_prefixes)} {message['content']}"
         except Exception as e:
             self.logger.error(f"Error applying jailbreak prefixes: {str(e)}")
-        
+
         return objectives_list
 
     def _filter_and_select_objectives(
-        self, objectives_response: List, strategy: str, baseline_objectives_exist: bool, 
-        baseline_key: tuple, num_objectives: int
+        self,
+        objectives_response: List,
+        strategy: str,
+        baseline_objectives_exist: bool,
+        baseline_key: tuple,
+        num_objectives: int,
     ) -> List:
         """Filter and select objectives based on strategy and baseline requirements."""
         # For non-baseline strategies, filter by baseline IDs if they exist
@@ -491,11 +504,15 @@ class RedTeam:
 
             if baseline_objective_ids:
                 self.logger.debug(f"Filtering by {len(baseline_objective_ids)} baseline objective IDs for {strategy}")
-                selected_cat_objectives = [obj for obj in objectives_response if obj.get("id") in baseline_objective_ids]
+                selected_cat_objectives = [
+                    obj for obj in objectives_response if obj.get("id") in baseline_objective_ids
+                ]
                 self.logger.debug(f"Found {len(selected_cat_objectives)} matching objectives with baseline IDs")
             else:
                 self.logger.warning("No baseline objective IDs found, using random selection")
-                selected_cat_objectives = random.sample(objectives_response, min(num_objectives, len(objectives_response)))
+                selected_cat_objectives = random.sample(
+                    objectives_response, min(num_objectives, len(objectives_response))
+                )
         else:
             # This is the baseline strategy or we don't have baseline objectives yet
             self.logger.debug(f"Using random selection for {strategy} strategy")
@@ -519,12 +536,16 @@ class RedTeam:
         return selected_prompts
 
     def _cache_attack_objectives(
-        self, current_key: tuple, risk_cat_value: str, strategy: str, 
-        selected_prompts: List[str], selected_objectives: List
+        self,
+        current_key: tuple,
+        risk_cat_value: str,
+        strategy: str,
+        selected_prompts: List[str],
+        selected_objectives: List,
     ) -> None:
         """Cache attack objectives for reuse."""
         objectives_by_category = {risk_cat_value: []}
-        
+
         for obj in selected_objectives:
             obj_id = obj.get("id", f"obj-{uuid.uuid4()}")
             content = ""
@@ -632,7 +653,9 @@ class RedTeam:
 
             # Store data file in our tracking dictionary
             self.red_team_info[strategy_name][risk_category.value]["data_file"] = data_path
-            self.logger.debug(f"Updated red_team_info with data file: {strategy_name} -> {risk_category.value} -> {data_path}")
+            self.logger.debug(
+                f"Updated red_team_info with data file: {strategy_name} -> {risk_category.value} -> {data_path}"
+            )
 
             # Perform evaluation
             try:
@@ -679,7 +702,9 @@ class RedTeam:
             self.task_statuses[task_key] = TASK_STATUS["COMPLETED"]
 
         except Exception as e:
-            self.logger.error(f"Unexpected error processing {strategy_name} strategy for {risk_category.value}: {str(e)}")
+            self.logger.error(
+                f"Unexpected error processing {strategy_name} strategy for {risk_category.value}: {str(e)}"
+            )
             self.task_statuses[task_key] = TASK_STATUS["FAILED"]
             self.failed_tasks += 1
             async with progress_bar_lock:
@@ -736,15 +761,15 @@ class RedTeam:
         with UserAgentSingleton().add_useragent_product(user_agent):
             # Initialize scan
             self._initialize_scan(scan_name, application_scenario)
-            
+
             # Setup logging and directories FIRST
             self._setup_scan_environment()
-            
+
             # Setup component managers AFTER scan environment is set up
             self._setup_component_managers()
 
             # Update result processor with AI studio URL
-            self.result_processor.ai_studio_url = getattr(self.mlflow_integration, 'ai_studio_url', None)
+            self.result_processor.ai_studio_url = getattr(self.mlflow_integration, "ai_studio_url", None)
 
             # Update component managers with the new logger
             self.orchestrator_manager.logger = self.logger
@@ -755,7 +780,7 @@ class RedTeam:
             # Validate and prepare inputs
             chat_target = get_chat_target(target)
             self.chat_target = chat_target
-            
+
             # Validate attack objective generator
             if not self.attack_objective_generator:
                 raise EvaluationException(
@@ -793,7 +818,7 @@ class RedTeam:
             else:
                 eval_run = self.mlflow_integration.start_redteam_mlflow_run(self.azure_ai_project, scan_name)
                 tqdm.write(f"🔗 Track your red team scan in AI Foundry: {self.mlflow_integration.ai_studio_url}")
-                
+
                 # Update result processor with the AI studio URL now that it's available
                 self.result_processor.ai_studio_url = self.mlflow_integration.ai_studio_url
 
@@ -811,8 +836,15 @@ class RedTeam:
 
             # Execute attacks
             await self._execute_attacks(
-                flattened_attack_strategies, all_objectives, scan_name, skip_upload, 
-                output_path, timeout, skip_evals, parallel_execution, max_parallel_tasks
+                flattened_attack_strategies,
+                all_objectives,
+                scan_name,
+                skip_upload,
+                output_path,
+                timeout,
+                skip_evals,
+                parallel_execution,
+                max_parallel_tasks,
             )
 
             # Process and return results
@@ -824,7 +856,7 @@ class RedTeam:
         self.task_statuses = {}
         self.completed_tasks = 0
         self.failed_tasks = 0
-        
+
         # Generate unique scan ID and session ID
         self.scan_id = (
             f"scan_{scan_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
@@ -852,6 +884,7 @@ class RedTeam:
 
     def _setup_logging_filters(self):
         """Setup logging filters to suppress unwanted logs."""
+
         class LogFilter(logging.Filter):
             def filter(self, record):
                 # Filter out promptflow logs and evaluation warnings about artifacts
@@ -885,9 +918,7 @@ class RedTeam:
             self.logger.warning(
                 "MultiTurn and Crescendo strategies are not compatible with multiple attack strategies."
             )
-            raise ValueError(
-                "MultiTurn and Crescendo strategies are not compatible with multiple attack strategies."
-            )
+            raise ValueError("MultiTurn and Crescendo strategies are not compatible with multiple attack strategies.")
 
     def _initialize_tracking_dict(self, flattened_attack_strategies: List):
         """Initialize the red_team_info tracking dictionary."""
@@ -919,7 +950,9 @@ class RedTeam:
             if "baseline" not in all_objectives:
                 all_objectives["baseline"] = {}
             all_objectives["baseline"][risk_category.value] = baseline_objectives
-            tqdm.write(f"📝 Fetched baseline objectives for {risk_category.value}: {len(baseline_objectives)} objectives")
+            tqdm.write(
+                f"📝 Fetched baseline objectives for {risk_category.value}: {len(baseline_objectives)} objectives"
+            )
 
         # Then fetch objectives for other strategies
         strategy_count = len(flattened_attack_strategies)
@@ -942,9 +975,16 @@ class RedTeam:
         return all_objectives
 
     async def _execute_attacks(
-        self, flattened_attack_strategies: List, all_objectives: Dict, scan_name: str,
-        skip_upload: bool, output_path: str, timeout: int, skip_evals: bool,
-        parallel_execution: bool, max_parallel_tasks: int
+        self,
+        flattened_attack_strategies: List,
+        all_objectives: Dict,
+        scan_name: str,
+        skip_upload: bool,
+        output_path: str,
+        timeout: int,
+        skip_evals: bool,
+        parallel_execution: bool,
+        max_parallel_tasks: int,
     ):
         """Execute all attack combinations."""
         log_section_header(self.logger, "Starting orchestrator processing")
@@ -996,8 +1036,7 @@ class RedTeam:
         progress_bar.close()
 
     async def _process_orchestrator_tasks(
-        self, orchestrator_tasks: List, parallel_execution: bool, 
-        max_parallel_tasks: int, timeout: int
+        self, orchestrator_tasks: List, parallel_execution: bool, max_parallel_tasks: int, timeout: int
     ):
         """Process orchestrator tasks either in parallel or sequentially."""
         if parallel_execution and orchestrator_tasks:
@@ -1031,15 +1070,13 @@ class RedTeam:
                     self.logger.error(f"Error processing task {i+1}: {str(e)}")
                     continue
 
-    async def _finalize_results(
-        self, skip_upload: bool, skip_evals: bool, eval_run, output_path: str
-    ) -> RedTeamResult:
+    async def _finalize_results(self, skip_upload: bool, skip_evals: bool, eval_run, output_path: str) -> RedTeamResult:
         """Process and finalize scan results."""
         log_section_header(self.logger, "Processing results")
 
         # Convert results to RedTeamResult
         red_team_result = self.result_processor.to_red_team_result(self.red_team_info)
-        
+
         output = RedTeamResult(
             scan_result=red_team_result,
             attack_details=red_team_result["attack_details"],
@@ -1049,10 +1086,7 @@ class RedTeam:
         if not skip_upload:
             self.logger.info("Logging results to AI Foundry")
             await self.mlflow_integration.log_redteam_results_to_mlflow(
-                redteam_result=output, 
-                eval_run=eval_run, 
-                red_team_info=self.red_team_info,
-                _skip_evals=skip_evals
+                redteam_result=output, eval_run=eval_run, red_team_info=self.red_team_info, _skip_evals=skip_evals
             )
 
         # Write output to specified path
@@ -1086,11 +1120,11 @@ class RedTeam:
 
         tqdm.write(f"✅ Scan completed successfully!")
         self.logger.info("Scan completed successfully")
-        
+
         # Close file handlers
         for handler in self.logger.handlers:
             if isinstance(handler, logging.FileHandler):
                 handler.close()
                 self.logger.removeHandler(handler)
-        
+
         return output

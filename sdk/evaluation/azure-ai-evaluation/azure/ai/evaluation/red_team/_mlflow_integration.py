@@ -34,8 +34,7 @@ from ._utils.logging_utils import log_error
 class MLflowIntegration:
     """Handles MLflow integration for red team evaluations."""
 
-    def __init__(self, logger, azure_ai_project, generated_rai_client, one_dp_project, 
-                 scan_output_dir=None):
+    def __init__(self, logger, azure_ai_project, generated_rai_client, one_dp_project, scan_output_dir=None):
         """Initialize the MLflow integration.
 
         :param logger: Logger instance for logging
@@ -204,6 +203,7 @@ class MLflowIntegration:
                 # Also save a human-readable scorecard if available
                 if not _skip_evals and redteam_result.scan_result:
                     from ._utils.formatting_utils import format_scorecard
+
                     scorecard_path = os.path.join(self.scan_output_dir, "scorecard.txt")
                     with open(scorecard_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
                         f.write(format_scorecard(redteam_result.scan_result))
@@ -223,6 +223,7 @@ class MLflowIntegration:
 
                 # Copy all relevant files to the temp directory
                 import shutil
+
                 for file in os.listdir(self.scan_output_dir):
                     file_path = os.path.join(self.scan_output_dir, file)
 

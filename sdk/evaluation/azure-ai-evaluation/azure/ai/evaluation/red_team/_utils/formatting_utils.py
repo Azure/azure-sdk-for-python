@@ -189,7 +189,7 @@ def write_pyrit_outputs_to_file(
     import os
     from pathlib import Path
     from pyrit.memory import CentralMemory
-    
+
     logger.debug(f"Writing PyRIT outputs to file: {output_path}")
     memory = CentralMemory.get_memory_instance()
 
@@ -201,7 +201,7 @@ def write_pyrit_outputs_to_file(
         [item.to_chat_message() for item in group]
         for conv_id, group in itertools.groupby(prompts_request_pieces, key=lambda x: x.conversation_id)
     ]
-    
+
     # Check if we should overwrite existing file with more conversations
     if os.path.exists(output_path):
         existing_line_count = 0
@@ -221,11 +221,7 @@ def write_pyrit_outputs_to_file(
                         continue
                     json_lines += (
                         json.dumps(
-                            {
-                                "conversation": {
-                                    "messages": [message_to_dict(message) for message in conversation]
-                                }
-                            }
+                            {"conversation": {"messages": [message_to_dict(message) for message in conversation]}}
                         )
                         + "\n"
                     )
@@ -251,9 +247,7 @@ def write_pyrit_outputs_to_file(
                 # Skip system messages in the output
                 continue
             json_lines += (
-                json.dumps(
-                    {"conversation": {"messages": [message_to_dict(message) for message in conversation]}}
-                )
+                json.dumps({"conversation": {"messages": [message_to_dict(message) for message in conversation]}})
                 + "\n"
             )
         with Path(output_path).open("w") as f:

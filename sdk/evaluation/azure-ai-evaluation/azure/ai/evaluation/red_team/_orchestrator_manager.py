@@ -42,11 +42,19 @@ from ._utils.logging_utils import log_strategy_start, log_error
 
 class OrchestratorManager:
     """Manages PyRIT orchestrators for different attack strategies."""
-    
-    def __init__(self, logger, generated_rai_client, credential, azure_ai_project, one_dp_project, 
-                 retry_config, scan_output_dir=None):
+
+    def __init__(
+        self,
+        logger,
+        generated_rai_client,
+        credential,
+        azure_ai_project,
+        one_dp_project,
+        retry_config,
+        scan_output_dir=None,
+    ):
         """Initialize the orchestrator manager.
-        
+
         :param logger: Logger instance for logging
         :param generated_rai_client: RAI client for service interactions
         :param credential: Authentication credential
@@ -62,7 +70,7 @@ class OrchestratorManager:
         self._one_dp_project = one_dp_project
         self.retry_config = retry_config
         self.scan_output_dir = scan_output_dir
-        
+
     def get_orchestrator_for_attack_strategy(
         self, attack_strategy: Union[AttackStrategy, List[AttackStrategy]]
     ) -> Callable:
@@ -166,11 +174,10 @@ class OrchestratorManager:
                 red_team_info[strategy_name][risk_category_name]["data_file"] = output_path
 
             # Process all prompts at once
-            self.logger.debug(
-                f"Processing {len(all_prompts)} prompts for {strategy_name}/{risk_category_name}"
-            )
+            self.logger.debug(f"Processing {len(all_prompts)} prompts for {strategy_name}/{risk_category_name}")
             start_time = datetime.now()
             try:
+
                 @retry(**self.retry_config["network_retry"])
                 async def send_all_with_retry():
                     try:
@@ -353,6 +360,7 @@ class OrchestratorManager:
                 self.logger.debug(f"Current prompt (truncated): {prompt[:50]}...")
 
                 try:
+
                     @retry(**self.retry_config["network_retry"])
                     async def send_prompt_with_retry():
                         try:
@@ -532,6 +540,7 @@ class OrchestratorManager:
                 self.logger.debug(f"Current prompt (truncated): {prompt[:50]}...")
 
                 try:
+
                     @retry(**self.retry_config["network_retry"])
                     async def send_prompt_with_retry():
                         try:
