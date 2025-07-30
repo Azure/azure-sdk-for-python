@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, AsyncIterable, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -68,7 +68,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
+class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], KeyVaultClientConfiguration]
 ):
 
@@ -544,9 +544,9 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def update_key(
         self,
         key_name: str,
-        key_version: str,
         parameters: _models.KeyUpdateParameters,
         *,
+        key_version: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.KeyBundle:
@@ -559,10 +559,10 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param key_name: The name of key to update. Required.
         :type key_name: str
-        :param key_version: The version of the key to update. Required.
-        :type key_version: str
         :param parameters: The parameters of the key to update. Required.
         :type parameters: ~azure.keyvault.keys._generated.models.KeyUpdateParameters
+        :keyword key_version: The version of the key to update. Default value is None.
+        :paramtype key_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -575,9 +575,9 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def update_key(
         self,
         key_name: str,
-        key_version: str,
         parameters: JSON,
         *,
+        key_version: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.KeyBundle:
@@ -590,10 +590,10 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param key_name: The name of key to update. Required.
         :type key_name: str
-        :param key_version: The version of the key to update. Required.
-        :type key_version: str
         :param parameters: The parameters of the key to update. Required.
         :type parameters: JSON
+        :keyword key_version: The version of the key to update. Default value is None.
+        :paramtype key_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -606,9 +606,9 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def update_key(
         self,
         key_name: str,
-        key_version: str,
         parameters: IO[bytes],
         *,
+        key_version: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.KeyBundle:
@@ -621,10 +621,10 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param key_name: The name of key to update. Required.
         :type key_name: str
-        :param key_version: The version of the key to update. Required.
-        :type key_version: str
         :param parameters: The parameters of the key to update. Required.
         :type parameters: IO[bytes]
+        :keyword key_version: The version of the key to update. Default value is None.
+        :paramtype key_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -637,8 +637,9 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def update_key(
         self,
         key_name: str,
-        key_version: str,
         parameters: Union[_models.KeyUpdateParameters, JSON, IO[bytes]],
+        *,
+        key_version: Optional[str] = None,
         **kwargs: Any
     ) -> _models.KeyBundle:
         """The update key operation changes specified attributes of a stored key and can be applied to any
@@ -650,12 +651,12 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param key_name: The name of key to update. Required.
         :type key_name: str
-        :param key_version: The version of the key to update. Required.
-        :type key_version: str
         :param parameters: The parameters of the key to update. Is one of the following types:
          KeyUpdateParameters, JSON, IO[bytes] Required.
         :type parameters: ~azure.keyvault.keys._generated.models.KeyUpdateParameters or JSON or
          IO[bytes]
+        :keyword key_version: The version of the key to update. Default value is None.
+        :paramtype key_version: str
         :return: KeyBundle. The KeyBundle is compatible with MutableMapping
         :rtype: ~azure.keyvault.keys._generated.models.KeyBundle
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -725,7 +726,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_key(self, key_name: str, key_version: str, **kwargs: Any) -> _models.KeyBundle:
+    async def get_key(self, key_name: str, *, key_version: Optional[str] = None, **kwargs: Any) -> _models.KeyBundle:
         """Gets the public part of a stored key.
 
         The get key operation is applicable to all key types. If the requested key is symmetric, then
@@ -733,10 +734,10 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param key_name: The name of the key to get. Required.
         :type key_name: str
-        :param key_version: Adding the version parameter retrieves a specific version of a key. This
-         URI fragment is optional. If not specified, the latest version of the key is returned.
-         Required.
-        :type key_version: str
+        :keyword key_version: Adding the version parameter retrieves a specific version of a key. This
+         URI fragment is optional. If not specified, the latest version of the key is returned. Default
+         value is None.
+        :paramtype key_version: str
         :return: KeyBundle. The KeyBundle is compatible with MutableMapping
         :rtype: ~azure.keyvault.keys._generated.models.KeyBundle
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -798,7 +799,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     @distributed_trace
     def get_key_versions(
         self, key_name: str, *, maxresults: Optional[int] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.KeyItem"]:
+    ) -> AsyncItemPaged["_models.KeyItem"]:
         """Retrieves a list of individual key versions with the same key name.
 
         The full key identifier, attributes, and tags are provided in the response. This operation
@@ -891,7 +892,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_keys(self, *, maxresults: Optional[int] = None, **kwargs: Any) -> AsyncIterable["_models.KeyItem"]:
+    def get_keys(self, *, maxresults: Optional[int] = None, **kwargs: Any) -> AsyncItemPaged["_models.KeyItem"]:
         """List keys in the specified vault.
 
         Retrieves a list of the keys in the Key Vault as JSON Web Key structures that contain the
@@ -1229,9 +1230,9 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def encrypt(
         self,
         key_name: str,
-        key_version: str,
         parameters: _models.KeyOperationsParameters,
         *,
+        key_version: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.KeyOperationResult:
@@ -1248,10 +1249,10 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param key_name: The name of the key. Required.
         :type key_name: str
-        :param key_version: The version of the key. Required.
-        :type key_version: str
         :param parameters: The parameters for the encryption operation. Required.
         :type parameters: ~azure.keyvault.keys._generated.models.KeyOperationsParameters
+        :keyword key_version: The version of the key. Default value is None.
+        :paramtype key_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1264,9 +1265,9 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def encrypt(
         self,
         key_name: str,
-        key_version: str,
         parameters: JSON,
         *,
+        key_version: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.KeyOperationResult:
@@ -1283,10 +1284,10 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param key_name: The name of the key. Required.
         :type key_name: str
-        :param key_version: The version of the key. Required.
-        :type key_version: str
         :param parameters: The parameters for the encryption operation. Required.
         :type parameters: JSON
+        :keyword key_version: The version of the key. Default value is None.
+        :paramtype key_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1299,9 +1300,9 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def encrypt(
         self,
         key_name: str,
-        key_version: str,
         parameters: IO[bytes],
         *,
+        key_version: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.KeyOperationResult:
@@ -1318,10 +1319,10 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param key_name: The name of the key. Required.
         :type key_name: str
-        :param key_version: The version of the key. Required.
-        :type key_version: str
         :param parameters: The parameters for the encryption operation. Required.
         :type parameters: IO[bytes]
+        :keyword key_version: The version of the key. Default value is None.
+        :paramtype key_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1334,8 +1335,9 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def encrypt(
         self,
         key_name: str,
-        key_version: str,
         parameters: Union[_models.KeyOperationsParameters, JSON, IO[bytes]],
+        *,
+        key_version: Optional[str] = None,
         **kwargs: Any
     ) -> _models.KeyOperationResult:
         """Encrypts an arbitrary sequence of bytes using an encryption key that is stored in a key vault.
@@ -1351,12 +1353,12 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param key_name: The name of the key. Required.
         :type key_name: str
-        :param key_version: The version of the key. Required.
-        :type key_version: str
         :param parameters: The parameters for the encryption operation. Is one of the following types:
          KeyOperationsParameters, JSON, IO[bytes] Required.
         :type parameters: ~azure.keyvault.keys._generated.models.KeyOperationsParameters or JSON or
          IO[bytes]
+        :keyword key_version: The version of the key. Default value is None.
+        :paramtype key_version: str
         :return: KeyOperationResult. The KeyOperationResult is compatible with MutableMapping
         :rtype: ~azure.keyvault.keys._generated.models.KeyOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1429,9 +1431,9 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def decrypt(
         self,
         key_name: str,
-        key_version: str,
         parameters: _models.KeyOperationsParameters,
         *,
+        key_version: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.KeyOperationResult:
@@ -1450,10 +1452,10 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param key_name: The name of the key. Required.
         :type key_name: str
-        :param key_version: The version of the key. Required.
-        :type key_version: str
         :param parameters: The parameters for the decryption operation. Required.
         :type parameters: ~azure.keyvault.keys._generated.models.KeyOperationsParameters
+        :keyword key_version: The version of the key. Default value is None.
+        :paramtype key_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1466,9 +1468,9 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def decrypt(
         self,
         key_name: str,
-        key_version: str,
         parameters: JSON,
         *,
+        key_version: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.KeyOperationResult:
@@ -1487,10 +1489,10 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param key_name: The name of the key. Required.
         :type key_name: str
-        :param key_version: The version of the key. Required.
-        :type key_version: str
         :param parameters: The parameters for the decryption operation. Required.
         :type parameters: JSON
+        :keyword key_version: The version of the key. Default value is None.
+        :paramtype key_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1503,9 +1505,9 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def decrypt(
         self,
         key_name: str,
-        key_version: str,
         parameters: IO[bytes],
         *,
+        key_version: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.KeyOperationResult:
@@ -1524,10 +1526,10 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param key_name: The name of the key. Required.
         :type key_name: str
-        :param key_version: The version of the key. Required.
-        :type key_version: str
         :param parameters: The parameters for the decryption operation. Required.
         :type parameters: IO[bytes]
+        :keyword key_version: The version of the key. Default value is None.
+        :paramtype key_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1540,8 +1542,9 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def decrypt(
         self,
         key_name: str,
-        key_version: str,
         parameters: Union[_models.KeyOperationsParameters, JSON, IO[bytes]],
+        *,
+        key_version: Optional[str] = None,
         **kwargs: Any
     ) -> _models.KeyOperationResult:
         """Decrypts a single block of encrypted data.
@@ -1559,12 +1562,12 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param key_name: The name of the key. Required.
         :type key_name: str
-        :param key_version: The version of the key. Required.
-        :type key_version: str
         :param parameters: The parameters for the decryption operation. Is one of the following types:
          KeyOperationsParameters, JSON, IO[bytes] Required.
         :type parameters: ~azure.keyvault.keys._generated.models.KeyOperationsParameters or JSON or
          IO[bytes]
+        :keyword key_version: The version of the key. Default value is None.
+        :paramtype key_version: str
         :return: KeyOperationResult. The KeyOperationResult is compatible with MutableMapping
         :rtype: ~azure.keyvault.keys._generated.models.KeyOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1637,9 +1640,9 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def sign(
         self,
         key_name: str,
-        key_version: str,
         parameters: _models.KeySignParameters,
         *,
+        key_version: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.KeyOperationResult:
@@ -1651,10 +1654,10 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param key_name: The name of the key. Required.
         :type key_name: str
-        :param key_version: The version of the key. Required.
-        :type key_version: str
         :param parameters: The parameters for the signing operation. Required.
         :type parameters: ~azure.keyvault.keys._generated.models.KeySignParameters
+        :keyword key_version: The version of the key. Default value is None.
+        :paramtype key_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1667,9 +1670,9 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def sign(
         self,
         key_name: str,
-        key_version: str,
         parameters: JSON,
         *,
+        key_version: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.KeyOperationResult:
@@ -1681,10 +1684,10 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param key_name: The name of the key. Required.
         :type key_name: str
-        :param key_version: The version of the key. Required.
-        :type key_version: str
         :param parameters: The parameters for the signing operation. Required.
         :type parameters: JSON
+        :keyword key_version: The version of the key. Default value is None.
+        :paramtype key_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1697,9 +1700,9 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def sign(
         self,
         key_name: str,
-        key_version: str,
         parameters: IO[bytes],
         *,
+        key_version: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.KeyOperationResult:
@@ -1711,10 +1714,10 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param key_name: The name of the key. Required.
         :type key_name: str
-        :param key_version: The version of the key. Required.
-        :type key_version: str
         :param parameters: The parameters for the signing operation. Required.
         :type parameters: IO[bytes]
+        :keyword key_version: The version of the key. Default value is None.
+        :paramtype key_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1727,8 +1730,9 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def sign(
         self,
         key_name: str,
-        key_version: str,
         parameters: Union[_models.KeySignParameters, JSON, IO[bytes]],
+        *,
+        key_version: Optional[str] = None,
         **kwargs: Any
     ) -> _models.KeyOperationResult:
         """Creates a signature from a digest using the specified key.
@@ -1739,11 +1743,11 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param key_name: The name of the key. Required.
         :type key_name: str
-        :param key_version: The version of the key. Required.
-        :type key_version: str
         :param parameters: The parameters for the signing operation. Is one of the following types:
          KeySignParameters, JSON, IO[bytes] Required.
         :type parameters: ~azure.keyvault.keys._generated.models.KeySignParameters or JSON or IO[bytes]
+        :keyword key_version: The version of the key. Default value is None.
+        :paramtype key_version: str
         :return: KeyOperationResult. The KeyOperationResult is compatible with MutableMapping
         :rtype: ~azure.keyvault.keys._generated.models.KeyOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1816,9 +1820,9 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def verify(
         self,
         key_name: str,
-        key_version: str,
         parameters: _models.KeyVerifyParameters,
         *,
+        key_version: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.KeyVerifyResult:
@@ -1832,10 +1836,10 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param key_name: The name of the key. Required.
         :type key_name: str
-        :param key_version: The version of the key. Required.
-        :type key_version: str
         :param parameters: The parameters for verify operations. Required.
         :type parameters: ~azure.keyvault.keys._generated.models.KeyVerifyParameters
+        :keyword key_version: The version of the key. Default value is None.
+        :paramtype key_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1848,9 +1852,9 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def verify(
         self,
         key_name: str,
-        key_version: str,
         parameters: JSON,
         *,
+        key_version: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.KeyVerifyResult:
@@ -1864,10 +1868,10 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param key_name: The name of the key. Required.
         :type key_name: str
-        :param key_version: The version of the key. Required.
-        :type key_version: str
         :param parameters: The parameters for verify operations. Required.
         :type parameters: JSON
+        :keyword key_version: The version of the key. Default value is None.
+        :paramtype key_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1880,9 +1884,9 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def verify(
         self,
         key_name: str,
-        key_version: str,
         parameters: IO[bytes],
         *,
+        key_version: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.KeyVerifyResult:
@@ -1896,10 +1900,10 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param key_name: The name of the key. Required.
         :type key_name: str
-        :param key_version: The version of the key. Required.
-        :type key_version: str
         :param parameters: The parameters for verify operations. Required.
         :type parameters: IO[bytes]
+        :keyword key_version: The version of the key. Default value is None.
+        :paramtype key_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1912,8 +1916,9 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def verify(
         self,
         key_name: str,
-        key_version: str,
         parameters: Union[_models.KeyVerifyParameters, JSON, IO[bytes]],
+        *,
+        key_version: Optional[str] = None,
         **kwargs: Any
     ) -> _models.KeyVerifyResult:
         """Verifies a signature using a specified key.
@@ -1926,12 +1931,12 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param key_name: The name of the key. Required.
         :type key_name: str
-        :param key_version: The version of the key. Required.
-        :type key_version: str
         :param parameters: The parameters for verify operations. Is one of the following types:
          KeyVerifyParameters, JSON, IO[bytes] Required.
         :type parameters: ~azure.keyvault.keys._generated.models.KeyVerifyParameters or JSON or
          IO[bytes]
+        :keyword key_version: The version of the key. Default value is None.
+        :paramtype key_version: str
         :return: KeyVerifyResult. The KeyVerifyResult is compatible with MutableMapping
         :rtype: ~azure.keyvault.keys._generated.models.KeyVerifyResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2004,9 +2009,9 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def wrap_key(
         self,
         key_name: str,
-        key_version: str,
         parameters: _models.KeyOperationsParameters,
         *,
+        key_version: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.KeyOperationResult:
@@ -2021,10 +2026,10 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param key_name: The name of the key. Required.
         :type key_name: str
-        :param key_version: The version of the key. Required.
-        :type key_version: str
         :param parameters: The parameters for wrap operation. Required.
         :type parameters: ~azure.keyvault.keys._generated.models.KeyOperationsParameters
+        :keyword key_version: The version of the key. Default value is None.
+        :paramtype key_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2037,9 +2042,9 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def wrap_key(
         self,
         key_name: str,
-        key_version: str,
         parameters: JSON,
         *,
+        key_version: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.KeyOperationResult:
@@ -2054,10 +2059,10 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param key_name: The name of the key. Required.
         :type key_name: str
-        :param key_version: The version of the key. Required.
-        :type key_version: str
         :param parameters: The parameters for wrap operation. Required.
         :type parameters: JSON
+        :keyword key_version: The version of the key. Default value is None.
+        :paramtype key_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2070,9 +2075,9 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def wrap_key(
         self,
         key_name: str,
-        key_version: str,
         parameters: IO[bytes],
         *,
+        key_version: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.KeyOperationResult:
@@ -2087,10 +2092,10 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param key_name: The name of the key. Required.
         :type key_name: str
-        :param key_version: The version of the key. Required.
-        :type key_version: str
         :param parameters: The parameters for wrap operation. Required.
         :type parameters: IO[bytes]
+        :keyword key_version: The version of the key. Default value is None.
+        :paramtype key_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2103,8 +2108,9 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def wrap_key(
         self,
         key_name: str,
-        key_version: str,
         parameters: Union[_models.KeyOperationsParameters, JSON, IO[bytes]],
+        *,
+        key_version: Optional[str] = None,
         **kwargs: Any
     ) -> _models.KeyOperationResult:
         """Wraps a symmetric key using a specified key.
@@ -2118,12 +2124,12 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param key_name: The name of the key. Required.
         :type key_name: str
-        :param key_version: The version of the key. Required.
-        :type key_version: str
         :param parameters: The parameters for wrap operation. Is one of the following types:
          KeyOperationsParameters, JSON, IO[bytes] Required.
         :type parameters: ~azure.keyvault.keys._generated.models.KeyOperationsParameters or JSON or
          IO[bytes]
+        :keyword key_version: The version of the key. Default value is None.
+        :paramtype key_version: str
         :return: KeyOperationResult. The KeyOperationResult is compatible with MutableMapping
         :rtype: ~azure.keyvault.keys._generated.models.KeyOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2196,9 +2202,9 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def unwrap_key(
         self,
         key_name: str,
-        key_version: str,
         parameters: _models.KeyOperationsParameters,
         *,
+        key_version: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.KeyOperationResult:
@@ -2211,10 +2217,10 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param key_name: The name of the key. Required.
         :type key_name: str
-        :param key_version: The version of the key. Required.
-        :type key_version: str
         :param parameters: The parameters for the key operation. Required.
         :type parameters: ~azure.keyvault.keys._generated.models.KeyOperationsParameters
+        :keyword key_version: The version of the key. Default value is None.
+        :paramtype key_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2227,9 +2233,9 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def unwrap_key(
         self,
         key_name: str,
-        key_version: str,
         parameters: JSON,
         *,
+        key_version: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.KeyOperationResult:
@@ -2242,10 +2248,10 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param key_name: The name of the key. Required.
         :type key_name: str
-        :param key_version: The version of the key. Required.
-        :type key_version: str
         :param parameters: The parameters for the key operation. Required.
         :type parameters: JSON
+        :keyword key_version: The version of the key. Default value is None.
+        :paramtype key_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2258,9 +2264,9 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def unwrap_key(
         self,
         key_name: str,
-        key_version: str,
         parameters: IO[bytes],
         *,
+        key_version: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.KeyOperationResult:
@@ -2273,10 +2279,10 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param key_name: The name of the key. Required.
         :type key_name: str
-        :param key_version: The version of the key. Required.
-        :type key_version: str
         :param parameters: The parameters for the key operation. Required.
         :type parameters: IO[bytes]
+        :keyword key_version: The version of the key. Default value is None.
+        :paramtype key_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2289,8 +2295,9 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def unwrap_key(
         self,
         key_name: str,
-        key_version: str,
         parameters: Union[_models.KeyOperationsParameters, JSON, IO[bytes]],
+        *,
+        key_version: Optional[str] = None,
         **kwargs: Any
     ) -> _models.KeyOperationResult:
         """Unwraps a symmetric key using the specified key that was initially used for wrapping that key.
@@ -2302,12 +2309,12 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param key_name: The name of the key. Required.
         :type key_name: str
-        :param key_version: The version of the key. Required.
-        :type key_version: str
         :param parameters: The parameters for the key operation. Is one of the following types:
          KeyOperationsParameters, JSON, IO[bytes] Required.
         :type parameters: ~azure.keyvault.keys._generated.models.KeyOperationsParameters or JSON or
          IO[bytes]
+        :keyword key_version: The version of the key. Default value is None.
+        :paramtype key_version: str
         :return: KeyOperationResult. The KeyOperationResult is compatible with MutableMapping
         :rtype: ~azure.keyvault.keys._generated.models.KeyOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2380,9 +2387,9 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def release(
         self,
         key_name: str,
-        key_version: str,
         parameters: _models.KeyReleaseParameters,
         *,
+        key_version: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.KeyReleaseResult:
@@ -2393,11 +2400,11 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param key_name: The name of the key to get. Required.
         :type key_name: str
-        :param key_version: Adding the version parameter retrieves a specific version of a key.
-         Required.
-        :type key_version: str
         :param parameters: The parameters for the key release operation. Required.
         :type parameters: ~azure.keyvault.keys._generated.models.KeyReleaseParameters
+        :keyword key_version: Adding the version parameter retrieves a specific version of a key.
+         Default value is None.
+        :paramtype key_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2410,9 +2417,9 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def release(
         self,
         key_name: str,
-        key_version: str,
         parameters: JSON,
         *,
+        key_version: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.KeyReleaseResult:
@@ -2423,11 +2430,11 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param key_name: The name of the key to get. Required.
         :type key_name: str
-        :param key_version: Adding the version parameter retrieves a specific version of a key.
-         Required.
-        :type key_version: str
         :param parameters: The parameters for the key release operation. Required.
         :type parameters: JSON
+        :keyword key_version: Adding the version parameter retrieves a specific version of a key.
+         Default value is None.
+        :paramtype key_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2440,9 +2447,9 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def release(
         self,
         key_name: str,
-        key_version: str,
         parameters: IO[bytes],
         *,
+        key_version: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.KeyReleaseResult:
@@ -2453,11 +2460,11 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param key_name: The name of the key to get. Required.
         :type key_name: str
-        :param key_version: Adding the version parameter retrieves a specific version of a key.
-         Required.
-        :type key_version: str
         :param parameters: The parameters for the key release operation. Required.
         :type parameters: IO[bytes]
+        :keyword key_version: Adding the version parameter retrieves a specific version of a key.
+         Default value is None.
+        :paramtype key_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2470,8 +2477,9 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def release(
         self,
         key_name: str,
-        key_version: str,
         parameters: Union[_models.KeyReleaseParameters, JSON, IO[bytes]],
+        *,
+        key_version: Optional[str] = None,
         **kwargs: Any
     ) -> _models.KeyReleaseResult:
         """Releases a key.
@@ -2481,13 +2489,13 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param key_name: The name of the key to get. Required.
         :type key_name: str
-        :param key_version: Adding the version parameter retrieves a specific version of a key.
-         Required.
-        :type key_version: str
         :param parameters: The parameters for the key release operation. Is one of the following types:
          KeyReleaseParameters, JSON, IO[bytes] Required.
         :type parameters: ~azure.keyvault.keys._generated.models.KeyReleaseParameters or JSON or
          IO[bytes]
+        :keyword key_version: Adding the version parameter retrieves a specific version of a key.
+         Default value is None.
+        :paramtype key_version: str
         :return: KeyReleaseResult. The KeyReleaseResult is compatible with MutableMapping
         :rtype: ~azure.keyvault.keys._generated.models.KeyReleaseResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2559,7 +2567,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     @distributed_trace
     def get_deleted_keys(
         self, *, maxresults: Optional[int] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.DeletedKeyItem"]:
+    ) -> AsyncItemPaged["_models.DeletedKeyItem"]:
         """Lists the deleted keys in the specified vault.
 
         Retrieves a list of the keys in the Key Vault as JSON Web Key structures that contain the
@@ -3192,10 +3200,13 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="7.6",
-        params_added_on={"7.6": ["api_version", "key_name", "key_version", "accept"]},
+        method_added_on="7.6-preview.2",
+        params_added_on={"7.6-preview.2": ["key_name", "key_version", "accept", "api_version"]},
+        api_versions_list=["7.6-preview.2", "7.6", "2025-06-01-preview"],
     )
-    async def get_key_attestation(self, key_name: str, key_version: str, **kwargs: Any) -> _models.KeyBundle:
+    async def get_key_attestation(
+        self, key_name: str, *, key_version: Optional[str] = None, **kwargs: Any
+    ) -> _models.KeyBundle:
         """Gets the public part of a stored key along with its attestation blob.
 
         The get key attestation operation returns the key along with its attestation blob. This
@@ -3203,10 +3214,10 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param key_name: The name of the key to retrieve attestation for. Required.
         :type key_name: str
-        :param key_version: Adding the version parameter retrieves attestation blob for specific
+        :keyword key_version: Adding the version parameter retrieves attestation blob for specific
          version of a key. This URI fragment is optional. If not specified, the latest version of the
-         key attestation blob is returned. Required.
-        :type key_version: str
+         key attestation blob is returned. Default value is None.
+        :paramtype key_version: str
         :return: KeyBundle. The KeyBundle is compatible with MutableMapping
         :rtype: ~azure.keyvault.keys._generated.models.KeyBundle
         :raises ~azure.core.exceptions.HttpResponseError:
