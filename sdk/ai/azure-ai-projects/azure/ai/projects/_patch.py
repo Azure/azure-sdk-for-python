@@ -93,9 +93,9 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     :ivar deployments: DeploymentsOperations operations
     :vartype deployments: azure.ai.projects.operations.DeploymentsOperations
     :param endpoint: Project endpoint. In the form
-     "https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/_project"
+     "https://your-ai-services-account-name.services.ai.azure.com/api/projects/_project"
      if your Foundry Hub has only one Project, or to use the default Project in your Hub. Or in the
-     form "https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/<your-project-name>"
+     form "https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name"
      if you want to explicitly specify the Foundry Project name. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
@@ -139,14 +139,14 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     def get_openai_client(
         self, *, api_version: Optional[str] = None, connection_name: Optional[str] = None, **kwargs
     ) -> "OpenAI":  # type: ignore[name-defined]
-        """Get an authenticated OpenAI client (from the `openai` package) to use with
+        """Get an authenticated AzureOpenAI client (from the `openai` package) to use with
         AI models deployed to your AI Foundry Project or connected Azure OpenAI services.
 
         .. note:: The package `openai` must be installed prior to calling this method.
 
         :keyword api_version: The Azure OpenAI api-version to use when creating the client. Optional.
          See "Data plane - Inference" row in the table at
-         https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs. If this keyword
+         https://learn.microsoft.com/azure/ai-foundry/openai/reference#api-specs. If this keyword
          is not specified, you must set the environment variable `OPENAI_API_VERSION` instead.
         :paramtype api_version: Optional[str]
         :keyword connection_name: Optional. If specified, the connection named here must be of type Azure OpenAI.
@@ -156,8 +156,8 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
          with AI models deployed directly to your AI Foundry project.
         :paramtype connection_name: Optional[str]
 
-        :return: An authenticated OpenAI client
-        :rtype: ~openai.OpenAI
+        :return: An authenticated AzureOpenAI client
+        :rtype: ~openai.AzureOpenAI
 
         :raises ~azure.core.exceptions.ResourceNotFoundError: if an Azure OpenAI connection
          does not exist.

@@ -64,9 +64,9 @@ with tracer.start_as_current_span(scenario):
 
     with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 
-        # Project endpoint has the form:   https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/<your-project-name>
-        # Inference endpoint has the form: https://<your-ai-services-account-name>.services.ai.azure.com/models
-        # Strip the "/api/projects/<your-project-name>" part and replace with "/models":
+        # Project endpoint has the form:   https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name
+        # Inference endpoint has the form: https://your-ai-services-account-name.services.ai.azure.com/models
+        # Strip the "/api/projects/your-project-name" part and replace with "/models":
         inference_endpoint = f"https://{urlparse(endpoint).netloc}/models"
 
         with ChatCompletionsClient(

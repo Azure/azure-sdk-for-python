@@ -3,14 +3,14 @@
 The AI Projects client library (in preview) is part of the Azure AI Foundry SDK, and provides easy access to
 resources in your Azure AI Foundry Project. Use it to:
 
-* **Create and run Agents** using the `.agents` property on the client.
-* **Get an AzureOpenAI client** using the `.inference.get_azure_openai_client` method.
-* **Enumerate AI Models** deployed to your Foundry Project using the `.deployments` operations.
-* **Enumerate connected Azure resources** in your Foundry project using the `.connections` operations.
-* **Upload documents and create Datasets** to reference them using the `.datasets` operations.
-* **Create and enumerate Search Indexes** using the `.indexes` operations.
+* **Create and run Agents** using methods on the `.agents` client property.
+* **Get an AzureOpenAI client** using the `.get_openai_client()` client method.
+* **Enumerate AI Models** deployed to your Foundry Project using methods on the `.deployments` client property.
+* **Enumerate connected Azure resources** in your Foundry project using methods on the `.connections` client property.
+* **Upload documents and create Datasets** to reference them using methods on the `.datasets` client property.
+* **Create and enumerate Search Indexes** using methods on the `.indexes` client property.
 
-The client library uses the version `v1` of the AI Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects/ga-rest-api-reference).
+The client library uses version `v1` of the AI Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects/ga-rest-api-reference).
 
 [Product documentation](https://aka.ms/azsdk/azure-ai-projects/product-doc)
 | [Samples][samples]
@@ -29,7 +29,7 @@ To report an issue with the client library, or request additional features, plea
 - Python 3.9 or later.
 - An [Azure subscription][azure_sub].
 - A [project in Azure AI Foundry](https://learn.microsoft.com/azure/ai-studio/how-to/create-projects).
-- The project endpoint URL of the form `https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/<your-project-name>`. It can be found in your Azure AI Foundry Project overview page. Below we will assume the environment variable `PROJECT_ENDPOINT` was defined to hold this value.
+- The project endpoint URL of the form `https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name`. It can be found in your Azure AI Foundry Project overview page. Below we will assume the environment variable `PROJECT_ENDPOINT` was defined to hold this value.
 - An Entra ID token for authentication. Your application needs an object that implements the [TokenCredential](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential) interface. Code samples here use [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential). To get that working, you will need:
   * An appropriate role assignment. see [Role-based access control in Azure AI Foundry portal](https://learn.microsoft.com/azure/ai-foundry/concepts/rbac-ai-foundry). Role assigned can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
   * [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) installed.
@@ -40,6 +40,8 @@ To report an issue with the client library, or request additional features, plea
 ```bash
 pip install azure-ai-projects
 ```
+
+Note that the dependent package [azure-ai-agents](https://pypi.org/project/azure-ai-agents/) will be install as a result, if not already installed, to support `.agent` operations on the client.
 
 ## Key concepts
 
@@ -66,21 +68,21 @@ To construct an asynchronous client, Install the additional package [aiohttp](ht
 pip install aiohttp
 ```
 
-and update the code above to import `asyncio`, and import `AIProjectClient` from the `azure.ai.projects.aio` namespace:
+and update the code above to import `asyncio`, import `AIProjectClient` from the `azure.ai.projects.aio` package, and import `DefaultAzureCredential` from the `azure.identity.aio` package:
 
 ```python
 import os
 import asyncio
 from azure.ai.projects.aio import AIProjectClient
-from azure.core.credentials import AzureKeyCredential
+from azure.identity.aio import DefaultAzureCredential
 
-project_client = AIProjectClient.from_connection_string(
+project_client = AIProjectClient(
     credential=DefaultAzureCredential(),
     endpoint=os.environ["PROJECT_ENDPOINT"],
 )
 ```
 
-**Note:** Support for project connection string and hub-based projects has been discontinued. We recommend creating a new Azure AI Foundry resource utilizing project endpoint. If this is not possible, please pin the version of or pin the version of `azure-ai-projects` to `1.0.0b10` or earlier.
+**Note:** Support for project connection string and hub-based projects has been discontinued. We recommend creating a new Azure AI Foundry resource utilizing project endpoint. If this is not possible, please pin the version of `azure-ai-projects` to `1.0.0b10` or earlier.
 
 ## Examples
 
@@ -88,7 +90,10 @@ project_client = AIProjectClient.from_connection_string(
 
 The `.agents` property on the `AIProjectsClient` gives you access to an authenticated `AgentsClient` from the `azure-ai-agents` package. Below we show how to create an Agent and delete it. To see what you can do with the Agent you created, see the [many samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents/samples) and the [README.md](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents) file of the dependent `azure-ai-agents` package.
 
-The code below assumes `model_deployment_name` (a string) is defined. It's the deployment name of an AI model in your Foundry Project, as shown in the "Models + endpoints" tab, under the "Name" column.
+The code below assumes the following:
+
+* `model_deployment_name` (a string) is defined. It's the deployment name of an AI model in your Foundry Project, as shown in the "Models + endpoints" tab, under the "Name" column.
+* `connection_name` (a string) is defined. It's the name of the connection to a resource of type "Azure OpenAI", as shown in the "Connected resources" tab, under the "Name" column, in the "Management Center" of your Foundry Project.
 
 <!-- SNIPPET:sample_agents.agents_sample -->
 
@@ -111,17 +116,19 @@ print("Deleted agent")
 
 ### Get an authenticated AzureOpenAI client
 
-Your Azure AI Foundry project may have one or more AI models deployed that support chat completions.
+Your Azure AI Foundry project may have one or more AI models deployed that support chat completions or responses.
 These could be OpenAI models, Microsoft models, or models from other providers.
 Use the code below to get an authenticated [AzureOpenAI](https://github.com/openai/openai-python?tab=readme-ov-file#microsoft-azure-openai)
-from the [openai](https://pypi.org/project/openai/) package, and execute a chat completions call.
+from the [openai](https://pypi.org/project/openai/) package, and execute a chat completions or responses calls.
 
 The code below assumes `model_deployment_name` (a string) is defined. It's the deployment name of an AI model in your
 Foundry Project, or a connected Azure OpenAI resource. As shown in the "Models + endpoints" tab, under the "Name" column.
 
-Update the `api_version` value with one found in the "Data plane - inference" row [in this table](https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs).
+Update the `api_version` value with one found in the "Data plane - inference" row [in this table](https://learn.microsoft.com/azure/ai-foundry/openai/reference#api-specs).
 
-<!-- SNIPPET:sample_chat_completions_with_azure_openai_client.aoai_sample-->
+#### Chat completions with AzureOpenAI client
+
+<!-- SNIPPET:sample_chat_completions_with_azure_openai_client.aoai_chat_completions_sample-->
 
 ```python
 print(
@@ -157,6 +164,42 @@ with project_client.get_openai_client(api_version="2024-10-21", connection_name=
     )
 
     print(response.choices[0].message.content)
+```
+
+<!-- END SNIPPET -->
+
+See the "inference" folder in the [package samples][samples] for additional samples.
+
+#### Responses with AzureOpenAI client
+
+<!-- SNIPPET:sample_responses_with_azure_openai_client.aoai_responses_sample-->
+
+```python
+print(
+    "Get an authenticated Azure OpenAI client for the parent AI Services resource, and perform a 'responses' operation:"
+)
+with project_client.get_openai_client(api_version="2025-04-01-preview") as client:
+
+    response = client.responses.create(
+        model=model_deployment_name,
+        input="How many feet are in a mile?",
+    )
+
+    print(response.output_text)
+
+print(
+    "Get an authenticated Azure OpenAI client for a connected Azure OpenAI service, and perform a 'responses' operation:"
+)
+with project_client.get_openai_client(
+    api_version="2025-04-01-preview", connection_name=connection_name
+) as client:
+
+    response = client.responses.create(
+        model=model_deployment_name,
+        input="How many feet are in a mile?",
+    )
+
+    print(response.output_text)
 ```
 
 <!-- END SNIPPET -->
@@ -393,7 +436,7 @@ By default logs redact the values of URL query strings, the values of some HTTP 
 project_client = AIProjectClient(
     credential=DefaultAzureCredential(),
     endpoint=os.environ["PROJECT_ENDPOINT"],
-    logging_enable = True
+    logging_enable=True
 )
 ```
 

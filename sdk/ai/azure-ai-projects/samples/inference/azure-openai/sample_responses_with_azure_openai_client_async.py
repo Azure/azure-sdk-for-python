@@ -25,7 +25,7 @@ USAGE:
        in the Management Center of your AI Foundry project. Required.
 
     Update the Azure OpenAI api-version as needed (see `api_version=` below). Values can be found here:
-    https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs. Note that `responses` operations
+    https://learn.microsoft.com/azure/ai-foundry/openai/reference#api-specs. Note that `responses` operations
     are only supported in the preview API version at the moment.
 """
 

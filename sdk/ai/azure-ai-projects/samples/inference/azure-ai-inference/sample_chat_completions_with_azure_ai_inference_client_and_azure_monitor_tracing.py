@@ -50,9 +50,9 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
         connection_string = project_client.telemetry.get_application_insights_connection_string()
         configure_azure_monitor(connection_string=connection_string)
 
-    # Project endpoint has the form:   https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/<your-project-name>
-    # Inference endpoint has the form: https://<your-ai-services-account-name>.services.ai.azure.com/models
-    # Strip the "/api/projects/<your-project-name>" part and replace with "/models":
+    # Project endpoint has the form:   https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name
+    # Inference endpoint has the form: https://your-ai-services-account-name.services.ai.azure.com/models
+    # Strip the "/api/projects/your-project-name" part and replace with "/models":
     inference_endpoint = f"https://{urlparse(endpoint).netloc}/models"
 
     with tracer.start_as_current_span(scenario):

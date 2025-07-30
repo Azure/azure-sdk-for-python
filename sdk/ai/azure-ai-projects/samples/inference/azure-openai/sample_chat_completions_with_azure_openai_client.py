@@ -24,7 +24,7 @@ USAGE:
        in the Management Center of your AI Foundry project. Required.
 
     Update the Azure OpenAI api-version as needed (see `api_version=` below). Values can be found here:
-    https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs
+    https://learn.microsoft.com/azure/ai-foundry/openai/reference#api-specs
 """
 
 import os
@@ -39,7 +39,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
 
     with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
 
-        # [START aoai_sample]
+        # [START aoai_chat_completions_sample]
         print(
             "Get an authenticated Azure OpenAI client for the parent AI Services resource, and perform a chat completion operation:"
         )
@@ -73,4 +73,4 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
             )
 
             print(response.choices[0].message.content)
-        # [END aoai_sample]
+        # [END aoai_chat_completions_sample]

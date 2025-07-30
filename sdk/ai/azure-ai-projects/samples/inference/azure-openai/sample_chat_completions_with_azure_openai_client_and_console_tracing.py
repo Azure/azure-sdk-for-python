@@ -23,7 +23,7 @@ USAGE:
     2) MODEL_DEPLOYMENT_NAME - The model deployment name, as found in your AI Foundry project.
 
     Update the Azure OpenAI api-version as needed (see `api_version=` below). Values can be found here:
-    https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs
+    https://learn.microsoft.com/azure/ai-foundry/openai/reference#api-specs
 
 ALTERNATIVE USAGE:
     If you want to export telemetry to OTLP endpoint (such as Aspire dashboard

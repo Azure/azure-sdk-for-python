@@ -24,7 +24,7 @@ USAGE:
        in the Management Center of your AI Foundry project. Required.
 
     Update the Azure OpenAI api-version as needed (see `api_version=` below). Values can be found here:
-    https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs. Note that `responses` operations
+    https://learn.microsoft.com/azure/ai-foundry/openai/reference#api-specs. Note that `responses` operations
     are only supported in the preview API version at the moment.
 """
 
@@ -40,6 +40,7 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
 
     with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
 
+        # [START aoai_responses_sample]
         print(
             "Get an authenticated Azure OpenAI client for the parent AI Services resource, and perform a 'responses' operation:"
         )
@@ -65,3 +66,4 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
             )
 
             print(response.output_text)
+        # [END aoai_chat_completions_sample]
