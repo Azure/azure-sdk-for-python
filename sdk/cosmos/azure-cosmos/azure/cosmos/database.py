@@ -22,7 +22,7 @@
 """Interact with databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, List, Union, Optional, Mapping, Callable, overload
+from typing import Any, Dict, List, Union, Optional, Mapping, Callable, overload, Literal
 
 import warnings
 from azure.core.tracing.decorator import distributed_trace
@@ -176,7 +176,7 @@ class DatabaseProxy(object):
             vector_embedding_policy: Optional[Dict[str, Any]] = None,
             change_feed_policy: Optional[Dict[str, Any]] = None,
             full_text_policy: Optional[Dict[str, Any]] = None,
-            return_properties: Optional[bool] = False,
+            return_properties: Literal[False],
             **kwargs: Any
     ) -> ContainerProxy:
         ...
@@ -199,7 +199,7 @@ class DatabaseProxy(object):
             vector_embedding_policy: Optional[Dict[str, Any]] = None,
             change_feed_policy: Optional[Dict[str, Any]] = None,
             full_text_policy: Optional[Dict[str, Any]] = None,
-            return_properties: Optional[bool] = True,
+            return_properties: Literal[True],
             **kwargs: Any
     ) -> CosmosDict:
         ...
@@ -222,7 +222,7 @@ class DatabaseProxy(object):
         vector_embedding_policy: Optional[Dict[str, Any]] = None,
         change_feed_policy: Optional[Dict[str, Any]] = None,
         full_text_policy: Optional[Dict[str, Any]] = None,
-        return_properties: Optional[bool] = False,
+        return_properties: bool = False,
         **kwargs: Any
     ) -> Union[ContainerProxy, CosmosDict]:
         """Create a new container with the given ID (name).
@@ -356,7 +356,7 @@ class DatabaseProxy(object):
             vector_embedding_policy: Optional[Dict[str, Any]] = None,
             change_feed_policy: Optional[Dict[str, Any]] = None,
             full_text_policy: Optional[Dict[str, Any]] = None,
-            return_properties:  Optional[bool] = False,
+            return_properties: Literal[False],
             **kwargs: Any
     ) -> ContainerProxy:
         ...
@@ -379,7 +379,7 @@ class DatabaseProxy(object):
             vector_embedding_policy: Optional[Dict[str, Any]] = None,
             change_feed_policy: Optional[Dict[str, Any]] = None,
             full_text_policy: Optional[Dict[str, Any]] = None,
-            return_properties:  Optional[bool] = True,
+            return_properties: Literal[True],
             **kwargs: Any
     ) -> CosmosDict:
         ...
@@ -402,7 +402,7 @@ class DatabaseProxy(object):
         vector_embedding_policy: Optional[Dict[str, Any]] = None,
         change_feed_policy: Optional[Dict[str, Any]] = None,
         full_text_policy: Optional[Dict[str, Any]] = None,
-        return_properties: Optional[bool] = False,
+        return_properties: bool = False,
         **kwargs: Any
     ) -> Union[ContainerProxy, CosmosDict]:
         """Create a container if it does not exist already.
@@ -688,7 +688,7 @@ class DatabaseProxy(object):
         analytical_storage_ttl: Optional[int] = None,
         computed_properties: Optional[List[Dict[str, str]]] = None,
         full_text_policy: Optional[Dict[str, Any]] = None,
-        return_properties: Optional[bool] = False,
+        return_properties: Literal[False],
         **kwargs: Any
     ) -> ContainerProxy:
         ...
@@ -707,7 +707,7 @@ class DatabaseProxy(object):
             analytical_storage_ttl: Optional[int] = None,
             computed_properties: Optional[List[Dict[str, str]]] = None,
             full_text_policy: Optional[Dict[str, Any]] = None,
-            return_properties: Optional[bool] = True,
+            return_properties: Literal[True],
             **kwargs: Any
     ) -> CosmosDict:
         ...
@@ -726,7 +726,7 @@ class DatabaseProxy(object):
         analytical_storage_ttl: Optional[int] = None,
         computed_properties: Optional[List[Dict[str, str]]] = None,
         full_text_policy: Optional[Dict[str, Any]] = None,
-        return_properties: Optional[bool] = False,
+        return_properties: bool = False,
         **kwargs: Any
     ) -> Union[ContainerProxy, CosmosDict]:
         """Reset the properties of the container.
@@ -1089,4 +1089,4 @@ class DatabaseProxy(object):
             offer=throughput_properties[0],
             **kwargs
         )
-        return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], headers=data)
+        return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)

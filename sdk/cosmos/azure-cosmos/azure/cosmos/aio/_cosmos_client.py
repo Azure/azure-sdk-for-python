@@ -22,7 +22,7 @@
 """Create, read, and delete databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, List, Optional, Union, cast, Mapping, Iterable, Callable, overload
+from typing import Any, Dict, List, Optional, Union, cast, Mapping, Iterable, Callable, overload, Literal
 import warnings
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials import TokenCredential
@@ -259,7 +259,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
             initial_headers: Optional[Dict[str, str]] = None,
             throughput_bucket: Optional[int] = None,
-            return_properties: Optional[bool] = False,
+            return_properties: Literal[False],
             **kwargs: Any
     ) -> DatabaseProxy:
         ...
@@ -272,7 +272,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
             initial_headers: Optional[Dict[str, str]] = None,
             throughput_bucket: Optional[int] = None,
-            return_properties: Optional[bool] = True,
+            return_properties: Literal[True],
             **kwargs: Any
     ) -> CosmosDict:
         ...
@@ -285,7 +285,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
         initial_headers: Optional[Dict[str, str]] = None,
         throughput_bucket: Optional[int] = None,
-        return_properties: Optional[bool] = False,
+        return_properties: bool = False,
         **kwargs: Any
     ) -> Union[DatabaseProxy, CosmosDict]:
         """
@@ -340,7 +340,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
         result = await self.client_connection.CreateDatabase(database={"id": id}, options=request_options, **kwargs)
         if not return_properties:
-            return DatabaseProxy(self.client_connection, id=result["id"], properties=result, header=result.get_response_headers())
+            return DatabaseProxy(self.client_connection, id=result["id"], properties=result)
         else:
             return result
 
@@ -352,7 +352,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
         initial_headers: Optional[Dict[str, str]] = None,
         throughput_bucket: Optional[int] = None,
-        return_properties: Optional[bool] = False,
+        return_properties: Literal[False],
         **kwargs: Any
     ) -> DatabaseProxy:
         ...
@@ -365,7 +365,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
             initial_headers: Optional[Dict[str, str]] = None,
             throughput_bucket: Optional[int] = None,
-            return_properties: Optional[bool] = True,
+            return_properties: Literal[True],
             **kwargs: Any
     ) -> CosmosDict:
         ...
@@ -378,7 +378,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
         initial_headers: Optional[Dict[str, str]] = None,
         throughput_bucket: Optional[int] = None,
-        return_properties: Optional[bool] = False,
+        return_properties: bool = False,
         **kwargs: Any
     ) -> Union[DatabaseProxy, CosmosDict]:
 
@@ -427,11 +427,11 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             kwargs["initial_headers"] = initial_headers
         try:
             database_proxy = self.get_database_client(id)
-            headers = await database_proxy.read(**kwargs)
+            result = await database_proxy.read(**kwargs)
             if not return_properties:
                 return database_proxy
             else:
-                return headers
+                return result
         except CosmosResourceNotFoundError:
             return await self.create_database(
                 id,

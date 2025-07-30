@@ -44,10 +44,9 @@ class ThroughputProperties:
 
     def __init__(self, *args, **kwargs) -> None:
         self.offer_throughput: Optional[int] = args[0] if args else kwargs.get('offer_throughput')
-        self.properties: Optional[Dict[str, Any]] = args[1] if len(args) > 1 else kwargs.get('properties')
+        self.properties: Optional[CosmosDict] = args[1] if len(args) > 1 else kwargs.get('properties')
         self.auto_scale_max_throughput: Optional[int] = kwargs.get('auto_scale_max_throughput')
         self.auto_scale_increment_percent: Optional[int] = kwargs.get('auto_scale_increment_percent')
-        self.headers : Optional[CosmosDict] = kwargs.get('headers')
 
     def get_response_headers(self) -> CaseInsensitiveDict:
         """Returns a copy of the response headers associated to this response
@@ -55,6 +54,9 @@ class ThroughputProperties:
         :return: Dict of response headers
         :rtype: ~azure.core.CaseInsensitiveDict
         """
-        return self.headers
+        try:
+            return self.properties.get_response_headers()
+        except AttributeError:
+            return {}
 
 Offer = ThroughputProperties

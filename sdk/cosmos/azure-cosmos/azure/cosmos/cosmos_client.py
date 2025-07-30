@@ -22,7 +22,7 @@
 """Create, read, and delete databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, Iterable, List, Mapping, Optional, Union, cast, Callable, overload
+from typing import Any, Dict, Iterable, List, Mapping, Optional, Union, cast, Callable, overload, Literal
 import warnings
 
 from azure.core.tracing.decorator import distributed_trace
@@ -270,7 +270,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             initial_headers: Optional[Dict[str, str]] = None,
             response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
             throughput_bucket: Optional[int] = None,
-            return_properties: Optional[bool] = False,
+            return_properties: Literal[False],
             **kwargs: Any
     ) -> DatabaseProxy:
         ...
@@ -285,7 +285,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             initial_headers: Optional[Dict[str, str]] = None,
             response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
             throughput_bucket: Optional[int] = None,
-            return_properties: Optional[bool] = True,
+            return_properties: Literal[True],
             **kwargs: Any
     ) -> CosmosDict:
         ...
@@ -300,7 +300,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         initial_headers: Optional[Dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         throughput_bucket: Optional[int] = None,
-        return_properties: Optional[bool] = False,
+        return_properties: bool = False,
         **kwargs: Any
     ) -> Union[DatabaseProxy, CosmosDict]:
         """
@@ -375,7 +375,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         *,
         initial_headers: Optional[Dict[str, str]] = None,
         throughput_bucket: Optional[int] = None,
-        return_properties: Optional[bool] = False,
+        return_properties: Literal[False],
         **kwargs: Any
     ) -> DatabaseProxy:
         ...
@@ -389,7 +389,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             *,
             initial_headers: Optional[Dict[str, str]] = None,
             throughput_bucket: Optional[int] = None,
-            return_properties: Optional[bool] = True,
+            return_properties: Literal[True],
             **kwargs: Any
     ) -> CosmosDict:
         ...
@@ -403,7 +403,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         *,
         initial_headers: Optional[Dict[str, str]] = None,
         throughput_bucket: Optional[int] = None,
-        return_properties: Optional[bool] = False,
+        return_properties: bool = False,
         **kwargs: Any
     ) -> Union[DatabaseProxy, CosmosDict]:
         """
@@ -450,14 +450,14 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             kwargs["initial_headers"] = initial_headers
         try:
             database_proxy = self.get_database_client(id)
-            headers = database_proxy.read(
+            result = database_proxy.read(
                 populate_query_metrics=populate_query_metrics,
                 **kwargs
             )
             if not return_properties:
                 return database_proxy
             else:
-                return headers
+                return result
         except CosmosResourceNotFoundError:
             return self.create_database(
                 id,
