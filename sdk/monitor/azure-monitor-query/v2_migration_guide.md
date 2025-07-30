@@ -1,6 +1,6 @@
 # Guide to migrating from v1 to v2
 
-Version 2.0.0 of `azure-monitor-query` removes the metrics querying capabilities which are now handled by separate packages.
+Version 2.0.0 of `azure-monitor-query` removes the metrics querying capabilities, which are now handled by separate packages.
 This guide assists you in the migration from [azure-monitor-query](https://pypi.org/project/azure-monitor-query/) versions 1.x to 2.x, and outlines how to adapt your code to leverage the new packages for metrics querying.
 
 ## Table of contents
@@ -20,17 +20,17 @@ This guide assists you in the migration from [azure-monitor-query](https://pypi.
 
 **Which client are you currently using?**
 
-- **`LogsQueryClient`** → **No changes needed** - continue using `azure-monitor-query`
+- **`LogsQueryClient`** → **No changes needed** - continue using `azure-monitor-query` package
 - **`MetricsClient`** → **Simple migration** - switch to `azure-monitor-querymetrics` package (same API, different import)
 - **`MetricsQueryClient`** → **Choose your path:**
-  - For **metrics querying**: Use `MetricsClient` from `azure-monitor-querymetrics` (recommended - higher limits)
-  - For **full metrics management capabilities**: Use `MonitorManagementClient` from `azure-mgmt-monitor` (requires code changes)
+  - For **metrics querying**: Use `MetricsClient` from `azure-monitor-querymetrics` (recommended - higher query limits)
+  - For **full metrics management capabilities**: Use `MonitorManagementClient` from `azure-mgmt-monitor` package (requires code changes)
 
 ## Motivation for v2
 
-Historically, the Azure Monitor Query library was a monolithic package that included both log analytics and metrics querying capabilities across three different services/endpoints. While this may have seemed convenient, it introduced challenges for users. A single SDK package combining multiple services meant customers couldn’t upgrade one service independently of others. Any breaking change in one service forced updates across all services in the package, disrupting customer workflows.
+Historically, the Azure Monitor Query library was a monolithic package that included both Log Analytics and Metrics querying capabilities across 5 different services/endpoints. While this may have seemed convenient, it introduced challenges for users. A single package combining multiple services meant customers couldn’t upgrade one service independently of others. Any breaking change in one service forced updates across all services in the package, disrupting customer workflows.
 
-To address these issues, Azure adopted a formal definition of a service as a set of operations that version uniformly. Each service version now has a dedicated SDK package, documentation, and API contract. This structure allows SDKs to be generated directly from [TypeSpec](https://typespec.io/) definitions, improving consistency, reducing manual intervention, and aligning with Azure’s long-term tooling strategy.
+To address these issues, Azure adopted a formal definition of a service as a set of operations that version uniformly. Each service version now has a dedicated package, documentation, and API contract. This structure allows libraries to be generated directly from [TypeSpec](https://typespec.io/) definitions, improving consistency, reducing manual intervention, and aligning with Azure’s long-term tooling strategy.
 
 With this in mind, the `azure-monitor-query` package will now focus solely on logs querying, while resource metrics querying will be handled by the new `azure-monitor-querymetrics` package and `azure-mgmt-monitor`.
 
