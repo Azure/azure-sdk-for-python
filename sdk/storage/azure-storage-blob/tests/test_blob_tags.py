@@ -522,4 +522,41 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         first_page = next(blob_list)
         items_on_page1 = list(first_page)
         assert 1 == len(items_on_page1)
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_blob_tags_conditional_headers(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        # Act
+        self._setup(storage_account_name, storage_account_key)
+
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(b'hello world', overwrite=True)
+        early_test_datetime = self.get_datetime_variable(
+            variables, "early_test_dt", (datetime.utcnow() - timedelta(minutes=15))
+        )
+        late_test_datetime = self.get_datetime_variable(
+            variables, "late_test_dt", (datetime.utcnow() + timedelta(minutes=15))
+        )
+        sas = self.generate_sas(
+            generate_blob_sas,
+            account_name=storage_account_name,
+            account_key=storage_account_key,
+            container_name=self.container_name,
+            blob_name=blob.blob_name,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1)
+        )
+        blob_url = '{0}/{1}/{2}?{3}'.format(
+            self.account_url(storage_account_name, "blob"), self.container_name, blob_name, sas)
+
+        props = blob.get_blob_properties()
+        assert props is not None
+
+        return variables
+
 #------------------------------------------------------------------------------
