@@ -60,17 +60,21 @@ HTTPResponseType = Union["LegacyHttpResponse", "HttpResponse", "LegacyAsyncHttpR
 
 # These Helper functions are used to Log Diagnostics for the SDK outside on_request and on_response
 def _populate_logger_attributes(  # type: ignore[attr-defined, union-attr]
-                                logger_attributes: Optional[Dict] = None,
-                                request: Optional[Union[PipelineRequest[HTTPRequestType], Any]] = None,
-                                exception: Optional[Union[CosmosHttpResponseError,
-                                ServiceRequestError, ServiceResponseError]] = None) -> Dict:
+                            logger_attributes: Optional[Dict[str, Any]] = None,
+                            request: Optional[Union[PipelineRequest[HTTPRequestType], Any]] = None,
+                            exception: Optional[Union[CosmosHttpResponseError,
+                            ServiceRequestError, ServiceResponseError]] = None) -> Dict[str, Any]:
     """Populates the logger attributes with the request and response details.
 
     :param logger_attributes: Optional[Dict[str, Any]], The logger attributes to populate.
+    :type logger_attributes: Optional[Dict[str, Any]]
     :param request: Optional[Union[PipelineRequest[HTTPRequestType], Any]], The request object containing HTTP details.
+    :type request: Optional[Union[PipelineRequest[HTTPRequestType], Any]]
     :param exception: Optional[Union[CosmosHttpResponseError, ServiceRequestError, ServiceResponseError]],
         The exception object, if any.
-    :return: Dict[str, Any], The logger attributes populated with the request and response details.
+    :type exception: Optional[Union[CosmosHttpResponseError, ServiceRequestError, ServiceResponseError]]
+    :return: The logger attributes populated with the request and response details.
+    :rtype: Dict[str, Any]
     """
 
     if not logger_attributes:

@@ -377,7 +377,6 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
             self.host,
             self.masterKey,
             consistency_level="Session",
-            connection_policy=self.connectionPolicy,
             logger=root_logger_grandchild,
             enable_diagnostics_logging=True
         )
