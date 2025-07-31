@@ -1,5 +1,15 @@
 # Release History
 
+## 1.0.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.0.0 (2025-07-31)
 
 First stable version of the client library. The client library now uses version `v1` of the
