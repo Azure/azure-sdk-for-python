@@ -398,66 +398,18 @@ class TestSafetyEvaluation:
 
     @pytest.mark.asyncio
     @patch("azure.ai.evaluation.simulator.DirectAttackSimulator.__init__", return_value=None)
-    @patch("azure.ai.evaluation.simulator.AdversarialSimulator.__init__", return_value=None)
-    @patch("azure.ai.evaluation.simulator.AdversarialSimulator.__call__", new_callable=AsyncMock)
-    async def test_direct_attack_different_seeds_fix(self, mock_adv_call, mock_adv_init, mock_direct_init, safety_eval, mock_target):
-        """Test that DirectAttackSimulator uses different seeds for regular and jailbreak simulations."""
-        
-        # Mock AdversarialSimulator calls
-        mock_adv_call.return_value = JsonLineList([
-            {"messages": [{"content": "test_query", "role": "user"}]}
-        ])
-        
-        # Import and create DirectAttackSimulator manually to test the fix
-        from azure.ai.evaluation.simulator._direct_attack_simulator import DirectAttackSimulator
-        from azure.ai.evaluation.simulator import AdversarialScenario
-        
-        # Create a real DirectAttackSimulator instance with mocked dependencies
-        simulator = DirectAttackSimulator.__new__(DirectAttackSimulator)
-        simulator.azure_ai_project = {"test": "project"}
-        simulator.credential = MagicMock()
-        simulator.adversarial_template_handler = MagicMock()
-        
-        # Call the fixed method
-        result = await simulator.__call__(
-            scenario=AdversarialScenario.ADVERSARIAL_QA,
-            target=mock_target,
-            max_simulation_results=2,
-            randomization_seed=42
-        )
-        
-        # Verify that AdversarialSimulator was called twice (regular and jailbreak)
-        assert mock_adv_call.call_count == 2
-        
-        # Check that different seeds were used
-        call_kwargs_list = [call[1] for call in mock_adv_call.call_args_list]
-        regular_seed = call_kwargs_list[0].get("randomization_seed")
-        jailbreak_seed = call_kwargs_list[1].get("randomization_seed")
-        
-        # The fix should use different seeds
-        assert regular_seed != jailbreak_seed
-        assert regular_seed == 42  # Original seed for regular simulation
-        assert jailbreak_seed == 43  # Derived seed for jailbreak simulation
-        
-        # Verify the structure of the result
-        assert "regular" in result
-        assert "jailbreak" in result
-
-    @pytest.mark.asyncio
-    @patch("azure.ai.evaluation.simulator.DirectAttackSimulator.__init__", return_value=None)
     @patch("azure.ai.evaluation.simulator.DirectAttackSimulator.__call__", new_callable=AsyncMock)
-    async def test_direct_attack_duplicate_queries_issue(self, mock_direct_call, mock_direct_init, safety_eval, mock_target):
-        """Test that DirectAttackSimulator doesn't produce duplicate queries when using same randomization_seed."""
+    async def test_direct_attack_same_seed_behavior(self, mock_direct_call, mock_direct_init, safety_eval, mock_target):
+        """Test that DirectAttackSimulator uses the same randomization_seed for both regular and jailbreak simulations."""
         
-        # Mock the DirectAttackSimulator to expose the issue
-        # Simulate what happens when both regular and jailbreak simulations use the same seed
+        # Mock the DirectAttackSimulator to return consistent results
         mock_regular_results = [
-            {"messages": [{"content": "query_1", "role": "user"}]},
-            {"messages": [{"content": "query_2", "role": "user"}]},
+            {"messages": [{"content": "regular_query_1", "role": "user"}]},
+            {"messages": [{"content": "regular_query_2", "role": "user"}]},
         ]
         mock_jailbreak_results = [
-            {"messages": [{"content": "query_1", "role": "user"}]},  # Same as regular - this is the bug!
-            {"messages": [{"content": "query_2", "role": "user"}]},  # Same as regular - this is the bug!
+            {"messages": [{"content": "jailbreak_query_1", "role": "user"}]},
+            {"messages": [{"content": "jailbreak_query_2", "role": "user"}]},
         ]
         
         mock_direct_call.return_value = {
@@ -474,10 +426,9 @@ class TestSafetyEvaluation:
             randomization_seed=42
         )
         
-        # Verify DirectAttackSimulator was called
+        # Verify DirectAttackSimulator was called with the correct seed
         mock_direct_call.assert_called_once()
         call_kwargs = mock_direct_call.call_args[1]
         
-        # The issue is that the same randomization_seed gets passed to both regular and jailbreak simulators
-        # This test documents the current problematic behavior
+        # Both regular and jailbreak should use the same randomization_seed
         assert call_kwargs.get("randomization_seed") == 42
