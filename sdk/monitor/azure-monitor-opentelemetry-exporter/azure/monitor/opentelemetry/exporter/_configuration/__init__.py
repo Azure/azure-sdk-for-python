@@ -104,7 +104,8 @@ class _ConfigurationManager:
                     else:
                         # Erroneous state, should not occur under normal circumstances
                         logger.warning(
-                            "Latest `CHANGE_VERSION` is less than the current stored version, no configurations updated."
+                            "Latest `CHANGE_VERSION` is less than the current stored version," \
+                            " no configurations updated."
                         )
         return self._refresh_interval
 
