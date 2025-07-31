@@ -248,6 +248,8 @@ class ShareSmbSettings(GeneratedShareSmbSettings):
         self.encryption_in_transit = kwargs.get('encryption_in_transit')  # type: ignore [assignment]
         if self.multichannel is None:
             raise ValueError("The value 'multichannel' must be specified.")
+        if self.encryption_in_transit is None:
+            raise ValueError("The value 'encryption_in_transit' must be specified.")
 
 
 class ShareProtocolSettings(GeneratedShareProtocolSettings):
