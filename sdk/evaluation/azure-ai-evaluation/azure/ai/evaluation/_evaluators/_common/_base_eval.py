@@ -416,6 +416,39 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         aggregated["evaluation_per_turn"] = evaluation_per_turn
         return aggregated
 
+    def _parse_tools_from_response(self, response):
+        """Parse the response to extract tool calls and results.
+        :param response: The response to parse.
+        :type response: Union[str, List[dict]]
+        :return: List of tool calls extracted from the response.
+        :rtype: List[dict]
+        """
+        tool_calls = []
+        tool_results_map = {}
+        if isinstance(response, list):
+            for message in response:
+                # Extract tool calls from assistant messages
+                if message.get("role") == "assistant" and isinstance(message.get("content"), list):
+                    for content_item in message.get("content"):
+                        if isinstance(content_item, dict) and content_item.get("type") == "tool_call":
+                            tool_calls.append(content_item)
+
+                # Extract tool results from tool messages
+                elif message.get("role") == "tool" and message.get("tool_call_id"):
+                    tool_call_id = message.get("tool_call_id")
+                    if isinstance(message.get("content"), list) and len(message.get("content")) > 0:
+                        result_content = message.get("content")[0]
+                        if isinstance(result_content, dict) and result_content.get("type") == "tool_result":
+                            tool_results_map[tool_call_id] = result_content
+
+        # Attach results to their corresponding calls
+        for tool_call in tool_calls:
+            tool_call_id = tool_call.get("tool_call_id")
+            if tool_call_id in tool_results_map:
+                tool_call["tool_result"] = tool_results_map[tool_call_id]["tool_result"]
+
+        return tool_calls
+
     async def _real_call(self, **kwargs) -> Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]:
         """The asynchronous call where real end-to-end evaluation logic is performed.
 

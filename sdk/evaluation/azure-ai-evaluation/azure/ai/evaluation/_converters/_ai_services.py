@@ -243,16 +243,26 @@ class AIAgentConverter:
             if len(single_turn.content) < 1:
                 continue
 
-            # Build the content of the text message.
-            content = {
-                "type": "text",
-                "text": single_turn.content[0].text.value,
-            }
+            content_list = []
+            # If content is a list, process all content items.
+            for content_item in single_turn.content:
+                if content_item.type == "text":
+                    content_list.append({
+                        "type": "text",
+                        "text": content_item.text.value,
+                    })
+                elif content_item.type == "image":
+                    content_list.append({
+                        "type": "image",
+                        "image": {
+                            "file_id": content_item.image_file.file_id,
+                        }
+                    })
 
             # If we have a user message, then we save it as such and since it's a human message, there is no
             # run_id associated with it.
             if single_turn.role == _USER:
-                final_messages.append(UserMessage(content=[content], createdAt=single_turn.created_at))
+                final_messages.append(UserMessage(content=content_list, createdAt=single_turn.created_at))
                 continue
 
             # In this case, we have an assistant message. Unfortunately, this would only have the user-facing
@@ -261,7 +271,7 @@ class AIAgentConverter:
             if single_turn.role == _AGENT:
                 # We are required to put the run_id in the assistant message.
                 final_messages.append(
-                    AssistantMessage(content=[content], run_id=single_turn.run_id, createdAt=single_turn.created_at)
+                    AssistantMessage(content=content_list, run_id=single_turn.run_id, createdAt=single_turn.created_at)
                 )
                 continue
 
@@ -791,6 +801,7 @@ class LegacyAgentDataRetriever(AIAgentDataRetriever):
                 limit=self._AI_SERVICES_API_MAX_LIMIT,
                 order="asc",
                 after=after,
+                include=["step_details.tool_calls[*].file_search.results[*].content"],
             )
             has_more = run_steps.has_more
             after = run_steps.last_id
@@ -838,7 +849,8 @@ class FDPAgentDataRetriever(AIAgentDataRetriever):
     def _list_run_steps_chronological(self, thread_id: str, run_id: str):
 
         return self.project_client.agents.run_steps.list(
-            thread_id=thread_id, run_id=run_id, limit=self._AI_SERVICES_API_MAX_LIMIT, order="asc"
+            thread_id=thread_id, run_id=run_id, limit=self._AI_SERVICES_API_MAX_LIMIT, order="asc",
+            include=["step_details.tool_calls[*].file_search.results[*].content"],
         )
 
     def _list_run_ids_chronological(self, thread_id: str) -> List[str]:
