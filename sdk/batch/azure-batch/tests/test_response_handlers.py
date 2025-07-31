@@ -8,13 +8,8 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceModifiedError
 )
-# from azure.batch._response_handlers import process_http_response_error, BatchErrorFormat
-from azure.batch._response_handlers import process_http_response_error, BatchErrorFormat
-from azure.batch._patch import BatchExceptionPolicy
+from azure.batch._patch import BatchExceptionPolicy, BatchErrorFormat
 
-# test invalid json (a string or smth)
-# message not an object
-# what error looks like serialized as a strig
 
 class TestBatchErrorFormat(unittest.TestCase):
     def test_batch_error_format_with_values(self):
@@ -105,7 +100,7 @@ class TestResponseHandler(unittest.TestCase):
 
     def test_if_match_resource_not_found(self):
         mock_http_response = Mock()
-        mock_http_response.status_code = 500  # Using 500 to show header takes precedence
+        mock_http_response.status_code = 500
         mock_http_response.json.return_value = {
             "code": 500,
             "message": "Server error",
@@ -128,7 +123,7 @@ class TestResponseHandler(unittest.TestCase):
 
     def test_if_none_match_resource_not_found(self):
         mock_http_response = Mock()
-        mock_http_response.status_code = 500  # Using 500 to show header takes precedence
+        mock_http_response.status_code = 500
         mock_http_response.json.return_value = {
             "code": 500,
             "message": "Server error",
