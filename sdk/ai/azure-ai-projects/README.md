@@ -5,12 +5,13 @@ resources in your Azure AI Foundry Project. Use it to:
 
 * **Create and run Agents** using methods on the `.agents` client property.
 * **Get an AzureOpenAI client** using the `.get_openai_client()` client method.
-* **Enumerate AI Models** deployed to your Foundry Project using methods on the `.deployments` client property.
-* **Enumerate connected Azure resources** in your Foundry project using methods on the `.connections` client property.
-* **Upload documents and create Datasets** to reference them using methods on the `.datasets` client property.
-* **Create and enumerate Search Indexes** using methods on the `.indexes` client property.
+* **Run Evaluations** to assess the performance of generative AI applications, using the `.evaluations` operations.
+* **Enumerate AI Models** deployed to your Foundry Project using the `.deployments` operations.
+* **Enumerate connected Azure resources** in your Foundry project using the `.connections` operations.
+* **Upload documents and create Datasets** to reference them using the `.datasets` operations.
+* **Create and enumerate Search Indexes** using methods the `.indexes` operations.
 
-The client library uses version `v1` of the AI Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects/ga-rest-api-reference).
+The client library uses version `2025-05-15-preview` of the AI Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects/rest-api-reference).
 
 [Product documentation](https://aka.ms/azsdk/azure-ai-projects/product-doc)
 | [Samples][samples]
@@ -367,6 +368,73 @@ for index in project_client.indexes.list_versions(name=index_name):
 
 print(f"Delete Index `{index_name}` version `{index_version}`:")
 project_client.indexes.delete(name=index_name, version=index_version)
+```
+
+<!-- END SNIPPET -->
+
+### Evaluation
+
+Evaluation in Azure AI Project client library provides quantitive, AI-assisted quality and safety metrics to asses performance and Evaluate LLM Models, GenAI Application and Agents. Metrics are defined as evaluators. Built-in or custom evaluators can provide comprehensive evaluation insights.
+
+The code below shows some evaluation operations. Full list of sample can be found under "evaluation" folder in the [package samples][samples]
+
+<!-- SNIPPET:sample_evaluations.evaluations_sample-->
+
+```python
+print("Upload a single file and create a new Dataset to reference the file.")
+dataset: DatasetVersion = project_client.datasets.upload_file(
+    name=dataset_name,
+    version=dataset_version,
+    file_path=data_file,
+)
+print(dataset)
+
+print("Create an evaluation")
+evaluation: Evaluation = Evaluation(
+    display_name="Sample Evaluation Test",
+    description="Sample evaluation for testing",
+    # Sample Dataset Id : azureai://accounts/<account_name>/projects/<project_name>/data/<dataset_name>/versions/<version>
+    data=InputDataset(id=dataset.id if dataset.id else ""),
+    evaluators={
+        "relevance": EvaluatorConfiguration(
+            id=EvaluatorIds.RELEVANCE.value,
+            init_params={
+                "deployment_name": model_deployment_name,
+            },
+            data_mapping={
+                "query": "${data.query}",
+                "response": "${data.response}",
+            },
+        ),
+        "violence": EvaluatorConfiguration(
+            id=EvaluatorIds.VIOLENCE.value,
+            init_params={
+                "azure_ai_project": endpoint,
+            },
+        ),
+        "bleu_score": EvaluatorConfiguration(
+            id=EvaluatorIds.BLEU_SCORE.value,
+        ),
+    },
+)
+
+evaluation_response: Evaluation = project_client.evaluations.create(
+    evaluation,
+    headers={
+        "model-endpoint": model_endpoint,
+        "model-api-key": model_api_key,
+    },
+)
+print(evaluation_response)
+
+print("Get evaluation")
+get_evaluation_response: Evaluation = project_client.evaluations.get(evaluation_response.name)
+
+print(get_evaluation_response)
+
+print("List evaluations")
+for evaluation in project_client.evaluations.list():
+    print(evaluation)
 ```
 
 <!-- END SNIPPET -->
