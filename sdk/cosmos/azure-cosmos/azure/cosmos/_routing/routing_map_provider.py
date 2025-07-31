@@ -22,7 +22,7 @@
 """Internal class for partition key range cache implementation in the Azure
 Cosmos database service.
 """
-from typing import Dict, Any, Optional, List, Mapping
+from typing import Dict, Any, Optional, List
 
 from .. import _base
 from .collection_routing_map import CollectionRoutingMap
@@ -157,7 +157,7 @@ class SmartRoutingMapProvider(PartitionKeyRangeCache):
     invocation of CollectionRoutingMap.get_overlapping_ranges()
     """
 
-    def get_overlapping_ranges(self, collection_link: str, partition_key_ranges: List[Range], feed_options = None, **kwargs):
+    def get_overlapping_ranges(self, collection_link, partition_key_ranges, feed_options = None, **kwargs):
         """
         Given the sorted ranges and a collection,
         Returns the list of overlapping partition key ranges
