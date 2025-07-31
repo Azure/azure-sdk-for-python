@@ -38,7 +38,6 @@ def validate_unhealthy_partitions(global_endpoint_manager,
     assert unhealthy_partitions == expected_unhealthy_partitions
 
 @pytest.mark.cosmosCircuitBreakerMultiRegion
-@pytest.mark.cosmosPerPartitionAutomaticFailover
 class TestPerPartitionCircuitBreakerSmMrr:
     host = test_config.TestConfig.host
     master_key = test_config.TestConfig.masterKey
