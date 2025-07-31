@@ -24,6 +24,7 @@ from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import ShareProtocolSettings as GeneratedShareProtocolSettings
 from ._generated.models import ShareSmbSettings as GeneratedShareSmbSettings
+from ._generated.models import ShareSmbSettingsEncryptionInTransit as GeneratedEncryptionInTransit
 from ._generated.models import SmbMultichannel as GeneratedSmbMultichannel
 from ._generated.models import StorageServiceProperties as GeneratedStorageServiceProperties
 from ._parser import _parse_datetime_from_str
@@ -215,17 +216,36 @@ class SmbMultichannel(GeneratedSmbMultichannel):
             raise ValueError("The value 'enabled' must be specified.")
 
 
+class EncryptionInTransit(GeneratedEncryptionInTransit):
+    """Settings for encryption in transit.
+
+    :keyword bool required: If encryption in transit is required.
+    """
+
+    required: Optional[bool]
+    """If encryption in transit is enabled."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.required = kwargs.get('required')
+        if self.required is None:
+            raise ValueError("The value 'required' must be specified.")
+
+
 class ShareSmbSettings(GeneratedShareSmbSettings):
     """Settings for the SMB protocol.
 
     :keyword SmbMultichannel multichannel: Sets the multichannel settings.
+    :keyword EncryptionInTransit encryption_in_transit: Sets the encryption in transit settings.
     """
 
     multichannel: SmbMultichannel
     """Sets the multichannel settings."""
+    encryption_in_transit: EncryptionInTransit
+    """Sets the encryption in transit settings."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.multichannel = kwargs.get('multichannel')  # type: ignore [assignment]
+        self.encryption_in_transit = kwargs.get('encryption_in_transit')  # type: ignore [assignment]
         if self.multichannel is None:
             raise ValueError("The value 'multichannel' must be specified.")
 
