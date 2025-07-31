@@ -234,6 +234,15 @@ class ListSortOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies a descending sort order."""
 
 
+class MCPApprovalRequirement(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The extendable list of MCP approval requirements."""
+
+    NEVER = "never"
+    """The approval is not required for any of the tools."""
+    ALWAYS = "always"
+    """The approval is required for all tools."""
+
+
 class MessageBlockType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the kind of content block within a message. Could be text, an image file, an external
     image URL, or an unknown future type.

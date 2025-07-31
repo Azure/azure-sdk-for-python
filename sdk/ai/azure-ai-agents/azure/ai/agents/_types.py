@@ -11,6 +11,7 @@ from typing import List, TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
     from . import models as _models
+MCPRequiredApproval = Union[str, str, "_models.MCPApprovalRequirement", "_models.MCPApprovalPerTool"]
 MessageInputContent = Union[str, List["_models.MessageInputContentBlock"]]
 MessageAttachmentToolDefinition = Union["_models.CodeInterpreterToolDefinition", "_models.FileSearchToolDefinition"]
 AgentsToolChoiceOption = Union[str, str, "_models.AgentsToolChoiceOptionMode", "_models.AgentsNamedToolChoice"]
