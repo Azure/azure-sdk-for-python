@@ -82,37 +82,22 @@ if LOGGING_ENABLED:
     handler = logging.StreamHandler(stream=sys.stdout)
     logger.addHandler(handler)
 
-
-def agentClientPreparer(use_foundry_endpoint=False, **kwargs):
-    """
-    Parameterized decorator for preparing agent client tests.
-
-    :param use_foundry_endpoint: Whether to use foundry endpoint
-    :param **kwargs: Additional keyword arguments to override default values
-    :return: Decorator function
-    """
-    # Default values for environment variables only
-    default_kwargs = {
-        "azure_ai_agents_tests_project_endpoint": "https://Sanitized.api.azureml.ms/agents/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/",
-        "azure_ai_agents_tests_data_path": "azureml://subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-resour-cegr-oupfoo1/workspaces/abcd-abcdabcdabcda-abcdefghijklm/datastores/workspaceblobstore/paths/LocalUpload/000000000000/product_info_1.md",
-        "azure_ai_agents_tests_storage_queue": "https://foobar.queue.core.windows.net",
-        "azure_ai_agents_tests_search_index_name": "sample_index",
-        "azure_ai_agents_tests_search_connection_id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/someindex",
-        "azure_ai_agents_tests_bing_connection_id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.CognitiveServices/accounts/00000/projects/00000/connections/00000",
-        "azure_ai_agents_tests_deep_research_model": "gpt-4o-deep-research",
-        "azure_ai_agents_tests_is_test_run": "True",
-    }
-
-    if use_foundry_endpoint:
-        default_kwargs["azure_ai_agents_tests_project_endpoint"] = (
-            "https://Sanitized.services.ai.azure.com/api/projects/00000"
-        )
-
-    # Merge with any provided kwargs
-    default_kwargs.update(kwargs)
-
-    # Return the actual decorator by instantiating EnvironmentVariableLoader
-    return EnvironmentVariableLoader("azure_ai_agents", **default_kwargs)
+agentClientPreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "azure_ai_agents",
+    # TODO: uncomment this endpoint when re running with 1DP
+    # azure_ai_agents_tests_project_endpoint="https://aiservices-id.services.ai.azure.com/api/projects/project-name",
+    # TODO: remove this endpoint when re running with 1DP
+    azure_ai_agents_tests_project_connection_string="https://Sanitized.api.azureml.ms/agents/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/",
+    azure_ai_agents_tests_project_endpoint="https://Sanitized.services.ai.azure.com/api/projects/00000",
+    azure_ai_agents_tests_data_path="azureml://subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-resour-cegr-oupfoo1/workspaces/abcd-abcdabcdabcda-abcdefghijklm/datastores/workspaceblobstore/paths/LocalUpload/000000000000/product_info_1.md",
+    azure_ai_agents_tests_storage_queue="https://foobar.queue.core.windows.net",
+    azure_ai_agents_tests_search_index_name="sample_index",
+    azure_ai_agents_tests_search_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/someindex",
+    azure_ai_agents_tests_bing_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.CognitiveServices/accounts/00000/projects/00000/connections/00000",
+    azure_ai_agents_tests_deep_research_model="gpt-4o-deep-research",
+    azure_ai_agents_tests_is_test_run="True",
+)
 
 
 # create tool for agent use
@@ -149,9 +134,11 @@ user_functions_live = {fetch_current_datetime_live}
 class TestAgentClient(AzureRecordedTestCase):
 
     # helper function: create client using environment variables
-    def create_client(self, **kwargs) -> AgentsClient:
+    def create_client(self, by_endpoint=False, **kwargs) -> AgentsClient:
         # fetch environment variables
-        endpoint = kwargs.pop("azure_ai_agents_tests_project_endpoint")
+        endpoint = kwargs.pop("azure_ai_agents_tests_project_connection_string")
+        if by_endpoint:
+            endpoint = kwargs.pop("azure_ai_agents_tests_project_endpoint")
         credential = self.get_credential(AgentsClient, is_async=False)
 
         # create and return client
@@ -3169,12 +3156,12 @@ class TestAgentClient(AzureRecordedTestCase):
             # Delete the agent once done
             client.delete_agent(agent.id)
 
-    @agentClientPreparer(use_foundry_endpoint=True)
+    @agentClientPreparer()
     @recorded_by_proxy
     def test_deep_research_tool(self, **kwargs):
         """Test using the DeepResearchTool with an agent."""
         # create client
-        with self.create_client(**kwargs) as client:
+        with self.create_client(by_endpoint=True, **kwargs) as client:
             assert isinstance(client, AgentsClient)
 
             # Get connection ID and model name from test environment
