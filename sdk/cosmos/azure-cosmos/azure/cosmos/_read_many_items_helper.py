@@ -20,6 +20,7 @@
 # SOFTWARE.
 
 import logging
+from collections.abc import Sequence
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Dict, List, Tuple, Any, Mapping, Optional, TYPE_CHECKING
 
@@ -42,7 +43,7 @@ class ReadManyItemsHelperSync:
             self,
             client: 'CosmosClientConnection',
             collection_link: str,
-            items: List[Tuple[str, "_PartitionKeyType"]],
+            items: Sequence[Tuple[str, "_PartitionKeyType"]],
             options: Optional[Mapping[str, Any]],
             partition_key_definition: Dict[str, Any],
             *,
@@ -74,22 +75,19 @@ class ReadManyItemsHelperSync:
         if not items_by_partition:
             return CosmosList([], response_headers=CaseInsensitiveDict())
 
-        results: List[Dict[str, Any]] = []
-        total_request_charge = 0.0
-
         # Use the provided executor if available, otherwise create one with max_concurrency
         if self.executor is not None:
             return self._execute_with_executor(self.executor, items_by_partition)
-        else:
-            with ThreadPoolExecutor(max_workers=self.max_concurrency) as executor:
-                return self._execute_with_executor(executor, items_by_partition)
+
+        with ThreadPoolExecutor(max_workers=self.max_concurrency) as executor:
+            return self._execute_with_executor(executor, items_by_partition)
 
     def _execute_with_executor(self, executor: ThreadPoolExecutor,
                                items_by_partition: Dict[str, List[Tuple[str, "_PartitionKeyType"]]]) -> CosmosList:
         """Execute the queries using the provided executor.
 
-        :param executor: The ThreadPoolExecutor to use
-        :param items_by_partition: Dictionary of items grouped by partition key range ID
+        :param ThreadPoolExecutor executor: The ThreadPoolExecutor to use
+        :param Dict[str, List[Tuple[str, "_PartitionKeyType"]]] items_by_partition: Dictionary of items grouped by partition key range ID
         :return: A list of the retrieved items
         :rtype: ~azure.cosmos.CosmosList
         """

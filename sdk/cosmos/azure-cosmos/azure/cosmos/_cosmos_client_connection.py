@@ -26,7 +26,9 @@
 import os
 import urllib.parse
 import uuid
+from concurrent.futures.thread import ThreadPoolExecutor
 from typing import Callable, Dict, Any, Iterable, List, Mapping, Optional, Sequence, Tuple, Union, cast
+
 from typing_extensions import TypedDict
 from urllib3.util.retry import Retry
 
@@ -43,12 +45,11 @@ from azure.core.pipeline.policies import (
     DistributedTracingPolicy,
     ProxyPolicy
 )
-
 from azure.core.utils import CaseInsensitiveDict
 from azure.core.pipeline.transport import HttpRequest, \
     HttpResponse  # pylint: disable=no-legacy-azure-core-http-response-import
+
 from . import _base as base
-from concurrent.futures.thread import ThreadPoolExecutor
 from ._global_partition_endpoint_manager_circuit_breaker import _GlobalPartitionEndpointManagerForCircuitBreaker
 from . import _query_iterable as query_iterable
 from . import _runtime_constants as runtime_constants

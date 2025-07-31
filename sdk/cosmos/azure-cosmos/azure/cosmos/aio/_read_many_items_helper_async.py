@@ -21,6 +21,7 @@
 
 import logging
 import asyncio
+from collections.abc import Sequence
 from typing import (
     Dict,
     List,
@@ -48,7 +49,7 @@ class ReadManyItemsHelper:
             self,
             client: 'CosmosClientConnection',
             collection_link: str,
-            items: List[Tuple[str, "PartitionKeyType"]],
+            items: Sequence[Tuple[str, "PartitionKeyType"]],
             options: Optional[Mapping[str, Any]],
             partition_key_definition: Dict[str, Any],
             max_concurrency: int = 10,

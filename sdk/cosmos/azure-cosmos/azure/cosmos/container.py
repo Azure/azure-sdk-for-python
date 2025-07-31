@@ -313,9 +313,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         :param items: A list of tuples, where each tuple contains an item's ID and partition key.
         :type items: List[Tuple[str, PartitionKeyType]]
-        :keyword ~concurrent.futures.ThreadPoolExecutor executor:
-                                            Optional ThreadPoolExecutor for handling concurrent operations.
-                                            If not provided, a new executor will be created as needed.
+        :keyword executor: Optional ThreadPoolExecutor for handling concurrent operations.
+                      If not provided, a new executor will be created as needed.
         :keyword int max_concurrency: The maximum number of concurrent operations for the read_many request. Defaults to 10.
         :keyword str consistency_level: The consistency level to use for the request.
         :keyword str session_token: Token for use with Session consistency.
