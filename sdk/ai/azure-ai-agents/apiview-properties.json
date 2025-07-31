@@ -175,7 +175,6 @@
         "azure.ai.agents.models.VectorStoreStaticChunkingStrategyResponse": "Azure.AI.Agents.VectorStoreStaticChunkingStrategyResponse",
         "azure.ai.agents.models.VectorStoreDataSourceAssetType": "Azure.AI.Agents.VectorStoreDataSourceAssetType",
         "azure.ai.agents.models.AzureAISearchQueryType": "Azure.AI.Agents.AzureAISearchQueryType",
-        "azure.ai.agents.models.MCPApprovalRequirement": "Azure.AI.Agents.MCPApprovalRequirement",
         "azure.ai.agents.models.MessageRole": "Azure.AI.Agents.MessageRole",
         "azure.ai.agents.models.MessageBlockType": "Azure.AI.Agents.MessageBlockType",
         "azure.ai.agents.models.ImageDetailLevel": "Azure.AI.Agents.ImageDetailLevel",

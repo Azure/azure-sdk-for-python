@@ -1864,9 +1864,8 @@ class MCPToolResource(_Model):
     :ivar headers: The headers for the MCP server updates. Required.
     :vartype headers: dict[str, str]
     :ivar require_approval: Does MCP server require approval. Is one of the following types: str,
-     Union[str, "_models.MCPApprovalRequirement"], MCPApprovalPerTool
-    :vartype require_approval: str or str or ~azure.ai.agents.models.MCPApprovalRequirement or
-     ~azure.ai.agents.models.MCPApprovalPerTool
+     Literal["never"], Literal["always"], MCPApprovalPerTool
+    :vartype require_approval: str or str or str or ~azure.ai.agents.models.MCPApprovalPerTool
     """
 
     server_label: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1876,8 +1875,8 @@ class MCPToolResource(_Model):
     require_approval: Optional["_types.MCPRequiredApproval"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Does MCP server require approval. Is one of the following types: str, Union[str,
-     \"_models.MCPApprovalRequirement\"], MCPApprovalPerTool"""
+    """Does MCP server require approval. Is one of the following types: str, Literal[\"never\"],
+     Literal[\"always\"], MCPApprovalPerTool"""
 
     @overload
     def __init__(
