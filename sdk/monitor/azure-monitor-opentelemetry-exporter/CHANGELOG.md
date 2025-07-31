@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b41 (Unreleased)
+## 1.0.0b41 (2025-0I-31)
 
 ### Features Added
 
@@ -8,10 +8,6 @@
   ([#41954](https://github.com/Azure/azure-sdk-for-python/pull/41954))
 - Refactored Application Insights Sampler Code
   ([#42210](https://github.com/Azure/azure-sdk-for-python/pull/42210))
-
-### Breaking Changes
-
-### Bugs Fixed
 
 ### Other Changes
 
