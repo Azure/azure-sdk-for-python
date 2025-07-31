@@ -23,6 +23,7 @@
 """
 import threading
 import warnings
+from concurrent.futures.thread import ThreadPoolExecutor
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Sequence, Union, Tuple, Mapping, cast, overload, Iterable, Callable
 from typing_extensions import Literal
@@ -295,8 +296,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def read_many_items(
             self,
-            items: List[Tuple[str, _PartitionKeyType]],
+            items: Sequence[Tuple[str, _PartitionKeyType]],
             *,
+            executor: Optional[ThreadPoolExecutor] = None,
+            max_concurrency: int = 10,
             consistency_level: Optional[str] = None,
             session_token: Optional[str] = None,
             initial_headers: Optional[Dict[str, str]] = None,
@@ -310,6 +313,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         :param items: A list of tuples, where each tuple contains an item's ID and partition key.
         :type items: List[Tuple[str, PartitionKeyType]]
+        :keyword ~concurrent.futures.ThreadPoolExecutor executor:
+                                            Optional ThreadPoolExecutor for handling concurrent operations.
+                                            If not provided, a new executor will be created as needed.
+        :keyword int max_concurrency: The maximum number of concurrent operations for the read_many request. Defaults to 10.
         :keyword str consistency_level: The consistency level to use for the request.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
@@ -339,6 +346,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             except exceptions.CosmosResourceNotFoundError as e:
                 return CosmosList([], response_headers=e.headers)
 
+        kwargs['max_concurrency'] = max_concurrency
         query_options = build_options(kwargs)
         self._get_properties_with_options(query_options)
         query_options["enableCrossPartitionQuery"] = True
@@ -349,6 +357,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             collection_link=self.container_link,
             items=item_tuples,
             options=query_options,
+            executor=executor,
             **kwargs)
 
 

@@ -45,6 +45,9 @@ class ReadManyItemsHelperSync:
             items: List[Tuple[str, "_PartitionKeyType"]],
             options: Optional[Mapping[str, Any]],
             partition_key_definition: Dict[str, Any],
+            *,
+            executor: Optional[ThreadPoolExecutor] = None,
+            max_concurrency: int = 10,
             **kwargs: Any
     ):
         self.client = client
@@ -53,7 +56,8 @@ class ReadManyItemsHelperSync:
         self.options = options if options is not None else {}
         self.partition_key_definition = partition_key_definition
         self.kwargs = kwargs
-        self.max_concurrency = 10
+        self.executor = executor
+        self.max_concurrency = max_concurrency
         self.max_items_per_query = 1000
 
     def read_many_items(self) -> CosmosList:
@@ -73,21 +77,41 @@ class ReadManyItemsHelperSync:
         results: List[Dict[str, Any]] = []
         total_request_charge = 0.0
 
-        with ThreadPoolExecutor(max_workers=self.max_concurrency) as executor:
-            futures = []
-            for partition_id, partition_items in items_by_partition.items():
-                for i in range(0, len(partition_items), self.max_items_per_query):
-                    chunk = partition_items[i:i + self.max_items_per_query]
-                    futures.append(executor.submit(self._execute_query_chunk_worker, partition_id, chunk))
-            try:
-                for future in as_completed(futures):
-                    chunk_results, chunk_ru_charge = future.result()
-                    results.extend(chunk_results)
-                    total_request_charge += chunk_ru_charge
-            except Exception:
-                # On failure, shutdown the executor to cancel pending futures and re-raise
+        # Use the provided executor if available, otherwise create one with max_concurrency
+        if self.executor is not None:
+            return self._execute_with_executor(self.executor, items_by_partition)
+        else:
+            with ThreadPoolExecutor(max_workers=self.max_concurrency) as executor:
+                return self._execute_with_executor(executor, items_by_partition)
+
+    def _execute_with_executor(self, executor: ThreadPoolExecutor,
+                               items_by_partition: Dict[str, List[Tuple[str, "_PartitionKeyType"]]]) -> CosmosList:
+        """Execute the queries using the provided executor.
+
+        :param executor: The ThreadPoolExecutor to use
+        :param items_by_partition: Dictionary of items grouped by partition key range ID
+        :return: A list of the retrieved items
+        :rtype: ~azure.cosmos.CosmosList
+        """
+        results: List[Dict[str, Any]] = []
+        total_request_charge = 0.0
+
+        futures = []
+        for partition_id, partition_items in items_by_partition.items():
+            for i in range(0, len(partition_items), self.max_items_per_query):
+                chunk = partition_items[i:i + self.max_items_per_query]
+                futures.append(executor.submit(self._execute_query_chunk_worker, partition_id, chunk))
+        try:
+            for future in as_completed(futures):
+                chunk_results, chunk_ru_charge = future.result()
+                results.extend(chunk_results)
+                total_request_charge += chunk_ru_charge
+        except Exception:
+            # On failure, shutdown the executor to cancel pending futures and re-raise
+            # Only shutdown if we created the executor
+            if self.executor is None:
                 executor.shutdown(wait=False, cancel_futures=True)
-                raise
+            raise
 
         final_headers = CaseInsensitiveDict()
         final_headers['x-ms-request-charge'] = str(total_request_charge)
@@ -142,13 +166,20 @@ class ReadManyItemsHelperSync:
         """
         captured_headers = {}
 
-        # Define the response hook function
-        def response_hook(hook_headers, _):
+        # Preserve customer's response hook if provided
+        original_hook = self.kwargs.get('response_hook')
+        request_kwargs = self.kwargs.copy()
+
+        # Create a combined hook that calls both our hook and the customer's hook
+        def combined_response_hook(hook_headers, *args, **kwargs):
+            # Capture headers for our use
             captured_headers.update(hook_headers)
 
-        # Copy the kwargs and add the response hook
-        request_kwargs = self.kwargs.copy()
-        request_kwargs['response_hook'] = response_hook
+            # Call the original hook if it exists
+            if original_hook:
+                original_hook(hook_headers, *args, **kwargs)
+
+        request_kwargs['response_hook'] = combined_response_hook
 
         if _QueryBuilder.is_id_partition_key_query(chunk_partition_items, self.partition_key_definition):
             query_obj = _QueryBuilder.build_id_in_query(chunk_partition_items)

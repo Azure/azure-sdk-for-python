@@ -23,7 +23,6 @@
 
 """Document client class for the Azure Cosmos database service.
 """
-import asyncio
 import os
 from urllib.parse import urlparse
 import uuid
@@ -2233,7 +2232,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     async def read_many_items(
             self,
             collection_link: str,
-            items: List[Tuple[str, PartitionKeyType]],
+            items: Sequence[Tuple[str, PartitionKeyType]],
             options: Optional[Mapping[str, Any]] = None,
             **kwargs: Any
      ) -> CosmosList:
@@ -2241,7 +2240,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         :param str collection_link: The link to the document collection.
         :param items: A list of tuples, where each tuple contains an item's ID and partition key.
-        :type items: List[Tuple[str, PartitionKeyType]]
+        :type items: Sequence[Tuple[str, PartitionKeyType]]
         :param dict options: The request options for the request.
         :return: The list of read items.
         :rtype: CosmosList
@@ -2255,12 +2254,15 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if not partition_key_definition:
             raise ValueError("Could not find partition key definition for collection.")
 
+        # Extract and remove max_concurrency from kwargs
+        max_concurrency = kwargs.pop('max_concurrency', 10)
         helper = ReadManyItemsHelper(
             client=self,
             collection_link=collection_link,
             items=items,
             options=options,
             partition_key_definition=partition_key_definition,
+            max_concurrency=max_concurrency,
             **kwargs)
         return await helper.read_many_items()
 

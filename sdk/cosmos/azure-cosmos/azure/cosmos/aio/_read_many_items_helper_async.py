@@ -51,6 +51,7 @@ class ReadManyItemsHelper:
             items: List[Tuple[str, "PartitionKeyType"]],
             options: Optional[Mapping[str, Any]],
             partition_key_definition: Dict[str, Any],
+            max_concurrency: int = 10,
             **kwargs: Any
     ):
         self.client = client
@@ -59,7 +60,7 @@ class ReadManyItemsHelper:
         self.options = options if options is not None else {}
         self.partition_key_definition = partition_key_definition
         self.kwargs = kwargs
-        self.max_concurrency = 10
+        self.max_concurrency = max_concurrency
         self.max_items_per_query = 1000
 
     async def read_many_items(self) -> 'CosmosList':
@@ -140,7 +141,7 @@ class ReadManyItemsHelper:
         """Create query chunks for concurrency control.
 
         :param items_by_partition: A dictionary mapping partition key range IDs to lists of items.
-        :type items_by_partition: dict[str, list[tuple[str, azure.cosmos.aio._cosmos_client_connection_async.PartitionKeyType]]]
+        :type items_by_partition: dict[str, list[tuple[str, "PartitionKeyType"]]]
         :return: A list of query chunks, where each chunk is a dictionary with a single partition.
         :rtype: list[dict[str, list[tuple[str, azure.cosmos.aio._cosmos_client_connection_async.PartitionKeyType]]]]
         """
@@ -164,7 +165,7 @@ class ReadManyItemsHelper:
         """Execute query chunks concurrently and return aggregated results.
 
         :param query_chunks: A list of query chunks to be executed.
-        :type query_chunks: list[dict[str, list[tuple[str, azure.cosmos.aio._cosmos_client_connection_async.PartitionKeyType]]]]
+        :type query_chunks: list[dict[str, list[tuple[str, "PartitionKeyType"]]]]
         :param str collection_link: The link to the collection.
         :param dict partition_key_definition: The partition key definition of the collection.
         :param options: Query options.
@@ -181,8 +182,22 @@ class ReadManyItemsHelper:
         async def execute_chunk_query(partition_id, chunk_partition_items):
             async with semaphore:
                 captured_headers = {}
+                # Preserve customer's original response hook
+                original_hook = kwargs.get('response_hook')
                 request_kwargs = kwargs.copy()
-                request_kwargs['response_hook'] = lambda hook_headers, _: captured_headers.update(hook_headers)
+
+                # Create a combined hook that calls both our hook and the customer's hook
+                def combined_response_hook(hook_headers, *args, **kwargs_hook):
+                    # Capture headers for internal use
+                    captured_headers.update(hook_headers)
+
+                    # Call the original hook if it exists
+                    if original_hook:
+                        return original_hook(hook_headers, *args, **kwargs_hook)
+                    return None
+
+                request_kwargs['response_hook'] = combined_response_hook
+
                 # Optimization for when the partition key is the item's ID.
                 # This allows for a highly efficient query using an IN clause on the ID field.
                 if _QueryBuilder.is_id_partition_key_query(chunk_partition_items, partition_key_definition):
