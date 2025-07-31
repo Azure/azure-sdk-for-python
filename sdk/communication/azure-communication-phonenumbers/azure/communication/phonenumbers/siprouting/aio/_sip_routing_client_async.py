@@ -31,7 +31,7 @@ class SipRoutingClient(object):
     :param endpoint: The endpoint url for Azure Communication Service resource.
     :type endpoint: str
     :param credential: The credentials with which to authenticate.
-    :type credential: Union[AsyncTokenCredential, AzureKeyCredential, str]
+    :type credential: Union[AsyncTokenCredential, AzureKeyCredential]
     :keyword api_version: Api Version. Default value is "2021-05-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
@@ -40,7 +40,7 @@ class SipRoutingClient(object):
     def __init__(
         self,
         endpoint: str,
-        credential: Union["AsyncTokenCredential", AzureKeyCredential, str],
+        credential: Union["AsyncTokenCredential", AzureKeyCredential],
         **kwargs: Any
     ) -> None:
 
@@ -77,8 +77,8 @@ class SipRoutingClient(object):
         :rtype: ~azure.communication.siprouting.models.SipRoutingClient
         """
 
-        endpoint, credential = parse_connection_str(conn_str)
-        return cls(endpoint, credential, **kwargs)
+        endpoint, access_key = parse_connection_str(conn_str)
+        return cls(endpoint, AzureKeyCredential(access_key), **kwargs)
 
     @distributed_trace_async
     async def get_trunk(
