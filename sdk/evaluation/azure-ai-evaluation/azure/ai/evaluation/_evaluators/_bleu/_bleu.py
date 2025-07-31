@@ -54,7 +54,7 @@ class BleuScoreEvaluator(EvaluatorBase):
             :caption: Initialize with threshold and call an BleuScoreEvaluator.
     """
 
-    id = "azureml://registries/azureml/models/Bleu-Score-Evaluator/versions/3"
+    id = "azureai://built-in/evaluators/bleu_score"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     def __init__(self, *, threshold=0.5):
