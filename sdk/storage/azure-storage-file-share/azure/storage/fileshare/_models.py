@@ -240,18 +240,16 @@ class ShareSmbSettings(GeneratedShareSmbSettings):
     :keyword SmbEncryptionInTransit encryption_in_transit: Sets the encryption in transit settings.
     """
 
-    multichannel: SmbMultichannel
+    multichannel: Optional[SmbMultichannel]
     """Sets the multichannel settings."""
-    encryption_in_transit: SmbEncryptionInTransit
+    encryption_in_transit: Optional[SmbEncryptionInTransit]
     """Sets the encryption in transit settings."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.multichannel = kwargs.get('multichannel')  # type: ignore [assignment]
-        self.encryption_in_transit = kwargs.get('encryption_in_transit')  # type: ignore [assignment]
-        if self.multichannel is None:
-            raise ValueError("The value 'multichannel' must be specified.")
-        if self.encryption_in_transit is None:
-            raise ValueError("The value 'encryption_in_transit' must be specified.")
+        self.multichannel = kwargs.get('multichannel')
+        self.encryption_in_transit = kwargs.get('encryption_in_transit')
+        if self.multichannel is None and self.encryption_in_transit is None:
+            raise ValueError("The value 'multichannel' or 'encryption_in_transit' must be specified.")
 
 
 class NfsEncryptionInTransit(GeneratedNfsEncryptionInTransit):
@@ -275,11 +273,11 @@ class ShareNfsSettings(GeneratedShareNfsSettings):
     :keyword NfsEncryptionInTransit encryption_in_transit: Sets the encryption in transit settings.
     """
 
-    encryption_in_transit: NfsEncryptionInTransit
+    encryption_in_transit: Optional[NfsEncryptionInTransit]
     """Sets the encryption in transit settings."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.encryption_in_transit = kwargs.get('encryption_in_transit')  # type: ignore [assignment]
+        self.encryption_in_transit = kwargs.get('encryption_in_transit')
         if self.encryption_in_transit is None:
             raise ValueError("The value 'encryption_in_transit' must be specified.")
 
@@ -287,18 +285,22 @@ class ShareNfsSettings(GeneratedShareNfsSettings):
 class ShareProtocolSettings(GeneratedShareProtocolSettings):
     """Protocol Settings class used by the set and get service properties methods in the share service.
 
-    Contains protocol properties of the share service such as the SMB setting of the share service.
+    Contains protocol properties of the share service such as the SMB and NFS setting of the share service.
 
     :keyword ShareSmbSettings smb: Sets SMB settings.
+    :keyword ShareNfsSettings nfs: Sets NFS settings.
     """
 
-    smb: ShareSmbSettings
+    smb: Optional[ShareSmbSettings]
     """Sets the SMB settings."""
+    nfs: Optional[ShareNfsSettings]
+    """Sets the NFS settings."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.smb = kwargs.get('smb')  # type: ignore [assignment]
-        if self.smb is None:
-            raise ValueError("The value 'smb' must be specified.")
+        self.smb = kwargs.get('smb')
+        self.nfs = kwargs.get('nfs')
+        if self.smb is None and self.nfs is None:
+            raise ValueError("The value 'smb' or 'nfs' must be specified.")
 
     @classmethod
     def _from_generated(cls, generated):
