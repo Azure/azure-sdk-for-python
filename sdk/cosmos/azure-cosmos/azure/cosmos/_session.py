@@ -26,7 +26,7 @@ import logging
 import sys
 import traceback
 import threading
-from typing import Any, Dict, Optional, Mapping
+from typing import Any, Dict, Optional
 
 from . import _base
 from . import http_constants
@@ -65,6 +65,7 @@ class SessionContainer(object):
         :type container_properties_cache: Dict[str, Dict[str, Any]]
         :param int partition_key_range_id: The partition key range ID used for the operation
         :param options: Options for the operation calling this method
+        :type options: Dict[str, Any]
         :return: Session Token dictionary for the collection_id, will be empty string if not found or if the operation
         does not require a session token (single master write operations).
         :rtype: str
@@ -158,6 +159,7 @@ class SessionContainer(object):
         :param Any routing_map_provider: The routing map provider containing the partition key range cache logic
         :param str partition_key_range_id: The partition key range ID used for the operation
         :param options: Options for the operation calling this method
+        :type options: Dict[str, Any]
         :return: Session Token dictionary for the collection_id, will be empty string if not found or if the operation
         does not require a session token (single master write operations).
         :rtype: str

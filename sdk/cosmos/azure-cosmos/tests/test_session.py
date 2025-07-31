@@ -175,10 +175,12 @@ class TestSession(unittest.TestCase):
                 None,
                 {},
                 None,
-                None), "")
+                None,
+                None), "",)
             self.assertEqual(e.status_code, StatusCodes.NOT_FOUND)
             self.assertEqual(e.sub_status, SubStatusCodes.READ_SESSION_NOTAVAILABLE)
-        _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
+        finally:
+            _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
 
     def _MockExecuteFunctionInvalidSessionToken(self, function, *args, **kwargs):
         response = {'_self': 'dbs/90U1AA==/colls/90U1AJ4o6iA=/docs/90U1AJ4o6iABCT0AAAAABA==/', 'id': '1'}
