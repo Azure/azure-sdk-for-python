@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import re
+import toml
 from functools import wraps
 from typing import Optional
 
@@ -16,7 +17,7 @@ import shutil
 from . import build_packaging
 from .swaggertosdk.autorest_tools import build_autorest_options, generate_code
 from .swaggertosdk.SwaggerToSdkCore import CONFIG_FILE_DPG, read_config
-from .conf import CONF_NAME
+from .conf import CONF_NAME, OLD_CONF_NAME
 from jinja2 import Environment, FileSystemLoader
 
 
@@ -110,11 +111,43 @@ def call_build_config(package_name: str, folder_name: str):
     # )
 
 
-def init_new_service(package_name, folder_name):
+def generate_packaging_files(package_name, folder_name):
+    # if pyproject.toml doesn't exist, create one
+    output_path = Path(folder_name) / package_name
+    pyproject_toml = output_path / CONF_NAME
+    sdk_packaging_toml = output_path / OLD_CONF_NAME
+    if sdk_packaging_toml.exists():
+        if pyproject_toml.exists():
+            # update related items in pyproject.toml then delete sdk_packaging.toml
+            _LOGGER.info(f"update {pyproject_toml} with {sdk_packaging_toml}")
+
+            # Read the old sdk_packaging.toml content
+            with open(sdk_packaging_toml, "r") as f:
+                sdk_packaging_content = toml.load(f)
+
+            # Read the existing pyproject.toml content
+            with open(pyproject_toml, "r") as f:
+                pyproject_content = toml.load(f)
+
+            # Update pyproject.toml with sdk_packaging.toml content
+            pyproject_content.update(sdk_packaging_content)
+
+            # Write updated content back to pyproject.toml
+            with open(pyproject_toml, "w") as f:
+                toml.dump(pyproject_content, f)
+
+            # Delete the old sdk_packaging.toml file
+            sdk_packaging_toml.unlink()
+            _LOGGER.info(f"deleted {sdk_packaging_toml}")
+
+        else:
+            # rename sdk_packaging.toml to pyproject.toml
+            _LOGGER.info(f"rename {sdk_packaging_toml} to {pyproject_toml}")
+            sdk_packaging_toml.rename(pyproject_toml)
+
     if "azure-mgmt-" in package_name:
         call_build_config(package_name, folder_name)
     else:
-        output_path = Path(folder_name) / package_name
         if not (output_path / CONF_NAME).exists():
             with open(output_path / CONF_NAME, "w") as file_out:
                 file_out.write("[packaging]\nauto_update = false")

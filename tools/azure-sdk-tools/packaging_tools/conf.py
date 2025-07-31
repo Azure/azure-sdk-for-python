@@ -13,6 +13,7 @@ import tomli_w as tomlw
 _LOGGER = logging.getLogger(__name__)
 
 CONF_NAME = "pyproject.toml"
+OLD_CONF_NAME = "sdk_packaging.toml"
 _SECTION = "packaging"
 
 # Default conf
