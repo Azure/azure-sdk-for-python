@@ -562,7 +562,7 @@ class AzureOpenAIModelConfiguration(TargetConfig, discriminator="AzureOpenAIMode
     :ivar type: Required. Default value is "AzureOpenAIModel".
     :vartype type: str
     :ivar model_deployment_name: Deployment name for AOAI model. Example: gpt-4o if in AIServices
-     or connection based ``connection_name/deployment_name`` (i.e. ``my-aoai-connection/gpt-4o``.
+     or connection based ``connection_name/deployment_name`` (i.e. ``my-aoai-connection/gpt-4o``).
      Required.
     :vartype model_deployment_name: str
     """
@@ -573,7 +573,7 @@ class AzureOpenAIModelConfiguration(TargetConfig, discriminator="AzureOpenAIMode
         name="modelDeploymentName", visibility=["read", "create", "update", "delete", "query"]
     )
     """Deployment name for AOAI model. Example: gpt-4o if in AIServices or connection based
-     ``connection_name/deployment_name`` (i.e. ``my-aoai-connection/gpt-4o``. Required."""
+     ``connection_name/deployment_name`` (i.e. ``my-aoai-connection/gpt-4o``). Required."""
 
     @overload
     def __init__(
@@ -606,7 +606,7 @@ class BlobReference(_Model):
     """
 
     blob_uri: str = rest_field(name="blobUri", visibility=["read", "create", "update", "delete", "query"])
-    """Blob URI path for client to upload data. Example: `https://blob.windows.core.net/Container/Path`. Required."""
+    """Blob URI path for client to upload data. Example: ``https://blob.windows.core.net/Container/Path``. Required."""
     storage_account_arm_id: str = rest_field(
         name="storageAccountArmId", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -827,7 +827,7 @@ class DatasetVersion(_Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     FileDatasetVersion, FolderDatasetVersion
 
-    :ivar data_uri: URI of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330`. Required.
+    :ivar data_uri: URI of the data. Example: ``https://go.microsoft.com/fwlink/?linkid=2202330``. Required.
     :vartype data_uri: str
     :ivar type: Dataset type. Required. Known values are: "uri_file" and "uri_folder".
     :vartype type: str or ~azure.ai.projects.models.DatasetType
@@ -852,7 +852,7 @@ class DatasetVersion(_Model):
 
     __mapping__: Dict[str, _Model] = {}
     data_uri: str = rest_field(name="dataUri", visibility=["read", "create"])
-    """URI of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330`. Required."""
+    """URI of the data. Example: ``https://go.microsoft.com/fwlink/?linkid=2202330``. Required."""
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Dataset type. Required. Known values are: \"uri_file\" and \"uri_folder\"."""
     is_reference: Optional[bool] = rest_field(name="isReference", visibility=["read"])
@@ -1234,7 +1234,7 @@ class FieldMapping(_Model):
 class FileDatasetVersion(DatasetVersion, discriminator="uri_file"):
     """FileDatasetVersion Definition.
 
-    :ivar data_uri: URI of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330`. Required.
+    :ivar data_uri: URI of the data. Example: ``https://go.microsoft.com/fwlink/?linkid=2202330``. Required.
     :vartype data_uri: str
     :ivar is_reference: Indicates if the dataset holds a reference to the storage, or the dataset
      manages storage itself. If true, the underlying data will not be deleted when the dataset
@@ -1284,7 +1284,7 @@ class FileDatasetVersion(DatasetVersion, discriminator="uri_file"):
 class FolderDatasetVersion(DatasetVersion, discriminator="uri_folder"):
     """FileDatasetVersion Definition.
 
-    :ivar data_uri: URI of the data. Example: `https://go.microsoft.com/fwlink/?linkid=2202330`. Required.
+    :ivar data_uri: URI of the data. Example: ``https://go.microsoft.com/fwlink/?linkid=2202330``. Required.
     :vartype data_uri: str
     :ivar is_reference: Indicates if the dataset holds a reference to the storage, or the dataset
      manages storage itself. If true, the underlying data will not be deleted when the dataset
