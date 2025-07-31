@@ -101,7 +101,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "v1". Note that overriding this default value may result in unsupported
+     "2025-05-15-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
