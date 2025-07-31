@@ -2,7 +2,6 @@
 # Licensed under the MIT License.
 
 import datetime
-import errno
 import json
 import logging
 import os
@@ -10,14 +9,6 @@ import random
 import subprocess
 
 from azure.monitor.opentelemetry.exporter._utils import PeriodicTask
-
-from azure.monitor.opentelemetry.exporter._constants import (
-    DropCode,
-)
-
-from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
-    _track_dropped_items,
-)
 
 logger = logging.getLogger(__name__)
 
@@ -39,9 +30,8 @@ def _seconds(seconds):
 
 # pylint: disable=broad-except
 class LocalFileBlob:
-    def __init__(self, fullpath, customer_statsbeat_metrics=None):
+    def __init__(self, fullpath):
         self.fullpath = fullpath
-        self.customer_statsbeat_metrics = customer_statsbeat_metrics
 
     def delete(self):
         try:
@@ -72,11 +62,8 @@ class LocalFileBlob:
                 self.fullpath += "@{}.lock".format(_fmt(timestamp))
             os.rename(fullpath, self.fullpath)
             return self
-        except Exception as ex:
-            # Track storage failures in customer statsbeat if available
-            if self.customer_statsbeat_metrics:
-                _track_dropped_items(self.customer_statsbeat_metrics, data, DropCode.CLIENT_EXCEPTION, ex)
-            # keep silent (original behavior)
+        except Exception:
+            pass  # keep silent
         return None
 
     def lease(self, period):
@@ -109,10 +96,6 @@ class LocalFileStorage:
         self._max_size = max_size
         self._retention_period = retention_period
         self._write_timeout = write_timeout
-
-        self._customer_statsbeat_metrics = None
-        self.filesystem_is_readonly = False
-        self.exception_occurred = None
 
         self._enabled = self._check_and_set_folder_permissions()
         if self._enabled:
@@ -182,7 +165,7 @@ class LocalFileStorage:
                             except Exception:
                                 pass  # keep silent
                         else:
-                            yield LocalFileBlob(path, self._customer_statsbeat_metrics)
+                            yield LocalFileBlob(path)
             except Exception:
                 pass  # keep silent
         else:
@@ -200,29 +183,8 @@ class LocalFileStorage:
 
     def put(self, data, lease_period=None):
         if not self._enabled:
-            # Track dropped items when storage is disabled
-            if self._customer_statsbeat_metrics:
-                _track_dropped_items(self._customer_statsbeat_metrics, data, DropCode.CLIENT_STORAGE_DISABLED, None)
-            return None
-        # If filesystem is readonly, track dropped items in customer statsbeat
-        if self.filesystem_is_readonly:
-            if self._customer_statsbeat_metrics:
-                _track_dropped_items(self._customer_statsbeat_metrics, data, DropCode.CLIENT_READONLY, None)
-            self.filesystem_is_readonly = False
             return None
         if not self._check_storage_size():
-            # If storage is full and metrics are available, track dropped items
-            if self._customer_statsbeat_metrics:
-                _track_dropped_items(self._customer_statsbeat_metrics, data, DropCode.CLIENT_PERSISTENCE_CAPACITY, None)
-            return None
-        if self.exception_occurred is not None:
-            if self._customer_statsbeat_metrics:
-                _track_dropped_items(
-                    self._customer_statsbeat_metrics,
-                    data, DropCode.CLIENT_EXCEPTION,
-                    self.exception_occurred
-                )
-            self.exception_occurred = None
             return None
         blob = LocalFileBlob(
             os.path.join(
@@ -231,13 +193,10 @@ class LocalFileStorage:
                     _fmt(_now()),
                     "{:08x}".format(random.getrandbits(32)),  # thread-safe random
                 ),
-            ),
-            self._customer_statsbeat_metrics  # Pass the metrics reference
+            )
         )
         if lease_period is None:
             lease_period = self._lease_period
-
-        # Now blob.put will handle its own statsbeat tracking
         return blob.put(data, lease_period=lease_period)
 
     def _check_and_set_folder_permissions(self):
@@ -276,13 +235,8 @@ class LocalFileStorage:
             else:
                 os.chmod(self._path, 0o700)
                 return True
-        except OSError as error:
-            if getattr(error, 'errno', None) == errno.EROFS:  # cspell:disable-line
-                self.filesystem_is_readonly = True
-            else:
-                self.exception_occurred = error
-        except Exception as exception:
-            self.exception_occurred = exception
+        except Exception:
+            pass  # keep silent
         return False
 
     def _check_storage_size(self):
