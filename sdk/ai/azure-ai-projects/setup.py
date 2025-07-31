@@ -37,7 +37,7 @@ setup(
     author="Microsoft Corporation",
     author_email="azpysdkhelp@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects",
-    keywords="azure sdk, azure, ai, agents, foundry, inference, chat completion, project",
+    keywords="azure sdk, azure, ai, agents, foundry, inference, chat completion, project, evaluation",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Programming Language :: Python",
