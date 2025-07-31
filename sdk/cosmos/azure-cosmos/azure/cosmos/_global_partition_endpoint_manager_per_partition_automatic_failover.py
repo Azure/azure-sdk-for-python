@@ -109,7 +109,8 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover(_GlobalPar
                             # main write region in the account configurations
                             self.partition_range_to_failover_info[pk_range_wrapper] = PartitionLevelFailoverInfo()
                             request.clear_route_to_location()
-                            return self._resolve_service_endpoint_for_partition_circuit_breaker(request, pk_range_wrapper)
+                            return self._resolve_service_endpoint_for_partition_circuit_breaker(request,
+                                                                                                pk_range_wrapper)
                     else:
                         # Update the current regional endpoint to whatever the request is routing to
                         partition_failover_info.current_regional_endpoint = request.location_endpoint_to_route

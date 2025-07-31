@@ -25,7 +25,7 @@
 
 from typing import Dict
 from typing_extensions import Literal
-# cspell:disable-line
+# cspell:ignore PPAF
 
 
 class _Constants:

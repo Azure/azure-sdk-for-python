@@ -44,6 +44,7 @@ from .http_constants import HttpHeaders, StatusCodes, SubStatusCodes, ResourceTy
 
 
 # pylint: disable=protected-access, disable=too-many-lines, disable=too-many-statements, disable=too-many-branches
+# cspell:ignore ppaf
 
 # args [0] is the request object
 # args [1] is the connection policy
