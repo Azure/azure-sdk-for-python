@@ -86,12 +86,16 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     :vartype connections: azure.ai.projects.operations.ConnectionsOperations
     :ivar telemetry: TelemetryOperations operations
     :vartype telemetry: azure.ai.projects.operations.TelemetryOperations
+    :ivar evaluations: EvaluationsOperations operations
+    :vartype evaluations: azure.ai.projects.operations.EvaluationsOperations
     :ivar datasets: DatasetsOperations operations
     :vartype datasets: azure.ai.projects.operations.DatasetsOperations
     :ivar indexes: IndexesOperations operations
     :vartype indexes: azure.ai.projects.operations.IndexesOperations
     :ivar deployments: DeploymentsOperations operations
     :vartype deployments: azure.ai.projects.operations.DeploymentsOperations
+    :ivar red_teams: RedTeamsOperations operations
+    :vartype red_teams: azure.ai.projects.operations.RedTeamsOperations
     :param endpoint: Project endpoint. In the form
      "https://your-ai-services-account-name.services.ai.azure.com/api/projects/_project"
      if your Foundry Hub has only one Project, or to use the default Project in your Hub. Or in the

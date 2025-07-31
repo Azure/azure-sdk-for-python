@@ -66,4 +66,4 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
             )
 
             print(response.output_text)
-        # [END aoai_chat_completions_sample]
+        # [END aoai_responses_sample]

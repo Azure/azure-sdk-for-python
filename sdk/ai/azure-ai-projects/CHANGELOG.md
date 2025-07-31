@@ -1,5 +1,14 @@
 # Release History
 
+## 1.1.0b1 (2025-08-01)
+
+This beta version is published shortly after the first stable version 1.0.0, in order to restore the operations listed below, which are still in preview.
+
+### Features added
+
+* Evaluation operations (property `.evaluations`) - In preview.
+* Red-Team operations (property `.red_teams`) - In preview.
+
 ## 1.0.0 (2025-07-31)
 
 First stable version of the client library. The client library now uses version `v1` of the
