@@ -232,27 +232,19 @@ class CheckFile:
             _LOGGER.info(f"Can not find the title for {self.whole_package_name}")
 
         # add `title` and update `is_stable` in pyproject.toml
-        toml = Path(self.whole_package_name) / "pyproject.toml"
-        stable_config = f'is_stable = {"true" if self.tag_is_stable and self.next_version != "1.0.0b1" else "false"}\n'
-        if toml.exists():
-
-            def edit_toml(content: List[str]):
-                has_title = False
-                has_isstable = False
-                for idx in range(len(content)):
-                    if "title" in content[idx]:
-                        has_title = True
-                    if "is_stable" in content[idx]:
-                        has_isstable = True
-                        content[idx] = stable_config
-                if not has_title:
-                    content.append(f'title = "{title}"\n')
-                if not has_isstable:
-                    content.append(stable_config)
-
-            modify_file(str(toml), edit_toml)
+        pyproject_toml = Path(self.whole_package_name) / "pyproject.toml"
+        if pyproject_toml.exists():
+            with open(pyproject_toml, "rb") as fd:
+                toml_data = toml.load(fd)
+            if "packaging" not in toml_data:
+                toml_data["packaging"] = {}
+            toml_data["packaging"]["title"] = title
+            toml_data["packaging"]["is_stable"] = self.tag_is_stable and self.next_version != "1.0.0b1"
+            with open(pyproject_toml, "wb") as fd:
+                tomlw.dump(toml_data, fd)
+            _LOGGER.info(f"Update {pyproject_toml} successfully")
         else:
-            _LOGGER.info(f"{os.getcwd()}/{toml} does not exist")
+            _LOGGER.info(f"{os.getcwd()}/{pyproject_toml} does not exist")
 
         build_packaging(output_folder=".", packages=[self.whole_package_name], build_conf=True)
         _LOGGER.info("packaging_tools --build-conf successfully")
