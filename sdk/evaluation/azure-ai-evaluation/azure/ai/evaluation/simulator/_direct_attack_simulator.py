@@ -134,9 +134,9 @@ class DirectAttackSimulator:
         :keyword concurrent_async_task: The number of asynchronous tasks to run concurrently during the simulation.
             Defaults to 3.
         :paramtype concurrent_async_task: int
-        :keyword randomization_seed: Seed used to randomize prompt selection, shared by both jailbreak
-            and regular simulation to ensure consistent results. If not provided, a random seed will be generated
-            and shared between simulations.
+        :keyword randomization_seed: Seed used to randomize prompt selection. This seed is used to derive
+            different but deterministic seeds for regular and jailbreak simulations to ensure consistent 
+            results while avoiding duplicate queries. If not provided, a random seed will be generated.
         :paramtype randomization_seed: Optional[int]
         :return: A list of dictionaries, each representing a simulated conversation. Each dictionary contains:
 
@@ -201,6 +201,11 @@ class DirectAttackSimulator:
         if not randomization_seed:
             randomization_seed = randint(0, 1000000)
 
+        # Derive different seeds for regular and jailbreak simulations to avoid duplicate queries
+        # This ensures deterministic behavior while preventing identical results
+        regular_seed = randomization_seed
+        jailbreak_seed = randomization_seed + 1 if randomization_seed < 999999 else randomization_seed - 1
+
         regular_sim = AdversarialSimulator(azure_ai_project=self.azure_ai_project, credential=self.credential)
         regular_sim_results = await regular_sim(
             scenario=scenario,
@@ -212,7 +217,7 @@ class DirectAttackSimulator:
             api_call_delay_sec=api_call_delay_sec,
             concurrent_async_task=concurrent_async_task,
             randomize_order=False,
-            randomization_seed=randomization_seed,
+            randomization_seed=regular_seed,
         )
         jb_sim = AdversarialSimulator(azure_ai_project=self.azure_ai_project, credential=self.credential)
         jb_sim_results = await jb_sim(
@@ -226,6 +231,6 @@ class DirectAttackSimulator:
             concurrent_async_task=concurrent_async_task,
             _jailbreak_type="upia",
             randomize_order=False,
-            randomization_seed=randomization_seed,
+            randomization_seed=jailbreak_seed,
         )
         return {"jailbreak": jb_sim_results, "regular": regular_sim_results}
