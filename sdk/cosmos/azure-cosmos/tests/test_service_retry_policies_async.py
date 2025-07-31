@@ -10,7 +10,7 @@ from aiohttp.client_exceptions import (ClientConnectionError, ClientConnectionRe
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 
 import test_config
-from azure.cosmos import DatabaseAccount, _location_cache
+from azure.cosmos import DatabaseAccount
 from azure.cosmos._location_cache import RegionalRoutingContext
 from azure.cosmos._request_object import RequestObject
 from azure.cosmos.aio import CosmosClient, _retry_utility_async, _global_endpoint_manager_async
