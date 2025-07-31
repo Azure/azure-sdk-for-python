@@ -179,27 +179,6 @@ def live_user_details():
         return user_details
 
 
-@pytest.fixture()
-def event_loop():
-    """Ensure the event loop used by pytest-asyncio on Windows is ProactorEventLoop, which supports subprocesses.
-
-    This is necessary because SelectorEventLoop, which does not support subprocesses, is the default on Python < 3.8.
-    """
-
-    try:
-        import asyncio
-    except:
-        return
-
-    if sys.platform.startswith("win"):
-        loop = asyncio.ProactorEventLoop()
-    else:
-        loop = asyncio.new_event_loop()
-
-    yield loop
-    loop.close()
-
-
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy, environment_variables):
     set_custom_default_matcher(

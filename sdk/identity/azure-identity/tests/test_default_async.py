@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
+import sys
 from unittest.mock import Mock, patch
 from urllib.parse import urlparse
 
@@ -17,7 +18,9 @@ from azure.identity.aio import (
     SharedTokenCacheCredential,
     VisualStudioCodeCredential,
 )
+from azure.identity.aio._credentials.broker import BrokerCredential
 from azure.identity._constants import EnvironmentVariables
+from azure.identity._internal.utils import is_wsl
 import pytest
 
 from helpers import mock_response, Request, GET_TOKEN_METHODS
@@ -136,6 +139,9 @@ def test_exclude_options():
     if SharedTokenCacheCredential.supported():
         credential = DefaultAzureCredential(exclude_shared_token_cache_credential=True)
         assert_credentials_not_present(credential, SharedTokenCacheCredential)
+
+    credential = DefaultAzureCredential(exclude_broker_credential=True)
+    assert_credentials_not_present(credential, BrokerCredential)
 
     credential = DefaultAzureCredential(exclude_cli_credential=True)
     assert_credentials_not_present(credential, AzureCliCredential)
@@ -344,3 +350,78 @@ def test_validate_cloud_shell_credential_in_dac():
         DefaultAzureCredential(identity_config={"client_id": "foo"})
         DefaultAzureCredential(identity_config={"object_id": "foo"})
         DefaultAzureCredential(identity_config={"resource_id": "foo"})
+
+
+@pytest.mark.skipif(not sys.platform.startswith("win") and not is_wsl(), reason="tests Windows-specific behavior")
+@pytest.mark.asyncio
+async def test_broker_credential():
+    """Test that DefaultAzureCredential uses the broker credential when available"""
+    with patch("azure.identity.broker.InteractiveBrowserBrokerCredential") as mock_credential:
+        credential = DefaultAzureCredential()
+        # The broker credential should be in the chain
+        broker_credentials = [c for c in credential.credentials if c.__class__.__name__ == "BrokerCredential"]
+        assert len(broker_credentials) == 1, "BrokerCredential should be in the chain"
+    # InteractiveBrowserBrokerCredential should be instantiated by BrokerCredential
+    assert mock_credential.call_count >= 1, "InteractiveBrowserBrokerCredential should be instantiated"
+
+
+@pytest.mark.asyncio
+async def test_broker_credential_client_id():
+    """Test that DefaultAzureCredential allows configuring a client ID for BrokerCredential"""
+
+    client_id = "broker-client-id"
+    credential = DefaultAzureCredential(broker_client_id=client_id)
+    broker_credentials = [c for c in credential.credentials if c.__class__.__name__ == "BrokerCredential"]
+    assert (
+        len(broker_credentials) == 1
+    ), "BrokerCredential should be in the chain even when broker package is not installed"
+    broker_credential = broker_credentials[0]
+    # Check that the broker credential was created with proper parameters by testing the sync credential
+    # We can access the sync credential since this is a test and we control the implementation
+    sync_credential = getattr(broker_credential, "_sync_credential", None)
+    assert sync_credential is not None, "BrokerCredential should have _sync_credential"
+    assert (
+        getattr(sync_credential, "_client_id", None) == client_id
+    ), "Credential should be instantiated with the specified client ID"
+
+
+@pytest.mark.asyncio
+async def test_broker_credential_tenant_id():
+    """Test that DefaultAzureCredential allows configuring a tenant ID for BrokerCredential"""
+
+    tenant_id = "broker-tenant-id"
+
+    credential = DefaultAzureCredential(broker_tenant_id=tenant_id)
+    broker_credentials = [c for c in credential.credentials if c.__class__.__name__ == "BrokerCredential"]
+    assert (
+        len(broker_credentials) == 1
+    ), "BrokerCredential should be in the chain even when broker package is not installed"
+    broker_credential = broker_credentials[0]
+    # Check that the broker credential was created with proper parameters by testing the sync credential
+    sync_credential = getattr(broker_credential, "_sync_credential", None)
+    assert sync_credential is not None, "BrokerCredential should have _sync_credential"
+    assert (
+        getattr(sync_credential, "_tenant_id", None) == tenant_id
+    ), "Credential should be instantiated with the specified tenant ID"
+
+
+@pytest.mark.asyncio
+async def test_broker_credential_requirements_not_installed():
+    """Test that DefaultAzureCredential includes BrokerCredential even when broker package is not installed"""
+
+    # Mock the get_broker_credential function to return None (simulating package not installed)
+    with patch.dict("sys.modules", {"azure.identity.broker": None}):
+        credential = DefaultAzureCredential()
+        # The broker credential should still be in the chain
+        broker_credentials = [c for c in credential.credentials if c.__class__.__name__ == "BrokerCredential"]
+        assert (
+            len(broker_credentials) == 1
+        ), "BrokerCredential should be in the chain even when broker package is not installed"
+
+        # Test that the broker credential raises CredentialUnavailableError using the async get_token method
+        broker_cred = broker_credentials[0]
+        with pytest.raises(CredentialUnavailableError):
+            # Use getattr to handle typing issues
+            get_token_method = getattr(broker_cred, "get_token_info", None)
+            assert get_token_method is not None
+            await get_token_method("https://management.azure.com/.default")
