@@ -2,7 +2,13 @@ import json
 import logging
 import os
 import re
-import toml
+try:
+    # py 311 adds this library natively
+    import tomllib as toml
+except:
+    # otherwise fall back to pypi package tomli
+    import tomli as toml
+import tomli_w as tomlw
 from functools import wraps
 from typing import Optional
 
@@ -125,19 +131,19 @@ def generate_packaging_files(package_name, folder_name):
             _LOGGER.info(f"update {pyproject_toml} with {sdk_packaging_toml}")
 
             # Read the old sdk_packaging.toml content
-            with open(sdk_packaging_toml, "r") as f:
+            with open(sdk_packaging_toml, "rb") as f:
                 sdk_packaging_content = toml.load(f)
 
             # Read the existing pyproject.toml content
-            with open(pyproject_toml, "r") as f:
+            with open(pyproject_toml, "rb") as f:
                 pyproject_content = toml.load(f)
 
             # Update pyproject.toml with sdk_packaging.toml content
             pyproject_content.update(sdk_packaging_content)
 
             # Write updated content back to pyproject.toml
-            with open(pyproject_toml, "w") as f:
-                toml.dump(pyproject_content, f)
+            with open(pyproject_toml, "wb") as f:
+                tomlw.dump(pyproject_content, f)
 
             # Delete the old sdk_packaging.toml file
             sdk_packaging_toml.unlink()
