@@ -22,9 +22,11 @@ from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import DirectoryItem
 from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
+from ._generated.models import ShareNfsSettings as GeneratedShareNfsSettings
+from ._generated.models import ShareNfsSettingsEncryptionInTransit as GeneratedNfsEncryptionInTransit
 from ._generated.models import ShareProtocolSettings as GeneratedShareProtocolSettings
 from ._generated.models import ShareSmbSettings as GeneratedShareSmbSettings
-from ._generated.models import ShareSmbSettingsEncryptionInTransit as GeneratedEncryptionInTransit
+from ._generated.models import ShareSmbSettingsEncryptionInTransit as GeneratedSmbEncryptionInTransit
 from ._generated.models import SmbMultichannel as GeneratedSmbMultichannel
 from ._generated.models import StorageServiceProperties as GeneratedStorageServiceProperties
 from ._parser import _parse_datetime_from_str
@@ -216,7 +218,7 @@ class SmbMultichannel(GeneratedSmbMultichannel):
             raise ValueError("The value 'enabled' must be specified.")
 
 
-class EncryptionInTransit(GeneratedEncryptionInTransit):
+class SmbEncryptionInTransit(GeneratedSmbEncryptionInTransit):
     """Settings for encryption in transit.
 
     :keyword bool required: If encryption in transit is required.
@@ -235,12 +237,12 @@ class ShareSmbSettings(GeneratedShareSmbSettings):
     """Settings for the SMB protocol.
 
     :keyword SmbMultichannel multichannel: Sets the multichannel settings.
-    :keyword EncryptionInTransit encryption_in_transit: Sets the encryption in transit settings.
+    :keyword SmbEncryptionInTransit encryption_in_transit: Sets the encryption in transit settings.
     """
 
     multichannel: SmbMultichannel
     """Sets the multichannel settings."""
-    encryption_in_transit: EncryptionInTransit
+    encryption_in_transit: SmbEncryptionInTransit
     """Sets the encryption in transit settings."""
 
     def __init__(self, **kwargs: Any) -> None:
@@ -248,6 +250,36 @@ class ShareSmbSettings(GeneratedShareSmbSettings):
         self.encryption_in_transit = kwargs.get('encryption_in_transit')  # type: ignore [assignment]
         if self.multichannel is None:
             raise ValueError("The value 'multichannel' must be specified.")
+        if self.encryption_in_transit is None:
+            raise ValueError("The value 'encryption_in_transit' must be specified.")
+
+
+class NfsEncryptionInTransit(GeneratedNfsEncryptionInTransit):
+    """Settings for encryption in transit.
+
+    :keyword bool required: If encryption in transit is required.
+    """
+
+    required: Optional[bool]
+    """If encryption in transit is enabled."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.required = kwargs.get('required')
+        if self.required is None:
+            raise ValueError("The value 'required' must be specified.")
+
+
+class ShareNfsSettings(GeneratedShareNfsSettings):
+    """Settings for the NFS protocol.
+
+    :keyword NfsEncryptionInTransit encryption_in_transit: Sets the encryption in transit settings.
+    """
+
+    encryption_in_transit: NfsEncryptionInTransit
+    """Sets the encryption in transit settings."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.encryption_in_transit = kwargs.get('encryption_in_transit')  # type: ignore [assignment]
         if self.encryption_in_transit is None:
             raise ValueError("The value 'encryption_in_transit' must be specified.")
 
