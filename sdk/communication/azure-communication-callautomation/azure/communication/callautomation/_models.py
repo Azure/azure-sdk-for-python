@@ -439,7 +439,7 @@ class TranscriptionOptions:
     :param transport_type: The type of transport to be used for live transcription, eg. Websocket.
      Required. "websocket"
     :type transport_type: str or ~azure.communication.callautomation.StreamingTransportType
-    :param locale: Defines the locale for the data e.g en-CA, en-AU. Required.
+    :param locale: Defines the locale for the data e.g en-CA, en-AU.
     :type locale: str
     :param start_transcription: Determines if the transcription should be started immediately after
      call is answered or not. Required.
@@ -454,7 +454,7 @@ class TranscriptionOptions:
     """Transport URL for live transcription."""
     transport_type: Union[str, "StreamingTransportType"]
     """The type of transport to be used for live transcription."""
-    locale: str
+    locale: Optional[str] = None
     """Defines the locale for the data."""
     start_transcription: bool
     """Determines if the transcription should be started immediately after call is answered or not."""
@@ -475,9 +475,9 @@ class TranscriptionOptions:
         self,
         *,
         transport_url: str,
-        transport_type: Union[str, "StreamingTransportType"],
-        locale: str,
+        transport_type: Union[str, "StreamingTransportType"],       
         start_transcription: bool,
+        locale: Optional[str] = None,
         speech_recognition_model_endpoint_id: Optional[str] = None,
         enable_intermediate_results: Optional[bool] = None,
         pii_redaction_options: Optional["PiiRedactionOptions"] = None,
