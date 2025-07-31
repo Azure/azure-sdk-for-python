@@ -560,7 +560,7 @@ class VoiceLiveConnectionManager:
                 log.debug("Connection options: %s", self.__connection_options)
 
             # Get auth headers
-            auth_headers = await self.__client._get_auth_headers()
+            auth_headers = self.__client._get_auth_headers()
             headers = {**auth_headers, **self.__extra_headers}
 
             # Create session and connection

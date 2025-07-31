@@ -16,7 +16,6 @@ Voice = Union[
     "_models.AzureStandardVoice",
     "_models.AzureCustomVoice",
     "_models.AzurePersonalVoice",
-    str,
     "_models.Phi4mmVoice",
 ]
 ToolChoice = Union[str, "_models.ToolChoiceLiteral", "_models.ToolChoiceObject"]

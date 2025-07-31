@@ -61,7 +61,7 @@ except ImportError:
 from azure.core.credentials import AzureKeyCredential
 from azure.identity import DefaultAzureCredential, InteractiveBrowserCredential
 
-from azure.ai.voicelive import VoiceLiveClient
+from azure.ai.voicelive.aio import VoiceLiveClient
 from azure.ai.voicelive.models import (
     ServerEventSessionUpdated,
     ServerEventInputAudioBufferSpeechStarted,
@@ -182,13 +182,21 @@ class AudioProcessor:
         """Audio send thread - handles async operations from sync thread."""
         while self.is_capturing:
             try:
+                # Get audio data from queue (blocking with timeout)
                 audio_base64 = self.audio_send_queue.get(timeout=0.1)
-                if audio_base64 and self.is_capturing:
-                    self.connection.input_audio_buffer.append(audio=audio_base64)
+
+                if audio_base64 and self.is_capturing and self.loop:
+                    # Schedule the async send operation in the main event loop
+                    future = asyncio.run_coroutine_threadsafe(
+                        self.connection.input_audio_buffer.append(audio=audio_base64), self.loop
+                    )
+                    # Don't wait for completion to avoid blocking
+
             except queue.Empty:
                 continue
             except Exception as e:
-                logger.error(f"Error sending audio: {e}")
+                if self.is_capturing:
+                    logger.error(f"Error sending audio: {e}")
                 break
 
     async def stop_capture(self):
@@ -323,7 +331,7 @@ class BasicVoiceAssistant:
             logger.info(f"Connecting to VoiceLive API with model {self.model}")
 
             # Connect to VoiceLive WebSocket API
-            with self.client.connect(
+            async with self.client.connect(
                 model=self.model,
                 connection_options={
                     "max_size": 10 * 1024 * 1024,  # 10 MB
@@ -337,7 +345,7 @@ class BasicVoiceAssistant:
                 self.audio_processor = AudioProcessor(connection)
 
                 # Configure session for voice conversation
-                self._setup_session()
+                await self._setup_session()
 
                 # Start audio systems
                 await self.audio_processor.start_playback()
@@ -363,7 +371,7 @@ class BasicVoiceAssistant:
         if self.audio_processor:
             await self.audio_processor.cleanup()
 
-    def _setup_session(self):
+    async def _setup_session(self):
         """Configure the VoiceLive session for audio conversation."""
         logger.info("Setting up voice conversation session...")
 
@@ -388,14 +396,14 @@ class BasicVoiceAssistant:
             turn_detection=turn_detection_config,
         )
 
-        self.connection.session.update(session=session_config)
+        await self.connection.session.update(session=session_config)
 
         logger.info("Session configuration sent")
 
     async def _process_events(self):
         """Process events from the VoiceLive connection."""
         try:
-            for event in self.connection:
+            async for event in self.connection:
                 await self._handle_event(event)
 
         except KeyboardInterrupt:
@@ -424,7 +432,7 @@ class BasicVoiceAssistant:
 
             # Cancel any ongoing response
             try:
-                self.connection.response.cancel()
+                await self.connection.response.cancel()
             except Exception as e:
                 logger.debug(f"No response to cancel: {e}")
 

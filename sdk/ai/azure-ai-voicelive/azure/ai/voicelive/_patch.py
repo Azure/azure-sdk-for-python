@@ -16,7 +16,7 @@ from urllib.parse import urlparse, urlunparse, urlencode, parse_qs
 from azure.core.credentials import AzureKeyCredential
 
 from ._client import VoiceLiveClient as VoiceLiveClientGenerated
-from .models import ClientEvent, ServerEvent
+from .models import ClientEvent, ServerEvent, RequestSession
 
 __all__: List[str] = [
     "VoiceLiveClient",
@@ -76,7 +76,7 @@ class SessionResource:
         """
         self._connection = connection
 
-    def update(self, *, session: Dict[str, Any], event_id: Optional[str] = None) -> None:
+    def update(self, *, session: Dict[str, Any] | RequestSession, event_id: Optional[str] = None) -> None:
         """Update the session configuration.
 
         :param session: Session configuration parameters.
@@ -84,6 +84,9 @@ class SessionResource:
         :param event_id: Optional ID for the event.
         :type event_id: Optional[str]
         """
+        if isinstance(session, RequestSession):
+            session = session.as_dict()
+        
         event = {"type": "session.update", "session": session}
         if event_id:
             event["event_id"] = event_id
@@ -515,7 +518,7 @@ class VoiceLiveConnectionManager:
         :rtype: Dict[str, str]
         """
         if isinstance(self.__client._config.credential, AzureKeyCredential):
-            return {"api-key": self._config._config.credential.key}
+            return {"api-key": self.__client._config.credential.key}
         else:
             # Use token credential to get a token
             token = self.__client._config.credential.get_token(self.__client._config.credential_scopes)

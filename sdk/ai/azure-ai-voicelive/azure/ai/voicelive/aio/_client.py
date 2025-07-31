@@ -13,7 +13,6 @@ from typing_extensions import Self
 from azure.core import AsyncPipelineClient
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline import policies
-from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import ClientConfiguration
@@ -59,41 +58,3 @@ class VoiceLiveClient(_VoiceLiveClientOperationsMixin):  # pylint: disable=clien
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-
-    def send_request(
-        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
-        """Runs the network request through the client's chained policies.
-
-        >>> from azure.core.rest import HttpRequest
-        >>> request = HttpRequest("GET", "https://www.example.org/")
-        <HttpRequest [GET], url: 'https://www.example.org/'>
-        >>> response = await client.send_request(request)
-        <AsyncHttpResponse: 200 OK>
-
-        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
-
-        :param request: The network request you want to make. Required.
-        :type request: ~azure.core.rest.HttpRequest
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
-        :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.rest.AsyncHttpResponse
-        """
-
-        request_copy = deepcopy(request)
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-
-        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
-        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
-
-    async def close(self) -> None:
-        await self._client.close()
-
-    async def __aenter__(self) -> Self:
-        await self._client.__aenter__()
-        return self
-
-    async def __aexit__(self, *exc_details: Any) -> None:
-        await self._client.__aexit__(*exc_details)
