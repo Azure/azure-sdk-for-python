@@ -2,12 +2,11 @@
 
 ## 1.1.0b1 (2025-08-01)
 
-This beta version is published shortly after the first stable version 1.0.0, in order to restore the operations listed below, which are still in preview.
+First beta version following the 1.0.0 stable release. It brings back the Evaluation and Red-Team operations which are still in preview.
 
 ### Features added
 
-* Evaluation operations (property `.evaluations`) - In preview.
-* Red-Team operations (property `.red_teams`) - In preview.
+* Added methods `cancel` and `delete` to Evaluations.
 
 ## 1.0.0 (2025-07-31)
 
