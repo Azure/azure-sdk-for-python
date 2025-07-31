@@ -1186,3 +1186,61 @@ class TestBatch(AzureMgmtRecordedTestCase):
         # Test Delete Job
         response = await wrap_result(client.delete_job(job_auto_param.id))
         assert response is None
+
+    @CachedResourceGroupPreparer(location=AZURE_LOCATION)
+    @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
+    @pytest.mark.parametrize("BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"])
+    @client_setup
+    @recorded_by_proxy_async
+    async def test_batch_exception_policy(self, client: BatchClient, **kwargs):
+        # Test Resource Not Found Error (404)
+        try:
+            await wrap_result(client.get_pool("non-existent-pool-id"))
+            self.fail("Expected ResourceNotFoundError but no exception was raised")
+        except azure.core.exceptions.ResourceNotFoundError as e:
+            assert e.response is not None
+            assert hasattr(e, 'model')
+            if hasattr(e, 'error') and hasattr(e.error, 'code'):
+                assert e.error.code in ['PoolNotFound']
+
+        # Test Resource Exists Error (409)
+        job_id = self.get_resource_name("batch_test_job_")
+        auto_pool = models.BatchAutoPoolSpecification(
+            pool_lifetime_option=models.BatchPoolLifetimeOption.JOB,
+            pool=models.BatchPoolSpecification(
+                vm_size=DEFAULT_VM_SIZE,
+                virtual_machine_configuration=models.VirtualMachineConfiguration(
+                    image_reference=models.BatchVmImageReference(
+                        publisher="Canonical",
+                        offer="0001-com-ubuntu-server-jammy", 
+                        sku="22_04-lts",
+                        version="latest",
+                    ),
+                    node_agent_sku_id="batch.node.ubuntu 22.04",
+                ),
+            ),
+        )
+        
+        job_param = models.BatchJobCreateOptions(
+            id=job_id,
+            pool_info=models.BatchPoolInfo(auto_pool_specification=auto_pool),
+        )
+        
+        # creating the job for the first time
+        await wrap_result(client.create_job(job_param))
+        
+        try:
+            # trying to create the same job again but should fail
+            await wrap_result(client.create_job(job_param))
+            self.fail("Expected ResourceExistsError but no exception was raised")
+        except azure.core.exceptions.ResourceExistsError as e:
+            assert e.response is not None
+            assert hasattr(e, 'model')
+
+            if hasattr(e, 'error') and hasattr(e.error, 'code'):
+                assert e.error.code in ['JobExists']
+        finally:
+            try:
+                await wrap_result(client.delete_job(job_id))
+            except:
+                pass
