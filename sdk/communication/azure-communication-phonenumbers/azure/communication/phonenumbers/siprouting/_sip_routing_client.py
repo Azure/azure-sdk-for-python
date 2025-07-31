@@ -74,7 +74,6 @@ class SipRoutingClient(object):
         """
         endpoint, access_key = parse_connection_str(conn_str)
         return cls(endpoint, AzureKeyCredential(access_key), **kwargs)
-    
 
     @distributed_trace
     def get_trunk(
