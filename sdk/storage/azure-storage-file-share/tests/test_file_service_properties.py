@@ -96,7 +96,6 @@ class TestFileServiceProperties(StorageRecordedTestCase):
             cors=[],
             protocol=protocol_properties1
         )
-
         assert resp is None
         props = self.fsc.get_service_properties()
         self._assert_metrics_equal(props['hour_metrics'], Metrics())
@@ -114,12 +113,13 @@ class TestFileServiceProperties(StorageRecordedTestCase):
         with pytest.raises(ValueError):
             ShareProtocolSettings()
 
-        self.fsc.set_service_properties(
+        resp = self.fsc.set_service_properties(
             hour_metrics=Metrics(),
             minute_metrics=Metrics(),
             cors=[],
             protocol=protocol_properties2
         )
+        assert resp is None
         props = self.fsc.get_service_properties()
         assert props['protocol'].smb.multichannel.enabled == True
         assert props['protocol'].smb.encryption_in_transit.required == True
