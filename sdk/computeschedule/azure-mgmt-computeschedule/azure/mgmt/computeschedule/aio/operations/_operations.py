@@ -2169,7 +2169,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         scheduled_action_name: str,
-        properties: _models.ScheduledAction,
+        properties: _models.ScheduledActionUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2182,7 +2182,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param scheduled_action_name: The name of the ScheduledAction. Required.
         :type scheduled_action_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.computeschedule.models.ScheduledAction
+        :type properties: ~azure.mgmt.computeschedule.models.ScheduledActionUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2264,7 +2264,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         scheduled_action_name: str,
-        properties: Union[_models.ScheduledAction, JSON, IO[bytes]],
+        properties: Union[_models.ScheduledActionUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.ScheduledAction:
         """Update a ScheduledAction.
@@ -2275,8 +2275,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param scheduled_action_name: The name of the ScheduledAction. Required.
         :type scheduled_action_name: str
         :param properties: The resource properties to be updated. Is one of the following types:
-         ScheduledAction, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.computeschedule.models.ScheduledAction or JSON or IO[bytes]
+         ScheduledActionUpdate, JSON, IO[bytes] Required.
+        :type properties: ~azure.mgmt.computeschedule.models.ScheduledActionUpdate or JSON or IO[bytes]
         :return: ScheduledAction. The ScheduledAction is compatible with MutableMapping
         :rtype: ~azure.mgmt.computeschedule.models.ScheduledAction
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2788,7 +2788,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.ResourceOperationResponse:
+    ) -> _models.RecurringActionsResourceOperationResult:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2801,9 +2801,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2816,7 +2816,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.ResourceOperationResponse:
+    ) -> _models.RecurringActionsResourceOperationResult:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2829,9 +2829,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2844,7 +2844,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.ResourceOperationResponse:
+    ) -> _models.RecurringActionsResourceOperationResult:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2857,9 +2857,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2884,7 +2884,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         scheduled_action_name: str,
         body: Union[_models.ResourceAttachRequest, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> _models.ResourceOperationResponse:
+    ) -> _models.RecurringActionsResourceOperationResult:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2895,9 +2895,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param body: The content of the action request. Is one of the following types:
          ResourceAttachRequest, JSON, IO[bytes] Required.
         :type body: ~azure.mgmt.computeschedule.models.ResourceAttachRequest or JSON or IO[bytes]
-        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2912,7 +2912,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ResourceOperationResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.RecurringActionsResourceOperationResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -2956,7 +2956,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.ResourceOperationResponse, response.json())
+            deserialized = _deserialize(_models.RecurringActionsResourceOperationResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2972,7 +2972,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.ResourceOperationResponse:
+    ) -> _models.RecurringActionsResourceOperationResult:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2985,9 +2985,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3000,7 +3000,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.ResourceOperationResponse:
+    ) -> _models.RecurringActionsResourceOperationResult:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3013,9 +3013,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3028,7 +3028,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.ResourceOperationResponse:
+    ) -> _models.RecurringActionsResourceOperationResult:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3041,9 +3041,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3068,7 +3068,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         scheduled_action_name: str,
         body: Union[_models.ResourceDetachRequest, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> _models.ResourceOperationResponse:
+    ) -> _models.RecurringActionsResourceOperationResult:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3079,9 +3079,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param body: The content of the action request. Is one of the following types:
          ResourceDetachRequest, JSON, IO[bytes] Required.
         :type body: ~azure.mgmt.computeschedule.models.ResourceDetachRequest or JSON or IO[bytes]
-        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3096,7 +3096,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ResourceOperationResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.RecurringActionsResourceOperationResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -3140,7 +3140,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.ResourceOperationResponse, response.json())
+            deserialized = _deserialize(_models.RecurringActionsResourceOperationResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3156,7 +3156,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.ResourceOperationResponse:
+    ) -> _models.RecurringActionsResourceOperationResult:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3169,9 +3169,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3184,7 +3184,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.ResourceOperationResponse:
+    ) -> _models.RecurringActionsResourceOperationResult:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3197,9 +3197,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3212,7 +3212,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.ResourceOperationResponse:
+    ) -> _models.RecurringActionsResourceOperationResult:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3225,9 +3225,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3252,7 +3252,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         scheduled_action_name: str,
         body: Union[_models.ResourcePatchRequest, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> _models.ResourceOperationResponse:
+    ) -> _models.RecurringActionsResourceOperationResult:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3263,9 +3263,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param body: The content of the action request. Is one of the following types:
          ResourcePatchRequest, JSON, IO[bytes] Required.
         :type body: ~azure.mgmt.computeschedule.models.ResourcePatchRequest or JSON or IO[bytes]
-        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3280,7 +3280,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ResourceOperationResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.RecurringActionsResourceOperationResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -3324,7 +3324,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.ResourceOperationResponse, response.json())
+            deserialized = _deserialize(_models.RecurringActionsResourceOperationResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3474,7 +3474,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.ResourceOperationResponse:
+    ) -> _models.RecurringActionsResourceOperationResult:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3487,9 +3487,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3502,7 +3502,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.ResourceOperationResponse:
+    ) -> _models.RecurringActionsResourceOperationResult:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3515,9 +3515,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3530,7 +3530,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.ResourceOperationResponse:
+    ) -> _models.RecurringActionsResourceOperationResult:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3543,9 +3543,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3570,7 +3570,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         scheduled_action_name: str,
         body: Union[_models.CancelOccurrenceRequest, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> _models.ResourceOperationResponse:
+    ) -> _models.RecurringActionsResourceOperationResult:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3581,9 +3581,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param body: The content of the action request. Is one of the following types:
          CancelOccurrenceRequest, JSON, IO[bytes] Required.
         :type body: ~azure.mgmt.computeschedule.models.CancelOccurrenceRequest or JSON or IO[bytes]
-        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3598,7 +3598,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ResourceOperationResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.RecurringActionsResourceOperationResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -3642,7 +3642,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.ResourceOperationResponse, response.json())
+            deserialized = _deserialize(_models.RecurringActionsResourceOperationResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4171,7 +4171,7 @@ class OccurrencesOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.ResourceOperationResponse:
+    ) -> _models.RecurringActionsResourceOperationResult:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -4186,9 +4186,9 @@ class OccurrencesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -4202,7 +4202,7 @@ class OccurrencesOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.ResourceOperationResponse:
+    ) -> _models.RecurringActionsResourceOperationResult:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -4217,9 +4217,9 @@ class OccurrencesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -4233,7 +4233,7 @@ class OccurrencesOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.ResourceOperationResponse:
+    ) -> _models.RecurringActionsResourceOperationResult:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -4248,9 +4248,9 @@ class OccurrencesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -4277,7 +4277,7 @@ class OccurrencesOperations:
         occurrence_id: str,
         body: Union[_models.CancelOccurrenceRequest, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> _models.ResourceOperationResponse:
+    ) -> _models.RecurringActionsResourceOperationResult:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -4290,9 +4290,9 @@ class OccurrencesOperations:
         :param body: The content of the action request. Is one of the following types:
          CancelOccurrenceRequest, JSON, IO[bytes] Required.
         :type body: ~azure.mgmt.computeschedule.models.CancelOccurrenceRequest or JSON or IO[bytes]
-        :return: ResourceOperationResponse. The ResourceOperationResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.computeschedule.models.ResourceOperationResponse
+        :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
+         is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4307,7 +4307,7 @@ class OccurrencesOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ResourceOperationResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.RecurringActionsResourceOperationResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -4352,7 +4352,7 @@ class OccurrencesOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.ResourceOperationResponse, response.json())
+            deserialized = _deserialize(_models.RecurringActionsResourceOperationResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4457,7 +4457,7 @@ class OccurrencesOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
+    ) -> AsyncLROPoller[_models.RecurringActionsResourceOperationResult]:
         """A long-running resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -4472,10 +4472,10 @@ class OccurrencesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns ResourceOperationResponse. The
-         ResourceOperationResponse is compatible with MutableMapping
+        :return: An instance of AsyncLROPoller that returns RecurringActionsResourceOperationResult.
+         The RecurringActionsResourceOperationResult is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.computeschedule.models.ResourceOperationResponse]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -4489,7 +4489,7 @@ class OccurrencesOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
+    ) -> AsyncLROPoller[_models.RecurringActionsResourceOperationResult]:
         """A long-running resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -4504,10 +4504,10 @@ class OccurrencesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns ResourceOperationResponse. The
-         ResourceOperationResponse is compatible with MutableMapping
+        :return: An instance of AsyncLROPoller that returns RecurringActionsResourceOperationResult.
+         The RecurringActionsResourceOperationResult is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.computeschedule.models.ResourceOperationResponse]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -4521,7 +4521,7 @@ class OccurrencesOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
+    ) -> AsyncLROPoller[_models.RecurringActionsResourceOperationResult]:
         """A long-running resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -4536,10 +4536,10 @@ class OccurrencesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns ResourceOperationResponse. The
-         ResourceOperationResponse is compatible with MutableMapping
+        :return: An instance of AsyncLROPoller that returns RecurringActionsResourceOperationResult.
+         The RecurringActionsResourceOperationResult is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.computeschedule.models.ResourceOperationResponse]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -4566,7 +4566,7 @@ class OccurrencesOperations:
         occurrence_id: str,
         body: Union[_models.DelayRequest, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.ResourceOperationResponse]:
+    ) -> AsyncLROPoller[_models.RecurringActionsResourceOperationResult]:
         """A long-running resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -4579,17 +4579,17 @@ class OccurrencesOperations:
         :param body: The content of the action request. Is one of the following types: DelayRequest,
          JSON, IO[bytes] Required.
         :type body: ~azure.mgmt.computeschedule.models.DelayRequest or JSON or IO[bytes]
-        :return: An instance of AsyncLROPoller that returns ResourceOperationResponse. The
-         ResourceOperationResponse is compatible with MutableMapping
+        :return: An instance of AsyncLROPoller that returns RecurringActionsResourceOperationResult.
+         The RecurringActionsResourceOperationResult is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.computeschedule.models.ResourceOperationResponse]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ResourceOperationResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.RecurringActionsResourceOperationResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -4614,7 +4614,7 @@ class OccurrencesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-            deserialized = _deserialize(_models.ResourceOperationResponse, response.json())
+            deserialized = _deserialize(_models.RecurringActionsResourceOperationResult, response.json())
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
@@ -4632,13 +4632,13 @@ class OccurrencesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models.ResourceOperationResponse].from_continuation_token(
+            return AsyncLROPoller[_models.RecurringActionsResourceOperationResult].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[_models.ResourceOperationResponse](
+        return AsyncLROPoller[_models.RecurringActionsResourceOperationResult](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 

@@ -368,7 +368,10 @@ def main(generate_input, generate_output):
 
                 changelog_generation_start_time = time.time()
                 try:
-                    md_output = execute_func_with_timeout(change_log_func)
+                    if data.get("enableChangelog", True):
+                        md_output = execute_func_with_timeout(change_log_func)
+                    else:
+                        md_output = "skip changelog generation"
                 except multiprocessing.TimeoutError:
                     md_output = "change log generation was timeout!!! You need to write it manually!!!"
                 except:
@@ -395,7 +398,7 @@ def main(generate_input, generate_output):
                 _LOGGER.warning(f"Fail to generate changelog for {package_name} in {readme_or_tsp}: {str(e)}")
 
             # Generate ApiView
-            if run_in_pipeline:
+            if data.get("runMode") in ["spec-pull-request"]:
                 apiview_start_time = time.time()
                 try:
                     package_path = Path(sdk_folder, folder_name, package_name)

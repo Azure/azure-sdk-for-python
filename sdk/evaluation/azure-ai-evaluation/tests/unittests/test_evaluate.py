@@ -410,7 +410,6 @@ class TestEvaluate:
             {"query": "${foo.query}"},
             {"query": "${data.query"},
             {"query": "data.query", "response": "target.response"},
-            {"query": "${data.query}", "response": "${target.response.one}"},
         ],
     )
     def test_evaluate_invalid_column_mapping(self, mock_model_config, evaluate_test_data_jsonl_file, column_mapping):
@@ -426,10 +425,10 @@ class TestEvaluate:
                 },
             )
 
-            assert (
-                "Unexpected references detected in 'column_mapping'. Ensure only ${target.} and ${data.} are used."
-                in exc_info.value.args[0]
-            )
+        assert (
+            "Unexpected references detected in 'column_mapping'. Ensure only ${target.} and ${data.} are used."
+            in exc_info.value.args[0]
+        )
 
     def test_evaluate_valid_column_mapping_with_numeric_chars(self, mock_model_config, evaluate_test_data_alphanumeric):
         # Valid column mappings that include numeric characters
@@ -701,6 +700,7 @@ class TestEvaluate:
                 "no": NoInputEval(),
             },
             _use_pf_client=False,
+            _use_run_submitter_client=False,
         )  # type: ignore
 
         first_row = results["rows"][0]
@@ -716,6 +716,7 @@ class TestEvaluate:
                     "non": NonOptionalEval(),
                 },
                 _use_pf_client=False,
+                _use_run_submitter_client=False,
             )  # type: ignore
 
         expected_message = "Some evaluators are missing required inputs:\n" "- non: ['response']\n"
@@ -726,6 +727,7 @@ class TestEvaluate:
             data=questions_file,
             evaluators={"half": HalfOptionalEval(), "opt": OptionalEval(), "no": NoInputEval()},
             _use_pf_client=False,
+            _use_run_submitter_client=False,
         )  # type: ignore
 
         first_row_2 = only_question_results["rows"][0]
@@ -742,6 +744,7 @@ class TestEvaluate:
             target=_new_answer_target,
             evaluators={"echo": EchoEval()},
             _use_pf_client=False,
+            _use_run_submitter_client=False,
         )  # type: ignore
 
         assert target_answer_results["rows"][0]["outputs.echo.echo_query"] == "How long is flight from Earth to LV-426?"
@@ -754,6 +757,7 @@ class TestEvaluate:
             target=_question_override_target,
             evaluators={"echo": EchoEval()},
             _use_pf_client=False,
+            _use_run_submitter_client=False,
         )  # type: ignore
 
         assert question_override_results["rows"][0]["outputs.echo.echo_query"] == "new query"
@@ -765,6 +769,7 @@ class TestEvaluate:
             target=_question_answer_override_target,
             evaluators={"echo": EchoEval()},
             _use_pf_client=False,
+            _use_run_submitter_client=False,
         )  # type: ignore
         assert double_override_results["rows"][0]["outputs.echo.echo_query"] == "new query"
         assert double_override_results["rows"][0]["outputs.echo.echo_response"] == "new response"
@@ -856,20 +861,20 @@ class TestEvaluate:
             return sum(values) + 1
 
         os.environ["AI_EVALS_BATCH_USE_ASYNC"] = use_async
-        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators, _use_pf_client=True)
         counting_eval._set_conversation_aggregation_type(_AggregationType.MIN)
-        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators, _use_pf_client=True)
         counting_eval._set_conversation_aggregation_type(_AggregationType.SUM)
-        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators, _use_pf_client=True)
         counting_eval._set_conversation_aggregation_type(_AggregationType.MAX)
-        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators, _use_pf_client=True)
         if use_async == "true":
             counting_eval._set_conversation_aggregator(custom_aggregator)
-            _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+            _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators, _use_pf_client=True)
         else:
             with pytest.raises(EvaluationException) as exc_info:
                 counting_eval._set_conversation_aggregator(custom_aggregator)
-                _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+                _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators, _use_pf_client=True)
             assert "TestEvaluate.test_aggregation_serialization.<locals>.custom_aggregator" in exc_info.value.args[0]
 
     def test_unsupported_file_inputs(self, mock_model_config, unsupported_file_type):

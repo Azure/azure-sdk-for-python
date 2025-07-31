@@ -6,11 +6,11 @@ import posixpath
 import re
 import math
 import threading
-from typing import Any, List, Literal, Mapping, Type, TypeVar, Tuple, Union, cast, get_args, get_origin
+from typing import Any, List, Literal, Mapping, Optional, Type, TypeVar, Tuple, Union, cast, get_args, get_origin
 
 import nltk
 from azure.storage.blob import ContainerClient
-from typing_extensions import NotRequired, Required, TypeGuard
+from typing_extensions import NotRequired, Required, TypeGuard, TypeIs
 from azure.ai.evaluation._legacy._adapters._errors import MissingRequiredPackage
 from azure.ai.evaluation._constants import AZURE_OPENAI_TYPE, OPENAI_TYPE
 from azure.ai.evaluation._exceptions import ErrorMessage, ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
@@ -127,17 +127,15 @@ def construct_prompty_model_config(
     return prompty_model_config
 
 
-def is_onedp_project(azure_ai_project: AzureAIProject) -> bool:
+def is_onedp_project(azure_ai_project: Optional[Union[str, AzureAIProject]]) -> TypeIs[str]:
     """Check if the Azure AI project is an OneDP project.
 
     :param azure_ai_project: The scope of the Azure AI project.
-    :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
+    :type azure_ai_project: Optional[Union[str,~azure.ai.evaluation.AzureAIProject]]
     :return: True if the Azure AI project is an OneDP project, False otherwise.
     :rtype: bool
     """
-    if isinstance(azure_ai_project, str):
-        return True
-    return False
+    return isinstance(azure_ai_project, str)
 
 
 def validate_azure_ai_project(o: object) -> AzureAIProject:

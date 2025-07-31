@@ -66,7 +66,7 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         for the groundedness pro label will be "groundedness_pro_passing_rate".
     """
 
-    id = "azureml://registries/azureml/models/Groundedness-Pro-Evaluator/versions/1"
+    id = "azureai://built-in/evaluators/groundedness_pro"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
     _OPTIONAL_PARAMS = ["query"]
 
@@ -77,7 +77,6 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         azure_ai_project,
         *,
         threshold: int = 5,
-        _evaluate_query: bool = False,
         **kwargs,
     ):
         self.threshold = threshold
@@ -88,7 +87,6 @@ class GroundednessProEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
             azure_ai_project=azure_ai_project,
             credential=credential,
             threshold=self.threshold,
-            _evaluate_query=_evaluate_query,
             **kwargs,
         )
 
