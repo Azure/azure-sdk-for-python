@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.portal import Portal
 
 """
@@ -14,7 +16,7 @@ from azure.mgmt.portal import Portal
     pip install azure-identity
     pip install azure-mgmt-portal
 # USAGE
-    python get_a_dashboard.py
+    python tenant_configurations_get.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,16 +28,15 @@ from azure.mgmt.portal import Portal
 def main():
     client = Portal(
         credential=DefaultAzureCredential(),
-        subscription_id="00000000-0000-0000-0000-000000000000",
+        subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.dashboards.get(
-        resource_group_name="testRG",
-        dashboard_name="testDashboard",
+    response = client.tenant_configurations.get(
+        configuration_name="default",
     )
     print(response)
 
 
-# x-ms-original-file: specification/portal/resource-manager/Microsoft.Portal/preview/2020-09-01-preview/examples/getDashboard.json
+# x-ms-original-file: specification/portal/resource-manager/Microsoft.Portal/preview/2025-04-01-preview/examples/TenantConfigurations_Get.json
 if __name__ == "__main__":
     main()

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.portal import Portal
 
 """
@@ -14,7 +16,7 @@ from azure.mgmt.portal import Portal
     pip install azure-identity
     pip install azure-mgmt-portal
 # USAGE
-    python list_all_custom_resource_providers_on_the_subscription.py
+    python dashboards_delete.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,11 +31,12 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.dashboards.list_by_subscription()
-    for item in response:
-        print(item)
+    client.dashboards.delete(
+        resource_group_name="testRG",
+        dashboard_name="testDashboard",
+    )
 
 
-# x-ms-original-file: specification/portal/resource-manager/Microsoft.Portal/preview/2020-09-01-preview/examples/listDashboardsBySubscription.json
+# x-ms-original-file: specification/portal/resource-manager/Microsoft.Portal/preview/2025-04-01-preview/examples/Dashboards_Delete.json
 if __name__ == "__main__":
     main()

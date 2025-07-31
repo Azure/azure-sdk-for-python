@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.portal import Portal
 
 """
@@ -14,7 +16,7 @@ from azure.mgmt.portal import Portal
     pip install azure-identity
     pip install azure-mgmt-portal
 # USAGE
-    python get_list_of_of_items_that_violate_tenant's_configuration.py
+    python tenant_configurations_delete.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,11 +31,11 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.list_tenant_configuration_violations.list()
-    for item in response:
-        print(item)
+    client.tenant_configurations.delete(
+        configuration_name="default",
+    )
 
 
-# x-ms-original-file: specification/portal/resource-manager/Microsoft.Portal/preview/2020-09-01-preview/examples/TenantConfiguration/GetListOfTenantConfigurationViolations.json
+# x-ms-original-file: specification/portal/resource-manager/Microsoft.Portal/preview/2025-04-01-preview/examples/TenantConfigurations_Delete.json
 if __name__ == "__main__":
     main()

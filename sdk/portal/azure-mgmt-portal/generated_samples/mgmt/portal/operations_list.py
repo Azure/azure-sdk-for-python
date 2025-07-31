@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.portal import Portal
 
 """
@@ -14,7 +16,7 @@ from azure.mgmt.portal import Portal
     pip install azure-identity
     pip install azure-mgmt-portal
 # USAGE
-    python list_all_custom_resource_providers_on_the_resource_group.py
+    python operations_list.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,16 +28,14 @@ from azure.mgmt.portal import Portal
 def main():
     client = Portal(
         credential=DefaultAzureCredential(),
-        subscription_id="00000000-0000-0000-0000-000000000000",
+        subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.dashboards.list_by_resource_group(
-        resource_group_name="testRG",
-    )
+    response = client.operations.list()
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/portal/resource-manager/Microsoft.Portal/preview/2020-09-01-preview/examples/listDashboardsByResourceGroup.json
+# x-ms-original-file: specification/portal/resource-manager/Microsoft.Portal/preview/2025-04-01-preview/examples/Operations_List.json
 if __name__ == "__main__":
     main()
