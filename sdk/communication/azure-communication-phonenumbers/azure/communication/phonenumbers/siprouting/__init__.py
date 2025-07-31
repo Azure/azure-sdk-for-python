@@ -6,6 +6,32 @@
 
 
 from ._sip_routing_client import SipRoutingClient
-from ._models import SipTrunk, SipTrunkRoute
+from ._models import SipTrunk, SipTrunkRoute, SipDomain
+from ._generated.models._enums import IpAddressVersion, PrivacyHeader
+from ._generated.models import(
+    PingHealth,
+    TlsHealth,
+    TrunkHealth,
+    OverallHealth,
+    PingStatus,
+    TlsStatus,
+    HealthStatusReason,
+    OverallHealthStatus
+    )
 
-__all__ = ["SipRoutingClient", "SipTrunk", "SipTrunkRoute"]
+__all__ = [
+    "SipRoutingClient",
+    "SipTrunk",
+    "SipDomain",
+    "SipTrunkRoute",
+    "IpAddressVersion",
+    "PrivacyHeader",
+    "PingHealth",
+    "TlsHealth",
+    "TrunkHealth",
+    "OverallHealth",
+    "PingStatus",
+    "TlsStatus",
+    "HealthStatusReason",
+    "OverallHealthStatus",
+    ]
