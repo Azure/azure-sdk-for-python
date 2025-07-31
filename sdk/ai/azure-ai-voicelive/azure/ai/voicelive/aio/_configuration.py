@@ -6,16 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, TYPE_CHECKING, Union
+from typing import Any, Union
 
-from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline import policies
 
 from .._version import VERSION
-
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
-
 
 class ClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for VoiceLiveClient.
@@ -28,11 +24,11 @@ class ClientConfiguration:  # pylint: disable=too-many-instance-attributes
     :param credential: Credential used to authenticate requests to the service. Is either a key
      credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
-     ~azure.core.credentials_async.AsyncTokenCredential
+     ~azure.core.credentials.TokenCredential
     """
 
     def __init__(
-        self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
+        self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any
     ) -> None:
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
@@ -41,17 +37,10 @@ class ClientConfiguration:  # pylint: disable=too-many-instance-attributes
 
         self.endpoint = endpoint
         self.credential = credential
-        self.credential_scopes = kwargs.pop("credential_scopes", ["https://cognitiveservices.azure.com/.default"])
+        self.credential_scopes = kwargs.pop("credential_scopes", "https://cognitiveservices.azure.com/.default")
         kwargs.setdefault("sdk_moniker", "ai-voicelive/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
-
-    def _infer_policy(self, **kwargs):
-        if isinstance(self.credential, AzureKeyCredential):
-            return policies.AzureKeyCredentialPolicy(self.credential, "api-key", **kwargs)
-        if hasattr(self.credential, "get_token"):
-            return policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
-        raise TypeError(f"Unsupported credential: {self.credential}")
 
     def _configure(self, **kwargs: Any) -> None:
         self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
@@ -63,5 +52,3 @@ class ClientConfiguration:  # pylint: disable=too-many-instance-attributes
         self.redirect_policy = kwargs.get("redirect_policy") or policies.AsyncRedirectPolicy(**kwargs)
         self.retry_policy = kwargs.get("retry_policy") or policies.AsyncRetryPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
-        if self.credential and not self.authentication_policy:
-            self.authentication_policy = self._infer_policy(**kwargs)

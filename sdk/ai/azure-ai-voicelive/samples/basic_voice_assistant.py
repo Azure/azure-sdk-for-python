@@ -59,7 +59,8 @@ except ImportError:
 
 # Azure VoiceLive SDK imports
 from azure.core.credentials import AzureKeyCredential
-from azure.identity.aio import DefaultAzureCredential
+from azure.identity import DefaultAzureCredential, InteractiveBrowserCredential
+
 from azure.ai.voicelive.aio import VoiceLiveClient
 from azure.ai.voicelive.models import (
     ServerEventSessionUpdated,
@@ -552,7 +553,7 @@ async def main():
     try:
         # Create client with appropriate credential
         if args.use_token_credential:
-            credential = DefaultAzureCredential()
+            credential = InteractiveBrowserCredential() # or DefaultAzureCredential() if needed
             logger.info("Using Azure token credential")
         else:
             credential = AzureKeyCredential(args.api_key)

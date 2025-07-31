@@ -16,7 +16,6 @@ import aiohttp
 from urllib.parse import urlparse, urlunparse, urlencode, parse_qs
 
 from azure.core.credentials import AzureKeyCredential, TokenCredential
-from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 from ._client import VoiceLiveClient as VoiceLiveClientGenerated
 from ..models import ClientEvent, ServerEvent, RequestSession
 from .._patch import ConnectionError, ConnectionClosed
@@ -643,13 +642,7 @@ class VoiceLiveClient(VoiceLiveClientGenerated):
         super().__init__(credential=credential, endpoint=endpoint, **kwargs)
         self._config.credential = credential
 
-        # Create auth policy for token credentials
-        if not isinstance(credential, AzureKeyCredential):
-            self._auth_policy = AsyncBearerTokenCredentialPolicy(
-                credential, "https://cognitiveservices.azure.com/.default"
-            )
-
-    async def _get_auth_headers(self) -> Dict[str, str]:
+    def _get_auth_headers(self) -> Dict[str, str]:
         """Get authentication headers for WebSocket connection.
 
         :return: A dictionary of authentication headers.
@@ -659,7 +652,7 @@ class VoiceLiveClient(VoiceLiveClientGenerated):
             return {"api-key": self._config.credential.key}
         else:
             # Use token credential to get a token
-            token = await self._auth_policy.get_token()
+            token = self._config.credential.get_token(self._config.credential_scopes)
             return {"Authorization": f"Bearer {token.token}"}
 
     def connect(

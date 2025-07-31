@@ -494,8 +494,7 @@ class VoiceLiveConnectionManager:
                 log.debug("Connection options: %s", self.__connection_options)
 
             # Get auth headers
-            # TODO: Support tokens.
-            auth_headers = {"api-key": self.__client._config.credential.key}
+            auth_headers = self._get_auth_headers()
             headers = {**auth_headers, **self.__extra_headers}
 
             connection = connect(
@@ -508,6 +507,19 @@ class VoiceLiveConnectionManager:
             return self.__connection
         except WebSocketException as e:
             raise ConnectionError(f"Failed to establish WebSocket connection: {e}") from e
+
+    def _get_auth_headers(self) -> Dict[str, str]:
+        """Get authentication headers for WebSocket connection.
+
+        :return: A dictionary of authentication headers.
+        :rtype: Dict[str, str]
+        """
+        if isinstance(self.__client._config.credential, AzureKeyCredential):
+            return {"api-key": self._config._config.credential.key}
+        else:
+            # Use token credential to get a token
+            token = self.__client._config.credential.get_token(self.__client._config.credential_scopes)
+            return {"Authorization": f"Bearer {token.token}"}
 
     def _prepare_url(self) -> str:
         """Prepare the WebSocket URL."""

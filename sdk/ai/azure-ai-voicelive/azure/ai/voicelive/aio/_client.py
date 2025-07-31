@@ -11,16 +11,13 @@ from typing import Any, Awaitable, TYPE_CHECKING, Union
 from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
-from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import ClientConfiguration
 from ._operations._operations import _VoiceLiveClientOperationsMixin
-
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class VoiceLiveClient(_VoiceLiveClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
@@ -31,11 +28,11 @@ class VoiceLiveClient(_VoiceLiveClientOperationsMixin):  # pylint: disable=clien
     :param credential: Credential used to authenticate requests to the service. Is either a key
      credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
-     ~azure.core.credentials_async.AsyncTokenCredential
+     ~azure.core.credentials.TokenCredential
     """
 
     def __init__(
-        self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
+        self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}/voice-agent/realtime"
         self._config = ClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
