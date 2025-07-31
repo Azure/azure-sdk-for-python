@@ -121,7 +121,7 @@ def call_build_config(package_name: str, folder_name: str):
 
 
 def generate_packaging_files(package_name, folder_name):
-    # if pyproject.toml doesn't exist, create one
+    # replace sdk_packaging.toml with pyproject.toml
     output_path = Path(folder_name) / package_name
     pyproject_toml = output_path / CONF_NAME
     sdk_packaging_toml = output_path / OLD_CONF_NAME
