@@ -13,6 +13,7 @@ from ..._internal import get_default_authority, normalize_authority, within_dac,
 from .azure_cli import AzureCliCredential
 from .azd_cli import AzureDeveloperCliCredential
 from .azure_powershell import AzurePowerShellCredential
+from .broker import BrokerCredential
 from .chained import ChainedTokenCredential
 from .environment import EnvironmentCredential
 from .managed_identity import ManagedIdentityCredential
@@ -42,6 +43,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
     5. The identity currently logged in to the Azure CLI.
     6. The identity currently logged in to Azure PowerShell.
     7. The identity currently logged in to the Azure Developer CLI.
+    8. Brokered authentication. On Windows and WSL only, this uses the default account logged in via
+       Web Account Manager (WAM) if the `azure-identity-broker` package is installed.
 
     This default behavior is configurable with keyword arguments.
 
@@ -58,6 +61,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
     :keyword bool exclude_powershell_credential: Whether to exclude Azure PowerShell. Defaults to **False**.
     :keyword bool exclude_visual_studio_code_credential: Whether to exclude stored credential from VS Code.
         Defaults to **True**.
+    :keyword bool exclude_broker_credential: Whether to exclude the broker credential from the credential chain.
+        Defaults to **False**.
     :keyword bool exclude_managed_identity_credential: Whether to exclude managed identity from the credential.
         Defaults to **False**.
     :keyword bool exclude_shared_token_cache_credential: Whether to exclude the shared token cache. Defaults to
@@ -66,6 +71,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
         of the environment variable AZURE_CLIENT_ID, if any. If not specified, a system-assigned identity will be used.
     :keyword str workload_identity_client_id: The client ID of an identity assigned to the pod. Defaults to the value
         of the environment variable AZURE_CLIENT_ID, if any. If not specified, the pod's default identity will be used.
+    :keyword str broker_client_id: The client ID to be used in brokered authentication. If not specified, users will
+        authenticate to an Azure development application.
     :keyword str workload_identity_tenant_id: Preferred tenant for :class:`~azure.identity.WorkloadIdentityCredential`.
         Defaults to the value of environment variable AZURE_TENANT_ID, if any.
     :keyword str shared_cache_username: Preferred username for :class:`~azure.identity.aio.SharedTokenCacheCredential`.
@@ -75,6 +82,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
     :keyword str visual_studio_code_tenant_id: Tenant ID to use when authenticating with
         :class:`~azure.identity.VisualStudioCodeCredential`. Defaults to the tenant specified in the authentication
         record file used by the Azure Resources extension.
+    :keyword str broker_tenant_id: The tenant ID to use when using brokered authentication. Defaults to the value of
+        environment variable AZURE_TENANT_ID, if any. If unspecified, users will authenticate in their home tenants.
     :keyword int process_timeout: The timeout in seconds to use for developer credentials that run
         subprocesses (e.g. AzureCliCredential, AzurePowerShellCredential). Defaults to **10** seconds.
 
@@ -96,6 +105,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
         authority = normalize_authority(authority) if authority else get_default_authority()
 
         vscode_tenant_id = kwargs.pop("visual_studio_code_tenant_id", None)
+
+        broker_tenant_id = kwargs.pop("broker_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID))
+        broker_client_id = kwargs.pop("broker_client_id", None)
 
         shared_cache_username = kwargs.pop("shared_cache_username", os.environ.get(EnvironmentVariables.AZURE_USERNAME))
         shared_cache_tenant_id = kwargs.pop(
@@ -152,6 +164,10 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 "env_name": "azurepowershellcredential",
                 "default_exclude": False,
             },
+            "broker": {
+                "exclude_param": "exclude_broker_credential",
+                "default_exclude": False,
+            },
         }
 
         # Extract user-provided exclude flags and set defaults
@@ -174,6 +190,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         exclude_cli_credential = exclude_flags["cli"]
         exclude_developer_cli_credential = exclude_flags["developer_cli"]
         exclude_powershell_credential = exclude_flags["powershell"]
+        exclude_broker_credential = exclude_flags["broker"]
 
         credentials: List[AsyncSupportsTokenInfo] = []
         within_dac.set(True)
@@ -215,6 +232,12 @@ class DefaultAzureCredential(ChainedTokenCredential):
             credentials.append(AzurePowerShellCredential(process_timeout=process_timeout))
         if not exclude_developer_cli_credential:
             credentials.append(AzureDeveloperCliCredential(process_timeout=process_timeout))
+        if not exclude_broker_credential:
+            broker_credential_args = {"tenant_id": broker_tenant_id, **kwargs}
+            if broker_client_id:
+                broker_credential_args["client_id"] = broker_client_id
+            credentials.append(BrokerCredential(**broker_credential_args))
+
         within_dac.set(False)
         super().__init__(*credentials)
 

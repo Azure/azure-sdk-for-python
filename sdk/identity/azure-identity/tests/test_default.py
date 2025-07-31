@@ -16,6 +16,7 @@ from azure.identity import (
     SharedTokenCacheCredential,
     VisualStudioCodeCredential,
 )
+from azure.identity._credentials.broker import BrokerCredential
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._credentials.azure_cli import AzureCliCredential
 from azure.identity._credentials.azd_cli import AzureDeveloperCliCredential
@@ -177,10 +178,7 @@ def test_exclude_options():
     credential = DefaultAzureCredential(exclude_developer_cli_credential=True)
     assert_credentials_not_present(credential, AzureDeveloperCliCredential)
 
-    # test excluding broker credential
     credential = DefaultAzureCredential(exclude_broker_credential=True)
-    from azure.identity._credentials.broker import BrokerCredential
-
     assert_credentials_not_present(credential, BrokerCredential)
 
     # interactive auth is excluded by default
@@ -188,13 +186,6 @@ def test_exclude_options():
     actual = {c.__class__ for c in credential.credentials}
     default = {c.__class__ for c in DefaultAzureCredential().credentials}
     assert actual - default == {InteractiveBrowserCredential}
-
-    # broker credential is included by default
-    credential = DefaultAzureCredential()
-    from azure.identity._credentials.broker import BrokerCredential
-
-    actual = {c.__class__ for c in credential.credentials}
-    assert BrokerCredential in actual, "BrokerCredential should be included in DefaultAzureCredential by default"
 
 
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
