@@ -135,9 +135,10 @@ class BatchErrorFormat(ODataV4Format):
             if odata_error:
                 super().__init__(odata_error)
             self.message = odata_error["message"]["value"]
-            for item in odata_error["values"]:
-                self.details.append( {"code": item["key"], "message": item["value"] })
-        except KeyError:
+            if "values" in odata_error:
+                for item in odata_error["values"]:
+                    self.details.append( {"code": item["key"], "message": item["value"] })
+        except KeyError as e:
             super().__init__(odata_error)
 class BatchExceptionPolicy(SansIOHTTPPolicy):
     
