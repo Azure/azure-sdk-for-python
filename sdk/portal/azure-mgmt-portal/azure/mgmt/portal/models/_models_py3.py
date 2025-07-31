@@ -1,5 +1,5 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,20 +7,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import sys
-from typing import Any, Dict, List, Optional, TYPE_CHECKING
+from collections.abc import MutableMapping
+import datetime
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
-
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]
 
 
 class Resource(_serialization.Model):
@@ -28,130 +23,131 @@ class Resource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.portal.models.SystemData
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.portal.models.SystemData
     """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-    }
-
-    def __init__(self, **kwargs):
-        """ """
-        super().__init__(**kwargs)
 
 
 class Configuration(ProxyResource):
-    """Tenant configuration.
+    """The tenant configuration resource definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar enforce_private_markdown_storage: When flag is set to true Markdown tile will require
-     external storage configuration (URI). The inline content configuration will be prohibited.
-    :vartype enforce_private_markdown_storage: bool
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.portal.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.portal.models.ConfigurationProperties
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "enforce_private_markdown_storage": {"key": "properties.enforcePrivateMarkdownStorage", "type": "bool"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "ConfigurationProperties"},
     }
 
-    def __init__(self, *, enforce_private_markdown_storage: Optional[bool] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.ConfigurationProperties"] = None, **kwargs: Any) -> None:
         """
-        :keyword enforce_private_markdown_storage: When flag is set to true Markdown tile will require
-         external storage configuration (URI). The inline content configuration will be prohibited.
-        :paramtype enforce_private_markdown_storage: bool
+        :keyword properties: The resource-specific properties for this resource.
+        :paramtype properties: ~azure.mgmt.portal.models.ConfigurationProperties
         """
         super().__init__(**kwargs)
-        self.enforce_private_markdown_storage = enforce_private_markdown_storage
+        self.properties = properties
 
 
-class ConfigurationList(_serialization.Model):
-    """List of tenant configurations.
+class ConfigurationListResult(_serialization.Model):
+    """The response of a Configuration list operation.
 
-    :ivar value: The array of tenant configurations.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The Configuration items on this page. Required.
     :vartype value: list[~azure.mgmt.portal.models.Configuration]
-    :ivar next_link: The URL to use for getting the next set of results.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[Configuration]"},
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self, *, value: Optional[List["_models.Configuration"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+    def __init__(self, *, value: List["_models.Configuration"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword value: The array of tenant configurations.
+        :keyword value: The Configuration items on this page. Required.
         :paramtype value: list[~azure.mgmt.portal.models.Configuration]
-        :keyword next_link: The URL to use for getting the next set of results.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -159,33 +155,69 @@ class ConfigurationList(_serialization.Model):
         self.next_link = next_link
 
 
-class Dashboard(_serialization.Model):
-    """The shared dashboard resource definition.
+class ConfigurationProperties(_serialization.Model):
+    """Tenant Configuration Properties with Provisioning state.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    :ivar enforce_private_markdown_storage: When flag is set to true Markdown tile will require
+     external storage configuration (URI). The inline content configuration will be prohibited.
+    :vartype enforce_private_markdown_storage: bool
+    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+     "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.portal.models.ResourceProvisioningState
+    """
 
-    :ivar id: Resource Id.
+    _validation = {
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "enforce_private_markdown_storage": {"key": "enforcePrivateMarkdownStorage", "type": "bool"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+    }
+
+    def __init__(self, *, enforce_private_markdown_storage: Optional[bool] = None, **kwargs: Any) -> None:
+        """
+        :keyword enforce_private_markdown_storage: When flag is set to true Markdown tile will require
+         external storage configuration (URI). The inline content configuration will be prohibited.
+        :paramtype enforce_private_markdown_storage: bool
+        """
+        super().__init__(**kwargs)
+        self.enforce_private_markdown_storage = enforce_private_markdown_storage
+        self.provisioning_state: Optional[Union[str, "_models.ResourceProvisioningState"]] = None
+
+
+class TrackedResource(Resource):
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.portal.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar lenses: The dashboard lenses.
-    :vartype lenses: list[~azure.mgmt.portal.models.DashboardLens]
-    :ivar metadata: The dashboard metadata.
-    :vartype metadata: dict[str, JSON]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "location": {"required": True},
     }
 
@@ -193,10 +225,65 @@ class Dashboard(_serialization.Model):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
-        "lenses": {"key": "properties.lenses", "type": "[DashboardLens]"},
-        "metadata": {"key": "properties.metadata", "type": "{object}"},
+        "location": {"key": "location", "type": "str"},
+    }
+
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+        self.location = location
+
+
+class Dashboard(TrackedResource):
+    """The shared dashboard resource definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.portal.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.portal.models.DashboardPropertiesWithProvisioningState
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "DashboardPropertiesWithProvisioningState"},
     }
 
     def __init__(
@@ -204,41 +291,32 @@ class Dashboard(_serialization.Model):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        lenses: Optional[List["_models.DashboardLens"]] = None,
-        metadata: Optional[Dict[str, JSON]] = None,
-        **kwargs
-    ):
+        properties: Optional["_models.DashboardPropertiesWithProvisioningState"] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword lenses: The dashboard lenses.
-        :paramtype lenses: list[~azure.mgmt.portal.models.DashboardLens]
-        :keyword metadata: The dashboard metadata.
-        :paramtype metadata: dict[str, JSON]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword properties: The resource-specific properties for this resource.
+        :paramtype properties: ~azure.mgmt.portal.models.DashboardPropertiesWithProvisioningState
         """
-        super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = location
-        self.tags = tags
-        self.lenses = lenses
-        self.metadata = metadata
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.properties = properties
 
 
 class DashboardLens(_serialization.Model):
     """A dashboard lens.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar order: The lens order. Required.
     :vartype order: int
     :ivar parts: The dashboard parts. Required.
     :vartype parts: list[~azure.mgmt.portal.models.DashboardParts]
     :ivar metadata: The dashboard len's metadata.
-    :vartype metadata: dict[str, JSON]
+    :vartype metadata: JSON
     """
 
     _validation = {
@@ -249,19 +327,19 @@ class DashboardLens(_serialization.Model):
     _attribute_map = {
         "order": {"key": "order", "type": "int"},
         "parts": {"key": "parts", "type": "[DashboardParts]"},
-        "metadata": {"key": "metadata", "type": "{object}"},
+        "metadata": {"key": "metadata", "type": "object"},
     }
 
     def __init__(
-        self, *, order: int, parts: List["_models.DashboardParts"], metadata: Optional[Dict[str, JSON]] = None, **kwargs
-    ):
+        self, *, order: int, parts: List["_models.DashboardParts"], metadata: Optional[JSON] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword order: The lens order. Required.
         :paramtype order: int
         :keyword parts: The dashboard parts. Required.
         :paramtype parts: list[~azure.mgmt.portal.models.DashboardParts]
         :keyword metadata: The dashboard len's metadata.
-        :paramtype metadata: dict[str, JSON]
+        :paramtype metadata: JSON
         """
         super().__init__(**kwargs)
         self.order = order
@@ -270,24 +348,30 @@ class DashboardLens(_serialization.Model):
 
 
 class DashboardListResult(_serialization.Model):
-    """List of dashboards.
+    """The response of a Dashboard list operation.
 
-    :ivar value: The array of custom resource provider manifests.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The Dashboard items on this page. Required.
     :vartype value: list[~azure.mgmt.portal.models.Dashboard]
-    :ivar next_link: The URL to use for getting the next set of results.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[Dashboard]"},
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Dashboard"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: List["_models.Dashboard"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword value: The array of custom resource provider manifests.
+        :keyword value: The Dashboard items on this page. Required.
         :paramtype value: list[~azure.mgmt.portal.models.Dashboard]
-        :keyword next_link: The URL to use for getting the next set of results.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -301,13 +385,11 @@ class DashboardPartMetadata(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     MarkdownPartMetadata
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar additional_properties: Unmatched properties from the message are deserialized to this
-     collection.
-    :vartype additional_properties: dict[str, any]
-    :ivar type: The type of dashboard part. Required.
-    :vartype type: str
+    :ivar type: The dashboard part metadata type. Required.
+     "Extension/HubsExtension/PartType/MarkdownPart"
+    :vartype type: str or ~azure.mgmt.portal.models.DashboardPartMetadataType
     """
 
     _validation = {
@@ -315,27 +397,21 @@ class DashboardPartMetadata(_serialization.Model):
     }
 
     _attribute_map = {
-        "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
     }
 
     _subtype_map = {"type": {"Extension/HubsExtension/PartType/MarkdownPart": "MarkdownPartMetadata"}}
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, Any]] = None, **kwargs):
-        """
-        :keyword additional_properties: Unmatched properties from the message are deserialized to this
-         collection.
-        :paramtype additional_properties: dict[str, any]
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.additional_properties = additional_properties
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
 
 
 class DashboardParts(_serialization.Model):
     """A dashboard part.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar position: The dashboard's part position. Required.
     :vartype position: ~azure.mgmt.portal.models.DashboardPartsPosition
@@ -357,8 +433,8 @@ class DashboardParts(_serialization.Model):
         *,
         position: "_models.DashboardPartsPosition",
         metadata: Optional["_models.DashboardPartMetadata"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword position: The dashboard's part position. Required.
         :paramtype position: ~azure.mgmt.portal.models.DashboardPartsPosition
@@ -373,7 +449,7 @@ class DashboardParts(_serialization.Model):
 class DashboardPartsPosition(_serialization.Model):
     """The dashboard's part position.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar x: The dashboard's part x coordinate. Required.
     :vartype x: int
@@ -384,7 +460,7 @@ class DashboardPartsPosition(_serialization.Model):
     :ivar col_span: The dashboard's part column span. Required.
     :vartype col_span: int
     :ivar metadata: The dashboard part's metadata.
-    :vartype metadata: dict[str, JSON]
+    :vartype metadata: JSON
     """
 
     _validation = {
@@ -399,12 +475,12 @@ class DashboardPartsPosition(_serialization.Model):
         "y": {"key": "y", "type": "int"},
         "row_span": {"key": "rowSpan", "type": "int"},
         "col_span": {"key": "colSpan", "type": "int"},
-        "metadata": {"key": "metadata", "type": "{object}"},
+        "metadata": {"key": "metadata", "type": "object"},
     }
 
     def __init__(
-        self, *, x: int, y: int, row_span: int, col_span: int, metadata: Optional[Dict[str, JSON]] = None, **kwargs
-    ):
+        self, *, x: int, y: int, row_span: int, col_span: int, metadata: Optional[JSON] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword x: The dashboard's part x coordinate. Required.
         :paramtype x: int
@@ -415,7 +491,7 @@ class DashboardPartsPosition(_serialization.Model):
         :keyword col_span: The dashboard's part column span. Required.
         :paramtype col_span: int
         :keyword metadata: The dashboard part's metadata.
-        :paramtype metadata: dict[str, JSON]
+        :paramtype metadata: JSON
         """
         super().__init__(**kwargs)
         self.x = x
@@ -425,54 +501,160 @@ class DashboardPartsPosition(_serialization.Model):
         self.metadata = metadata
 
 
-class ErrorDefinition(_serialization.Model):
-    """Error definition.
+class DashboardProperties(_serialization.Model):
+    """The shared dashboard properties.
+
+    :ivar lenses: The dashboard lenses.
+    :vartype lenses: list[~azure.mgmt.portal.models.DashboardLens]
+    :ivar metadata: The dashboard metadata.
+    :vartype metadata: JSON
+    """
+
+    _attribute_map = {
+        "lenses": {"key": "lenses", "type": "[DashboardLens]"},
+        "metadata": {"key": "metadata", "type": "object"},
+    }
+
+    def __init__(
+        self, *, lenses: Optional[List["_models.DashboardLens"]] = None, metadata: Optional[JSON] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword lenses: The dashboard lenses.
+        :paramtype lenses: list[~azure.mgmt.portal.models.DashboardLens]
+        :keyword metadata: The dashboard metadata.
+        :paramtype metadata: JSON
+        """
+        super().__init__(**kwargs)
+        self.lenses = lenses
+        self.metadata = metadata
+
+
+class DashboardPropertiesWithProvisioningState(_serialization.Model):
+    """Dashboard Properties with Provisioning state.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar code: Service specific error code which serves as the substatus for the HTTP error code.
-    :vartype code: int
-    :ivar message: Description of the error.
+    :ivar lenses: The dashboard lenses.
+    :vartype lenses: list[~azure.mgmt.portal.models.DashboardLens]
+    :ivar metadata: The dashboard metadata.
+    :vartype metadata: JSON
+    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+     "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.portal.models.ResourceProvisioningState
+    """
+
+    _validation = {
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "lenses": {"key": "lenses", "type": "[DashboardLens]"},
+        "metadata": {"key": "metadata", "type": "object"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self, *, lenses: Optional[List["_models.DashboardLens"]] = None, metadata: Optional[JSON] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword lenses: The dashboard lenses.
+        :paramtype lenses: list[~azure.mgmt.portal.models.DashboardLens]
+        :keyword metadata: The dashboard metadata.
+        :paramtype metadata: JSON
+        """
+        super().__init__(**kwargs)
+        self.lenses = lenses
+        self.metadata = metadata
+        self.provisioning_state: Optional[Union[str, "_models.ResourceProvisioningState"]] = None
+
+
+class ErrorAdditionalInfo(_serialization.Model):
+    """The resource management error additional info.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: JSON
+    """
+
+    _validation = {
+        "type": {"readonly": True},
+        "info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
+
+
+class ErrorDetail(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
     :vartype message: str
-    :ivar details: Internal error details.
-    :vartype details: list[~azure.mgmt.portal.models.ErrorDefinition]
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.portal.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.portal.models.ErrorAdditionalInfo]
     """
 
     _validation = {
         "code": {"readonly": True},
         "message": {"readonly": True},
+        "target": {"readonly": True},
         "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        "code": {"key": "code", "type": "int"},
+        "code": {"key": "code", "type": "str"},
         "message": {"key": "message", "type": "str"},
-        "details": {"key": "details", "type": "[ErrorDefinition]"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.details = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[List["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorResponse(_serialization.Model):
-    """Error response.
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
-    :ivar error: The error details.
-    :vartype error: ~azure.mgmt.portal.models.ErrorDefinition
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.portal.models.ErrorDetail
     """
 
     _attribute_map = {
-        "error": {"key": "error", "type": "ErrorDefinition"},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDefinition"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
-        :keyword error: The error details.
-        :paramtype error: ~azure.mgmt.portal.models.ErrorDefinition
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.portal.models.ErrorDetail
         """
         super().__init__(**kwargs)
         self.error = error
@@ -481,13 +663,11 @@ class ErrorResponse(_serialization.Model):
 class MarkdownPartMetadata(DashboardPartMetadata):
     """Markdown part metadata.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar additional_properties: Unmatched properties from the message are deserialized to this
-     collection.
-    :vartype additional_properties: dict[str, any]
-    :ivar type: The type of dashboard part. Required.
-    :vartype type: str
+    :ivar type: The dashboard part metadata type. Required.
+     "Extension/HubsExtension/PartType/MarkdownPart"
+    :vartype type: str or ~azure.mgmt.portal.models.DashboardPartMetadataType
     :ivar inputs: Input to dashboard part.
     :vartype inputs: list[JSON]
     :ivar settings: Markdown part settings.
@@ -499,7 +679,6 @@ class MarkdownPartMetadata(DashboardPartMetadata):
     }
 
     _attribute_map = {
-        "additional_properties": {"key": "", "type": "{object}"},
         "type": {"key": "type", "type": "str"},
         "inputs": {"key": "inputs", "type": "[object]"},
         "settings": {"key": "settings", "type": "MarkdownPartMetadataSettings"},
@@ -508,22 +687,18 @@ class MarkdownPartMetadata(DashboardPartMetadata):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, Any]] = None,
         inputs: Optional[List[JSON]] = None,
         settings: Optional["_models.MarkdownPartMetadataSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword additional_properties: Unmatched properties from the message are deserialized to this
-         collection.
-        :paramtype additional_properties: dict[str, any]
         :keyword inputs: Input to dashboard part.
         :paramtype inputs: list[JSON]
         :keyword settings: Markdown part settings.
         :paramtype settings: ~azure.mgmt.portal.models.MarkdownPartMetadataSettings
         """
-        super().__init__(additional_properties=additional_properties, **kwargs)
-        self.type = "Extension/HubsExtension/PartType/MarkdownPart"  # type: str
+        super().__init__(**kwargs)
+        self.type: str = "Extension/HubsExtension/PartType/MarkdownPart"
         self.inputs = inputs
         self.settings = settings
 
@@ -539,7 +714,9 @@ class MarkdownPartMetadataSettings(_serialization.Model):
         "content": {"key": "content", "type": "MarkdownPartMetadataSettingsContent"},
     }
 
-    def __init__(self, *, content: Optional["_models.MarkdownPartMetadataSettingsContent"] = None, **kwargs):
+    def __init__(
+        self, *, content: Optional["_models.MarkdownPartMetadataSettingsContent"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword content: The content of markdown part.
         :paramtype content: ~azure.mgmt.portal.models.MarkdownPartMetadataSettingsContent
@@ -550,26 +727,6 @@ class MarkdownPartMetadataSettings(_serialization.Model):
 
 class MarkdownPartMetadataSettingsContent(_serialization.Model):
     """The content of markdown part.
-
-    :ivar settings: The setting of the content of markdown part.
-    :vartype settings: ~azure.mgmt.portal.models.MarkdownPartMetadataSettingsContentSettings
-    """
-
-    _attribute_map = {
-        "settings": {"key": "settings", "type": "MarkdownPartMetadataSettingsContentSettings"},
-    }
-
-    def __init__(self, *, settings: Optional["_models.MarkdownPartMetadataSettingsContentSettings"] = None, **kwargs):
-        """
-        :keyword settings: The setting of the content of markdown part.
-        :paramtype settings: ~azure.mgmt.portal.models.MarkdownPartMetadataSettingsContentSettings
-        """
-        super().__init__(**kwargs)
-        self.settings = settings
-
-
-class MarkdownPartMetadataSettingsContentSettings(_serialization.Model):
-    """The setting of the content of markdown part.
 
     :ivar content: The content of the markdown part.
     :vartype content: str
@@ -599,8 +756,8 @@ class MarkdownPartMetadataSettingsContentSettings(_serialization.Model):
         subtitle: Optional[str] = None,
         markdown_source: Optional[int] = None,
         markdown_uri: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword content: The content of the markdown part.
         :paramtype content: str
@@ -621,96 +778,81 @@ class MarkdownPartMetadataSettingsContentSettings(_serialization.Model):
         self.markdown_uri = markdown_uri
 
 
-class PatchableDashboard(_serialization.Model):
-    """The shared dashboard resource definition.
+class Operation(_serialization.Model):
+    """Details of a REST API operation, returned from the Resource Provider Operations API.
 
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar lenses: The dashboard lenses.
-    :vartype lenses: list[~azure.mgmt.portal.models.DashboardLens]
-    :ivar metadata: The dashboard metadata.
-    :vartype metadata: dict[str, JSON]
-    """
+    Variables are only populated by the server, and will be ignored when sending a request.
 
-    _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
-        "lenses": {"key": "properties.lenses", "type": "[DashboardLens]"},
-        "metadata": {"key": "properties.metadata", "type": "{object}"},
-    }
-
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        lenses: Optional[List["_models.DashboardLens"]] = None,
-        metadata: Optional[Dict[str, JSON]] = None,
-        **kwargs
-    ):
-        """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword lenses: The dashboard lenses.
-        :paramtype lenses: list[~azure.mgmt.portal.models.DashboardLens]
-        :keyword metadata: The dashboard metadata.
-        :paramtype metadata: dict[str, JSON]
-        """
-        super().__init__(**kwargs)
-        self.tags = tags
-        self.lenses = lenses
-        self.metadata = metadata
-
-
-class ResourceProviderOperation(_serialization.Model):
-    """Supported operations of this resource provider.
-
-    :ivar name: Operation name, in format of {provider}/{resource}/{operation}.
+    :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
+     "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
     :vartype name: str
-    :ivar is_data_action: Indicates whether the operation applies to data-plane.
-    :vartype is_data_action: str
-    :ivar display: Display metadata associated with the operation.
-    :vartype display: ~azure.mgmt.portal.models.ResourceProviderOperationDisplay
+    :ivar is_data_action: Whether the operation applies to data-plane. This is "true" for
+     data-plane operations and "false" for ARM/control-plane operations.
+    :vartype is_data_action: bool
+    :ivar display: Localized display information for this particular operation.
+    :vartype display: ~azure.mgmt.portal.models.OperationDisplay
+    :ivar origin: The intended executor of the operation; as in Resource Based Access Control
+     (RBAC) and audit logs UX. Default value is "user,system". Known values are: "user", "system",
+     and "user,system".
+    :vartype origin: str or ~azure.mgmt.portal.models.Origin
+    :ivar action_type: Enum. Indicates the action type. "Internal" refers to actions that are for
+     internal only APIs. "Internal"
+    :vartype action_type: str or ~azure.mgmt.portal.models.ActionType
     """
+
+    _validation = {
+        "name": {"readonly": True},
+        "is_data_action": {"readonly": True},
+        "origin": {"readonly": True},
+        "action_type": {"readonly": True},
+    }
 
     _attribute_map = {
         "name": {"key": "name", "type": "str"},
-        "is_data_action": {"key": "isDataAction", "type": "str"},
-        "display": {"key": "display", "type": "ResourceProviderOperationDisplay"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
+        "action_type": {"key": "actionType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        is_data_action: Optional[str] = None,
-        display: Optional["_models.ResourceProviderOperationDisplay"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any) -> None:
         """
-        :keyword name: Operation name, in format of {provider}/{resource}/{operation}.
-        :paramtype name: str
-        :keyword is_data_action: Indicates whether the operation applies to data-plane.
-        :paramtype is_data_action: str
-        :keyword display: Display metadata associated with the operation.
-        :paramtype display: ~azure.mgmt.portal.models.ResourceProviderOperationDisplay
+        :keyword display: Localized display information for this particular operation.
+        :paramtype display: ~azure.mgmt.portal.models.OperationDisplay
         """
         super().__init__(**kwargs)
-        self.name = name
-        self.is_data_action = is_data_action
+        self.name: Optional[str] = None
+        self.is_data_action: Optional[bool] = None
         self.display = display
+        self.origin: Optional[Union[str, "_models.Origin"]] = None
+        self.action_type: Optional[Union[str, "_models.ActionType"]] = None
 
 
-class ResourceProviderOperationDisplay(_serialization.Model):
-    """Display metadata associated with the operation.
+class OperationDisplay(_serialization.Model):
+    """Localized display information for this particular operation.
 
-    :ivar provider: Resource provider: Microsoft Custom Providers.
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
+     Monitoring Insights" or "Microsoft Compute".
     :vartype provider: str
-    :ivar resource: Resource on which the operation is performed.
+    :ivar resource: The localized friendly name of the resource type related to this operation.
+     E.g. "Virtual Machines" or "Job Schedule Collections".
     :vartype resource: str
-    :ivar operation: Type of operation: get, read, delete, etc.
+    :ivar operation: The concise, localized friendly name for the operation; suitable for
+     dropdowns. E.g. "Create or Update Virtual Machine", "Restart Virtual Machine".
     :vartype operation: str
-    :ivar description: Description of this operation.
+    :ivar description: The short, localized friendly description of the operation; suitable for
+     tool tips and detailed views.
     :vartype description: str
     """
+
+    _validation = {
+        "provider": {"readonly": True},
+        "resource": {"readonly": True},
+        "operation": {"readonly": True},
+        "description": {"readonly": True},
+    }
 
     _attribute_map = {
         "provider": {"key": "provider", "type": "str"},
@@ -719,62 +861,138 @@ class ResourceProviderOperationDisplay(_serialization.Model):
         "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        provider: Optional[str] = None,
-        resource: Optional[str] = None,
-        operation: Optional[str] = None,
-        description: Optional[str] = None,
-        **kwargs
-    ):
-        """
-        :keyword provider: Resource provider: Microsoft Custom Providers.
-        :paramtype provider: str
-        :keyword resource: Resource on which the operation is performed.
-        :paramtype resource: str
-        :keyword operation: Type of operation: get, read, delete, etc.
-        :paramtype operation: str
-        :keyword description: Description of this operation.
-        :paramtype description: str
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.provider = provider
-        self.resource = resource
-        self.operation = operation
-        self.description = description
+        self.provider: Optional[str] = None
+        self.resource: Optional[str] = None
+        self.operation: Optional[str] = None
+        self.description: Optional[str] = None
 
 
-class ResourceProviderOperationList(_serialization.Model):
-    """Results of the request to list operations.
+class OperationListResult(_serialization.Model):
+    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link
+    to get the next set of results.
 
-    :ivar value: List of operations supported by this resource provider.
-    :vartype value: list[~azure.mgmt.portal.models.ResourceProviderOperation]
-    :ivar next_link: The URL to use for getting the next set of results.
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of operations supported by the resource provider.
+    :vartype value: list[~azure.mgmt.portal.models.Operation]
+    :ivar next_link: URL to get the next set of operation list results (if there are any).
     :vartype next_link: str
     """
 
+    _validation = {
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
+    }
+
     _attribute_map = {
-        "value": {"key": "value", "type": "[ResourceProviderOperation]"},
+        "value": {"key": "value", "type": "[Operation]"},
         "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.value: Optional[List["_models.Operation"]] = None
+        self.next_link: Optional[str] = None
+
+
+class PatchableDashboard(_serialization.Model):
+    """The shared dashboard resource definition.
+
+    :ivar properties: The shared dashboard properties.
+    :vartype properties: ~azure.mgmt.portal.models.DashboardProperties
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        "properties": {"key": "properties", "type": "DashboardProperties"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["_models.ResourceProviderOperation"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+        properties: Optional["_models.DashboardProperties"] = None,
+        tags: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword value: List of operations supported by this resource provider.
-        :paramtype value: list[~azure.mgmt.portal.models.ResourceProviderOperation]
-        :keyword next_link: The URL to use for getting the next set of results.
-        :paramtype next_link: str
+        :keyword properties: The shared dashboard properties.
+        :paramtype properties: ~azure.mgmt.portal.models.DashboardProperties
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
+        self.properties = properties
+        self.tags = tags
+
+
+class SystemData(_serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.portal.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.portal.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self,
+        *,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.portal.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.portal.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
 
 
 class Violation(_serialization.Model):
@@ -802,33 +1020,39 @@ class Violation(_serialization.Model):
         "error_message": {"key": "errorMessage", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.user_id = None
-        self.error_message = None
+        self.id: Optional[str] = None
+        self.user_id: Optional[str] = None
+        self.error_message: Optional[str] = None
 
 
 class ViolationsList(_serialization.Model):
     """List of list of items that violate tenant's configuration.
 
-    :ivar value: The array of violations.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The Violation items on this page. Required.
     :vartype value: list[~azure.mgmt.portal.models.Violation]
-    :ivar next_link: The URL to use for getting the next set of results.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[Violation]"},
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Violation"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: List["_models.Violation"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword value: The array of violations.
+        :keyword value: The Violation items on this page. Required.
         :paramtype value: list[~azure.mgmt.portal.models.Violation]
-        :keyword next_link: The URL to use for getting the next set of results.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
