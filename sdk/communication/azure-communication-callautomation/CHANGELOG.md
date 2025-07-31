@@ -4,7 +4,6 @@
 
 ### Features Added
 - Added support for move participant in a call to another call.
-- Added support for Get recording result.
 - Added support for Teams phone call details with custom calling context.
 - Added support for PiiRedaction and summarization in transcription.
 - Added support for sentiments analysis in speech and choice recognition.
