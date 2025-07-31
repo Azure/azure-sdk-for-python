@@ -238,7 +238,8 @@ class CheckFile:
                 toml_data = toml.load(fd)
             if "packaging" not in toml_data:
                 toml_data["packaging"] = {}
-            toml_data["packaging"]["title"] = title
+            if title and not toml_data["packaging"].get("title"):
+                toml_data["packaging"]["title"] = title
             toml_data["packaging"]["is_stable"] = self.tag_is_stable and self.next_version != "1.0.0b1"
             with open(pyproject_toml, "wb") as fd:
                 tomlw.dump(toml_data, fd)
