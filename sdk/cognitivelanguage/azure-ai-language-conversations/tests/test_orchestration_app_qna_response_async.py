@@ -17,8 +17,7 @@ class TestOrchestrationAppQnaResponseAsync(AzureRecordedTestCase):
 
         # analyze query
         client = ConversationAnalysisClient(
-            conversation_creds["endpoint"],
-            AzureKeyCredential(conversation_creds["key"])
+            conversation_creds["endpoint"], AzureKeyCredential(conversation_creds["key"])
         )
         async with client:
             query = "How are you?"
@@ -31,20 +30,20 @@ class TestOrchestrationAppQnaResponseAsync(AzureRecordedTestCase):
                             "id": "1",
                             "modality": "text",
                             "language": "en",
-                            "text": query
+                            "text": query,
                         },
-                        "isLoggingEnabled": False
+                        "isLoggingEnabled": False,
                     },
                     "parameters": {
                         "projectName": conversation_creds["orch_project_name"],
                         "deploymentName": conversation_creds["orch_deployment_name"],
-                        "verbose": True
-                    }
+                        "verbose": True,
+                    },
                 }
             )
 
             # assert - main object
-            top_project = 'ChitChat-QnA'
+            top_project = "ChitChat-QnA"
             assert not result is None
             assert result["kind"] == "ConversationResult"
             assert result["result"]["query"] == query
