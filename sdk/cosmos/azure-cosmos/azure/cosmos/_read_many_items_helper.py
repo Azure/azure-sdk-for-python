@@ -87,7 +87,8 @@ class ReadManyItemsHelperSync:
         """Execute the queries using the provided executor.
 
         :param ThreadPoolExecutor executor: The ThreadPoolExecutor to use
-        :param Dict[str, List[Tuple[str, "_PartitionKeyType"]]] items_by_partition: Dictionary of items grouped by partition key range ID
+        :param Dict[str, List[Tuple[str, "_PartitionKeyType"]]] items_by_partition:
+                    Dictionary of items grouped by partition key range ID
         :return: A list of the retrieved items
         :rtype: ~azure.cosmos.CosmosList
         """

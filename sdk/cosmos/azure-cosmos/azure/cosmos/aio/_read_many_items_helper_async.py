@@ -92,7 +92,7 @@ class ReadManyItemsHelper:
 
     async def partition_items_by_range(
             self,
-            items: List[Tuple[str, "PartitionKeyType"]],
+            items: Sequence[Tuple[str, "PartitionKeyType"]],
             collection_link: str,
             partition_key_definition: Dict[str, Any]
     ) -> Dict[str, List[Tuple[str, "PartitionKeyType"]]]:
