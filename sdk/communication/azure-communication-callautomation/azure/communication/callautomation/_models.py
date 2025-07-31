@@ -3,13 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import List, Optional, Union, TYPE_CHECKING
+from typing import Dict, List, Optional, Union, TYPE_CHECKING
 from typing_extensions import Literal
 
-from azure.communication.callautomation._generated.models._models import (
-    TeamsPhoneCallerDetails,
-    TeamsPhoneSourceDetails
-    )
 from ._generated.models import (
     CallLocator,
     WebSocketMediaStreamingOptions as WebSocketMediaStreamingOptionsRest,
@@ -24,7 +20,9 @@ from ._generated.models import (
     TranscriptionSubscription as TranscriptionSubscriptionInternal,
     PiiRedactionOptions as PiiRedactionOptionsInternal,
     TeamsPhoneCallDetails as TeamsPhoneCallDetailsInternal,
-    SummarizationOptions as SummarizationOptionsInternal
+    SummarizationOptions as SummarizationOptionsInternal,
+    TeamsPhoneCallerDetails as TeamsPhoneCallerDetailsInternal,
+    TeamsPhoneSourceDetails as TeamsPhoneSourceDetailsInternal
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -62,7 +60,6 @@ if TYPE_CHECKING:
         RemoveParticipantResponse as RemoveParticipantResultRest,
         TransferCallResponse as TransferParticipantResultRest,
         RecordingStateResponse as RecordingStateResultRest,
-        RecordingResultResponse as RecordingResultRest,
         MuteParticipantsResult as MuteParticipantsResultRest,
         SendDtmfTonesResult as SendDtmfTonesResultRest,
         CancelAddParticipantResponse as CancelAddParticipantResultRest,
@@ -1121,6 +1118,107 @@ class TeamsPhoneCallDetails:
             transcript_url=self.transcript_url,
             call_sentiment=self.call_sentiment,
             suggested_actions=self.suggested_actions
+        )
+
+class TeamsPhoneCallerDetails:
+    """Container for details relating to the original caller of the call.
+
+    All required parameters must be populated in order to send to server.
+
+    :keyword caller: Caller's ID. Required.
+    :paramtype caller: ~azure.communication.callautomation.models.CommunicationIdentifierModel
+    :keyword name: Caller's name. Required.
+    :paramtype name: str
+    :keyword phone_number: Caller's phone number. Required.
+    :paramtype phone_number: str
+    :keyword record_id: Caller's record ID (ex in CRM).
+    :paramtype record_id: str
+    :keyword screen_pop_url: Caller's screen pop URL.
+    :paramtype screen_pop_url: str
+    :keyword is_authenticated: Flag indicating whether the caller was authenticated.
+    :paramtype is_authenticated: bool
+    :keyword additional_caller_information: A set of key value pairs (max 10, any additional entries
+     would be ignored) which a bot author wants to pass to the Teams Client for display to the
+     agent.
+    :paramtype additional_caller_information: dict[str, str]
+    """
+
+    caller: CommunicationIdentifier
+    name: str
+    phone_number: str
+    record_id: Optional[str] = None
+    screen_pop_url: Optional[str] = None
+    is_authenticated: Optional[bool] = None
+    additional_caller_information: Optional[Dict[str, str]] = None
+
+    def __init__(
+        self,
+        *,
+        caller: CommunicationIdentifier,
+        name: str,
+        phone_number: str,
+        record_id: Optional[str] = None,
+        screen_pop_url: Optional[str] = None,
+        is_authenticated: Optional[bool] = None,
+        additional_caller_information: Optional[Dict[str, str]] = None
+    ) -> None:
+        self.caller = caller
+        self.name = name
+        self.phone_number = phone_number
+        self.record_id = record_id
+        self.screen_pop_url = screen_pop_url
+        self.is_authenticated = is_authenticated
+        self.additional_caller_information = additional_caller_information
+
+    def _to_generated(self):
+        return TeamsPhoneCallerDetailsInternal(
+            caller=self.caller,
+            name=self.name,
+            phone_number=self.phone_number,
+            record_id=self.record_id,
+            screen_pop_url=self.screen_pop_url,
+            is_authenticated=self.is_authenticated,
+            additional_caller_information=self.additional_caller_information
+        )
+
+class TeamsPhoneSourceDetails:
+    """Container for details relating to the entity responsible for the creation of these call
+    details.
+
+    All required parameters must be populated in order to send to server.
+
+    :keyword source: ID of the source entity passing along the call details (ex. Application Instance
+     ID of - CQ/AA). Required.
+    :paramtype source: ~azure.communication.callautomation.CommunicationIdentifier
+    :keyword language: Language of the source entity passing along the call details, passed in the
+     ISO-639 standard. Required.
+    :paramtype language: str
+    :keyword status: Status of the source entity passing along the call details. Required.
+    :paramtype status: str
+    :keyword intended_targets: Intended targets of the source entity passing along the call details.
+    :paramtype intended_targets: dict[str,
+     ~azure.communication.callautomation.CommunicationIdentifier]
+    """
+
+    def __init__(
+        self,
+        *,
+        source: CommunicationIdentifier,
+        language: str,
+        status: str,
+        intended_targets: Optional[Dict[str, CommunicationIdentifier]] = None
+    ) -> None:
+        self.source = source
+        self.language = language
+        self.status = status
+        self.intended_targets = intended_targets
+
+    def _to_generated(self):
+        return TeamsPhoneSourceDetailsInternal(
+            source=serialize_identifier(self.source),
+            language=self.language,
+            status=self.status,
+            intended_targets=[serialize_identifier(p) for p in self.intended_targets.values()]
         )
 
 class SummarizationOptions:
