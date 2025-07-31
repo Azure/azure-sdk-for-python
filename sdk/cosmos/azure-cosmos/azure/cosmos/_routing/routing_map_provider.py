@@ -22,12 +22,13 @@
 """Internal class for partition key range cache implementation in the Azure
 Cosmos database service.
 """
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List, Mapping
 
 from .. import _base
 from .collection_routing_map import CollectionRoutingMap
 from . import routing_range
-from .routing_range import PartitionKeyRange
+from .routing_range import PartitionKeyRange, Range
+
 
 # pylint: disable=protected-access
 
@@ -55,7 +56,7 @@ class PartitionKeyRangeCache(object):
             self,
             collection_link: str,
             collection_id: str,
-            feed_options: Optional[Dict[str, Any]] = None,
+            feed_options: Optional[Dict[str, Any]],
             **kwargs: Dict[str, Any]
     ):
         collection_routing_map = self._collection_routing_map_by_item.get(collection_id)
@@ -72,7 +73,7 @@ class PartitionKeyRangeCache(object):
             )
             self._collection_routing_map_by_item[collection_id] = collection_routing_map
 
-    def get_overlapping_ranges(self, collection_link, partition_key_ranges, feed_options = None, **kwargs):
+    def get_overlapping_ranges(self, collection_link, partition_key_ranges, feed_options, **kwargs):
         """Given a partition key range and a collection, return the list of
         overlapping partition key ranges.
 
@@ -91,10 +92,11 @@ class PartitionKeyRangeCache(object):
             self,
             collection_link: str,
             partition_key_range_id: int,
+            feed_options: Dict[str, Any],
             **kwargs: Dict[str, Any]
     ) -> Optional[Dict[str, Any]]:
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
-        self.init_collection_routing_map_if_needed(collection_link, collection_id, **kwargs)
+        self.init_collection_routing_map_if_needed(collection_link, collection_id, feed_options, **kwargs)
 
         return (self._collection_routing_map_by_item[collection_id]
                 .get_range_by_partition_key_range_id(partition_key_range_id))
@@ -155,7 +157,7 @@ class SmartRoutingMapProvider(PartitionKeyRangeCache):
     invocation of CollectionRoutingMap.get_overlapping_ranges()
     """
 
-    def get_overlapping_ranges(self, collection_link, partition_key_ranges, feed_options = None, **kwargs):
+    def get_overlapping_ranges(self, collection_link: str, partition_key_ranges: List[Range], feed_options = None, **kwargs):
         """
         Given the sorted ranges and a collection,
         Returns the list of overlapping partition key ranges

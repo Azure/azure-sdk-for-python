@@ -4,7 +4,6 @@
 
 """End-to-end test.
 """
-import asyncio
 import time
 import unittest
 import uuid
@@ -80,6 +79,7 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
 
     async def asyncSetUp(self):
         self.client = CosmosClient(self.host, self.masterKey)
+        await self.client.__aenter__()
         self.database_for_test = self.client.get_database_client(self.configs.TEST_DATABASE_ID)
 
     async def asyncTearDown(self):
@@ -369,7 +369,6 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
         assert upserted_document.get('key') == document_definition.get('key')
         assert upserted_document.get('city') == document_definition.get('city')
         assert upserted_document.get('zipcode') == document_definition.get('zipcode')
-        await asyncio.sleep(2)
 
         documentlist = [document async for document in created_collection.read_all_items()]
         assert 2 == len(documentlist)

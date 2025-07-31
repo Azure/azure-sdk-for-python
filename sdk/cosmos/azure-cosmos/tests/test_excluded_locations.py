@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import logging
+import os
 import re
 import unittest
 import uuid
@@ -220,6 +221,7 @@ def setup_and_teardown():
     # Code to run after tests
     print("Teardown: This runs after all tests")
 
+@pytest.mark.cosmosCircuitBreakerMultiRegion
 @pytest.mark.cosmosMultiRegion
 class TestExcludedLocations:
     @pytest.mark.parametrize('test_data', read_item_test_data())
