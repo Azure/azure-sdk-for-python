@@ -25,13 +25,13 @@ class AzureCommunicationCallAutomationServiceConfiguration:  # pylint: disable=t
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential
-    :keyword api_version: Api Version. Default value is "2025-05-15". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2025-06-15". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2025-05-15")
+        api_version: str = kwargs.pop("api_version", "2025-06-15")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

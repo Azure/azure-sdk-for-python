@@ -79,7 +79,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _RESULT_KEY = "groundedness"
     _OPTIONAL_PARAMS = ["query"]
 
-    id = "azureml://registries/azureml/models/Groundedness-Evaluator/versions/4"
+    id = "azureai://built-in/evaluators/groundedness"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
