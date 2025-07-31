@@ -48,7 +48,7 @@ client.query_workspace(logging_enable=True)
 
 ### Authentication errors
 
-Azure Monitor Query Metrics supports Azure Active Directory authentication. The MetricsClient has methods to set the `credential`. To provide a valid credential, you can use
+Azure Monitor Query Metrics supports Microsoft Entra ID authentication. The MetricsClient has methods to set the `credential`. To provide a valid credential, you can use
 `azure-identity` dependency. For more details on getting started, refer to
 the [README](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-querymetrics#create-the-client)
 of Azure Monitor Query Metrics library. You can also refer to

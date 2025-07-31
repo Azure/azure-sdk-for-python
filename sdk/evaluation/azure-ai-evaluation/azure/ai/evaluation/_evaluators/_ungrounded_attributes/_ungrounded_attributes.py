@@ -58,7 +58,7 @@ class UngroundedAttributesEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         for the ungrounded attributes will be "ungrounded_attributes_label".
     """
 
-    id = "ungrounded_attributes"
+    id = "azureai://built-in/evaluators/ungrounded_attributes"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
     _OPTIONAL_PARAMS = ["query"]
 
