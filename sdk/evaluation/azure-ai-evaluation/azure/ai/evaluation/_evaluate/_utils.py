@@ -138,6 +138,7 @@ def _log_metrics_and_instance_results_onedp(
     project_url: str,
     evaluation_name: Optional[str],
     name_map: Dict[str, str],
+    tags: Optional[Dict[str, str]] = None,
     **kwargs,
 ) -> Optional[str]:
 
@@ -191,6 +192,7 @@ def _log_metrics_and_instance_results_onedp(
             evaluation=EvaluationUpload(
                 display_name=evaluation_name,
                 properties=properties,
+                tags=tags,
             )
         )
 
@@ -215,6 +217,7 @@ def _log_metrics_and_instance_results(
     run: Optional[Run],
     evaluation_name: Optional[str],
     name_map: Dict[str, str],
+    tags: Optional[Dict[str, str]] = None,
     **kwargs,
 ) -> Optional[str]:
     from azure.ai.evaluation._evaluate._eval_run import EvalRun
@@ -244,6 +247,7 @@ def _log_metrics_and_instance_results(
         workspace_name=ws_triad.workspace_name,
         management_client=management_client,
         promptflow_run=run,
+        tags=tags,
     ) as ev_run:
         artifact_name = EvalRun.EVALUATION_ARTIFACT
 

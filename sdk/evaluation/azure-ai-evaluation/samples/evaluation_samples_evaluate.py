@@ -62,6 +62,13 @@ class EvaluationEvaluateSamples(object):
                     },
                 },
             },
+            # Example of using tags for tracking and organization
+            tags={
+                "experiment": "basic_evaluation",
+                "model": "gpt-4",
+                "dataset": "sample_qa_data",
+                "environment": "development",
+            },
         )
 
         # [END evaluate_method]
@@ -363,23 +370,6 @@ class EvaluationEvaluateSamples(object):
         )
         # [END similarity_evaluator]
 
-        # [START completeness_evaluator]
-        import os
-        from azure.ai.evaluation import CompletenessEvaluator
-
-        model_config = {
-            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
-            "api_key": os.environ.get("AZURE_OPENAI_KEY"),
-            "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
-        }
-
-        completeness_eval = CompletenessEvaluator(model_config=model_config)
-        completeness_eval(
-            response="The capital of Japan is Tokyo.",
-            ground_truth="Tokyo is Japan's capital.",
-        )
-        # [END completeness_evaluator]
-
         # [START task_adherence_evaluator]
         import os
         from azure.ai.evaluation import TaskAdherenceEvaluator
@@ -509,19 +499,19 @@ class EvaluationEvaluateSamples(object):
         from azure.ai.evaluation import DocumentRetrievalEvaluator
 
         retrieval_ground_truth = [
-            {"document_id": "1", "query_relevance_judgement": 4},
-            {"document_id": "2", "query_relevance_judgement": 2},
-            {"document_id": "3", "query_relevance_judgement": 3},
-            {"document_id": "4", "query_relevance_judgement": 1},
-            {"document_id": "5", "query_relevance_judgement": 0},
+            {"document_id": "1", "query_relevance_label": 4},
+            {"document_id": "2", "query_relevance_label": 2},
+            {"document_id": "3", "query_relevance_label": 3},
+            {"document_id": "4", "query_relevance_label": 1},
+            {"document_id": "5", "query_relevance_label": 0},
         ]
 
         retrieved_documents = [
-            {"document_id": "2", "query_relevance_judgement": 45.1},
-            {"document_id": "6", "query_relevance_judgement": 35.8},
-            {"document_id": "3", "query_relevance_judgement": 29.2},
-            {"document_id": "5", "query_relevance_judgement": 25.4},
-            {"document_id": "7", "query_relevance_judgement": 18.8},
+            {"document_id": "2", "relevance_score": 45.1},
+            {"document_id": "6", "relevance_score": 35.8},
+            {"document_id": "3", "relevance_score": 29.2},
+            {"document_id": "5", "relevance_score": 25.4},
+            {"document_id": "7", "relevance_score": 18.8},
         ]
 
         document_retrieval_evaluator = DocumentRetrievalEvaluator()
@@ -529,6 +519,29 @@ class EvaluationEvaluateSamples(object):
             retrieval_ground_truth=retrieval_ground_truth, retrieved_documents=retrieved_documents
         )
         # [END document_retrieval_evaluator]
+
+        # [START evaluate_with_tags_examples]
+        evaluate(
+            data=path,
+            evaluators={"coherence": CoherenceEvaluator(model_config=model_config)},
+            evaluator_config={
+                "coherence": {
+                    "column_mapping": {
+                        "response": "${data.response}",
+                        "query": "${data.query}",
+                    },
+                },
+            },
+            azure_ai_project=azure_ai_project,
+            tags={
+                "experiment_name": "coherence_baseline",
+                "model_version": "gpt-4-0613",
+                "dataset_version": "v1.2",
+                "researcher": "data_science_team",
+                "cost_center": "ai_research",
+            },
+        )
+        # [END evaluate_with_tags_examples]
 
 
 if __name__ == "__main__":

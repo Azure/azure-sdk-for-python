@@ -87,11 +87,13 @@ class EvaluationThresholdSamples(object):
             "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
         }
         coherence_evaluator = CoherenceEvaluator(model_config=model_config, threshold=2)
-        coherence_evaluator(query="What is the capital of France?", response="Paris is the capital of France.")
-        print(
-            f"Coherence Score: {coherence_evaluator['coherence']}, Result: {coherence_evaluator['coherence_result']}, Threshold: {coherence_evaluator['coherence_threshold']}"
+        coherence_result = coherence_evaluator(
+            query="What is the capital of France?", response="Paris is the capital of France."
         )
-        # [END coherence_evaluator]
+        print(
+            f"Coherence Score: {coherence_result['coherence']}, Result: {coherence_result['coherence_result']}, Threshold: {coherence_result['coherence_threshold']}"
+        )
+        # [END threshold_coherence_evaluator]
 
         # [START threshold_content_safety_evaluator]
         import os
@@ -370,24 +372,22 @@ class EvaluationThresholdSamples(object):
         from azure.ai.evaluation import DocumentRetrievalEvaluator
 
         retrieval_ground_truth = [
-            {"document_id": "1", "query_relevance_judgement": 4},
-            {"document_id": "2", "query_relevance_judgement": 2},
-            {"document_id": "3", "query_relevance_judgement": 3},
-            {"document_id": "4", "query_relevance_judgement": 1},
-            {"document_id": "5", "query_relevance_judgement": 0},
+            {"document_id": "1", "query_relevance_label": 4},
+            {"document_id": "2", "query_relevance_label": 2},
+            {"document_id": "3", "query_relevance_label": 3},
+            {"document_id": "4", "query_relevance_label": 1},
+            {"document_id": "5", "query_relevance_label": 0},
         ]
 
         retrieved_documents = [
-            {"document_id": "2", "query_relevance_judgement": 45.1},
-            {"document_id": "6", "query_relevance_judgement": 35.8},
-            {"document_id": "3", "query_relevance_judgement": 29.2},
-            {"document_id": "5", "query_relevance_judgement": 25.4},
-            {"document_id": "7", "query_relevance_judgement": 18.8},
+            {"document_id": "2", "relevance_score": 45.1},
+            {"document_id": "6", "relevance_score": 35.8},
+            {"document_id": "3", "relevance_score": 29.2},
+            {"document_id": "5", "relevance_score": 25.4},
+            {"document_id": "7", "relevance_score": 18.8},
         ]
 
-        threshold = {"ndcg@3": 0.7, "xdcg@3": 70, "fidelity": 0.7}
-
-        document_retrieval_evaluator = DocumentRetrievalEvaluator(threshold=threshold)
+        document_retrieval_evaluator = DocumentRetrievalEvaluator()
         document_retrieval_evaluator(
             retrieval_ground_truth=retrieval_ground_truth, retrieved_documents=retrieved_documents
         )
