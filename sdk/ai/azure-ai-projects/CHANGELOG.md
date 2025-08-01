@@ -1,5 +1,15 @@
 # Release History
 
+## 1.1.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.1.0b1 (2025-08-01)
 
 First beta version following the 1.0.0 stable release. It brings back the Evaluation and Red-Team operations which are still in preview.
