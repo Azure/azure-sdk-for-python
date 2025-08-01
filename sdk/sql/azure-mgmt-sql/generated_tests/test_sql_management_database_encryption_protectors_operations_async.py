@@ -28,7 +28,7 @@ class TestSqlManagementDatabaseEncryptionProtectorsOperationsAsync(AzureMgmtReco
                 server_name="str",
                 database_name="str",
                 encryption_protector_name="str",
-                api_version="2024-11-01-preview",
+                api_version="2022-08-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -44,7 +44,7 @@ class TestSqlManagementDatabaseEncryptionProtectorsOperationsAsync(AzureMgmtReco
                 server_name="str",
                 database_name="str",
                 encryption_protector_name="str",
-                api_version="2024-11-01-preview",
+                api_version="2022-08-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

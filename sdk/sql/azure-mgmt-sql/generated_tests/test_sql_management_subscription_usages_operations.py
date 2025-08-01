@@ -23,7 +23,7 @@ class TestSqlManagementSubscriptionUsagesOperations(AzureMgmtRecordedTestCase):
     def test_subscription_usages_list_by_location(self, resource_group):
         response = self.client.subscription_usages.list_by_location(
             location_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2020-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -35,7 +35,7 @@ class TestSqlManagementSubscriptionUsagesOperations(AzureMgmtRecordedTestCase):
         response = self.client.subscription_usages.get(
             location_name="str",
             usage_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2020-11-01-preview",
         )
 
         # please add some check logic here by yourself

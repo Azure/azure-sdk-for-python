@@ -25,7 +25,7 @@ class TestSqlManagementTransparentDataEncryptionsOperations(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2022-08-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -39,7 +39,7 @@ class TestSqlManagementTransparentDataEncryptionsOperations(AzureMgmtRecordedTes
             server_name="str",
             database_name="str",
             tde_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2022-08-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -53,36 +53,8 @@ class TestSqlManagementTransparentDataEncryptionsOperations(AzureMgmtRecordedTes
             server_name="str",
             database_name="str",
             tde_name="str",
-            parameters={"id": "str", "name": "str", "scanState": "str", "state": "str", "type": "str"},
-            api_version="2024-11-01-preview",
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_transparent_data_encryptions_begin_resume(self, resource_group):
-        response = self.client.transparent_data_encryptions.begin_resume(
-            resource_group_name=resource_group.name,
-            server_name="str",
-            database_name="str",
-            tde_name="str",
-            api_version="2024-11-01-preview",
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_transparent_data_encryptions_begin_suspend(self, resource_group):
-        response = self.client.transparent_data_encryptions.begin_suspend(
-            resource_group_name=resource_group.name,
-            server_name="str",
-            database_name="str",
-            tde_name="str",
-            api_version="2024-11-01-preview",
+            parameters={"id": "str", "name": "str", "state": "str", "type": "str"},
+            api_version="2022-08-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

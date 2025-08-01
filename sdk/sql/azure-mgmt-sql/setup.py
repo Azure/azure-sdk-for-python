@@ -57,6 +57,7 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
@@ -76,7 +77,7 @@ setup(
         "isodate>=0.6.1",
         "typing-extensions>=4.6.0",
         "azure-common>=1.1",
-        "azure-mgmt-core>=1.5.0",
+        "azure-mgmt-core>=1.6.0",
     ],
     python_requires=">=3.9",
 )

@@ -24,7 +24,7 @@ class TestSqlManagementRecoverableManagedDatabasesOperations(AzureMgmtRecordedTe
         response = self.client.recoverable_managed_databases.list_by_instance(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2020-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestSqlManagementRecoverableManagedDatabasesOperations(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             recoverable_database_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2020-11-01-preview",
         )
 
         # please add some check logic here by yourself

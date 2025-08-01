@@ -25,7 +25,7 @@ class TestSqlManagementManagedInstanceDtcsOperationsAsync(AzureMgmtRecordedTestC
         response = self.client.managed_instance_dtcs.list_by_managed_instance(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2022-05-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestSqlManagementManagedInstanceDtcsOperationsAsync(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             dtc_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2022-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -72,7 +72,7 @@ class TestSqlManagementManagedInstanceDtcsOperationsAsync(AzureMgmtRecordedTestC
                     },
                     "type": "str",
                 },
-                api_version="2024-11-01-preview",
+                api_version="2022-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
