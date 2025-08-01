@@ -58,11 +58,14 @@ def make_onesettings_request(url: str, query_dict: Optional[Dict[str, str]] = No
     - Error handling for network, HTTP, and JSON parsing errors
     - Parsing the response into a structured OneSettingsResponse object
 
-    :param url (str): The OneSettings API endpoint URL to request
-    :param query_dict (Optional[Dict[str, str]], optional): Query parameters to include
+    :param url: The OneSettings API endpoint URL to request
+    :type url: str
+    :param query_dict: Query parameters to include
         in the request URL. Defaults to None.
-    :param headers (Optional[Dict[str, str]], optional): HTTP headers to include in the request.
-        Common headers include 'If-None-Match' for ETag caching. Defaults to None.
+    :type query_dict: Optional[Dict[str, str]]
+    :param headers: HTTP headers to include in the request.
+    Common headers include 'If-None-Match' for ETag caching. Defaults to None.
+    :type headers: Optional[Dict[str, str]]
 
     :return: Parsed response containing configuration data and metadata.
             Returns a default response object if the request fails.
@@ -103,9 +106,8 @@ def _parse_onesettings_response(response) -> OneSettingsResponse:
     - 304: Not modified, configuration unchanged (empty settings)
     - 400/404/414/500: Various error conditions, logged with warnings
 
-    :param response:
-        HTTP response object from the requests library containing
-            the OneSettings API response with headers, status code, and content.
+    :param response: HTTP response object from the requests library containing
+        the OneSettings API response with headers, status code, and content.
 
     :return: Structured response object containing:
         - etag: ETag header value for conditional requests
