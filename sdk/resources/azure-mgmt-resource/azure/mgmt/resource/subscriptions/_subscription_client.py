@@ -20,13 +20,13 @@ from azure.mgmt.core.tools import get_arm_endpoints
 from . import models as _models
 from ._configuration import SubscriptionClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
-from .operations import Operations, SubscriptionClientOperationsMixin, SubscriptionsOperations, TenantsOperations
+from .operations import Operations, SubscriptionsOperations, TenantsOperations, _SubscriptionClientOperationsMixin
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class SubscriptionClient(SubscriptionClientOperationsMixin):
+class SubscriptionClient(_SubscriptionClientOperationsMixin):
     """All resource groups and resources exist within subscriptions. These operation enable you get
     information about your subscriptions and tenants. A tenant is a dedicated instance of Azure
     Active Directory (Azure AD) for your organization.

@@ -357,7 +357,7 @@ def build_subscription_feature_registrations_list_all_by_subscription_request(  
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class FeatureClientOperationsMixin(
+class _FeatureClientOperationsMixin(
     ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], FeatureClientConfiguration]
 ):
 
