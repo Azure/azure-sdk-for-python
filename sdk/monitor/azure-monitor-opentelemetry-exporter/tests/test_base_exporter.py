@@ -1872,12 +1872,10 @@ class TestBaseExporter(unittest.TestCase):
             with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat.PeriodicExportingMetricReader"), \
                  mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat.MeterProvider"), \
                  mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat.get_compute_type", return_value="vm"):
-                
-                options = mock.MagicMock()
-                options.connection_string = "InstrumentationKey=12345678-1234-1234-1234-123456789abc"
-                
-                customer_statsbeat = CustomerStatsbeatMetrics(options)
-                
+                connection_string = "InstrumentationKey=12345678-1234-1234-1234-123456789abc"
+
+                customer_statsbeat = CustomerStatsbeatMetrics(connection_string)
+
                 # Verify that the exporter was created and flagged
                 self.assertTrue(hasattr(customer_statsbeat, '_customer_statsbeat_exporter'))
                 self.assertTrue(customer_statsbeat._customer_statsbeat_exporter._is_customer_stats_exporter())
@@ -2198,9 +2196,9 @@ class TestBaseExporter(unittest.TestCase):
                 
                 args, kwargs = mock_customer_statsbeat.count_dropped_items.call_args
                 self.assertEqual(args[0], 1)  # count
-                self.assertEqual(args[1], 'UNKNOWN')  # reason
-                self.assertEqual(args[2], DropCode.CLIENT_EXCEPTION)  # drop_code
-                self.assertEqual(args[3], 400)  # status_code
+                self.assertEqual(args[2], 400)  # status_code
+                # The error parameter is now optional, so it's not passed when None
+                # This means args only has 3 elements, not 4
 
     @mock.patch.dict(
         os.environ,
@@ -2395,8 +2393,7 @@ class TestBaseExporter(unittest.TestCase):
             mock_track_dropped.assert_called_once_with(
                 exporter._customer_statsbeat_metrics, 
                 [test_envelope], 
-                DropCode.CLIENT_EXCEPTION, 
-                mock.ANY  # HttpResponseError instance
+                402  # HTTP status code is passed directly
             )
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base._track_dropped_items")
@@ -2441,8 +2438,7 @@ class TestBaseExporter(unittest.TestCase):
             mock_track_dropped.assert_called_once_with(
                 exporter._customer_statsbeat_metrics, 
                 [test_envelope], 
-                DropCode.CLIENT_EXCEPTION, 
-                mock.ANY  # HttpResponseError instance
+                400  # HTTP status code is passed directly
             )
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base._track_retry_items")
@@ -2510,8 +2506,7 @@ class TestBaseExporter(unittest.TestCase):
             mock_track_dropped.assert_called_once_with(
                 exporter._customer_statsbeat_metrics, 
                 [test_envelope], 
-                DropCode.CLIENT_EXCEPTION, 
-                mock.ANY  # HttpResponseError instance
+                302  # HTTP status code is passed directly
             )
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base._track_dropped_items")
@@ -2544,10 +2539,9 @@ class TestBaseExporter(unittest.TestCase):
             
             self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
             mock_track_dropped.assert_called_once_with(
-                exporter._customer_statsbeat_metrics, 
+                exporter._customer_statsbeat_metrics,
                 [test_envelope1],  # Only the failed envelope
-                DropCode.CLIENT_STORAGE_DISABLED, 
-                None
+                DropCode.CLIENT_STORAGE_DISABLED
             )
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base._track_dropped_items")
@@ -2620,11 +2614,555 @@ class TestBaseExporter(unittest.TestCase):
             
             self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
             mock_track_dropped.assert_called_once_with(
-                exporter._customer_statsbeat_metrics, 
+                exporter._customer_statsbeat_metrics,
                 [test_envelope1],  # Only the failed envelope
-                DropCode.CLIENT_EXCEPTION, 
-                mock.ANY  # Error instance
+                400  # HTTP status code is passed directly
             )
+
+    def test_track_dropped_items_no_error(self):
+        """Test _track_dropped_items with no error (error=None)."""
+        # Create mock customer statsbeat metrics
+        mock_customer_statsbeat = mock.Mock()
+        
+        # Create test envelopes
+        envelope1 = TelemetryItem(name="test1", time=datetime.now())
+        envelope2 = TelemetryItem(name="test2", time=datetime.now())
+        envelopes = [envelope1, envelope2]
+        
+        # Mock _get_telemetry_type to return consistent values
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils._get_telemetry_type") as mock_get_type:
+            mock_get_type.side_effect = ["trace", "metric"]
+            
+            # Call _track_dropped_items with no error
+            _track_dropped_items(
+                mock_customer_statsbeat,
+                envelopes,
+                DropCode.CLIENT_STORAGE_DISABLED,
+                error_message=None
+            )
+            
+            # Verify that count_dropped_items was called for each envelope
+            self.assertEqual(mock_customer_statsbeat.count_dropped_items.call_count, 2)
+            
+            # Check first call
+            first_call = mock_customer_statsbeat.count_dropped_items.call_args_list[0]
+            self.assertEqual(first_call[0], (1, "trace", DropCode.CLIENT_STORAGE_DISABLED))
+            
+            # Check second call
+            second_call = mock_customer_statsbeat.count_dropped_items.call_args_list[1]
+            self.assertEqual(second_call[0], (1, "metric", DropCode.CLIENT_STORAGE_DISABLED))
+
+    def test_track_dropped_items_with_error_index(self):
+        """Test _track_dropped_items with error string."""
+        # Create mock customer statsbeat metrics
+        mock_customer_statsbeat = mock.Mock()
+        
+        # Create test envelopes
+        envelope1 = TelemetryItem(name="test1", time=datetime.now())
+        envelope2 = TelemetryItem(name="test2", time=datetime.now())
+        envelope3 = TelemetryItem(name="test3", time=datetime.now())
+        envelopes = [envelope1, envelope2, envelope3]
+        
+        # Create error string
+        error_message = "Bad Request: Invalid telemetry data"
+        
+        # Mock _get_telemetry_type
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils._get_telemetry_type") as mock_get_type:
+            mock_get_type.side_effect = ["trace", "metric", "log"]
+            
+            # Call _track_dropped_items with error string
+            _track_dropped_items(
+                mock_customer_statsbeat,
+                envelopes,
+                DropCode.CLIENT_EXCEPTION,
+                error_message=error_message
+            )
+            
+            # With the current simplified implementation, all envelopes are processed when error is not None
+            self.assertEqual(mock_customer_statsbeat.count_dropped_items.call_count, 3)
+            
+            # Check the calls
+            calls = mock_customer_statsbeat.count_dropped_items.call_args_list
+            self.assertEqual(calls[0][0], (1, "trace", DropCode.CLIENT_EXCEPTION, error_message))
+            self.assertEqual(calls[1][0], (1, "metric", DropCode.CLIENT_EXCEPTION, error_message))
+            self.assertEqual(calls[2][0], (1, "log", DropCode.CLIENT_EXCEPTION, error_message))
+
+    def test_track_dropped_items_with_client_exception_error(self):
+        """Test _track_dropped_items with CLIENT_EXCEPTION drop code and error string."""
+        # Create mock customer statsbeat metrics
+        mock_customer_statsbeat = mock.Mock()
+        
+        # Create test envelopes
+        envelope1 = TelemetryItem(name="test1", time=datetime.now())
+        envelope2 = TelemetryItem(name="test2", time=datetime.now())
+        envelopes = [envelope1, envelope2]
+        
+        # Create error string
+        error_message = "Connection timeout"
+        
+        # Mock _get_telemetry_type
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils._get_telemetry_type") as mock_get_type:
+            mock_get_type.side_effect = ["trace", "metric"]
+            
+            # Call _track_dropped_items with CLIENT_EXCEPTION
+            _track_dropped_items(
+                mock_customer_statsbeat,
+                envelopes,
+                DropCode.CLIENT_EXCEPTION,
+                error_message=error_message
+            )
+            
+            # Verify that count_dropped_items was called for each envelope
+            self.assertEqual(mock_customer_statsbeat.count_dropped_items.call_count, 2)
+            
+            # Check first call
+            first_call = mock_customer_statsbeat.count_dropped_items.call_args_list[0]
+            self.assertEqual(first_call[0], (1, "trace", DropCode.CLIENT_EXCEPTION, error_message))
+            
+            # Check second call
+            second_call = mock_customer_statsbeat.count_dropped_items.call_args_list[1]
+            self.assertEqual(second_call[0], (1, "metric", DropCode.CLIENT_EXCEPTION, error_message))
+
+    def test_track_dropped_items_with_status_code_error_not_client_exception(self):
+        """Test _track_dropped_items with error string and non-CLIENT_EXCEPTION drop code."""
+        # Create mock customer statsbeat metrics
+        mock_customer_statsbeat = mock.Mock()
+        
+        # Create test envelopes
+        envelope1 = TelemetryItem(name="test1", time=datetime.now())
+        envelopes = [envelope1]
+        
+        # Create error string
+        error_message = "Internal Server Error"
+        
+        # Mock _get_telemetry_type
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils._get_telemetry_type") as mock_get_type:
+            mock_get_type.return_value = "trace"
+            
+            # Call _track_dropped_items with non-CLIENT_EXCEPTION drop code
+            _track_dropped_items(
+                mock_customer_statsbeat,
+                envelopes,
+                500,  # Using status code as drop code
+                error_message=error_message
+            )
+            
+            # With the current simplified implementation, any error (not None) will process all envelopes
+            mock_customer_statsbeat.count_dropped_items.assert_called_once_with(
+                1, "trace", 500, error_message
+            )
+
+    def test_track_dropped_items_with_error_none_index(self):
+        """Test _track_dropped_items with error string."""
+        # Create mock customer statsbeat metrics
+        mock_customer_statsbeat = mock.Mock()
+        
+        # Create test envelopes
+        envelope1 = TelemetryItem(name="test1", time=datetime.now())
+        envelopes = [envelope1]
+        
+        # Create error string
+        error_message = "Bad Request"
+        
+        # Mock _get_telemetry_type
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils._get_telemetry_type") as mock_get_type:
+            mock_get_type.return_value = "trace"
+            
+            # Call _track_dropped_items
+            _track_dropped_items(
+                mock_customer_statsbeat,
+                envelopes,
+                DropCode.CLIENT_EXCEPTION,
+                error_message=error_message
+            )
+            
+            # With current implementation, any non-None error will process all envelopes
+            mock_customer_statsbeat.count_dropped_items.assert_called_once_with(
+                1, "trace", DropCode.CLIENT_EXCEPTION, error_message
+            )
+
+    def test_track_dropped_items_no_customer_statsbeat_metrics(self):
+        """Test _track_dropped_items with None customer_statsbeat_metrics."""
+        # Create test envelopes
+        envelope1 = TelemetryItem(name="test1", time=datetime.now())
+        envelopes = [envelope1]
+        
+        # Call _track_dropped_items with None metrics
+        result = _track_dropped_items(
+            customer_statsbeat_metrics=None,
+            envelopes=envelopes,
+            drop_code=DropCode.CLIENT_STORAGE_DISABLED,
+            error_message=None
+        )
+        
+        # Should return None and not raise any exceptions
+        self.assertIsNone(result)
+
+    def test_track_dropped_items_empty_envelopes_list(self):
+        """Test _track_dropped_items with empty envelopes list."""
+        # Create mock customer statsbeat metrics
+        mock_customer_statsbeat = mock.Mock()
+        
+        # Call _track_dropped_items with empty list
+        _track_dropped_items(
+            mock_customer_statsbeat,
+            envelopes=[],
+            drop_code=DropCode.CLIENT_STORAGE_DISABLED,
+            error_message=None
+        )
+        
+        # Should not call count_dropped_items since there are no envelopes
+        mock_customer_statsbeat.count_dropped_items.assert_not_called()
+
+    def test_track_dropped_items_integration_with_transmit_206_error_status_code(self):
+        """Integration test for _track_dropped_items with 206 response containing status code errors."""
+        with mock.patch("azure.monitor.opentelemetry.exporter.export._base._track_dropped_items") as mock_track_dropped:
+            with mock.patch.object(AzureMonitorClient, "track") as mock_track:
+                # Setup 206 response with mixed success/failure
+                mock_track.return_value = TrackResponse(
+                    items_received=3,
+                    items_accepted=1,
+                    errors=[
+                        TelemetryErrorDetails(
+                            index=0,
+                            status_code=400,  # Non-retryable - should be tracked as dropped
+                            message="Bad request"
+                        ),
+                        TelemetryErrorDetails(
+                            index=2,
+                            status_code=500,  # Retryable - should not be tracked as dropped initially
+                            message="Server error"
+                        )
+                    ]
+                )
+                
+                exporter = BaseExporter(
+                    connection_string="InstrumentationKey=12345678-1234-5678-abcd-12345678abcd",
+                    disable_offline_storage=True
+                )
+                # Enable customer statsbeat collection
+                exporter._should_collect_customer_statsbeat = mock.Mock(return_value=True)
+                exporter._customer_statsbeat_metrics = mock.Mock()
+                
+                test_envelopes = [
+                    TelemetryItem(name="envelope0", time=datetime.now()),
+                    TelemetryItem(name="envelope1", time=datetime.now()),
+                    TelemetryItem(name="envelope2", time=datetime.now())
+                ]
+                
+                result = exporter._transmit(test_envelopes)
+                
+                self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+                
+                # Verify _track_dropped_items was called for the non-retryable error (400)
+                
+                # Check if _track_dropped_items was called (regardless of the bug)
+                self.assertTrue(mock_track_dropped.called)
+                
+                # Find the call that matches our expectations
+                found_call = False
+                for call in mock_track_dropped.call_args_list:
+                    args = call[0]
+                    if len(args) >= 3 and args[2] == 400:  # status_code as drop_code
+                        found_call = True
+                        break
+                
+                self.assertTrue(found_call, "Expected call to _track_dropped_items with status_code 400 not found")
+
+    def test_track_dropped_items_with_various_drop_codes(self):
+        """Test _track_dropped_items with different DropCode values."""
+        # Create mock customer statsbeat metrics
+        mock_customer_statsbeat = mock.Mock()
+        envelope = TelemetryItem(name="test", time=datetime.now())
+        
+        drop_codes_to_test = [
+            DropCode.CLIENT_STORAGE_DISABLED,
+            DropCode.CLIENT_EXCEPTION,
+            400,  # HTTP status code
+            500,  # HTTP status code
+        ]
+        
+        # Mock _get_telemetry_type
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils._get_telemetry_type") as mock_get_type:
+            mock_get_type.return_value = "trace"
+            
+            for drop_code in drop_codes_to_test:
+                mock_customer_statsbeat.reset_mock()
+                
+                # Test with no error
+                _track_dropped_items(
+                    mock_customer_statsbeat,
+                    [envelope],
+                    drop_code,
+                    error_message=None
+                )
+                
+                # Should call count_dropped_items for each drop_code
+                mock_customer_statsbeat.count_dropped_items.assert_called_once_with(
+                    1, "trace", drop_code
+                )
+
+    def test_track_dropped_items_with_status_code_as_drop_code_and_error(self):
+        """Test _track_dropped_items using HTTP status code as drop_code with error string."""
+        # Create mock customer statsbeat metrics
+        mock_customer_statsbeat = mock.Mock()
+        envelope = TelemetryItem(name="test", time=datetime.now())
+        
+        # Create error string
+        error_message = "Bad Request"
+        
+        # Mock _get_telemetry_type
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils._get_telemetry_type") as mock_get_type:
+            mock_get_type.return_value = "trace"
+            
+            # Call _track_dropped_items using status code as drop_code (common pattern in _base.py)
+            _track_dropped_items(
+                mock_customer_statsbeat,
+                [envelope],
+                drop_code=400,  # Status code as drop code
+                error_message=error_message
+            )
+            
+            # Should call count_dropped_items with status code as drop_code
+            mock_customer_statsbeat.count_dropped_items.assert_called_once_with(
+                1, "trace", 400, error_message
+            )
+
+    def test_track_dropped_items_error_with_string_conversion(self):
+        """Test _track_dropped_items with different string error types."""
+        # Create mock customer statsbeat metrics
+        mock_customer_statsbeat = mock.Mock()
+        envelope = TelemetryItem(name="test", time=datetime.now())
+        
+        # Test different error string cases
+        error_cases = [
+            "Test exception",
+            "Invalid value error",
+            "Connection timeout",
+            "Server internal error"
+        ]
+        
+        # Mock _get_telemetry_type
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils._get_telemetry_type") as mock_get_type:
+            mock_get_type.return_value = "trace"
+            
+            for error_message in error_cases:
+                mock_customer_statsbeat.reset_mock()
+                
+                _track_dropped_items(
+                    mock_customer_statsbeat,
+                    [envelope],
+                    DropCode.CLIENT_EXCEPTION,
+                    error_message=error_message
+                )
+                
+                # Should call count_dropped_items with the error string
+                mock_customer_statsbeat.count_dropped_items.assert_called_once_with(
+                    1, "trace", DropCode.CLIENT_EXCEPTION, error_message
+                )
+
+    def test_track_dropped_items_regression_base_exporter_pattern(self):
+        """Regression test that matches the actual usage pattern in _base.py."""
+        # This test verifies the common pattern used in _base.py where:
+        # 1. Status codes are used as drop codes
+        # 2. Error messages are passed as strings
+        # 3. Single envelope is wrapped in a list (fixing the bug in _base.py)
+        
+        mock_customer_statsbeat = mock.Mock()
+        envelope = TelemetryItem(name="test", time=datetime.now())
+        
+        # Create error message string (what should be passed instead of error object)
+        error_message = "Bad Request - Invalid telemetry"
+        
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils._get_telemetry_type") as mock_get_type:
+            mock_get_type.return_value = "trace"
+            
+            # Test the corrected pattern (envelope wrapped in list, error as string)
+            _track_dropped_items(
+                mock_customer_statsbeat,
+                [envelope],  # Correct - envelope wrapped in list
+                drop_code=400,  # Status code as drop code
+                error_message=error_message  # Error as string
+            )
+            
+            mock_customer_statsbeat.count_dropped_items.assert_called_once_with(
+                1, "trace", 400, error_message
+            )
+            
+            # Test what would happen with the bug (single envelope instead of list)
+            mock_customer_statsbeat.reset_mock()
+            mock_get_type.reset_mock()
+            
+            # This would cause an error in real usage since envelope is not iterable
+            with self.assertRaises(TypeError):
+                _track_dropped_items(
+                    mock_customer_statsbeat,
+                    envelope,  # Bug - single envelope instead of list
+                    drop_code=400,
+                    error_message=error_message
+                )
+
+    def test_track_dropped_items_custom_message_circular_redirect_scenario(self):
+        """Test _track_dropped_items with custom message for circular redirect scenario."""
+        # This test simulates the circular redirect scenario in _base.py lines 336-349
+        # to verify that the custom error message is properly passed through
+        
+        mock_customer_statsbeat = mock.Mock()
+        envelope = TelemetryItem(name="test_request", time=datetime.now())
+        
+        # Use the exact custom message from the _base.py code
+        expected_custom_message = "Error sending telemetry because of circular redirects. Please check the integrity of your connection string."
+        
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils._get_telemetry_type") as mock_get_type:
+            mock_get_type.return_value = "request"
+            
+            # Call _track_dropped_items with the exact custom message from the circular redirect scenario
+            _track_dropped_items(
+                mock_customer_statsbeat,
+                [envelope],
+                drop_code=DropCode.CLIENT_EXCEPTION,
+                error_message=expected_custom_message
+            )
+            
+            # Verify the custom message is properly passed through to count_dropped_items
+            mock_customer_statsbeat.count_dropped_items.assert_called_once_with(
+                1, "request", DropCode.CLIENT_EXCEPTION, expected_custom_message
+            )
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base._track_dropped_items")
+    def test_transmit_circular_redirect_scenario_integration(self, mock_track_dropped):
+        """Integration test that simulates the circular redirect scenario to verify custom message."""
+        # This test simulates the actual circular redirect scenario that triggers the custom message
+        
+        # Create a redirect response with correct redirect status code (307 or 308)
+        redirect_response = MockResponse(307, "{}")  # Use 307 which is in _REDIRECT_STATUS_CODES
+        redirect_response.headers = {"location": "https://redirect.example.com"}
+        
+        with mock.patch.object(AzureMonitorClient, "track") as mock_track:
+            # Mock the track method to raise HttpResponseError with redirect status
+            mock_track.side_effect = HttpResponseError(
+                message="Temporary Redirect", 
+                response=redirect_response
+            )
+            
+            exporter = BaseExporter(
+                connection_string="InstrumentationKey=12345678-1234-5678-abcd-12345678abcd",
+                disable_offline_storage=True
+            )
+            
+            # Enable customer statsbeat collection  
+            exporter._should_collect_customer_statsbeat = mock.Mock(return_value=True)
+            exporter._customer_statsbeat_metrics = mock.Mock()
+            
+            # Set consecutive redirects to one less than max to simulate we've been redirecting
+            # When the HttpResponseError is raised, _consecutive_redirects will be incremented
+            # and then compared to max_redirects. We want it to equal max_redirects after increment.
+            max_redirects = exporter.client._config.redirect_policy.max_redirects
+            exporter._consecutive_redirects = max_redirects - 1  # Will become max_redirects after increment
+            
+            test_envelope = TelemetryItem(name="test", time=datetime.now())
+            result = exporter._transmit([test_envelope])
+            
+            self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+            
+            # Verify _track_dropped_items was called with the circular redirect custom message
+            mock_track_dropped.assert_called_with(
+                exporter._customer_statsbeat_metrics,
+                [test_envelope],
+                DropCode.CLIENT_EXCEPTION,
+                "Error sending telemetry because of circular redirects. Please check the integrity of your connection string."
+            )
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base._track_dropped_items")
+    def test_transmit_redirect_parsing_error_scenario_integration(self, mock_track_dropped):
+        """Integration test that simulates the redirect parsing error scenario to verify custom message."""
+        # This test simulates the scenario where redirect headers are missing/malformed (lines 328-335)
+        
+        # Create a redirect response with NO headers (or empty headers)
+        redirect_response = MockResponse(307, "{}")  # Use 307 which is in _REDIRECT_STATUS_CODES
+        redirect_response.headers = {}  # Empty headers - will cause parsing error
+        
+        with mock.patch.object(AzureMonitorClient, "track") as mock_track:
+            # Mock the track method to raise HttpResponseError with redirect status but no location header
+            mock_track.side_effect = HttpResponseError(
+                message="Temporary Redirect", 
+                response=redirect_response
+            )
+            
+            exporter = BaseExporter(
+                connection_string="InstrumentationKey=12345678-1234-5678-abcd-12345678abcd",
+                disable_offline_storage=True
+            )
+            
+            # Enable customer statsbeat collection  
+            exporter._should_collect_customer_statsbeat = mock.Mock(return_value=True)
+            exporter._customer_statsbeat_metrics = mock.Mock()
+            
+            # Set consecutive redirects to be less than max to ensure we go into the redirect handling logic
+            # but not the circular redirect scenario
+            max_redirects = exporter.client._config.redirect_policy.max_redirects
+            exporter._consecutive_redirects = 0  # Start with 0 redirects
+            
+            test_envelope = TelemetryItem(name="test", time=datetime.now())
+            result = exporter._transmit([test_envelope])
+            
+            self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+            
+            # Verify _track_dropped_items was called with the redirect parsing error custom message
+            mock_track_dropped.assert_called_with(
+                exporter._customer_statsbeat_metrics,
+                [test_envelope],
+                DropCode.CLIENT_EXCEPTION,
+                "Error parsing redirect information."
+            )
+            
+    def test_track_dropped_items_custom_message_vs_no_message_comparison(self):
+        """Test _track_dropped_items comparing custom message vs no message scenarios."""
+        # This test demonstrates the difference between providing a custom message
+        # and not providing any error message
+        
+        mock_customer_statsbeat = mock.Mock()
+        envelope = TelemetryItem(name="test_trace", time=datetime.now())
+        
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils._get_telemetry_type") as mock_get_type:
+            mock_get_type.return_value = "trace"
+            
+            # Test 1: Call with custom message
+            custom_message = "Custom error description for debugging"
+            _track_dropped_items(
+                mock_customer_statsbeat,
+                [envelope],
+                drop_code=DropCode.CLIENT_EXCEPTION,
+                error_message=custom_message
+            )
+            
+            # Verify custom message is included
+            mock_customer_statsbeat.count_dropped_items.assert_called_with(
+                1, "trace", DropCode.CLIENT_EXCEPTION, custom_message
+            )
+            
+            # Reset mock for second test
+            mock_customer_statsbeat.reset_mock()
+            
+            # Test 2: Call without error message (default None)
+            _track_dropped_items(
+                mock_customer_statsbeat,
+                [envelope],
+                drop_code=DropCode.CLIENT_EXCEPTION
+                # error parameter omitted, should default to None
+            )
+            
+            # Verify no error message is passed (only 3 arguments)
+            mock_customer_statsbeat.count_dropped_items.assert_called_with(
+                1, "trace", DropCode.CLIENT_EXCEPTION
+            )
+            
+            # Verify the calls were different
+            self.assertEqual(mock_customer_statsbeat.count_dropped_items.call_count, 1)
+            
+            # Check that the second call didn't include the error message
+            args, kwargs = mock_customer_statsbeat.count_dropped_items.call_args
+            self.assertEqual(len(args), 3)  # Should only have 3 args when no error message
 
 
 def validate_telemetry_item(item1, item2):

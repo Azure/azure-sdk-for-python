@@ -46,7 +46,7 @@ class _CustomerStatsbeatTelemetryCounters:
         self.total_item_retry_count: Dict[str, Dict[RetryCodeType, Dict[str, int]]] = {}
 
 class CustomerStatsbeatMetrics(metaclass=Singleton): # pylint: disable=too-many-instance-attributes
-    def __init__(self, options):
+    def __init__(self, connection_string):
         self._counters = _CustomerStatsbeatTelemetryCounters()
         self._language = _CUSTOMER_STATSBEAT_LANGUAGE
         self._is_enabled = os.environ.get(_APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW, "").lower() in ("true")
@@ -54,7 +54,7 @@ class CustomerStatsbeatMetrics(metaclass=Singleton): # pylint: disable=too-many-
             return
 
         exporter_config = {
-            "connection_string": options.connection_string,
+            "connection_string": connection_string,
             "instrumentation_collection": True,  # Prevent circular dependency
         }
 
@@ -245,16 +245,12 @@ def collect_customer_statsbeat(exporter):
         with _CUSTOMER_STATSBEAT_LOCK:
             # Double-check inside the lock to avoid race conditions
             if _CUSTOMER_STATSBEAT_METRICS is None:
-                class StatsbeatOptions:
-                    def __init__(self, connection_string):
-                        self.connection_string = connection_string
 
                 connection_string = (
                     f"InstrumentationKey={exporter._instrumentation_key};"
                     f"IngestionEndpoint={exporter._endpoint}"
                 )
-                statsbeat_options = StatsbeatOptions(connection_string)
-                _CUSTOMER_STATSBEAT_METRICS = CustomerStatsbeatMetrics(statsbeat_options)
+                _CUSTOMER_STATSBEAT_METRICS = CustomerStatsbeatMetrics(connection_string)
 
     exporter._customer_statsbeat_metrics = _CUSTOMER_STATSBEAT_METRICS
     if hasattr(exporter, 'storage') and exporter.storage:

@@ -6,7 +6,6 @@ from azure.core.exceptions import ServiceRequestError
 from azure.monitor.opentelemetry.exporter._constants import (
     RetryCode,
     RetryCodeType,
-    DropCode,
     DropCodeType,
     _UNKNOWN,
 )
@@ -130,11 +129,11 @@ def _track_successful_items(customer_statsbeat_metrics, envelopes: List[Telemetr
 def _track_dropped_items(
         customer_statsbeat_metrics,
         envelopes: List[TelemetryItem],
-        drop_code: Optional[DropCodeType],
-        error
+        drop_code: DropCodeType,
+        error_message: Optional[str] = None
     ):
     if customer_statsbeat_metrics:
-        if error is None:
+        if error_message is None:
             for envelope in envelopes:
                 telemetry_type = _get_telemetry_type(envelope)
                 customer_statsbeat_metrics.count_dropped_items(
@@ -142,19 +141,9 @@ def _track_dropped_items(
                     telemetry_type,
                     drop_code
                 )
-        elif error is not None and hasattr(error, 'index') and error.index is not None:
-            telemetry_type = _get_telemetry_type(envelopes[error.index])
-            customer_statsbeat_metrics.count_dropped_items(
-                1,
-                telemetry_type,
-                drop_code,
-                error.status_code,
-            )
-        elif error is not None and drop_code == DropCode.CLIENT_EXCEPTION:
-            # Handle general exceptions
+        else:
             for envelope in envelopes:
                 telemetry_type = _get_telemetry_type(envelope)
-                error_message = str(error) if error else None
                 customer_statsbeat_metrics.count_dropped_items(
                     1,
                     telemetry_type,

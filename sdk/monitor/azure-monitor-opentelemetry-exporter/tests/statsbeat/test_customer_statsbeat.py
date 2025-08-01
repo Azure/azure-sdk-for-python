@@ -74,7 +74,7 @@ class TestCustomerStatsbeat(unittest.TestCase):
         self.mock_options.language = _CUSTOMER_STATSBEAT_LANGUAGE
         self.original_trace_provider = trace._TRACER_PROVIDER
         trace._TRACER_PROVIDER = None
-        self.mock_options.metrics = CustomerStatsbeatMetrics(self.mock_options)
+        self.mock_options.metrics = CustomerStatsbeatMetrics(self.mock_options.connection_string)
         self.mock_options.transmit_called = [False]
 
     def tearDown(self):
@@ -96,7 +96,7 @@ class TestCustomerStatsbeat(unittest.TestCase):
         CustomerStatsbeatMetrics._instance = None
         
         with mock.patch.dict(os.environ, {"APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "false"}):
-            metrics = CustomerStatsbeatMetrics(self.mock_options)
+            metrics = CustomerStatsbeatMetrics(self.mock_options.connection_string)
 
             # Verify is_enabled flag is False
             self.assertFalse(metrics._is_enabled)
