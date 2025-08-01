@@ -11,6 +11,7 @@
 * Fixed session container session token logic. The SDK will now only send the relevant partition-local session tokens for read document requests and write requests when multi-region writes are enabled, as opposed to the entire compound session token for the container for every document request. See [PR 41678](https://github.com/Azure/azure-sdk-for-python/pull/41678).
 * Write requests for single-write region accounts will no longer send session tokens when using session consistency. See [PR 41678](https://github.com/Azure/azure-sdk-for-python/pull/41678).
 * Fixed bug where container cache was not being properly updated resulting in unnecessary extra requests. See [PR 42143](https://github.com/Azure/azure-sdk-for-python/pull/42143).
+* Fixed bug where `excluded_locations` was not being honored for some metadata calls. See [PR 42266](https://github.com/Azure/azure-sdk-for-python/pull/42266).
 
 #### Other Changes
 * Changed to include client id in headers for all requests. See [PR 42104](https://github.com/Azure/azure-sdk-for-python/pull/42104).
