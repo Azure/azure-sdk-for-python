@@ -18,6 +18,7 @@ try:
         FileSearchRankingOptions,
         RunStepBingGroundingToolCall,
         ThreadRun,
+        FileSearchToolCallContent,
     )
 except ImportError:
     pass
@@ -31,7 +32,7 @@ try:
         FileSearchRankingOptions,
         RunStepBingGroundingToolCall,
         ThreadRun,
-        FileSearchToolCallContent
+        FileSearchToolCallContent,
     )
 except ImportError:
     pass
