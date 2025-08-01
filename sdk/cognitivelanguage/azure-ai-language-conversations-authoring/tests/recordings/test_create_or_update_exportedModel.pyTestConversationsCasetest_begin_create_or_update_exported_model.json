@@ -1,0 +1,132 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/Test-data-labels/exported-models/model-label?api-version=2025-05-15-preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "32",
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-language-conversations-authoring/1.0.0b1 Python/3.13.5 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": {
+        "trainedModelLabel": "MyModel"
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "67957e84-d274-4b91-a805-27d02614decc",
+        "Content-Length": "0",
+        "Date": "Mon, 28 Jul 2025 03:13:42 GMT",
+        "operation-location": "fake_resource.servicebus.windows.net/language/authoring/analyze-conversations/projects/Test-data-labels/exported-models/model-label/jobs/3ffa1259-8b48-4f9e-90e3-706eedaec952_638892576000000000?api-version=2025-05-15-preview",
+        "request-id": "67957e84-d274-4b91-a805-27d02614decc",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "128",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/Test-data-labels/exported-models/model-label/jobs/3ffa1259-8b48-4f9e-90e3-706eedaec952_638892576000000000?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-language-conversations-authoring/1.0.0b1 Python/3.13.5 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "367c5e44-cc5f-4628-a743-1c36e4320682",
+        "Content-Length": "219",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 28 Jul 2025 03:13:43 GMT",
+        "request-id": "367c5e44-cc5f-4628-a743-1c36e4320682",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "40",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "jobId": "3ffa1259-8b48-4f9e-90e3-706eedaec952_638892576000000000",
+        "createdDateTime": "2025-07-28T03:13:42Z",
+        "lastUpdatedDateTime": "2025-07-28T03:13:42Z",
+        "expirationDateTime": "2025-08-04T03:13:42Z",
+        "status": "notStarted"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/Test-data-labels/exported-models/model-label/jobs/3ffa1259-8b48-4f9e-90e3-706eedaec952_638892576000000000?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-language-conversations-authoring/1.0.0b1 Python/3.13.5 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "7734fbae-3894-4f79-b2bf-9a56cd42fb05",
+        "Content-Length": "218",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 28 Jul 2025 03:14:13 GMT",
+        "request-id": "7734fbae-3894-4f79-b2bf-9a56cd42fb05",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "40",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "jobId": "3ffa1259-8b48-4f9e-90e3-706eedaec952_638892576000000000",
+        "createdDateTime": "2025-07-28T03:13:42Z",
+        "lastUpdatedDateTime": "2025-07-28T03:13:47Z",
+        "expirationDateTime": "2025-08-04T03:13:42Z",
+        "status": "succeeded"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/Test-data-labels/exported-models/model-label?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-language-conversations-authoring/1.0.0b1 Python/3.13.5 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "39c16ab6-655b-4fb2-bea1-29aa58ad4803",
+        "Content-Length": "285",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 28 Jul 2025 03:14:13 GMT",
+        "request-id": "39c16ab6-655b-4fb2-bea1-29aa58ad4803",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "51",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "exportedModelName": "model-label",
+        "modelId": "MyModel-20250625T120015-e78f8a284c094b32adc8bcaedc520daf",
+        "lastTrainedDateTime": "2025-06-25T00:00:15.0502457Z",
+        "lastExportedModelDateTime": "2025-07-28T03:13:47Z",
+        "modelExpirationDate": "2026-04-14",
+        "modelTrainingConfigVersion": "2023-04-15"
+      }
+    }
+  ],
+  "Variables": {}
+}

@@ -1,0 +1,132 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/EmailAppEnglish/deployments/deployment1?api-version=2025-05-15-preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "36",
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-language-conversations-authoring/1.0.0b1 Python/3.13.5 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": {
+        "trainedModelLabel": "ModelWithDG"
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "aec018ab-8241-4cd6-bbbf-2f78ad86775e",
+        "Content-Length": "0",
+        "Date": "Mon, 28 Jul 2025 02:21:18 GMT",
+        "operation-location": "fake_resource.servicebus.windows.net/language/authoring/analyze-conversations/projects/EmailAppEnglish/deployments/deployment1/jobs/7b5efced-49b8-470d-998c-43e769aa12ab_638892576000000000?api-version=2025-05-15-preview",
+        "request-id": "aec018ab-8241-4cd6-bbbf-2f78ad86775e",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "117",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/EmailAppEnglish/deployments/deployment1/jobs/7b5efced-49b8-470d-998c-43e769aa12ab_638892576000000000?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-language-conversations-authoring/1.0.0b1 Python/3.13.5 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "84901f96-2419-4dbd-98f4-47cf338b8007",
+        "Content-Length": "216",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 28 Jul 2025 02:21:18 GMT",
+        "request-id": "84901f96-2419-4dbd-98f4-47cf338b8007",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "29",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "jobId": "7b5efced-49b8-470d-998c-43e769aa12ab_638892576000000000",
+        "createdDateTime": "2025-07-28T02:21:19Z",
+        "lastUpdatedDateTime": "2025-07-28T02:21:19Z",
+        "expirationDateTime": "2025-08-04T02:21:19Z",
+        "status": "running"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/EmailAppEnglish/deployments/deployment1/jobs/7b5efced-49b8-470d-998c-43e769aa12ab_638892576000000000?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-language-conversations-authoring/1.0.0b1 Python/3.13.5 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "6129e203-b592-4ca4-a669-95c72545eced",
+        "Content-Length": "218",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 28 Jul 2025 02:21:48 GMT",
+        "request-id": "6129e203-b592-4ca4-a669-95c72545eced",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "26",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "jobId": "7b5efced-49b8-470d-998c-43e769aa12ab_638892576000000000",
+        "createdDateTime": "2025-07-28T02:21:19Z",
+        "lastUpdatedDateTime": "2025-07-28T02:21:23Z",
+        "expirationDateTime": "2025-08-04T02:21:19Z",
+        "status": "succeeded"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/EmailAppEnglish/deployments/deployment1?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-language-conversations-authoring/1.0.0b1 Python/3.13.5 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "bec7e12e-d39b-4a24-ba7c-e257b93a1c92",
+        "Content-Length": "304",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 28 Jul 2025 02:21:48 GMT",
+        "request-id": "bec7e12e-d39b-4a24-ba7c-e257b93a1c92",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "23",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "deploymentName": "deployment1",
+        "modelId": "ModelWithDG-20250625T123543-82c93706941b4b46a545aff97e63d359",
+        "lastTrainedDateTime": "2025-06-25T00:35:43.9952435Z",
+        "lastDeployedDateTime": "2025-07-28T02:21:23Z",
+        "deploymentExpirationDate": "2027-05-15",
+        "modelTrainingConfigVersion": "2025-05-15-preview-ConvLevel"
+      }
+    }
+  ],
+  "Variables": {}
+}

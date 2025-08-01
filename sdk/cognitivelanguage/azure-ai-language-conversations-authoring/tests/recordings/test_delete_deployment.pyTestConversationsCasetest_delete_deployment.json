@@ -1,0 +1,96 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/EmailAppEnglish/deployments/assignedDeployment?api-version=2025-05-15-preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-language-conversations-authoring/1.0.0b1 Python/3.13.5 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "515b9858-37a8-4b1d-9d50-9ea7798ca086",
+        "Content-Length": "0",
+        "Date": "Mon, 28 Jul 2025 00:16:07 GMT",
+        "operation-location": "fake_resource.servicebus.windows.net/language/authoring/analyze-conversations/projects/EmailAppEnglish/deployments/assignedDeployment/jobs/93116e51-cc58-47d3-a90a-83e32305dd14_638892576000000000?api-version=2025-05-15-preview",
+        "request-id": "515b9858-37a8-4b1d-9d50-9ea7798ca086",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "172",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/EmailAppEnglish/deployments/assignedDeployment/jobs/93116e51-cc58-47d3-a90a-83e32305dd14_638892576000000000?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-language-conversations-authoring/1.0.0b1 Python/3.13.5 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "f48b3749-62d8-46a9-8edf-d99bfe4d6c2e",
+        "Content-Length": "219",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 28 Jul 2025 00:16:07 GMT",
+        "request-id": "f48b3749-62d8-46a9-8edf-d99bfe4d6c2e",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "28",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "jobId": "93116e51-cc58-47d3-a90a-83e32305dd14_638892576000000000",
+        "createdDateTime": "2025-07-28T00:16:08Z",
+        "lastUpdatedDateTime": "2025-07-28T00:16:08Z",
+        "expirationDateTime": "2025-08-04T00:16:08Z",
+        "status": "notStarted"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/EmailAppEnglish/deployments/assignedDeployment/jobs/93116e51-cc58-47d3-a90a-83e32305dd14_638892576000000000?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-language-conversations-authoring/1.0.0b1 Python/3.13.5 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "22ee112c-11fc-45cd-9459-22f268d08939",
+        "Content-Length": "218",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 28 Jul 2025 00:16:37 GMT",
+        "request-id": "22ee112c-11fc-45cd-9459-22f268d08939",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "27",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "jobId": "93116e51-cc58-47d3-a90a-83e32305dd14_638892576000000000",
+        "createdDateTime": "2025-07-28T00:16:08Z",
+        "lastUpdatedDateTime": "2025-07-28T00:16:13Z",
+        "expirationDateTime": "2025-08-04T00:16:08Z",
+        "status": "succeeded"
+      }
+    }
+  ],
+  "Variables": {}
+}

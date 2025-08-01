@@ -1,0 +1,51 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/EmailApp/deployments?api-version=2025-05-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-language-conversations-authoring/1.0.0b1 Python/3.13.5 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "f9df6a12-4824-421a-9888-361992c3cc46",
+        "Content-Length": "586",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 28 Jul 2025 06:37:01 GMT",
+        "request-id": "f9df6a12-4824-421a-9888-361992c3cc46",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "40",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "deploymentName": "production",
+            "modelId": "Model1-20250618T062247-76ed3a8386c24b35958dcac948f884c7",
+            "lastTrainedDateTime": "2025-06-18T06:22:47.0408253Z",
+            "lastDeployedDateTime": "2025-06-18T06:24:02Z",
+            "deploymentExpirationDate": "2027-02-27",
+            "modelTrainingConfigVersion": "2022-09-01"
+          },
+          {
+            "deploymentName": "staging",
+            "modelId": "Model1-20250618T062247-76ed3a8386c24b35958dcac948f884c7",
+            "lastTrainedDateTime": "2025-06-18T06:22:47.0408253Z",
+            "lastDeployedDateTime": "2025-06-24T23:43:06Z",
+            "deploymentExpirationDate": "2027-02-27",
+            "modelTrainingConfigVersion": "2022-09-01"
+          }
+        ],
+        "nextLink": null
+      }
+    }
+  ],
+  "Variables": {}
+}
