@@ -21,17 +21,17 @@ from .. import models as _models
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import ApplicationClientConfiguration
 from .operations import (
-    ApplicationClientOperationsMixin,
     ApplicationDefinitionsOperations,
     ApplicationsOperations,
     JitRequestsOperations,
+    _ApplicationClientOperationsMixin,
 )
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ApplicationClient(ApplicationClientOperationsMixin):
+class ApplicationClient(_ApplicationClientOperationsMixin):
     """ARM applications.
 
     :ivar applications: ApplicationsOperations operations

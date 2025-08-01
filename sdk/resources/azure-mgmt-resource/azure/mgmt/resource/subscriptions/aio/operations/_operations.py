@@ -573,7 +573,7 @@ class TenantsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SubscriptionClientOperationsMixin(
+class _SubscriptionClientOperationsMixin(
     ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], SubscriptionClientConfiguration]
 ):
 

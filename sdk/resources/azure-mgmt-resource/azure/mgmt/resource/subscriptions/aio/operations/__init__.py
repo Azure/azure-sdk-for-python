@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 from ._operations import Operations  # type: ignore
 from ._operations import SubscriptionsOperations  # type: ignore
 from ._operations import TenantsOperations  # type: ignore
-from ._operations import SubscriptionClientOperationsMixin  # type: ignore
+from ._operations import _SubscriptionClientOperationsMixin  # type: ignore # pylint: disable=unused-import
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -25,7 +25,6 @@ __all__ = [
     "Operations",
     "SubscriptionsOperations",
     "TenantsOperations",
-    "SubscriptionClientOperationsMixin",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

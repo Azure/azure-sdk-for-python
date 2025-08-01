@@ -839,7 +839,7 @@ def build_jit_requests_list_by_resource_group_request(  # pylint: disable=name-t
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class ApplicationClientOperationsMixin(
+class _ApplicationClientOperationsMixin(
     ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], ApplicationClientConfiguration]
 ):
 
