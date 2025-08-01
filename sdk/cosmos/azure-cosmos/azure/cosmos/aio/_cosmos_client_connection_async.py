@@ -50,7 +50,7 @@ from azure.core.pipeline.policies import (
 from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos.aio._global_partition_endpoint_manager_circuit_breaker_async import (
     _GlobalPartitionEndpointManagerForCircuitBreakerAsync)
-from ._read_many_items_helper_async import ReadManyItemsHelper
+from ._read_items_helper_async import ReadItemsHelperAsync
 
 from .. import _base as base
 from .._base import _build_properties_cache
@@ -2229,7 +2229,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
 
 
-    async def read_many_items(
+    async def read_items(
             self,
             collection_link: str,
             items: Sequence[Tuple[str, PartitionKeyType]],
@@ -2256,7 +2256,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # Extract and remove max_concurrency from kwargs
         max_concurrency = kwargs.pop('max_concurrency', 10)
-        helper = ReadManyItemsHelper(
+        helper = ReadItemsHelperAsync(
             client=self,
             collection_link=collection_link,
             items=items,
@@ -2264,7 +2264,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             partition_key_definition=partition_key_definition,
             max_concurrency=max_concurrency,
             **kwargs)
-        return await helper.read_many_items()
+        return await helper.read_items()
 
 
 

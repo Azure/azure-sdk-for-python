@@ -35,7 +35,7 @@ if TYPE_CHECKING:
 
 
 
-class ReadManyItemsHelperSync:
+class ReadItemsHelperSync:
     """Helper class for handling synchronous read many items operations."""
     logger = logging.getLogger("azure.cosmos.ReadManyItemsHelperSync")
 
@@ -61,7 +61,7 @@ class ReadManyItemsHelperSync:
         self.max_concurrency = max_concurrency
         self.max_items_per_query = 1000
 
-    def read_many_items(self) -> CosmosList:
+    def read_items(self) -> CosmosList:
         """Reads many items synchronously using a query-based approach with a thread pool.
 
         :return: A list of the retrieved items in the same order as the input.
@@ -158,7 +158,7 @@ class ReadManyItemsHelperSync:
             pk_value = pk_items[0][2]
             epk_range = partition_key._get_epk_range_for_partition_key(pk_value)
             overlapping_ranges = self.client._routing_map_provider.get_overlapping_ranges(
-                collection_rid, [epk_range]
+                collection_rid, [epk_range] , self.options
             )
             if overlapping_ranges:
                 range_id = overlapping_ranges[0]["id"]

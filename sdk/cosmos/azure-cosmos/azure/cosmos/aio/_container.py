@@ -436,7 +436,7 @@ class ContainerProxy:
         return items
 
     @distributed_trace_async
-    async def read_many_items(
+    async def read_items(
             self,
             items: Sequence[Tuple[str, PartitionKeyType]],
             *,
@@ -454,7 +454,7 @@ class ContainerProxy:
 
         :param items: A list of tuples, where each tuple contains an item's ID and partition key.
         :type items: Sequence[Tuple[str, PartitionKeyType]]
-        :keyword int max_concurrency: The maximum number of concurrent operations for the read_many
+        :keyword int max_concurrency: The maximum number of concurrent operations for the read_items
             request. Defaults to 10.
         :keyword str consistency_level: The consistency level to use for the request.
         :keyword str session_token: Token for use with Session consistency.
@@ -492,7 +492,7 @@ class ContainerProxy:
         await self._get_properties_with_options(query_options)
         query_options["enableCrossPartitionQuery"] = True
 
-        return await self.client_connection.read_many_items(
+        return await self.client_connection.read_items(
             collection_link=self.container_link,
             items=items,
             options= query_options,

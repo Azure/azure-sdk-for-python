@@ -294,7 +294,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         return self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
 
     @distributed_trace
-    def read_many_items(
+    def read_items(
             self,
             items: Sequence[Tuple[str, _PartitionKeyType]],
             *,
@@ -316,7 +316,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword executor: Optional ThreadPoolExecutor for handling concurrent operations.
                       If not provided, a new executor will be created as needed.
         :keyword int max_concurrency: The maximum number of concurrent operations for the
-                      read_many request. Defaults to 10.
+                      items request. Defaults to 10.
         :keyword str consistency_level: The consistency level to use for the request.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
@@ -353,7 +353,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         item_tuples = [(item_id, self._set_partition_key(pk)) for item_id, pk in items]
 
-        return self.client_connection.read_many_items(
+        return self.client_connection.read_items(
             collection_link=self.container_link,
             items=item_tuples,
             options=query_options,

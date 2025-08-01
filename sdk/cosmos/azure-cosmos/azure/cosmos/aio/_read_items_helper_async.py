@@ -41,7 +41,7 @@ from azure.cosmos import CosmosList
 if TYPE_CHECKING:
     from azure.cosmos.aio._cosmos_client_connection_async import PartitionKeyType, CosmosClientConnection
 
-class ReadManyItemsHelper:
+class ReadItemsHelperAsync:
     """Helper class for handling read many items operations.
 
     This implementation preserves the original order of items in the input sequence
@@ -69,7 +69,7 @@ class ReadManyItemsHelper:
         self.max_concurrency = max_concurrency
         self.max_items_per_query = 1000
 
-    async def read_many_items(self) -> 'CosmosList':
+    async def read_items(self) -> 'CosmosList':
         """Executes the read-many operation.
 
         :return: A list of the retrieved items in the same order as the input.
@@ -141,7 +141,7 @@ class ReadManyItemsHelper:
             pk_value = pk_items[0][2]
             epk_range = partition_key._get_epk_range_for_partition_key(pk_value)
             overlapping_ranges = await self.client._routing_map_provider.get_overlapping_ranges(
-                collection_rid, [epk_range]
+                collection_rid, [epk_range], self.options
             )
             if overlapping_ranges:
                 range_id = overlapping_ranges[0]["id"]
@@ -252,15 +252,9 @@ class ReadManyItemsHelper:
 
                 # Process headers
                 headers = CaseInsensitiveDict(captured_headers)
-                charge = headers.get('x-ms-request-charge')
-                ru_charge = 0.0
-                if charge:
-                    try:
-                        ru_charge = float(charge)
-                    except (ValueError, TypeError):
-                        self.logger.warning("Invalid request charge format: %s", charge)
+                request_charge = self._extract_request_charge(headers)
 
-                return chunk_indexed_results, ru_charge
+                return chunk_indexed_results, request_charge
 
         chunk_tasks = [
             asyncio.create_task(execute_chunk_query(partition_id, items))
@@ -288,3 +282,20 @@ class ReadManyItemsHelper:
         final_headers['x-ms-request-charge'] = str(total_request_charge)
 
         return indexed_results, final_headers
+
+    def _extract_request_charge(self, headers: CaseInsensitiveDict) -> float:
+        """Extract the request charge from the headers.
+
+        :param headers: The response headers.
+        :type headers: ~azure.core.utils.CaseInsensitiveDict
+        :return: The request charge.
+        :rtype: float
+        """
+        charge = headers.get('x-ms-request-charge')
+        request_charge = 0.0  # Renamed from ru_charge to avoid shadowing
+        if charge:
+            try:
+                request_charge = float(charge)
+            except (ValueError, TypeError):
+                self.logger.warning("Invalid request charge format: %s", charge)
+        return request_charge

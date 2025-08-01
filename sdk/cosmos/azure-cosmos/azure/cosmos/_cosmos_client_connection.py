@@ -67,7 +67,7 @@ from ._constants import _Constants as Constants
 from ._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from ._cosmos_responses import CosmosDict, CosmosList
 from ._range_partition_resolver import RangePartitionResolver
-from ._read_many_items_helper import ReadManyItemsHelperSync
+from ._read_items_helper import ReadItemsHelperSync
 from ._request_object import RequestObject
 from ._retry_utility import ConnectionRetryPolicy
 from ._routing import routing_map_provider, routing_range
@@ -1038,7 +1038,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self.DeleteResource(path, http_constants.ResourceType.Permission, permission_id, None, options,
                             **kwargs)
 
-    def read_many_items(
+    def read_items(
             self,
             collection_link: str,
             items: Sequence[Tuple[str, _PartitionKeyType]],
@@ -1070,7 +1070,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Extract and remove max_concurrency from kwargs
         max_concurrency = kwargs.pop('max_concurrency', 10)
 
-        helper = ReadManyItemsHelperSync(
+        helper = ReadItemsHelperSync(
             client=self,
             collection_link=collection_link,
             items=items,
@@ -1079,7 +1079,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             executor=executor,
             max_concurrency=max_concurrency,
             **kwargs)
-        return helper.read_many_items()
+        return helper.read_items()
 
     def ReadItems(
         self,
