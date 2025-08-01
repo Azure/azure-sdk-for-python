@@ -18,12 +18,12 @@ class _ConfigurationWorker:
     operations in the background, including error handling and dynamic interval adjustment.
 
     Attributes:
-        _default_refresh_interval (float): Default refresh interval (3600 seconds/1 hour)
+        _default_refresh_interval (int): Default refresh interval (3600 seconds/1 hour)
         _interval_lock (threading.Lock): Thread lock for refresh interval access
         _state_lock (threading.Lock): Thread lock for worker state management
         _shutdown_event (threading.Event): Event for coordinating graceful shutdown
         _refresh_thread (threading.Thread): Background daemon thread for configuration refresh
-        _refresh_interval (float): Current refresh interval in seconds
+        _refresh_interval (int): Current refresh interval in seconds
         _running (bool): Flag indicating if the worker is currently running
     """
 
@@ -34,7 +34,7 @@ class _ConfigurationWorker:
         configuration from OneSettings. The thread starts immediately upon initialization.
 
         Args:
-            refresh_interval (Optional[float]): Initial refresh interval in seconds.
+            refresh_interval (Optional[int]): Initial refresh interval in seconds.
                 If None, defaults to 3600 seconds (1 hour).
 
         Note:
@@ -87,8 +87,8 @@ class _ConfigurationWorker:
         fetches configuration updates from OneSettings. This value can change
         dynamically based on server responses.
 
-        Returns:
-            int: Current refresh interval in seconds.
+        :return: Current refresh interval in seconds.
+        :rtype: int
 
         Note:
             This method is thread-safe and can be called from any thread.

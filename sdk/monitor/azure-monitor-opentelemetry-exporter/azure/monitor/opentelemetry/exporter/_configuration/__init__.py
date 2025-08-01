@@ -55,13 +55,12 @@ class _ConfigurationManager:
         - Version same: No changes, cache remains unchanged  
         - Version decrease: Unexpected state, logged as warning
         
-        Args:
-            query_dict (Optional[Dict[str, str]]): Optional query parameters to include
+        :param query_dict (Optional[Dict[str, str]]): Optional query parameters to include
                 in the OneSettings request. Commonly used for targeting specific
                 configuration namespaces or environments.
-        
-        Returns:
-            float: Updated refresh interval in seconds for the next configuration check.
+
+        :return: Updated refresh interval in seconds for the next configuration check.
+        :rtype: float
         
         Thread Safety:
             This method is thread-safe and uses multiple locks to ensure consistent
