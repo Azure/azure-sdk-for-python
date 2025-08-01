@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -38,6 +39,8 @@ def main():
         parameters={
             "properties": {
                 "monthlyRetention": "P1Y",
+                "timeBasedImmutability": "Enabled",
+                "timeBasedImmutabilityMode": "Unlocked",
                 "weekOfYear": 5,
                 "weeklyRetention": "P1M",
                 "yearlyRetention": "P5Y",
@@ -47,6 +50,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2024-05-01-preview/examples/LongTermRetentionPolicyCreateOrUpdate.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2024-11-01-preview/examples/LongTermRetentionPolicyCreateOrUpdate.json
 if __name__ == "__main__":
     main()
