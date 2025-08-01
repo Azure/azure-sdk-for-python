@@ -182,6 +182,9 @@
 /sdk/monitor/azure-monitor-query/                                    @pvaneck @Azure/azure-sdk-write-monitor-data-plane
 
 # PRLabel: %Monitor
+/sdk/monitor/azure-monitor-querymetrics/                             @Azure/azure-sdk-write-monitor-query-metrics
+
+# PRLabel: %Monitor
 /sdk/monitor/*                                                       @pvaneck
 
 # PRLabel: %Monitor - ApplicationInsights
