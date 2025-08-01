@@ -82,9 +82,6 @@ class _AgentBooster:
         self._model_config = model_config
         self._agent = self._project_client.agents.get_agent(agent_id)
 
-        # Validate model configuration
-        self._validate_model_config()
-
         self._config: _AgentBoosterConfig = _AgentBoosterConfig(
             model_config=self._model_config,
             sample_size=sample_size,
@@ -102,9 +99,7 @@ class _AgentBooster:
 
         # Initialize critique generator and prompt improver with client factory
         self._openai_client = self._get_client()
-        self._critique_generator = _CritiqueGenerator(
-            self._openai_client, self._model_config
-        )
+        self._critique_generator = _CritiqueGenerator(self._openai_client, self._model_config)
         self._prompt_improver = _PromptImprover(self._openai_client, self._model_config)
 
         # Initialize refinement tracking
@@ -112,34 +107,6 @@ class _AgentBooster:
         self.current_iteration = 0
         self.best_scores = {}
         self.best_iteration = 0
-
-    def _validate_model_config(self) -> None:
-        """Validate the model configuration using Azure SDK patterns.
-
-        :raises ValueError: If the model configuration is invalid or missing required fields.
-        """
-        from azure.ai.evaluation._common.utils import parse_model_config_type
-
-        try:
-            # Parse and validate the model configuration type
-            parse_model_config_type(self._model_config)
-
-            # Validate required fields based on model type
-            if "azure_endpoint" in self._model_config:
-                # Azure OpenAI configuration
-                required_fields = ["azure_endpoint", "azure_deployment"]
-                for field in required_fields:
-                    if field not in self._model_config or not self._model_config[field]:
-                        raise ValueError(f"Missing required field: {field}")
-            else:
-                # OpenAI configuration
-                required_fields = ["api_key", "model"]
-                for field in required_fields:
-                    if field not in self._model_config or not self._model_config[field]:
-                        raise ValueError(f"Missing required field: {field}")
-
-        except Exception as e:
-            raise ValueError(f"Invalid model configuration: {e}")
 
     def _generate_refinement_history_filename(self) -> str:
         """Generate a unique filename for refinement history with timestamp.
@@ -237,9 +204,7 @@ class _AgentBooster:
         # Run iterations
         for iteration in range(max_iterations):
             # Sample queries
-            sampled_queries = random.sample(
-                queries, min(len(queries), self._config["sample_size"])
-            )
+            sampled_queries = random.sample(queries, min(len(queries), self._config["sample_size"]))
 
             # Run single iteration
             iteration_result = self._run_single_iteration(
@@ -329,9 +294,7 @@ class _AgentBooster:
 
         return queries
 
-    def _generate_responses(
-        self, queries: List[str], prompt_config: _PromptConfiguration
-    ) -> str:
+    def _generate_responses(self, queries: List[str], prompt_config: _PromptConfiguration) -> str:
         """Generate responses for the given queries using the current prompt configuration.
 
         :param queries: List of queries to generate responses for.
@@ -389,10 +352,7 @@ class _AgentBooster:
         )
 
         default_evaluators = [IntentResolutionEvaluator, ToolCallAccuracyEvaluator]
-        return {
-            evaluator.__name__: evaluator(model_config=self._model_config)
-            for evaluator in default_evaluators
-        }
+        return {evaluator.__name__: evaluator(model_config=self._model_config) for evaluator in default_evaluators}
 
     def _evaluate_responses(self, response_file_path: str):
         """Evaluate the generated responses using the provided evaluators.
@@ -410,9 +370,7 @@ class _AgentBooster:
 
         return results
 
-    def _boost(
-        self, iteration_result: EvaluationResult, prompt_config: _PromptConfiguration
-    ) -> _PromptConfiguration:
+    def _boost(self, iteration_result: EvaluationResult, prompt_config: _PromptConfiguration) -> _PromptConfiguration:
         """Analyze evaluation results and return an improved prompt configuration.
 
         :param iteration_result: Results from evaluation containing scores and conversation data.
@@ -427,9 +385,7 @@ class _AgentBooster:
 
         if not cases:
             if self._verbose:
-                print(
-                    "No evaluation cases found. Returning original prompt configuration."
-                )
+                print("No evaluation cases found. Returning original prompt configuration.")
             return prompt_config
 
         # Generate and process critiques
@@ -440,9 +396,7 @@ class _AgentBooster:
 
         if not critiques:
             if self._verbose:
-                print(
-                    "No critiques generated. Returning original prompt configuration."
-                )
+                print("No critiques generated. Returning original prompt configuration.")
             return prompt_config
 
         # Create improved prompt using human intent and evaluation data
@@ -453,15 +407,11 @@ class _AgentBooster:
 
         # Print summary
         if self._verbose:
-            self._print_boost_summary(
-                cases, critiques, system_prompt, improved_prompt, tools
-            )
+            self._print_boost_summary(cases, critiques, system_prompt, improved_prompt, tools)
 
         return new_config
 
-    def _extract_evaluation_cases(
-        self, eval_results: EvaluationResult
-    ) -> List[_EvaluationCase]:
+    def _extract_evaluation_cases(self, eval_results: EvaluationResult) -> List[_EvaluationCase]:
         """Extract evaluation cases from results.
 
         :param eval_results: Evaluation results containing case data.
@@ -500,18 +450,14 @@ class _AgentBooster:
         critiques = []
 
         for case in cases:
-            critique = self._critique_generator.generate_critique(
-                case, system_prompt, tools
-            )
+            critique = self._critique_generator.generate_critique(case, system_prompt, tools)
             critiques.append(critique)
             if self._verbose:
                 print(f"Generated critique for {case.case_id}")
 
         return critiques
 
-    def _create_improved_prompt(
-        self, original_prompt: str, critiques: List[str], tools: List[Dict[str, Any]]
-    ) -> str:
+    def _create_improved_prompt(self, original_prompt: str, critiques: List[str], tools: List[Dict[str, Any]]) -> str:
         """Create improved prompt from critiques and optional human intent.
 
         :param original_prompt: The original prompt to improve.
@@ -585,9 +531,7 @@ class _AgentBooster:
         print("-" * 20)
         print(improved_prompt)
 
-    def _run_single_iteration(
-        self, prompt_config: _PromptConfiguration, queries: List[str]
-    ):
+    def _run_single_iteration(self, prompt_config: _PromptConfiguration, queries: List[str]):
         """Run a single iteration of evaluation and improvement.
 
         :param prompt_config: Current prompt configuration to use.
@@ -622,9 +566,7 @@ class _AgentBooster:
             # TODO set default values?
             return AzureOpenAI(
                 azure_endpoint=self._model_config["azure_endpoint"],
-                api_key=self._model_config.get(
-                    "api_key", None
-                ),  # Default-style access to appease linters.
+                api_key=self._model_config.get("api_key", None),  # Default-style access to appease linters.
                 api_version=DEFAULT_AOAI_API_VERSION,  # Force a known working version
                 azure_deployment=self._model_config.get("azure_deployment", ""),
                 default_headers=default_headers,

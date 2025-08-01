@@ -20,7 +20,7 @@ class _EvaluationCase:
     @staticmethod
     def _extract_metrics(row: Dict) -> Dict[str, Any]:
         """Extract evaluation metrics and reasons from evaluation row.
-        
+
         Extracts all outputs from evaluators, including numeric scores,
         pass/fail results, thresholds, and reasoning explanations.
         """

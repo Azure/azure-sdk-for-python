@@ -82,9 +82,7 @@ class _CritiqueGenerator:
         if len(critiques) == 1:
             return critiques[0]
 
-        critiques_joined = "\n".join(
-            f"{i+1}. {critique}" for i, critique in enumerate(critiques)
-        )
+        critiques_joined = "\n".join(f"{i+1}. {critique}" for i, critique in enumerate(critiques))
         aggregate_prompt = f"""
 You are an expert prompt engineer. I have {len(critiques)} individual critiques of a system prompt. 
 Please synthesize them into a single, comprehensive meta-critique that identifies the most important issues and improvements.
@@ -121,15 +119,11 @@ Provide a synthesized meta-critique that captures the key insights:
         :rtype: str
         """
 
-        score_summary = "\n".join(
-            f"- {metric}: {value}" for metric, value in case.metrics.items()
-        )
+        score_summary = "\n".join(f"- {metric}: {value}" for metric, value in case.metrics.items())
 
         tools_summary = ""
         if tools:
-            tools_summary = (
-                f"\n\nTools Available:\n{json.dumps(tools, separators=(',', ':'))}"
-            )
+            tools_summary = f"\n\nTools Available:\n{json.dumps(tools, separators=(',', ':'))}"
 
         return f"""
 You are an expert prompt engineer. Analyze the following system prompt and its evaluation scores to provide a detailed critique.
