@@ -12,6 +12,8 @@
 
 ### Other Changes
 
+- `ManagedIdentityCredential` now retries IMDS 410 status responses for at least 70 seconds total duration as required by [Azure IMDS documentation](https://learn.microsoft.com/azure/virtual-machines/instance-metadata-service?tabs=windows#errors-and-debugging).  ([#42330](https://github.com/Azure/azure-sdk-for-python/pull/42330))
+
 ## 1.24.0b1 (2025-07-17)
 
 ### Features Added
