@@ -139,7 +139,7 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
         sampling_traces_per_second = configurations[SAMPLING_TRACES_PER_SECOND_ARG]
         tracer_provider = TracerProvider(
             sampler=RateLimitedSampler(
-                sampling_traces_per_second=cast(float, sampling_traces_per_second)
+                target_spans_per_second_limit=cast(float, sampling_traces_per_second)
             ),
             resource=resource
         )

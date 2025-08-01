@@ -360,7 +360,7 @@ class TestConfigure(unittest.TestCase):
                 'azure.core.tracing.ext.opentelemetry_span': Mock(OpenTelemetrySpan=opentelemetry_span_mock)
             }):
                 _setup_tracing(configurations)
-                sampler_mock.assert_called_once_with(sampling_traces_per_second=2.0)
+                sampler_mock.assert_called_once_with(target_spans_per_second_limit=2.0)
                 tp_mock.assert_called_once_with(sampler=sampler_init_mock, resource=TEST_RESOURCE)
                 set_tracer_provider_mock.assert_called_once_with(tp_init_mock)
                 trace_exporter_mock.assert_called_once_with(**configurations)
