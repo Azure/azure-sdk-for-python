@@ -43,3 +43,12 @@ class CommunicationIdentifierModelKind(str, Enum, metaclass=CaseInsensitiveEnumM
     PHONE_NUMBER = "phoneNumber"
     MICROSOFT_TEAMS_USER = "microsoftTeamsUser"
     MICROSOFT_TEAMS_APP = "microsoftTeamsApp"
+
+
+class RetentionPolicyKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Retention Policy Type."""
+
+    THREAD_CREATION_DATE = "threadCreationDate"
+    """Thread retention policy based on thread creation date."""
+    NONE = "none"
+    """No thread retention policy"""
