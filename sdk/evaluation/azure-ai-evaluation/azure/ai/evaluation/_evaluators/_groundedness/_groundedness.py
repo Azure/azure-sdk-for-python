@@ -9,7 +9,14 @@ from azure.ai.evaluation._legacy._adapters._flows import AsyncPrompty
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._model_configurations import Conversation
-from ..._common.utils import ErrorBlame, ErrorTarget, EvaluationException, ErrorCategory, construct_prompty_model_config, validate_model_config
+from ..._common.utils import (
+    ErrorBlame,
+    ErrorTarget,
+    EvaluationException,
+    ErrorCategory,
+    construct_prompty_model_config,
+    validate_model_config,
+)
 
 try:
     from ..._user_agent import UserAgentSingleton
@@ -19,6 +26,7 @@ except ImportError:
         @property
         def value(self) -> str:
             return "None"
+
 
 logger = logging.getLogger(__name__)
 
@@ -80,7 +88,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _PROMPTY_FILE_WITH_QUERY = "groundedness_with_query.prompty"
     _RESULT_KEY = "groundedness"
     _OPTIONAL_PARAMS = ["query"]
-    _SUPPORTED_TOOLS= ["file_search"]
+    _SUPPORTED_TOOLS = ["file_search"]
 
     id = "azureai://built-in/evaluators/groundedness"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
@@ -197,7 +205,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             self._flow = AsyncPrompty.load(source=self._prompty_file, model=prompty_model_config)
 
         return super().__call__(*args, **kwargs)
-    
+
     async def _real_call(self, **kwargs):
         """The asynchronous call where real end-to-end evaluation logic is performed.
 
@@ -221,12 +229,12 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 raise ex
 
     def _convert_kwargs_to_eval_input(self, **kwargs):
-        if 'context' in kwargs or 'conversation' in kwargs:
+        if "context" in kwargs or "conversation" in kwargs:
             return super()._convert_kwargs_to_eval_input(**kwargs)
-        
-        query = kwargs.get('query')
-        response = kwargs.get('response')
-        tool_definitions = kwargs.get('tool_definitions')
+
+        query = kwargs.get("query")
+        response = kwargs.get("response")
+        tool_definitions = kwargs.get("tool_definitions")
 
         if not query or not response or not tool_definitions:
             msg = f"{type(self).__name__}: Either 'conversation' or individual inputs must be provided. For Agent groundedness 'query', 'response' and 'tool_definitions' are required."
@@ -237,23 +245,21 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
             )
 
-
         context = self._get_context_from_agent_response(response, tool_definitions)
         if not context:
             raise EvaluationException(
-                message=f"Context could not be extracted from agent response.Supported tools for groundedness are {self._SUPPORTED_TOOLS}. If supported tools are not used groundedness is not calculated.",
+                message=f"Context could not be extracted from agent response. Supported tools for groundedness are {self._SUPPORTED_TOOLS}. If supported tools are not used groundedness is not calculated.",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.NOT_APPLICABLE,
                 target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
             )
-        
+
         return super()._convert_kwargs_to_eval_input(response=response[-1], context=context, query=query)
-    
 
     def _get_context_from_agent_response(self, response, tool_definitions):
         context = ""
         try:
-            logger.debug("Extracing context from response")
+            logger.debug("Extracting context from response")
             tool_calls = self._parse_tools_from_response(response=response)
             logger.debug(f"Tool Calls parsed successfully : {tool_calls}")
             if tool_calls:
@@ -263,7 +269,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                         for tool in tool_definitions:
                             if tool.get("name") == tool_name and tool.get("type") in self._SUPPORTED_TOOLS:
                                 if tool_name == "file_search":
-                                    tool_result = tool_call.get('tool_result')
+                                    tool_result = tool_call.get("tool_result")
                                     if tool_result:
                                         for result in tool_result:
                                             content_list = result.get("content")
@@ -275,6 +281,5 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         except Exception as ex:
             logger.debug(f"Error extracting context from agent response : {str(ex)}")
             context = ""
-        
+
         return context if context else None
-            

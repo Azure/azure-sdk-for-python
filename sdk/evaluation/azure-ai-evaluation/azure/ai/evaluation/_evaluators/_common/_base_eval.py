@@ -186,7 +186,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
             call_signatures = [inspect.signature(self.__call__)]
         else:
             call_signatures = [inspect.signature(overload) for overload in overloads]
-        
+
         overload_inputs = []
         for call_signature in call_signatures:
             params = call_signature.parameters
@@ -198,7 +198,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
 
     def _get_matching_overload_inputs(self, **kwargs) -> List[str]:
         """Find the overload that matches the provided kwargs and return its input parameters.
-        
+
         :keyword kwargs: The keyword arguments to match against overloads.
         :type kwargs: Dict
         :return: List of input parameter names for the matching overload.
@@ -206,25 +206,25 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         """
         overload_inputs = self._singleton_inputs
         provided_keys = set(key for key, value in kwargs.items() if value is not None)
-        
+
         # Find the overload that best matches the provided parameters
         best_match = None
         best_score = -1
-        
+
         for inputs in overload_inputs:
             input_set = set(inputs)
-            
+
             # Calculate match score: how many of the overload's params are provided
             if input_set.issubset(provided_keys):
                 score = len(input_set)
                 if score > best_score:
                     best_score = score
                     best_match = inputs
-        
+
         # If exact match found, return it
         if best_match is not None:
             return best_match
-            
+
         # If no exact match, find the overload with the most overlap
         for inputs in overload_inputs:
             input_set = set(inputs)
@@ -232,13 +232,13 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
             if overlap > best_score:
                 best_score = overlap
                 best_match = inputs
-        
+
         # Return the best match or the first overload as fallback
         return best_match if best_match is not None else (overload_inputs[0] if overload_inputs else [])
 
     def _get_all_singleton_inputs(self) -> List[str]:
         """Get a flattened list of all possible singleton inputs across all overloads.
-        
+
         :return: Flattened list of all singleton input names.
         :rtype: List[str]
         """
@@ -371,8 +371,8 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         (like a query and response), or they receive conversation that iss a list of dictionary
         values.
 
-        The self._singleton_inputs list (containing overload signatures) assigned during initialization 
-        is used to find and extract singleton keywords, and determine which overload matches the 
+        The self._singleton_inputs list (containing overload signatures) assigned during initialization
+        is used to find and extract singleton keywords, and determine which overload matches the
         provided arguments.
 
         If both conversations and singletons are allowed, the function will raise an exception if both
@@ -394,7 +394,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
             # Get all possible singleton inputs and check what's provided
             all_singleton_inputs = self._get_all_singleton_inputs()
             singletons = {key: kwargs.get(key, None) for key in all_singleton_inputs}
-        
+
         # Check that both conversation and other inputs aren't set
         if conversation is not None and any(singletons.values()):
             msg = f"{type(self).__name__}: Cannot provide both 'conversation' and individual inputs at the same time."
@@ -409,7 +409,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
             if self._is_multi_modal_conversation(conversation):
                 return self._derive_multi_modal_conversation_converter()(conversation)
             return self._derive_conversation_converter()(conversation)
-        
+
         # Handle Singletons - find matching overload
         matching_inputs = self._get_matching_overload_inputs(**kwargs)
         if matching_inputs:
@@ -418,7 +418,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
             required_singletons = remove_optional_singletons(self, required_singletons)
             if all(value is not None for value in required_singletons.values()):
                 return [singletons]
-        
+
         # Missing input
         msg = f"{type(self).__name__}: Either 'conversation' or individual inputs must be provided."
         raise EvaluationException(

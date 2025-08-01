@@ -247,17 +247,21 @@ class AIAgentConverter:
             # If content is a list, process all content items.
             for content_item in single_turn.content:
                 if content_item.type == "text":
-                    content_list.append({
-                        "type": "text",
-                        "text": content_item.text.value,
-                    })
-                elif content_item.type == "image":
-                    content_list.append({
-                        "type": "image",
-                        "image": {
-                            "file_id": content_item.image_file.file_id,
+                    content_list.append(
+                        {
+                            "type": "text",
+                            "text": content_item.text.value,
                         }
-                    })
+                    )
+                elif content_item.type == "image":
+                    content_list.append(
+                        {
+                            "type": "image",
+                            "image": {
+                                "file_id": content_item.image_file.file_id,
+                            },
+                        }
+                    )
 
             # If we have a user message, then we save it as such and since it's a human message, there is no
             # run_id associated with it.
@@ -849,7 +853,10 @@ class FDPAgentDataRetriever(AIAgentDataRetriever):
     def _list_run_steps_chronological(self, thread_id: str, run_id: str):
 
         return self.project_client.agents.run_steps.list(
-            thread_id=thread_id, run_id=run_id, limit=self._AI_SERVICES_API_MAX_LIMIT, order="asc",
+            thread_id=thread_id,
+            run_id=run_id,
+            limit=self._AI_SERVICES_API_MAX_LIMIT,
+            order="asc",
             include=["step_details.tool_calls[*].file_search.results[*].content"],
         )
 

@@ -334,10 +334,7 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
             elif tool_call.details.type == _BING_GROUNDING:
                 return messages  # not supported yet from bing grounding tool
             elif tool_call.details.type == _FILE_SEARCH:
-                output = [
-                    result.as_dict()
-                    for result in tool_call.details.file_search.results
-                ]
+                output = [result.as_dict() for result in tool_call.details.file_search.results]
             elif tool_call.details.type == _AZURE_AI_SEARCH:
                 output = tool_call.details.azure_ai_search["output"]
             elif tool_call.details.type == _FABRIC_DATAAGENT:
