@@ -44,6 +44,7 @@ from .._azureappconfigurationproviderbase import (
 )
 from ._async_client_manager import AsyncConfigurationClientManager
 from .._user_agent import USER_AGENT
+from .._json import remove_json_comments
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -523,8 +524,12 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                     self._uses_aicc_configuration = True
                 return json.loads(config.value)
             except json.JSONDecodeError:
-                # If the value is not a valid JSON, treat it like regular string value
-                return config.value
+                try:
+                    # If the value is not a valid JSON, check if it has comments and remove them
+                    return json.loads(remove_json_comments(config.value))
+                except json.JSONDecodeError:
+                    # If the value is not a valid JSON, treat it like regular string value
+                    return config.value
         return config.value
 
     def __eq__(self, other: Any) -> bool:
