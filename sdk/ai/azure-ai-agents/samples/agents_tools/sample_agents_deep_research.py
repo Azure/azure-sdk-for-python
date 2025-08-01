@@ -58,7 +58,7 @@ def convert_citations_to_superscript(markdown_content):
     """
     # Pattern to match [number:number+source]
     pattern = r"\u3010\d+:(\d+)\u2020source\u3011"
-    
+
     # Replace with <sup>captured_number</sup>
     def replacement(match):
         citation_number = match.group(1)
@@ -92,6 +92,7 @@ def convert_citations_to_superscript(markdown_content):
     final_text = re.sub(consecutive_pattern, consolidate_and_sort_citations, converted_text)
 
     return final_text
+
 
 def fetch_and_print_new_agent_response(
     thread_id: str,
@@ -174,36 +175,31 @@ def create_research_summary(message: ThreadMessage, filepath: str = "research_re
         if message.url_citation_annotations:
             fp.write("\n\n## Citations\n")
             seen_urls = set()
-            citation_dict = {}
+            # Dictionary mapping full citation content to ordinal number
+            citations_ordinals = {}
+            # List of citation URLs indexed by ordinal (0-based)
+            text_citation_list = []
 
             for ann in message.url_citation_annotations:
                 url = ann.url_citation.url
                 title = ann.url_citation.title or url
 
                 if url not in seen_urls:
-                    # Extract citation number from annotation text like "[58:1+...]"
-                    citation_number = None
-                    if ann.text and ":" in ann.text:
-                        match = re.search(r"\u3010\d+:(\d+)", ann.text)
-                        if match:
-                            citation_number = int(match.group(1))
+                    # Use the full annotation text as the key to avoid conflicts
+                    citation_key = ann.text if ann.text else f"fallback_{url}"
 
-                    if citation_number is not None:
-                        # Only add if this citation number isn't already used
-                        if citation_number not in citation_dict:
-                            citation_dict[citation_number] = f"[{title}]({url})"
-                    else:
-                        # Fallback for citations without proper format
-                        fallback_num = len(citation_dict) + 1
-                        while fallback_num in citation_dict:
-                            fallback_num += 1
-                        citation_dict[fallback_num] = f"[{title}]({url})"
+                    # Only add if this citation content hasn't been seen before
+                    if citation_key not in citations_ordinals:
+                        # Assign next available ordinal number (1-based for display)
+                        ordinal = len(text_citation_list) + 1
+                        citations_ordinals[citation_key] = ordinal
+                        text_citation_list.append(f"[{title}]({url})")
 
                     seen_urls.add(url)
 
-            # Write citations in numbered order
-            for num in sorted(citation_dict.keys()):
-                fp.write(f"{num}. {citation_dict[num]}\n")
+            # Write citations in order they were added
+            for i, citation_text in enumerate(text_citation_list):
+                fp.write(f"{i + 1}. {citation_text}\n")
 
     print(f"Research report written to '{filepath}'.")
 
