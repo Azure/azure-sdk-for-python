@@ -3,3 +3,6 @@
 *.pfx
 *security-domain.json
 *.pem
+!azure-keyvault-securitydomain/tests/resources/*.cer
+!azure-keyvault-securitydomain/tests/resources/*.pem
+*transfer-key.pem
