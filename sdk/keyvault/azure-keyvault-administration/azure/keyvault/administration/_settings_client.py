@@ -38,6 +38,14 @@ class KeyVaultSettingsClient(KeyVaultClientBase):
         :returns: The account setting, as a :class:`~azure.keyvault.administration.KeyVaultSetting`.
         :rtype: ~azure.keyvault.administration.KeyVaultSetting
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_administration.py
+                :start-after: [START get_setting]
+                :end-before: [END get_setting]
+                :language: python
+                :caption: Get a specific setting
+                :dedent: 8
         """
         result = self._client.get_setting(setting_name=name, **kwargs)
         return KeyVaultSetting._from_generated(result)
@@ -49,6 +57,14 @@ class KeyVaultSettingsClient(KeyVaultClientBase):
         :returns: A paged object containing the account's settings.
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.administration.KeyVaultSetting]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_administration.py
+                :start-after: [START list_settings]
+                :end-before: [END list_settings]
+                :language: python
+                :caption: List all account settings
+                :dedent: 8
         """
         result = self._client.get_settings(*kwargs)
         converted_result = [KeyVaultSetting._from_generated(setting) for setting in result.settings]
@@ -73,6 +89,14 @@ class KeyVaultSettingsClient(KeyVaultClientBase):
         :returns: The updated account setting, as a :class:`~azure.keyvault.administration.KeyVaultSetting`.
         :rtype: ~azure.keyvault.administration.KeyVaultSetting
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_administration.py
+                :start-after: [START update_setting]
+                :end-before: [END update_setting]
+                :language: python
+                :caption: Update a setting
+                :dedent: 8
         """
         parameters = UpdateSettingRequest(value=setting.value)
         result = self._client.update_setting(
