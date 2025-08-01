@@ -31,6 +31,7 @@ try:
         FileSearchRankingOptions,
         RunStepBingGroundingToolCall,
         ThreadRun,
+        FileSearchToolCallContent
     )
 except ImportError:
     pass
@@ -67,7 +68,12 @@ class ToolDecoder(json.JSONDecoder):
                                 file_name=result["file_name"],
                                 file_id=result["file_id"],
                                 score=result["score"],
-                                content=result["content"],
+                                content=[
+                                    FileSearchToolCallContent(
+                                        text=too_call_content["text"]
+                                        )
+                                        for too_call_content in result["content"]
+                                    ],
                             )
                             for result in details["file_search"]["results"]
                         ],
