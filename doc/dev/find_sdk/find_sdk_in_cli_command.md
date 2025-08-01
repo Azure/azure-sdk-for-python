@@ -83,7 +83,7 @@ Similarly, find the `service` folder in the [SDK folder](https://github.com/Azur
 Such as [`resources` folder](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/resources).
 
 Then, you could find [here](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/resources/azure-mgmt-resource/azure/mgmt/resource/resources). This step may be a little difficult for beginners. It requires some experience.
-(Some libraries, like [`compute`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/compute/azure-mgmt-compute/azure/mgmt/compute), may have many API version folders. You can choose the latest date to enter, like [this](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/compute/azure-mgmt-compute/azure/mgmt/compute/v2025_01_02).)
+(Some libraries, like [`compute`](https://github.com/Azure/azure-sdk-for-python/tree/523ba9d5b13256c45d83904f8de264088059c1cb/sdk/compute/azure-mgmt-compute/azure/mgmt/compute), may have many API version folders. You can choose the latest date to enter, like [this](https://github.com/Azure/azure-sdk-for-python/tree/523ba9d5b13256c45d83904f8de264088059c1cb/sdk/compute/azure-mgmt-compute/azure/mgmt/compute/v2025_01_02).)
 
 Enter the [_operation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/resources/azure-mgmt-resource/azure/mgmt/resource/resources/operations/_operations.py) in the [operation folder](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/resources/azure-mgmt-resource/azure/mgmt/resource/resources/operations), and you can see the meta code.
 
