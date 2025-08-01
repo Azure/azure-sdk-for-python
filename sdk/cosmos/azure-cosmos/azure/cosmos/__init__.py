@@ -43,6 +43,7 @@ from .documents import (
 )
 from .partition_key import PartitionKey
 from .permission import Permission
+from .query_engine import QueryEngine
 
 __all__ = (
     "CosmosClient",

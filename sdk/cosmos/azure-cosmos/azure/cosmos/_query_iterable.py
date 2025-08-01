@@ -21,10 +21,17 @@
 
 """Iterable query results in the Azure Cosmos database service.
 """
+from typing import Optional, Union, Dict, Any, Mapping, Callable, Tuple, List, TYPE_CHECKING
+from requests.structures import CaseInsensitiveDict
 from azure.core.paging import PageIterator  # type: ignore
 from azure.cosmos._execution_context import execution_dispatcher
+from azure.cosmos.query_engine import QueryEngine
 
 # pylint: disable=protected-access
+
+if TYPE_CHECKING:
+    # We can't import this at runtime because it's circular, so only import it for type checking
+    from azure.cosmos._cosmos_client_connection import PartitionKeyType, CosmosClientConnection
 
 
 class QueryIterable(PageIterator):
@@ -35,17 +42,19 @@ class QueryIterable(PageIterator):
 
     def __init__(
         self,
-        client,
-        query,
-        options,
-        fetch_function=None,
-        collection_link=None,
-        database_link=None,
-        partition_key=None,
-        continuation_token=None,
-        resource_type=None,
-        response_hook=None,
-        raw_response_hook=None,
+        client: 'CosmosClientConnection',
+        query: Optional[Union[str, Dict[str, Any]]],
+        options: Optional[Mapping[str, Any]],
+        fetch_function: Callable[[
+            Mapping[str, Any]], Tuple[List[Dict[str, Any]], CaseInsensitiveDict]] = None,
+        collection_link: Optional[str] = None,
+        database_link: Optional[str] = None,
+        partition_key: Optional['PartitionKeyType'] = None,
+        continuation_token: Optional[str] = None,
+        query_engine: Optional[QueryEngine] = None,
+        resource_type: str = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
+        raw_response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
     ):
         """Instantiates a QueryIterable for non-client side partitioning queries.
 
@@ -57,7 +66,6 @@ class QueryIterable(PageIterator):
         :param dict options: The request options for the request.
         :param method fetch_function:
         :param str resource_type: The type of the resource being queried
-        :param str resource_link: If this is a Document query/feed collection_link is required.
 
         Example of `fetch_function`:
 
@@ -77,7 +85,8 @@ class QueryIterable(PageIterator):
         self._partition_key = partition_key
         self._ex_context = execution_dispatcher._ProxyQueryExecutionContext(
             self._client, self._collection_link, self._query, self._options, self._fetch_function,
-            response_hook, raw_response_hook, resource_type)
+            response_hook, raw_response_hook, resource_type, query_engine
+        )
         super(QueryIterable, self).__init__(self._fetch_next, self._unpack, continuation_token=continuation_token)
 
     def _unpack(self, block):

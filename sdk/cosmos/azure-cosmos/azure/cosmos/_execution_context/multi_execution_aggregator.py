@@ -78,7 +78,8 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         self._raw_response_hook = raw_response_hook
 
         if self._sort_orders:
-            self._document_producer_comparator = document_producer._OrderByDocumentProducerComparator(self._sort_orders)
+            self._document_producer_comparator = document_producer._OrderByDocumentProducerComparator(
+                self._sort_orders)
         else:
             self._document_producer_comparator = document_producer._PartitionKeyRangeDocumentProducerComparator()
 
@@ -119,7 +120,8 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         for partitionTargetRange in targetPartitionRanges:
             # create and add the child execution context for the target range
             targetPartitionQueryExecutionContextList.append(
-                self._createTargetPartitionQueryExecutionContext(partitionTargetRange)
+                self._createTargetPartitionQueryExecutionContext(
+                    partitionTargetRange)
             )
 
         for targetQueryExContext in targetPartitionQueryExecutionContextList:
@@ -154,7 +156,8 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         for partitionTargetRange in targetPartitionRanges:
             # create and add the child execution context for the target range
             targetPartitionQueryExecutionContextList.append(
-                self._createTargetPartitionQueryExecutionContext(partitionTargetRange)
+                self._createTargetPartitionQueryExecutionContext(
+                    partitionTargetRange)
             )
 
         self._orderByPQ = _MultiExecutionContextAggregator.PriorityQueue()
@@ -199,7 +202,8 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         query_ranges = self._partitioned_query_ex_info.get_query_ranges()
         return self._routing_provider.get_overlapping_ranges(
             self._resource_link,
-            [routing_range.Range.ParseFromDict(range_as_dict) for range_as_dict in query_ranges],
+            [routing_range.Range.ParseFromDict(
+                range_as_dict) for range_as_dict in query_ranges],
             self._options
         )
 
