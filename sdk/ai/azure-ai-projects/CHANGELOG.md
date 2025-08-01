@@ -1,10 +1,41 @@
 # Release History
 
-## 1.0.0b13 (Unreleased)
+## 1.1.0b1 (2025-08-01)
+
+First beta version following the 1.0.0 stable release. It brings back the Evaluation and Red-Team operations which are still in preview.
+
+### Features added
+
+* Added methods `cancel` and `delete` to Evaluations.
+
+## 1.0.0 (2025-07-31)
+
+First stable version of the client library. The client library now uses version `v1` of the
+AI Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects/ga-rest-api-reference).
 
 ### Breaking changes
 
-* Updated evaluator ids for AOAI graders.
+* Features that are still in preview were removed from this stable release. This includes:
+  * Evaluation operations (property `.evaluations`)
+  * Red-Team operations (property `.red_teams`)
+  * Class `PromptTemplate`.
+  * Package function `enable_telemetry()`
+* Classes were renamed:
+  * Class `Sku` was renamed `ModelDeploymentSku`
+  * Class `SasCredential` was renamed `BlobReferenceSasCredential`
+  * Class `AssetCredentialResponse` was renamed `DatasetCredential`
+* Method `.inference.get_azure_openai_client()` was renamed `.get_openai_client()`. The `.inference` property was removed.
+  The method is documented as returning an object of type `OpenAI`, but it still returns an object of the derived type `AzureOpenAI`.
+  The function implementation has not changed.
+* Method `.telemetry.get_connection_string()` was renamed `.telemetry.get_application_insights_connection_string()`
+
+### Sample updates
+
+* Added a new Dataset sample named `sample_datasets_download.py` to show how you can download all files referenced by a certain Dataset (following a question in [this GitHub issue](https://github.com/Azure/azure-sdk-for-python/issues/41960))
+* Two samples added showing how to do a `responses` operation using an authenticated Azure OpenAI client created
+using `get_openai_client()`.
+* Existing inference samples that used the package function `enable_telemetry()` were updated to remove this call,
+and instead add the necessary tracing configuration calls to the sample.
 
 ## 1.0.0b12 (2025-06-23)
 
@@ -14,7 +45,7 @@
 `.inference.get_embeddings_client()` and `.inference.get_image_embeddings_client()`.
 For guidance on obtaining an authenticated `azure-ai-inference` client for your AI Foundry Project,
 refer to the updated samples in the `samples\inference` directory. For example,
-[sample_chat_completions_with_azure_ai_inference_client.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/inference/sample_chat_completions_with_azure_ai_inference_client.py). Alternatively, use the `.inference.get_azure_openai_client()` method to perform chat completions with an Azure OpenAI client.
+`sample_chat_completions_with_azure_ai_inference_client.py`. Alternatively, use the `.inference.get_azure_openai_client()` method to perform chat completions with an Azure OpenAI client.
 * Method argument name changes:
   * In method `.indexes.create_or_update()` argument `body` was renamed `index`.
   * In method `.datasets.create_or_update()` argument `body` was renamed `dataset_version`.

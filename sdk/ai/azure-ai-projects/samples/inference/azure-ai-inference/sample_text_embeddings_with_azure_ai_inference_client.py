@@ -6,7 +6,7 @@
 
 """
 DESCRIPTION:
-    Given an AI Foundry Project endpoint, this sample demonstrates how to get an authenticated 
+    Given an AI Foundry Project endpoint, this sample demonstrates how to get an authenticated
     EmbeddingsClient from the azure.ai.inference package, and perform one text embeddings
     operation. For more information on the azure.ai.inference package see
     https://pypi.org/project/azure-ai-inference/.
@@ -32,9 +32,9 @@ from azure.ai.inference import EmbeddingsClient
 endpoint = os.environ["PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 
-# Project endpoint has the form:   https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/<your-project-name>
-# Inference endpoint has the form: https://<your-ai-services-account-name>.services.ai.azure.com/models
-# Strip the "/api/projects/<your-project-name>" part and replace with "/models":
+# Project endpoint has the form:   https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name
+# Inference endpoint has the form: https://your-ai-services-account-name.services.ai.azure.com/models
+# Strip the "/api/projects/your-project-name" part and replace with "/models":
 inference_endpoint = f"https://{urlparse(endpoint).netloc}/models"
 
 with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
