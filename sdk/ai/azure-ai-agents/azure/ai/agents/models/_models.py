@@ -1181,18 +1181,18 @@ class DeepResearchBingGroundingConnection(_Model):
 class DeepResearchDetails(_Model):
     """The details of the Deep Research tool.
 
-    :ivar deep_research_model: The deep research model deployment name. Required.
-    :vartype deep_research_model: str
-    :ivar deep_research_bing_grounding_connections: The array containing Bing grounding connection
-     IDs to enhance deep research capabilities. Required.
-    :vartype deep_research_bing_grounding_connections:
+    :ivar model: The deep research model deployment name. Required.
+    :vartype model: str
+    :ivar bing_grounding_connections: The array containing Bing grounding connection IDs to enhance
+     deep research capabilities. Required.
+    :vartype bing_grounding_connections:
      list[~azure.ai.agents.models.DeepResearchBingGroundingConnection]
     """
 
-    deep_research_model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    model: str = rest_field(name="deep_research_model", visibility=["read", "create", "update", "delete", "query"])
     """The deep research model deployment name. Required."""
-    deep_research_bing_grounding_connections: List["_models.DeepResearchBingGroundingConnection"] = rest_field(
-        name="bing_grounding_connections", visibility=["read", "create", "update", "delete", "query"]
+    bing_grounding_connections: List["_models.DeepResearchBingGroundingConnection"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
     )
     """The array containing Bing grounding connection IDs to enhance deep research capabilities.
      Required."""
@@ -1201,8 +1201,8 @@ class DeepResearchDetails(_Model):
     def __init__(
         self,
         *,
-        deep_research_model: str,
-        deep_research_bing_grounding_connections: List["_models.DeepResearchBingGroundingConnection"],
+        model: str,
+        bing_grounding_connections: List["_models.DeepResearchBingGroundingConnection"],
     ) -> None: ...
 
     @overload

@@ -16,13 +16,13 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import SchemaRegistryClientConfiguration
-from ._operations import SchemaRegistryClientOperationsMixin
+from ._operations import _SchemaRegistryClientOperationsMixin
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class SchemaRegistryClient(SchemaRegistryClientOperationsMixin):
+class SchemaRegistryClient(_SchemaRegistryClientOperationsMixin):
     """SchemaRegistryClient is a client for registering and retrieving schemas from the Azure Schema
     Registry service.
 

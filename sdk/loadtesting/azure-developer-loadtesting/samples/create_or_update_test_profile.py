@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -59,9 +60,9 @@ result = client.create_or_update_test_profile(
                 "config2": {
                     "instanceMemoryMB": 4096,
                     "httpConcurrency": 100,
-                }
-            }
-        }
+                },
+            },
+        },
     },
 )
 
