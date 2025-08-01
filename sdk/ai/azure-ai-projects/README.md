@@ -386,6 +386,7 @@ dataset: DatasetVersion = project_client.datasets.upload_file(
     name=dataset_name,
     version=dataset_version,
     file_path=data_file,
+    connection_name=connection_name,
 )
 print(dataset)
 
@@ -429,12 +430,15 @@ print(evaluation_response)
 
 print("Get evaluation")
 get_evaluation_response: Evaluation = project_client.evaluations.get(evaluation_response.name)
-
 print(get_evaluation_response)
 
 print("List evaluations")
 for evaluation in project_client.evaluations.list():
     print(evaluation)
+
+print("Cleanup")
+project_client.datasets.delete(name=dataset_name, version=dataset_version)
+project_client.evaluations.delete(name=evaluation.name)
 ```
 
 <!-- END SNIPPET -->

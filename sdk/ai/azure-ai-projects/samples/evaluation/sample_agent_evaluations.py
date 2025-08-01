@@ -7,7 +7,7 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the synchronous
-    `.evaluations` methods to submit evaluation for an agent run.
+    `.evaluations` methods to submit evaluation for an Agent run.
 
 USAGE:
     python sample_agent_evaluations.py
@@ -19,6 +19,7 @@ USAGE:
     Set these environment variables with your own values:
     1) PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Azure AI Foundry project.
+    2) MODEL_DEPLOYMENT_NAME - Required. The name of the model deployment to use for evaluation.
 """
 
 import os, time
@@ -27,23 +28,17 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     AgentEvaluationRequest,
-    InputDataset,
     EvaluatorIds,
     EvaluatorConfiguration,
     AgentEvaluationSamplingConfiguration,
     AgentEvaluationRedactionConfiguration,
 )
-from dotenv import load_dotenv
-
-load_dotenv()
 
 endpoint = os.environ["PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 
+with DefaultAzureCredential() as credential:
 
-with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
-
-    # TODO : Remove api_version when the service is stable
     with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
 
         # [START evaluations_agent_sample]
@@ -90,10 +85,13 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
             app_insights_connection_string=project_client.telemetry.get_application_insights_connection_string(),
         )
 
+        print("Create an agent evaluation")
         agent_evaluation_response = project_client.evaluations.create_agent_evaluation(
             evaluation=agent_evaluation_request
         )
-
         print(agent_evaluation_response)
+
+        print("Cleanup")
+        project_client.agents.delete_agent(agent.id)
 
         # [END evaluations_agent_sample]
