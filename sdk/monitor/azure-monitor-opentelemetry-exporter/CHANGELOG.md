@@ -38,6 +38,9 @@
   ([#41971](https://github.com/Azure/azure-sdk-for-python/pull/41971))
 - Support AI Foundry by Handling GEN_AI_SYSTEM Attributes with [Spec](https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/blob/main/ApplicationInsights/genai_semconv_mapping.md) ([#41705](https://github.com/Azure/azure-sdk-for-python/pull/41705))
 - Distinguish Azure AI SDKs in statsbeats ([#42016](https://github.com/Azure/azure-sdk-for-python/pull/42016))
+- Customer Facing Statsbeat: Updated base to include the metrics for customer statsbeat
+  ([#42123](https://github.com/Azure/azure-sdk-for-python/pull/42123))
+
 
 ## 1.0.0b39 (2025-06-25)
 
