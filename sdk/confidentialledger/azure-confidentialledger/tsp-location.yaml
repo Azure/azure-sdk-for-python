@@ -1,6 +1,6 @@
 directory: specification/confidentialledger/Microsoft.ConfidentialLedger/Ledger
-commit: <replace with your value>
-repo: <replace with your value>
+commit: cccd9de9aa977d28bee3f8bfa028c8b34b3db78c
+repo: Azure/azure-rest-api-specs
 additionalDirectories: 
 - specification/confidentialledger/Microsoft.ConfidentialLedger/Certificate
 - specification/confidentialledger/Microsoft.ConfidentialLedger/Common
