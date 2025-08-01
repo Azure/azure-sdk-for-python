@@ -119,10 +119,6 @@ async def main() -> None:
             async for evaluation in project_client.evaluations.list():
                 print(evaluation)
 
-            print("Cleanup")
-            await project_client.datasets.delete(name=dataset_name, version=dataset_version)
-            await project_client.evaluations.delete(name=evaluation.name)
-
 
 if __name__ == "__main__":
     asyncio.run(main())

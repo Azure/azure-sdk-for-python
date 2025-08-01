@@ -117,8 +117,4 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
         for evaluation in project_client.evaluations.list():
             print(evaluation)
 
-        print("Cleanup")
-        project_client.datasets.delete(name=dataset_name, version=dataset_version)
-        project_client.evaluations.delete(name=evaluation.name)
-
         # [END evaluations_sample]

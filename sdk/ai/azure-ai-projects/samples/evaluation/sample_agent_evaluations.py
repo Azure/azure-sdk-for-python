@@ -91,7 +91,4 @@ with DefaultAzureCredential() as credential:
         )
         print(agent_evaluation_response)
 
-        print("Cleanup")
-        project_client.agents.delete_agent(agent.id)
-
         # [END evaluations_agent_sample]

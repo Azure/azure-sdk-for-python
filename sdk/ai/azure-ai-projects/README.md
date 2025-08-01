@@ -435,10 +435,6 @@ print(get_evaluation_response)
 print("List evaluations")
 for evaluation in project_client.evaluations.list():
     print(evaluation)
-
-print("Cleanup")
-project_client.datasets.delete(name=dataset_name, version=dataset_version)
-project_client.evaluations.delete(name=evaluation.name)
 ```
 
 <!-- END SNIPPET -->
