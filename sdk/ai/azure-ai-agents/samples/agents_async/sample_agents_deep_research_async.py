@@ -47,7 +47,7 @@ def convert_citations_to_superscript(markdown_content):
     """
     Convert citation markers in markdown content to HTML superscript format.
 
-    This function finds citation patterns like 【78:12†source】 and converts them to
+    This function finds citation patterns like [78:12+source] and converts them to
     HTML superscript tags <sup>12</sup> for better formatting in markdown documents.
     It also consolidates consecutive citations by sorting and deduplicating them.
 
@@ -57,8 +57,8 @@ def convert_citations_to_superscript(markdown_content):
     Returns:
         str: The markdown content with citations converted to HTML superscript format
     """
-    # Pattern to match 【number:number†source】
-    pattern = r"【\d+:(\d+)†source】"
+    # Pattern to match [number:number+source]
+    pattern = re.compile(r"\u3010\d+:(\d+)\u2020source\u3011")
 
     # Replace with <sup>captured_number</sup>
     def replacement(match):
@@ -66,12 +66,12 @@ def convert_citations_to_superscript(markdown_content):
         return f"<sup>{citation_number}</sup>"
 
     # First, convert all citation markers to superscript
-    converted_text = re.sub(pattern, replacement, markdown_content)
+    converted_text = pattern.sub(replacement, markdown_content)
 
     # Then, consolidate consecutive superscript citations
     # Pattern to match multiple superscript tags with optional commas/spaces
     # Matches: <sup>5</sup>,<sup>4</sup>,<sup>5</sup> or <sup>5</sup><sup>4</sup><sup>5</sup>
-    consecutive_pattern = r"(<sup>\d+</sup>)(\s*,?\s*<sup>\d+</sup>)+"
+    consecutive_pattern = r"(<sup>\d+</sup>)(\s*,?\s*<sup>\d+</sup>)\u3020"
 
     def consolidate_and_sort_citations(match):
         # Extract all citation numbers from the matched text
@@ -183,10 +183,10 @@ def create_research_summary(message: ThreadMessage, filepath: str = "research_re
                 title = ann.url_citation.title or url
 
                 if url not in seen_urls:
-                    # Extract citation number from annotation text like "【58:1†...】"
+                    # Extract citation number from annotation text like "[58:1+...]"
                     citation_number = None
                     if ann.text and ":" in ann.text:
-                        match = re.search(r"【\d+:(\d+)", ann.text)
+                        match = re.search(r"\u3010\d+:(\d+)", ann.text)
                         if match:
                             citation_number = int(match.group(1))
 
@@ -217,6 +217,7 @@ async def main() -> None:
         credential=DefaultAzureCredential(),
     )
 
+    # [START create_agent_with_deep_research_tool]
     bing_connection = await project_client.connections.get(name=os.environ["BING_RESOURCE_NAME"])
 
     # Initialize a Deep Research tool with Bing Connection ID and Deep Research model deployment name
@@ -225,6 +226,7 @@ async def main() -> None:
         deep_research_model=os.environ["DEEP_RESEARCH_MODEL_DEPLOYMENT_NAME"],
     )
 
+    # Create Agent with the Deep Research tool and process Agent run
     async with project_client:
 
         agents_client = project_client.agents
