@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.ai.language.conversations.authoring import AuthoringClient
+from azure.ai.language.conversations.authoring import ConversationAuthoringProjectClient
 
 """
 # PREREQUISITES
@@ -17,12 +17,12 @@ from azure.ai.language.conversations.authoring import AuthoringClient
 
 
 def main():
-    client = AuthoringClient(
+    client = ConversationAuthoringClient(
         endpoint="{Endpoint}",
         credential="CREDENTIAL",
     )
 
-    response = client.conversation_authoring_trained_model.get_load_snapshot_status(
+    response = client.trained_model.get_load_snapshot_status(
         project_name="EmailApp",
         trained_model_label="model1",
         job_id="8ccf2ffe-e758-4d04-a44a-31512918c7e8_637858368000000000",

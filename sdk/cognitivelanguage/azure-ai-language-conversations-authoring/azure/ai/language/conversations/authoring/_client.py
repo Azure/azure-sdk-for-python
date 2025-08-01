@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -16,41 +15,35 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
-from ._configuration import AuthoringClientConfiguration
+from ._configuration import ConversationAuthoringClientConfiguration, ConversationAuthoringProjectClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
-    ConversationAuthoringDeploymentOperations,
-    ConversationAuthoringExportedModelOperations,
-    ConversationAuthoringProjectOperations,
-    ConversationAuthoringTrainedModelOperations,
+    DeploymentOperationsOperations,
+    ExportedModelOperations,
+    ProjectOperationsOperations,
+    TrainedModelOperations,
 )
-from .operations._operations import _AuthoringClientOperationsMixin
+from .operations._operations import _ConversationAuthoringClientOperationsMixin
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class AuthoringClient(_AuthoringClientOperationsMixin):
-    """The language service API is a suite of natural language processing (NLP) skills built with
-    best-in-class Microsoft machine learning algorithms. The API can be used to analyze
-    unstructured text for tasks such as sentiment analysis, key phrase extraction, language
-    detection and question answering. Further documentation can be found in <a
-    href="https://learn.microsoft.com/en-us/azure/cognitive-services/language-service/overview">https://learn.microsoft.com/en-us/azure/cognitive-services/language-service/overview</a>.
+class ConversationAuthoringClient(_ConversationAuthoringClientOperationsMixin):
+    """ConversationAuthoringClient.
 
-    :ivar conversation_authoring_deployment: ConversationAuthoringDeploymentOperations operations
-    :vartype conversation_authoring_deployment:
-     azure.ai.language.conversations.authoring.operations.ConversationAuthoringDeploymentOperations
-    :ivar conversation_authoring_project: ConversationAuthoringProjectOperations operations
-    :vartype conversation_authoring_project:
-     azure.ai.language.conversations.authoring.operations.ConversationAuthoringProjectOperations
-    :ivar conversation_authoring_exported_model: ConversationAuthoringExportedModelOperations
-     operations
-    :vartype conversation_authoring_exported_model:
-     azure.ai.language.conversations.authoring.operations.ConversationAuthoringExportedModelOperations
-    :ivar conversation_authoring_trained_model: ConversationAuthoringTrainedModelOperations
-     operations
-    :vartype conversation_authoring_trained_model:
-     azure.ai.language.conversations.authoring.operations.ConversationAuthoringTrainedModelOperations
+    :ivar deployment_operations: DeploymentOperationsOperations operations
+    :vartype deployment_operations:
+     azure.ai.language.conversations.authoring.operations.DeploymentOperationsOperations
+    :ivar project_operations: ProjectOperationsOperations operations
+    :vartype project_operations:
+     azure.ai.language.conversations.authoring.operations.ProjectOperationsOperations
+    :ivar exported_model: ExportedModelOperations operations
+    :vartype exported_model:
+     azure.ai.language.conversations.authoring.operations.ExportedModelOperations
+    :ivar trained_model: TrainedModelOperations operations
+    :vartype trained_model:
+     azure.ai.language.conversations.authoring.operations.TrainedModelOperations
     :param endpoint: Supported Cognitive Services endpoint e.g.,
      https://<resource-name>.api.cognitiveservices.azure.com. Required.
     :type endpoint: str
@@ -68,7 +61,7 @@ class AuthoringClient(_AuthoringClientOperationsMixin):
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
         _endpoint = "{Endpoint}/language"
-        self._config = AuthoringClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._config = ConversationAuthoringClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:
@@ -92,18 +85,14 @@ class AuthoringClient(_AuthoringClientOperationsMixin):
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.conversation_authoring_deployment = ConversationAuthoringDeploymentOperations(
+        self.deployment_operations = DeploymentOperationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.conversation_authoring_project = ConversationAuthoringProjectOperations(
+        self.project_operations = ProjectOperationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.conversation_authoring_exported_model = ConversationAuthoringExportedModelOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.conversation_authoring_trained_model = ConversationAuthoringTrainedModelOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.exported_model = ExportedModelOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.trained_model = TrainedModelOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
@@ -125,7 +114,115 @@ class AuthoringClient(_AuthoringClientOperationsMixin):
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
+
+    def close(self) -> None:
+        self._client.close()
+
+    def __enter__(self) -> Self:
+        self._client.__enter__()
+        return self
+
+    def __exit__(self, *exc_details: Any) -> None:
+        self._client.__exit__(*exc_details)
+
+
+class ConversationAuthoringProjectClient:
+    """ConversationAuthoringProjectClient.
+
+    :ivar deployment_operations: DeploymentOperationsOperations operations
+    :vartype deployment_operations:
+     azure.ai.language.conversations.authoring.operations.DeploymentOperationsOperations
+    :ivar project_operations: ProjectOperationsOperations operations
+    :vartype project_operations:
+     azure.ai.language.conversations.authoring.operations.ProjectOperationsOperations
+    :ivar exported_model: ExportedModelOperations operations
+    :vartype exported_model:
+     azure.ai.language.conversations.authoring.operations.ExportedModelOperations
+    :ivar trained_model: TrainedModelOperations operations
+    :vartype trained_model:
+     azure.ai.language.conversations.authoring.operations.TrainedModelOperations
+    :param endpoint: Supported Cognitive Services endpoint e.g.,
+     https://<resource-name>.api.cognitiveservices.azure.com. Required.
+    :type endpoint: str
+    :param credential: Credential used to authenticate requests to the service. Is either a key
+     credential type or a token credential type. Required.
+    :type credential: ~azure.core.credentials.AzureKeyCredential or
+     ~azure.core.credentials.TokenCredential
+    :param project_name: Required.
+    :type project_name: str
+    :keyword api_version: The API version to use for this operation. Default value is
+     "2025-05-15-preview". Note that overriding this default value may result in unsupported
+     behavior.
+    :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
+    """
+
+    def __init__(
+        self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], project_name: str, **kwargs: Any
+    ) -> None:
+        _endpoint = "{Endpoint}/language"
+        self._config = ConversationAuthoringProjectClientConfiguration(
+            endpoint=endpoint, credential=credential, project_name=project_name, **kwargs
+        )
+
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client: PipelineClient = PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+
+        self._serialize = Serializer()
+        self._deserialize = Deserializer()
+        self._serialize.client_side_validation = False
+        self.deployment_operations = DeploymentOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.project_operations = ProjectOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.exported_model = ExportedModelOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.trained_model = TrainedModelOperations(self._client, self._config, self._serialize, self._deserialize)
+
+    def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
+        """Runs the network request through the client's chained policies.
+
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = client.send_request(request)
+        <HttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.HttpResponse
+        """
+
+        request_copy = deepcopy(request)
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.ai.language.conversations.authoring import AuthoringClient
+from azure.ai.language.conversations.authoring import ConversationAuthoringProjectClient
 
 """
 # PREREQUISITES
@@ -17,12 +17,12 @@ from azure.ai.language.conversations.authoring import AuthoringClient
 
 
 def main():
-    client = AuthoringClient(
+    client = ConversationAuthoringClient(
         endpoint="{Endpoint}",
         credential="CREDENTIAL",
     )
 
-    response = client.conversation_authoring_trained_model.begin_evaluate_model(
+    response = client.trained_model.begin_evaluate_model(
         project_name="EmailApp",
         trained_model_label="model1",
         body={"kind": "percentage", "testingSplitPercentage": 20, "trainingSplitPercentage": 80},

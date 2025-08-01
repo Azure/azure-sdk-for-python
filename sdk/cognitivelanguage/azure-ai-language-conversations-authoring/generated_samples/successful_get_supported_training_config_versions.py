@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.ai.language.conversations.authoring import AuthoringClient
+from azure.ai.language.conversations.authoring import ConversationAuthoringClient
 
 """
 # PREREQUISITES
@@ -18,7 +18,7 @@ from azure.ai.language.conversations.authoring import AuthoringClient
 
 
 def main():
-    client = AuthoringClient(
+    client = ConversationAuthoringClient(
         endpoint="{Endpoint}",
         credential="CREDENTIAL",
     )
