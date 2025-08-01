@@ -249,21 +249,13 @@ class AdversarialSimulator:
         tasks = []
         template_parameter_pairs = []
 
-        if scenario == AdversarialScenario.ADVERSARIAL_CONVERSATION:
-            # For ADVERSARIAL_CONVERSATION, flatten the parameters
-            for i, template in enumerate(templates):
-                if not template.template_parameters:
-                    continue
-                for parameter in template.template_parameters:
-                    template_parameter_pairs.append((template, parameter))
-        else:
-            # Use original logic for other scenarios - zip parameters
-            parameter_lists = [t.template_parameters for t in templates]
-            zipped_parameters = list(zip(*parameter_lists))
-
-            for param_group in zipped_parameters:
-                for template, parameter in zip(templates, param_group):
-                    template_parameter_pairs.append((template, parameter))
+        # Use consistent flattening logic for all scenarios to avoid duplicates and parameter loss
+        # Each template should be paired with each of its own parameters exactly once
+        for template in templates:
+            if not template.template_parameters:
+                continue
+            for parameter in template.template_parameters:
+                template_parameter_pairs.append((template, parameter))
 
         # Limit to max_simulation_results if needed
         if len(template_parameter_pairs) > max_simulation_results:
