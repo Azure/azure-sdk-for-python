@@ -127,17 +127,20 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     def __call__(
         self,
         *,
-        query: List[dict],
+        query: str,
         response: List[dict],
-    ) -> Dict[str, float]:
-        """Evaluate groundedness for lists of queries and responses
+        tool_definitions: List[dict],
+    ) -> Dict[str, Union[str, float]]:
+        """Evaluate groundedness for agent response with tool calls. Only file_search tool is supported.
 
-        :keyword query: List of query dictionaries to be evaluated.
-        :paramtype query: List[dict]
-        :keyword response: List of response dictionaries to be evaluated.
+        :keyword query: The query to be evaluated.
+        :paramtype query: str
+        :keyword response: The response from the agent to be evaluated.
         :paramtype response: List[dict]
+        :keyword tool_definitions: The tool definitions used by the agent.
+        :paramtype tool_definitions: List[dict]
         :return: The groundedness score.
-        :rtype: Dict[str, float]
+        :rtype: Dict[str, Union[str, float]]
         """
 
     @overload
@@ -205,7 +208,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         """
         # Convert inputs into list of evaluable inputs.
         try:
-            eval_input = self._convert_kwargs_to_eval_input(**kwargs)
+            return await super()._real_call(**kwargs)
         except EvaluationException as ex:
             if ex.category == ErrorCategory.NOT_APPLICABLE:
                 return {
@@ -214,8 +217,8 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                     f"{self._result_key}_threshold": self.threshold,
                     f"{self._result_key}_reason": f"Supported tools were not called. Supported tools for groundedness are {self._SUPPORTED_TOOLS}.",
                 }
-
-        return await super()._real_call(**kwargs)
+            else:
+                raise ex
 
     def _convert_kwargs_to_eval_input(self, **kwargs):
         if 'context' in kwargs or 'conversation' in kwargs:
@@ -224,6 +227,16 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         query = kwargs.get('query')
         response = kwargs.get('response')
         tool_definitions = kwargs.get('tool_definitions')
+
+        if not query or not response or not tool_definitions:
+            msg = f"{type(self).__name__}: Either 'conversation' or individual inputs must be provided. For Agent groundedness 'query', 'response' and 'tool_definitions' are required."
+            raise EvaluationException(
+                message=msg,
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
+            )
+
 
         context = self._get_context_from_agent_response(response, tool_definitions)
         if not context:
@@ -242,7 +255,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         try:
             logger.debug("Extracing context from response")
             tool_calls = self._parse_tools_from_response(response=response)
-            logger.debug("Tool Calls parsed successfully")
+            logger.debug(f"Tool Calls parsed successfully : {tool_calls}")
             if tool_calls:
                 for tool_call in tool_calls:
                     if isinstance(tool_call, dict) and tool_call.get("type") == "tool_call":
@@ -250,9 +263,15 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                         for tool in tool_definitions:
                             if tool.get("name") == tool_name and tool.get("type") in self._SUPPORTED_TOOLS:
                                 if tool_name == "file_search":
-                                    for result in tool_call.get('tool_result'):
-                                        for content in result.get("content"):
-                                            context += str(content.get("text"))
+                                    tool_result = tool_call.get('tool_result')
+                                    if tool_result:
+                                        for result in tool_result:
+                                            content_list = result.get("content")
+                                            if content_list:
+                                                for content in content_list:
+                                                    text = content.get("text")
+                                                    if text:
+                                                        context += str(text)
         except Exception as ex:
             logger.debug(f"Error extracting context from agent response : {str(ex)}")
             context = ""
