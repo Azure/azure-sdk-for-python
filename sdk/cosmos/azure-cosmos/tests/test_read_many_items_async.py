@@ -226,6 +226,64 @@ class TestReadManyItems(unittest.IsolatedAsyncioTestCase):
         finally:
             await self.database.delete_container(container_hpk)
 
+    async def test_read_many_items_preserves_input_order(self):
+        """Tests that read_many_items preserves the original order of input items."""
+        container_pk = await self.database.create_container(
+            id='read_many_order_container_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk")
+        )
+
+        try:
+            # Create items with varied partition keys to ensure cross-partition queries
+            all_items = []
+
+            # Create items with alternating partition keys to ensure they span partitions
+            for i in range(50):
+                doc_id = f"order_item_{i}_{uuid.uuid4()}"
+                # Use different partition keys to ensure items are spread across partitions
+                pk_value = f"pk_{i % 5}"
+
+                # Create the item in the container
+                await container_pk.create_item({'id': doc_id, 'pk': pk_value, 'order_value': i})
+                all_items.append((doc_id, pk_value))
+
+            # Create a complex order for the read operation
+            scrambled_items = []
+            scrambled_items.extend(all_items[25:])  # Second half first
+            scrambled_items.extend(all_items[:25])  # Then first half
+
+            # Add a few more out-of-order items
+            if len(all_items) >= 30:
+                # Move some items from the middle to the end
+                moved_items = scrambled_items[10:15]
+                scrambled_items = scrambled_items[:10] + scrambled_items[15:]
+                scrambled_items.extend(moved_items)
+
+            # Read items using read_many_items with scrambled order
+            read_items = await container_pk.read_many_items(items=scrambled_items)
+
+            # Verify that all items were returned
+            self.assertEqual(len(read_items), len(scrambled_items))
+
+            # Verify the order matches the scrambled input order
+            for i, item in enumerate(read_items):
+                expected_id = scrambled_items[i][0]
+                expected_pk = scrambled_items[i][1]
+                self.assertEqual(
+                    item['id'],
+                    expected_id,
+                    f"Item at position {i} does not match input order. Expected ID {expected_id}, got {item['id']}"
+                )
+                self.assertEqual(
+                    item['pk'],
+                    expected_pk,
+                    f"Item at position {i} does not match input order. Expected PK {expected_pk}, got {item['pk']}"
+                )
+
+        finally:
+            # Clean up
+            await self.database.delete_container(container_pk)
+
     async def test_read_many_failure_preserves_headers_async(self):
         """Tests that if a query fails, the exception contains the headers from the failed request."""
         # 1. Define headers and the error to inject
