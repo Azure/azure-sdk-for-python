@@ -115,10 +115,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
     def _create_execution_context_with_query_plan(self):
         self._fetched_query_plan = True
         query_to_use = self._query if self._query is not None else "Select * from root r"
-        query_execution_info = _PartitionedQueryExecutionInfo(self._client._GetQueryPlanThroughGateway
-        (query_to_use, self._resource_link, self._options.get('excludedLocations')))
-        self._execution_context = self._create_pipelined_execution_context(query_execution_info)
-        # self._create_execution_context(query_to_use)
+        self._create_execution_context(query_to_use)
 
     def __next__(self):
         """Returns the next query result.
@@ -166,12 +163,12 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
             # But this is slower because we fetch them, deserialize them, buffer all the pages of data, then reserialize the full list, only to be deserialized again in the native engine.
             # In theory, we could find a way to aggregate this data better and avoid the double-deserialization.
             pkranges = list(self._client._ReadPartitionKeyRanges(
-                collection_link=self._resource_link))
+                collection_link=self._resource_link, feed_options=self._options))
             self._execution_context = _QueryEngineExecutionContext(
                 self._client, self._query_engine, query_plan, pkranges, self._query, self._resource_link, self._options)
         else:
             query_plan = self._client._GetQueryPlanThroughGateway(
-                query, self._resource_link)
+                query, self._resource_link, self._options.get('excludedLocations'))
             query_execution_info = _PartitionedQueryExecutionInfo(
                 query_plan)
             self._execution_context = self._create_pipelined_execution_context(
