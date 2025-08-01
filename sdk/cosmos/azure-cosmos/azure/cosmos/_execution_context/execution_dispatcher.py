@@ -92,9 +92,9 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                  query: Optional[Union[str, Dict[str, Any]]],
                  options: Optional[Mapping[str, Any]] = {},
                  fetch_function: Callable[[Mapping[str, Any]], Tuple[List[Dict[str, Any]], CaseInsensitiveDict]] = None,
-                 response_hook,
-                 raw_response_hook,
-                 resource_typ,
+                 response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
+                 raw_response_hook = None,
+                 resource_type: str = None,
                  query_engine: Optional[QueryEngine] = None):
         """
         Constructor

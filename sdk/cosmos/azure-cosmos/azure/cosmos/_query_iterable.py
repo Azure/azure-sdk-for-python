@@ -52,9 +52,9 @@ class QueryIterable(PageIterator):
         partition_key: Optional['PartitionKeyType'] = None,
         continuation_token: Optional[str] = None,
         query_engine: Optional[QueryEngine] = None,
-        resource_type=None,
-        response_hook=None,
-        raw_response_hook=None,
+        resource_type: str = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
+        raw_response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
     ):
         """Instantiates a QueryIterable for non-client side partitioning queries.
 
@@ -66,7 +66,6 @@ class QueryIterable(PageIterator):
         :param dict options: The request options for the request.
         :param method fetch_function:
         :param str resource_type: The type of the resource being queried
-        :param str resource_link: If this is a Document query/feed collection_link is required.
 
         Example of `fetch_function`:
 
