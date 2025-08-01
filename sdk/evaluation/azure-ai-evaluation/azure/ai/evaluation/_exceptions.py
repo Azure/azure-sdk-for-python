@@ -48,6 +48,7 @@ class ErrorCategory(Enum):
     PROJECT_ACCESS_ERROR = "PROJECT ACCESS ERROR"
     UNKNOWN = "UNKNOWN"
     UPLOAD_ERROR = "UPLOAD ERROR"
+    NOT_APPLICABLE = "NOT APPLICABLE"
 
 
 class ErrorBlame(Enum):

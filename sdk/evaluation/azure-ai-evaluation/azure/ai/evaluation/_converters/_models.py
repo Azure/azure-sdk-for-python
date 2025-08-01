@@ -330,19 +330,11 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
             # Try to retrieve it, but if we don't find anything, skip adding the message
             # Just manually converting to dicts for easy serialization for now rather than custom serializers
             if tool_call.details.type == _CODE_INTERPRETER:
-                output = tool_call.details.code_interpreter.outputs
+                output = [result.as_dict() for result in tool_call.details.code_interpreter.outputs]
             elif tool_call.details.type == _BING_GROUNDING:
                 return messages  # not supported yet from bing grounding tool
             elif tool_call.details.type == _FILE_SEARCH:
-                output = [
-                    {
-                        "file_id": result.file_id,
-                        "file_name": result.file_name,
-                        "score": result.score,
-                        "content": result.content,
-                    }
-                    for result in tool_call.details.file_search.results
-                ]
+                output = [result.as_dict() for result in tool_call.details.file_search.results]
             elif tool_call.details.type == _AZURE_AI_SEARCH:
                 output = tool_call.details.azure_ai_search["output"]
             elif tool_call.details.type == _FABRIC_DATAAGENT:
