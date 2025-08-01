@@ -25,8 +25,8 @@ from .operations import (
     VectorStoreFileBatchesOperations,
     VectorStoreFilesOperations,
     VectorStoresOperations,
+    _AgentsClientOperationsMixin,
 )
-from .operations._operations import _AgentsClientOperationsMixin
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential

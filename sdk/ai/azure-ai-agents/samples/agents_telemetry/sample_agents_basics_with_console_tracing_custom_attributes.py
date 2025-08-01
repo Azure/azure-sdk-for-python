@@ -64,6 +64,8 @@ class CustomAttributeSpanProcessor(SpanProcessor):
     def on_end(self, span: ReadableSpan):
         # Clean-up logic can be added here if necessary
         pass
+
+
 # [END custom_attribute_span_processor]
 
 # Setup tracing to console

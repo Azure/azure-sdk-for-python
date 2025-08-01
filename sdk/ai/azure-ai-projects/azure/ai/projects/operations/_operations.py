@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -277,12 +277,9 @@ def build_datasets_get_request(name: str, version: str, **kwargs: Any) -> HttpRe
 
 
 def build_datasets_delete_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/datasets/{name}/versions/{version}"
     path_format_arguments = {
@@ -295,10 +292,7 @@ def build_datasets_delete_request(name: str, version: str, **kwargs: Any) -> Htt
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_datasets_create_or_update_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
@@ -451,12 +445,9 @@ def build_indexes_get_request(name: str, version: str, **kwargs: Any) -> HttpReq
 
 
 def build_indexes_delete_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/indexes/{name}/versions/{version}"
     path_format_arguments = {
@@ -469,10 +460,7 @@ def build_indexes_delete_request(name: str, version: str, **kwargs: Any) -> Http
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_indexes_create_or_update_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
@@ -889,6 +877,7 @@ class EvaluationsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "name", "client_request_id", "accept"]},
+        api_versions_list=["2025-05-15-preview"],
     )
     def get(self, name: str, **kwargs: Any) -> _models.Evaluation:
         """Get an evaluation run by name.
@@ -958,6 +947,7 @@ class EvaluationsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "accept"]},
+        api_versions_list=["2025-05-15-preview"],
     )
     def list(self, **kwargs: Any) -> ItemPaged["_models.Evaluation"]:
         """List evaluation runs.
@@ -1090,6 +1080,7 @@ class EvaluationsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "content_type", "accept"]},
+        api_versions_list=["2025-05-15-preview"],
     )
     def create(self, evaluation: Union[_models.Evaluation, JSON, IO[bytes]], **kwargs: Any) -> _models.Evaluation:
         """Creates an evaluation run.
@@ -1212,6 +1203,7 @@ class EvaluationsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "content_type", "accept"]},
+        api_versions_list=["2025-05-15-preview"],
     )
     def create_agent_evaluation(
         self, evaluation: Union[_models.AgentEvaluationRequest, JSON, IO[bytes]], **kwargs: Any
@@ -1576,7 +1568,7 @@ class DatasetsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204, 200]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -2617,6 +2609,7 @@ class RedTeamsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "name", "client_request_id", "accept"]},
+        api_versions_list=["2025-05-15-preview"],
     )
     def get(self, name: str, **kwargs: Any) -> _models.RedTeam:
         """Get a redteam by name.
@@ -2686,6 +2679,7 @@ class RedTeamsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "accept"]},
+        api_versions_list=["2025-05-15-preview"],
     )
     def list(self, **kwargs: Any) -> ItemPaged["_models.RedTeam"]:
         """List a redteam by name.
@@ -2816,6 +2810,7 @@ class RedTeamsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "content_type", "accept"]},
+        api_versions_list=["2025-05-15-preview"],
     )
     def create(self, red_team: Union[_models.RedTeam, JSON, IO[bytes]], **kwargs: Any) -> _models.RedTeam:
         """Creates a redteam run.

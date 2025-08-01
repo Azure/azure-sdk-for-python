@@ -14,9 +14,10 @@ from setuptools import setup, find_packages
 
 PACKAGE_NAME = "azure-healthinsights-radiologyinsights"
 PACKAGE_PPRINT_NAME = "Azure Health Insights - Radiology Insights"
+PACKAGE_NAMESPACE = "azure.healthinsights.radiologyinsights"
 
-# a-b-c => a/b/c
-package_folder_path = PACKAGE_NAME.replace("-", "/")
+# a.b.c => a/b/c
+package_folder_path = PACKAGE_NAMESPACE.replace(".", "/")
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, "_version.py"), "r") as fd:
@@ -46,6 +47,7 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
@@ -63,7 +65,7 @@ setup(
     },
     install_requires=[
         "isodate>=0.6.1",
-        "azure-core>=1.30.0",
+        "azure-core>=1.35.0",
         "typing-extensions>=4.6.0",
     ],
     python_requires=">=3.9",

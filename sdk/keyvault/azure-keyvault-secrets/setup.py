@@ -14,9 +14,10 @@ from setuptools import setup, find_packages
 
 PACKAGE_NAME = "azure-keyvault-secrets"
 PACKAGE_PPRINT_NAME = "Key Vault Secrets"
+PACKAGE_NAMESPACE = "azure.keyvault.secrets._generated"
 
-# a-b-c => a/b/c
-package_folder_path = PACKAGE_NAME.replace("-", "/")
+# a.b.c => a/b/c
+package_folder_path = PACKAGE_NAMESPACE.replace(".", "/")
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, "_version.py"), "r") as fd:
@@ -29,7 +30,6 @@ if not version:
 setup(
     name=PACKAGE_NAME,
     version=version,
-    include_package_data=True,
     description="Microsoft Corporation {} Client Library for Python".format(PACKAGE_PPRINT_NAME),
     long_description=open("README.md", "r").read(),
     long_description_content_type="text/markdown",
@@ -39,7 +39,7 @@ setup(
     url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk",
     keywords="azure, azure sdk",
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: ",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
@@ -53,16 +53,16 @@ setup(
     zip_safe=False,
     packages=find_packages(
         exclude=[
-            "samples",
             "tests",
-            # Exclude packages that will be covered by PEP420 or nspkg
-            "azure",
-            "azure.keyvault",
         ]
     ),
+    include_package_data=True,
+    package_data={
+        "azure.keyvault.secrets._generated": ["py.typed"],
+    },
     install_requires=[
         "isodate>=0.6.1",
-        "azure-core>=1.31.0",
+        "azure-core>=1.35.0",
         "typing-extensions>=4.6.0",
     ],
     python_requires=">=3.9",

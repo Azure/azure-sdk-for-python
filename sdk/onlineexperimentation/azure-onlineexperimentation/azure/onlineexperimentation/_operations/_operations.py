@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -167,8 +166,6 @@ def build_online_experimentation_delete_metric_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-31-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/experiment-metrics/{experimentMetricId}"
     path_format_arguments = {
@@ -185,7 +182,6 @@ def build_online_experimentation_delete_metric_request(  # pylint: disable=name-
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -223,7 +219,7 @@ def build_online_experimentation_list_metrics_request(  # pylint: disable=name-t
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class OnlineExperimentationClientOperationsMixin(  # pylint: disable=name-too-long
+class _OnlineExperimentationClientOperationsMixin(
     ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], OnlineExperimentationClientConfiguration]
 ):
 
