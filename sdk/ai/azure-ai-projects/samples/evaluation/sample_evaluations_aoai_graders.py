@@ -7,7 +7,7 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the synchronous
-    `.evaluations` methods to create, get, list and delete evaluations. It uses additional
+    `.evaluations` methods to create, get and list evaluations. It uses additional
     Azure OpenAI graders for evaluation.
 
 USAGE:

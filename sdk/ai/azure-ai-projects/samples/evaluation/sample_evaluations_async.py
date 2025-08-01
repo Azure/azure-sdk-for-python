@@ -7,7 +7,7 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the asynchronous
-    `.evaluations` methods to create, get, list and delete evaluations.
+    `.evaluations` methods to create, get and list evaluations.
 
 USAGE:
     python sample_evaluations_async.py
