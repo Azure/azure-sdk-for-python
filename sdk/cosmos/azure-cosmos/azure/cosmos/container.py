@@ -48,6 +48,7 @@ from ._cosmos_responses import CosmosDict, CosmosList
 from ._routing.routing_range import Range
 from ._session_token_helpers import get_latest_session_token
 from .offer import Offer, ThroughputProperties
+from ._cosmos_responses import CosmosDict
 from .partition_key import (
     NonePartitionKeyValue,
     PartitionKey,
@@ -166,7 +167,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         initial_headers: Optional[Dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDict:
         """Read the container properties.
 
         :param bool populate_partition_key_range_statistics: Enable returning partition key
@@ -1519,7 +1520,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         data = self.client_connection.ReplaceOffer(
             offer_link=throughput_properties[0]["_self"], offer=throughput_properties[0], **kwargs)
 
-        return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
+        return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data, headers=data)
 
     @distributed_trace
     def list_conflicts(
