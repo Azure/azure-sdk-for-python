@@ -11,7 +11,7 @@ When migrating to the operation design, expect these breaking changes:
 | Change                                                                              | Impact                                                    | Quick Fix                                                                         |
 | ----------------------------------------------------------------------------------- | --------------------------------------------------------- | --------------------------------------------------------------------------------- |
 | [Query/Header Parameters](#queryheader-parameters-requiring-keywords) | Query and header signatures changed from positional to keyword-only | Convert all positional parameters to keyword arguments |
-| [Conditional Operation](#conditional-operation-parameters-changed) | header signatures `if_match`/`if_none_match` is replaced by `etag`/`match_condition` | Replace `if_match="etag"` with `etag=<specific etag>, match_condition=MatchConditions.IfNotModified` |
+| [Conditional Operation](#conditional-operation-parameters-changed) | header signatures `if_match`/`if_none_match` is replaced by `etag`/`match_condition` | Replace `if_match=<specific etag>` with `etag=<specific etag>, match_condition=MatchConditions.IfNotModified`,<br>Replace `if_none_match=<specific etag>` with `etag=<specific etag>, match_condition=MatchConditions.IfModified` |
 
 ## Detailed Breaking Changes
 
@@ -28,7 +28,7 @@ When migrating to the operation design, expect these breaking changes:
 ```python
 from azure.mgmt.confluent import ConfluentManagementClient
 
-client = ConfluentManagementClient(credential, subscription_id)
+client = ConfluentManagementClient(...)
 
 # Pass query parameters positionally
 environments = client.organization_operations.list_environments(
@@ -44,7 +44,7 @@ environments = client.organization_operations.list_environments(
 ```python
 from azure.mgmt.confluent import ConfluentManagementClient
 
-client = ConfluentManagementClient(credential, subscription_id)
+client = ConfluentManagementClient(...)
 
 # ❌ Raises TypeError
 environments = client.organization_operations.list_environments(
@@ -80,9 +80,9 @@ environments = client.organization_operations.list_environments(
 ```python
 from azure.mgmt.containerservicefleet import ContainerServiceFleetManagementClient
 
-client = ContainerServiceFleetManagementClient(credential, subscription_id)
+client = ContainerServiceFleetManagementClient(...)
 
-# Update the resource only if the existing etag matches the value provided in this header
+# Update the resource only if the latest etag matches the value provided in this header
 fleet = client.fleets.begin_create_or_update(
     resource_group_name="rg",
     fleet_name="fleet1", 
@@ -97,7 +97,7 @@ fleet = client.fleets.begin_create_or_update(
 from azure.mgmt.containerservicefleet import ContainerServiceFleetManagementClient
 from azure.core import MatchConditions
 
-client = ContainerServiceFleetManagementClient(credential, subscription_id)
+client = ContainerServiceFleetManagementClient(...)
 
 # Use enum to describe match conditions
 fleet = client.fleets.begin_create_or_update(
@@ -108,13 +108,6 @@ fleet = client.fleets.begin_create_or_update(
     match_condition=MatchConditions.IfNotModified
 )
 ```
-
-**MatchConditions enum values:**
-- `MatchConditions.IfNotModified` - Perform the operation only if the targeted resource's etag matches the specified etag
-- `MatchConditions.IfModified` - Perform the operation only if the targeted resource's etag does not match the specified etag
-- `MatchConditions.IfPresent` - Perform the operation only if the resource exists
-- `MatchConditions.IfMissing` - Perform the operation only if the resource does not exist
-- `MatchConditions.Unconditionally` - Perform the operation regardless of any condition
 
 **Migration steps:**
 
