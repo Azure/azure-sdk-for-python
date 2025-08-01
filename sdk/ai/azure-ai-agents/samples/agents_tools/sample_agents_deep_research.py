@@ -35,7 +35,7 @@ USAGE:
 import os
 import time
 import re
-from typing import Optional
+from typing import Optional, Dict, List
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents import AgentsClient
@@ -176,9 +176,9 @@ def create_research_summary(message: ThreadMessage, filepath: str = "research_re
             fp.write("\n\n## Citations\n")
             seen_urls = set()
             # Dictionary mapping full citation content to ordinal number
-            citations_ordinals = {}
+            citations_ordinals: Dict[str, int] = {}
             # List of citation URLs indexed by ordinal (0-based)
-            text_citation_list = []
+            text_citation_list: List[str] = []
 
             for ann in message.url_citation_annotations:
                 url = ann.url_citation.url
