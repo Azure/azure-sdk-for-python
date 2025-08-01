@@ -93,7 +93,7 @@ def make_onesettings_request(url: str, query_dict: Optional[Dict[str, str]] = No
         logger.warning("Unexpected error while fetching configuration: %s", str(ex))
         return OneSettingsResponse()
 
-def _parse_onesettings_response(response) -> OneSettingsResponse:
+def _parse_onesettings_response(response: requests.Response) -> OneSettingsResponse:
     """Parse an HTTP response from OneSettings into a structured response object.
 
     This function processes the OneSettings API response and extracts:
@@ -108,6 +108,7 @@ def _parse_onesettings_response(response) -> OneSettingsResponse:
 
     :param response: HTTP response object from the requests library containing
         the OneSettings API response with headers, status code, and content.
+    :type response: requests.Response
 
     :return: Structured response object containing:
         - etag: ETag header value for conditional requests
