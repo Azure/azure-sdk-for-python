@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -174,9 +175,7 @@ def _verify_signature_over_root_node_hash(
 
     try:
         # Verify public key contained in the node certificate is equal to the node_id
-        public_key_bytes = node_cert.public_key().public_bytes(
-            Encoding.DER, PublicFormat.SubjectPublicKeyInfo
-        )
+        public_key_bytes = node_cert.public_key().public_bytes(Encoding.DER, PublicFormat.SubjectPublicKeyInfo)
 
         if node_id is not None:
             assert sha256(public_key_bytes).digest() == bytes.fromhex(node_id)
@@ -206,9 +205,7 @@ def _compute_leaf_node_hash(leaf_components: LeafComponents) -> bytes:
 
     try:
         # Digest commit evidence string
-        commit_evidence_digest = sha256(
-            leaf_components.commitEvidence.encode()
-        ).digest()
+        commit_evidence_digest = sha256(leaf_components.commitEvidence.encode()).digest()
 
         # Convert write set digest to bytes
         write_set_digest = bytes.fromhex(leaf_components.writeSetDigest)
@@ -221,9 +218,7 @@ def _compute_leaf_node_hash(leaf_components: LeafComponents) -> bytes:
         # 1. write_set_digest
         # 2. commit_evidence_digest
         # 3. claims_digest
-        return sha256(
-            write_set_digest + commit_evidence_digest + claims_digest
-        ).digest()
+        return sha256(write_set_digest + commit_evidence_digest + claims_digest).digest()
 
     except Exception as exception:
         raise ValueError(
@@ -274,14 +269,10 @@ def _compute_root_node_hash(leaf_hash: bytes, proof: List[ProofElement]) -> byte
         return current_node_hash
 
     except Exception as exception:
-        raise ValueError(
-            f"Encountered exception when computing root node hash from proof list {proof}."
-        ) from exception
+        raise ValueError(f"Encountered exception when computing root node hash from proof list {proof}.") from exception
 
 
-def _verify_certificate_endorsement(
-    endorsee: Certificate, endorser: Certificate
-) -> None:
+def _verify_certificate_endorsement(endorsee: Certificate, endorser: Certificate) -> None:
     """Verify that the endorser certificate has endorsed endorsee
     certificate using ECDSA.
 

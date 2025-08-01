@@ -41,8 +41,7 @@ async def main():
         ledger_endpoint = os.environ["CONFIDENTIALLEDGER_ENDPOINT"]
     except KeyError:
         LOG.error(
-            "Missing environment variable 'CONFIDENTIALLEDGER_ENDPOINT' - "
-            "please set it before running the example"
+            "Missing environment variable 'CONFIDENTIALLEDGER_ENDPOINT' - " "please set it before running the example"
         )
         sys.exit(1)
 
@@ -52,9 +51,7 @@ async def main():
 
     identity_service_client = ConfidentialLedgerCertificateClient()  # type: ignore[call-arg]
     async with identity_service_client:
-        ledger_certificate = await identity_service_client.get_ledger_identity(
-            ledger_id
-        )
+        ledger_certificate = await identity_service_client.get_ledger_identity(ledger_id)
 
     # The Confidential Ledger's TLS certificate must be written to a file to be used by the
     # ConfidentialLedgerClient. Here, we write it to a temporary file so that is is cleaned up
@@ -88,10 +85,7 @@ async def main():
                 )
                 consortium = ledger_client.list_consortium_members()
                 async for member in consortium:
-                    print(
-                        f'\tMember {member["id"]} has certificate (truncated) '
-                        f'{member["certificate"][:24]}...'
-                    )
+                    print(f'\tMember {member["id"]} has certificate (truncated) ' f'{member["certificate"][:24]}...')
 
                 print(
                     "The constitution is a collection of JavaScript code that defines actions "
@@ -100,8 +94,8 @@ async def main():
 
                 constitution = await ledger_client.get_constitution()
                 assert (
-                    constitution["digest"].lower() ==
-                    hashlib.sha256(constitution["script"].encode()).hexdigest().lower()
+                    constitution["digest"].lower()
+                    == hashlib.sha256(constitution["script"].encode()).hexdigest().lower()
                 )
                 print(f'\tConstitution (truncated): {constitution["script"][:24]}...')
                 print(f'\tConstitution digest: {constitution["digest"]}')
@@ -112,9 +106,7 @@ async def main():
                 )
                 ledger_enclaves = await ledger_client.get_enclave_quotes()
                 for node_id, quote in ledger_enclaves["enclaveQuotes"].items():
-                    print(
-                        f"\tMRENCLAVE for node {node_id}: {quote['mrenclave']}"
-                    )
+                    print(f"\tMRENCLAVE for node {node_id}: {quote['mrenclave']}")
 
 
 if __name__ == "__main__":
