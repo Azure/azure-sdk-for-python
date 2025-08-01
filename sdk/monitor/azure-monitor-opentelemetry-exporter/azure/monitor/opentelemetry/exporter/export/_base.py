@@ -43,6 +43,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _RETRYABLE_STATUS_CODES,
     _THROTTLE_STATUS_CODES,
 )
+from azure.monitor.opentelemetry.exporter._configuration import _ConfigurationManager
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage
 from azure.monitor.opentelemetry.exporter._utils import _get_auth_policy
@@ -85,6 +86,8 @@ class BaseExporter:
         :rtype: None
         """
         parsed_connection_string = ConnectionStringParser(kwargs.get("connection_string"))
+
+        self._configuration_manager = _ConfigurationManager()
 
         self._api_version = kwargs.get("api_version") or _SERVICE_API_LATEST
         if self._is_stats_exporter():
@@ -155,6 +158,7 @@ class BaseExporter:
             )
         # specifies whether current exporter is used for collection of instrumentation metrics
         self._instrumentation_collection = kwargs.get("instrumentation_collection", False)
+
         # statsbeat initialization
         if self._should_collect_stats():
             # Import here to avoid circular dependencies
