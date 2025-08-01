@@ -176,7 +176,7 @@ class TestSession(unittest.TestCase):
                 {},
                 None,
                 None,
-                None), "",)
+                None), "")
             self.assertEqual(e.status_code, StatusCodes.NOT_FOUND)
             self.assertEqual(e.sub_status, SubStatusCodes.READ_SESSION_NOTAVAILABLE)
         finally:
