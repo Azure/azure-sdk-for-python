@@ -86,7 +86,7 @@ from ._attack_objective_generator import (
 from ._utils._rai_service_target import AzureRAIServiceTarget
 from ._utils._rai_service_true_false_scorer import AzureRAIServiceTrueFalseScorer
 from ._utils._rai_service_eval_chat_target import RAIServiceEvalChatTarget
-from ._utils.metric_mapping import get_annotation_task_from_risk_category
+from ._utils.metric_mapping import get_annotation_task_from_risk_category, get_attack_objective_from_risk_category
 
 # PyRIT imports
 from pyrit.common import initialize_pyrit, DUCK_DB
@@ -275,7 +275,7 @@ class RedTeam:
         azure_ai_project: Union[dict, str],
         credential,
         *,
-        risk_categories: Optional[List[RiskCategory]] = None,
+        risk_categories: Optional[List[Union[RiskCategory, _InternalRiskCategory]]] = None,
         num_objectives: int = 10,
         application_scenario: Optional[str] = None,
         custom_attack_seed_prompts: Optional[str] = None,
@@ -351,6 +351,9 @@ class RedTeam:
 
         # keep track of data and eval result file names
         self.red_team_info = {}
+
+        # keep track of prompt content to context mapping for evaluation
+        self.prompt_to_context = {}
 
         initialize_pyrit(memory_db_type=DUCK_DB)
 
@@ -654,7 +657,7 @@ class RedTeam:
 
     async def _get_attack_objectives(
         self,
-        risk_category: Optional[RiskCategory] = None,  # Now accepting a single risk category
+        risk_category: Optional[Union[RiskCategory, _InternalRiskCategory]] = None,
         application_scenario: Optional[str] = None,
         strategy: Optional[str] = None,
     ) -> List[str]:
@@ -667,7 +670,7 @@ class RedTeam:
         across different strategies for the same risk category.
 
         :param risk_category: The specific risk category to get objectives for
-        :type risk_category: Optional[RiskCategory]
+        :type risk_category: Optional[Union[RiskCategory, _InternalRiskCategory]]
         :param application_scenario: Optional description of the application scenario for context
         :type application_scenario: Optional[str]
         :param strategy: Optional attack strategy to get specific objectives for
@@ -687,7 +690,7 @@ class RedTeam:
                 return []
 
         # Convert risk category to lowercase for consistent caching
-        risk_cat_value = risk_category.value.lower()
+        risk_cat_value = get_attack_objective_from_risk_category(risk_category).lower()
         num_objectives = attack_objective_generator.num_objectives
 
         log_subsection_header(
@@ -769,7 +772,11 @@ class RedTeam:
                 if "messages" in obj and len(obj["messages"]) > 0:
                     message = obj["messages"][0]
                     if isinstance(message, dict) and "content" in message:
-                        selected_prompts.append(message["content"])
+                        content = message["content"]
+                        context = message.get("context", "")
+                        selected_prompts.append(content)
+                        # Store mapping of content to context for later evaluation
+                        self.prompt_to_context[content] = context
 
             # Process the selected objectives for caching
             objectives_by_category = {risk_cat_value: []}
@@ -778,13 +785,16 @@ class RedTeam:
                 obj_id = obj.get("id", f"obj-{uuid.uuid4()}")
                 target_harms = obj.get("metadata", {}).get("target_harms", [])
                 content = ""
+                context = ""
                 if "messages" in obj and len(obj["messages"]) > 0:
-                    content = obj["messages"][0].get("content", "")
+                    message = obj["messages"][0]
+                    content = message.get("content", "")
+                    context = message.get("context", "")
 
                 if not content:
                     continue
 
-                obj_data = {"id": obj_id, "content": content}
+                obj_data = {"id": obj_id, "content": content, "context": context}
                 objectives_by_category[risk_cat_value].append(obj_data)
 
             # Store in cache
@@ -916,7 +926,11 @@ class RedTeam:
                 if "messages" in obj and len(obj["messages"]) > 0:
                     message = obj["messages"][0]
                     if isinstance(message, dict) and "content" in message:
-                        selected_prompts.append(message["content"])
+                        content = message["content"]
+                        context = message.get("context", "")
+                        selected_prompts.append(content)
+                        # Store mapping of content to context for later evaluation
+                        self.prompt_to_context[content] = context
 
             # Process the response - organize by category and extract content/IDs
             objectives_by_category = {risk_cat_value: []}
@@ -926,14 +940,17 @@ class RedTeam:
                 obj_id = obj.get("id", f"obj-{uuid.uuid4()}")
                 target_harms = obj.get("metadata", {}).get("target_harms", [])
                 content = ""
+                context = ""
                 if "messages" in obj and len(obj["messages"]) > 0:
-                    content = obj["messages"][0].get("content", "")
+                    message = obj["messages"][0]
+                    content = message.get("content", "")
+                    context = message.get("context", "")
 
                 if not content:
                     continue
                 if target_harms:
                     for harm in target_harms:
-                        obj_data = {"id": obj_id, "content": content}
+                        obj_data = {"id": obj_id, "content": content, "context": context}
                         objectives_by_category[risk_cat_value].append(obj_data)
                         break  # Just use the first harm for categorization
 
@@ -987,7 +1004,7 @@ class RedTeam:
         return formatted_thresholds
 
     # Replace with utility function
-    def _message_to_dict(self, message: ChatMessage):
+    def _message_to_dict(self, message: ChatMessage, context: str = None):
         """Convert a PyRIT ChatMessage object to a dictionary representation.
 
         Transforms a ChatMessage object into a standardized dictionary format that can be
@@ -996,12 +1013,14 @@ class RedTeam:
 
         :param message: The PyRIT ChatMessage to convert
         :type message: ChatMessage
+        :param context: Optional context to include in the dictionary
+        :type context: str
         :return: Dictionary representation of the message
         :rtype: dict
         """
         from ._utils.formatting_utils import message_to_dict
 
-        return message_to_dict(message)
+        return message_to_dict(message, context)
 
     # Replace with utility function
     def _get_strategy_name(self, attack_strategy: Union[AttackStrategy, List[AttackStrategy]]) -> str:
@@ -1066,7 +1085,7 @@ class RedTeam:
         *,
         strategy_name: str = "unknown",
         risk_category_name: str = "unknown",
-        risk_category: Optional[RiskCategory] = None,
+        risk_category: Optional[Union[RiskCategory, _InternalRiskCategory]] = None,
         timeout: int = 120,
     ) -> Orchestrator:
         """Send prompts via the PromptSendingOrchestrator with optimized performance.
@@ -1088,7 +1107,7 @@ class RedTeam:
         :param risk_category_name: Name of the risk category being evaluated
         :type risk_category_name: str
         :param risk_category: Risk category being evaluated
-        :type risk_category: str
+        :type risk_category: Union[RiskCategory, _InternalRiskCategory]
         :param timeout: Timeout in seconds for each prompt
         :type timeout: int
         :return: Configured and initialized orchestrator
@@ -1122,9 +1141,6 @@ class RedTeam:
                 self.logger.warning(f"No prompts provided to orchestrator for {strategy_name}/{risk_category_name}")
                 self.task_statuses[task_key] = TASK_STATUS["COMPLETED"]
                 return orchestrator
-
-            # Debug log the first few characters of each prompt
-            self.logger.debug(f"First prompt (truncated): {all_prompts[0][:50]}...")
 
             # Use a batched approach for send_prompts_async to prevent overwhelming
             # the model with too many concurrent requests
@@ -1346,7 +1362,7 @@ class RedTeam:
         *,
         strategy_name: str = "unknown",
         risk_category_name: str = "unknown",
-        risk_category: Optional[RiskCategory] = None,
+        risk_category: Optional[Union[RiskCategory, _InternalRiskCategory]] = None,
         timeout: int = 120,
     ) -> Orchestrator:
         """Send prompts via the RedTeamingOrchestrator, the simplest form of MultiTurnOrchestrator, with optimized performance.
@@ -1564,7 +1580,7 @@ class RedTeam:
         *,
         strategy_name: str = "unknown",
         risk_category_name: str = "unknown",
-        risk_category: Optional[RiskCategory] = None,
+        risk_category: Optional[Union[RiskCategory, _InternalRiskCategory]] = None,
         timeout: int = 120,
     ) -> Orchestrator:
         """Send prompts via the CrescendoOrchestrator with optimized performance.
@@ -1796,7 +1812,7 @@ class RedTeam:
         prompts_request_pieces = memory.get_prompt_request_pieces(labels=memory_label)
 
         conversations = [
-            [item.to_chat_message() for item in group]
+            [(item.to_chat_message(), self.prompt_to_context.get(item.original_value, "")) for item in group]
             for conv_id, group in itertools.groupby(prompts_request_pieces, key=lambda x: x.conversation_id)
         ]
         # Check if we should overwrite existing file with more conversations
@@ -1822,7 +1838,9 @@ class RedTeam:
                             json.dumps(
                                 {
                                     "conversation": {
-                                        "messages": [self._message_to_dict(message) for message in conversation]
+                                        "messages": [
+                                            self._message_to_dict(message[0], message[1]) for message in conversation
+                                        ]
                                     }
                                 }
                             )
@@ -1846,12 +1864,16 @@ class RedTeam:
             json_lines = ""
 
             for conversation in conversations:  # each conversation is a List[ChatMessage]
-                if conversation[0].role == "system":
+                if conversation[0][0].role == "system":
                     # Skip system messages in the output
                     continue
                 json_lines += (
                     json.dumps(
-                        {"conversation": {"messages": [self._message_to_dict(message) for message in conversation]}}
+                        {
+                            "conversation": {
+                                "messages": [self._message_to_dict(message[0], message[1]) for message in conversation]
+                            }
+                        }
                     )
                     + "\n"
                 )
@@ -1884,7 +1906,7 @@ class RedTeam:
         """
         from ._utils.strategy_utils import get_chat_target
 
-        return get_chat_target(target)
+        return get_chat_target(target, prompt_to_context=self.prompt_to_context)
 
     # Replace with utility function
     def _get_orchestrator_for_attack_strategy(
@@ -2594,7 +2616,7 @@ class RedTeam:
         conversation: Dict,
         metric_name: str,
         strategy_name: str,
-        risk_category: RiskCategory,
+        risk_category: Union[RiskCategory, _InternalRiskCategory],
         idx: int,
     ) -> None:
         """Evaluate a single conversation using the specified metric and risk category.
@@ -2610,7 +2632,7 @@ class RedTeam:
         :param strategy_name: Name of the attack strategy used in the conversation
         :type strategy_name: str
         :param risk_category: Risk category to evaluate against
-        :type risk_category: RiskCategory
+        :type risk_category: Union[RiskCategory, _InternalRiskCategory]
         :param idx: Index of the conversation for tracking purposes
         :type idx: int
         :return: None
@@ -2623,12 +2645,18 @@ class RedTeam:
         # Extract all assistant messages for evaluation
         assistant_messages = [msg["content"] for msg in messages if msg.get("role") == "assistant"]
 
+        context = [msg["context"] for msg in messages if msg.get("role") == "user"]
+
         if assistant_messages:
             # Create query-response pair with empty query and all assistant messages
             query_response = {
                 "query": "query",  # Empty query as required
                 "response": " ".join(assistant_messages),  # Join all assistant messages
             }
+
+            # Add context to query_response if found
+            if context[0] is not None:
+                query_response["context"] = context[0]
             try:
                 self.logger.debug(
                     f"Evaluating conversation {idx+1} for {risk_category.value}/{strategy_name}"
@@ -2733,7 +2761,7 @@ class RedTeam:
     async def _evaluate(
         self,
         data_path: Union[str, os.PathLike],
-        risk_category: RiskCategory,
+        risk_category: Union[RiskCategory, _InternalRiskCategory],
         strategy: Union[AttackStrategy, List[AttackStrategy]],
         scan_name: Optional[str] = None,
         output_path: Optional[Union[str, os.PathLike]] = None,
@@ -2749,7 +2777,7 @@ class RedTeam:
         :param data_path: Path to the input data containing red team conversations
         :type data_path: Union[str, os.PathLike]
         :param risk_category: Risk category to evaluate against
-        :type risk_category: RiskCategory
+        :type risk_category: Union[RiskCategory, _InternalRiskCategory]
         :param strategy: Attack strategy or strategies used to generate the data
         :type strategy: Union[AttackStrategy, List[AttackStrategy]]
         :param scan_name: Optional name for the evaluation
@@ -2855,7 +2883,7 @@ class RedTeam:
     async def _process_attack(
         self,
         strategy: Union[AttackStrategy, List[AttackStrategy]],
-        risk_category: RiskCategory,
+        risk_category: Union[RiskCategory, _InternalRiskCategory],
         all_prompts: List[str],
         progress_bar: tqdm,
         progress_bar_lock: asyncio.Lock,
@@ -2875,7 +2903,7 @@ class RedTeam:
         :param strategy: The attack strategy to use
         :type strategy: Union[AttackStrategy, List[AttackStrategy]]
         :param risk_category: The risk category to evaluate
-        :type risk_category: RiskCategory
+        :type risk_category: Union[RiskCategory, _InternalRiskCategory]
         :param all_prompts: List of prompts to use for the scan
         :type all_prompts: List[str]
         :param progress_bar: Progress bar to update
@@ -3131,8 +3159,6 @@ class RedTeam:
             self.logger.info(f"Starting RED TEAM SCAN: {scan_name}")
             self.logger.info(f"Output directory: {self.scan_output_dir}")
 
-            chat_target = self._get_chat_target(target)
-            self.chat_target = chat_target
             self.application_scenario = application_scenario or ""
 
             if not self.attack_objective_generator:
@@ -3253,6 +3279,16 @@ class RedTeam:
                 raise ValueError(
                     "MultiTurn and Crescendo strategies are not compatible with multiple attack strategies."
                 )
+            if AttackStrategy.Tense in flattened_attack_strategies and (
+                RiskCategory.XPIA in self.risk_categories or RiskCategory.UngroundedAttributes in self.risk_categories
+            ):
+                self.logger.warning(
+                    "Tense strategy is not compatible with XPIA or UngroundedAttributes risk categories. Skipping Tense strategy."
+                )
+                print(
+                    "⚠️ Warning: Tense strategy is not compatible with XPIA or UngroundedAttributes risk categories. Skipping Tense strategy."
+                )
+                raise ValueError("Tense strategy is not compatible with XPIA or UngroundedAttributes risk categories.")
 
             # Calculate total tasks: #risk_categories * #converters
             self.total_tasks = len(self.risk_categories) * len(flattened_attack_strategies)
@@ -3349,6 +3385,9 @@ class RedTeam:
                     all_objectives[strategy_name][risk_category.value] = objectives
 
             self.logger.info("Completed fetching all attack objectives")
+
+            chat_target = self._get_chat_target(target)
+            self.chat_target = chat_target
 
             log_section_header(self.logger, "Starting orchestrator processing")
 

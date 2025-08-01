@@ -20,6 +20,8 @@ class RiskCategory(str, Enum):
     SelfHarm = "self_harm"
     ProtectedMaterial = "protected_material"
     CodeVulnerability = "code_vulnerability"
+    UngroundedAttributes = "ungrounded_attributes"
+    XPIA = "xpia"
 
 
 @experimental
