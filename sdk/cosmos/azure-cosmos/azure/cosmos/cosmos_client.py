@@ -199,7 +199,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         response payloads on write operations for items.
     :keyword int throughput_bucket: The desired throughput bucket for the client
     :keyword str user_agent_suffix: Allows user agent suffix to be specified when creating client
-        response payloads on rite operations for items.
     :keyword query_engine.QueryEngine query_engine: An optional client query engine to use for executing queries.
 
     .. admonition:: Example:
