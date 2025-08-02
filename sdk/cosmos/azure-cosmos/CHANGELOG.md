@@ -4,6 +4,7 @@
 
 #### Features Added
 * Added feed range support in `query_items`. See [PR 41722](https://github.com/Azure/azure-sdk-for-python/pull/41722).
+* Added read_items API to provide an efficient method for retrieving multiple items in a single request. See [PR 42167](https://github.com/Azure/azure-sdk-for-python/pull/42167).
 
 #### Breaking Changes
 
@@ -11,6 +12,8 @@
 * Fixed session container session token logic. The SDK will now only send the relevant partition-local session tokens for read document requests and write requests when multi-region writes are enabled, as opposed to the entire compound session token for the container for every document request. See [PR 41678](https://github.com/Azure/azure-sdk-for-python/pull/41678).
 * Write requests for single-write region accounts will no longer send session tokens when using session consistency. See [PR 41678](https://github.com/Azure/azure-sdk-for-python/pull/41678).
 * Fixed bug where container cache was not being properly updated resulting in unnecessary extra requests. See [PR 42143](https://github.com/Azure/azure-sdk-for-python/pull/42143).
+* Fixed bug where the code was incorrectly comparing status_code to a sub-status constant. See [PR 42167](https://github.com/Azure/azure-sdk-for-python/pull/42167).
+* Fixed bug where exceptions were being swallowed in the synchronous flow. See [PR 42167](https://github.com/Azure/azure-sdk-for-python/pull/42167).
 
 #### Other Changes
 * Changed to include client id in headers for all requests. See [PR 42104](https://github.com/Azure/azure-sdk-for-python/pull/42104).
