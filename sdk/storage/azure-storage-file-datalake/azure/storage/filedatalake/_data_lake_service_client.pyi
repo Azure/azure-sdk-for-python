@@ -33,7 +33,7 @@ from ._models import (
     StaticWebsite,
     UserDelegationKey
 )
-from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper
+from ._shared.base_client import StorageAccountHostsMixin
 
 
 class DataLakeServiceClient(StorageAccountHostsMixin):
