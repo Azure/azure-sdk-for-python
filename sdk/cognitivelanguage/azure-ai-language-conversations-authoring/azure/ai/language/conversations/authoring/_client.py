@@ -32,18 +32,6 @@ if TYPE_CHECKING:
 class ConversationAuthoringClient(_ConversationAuthoringClientOperationsMixin):
     """ConversationAuthoringClient.
 
-    :ivar deployment_operations: DeploymentOperationsOperations operations
-    :vartype deployment_operations:
-     azure.ai.language.conversations.authoring.operations.DeploymentOperationsOperations
-    :ivar project_operations: ProjectOperationsOperations operations
-    :vartype project_operations:
-     azure.ai.language.conversations.authoring.operations.ProjectOperationsOperations
-    :ivar exported_model: ExportedModelOperations operations
-    :vartype exported_model:
-     azure.ai.language.conversations.authoring.operations.ExportedModelOperations
-    :ivar trained_model: TrainedModelOperations operations
-    :vartype trained_model:
-     azure.ai.language.conversations.authoring.operations.TrainedModelOperations
     :param endpoint: Supported Cognitive Services endpoint e.g.,
      https://<resource-name>.api.cognitiveservices.azure.com. Required.
     :type endpoint: str
@@ -85,14 +73,6 @@ class ConversationAuthoringClient(_ConversationAuthoringClientOperationsMixin):
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.deployment_operations = DeploymentOperationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.project_operations = ProjectOperationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.exported_model = ExportedModelOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.trained_model = TrainedModelOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

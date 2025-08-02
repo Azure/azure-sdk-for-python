@@ -22,7 +22,7 @@ def main():
         credential="CREDENTIAL",
     )
 
-    response = client.conversation_authoring_list_supported_prebuilt_entities()
+    response = client.list_supported_prebuilt_entities()
     for item in response:
         print(item)
 

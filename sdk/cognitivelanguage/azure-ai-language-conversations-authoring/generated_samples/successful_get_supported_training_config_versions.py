@@ -23,7 +23,7 @@ def main():
         credential="CREDENTIAL",
     )
 
-    response = client.conversation_authoring_list_training_config_versions(
+    response = client.list_training_config_versions(
         project_kind="Conversation",
     )
     for item in response:

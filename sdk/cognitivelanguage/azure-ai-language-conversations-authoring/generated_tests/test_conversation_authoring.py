@@ -14,29 +14,18 @@ from testpreparer import ConversationAuthoringClientTestBase, ConversationAuthor
 class TestConversationAuthoring(ConversationAuthoringClientTestBase):
     @ConversationAuthoringPreparer()
     @recorded_by_proxy
-    def test_conversation_authoring_list_deployments(self, conversationauthoring_endpoint):
+    def test_list_projects(self, conversationauthoring_endpoint):
         client = self.create_client(endpoint=conversationauthoring_endpoint)
-        response = client.conversation_authoring_list_deployments(
-            project_name="str",
-        )
+        response = client.list_projects()
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
     @ConversationAuthoringPreparer()
     @recorded_by_proxy
-    def test_conversation_authoring_list_projects(self, conversationauthoring_endpoint):
+    def test_list_supported_languages(self, conversationauthoring_endpoint):
         client = self.create_client(endpoint=conversationauthoring_endpoint)
-        response = client.conversation_authoring_list_projects()
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @ConversationAuthoringPreparer()
-    @recorded_by_proxy
-    def test_conversation_authoring_list_supported_languages(self, conversationauthoring_endpoint):
-        client = self.create_client(endpoint=conversationauthoring_endpoint)
-        response = client.conversation_authoring_list_supported_languages(
+        response = client.list_supported_languages(
             project_kind="str",
         )
         result = [r for r in response]
@@ -45,38 +34,27 @@ class TestConversationAuthoring(ConversationAuthoringClientTestBase):
 
     @ConversationAuthoringPreparer()
     @recorded_by_proxy
-    def test_conversation_authoring_list_assigned_resource_deployments(self, conversationauthoring_endpoint):
+    def test_list_assigned_resource_deployments(self, conversationauthoring_endpoint):
         client = self.create_client(endpoint=conversationauthoring_endpoint)
-        response = client.conversation_authoring_list_assigned_resource_deployments()
+        response = client.list_assigned_resource_deployments()
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
     @ConversationAuthoringPreparer()
     @recorded_by_proxy
-    def test_conversation_authoring_list_deployment_resources(self, conversationauthoring_endpoint):
+    def test_list_supported_prebuilt_entities(self, conversationauthoring_endpoint):
         client = self.create_client(endpoint=conversationauthoring_endpoint)
-        response = client.conversation_authoring_list_deployment_resources(
-            project_name="str",
-        )
+        response = client.list_supported_prebuilt_entities()
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
     @ConversationAuthoringPreparer()
     @recorded_by_proxy
-    def test_conversation_authoring_list_supported_prebuilt_entities(self, conversationauthoring_endpoint):
+    def test_list_training_config_versions(self, conversationauthoring_endpoint):
         client = self.create_client(endpoint=conversationauthoring_endpoint)
-        response = client.conversation_authoring_list_supported_prebuilt_entities()
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @ConversationAuthoringPreparer()
-    @recorded_by_proxy
-    def test_conversation_authoring_list_training_config_versions(self, conversationauthoring_endpoint):
-        client = self.create_client(endpoint=conversationauthoring_endpoint)
-        response = client.conversation_authoring_list_training_config_versions(
+        response = client.list_training_config_versions(
             project_kind="str",
         )
         result = [r for r in response]
@@ -85,33 +63,42 @@ class TestConversationAuthoring(ConversationAuthoringClientTestBase):
 
     @ConversationAuthoringPreparer()
     @recorded_by_proxy
-    def test_conversation_authoring_list_training_jobs(self, conversationauthoring_endpoint):
+    def test_create_project(self, conversationauthoring_endpoint):
         client = self.create_client(endpoint=conversationauthoring_endpoint)
-        response = client.conversation_authoring_list_training_jobs(
+        response = client.create_project(
             project_name="str",
+            body={
+                "language": "str",
+                "projectKind": "str",
+                "projectName": "str",
+                "description": "str",
+                "multilingual": bool,
+                "settings": {"confidenceThreshold": 0.0},
+                "storageInputContainerName": "str",
+            },
         )
-        result = [r for r in response]
+
         # please add some check logic here by yourself
         # ...
 
     @ConversationAuthoringPreparer()
     @recorded_by_proxy
-    def test_conversation_authoring_list_trained_models(self, conversationauthoring_endpoint):
+    def test_get_project(self, conversationauthoring_endpoint):
         client = self.create_client(endpoint=conversationauthoring_endpoint)
-        response = client.conversation_authoring_list_trained_models(
+        response = client.get_project(
             project_name="str",
         )
-        result = [r for r in response]
+
         # please add some check logic here by yourself
         # ...
 
     @ConversationAuthoringPreparer()
     @recorded_by_proxy
-    def test_conversation_authoring_list_exported_models(self, conversationauthoring_endpoint):
+    def test_begin_delete_project(self, conversationauthoring_endpoint):
         client = self.create_client(endpoint=conversationauthoring_endpoint)
-        response = client.conversation_authoring_list_exported_models(
+        response = client.begin_delete_project(
             project_name="str",
-        )
-        result = [r for r in response]
+        ).result()  # call '.result()' to poll until service return final result
+
         # please add some check logic here by yourself
         # ...

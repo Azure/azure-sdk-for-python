@@ -16,20 +16,12 @@ from ._operations import DeploymentOperationsOperations  # type: ignore
 from ._operations import ProjectOperationsOperations  # type: ignore
 from ._operations import ExportedModelOperations  # type: ignore
 from ._operations import TrainedModelOperations  # type: ignore
-from ._operations import DeploymentOperationsOperations  # type: ignore
-from ._operations import ProjectOperationsOperations  # type: ignore
-from ._operations import ExportedModelOperations  # type: ignore
-from ._operations import TrainedModelOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "DeploymentOperationsOperations",
-    "ProjectOperationsOperations",
-    "ExportedModelOperations",
-    "TrainedModelOperations",
     "DeploymentOperationsOperations",
     "ProjectOperationsOperations",
     "ExportedModelOperations",

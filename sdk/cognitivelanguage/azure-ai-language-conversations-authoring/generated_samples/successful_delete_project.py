@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.ai.language.conversations.authoring import ConversationAuthoringProjectClient
+from azure.ai.language.conversations.authoring import ConversationAuthoringClient
 
 """
 # PREREQUISITES
@@ -22,7 +22,7 @@ def main():
         credential="CREDENTIAL",
     )
 
-    client.project_operations.begin_delete_project(
+    client.begin_delete_project(
         project_name="myproject",
     ).result()
 

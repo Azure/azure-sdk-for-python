@@ -22,7 +22,7 @@ def main():
         credential="CREDENTIAL",
     )
 
-    response = client.conversation_authoring_list_assigned_resource_deployments()
+    response = client.list_assigned_resource_deployments()
     for item in response:
         print(item)
 

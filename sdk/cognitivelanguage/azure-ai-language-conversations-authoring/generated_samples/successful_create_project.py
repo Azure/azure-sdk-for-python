@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.ai.language.conversations.authoring import ConversationAuthoringProjectClient
+from azure.ai.language.conversations.authoring import ConversationAuthoringClient
 
 """
 # PREREQUISITES
@@ -22,7 +22,7 @@ def main():
         credential="CREDENTIAL",
     )
 
-    response = client.project_operations.create_project(
+    response = client.create_project(
         project_name="myproject",
         body={
             "description": "This is a sample conversation project.",

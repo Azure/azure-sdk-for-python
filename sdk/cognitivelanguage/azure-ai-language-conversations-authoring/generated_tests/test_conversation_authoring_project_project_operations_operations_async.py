@@ -16,6 +16,61 @@ from testpreparer_async import ConversationAuthoringProjectClientTestBaseAsync
 class TestConversationAuthoringProjectProjectOperationsOperationsAsync(ConversationAuthoringProjectClientTestBaseAsync):
     @ConversationAuthoringProjectPreparer()
     @recorded_by_proxy_async
+    async def test_project_operations_list_trained_models(self, conversationauthoringproject_endpoint):
+        client = self.create_async_client(endpoint=conversationauthoringproject_endpoint)
+        response = client.project_operations.list_trained_models(
+            project_name="str",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @ConversationAuthoringProjectPreparer()
+    @recorded_by_proxy_async
+    async def test_project_operations_list_training_jobs(self, conversationauthoringproject_endpoint):
+        client = self.create_async_client(endpoint=conversationauthoringproject_endpoint)
+        response = client.project_operations.list_training_jobs(
+            project_name="str",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @ConversationAuthoringProjectPreparer()
+    @recorded_by_proxy_async
+    async def test_project_operations_list_deployment_resources(self, conversationauthoringproject_endpoint):
+        client = self.create_async_client(endpoint=conversationauthoringproject_endpoint)
+        response = client.project_operations.list_deployment_resources(
+            project_name="str",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @ConversationAuthoringProjectPreparer()
+    @recorded_by_proxy_async
+    async def test_project_operations_list_deployments(self, conversationauthoringproject_endpoint):
+        client = self.create_async_client(endpoint=conversationauthoringproject_endpoint)
+        response = client.project_operations.list_deployments(
+            project_name="str",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @ConversationAuthoringProjectPreparer()
+    @recorded_by_proxy_async
+    async def test_project_operations_list_exported_models(self, conversationauthoringproject_endpoint):
+        client = self.create_async_client(endpoint=conversationauthoringproject_endpoint)
+        response = client.project_operations.list_exported_models(
+            project_name="str",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @ConversationAuthoringProjectPreparer()
+    @recorded_by_proxy_async
     async def test_project_operations_begin_assign_deployment_resources(self, conversationauthoringproject_endpoint):
         client = self.create_async_client(endpoint=conversationauthoringproject_endpoint)
         response = await (
@@ -103,39 +158,6 @@ class TestConversationAuthoringProjectProjectOperationsOperationsAsync(Conversat
         response = await client.project_operations.get_project(
             project_name="str",
         )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @ConversationAuthoringProjectPreparer()
-    @recorded_by_proxy_async
-    async def test_project_operations_create_project(self, conversationauthoringproject_endpoint):
-        client = self.create_async_client(endpoint=conversationauthoringproject_endpoint)
-        response = await client.project_operations.create_project(
-            project_name="str",
-            body={
-                "language": "str",
-                "projectKind": "str",
-                "projectName": "str",
-                "description": "str",
-                "multilingual": bool,
-                "settings": {"confidenceThreshold": 0.0},
-                "storageInputContainerName": "str",
-            },
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @ConversationAuthoringProjectPreparer()
-    @recorded_by_proxy_async
-    async def test_project_operations_begin_delete_project(self, conversationauthoringproject_endpoint):
-        client = self.create_async_client(endpoint=conversationauthoringproject_endpoint)
-        response = await (
-            await client.project_operations.begin_delete_project(
-                project_name="str",
-            )
-        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
