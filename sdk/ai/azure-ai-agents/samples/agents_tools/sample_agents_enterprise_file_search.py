@@ -25,8 +25,13 @@ USAGE:
 
 import os
 from azure.ai.projects import AIProjectClient
-from azure.ai.agents.models import FileSearchTool, ListSortOrder, VectorStoreDataSource, VectorStoreDataSourceAssetType, \
-    RunStatus
+from azure.ai.agents.models import (
+    FileSearchTool,
+    ListSortOrder,
+    VectorStoreDataSource,
+    VectorStoreDataSourceAssetType,
+    RunStatus,
+)
 from azure.identity import DefaultAzureCredential
 
 project_client = AIProjectClient(
