@@ -204,10 +204,9 @@ class ReadItemsHelperAsync:
                 request_kwargs = kwargs.copy()
 
                 # Create a local hook that just captures headers
-                def local_response_hook(hook_headers, *args, **kwargs_hook):
+                def local_response_hook(hook_headers, _):
                     # Only capture headers, don't call original hook here
                     captured_headers.update(hook_headers)
-                    return None
 
                 request_kwargs['response_hook'] = local_response_hook
 
