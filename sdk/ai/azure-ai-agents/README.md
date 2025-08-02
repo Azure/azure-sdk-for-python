@@ -394,11 +394,11 @@ Here is an example:
 <!-- SNIPPET:sample_agents_deep_research.create_agent_with_deep_research_tool -->
 
 ```python
-conn_id = project_client.connections.get(name=os.environ["BING_RESOURCE_NAME"]).id
+bing_connection = project_client.connections.get(name=os.environ["BING_RESOURCE_NAME"])
 
 # Initialize a Deep Research tool with Bing Connection ID and Deep Research model deployment name
 deep_research_tool = DeepResearchTool(
-    bing_grounding_connection_id=conn_id,
+    bing_grounding_connection_id=bing_connection.id,
     deep_research_model=os.environ["DEEP_RESEARCH_MODEL_DEPLOYMENT_NAME"],
 )
 
