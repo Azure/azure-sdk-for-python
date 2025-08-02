@@ -201,21 +201,15 @@ class ReadItemsHelperAsync:
         async def execute_chunk_query(partition_id, chunk_partition_items):
             async with semaphore:
                 captured_headers = {}
-                # Preserve customer's original response hook
-                original_hook = kwargs.get('response_hook')
                 request_kwargs = kwargs.copy()
 
-                # Create a combined hook that calls both our hook and the customer's hook
-                def combined_response_hook(hook_headers, *args, **kwargs_hook):
-                    # Capture headers for internal use
+                # Create a local hook that just captures headers
+                def local_response_hook(hook_headers, *args, **kwargs_hook):
+                    # Only capture headers, don't call original hook here
                     captured_headers.update(hook_headers)
-
-                    # Call the original hook if it exists
-                    if original_hook:
-                        return original_hook(hook_headers, *args, **kwargs_hook)
                     return None
 
-                request_kwargs['response_hook'] = combined_response_hook
+                request_kwargs['response_hook'] = local_response_hook
 
                 # Create a map of document IDs to original indices
                 id_to_idx = {item[1]: item[0] for item in chunk_partition_items}
@@ -280,6 +274,10 @@ class ReadItemsHelperAsync:
 
         final_headers = CaseInsensitiveDict()
         final_headers['x-ms-request-charge'] = str(total_request_charge)
+
+        # Call the original response hook with the final results if provided
+        if 'response_hook' in kwargs:
+            kwargs['response_hook'](final_headers, indexed_results)
 
         return indexed_results, final_headers
 

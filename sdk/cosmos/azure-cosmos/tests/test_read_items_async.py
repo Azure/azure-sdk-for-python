@@ -224,7 +224,7 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             await self.database.delete_container(container_hpk)
 
-    async def test_read_items_preserves_input_order(self):
+    async def test_read_items_preserves_input_order_async(self):
         """Tests that read_items preserves the original order of input items."""
         container_pk = await self.database.create_container(
             id='read_order_container_' + str(uuid.uuid4()),
@@ -280,6 +280,43 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
 
         finally:
             # Clean up
+            await self.database.delete_container(container_pk)
+
+    async def test_read_items_order_using_zip_comparison_async(self):
+        """Tests that read_items_async preserves the original order using zip and boolean comparison."""
+        container_pk = await self.database.create_container(
+            id='read_order_zip_async_container_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk")
+        )
+
+        try:
+            # Create items with varied partition keys
+            all_items = []
+            for i in range(30):
+                doc_id = f"zip_async_item_{i}_{uuid.uuid4()}"
+                pk_value = f"pk_{i % 5}"  # Distribute across 5 partition keys
+
+                # Create the item in the container
+                await container_pk.create_item({'id': doc_id, 'pk': pk_value, 'order_value': i})
+
+                # Add to our list
+                all_items.append((doc_id, pk_value))
+
+            # Read items asynchronously
+            read_items = await container_pk.read_items(items=all_items)
+
+            # Verify correct count
+            self.assertEqual(len(read_items), len(all_items))
+
+            # Use the zip method to verify order preservation
+            consolidated = zip(all_items, read_items)
+            matching = [x[0][0] == x[1]["id"] and x[0][1] == x[1]["pk"] for x in consolidated]
+
+            # Assert all items match in order
+            self.assertTrue(all(matching),
+                            "Order was not preserved in async version. Input order doesn't match output order.")
+
+        finally:
             await self.database.delete_container(container_pk)
 
     async def test_read_failure_preserves_headers_async(self):

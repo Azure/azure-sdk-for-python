@@ -434,6 +434,43 @@ class TestReadItems(unittest.TestCase):
             # Clean up
             self.database.delete_container(container_pk)
 
+    def test_read_items_order_using_zip_comparison(self):
+        """Tests that read_items preserves the original order using zip and boolean comparison."""
+        container_pk = self.database.create_container(
+            id='read_order_zip_container_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk")
+        )
+
+        try:
+            # Create items with varied partition keys
+            all_items = []
+            for i in range(30):
+                doc_id = f"zip_item_{i}_{uuid.uuid4()}"
+                pk_value = f"pk_{i % 5}"  # Distribute across 5 partition keys
+
+                # Create the item in the container
+                container_pk.create_item({'id': doc_id, 'pk': pk_value, 'order_value': i})
+
+                # Add to our list
+                all_items.append((doc_id, pk_value))
+
+            # Read items with the scrambled order
+            read_items = container_pk.read_items(items=all_items)
+
+            # Verify correct count
+            self.assertEqual(len(read_items), len(all_items))
+
+            # Use the zip method to verify order preservation
+            consolidated = zip(all_items, read_items)
+            matching = [x[0][0] == x[1]["id"] and x[0][1] == x[1]["pk"] for x in consolidated]
+
+            # Assert all items match in order
+            self.assertTrue(all(matching),
+                            "Order was not preserved. Input order doesn't match output order.")
+
+        finally:
+            self.database.delete_container(container_pk)
+
     def test_read_items_concurrency_internals(self):
         """Tests that read_items properly chunks large requests."""
         items_to_read = []

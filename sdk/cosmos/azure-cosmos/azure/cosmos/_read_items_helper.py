@@ -94,7 +94,6 @@ class ReadItemsHelperSync:
         """
         indexed_results = []
         total_request_charge = 0.0
-
         futures = []
         # Create a clear mapping of futures to chunks for better error handling
         future_to_chunk = {}
@@ -111,7 +110,7 @@ class ReadItemsHelperSync:
                 chunk_results, chunk_ru_charge = future.result()
                 indexed_results.extend(chunk_results)
                 total_request_charge += chunk_ru_charge
-        except Exception as e:
+        except (Exception, KeyboardInterrupt) as e:
             self.logger.error("Error in query execution: %s", str(e))
             # Cancel all pending futures
             for future in futures:
@@ -130,7 +129,13 @@ class ReadItemsHelperSync:
         final_headers = CaseInsensitiveDict()
         final_headers['x-ms-request-charge'] = str(total_request_charge)
 
-        return CosmosList(results, response_headers=final_headers)
+        cosmos_list = CosmosList(results, response_headers=final_headers)
+
+        # Call the original response hook with the final results if provided
+        if 'response_hook' in self.kwargs:
+            self.kwargs['response_hook'](final_headers, cosmos_list)
+
+        return cosmos_list
 
     def _partition_items_by_range(self) -> Dict[str, List[Tuple[int, str, "_PartitionKeyType"]]]:
         # pylint: disable=protected-access
@@ -180,20 +185,13 @@ class ReadItemsHelperSync:
         """
         captured_headers = {}
 
-        # Preserve customer's response hook if provided
-        original_hook = self.kwargs.get('response_hook')
-        request_kwargs = self.kwargs.copy()
-
-        # Create a combined hook that calls both our hook and the customer's hook
-        def combined_response_hook(hook_headers, *args, **kwargs):
-            # Capture headers for our use
+        # Create a local hook that just captures headers
+        def local_response_hook(hook_headers, _):
+            # Only capture headers, don't call original hook here
             captured_headers.update(hook_headers)
 
-            # Call the original hook if it exists
-            if original_hook:
-                original_hook(hook_headers, *args, **kwargs)
-
-        request_kwargs['response_hook'] = combined_response_hook
+        request_kwargs = self.kwargs.copy()
+        request_kwargs['response_hook'] = local_response_hook
 
         # Create a map of original indices to document IDs for lookup after query
         id_to_idx = {item[1]: item[0] for item in chunk_partition_items}
