@@ -285,6 +285,79 @@ def build_conversation_authoring_delete_project_request(  # pylint: disable=name
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_conversation_authoring_export_request(  # pylint: disable=name-too-long
+    project_name: str,
+    *,
+    string_index_type: Union[str, _models.StringIndexType],
+    exported_project_format: Optional[Union[str, _models.ConversationAuthoringExportedProjectFormat]] = None,
+    asset_kind: Optional[str] = None,
+    trained_model_label: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-conversations/projects/{projectName}/:export"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if exported_project_format is not None:
+        _params["format"] = _SERIALIZER.query("exported_project_format", exported_project_format, "str")
+    _params["stringIndexType"] = _SERIALIZER.query("string_index_type", string_index_type, "str")
+    if asset_kind is not None:
+        _params["assetKind"] = _SERIALIZER.query("asset_kind", asset_kind, "str")
+    if trained_model_label is not None:
+        _params["trainedModelLabel"] = _SERIALIZER.query("trained_model_label", trained_model_label, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_conversation_authoring_import_method_request(  # pylint: disable=name-too-long
+    project_name: str,
+    *,
+    exported_project_format: Optional[Union[str, _models.ConversationAuthoringExportedProjectFormat]] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-conversations/projects/{projectName}/:import"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if exported_project_format is not None:
+        _params["format"] = _SERIALIZER.query("exported_project_format", exported_project_format, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_deployment_operations_get_deployment_request(  # pylint: disable=name-too-long
     project_name: str, deployment_name: str, **kwargs: Any
 ) -> HttpRequest:
@@ -894,40 +967,6 @@ def build_project_operations_export_request(
         _params["trainedModelLabel"] = _SERIALIZER.query("trained_model_label", trained_model_label, "str")
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_project_operations_import_method_request(  # pylint: disable=name-too-long
-    project_name: str,
-    *,
-    exported_project_format: Optional[Union[str, _models.ConversationAuthoringExportedProjectFormat]] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-conversations/projects/{projectName}/:import"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if exported_project_format is not None:
-        _params["format"] = _SERIALIZER.query("exported_project_format", exported_project_format, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
@@ -2300,6 +2339,380 @@ class _ConversationAuthoringClientOperationsMixin(
         if cont_token is None:
             raw_result = self._delete_project_initial(
                 project_name=project_name, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    def _export_initial(
+        self,
+        project_name: str,
+        *,
+        string_index_type: Union[str, _models.StringIndexType],
+        exported_project_format: Optional[Union[str, _models.ConversationAuthoringExportedProjectFormat]] = None,
+        asset_kind: Optional[str] = None,
+        trained_model_label: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_conversation_authoring_export_request(
+            project_name=project_name,
+            string_index_type=string_index_type,
+            exported_project_format=exported_project_format,
+            asset_kind=asset_kind,
+            trained_model_label=trained_model_label,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def begin_export(
+        self,
+        project_name: str,
+        *,
+        string_index_type: Union[str, _models.StringIndexType],
+        exported_project_format: Optional[Union[str, _models.ConversationAuthoringExportedProjectFormat]] = None,
+        asset_kind: Optional[str] = None,
+        trained_model_label: Optional[str] = None,
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Triggers a job to export a project's data.
+
+        :param project_name: The name of the project to use. Required.
+        :type project_name: str
+        :keyword string_index_type: Specifies the method used to interpret string offsets. For
+         additional information see `https://aka.ms/text-analytics-offsets
+         <https://aka.ms/text-analytics-offsets>`_. Known values are: "Utf16CodeUnit", "Utf8CodeUnit",
+         and "Utf32CodeUnit". Required.
+        :paramtype string_index_type: str or
+         ~azure.ai.language.conversations.authoring.models.StringIndexType
+        :keyword exported_project_format: The format of the exported project file to use. Known values
+         are: "Conversation" and "Luis". Default value is None.
+        :paramtype exported_project_format: str or
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringExportedProjectFormat
+        :keyword asset_kind: Kind of asset to export. Default value is None.
+        :paramtype asset_kind: str
+        :keyword trained_model_label: Trained model label to export. If the trainedModelLabel is null,
+         the default behavior is to export the current working copy. Default value is None.
+        :paramtype trained_model_label: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._export_initial(
+                project_name=project_name,
+                string_index_type=string_index_type,
+                exported_project_format=exported_project_format,
+                asset_kind=asset_kind,
+                trained_model_label=trained_model_label,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    def _import_method_initial(
+        self,
+        project_name: str,
+        body: Union[_models.ConversationAuthoringExportedProject, JSON, IO[bytes]],
+        *,
+        exported_project_format: Optional[Union[str, _models.ConversationAuthoringExportedProjectFormat]] = None,
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_conversation_authoring_import_method_request(
+            project_name=project_name,
+            exported_project_format=exported_project_format,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_import_method(
+        self,
+        project_name: str,
+        body: _models.ConversationAuthoringExportedProject,
+        *,
+        exported_project_format: Optional[Union[str, _models.ConversationAuthoringExportedProjectFormat]] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Triggers a job to import a project. If a project with the same name already exists, the data of
+        that project is replaced.
+
+        :param project_name: The name of the project to use. Required.
+        :type project_name: str
+        :param body: The project data to import. Required.
+        :type body:
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringExportedProject
+        :keyword exported_project_format: The format of the exported project file to use. Known values
+         are: "Conversation" and "Luis". Default value is None.
+        :paramtype exported_project_format: str or
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringExportedProjectFormat
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_import_method(
+        self,
+        project_name: str,
+        body: JSON,
+        *,
+        exported_project_format: Optional[Union[str, _models.ConversationAuthoringExportedProjectFormat]] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Triggers a job to import a project. If a project with the same name already exists, the data of
+        that project is replaced.
+
+        :param project_name: The name of the project to use. Required.
+        :type project_name: str
+        :param body: The project data to import. Required.
+        :type body: JSON
+        :keyword exported_project_format: The format of the exported project file to use. Known values
+         are: "Conversation" and "Luis". Default value is None.
+        :paramtype exported_project_format: str or
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringExportedProjectFormat
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_import_method(
+        self,
+        project_name: str,
+        body: IO[bytes],
+        *,
+        exported_project_format: Optional[Union[str, _models.ConversationAuthoringExportedProjectFormat]] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Triggers a job to import a project. If a project with the same name already exists, the data of
+        that project is replaced.
+
+        :param project_name: The name of the project to use. Required.
+        :type project_name: str
+        :param body: The project data to import. Required.
+        :type body: IO[bytes]
+        :keyword exported_project_format: The format of the exported project file to use. Known values
+         are: "Conversation" and "Luis". Default value is None.
+        :paramtype exported_project_format: str or
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringExportedProjectFormat
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def begin_import_method(
+        self,
+        project_name: str,
+        body: Union[_models.ConversationAuthoringExportedProject, JSON, IO[bytes]],
+        *,
+        exported_project_format: Optional[Union[str, _models.ConversationAuthoringExportedProjectFormat]] = None,
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Triggers a job to import a project. If a project with the same name already exists, the data of
+        that project is replaced.
+
+        :param project_name: The name of the project to use. Required.
+        :type project_name: str
+        :param body: The project data to import. Is one of the following types:
+         ConversationAuthoringExportedProject, JSON, IO[bytes] Required.
+        :type body:
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringExportedProject or JSON
+         or IO[bytes]
+        :keyword exported_project_format: The format of the exported project file to use. Known values
+         are: "Conversation" and "Luis". Default value is None.
+        :paramtype exported_project_format: str or
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringExportedProjectFormat
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._import_method_initial(
+                project_name=project_name,
+                body=body,
+                exported_project_format=exported_project_format,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
             )
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -4693,236 +5106,6 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
                 exported_project_format=exported_project_format,
                 asset_kind=asset_kind,
                 trained_model_label=trained_model_label,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    def _import_method_initial(
-        self,
-        project_name: str,
-        body: Union[_models.ConversationAuthoringExportedProject, JSON, IO[bytes]],
-        *,
-        exported_project_format: Optional[Union[str, _models.ConversationAuthoringExportedProjectFormat]] = None,
-        **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_project_operations_import_method_request(
-            project_name=project_name,
-            exported_project_format=exported_project_format,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def begin_import_method(
-        self,
-        project_name: str,
-        body: _models.ConversationAuthoringExportedProject,
-        *,
-        exported_project_format: Optional[Union[str, _models.ConversationAuthoringExportedProjectFormat]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[None]:
-        """Triggers a job to import a project. If a project with the same name already exists, the data of
-        that project is replaced.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param body: The project data to import. Required.
-        :type body:
-         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringExportedProject
-        :keyword exported_project_format: The format of the exported project file to use. Known values
-         are: "Conversation" and "Luis". Default value is None.
-        :paramtype exported_project_format: str or
-         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringExportedProjectFormat
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_import_method(
-        self,
-        project_name: str,
-        body: JSON,
-        *,
-        exported_project_format: Optional[Union[str, _models.ConversationAuthoringExportedProjectFormat]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[None]:
-        """Triggers a job to import a project. If a project with the same name already exists, the data of
-        that project is replaced.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param body: The project data to import. Required.
-        :type body: JSON
-        :keyword exported_project_format: The format of the exported project file to use. Known values
-         are: "Conversation" and "Luis". Default value is None.
-        :paramtype exported_project_format: str or
-         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringExportedProjectFormat
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_import_method(
-        self,
-        project_name: str,
-        body: IO[bytes],
-        *,
-        exported_project_format: Optional[Union[str, _models.ConversationAuthoringExportedProjectFormat]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[None]:
-        """Triggers a job to import a project. If a project with the same name already exists, the data of
-        that project is replaced.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param body: The project data to import. Required.
-        :type body: IO[bytes]
-        :keyword exported_project_format: The format of the exported project file to use. Known values
-         are: "Conversation" and "Luis". Default value is None.
-        :paramtype exported_project_format: str or
-         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringExportedProjectFormat
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def begin_import_method(
-        self,
-        project_name: str,
-        body: Union[_models.ConversationAuthoringExportedProject, JSON, IO[bytes]],
-        *,
-        exported_project_format: Optional[Union[str, _models.ConversationAuthoringExportedProjectFormat]] = None,
-        **kwargs: Any
-    ) -> LROPoller[None]:
-        """Triggers a job to import a project. If a project with the same name already exists, the data of
-        that project is replaced.
-
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param body: The project data to import. Is one of the following types:
-         ConversationAuthoringExportedProject, JSON, IO[bytes] Required.
-        :type body:
-         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringExportedProject or JSON
-         or IO[bytes]
-        :keyword exported_project_format: The format of the exported project file to use. Known values
-         are: "Conversation" and "Luis". Default value is None.
-        :paramtype exported_project_format: str or
-         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringExportedProjectFormat
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._import_method_initial(
-                project_name=project_name,
-                body=body,
-                exported_project_format=exported_project_format,
-                content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,

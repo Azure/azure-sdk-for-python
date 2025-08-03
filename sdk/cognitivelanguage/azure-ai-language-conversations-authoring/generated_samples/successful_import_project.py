@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.ai.language.conversations.authoring import ConversationAuthoringProjectClient
+from azure.ai.language.conversations.authoring import ConversationAuthoringClient
 
 """
 # PREREQUISITES
@@ -22,7 +22,7 @@ def main():
         credential="CREDENTIAL",
     )
 
-    client.project_operations.begin_import_method(
+    client.begin_import_method(
         project_name="EmailApp",
         body={
             "assets": {

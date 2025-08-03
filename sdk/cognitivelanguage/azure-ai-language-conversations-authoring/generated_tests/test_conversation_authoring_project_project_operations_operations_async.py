@@ -189,33 +189,6 @@ class TestConversationAuthoringProjectProjectOperationsOperationsAsync(Conversat
 
     @ConversationAuthoringProjectPreparer()
     @recorded_by_proxy_async
-    async def test_project_operations_begin_import_method(self, conversationauthoringproject_endpoint):
-        client = self.create_async_client(endpoint=conversationauthoringproject_endpoint)
-        response = await (
-            await client.project_operations.begin_import_method(
-                project_name="str",
-                body={
-                    "metadata": {
-                        "language": "str",
-                        "projectKind": "str",
-                        "projectName": "str",
-                        "description": "str",
-                        "multilingual": bool,
-                        "settings": {"confidenceThreshold": 0.0},
-                        "storageInputContainerName": "str",
-                    },
-                    "projectFileVersion": "str",
-                    "stringIndexType": "str",
-                    "assets": "conversation_authoring_exported_project_asset",
-                },
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @ConversationAuthoringProjectPreparer()
-    @recorded_by_proxy_async
     async def test_project_operations_get_export_status(self, conversationauthoringproject_endpoint):
         client = self.create_async_client(endpoint=conversationauthoringproject_endpoint)
         response = await client.project_operations.get_export_status(

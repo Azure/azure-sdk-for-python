@@ -7,7 +7,7 @@ from azure.ai.language.conversations.authoring import ConversationAuthoringClien
 from azure.ai.language.conversations.authoring.models import (
     ConversationAuthoringCreateProjectDetails,
     ConversationAuthoringProjectMetadata,
-    ConversationAuthoringProjectKind
+    ConversationAuthoringProjectKind,
 )
 
 from azure.core.credentials import AzureKeyCredential
@@ -18,6 +18,7 @@ ConversationsPreparer = functools.partial(
     authoring_endpoint="fake_resource.servicebus.windows.net/",
     authoring_key="fake_key",
 )
+
 
 class TestConversations(AzureRecordedTestCase):
 
@@ -43,7 +44,7 @@ class TestConversationsCase(TestConversations):
             project_name=project_name,
             language="en-us",
             multilingual=True,
-            description="Project created for testing via Python SDK"
+            description="Project created for testing via Python SDK",
         )
 
         # Act

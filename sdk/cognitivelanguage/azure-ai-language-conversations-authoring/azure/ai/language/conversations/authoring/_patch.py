@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -16,6 +17,7 @@ from .operations import (
     ProjectOperationsOperations,
     TrainedModelOperations,
 )
+
 
 class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
     """Custom Project Client that auto-injects project_name into operation groups."""
