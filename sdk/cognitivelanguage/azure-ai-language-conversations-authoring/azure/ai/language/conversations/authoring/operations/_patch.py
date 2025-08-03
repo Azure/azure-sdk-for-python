@@ -14,7 +14,8 @@ from azure.core.tracing.decorator import distributed_trace
 from ._operations import (
     ProjectOperationsOperations as ProjectOperationsGenerated,
     DeploymentOperationsOperations as DeploymentOperationsGenerated,
-    ExportedModelOperations as ExportedModelOperationsGenerated
+    ExportedModelOperations as ExportedModelOperationsGenerated,
+    TrainedModelOperations as TrainedModelOperationsGenerated
 )
 
 from ..models import (
@@ -45,6 +46,14 @@ from ..models import (
     ConversationAuthoringExportedModelDetails,
     ConversationAuthoringExportedTrainedModel,
     ConversationAuthoringExportedModelState,
+    ConversationAuthoringEvaluationDetails,
+    ConversationAuthoringEvaluationJobResult,
+    ConversationAuthoringEvaluationState,
+    ConversationAuthoringLoadSnapshotState,
+    ConversationAuthoringProjectTrainedModel,
+    ConversationAuthoringEvalSummary,
+    AnalyzeConversationAuthoringUtteranceEvaluationResult,
+    StringIndexType
 )
 from azure.core.paging import ItemPaged
 from collections.abc import MutableMapping
@@ -472,6 +481,124 @@ class ExportedModelOperations(ExportedModelOperationsGenerated):
             job_id=job_id,
             **kwargs,
         )
+
+class TrainedModelOperations(TrainedModelOperationsGenerated):
+
+    def __init__(self, *args, project_name: str, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self._project_name = project_name
+
+    @distributed_trace
+    def begin_evaluate_model(  # type: ignore[override]
+        self,
+        trained_model_label: str,
+        body: Union[ConversationAuthoringEvaluationDetails, dict, IO[bytes]],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[ConversationAuthoringEvaluationJobResult]:
+        return super().begin_evaluate_model(
+            project_name=self._project_name,
+            trained_model_label=trained_model_label,
+            body=body,
+            content_type=content_type,
+            **kwargs,
+        )
+
+    @distributed_trace
+    def begin_load_snapshot(  # type: ignore[override]
+        self,
+        trained_model_label: str,
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        return super().begin_load_snapshot(
+            project_name=self._project_name,
+            trained_model_label=trained_model_label,
+            **kwargs,
+        )
+
+    @distributed_trace
+    def delete_trained_model(  # type: ignore[override]
+        self,
+        trained_model_label: str,
+        **kwargs: Any
+    ) -> None:
+        return super().delete_trained_model(
+            project_name=self._project_name,
+            trained_model_label=trained_model_label,
+            **kwargs,
+        )
+
+    @distributed_trace
+    def get_evaluation_status(  # type: ignore[override]
+        self,
+        trained_model_label: str,
+        job_id: str,
+        **kwargs: Any
+    ) -> ConversationAuthoringEvaluationState:
+        return super().get_evaluation_status(
+            project_name=self._project_name,
+            trained_model_label=trained_model_label,
+            job_id=job_id,
+            **kwargs,
+        )
+
+    @distributed_trace
+    def get_load_snapshot_status(  # type: ignore[override]
+        self,
+        trained_model_label: str,
+        job_id: str,
+        **kwargs: Any
+    ) -> ConversationAuthoringLoadSnapshotState:
+        return super().get_load_snapshot_status(
+            project_name=self._project_name,
+            trained_model_label=trained_model_label,
+            job_id=job_id,
+            **kwargs,
+        )
+
+    @distributed_trace
+    def get_model_evaluation_results(  # type: ignore[override]
+        self,
+        trained_model_label: str,
+        *,
+        skip: Optional[int] = None,
+        string_index_type: Union[str, StringIndexType],
+        top: Optional[int] = None,
+        **kwargs: Any
+    ) -> ItemPaged[AnalyzeConversationAuthoringUtteranceEvaluationResult]:
+        return super().get_model_evaluation_results(
+            project_name=self._project_name,
+            trained_model_label=trained_model_label,
+            skip=skip,
+            string_index_type=string_index_type,
+            top=top,
+            **kwargs,
+        )
+
+    @distributed_trace
+    def get_model_evaluation_summary(  # type: ignore[override]
+        self,
+        trained_model_label: str,
+        **kwargs: Any
+    ) -> ConversationAuthoringEvalSummary:
+        return super().get_model_evaluation_summary(
+            project_name=self._project_name,
+            trained_model_label=trained_model_label,
+            **kwargs,
+        )
+
+    @distributed_trace
+    def get_trained_model(  # type: ignore[override]
+        self,
+        trained_model_label: str,
+        **kwargs: Any
+    ) -> ConversationAuthoringProjectTrainedModel:
+        return super().get_trained_model(
+            project_name=self._project_name,
+            trained_model_label=trained_model_label,
+            **kwargs,
+        )
     
 def patch_sdk():
     """Do not remove from this file.
@@ -482,4 +609,4 @@ def patch_sdk():
     """
 
 
-__all__ = ["ProjectOperations", "DeploymentOperations", "ExportedModelOperations"]
+__all__ = ["ProjectOperations", "DeploymentOperations", "ExportedModelOperations", "TrainedModelOperations"]

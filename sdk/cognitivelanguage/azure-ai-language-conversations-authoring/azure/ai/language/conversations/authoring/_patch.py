@@ -14,7 +14,8 @@ from ._client import ConversationAuthoringProjectClient as AuthoringProjectClien
 from .operations._patch import (
     ProjectOperations,
     DeploymentOperations,
-    ExportedModelOperations
+    ExportedModelOperations,
+    TrainedModelOperations
 )
 
 
@@ -23,11 +24,11 @@ class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
     #: Deployment operations group
     deployment_operations: DeploymentOperations
     #: Exported model operations group
-    # exported_model: ExportedModelOperations
+    exported_model: ExportedModelOperations
     #: Project operations group
     project_operations: ProjectOperations
     #: Trained model operations group
-    # trained_model: TrainedModelOperations
+    trained_model: TrainedModelOperations
 
     def __init__(self, parent_client, project_name: str, **kwargs):
         super().__init__(
@@ -47,9 +48,9 @@ class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
         self.exported_model = ExportedModelOperations(
             self._client, self._config, self._serialize, self._deserialize, project_name=project_name
         )
-        # self.trained_model = TrainedModelOperations(
-        #     self._client, self._config, self._serialize, self._deserialize, project_name=project_name
-        # )
+        self.trained_model = TrainedModelOperations(
+            self._client, self._config, self._serialize, self._deserialize, project_name=project_name
+        )
 
 
 class ConversationAuthoringClient(AuthoringClientGenerated):
