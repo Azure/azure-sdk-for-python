@@ -24,7 +24,17 @@ from ..models import (
     ConversationAuthoringDeploymentResourcesState,
     ConversationAuthoringCopyProjectState,
     ConversationAuthoringExportProjectState,
+    ConversationAuthoringProjectMetadata,
+    ConversationAuthoringProjectDeletionState,
+    ConversationAuthoringSwapDeploymentsState,
+    ConversationAuthoringTrainingState,
+    ConversationAuthoringDeploymentResourcesState,
+    ConversationAuthoringAssignedDeploymentResource,
+    ConversationAuthoringProjectDeployment,
+    ConversationAuthoringExportedTrainedModel,
+    ConversationAuthoringProjectTrainedModel
 )
+from azure.core.paging import ItemPaged
 from collections.abc import MutableMapping
 
 JSON = MutableMapping[str, Any]
@@ -164,7 +174,140 @@ class ProjectOperations(ProjectOperationsGenerated):
     ) -> ConversationAuthoringExportProjectState:
         return super().get_export_status(project_name=self._project_name, job_id=job_id, **kwargs)
 
+    @distributed_trace
+    def get_project(  # type: ignore[override]
+        self,
+        project_name: str = _Unset,
+        **kwargs: Any
+    ) -> ConversationAuthoringProjectMetadata:
+        return super().get_project(
+            project_name=self._project_name,
+            **kwargs
+        )
 
+    @distributed_trace
+    def get_project_deletion_status(  # type: ignore[override]
+        self,
+        job_id: str,
+        **kwargs: Any
+    ) -> ConversationAuthoringProjectDeletionState:
+        return super().get_project_deletion_status(
+            project_name=self._project_name,
+            job_id=job_id,
+            **kwargs
+        )
+
+    @distributed_trace
+    def get_swap_deployments_status(  # type: ignore[override]
+        self,
+        job_id: str,
+        **kwargs: Any
+    ) -> ConversationAuthoringSwapDeploymentsState:
+        return super().get_swap_deployments_status(
+            project_name=self._project_name,
+            job_id=job_id,
+            **kwargs
+        )
+
+    @distributed_trace
+    def get_training_status(  # type: ignore[override]
+        self,
+        job_id: str,
+        **kwargs: Any
+    ) -> ConversationAuthoringTrainingState:
+        return super().get_training_status(
+            project_name=self._project_name,
+            job_id=job_id,
+            **kwargs
+        )
+
+    @distributed_trace
+    def get_unassign_deployment_resources_status(  # type: ignore[override]
+        self,
+        job_id: str,
+        **kwargs: Any
+    ) -> ConversationAuthoringDeploymentResourcesState:
+        return super().get_unassign_deployment_resources_status(
+            project_name=self._project_name,
+            job_id=job_id,
+            **kwargs
+        )
+
+    @distributed_trace
+    def list_deployment_resources(  # type: ignore[override]
+        self,
+        *,
+        skip: Optional[int] = _Unset,
+        top: Optional[int] = _Unset,
+        **kwargs: Any
+    ) -> ItemPaged[ConversationAuthoringAssignedDeploymentResource]:
+        return super().list_deployment_resources(
+            project_name=self._project_name,
+            skip=skip,
+            top=top,
+            **kwargs
+        )
+
+    @distributed_trace
+    def list_deployments(  # type: ignore[override]
+        self,
+        *,
+        skip: Optional[int] = _Unset,
+        top: Optional[int] = _Unset,
+        **kwargs: Any
+    ) -> ItemPaged[ConversationAuthoringProjectDeployment]:
+        return super().list_deployments(
+            project_name=self._project_name,
+            skip=skip,
+            top=top,
+            **kwargs
+        )
+
+    @distributed_trace
+    def list_exported_models(  # type: ignore[override]
+        self,
+        *,
+        skip: Optional[int] = _Unset,
+        top: Optional[int] = _Unset,
+        **kwargs: Any
+    ) -> ItemPaged[ConversationAuthoringExportedTrainedModel]:
+        return super().list_exported_models(
+            project_name=self._project_name,
+            skip=skip,
+            top=top,
+            **kwargs
+        )
+
+    @distributed_trace
+    def list_trained_models(  # type: ignore[override]
+        self,
+        *,
+        skip: Optional[int] = _Unset,
+        top: Optional[int] = _Unset,
+        **kwargs: Any
+    ) -> ItemPaged[ConversationAuthoringProjectTrainedModel]:
+        return super().list_trained_models(
+            project_name=self._project_name,
+            skip=skip,
+            top=top,
+            **kwargs
+        )
+
+    @distributed_trace
+    def list_training_jobs(  # type: ignore[override]
+        self,
+        *,
+        skip: Optional[int] = _Unset,
+        top: Optional[int] = _Unset,
+        **kwargs: Any
+    ) -> ItemPaged[ConversationAuthoringTrainingState]:
+        return super().list_training_jobs(
+            project_name=self._project_name,
+            skip=skip,
+            top=top,
+            **kwargs
+        )
+    
 def patch_sdk():
     """Do not remove from this file.
 
