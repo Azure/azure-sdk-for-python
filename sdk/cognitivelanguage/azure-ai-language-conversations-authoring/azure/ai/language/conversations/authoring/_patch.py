@@ -7,13 +7,27 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List
+from typing import List, cast
 from ._client import ConversationAuthoringClient as AuthoringClientGenerated
 from ._client import ConversationAuthoringProjectClient as AuthoringProjectClientGenerated
-
+from .operations import (
+    DeploymentOperationsOperations,
+    ExportedModelOperations,
+    ProjectOperationsOperations,
+    TrainedModelOperations,
+)
 
 class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
     """Custom Project Client that auto-injects project_name into operation groups."""
+
+    #: Deployment operations group
+    deployment_operations: DeploymentOperationsOperations
+    #: Exported model operations group
+    exported_model: ExportedModelOperations
+    #: Project operations group
+    project_operations: ProjectOperationsOperations
+    #: Trained model operations group
+    trained_model: TrainedModelOperations
 
     def __init__(self, parent_client: AuthoringClientGenerated, project_name: str, **kwargs):
         # Call the generated constructor with values from the parent
@@ -26,10 +40,10 @@ class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
         self._project_name = project_name
 
         # Re-wrap operation groups so they auto-inject project_name
-        self.deployment_operations = self._wrap_ops(super().deployment_operations)
-        self.project_operations = self._wrap_ops(super().project_operations)
-        self.exported_model = self._wrap_ops(super().exported_model)
-        self.trained_model = self._wrap_ops(super().trained_model)
+        self.deployment_operations = cast(DeploymentOperationsOperations, self._wrap_ops(super().deployment_operations))
+        self.project_operations = cast(ProjectOperationsOperations, self._wrap_ops(super().project_operations))
+        self.exported_model = cast(ExportedModelOperations, self._wrap_ops(super().exported_model))
+        self.trained_model = cast(TrainedModelOperations, self._wrap_ops(super().trained_model))
 
     def _wrap_ops(self, operations_group):
         """Wrap each callable in the operations group to inject project_name."""
