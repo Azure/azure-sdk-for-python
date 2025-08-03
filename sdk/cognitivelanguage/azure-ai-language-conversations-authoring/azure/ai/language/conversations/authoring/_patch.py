@@ -15,6 +15,16 @@ from .operations._patch import ProjectOperations
 
 
 class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
+
+    #: Deployment operations group
+    # deployment_operations: DeploymentOperationsOperations
+    #: Exported model operations group
+    # exported_model: ExportedModelOperations
+    #: Project operations group
+    project_operations: ProjectOperations
+    #: Trained model operations group
+    # trained_model: TrainedModelOperations
+
     def __init__(self, parent_client, project_name: str, **kwargs):
         super().__init__(
             endpoint=parent_client._config.endpoint,
@@ -27,6 +37,15 @@ class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
         self.project_operations = ProjectOperations(
             self._client, self._config, self._serialize, self._deserialize, project_name=project_name
         )
+        # self.deployment_operations = DeploymentOperationsOperations(
+        #     self._client, self._config, self._serialize, self._deserialize
+        # )
+        # self.exported_model = ExportedModelOperations(
+        #     self._client, self._config, self._serialize, self._deserialize
+        # )
+        # self.trained_model = TrainedModelOperations(
+        #     self._client, self._config, self._serialize, self._deserialize
+        # )
 
 
 class ConversationAuthoringClient(AuthoringClientGenerated):
