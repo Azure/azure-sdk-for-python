@@ -1,0 +1,42 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/EmailApp/:train?api-version=2025-05-15-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "200",
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-language-conversations-authoring/1.0.0b1 Python/3.13.5 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": {
+        "modelLabel": "Model0803",
+        "trainingMode": "standard",
+        "trainingConfigVersion": "2023-04-15",
+        "evaluationOptions": {
+          "kind": "percentage",
+          "testingSplitPercentage": 20,
+          "trainingSplitPercentage": 80
+        }
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "cd598fb0-74a3-4669-956b-f828b2b8cedb",
+        "Content-Length": "0",
+        "Date": "Sun, 03 Aug 2025 21:20:14 GMT",
+        "operation-location": "fake_resource.servicebus.windows.net/language/authoring/analyze-conversations/projects/EmailApp/train/jobs/84ca4c04-b4f6-40cf-a08a-eb605fa44446_638897760000000000?api-version=2025-05-15-preview",
+        "request-id": "cd598fb0-74a3-4669-956b-f828b2b8cedb",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "229",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}
