@@ -11,7 +11,11 @@ from typing import Any, Callable, Dict, IO, Iterator, List, Optional, TypeVar, U
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
-from ._operations import ProjectOperationsOperations as ProjectOperationsGenerated
+from ._operations import (
+    ProjectOperationsOperations as ProjectOperationsGenerated,
+    DeploymentOperationsOperations as DeploymentOperationsGenerated
+)
+
 from ..models import (
     ConversationAuthoringAssignDeploymentResourcesDetails,
     ConversationAuthoringTrainingJobResult,
@@ -32,7 +36,11 @@ from ..models import (
     ConversationAuthoringAssignedDeploymentResource,
     ConversationAuthoringProjectDeployment,
     ConversationAuthoringExportedTrainedModel,
-    ConversationAuthoringProjectTrainedModel
+    ConversationAuthoringProjectTrainedModel,
+    ConversationAuthoringDeleteDeploymentDetails,
+    ConversationAuthoringCreateDeploymentDetails,
+    ConversationAuthoringDeploymentDeleteFromResourcesState,
+    ConversationAuthoringDeploymentState
 )
 from azure.core.paging import ItemPaged
 from collections.abc import MutableMapping
@@ -308,6 +316,98 @@ class ProjectOperations(ProjectOperationsGenerated):
             **kwargs
         )
     
+class DeploymentOperations(DeploymentOperationsGenerated):
+    
+    def __init__(self, *args, project_name: str, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self._project_name = project_name
+
+    @distributed_trace
+    def begin_delete_deployment( # type: ignore[override]
+        self,
+        deployment_name: str,
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        return super().begin_delete_deployment(
+            project_name=self._project_name,
+            deployment_name=deployment_name,
+            **kwargs
+        )
+
+    @distributed_trace
+    def begin_delete_deployment_from_resources( # type: ignore[override]
+        self,
+        deployment_name: str,
+        body: Union[ConversationAuthoringDeleteDeploymentDetails, JSON, IO[bytes]],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        return super().begin_delete_deployment_from_resources(
+            project_name=self._project_name,
+            deployment_name=deployment_name,
+            body=body,
+            content_type=content_type,
+            **kwargs
+        )
+
+    @distributed_trace
+    def begin_deploy_project( # type: ignore[override]
+        self,
+        deployment_name: str,
+        body: Union[ConversationAuthoringCreateDeploymentDetails, JSON, IO[bytes]],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        return super().begin_deploy_project(
+            project_name=self._project_name,
+            deployment_name=deployment_name,
+            body=body,
+            content_type=content_type,
+            **kwargs
+        )
+
+    @distributed_trace
+    def get_deployment( # type: ignore[override]
+        self,
+        deployment_name: str,
+        **kwargs: Any
+    ) -> ConversationAuthoringProjectDeployment:
+        return super().get_deployment(
+            project_name=self._project_name,
+            deployment_name=deployment_name,
+            **kwargs
+        )
+
+    @distributed_trace
+    def get_deployment_delete_from_resources_status( # type: ignore[override]
+        self,
+        deployment_name: str,
+        job_id: str,
+        **kwargs: Any
+    ) -> ConversationAuthoringDeploymentDeleteFromResourcesState:
+        return super().get_deployment_delete_from_resources_status(
+            project_name=self._project_name,
+            deployment_name=deployment_name,
+            job_id=job_id,
+            **kwargs
+        )
+
+    @distributed_trace
+    def get_deployment_status( # type: ignore[override]
+        self,
+        deployment_name: str,
+        job_id: str,
+        **kwargs: Any
+    ) -> ConversationAuthoringDeploymentState:
+        return super().get_deployment_status(
+            project_name=self._project_name,
+            deployment_name=deployment_name,
+            job_id=job_id,
+            **kwargs
+        )
+    
 def patch_sdk():
     """Do not remove from this file.
 
@@ -317,4 +417,4 @@ def patch_sdk():
     """
 
 
-__all__ = ["ProjectOperations"]
+__all__ = ["ProjectOperations", "DeploymentOperations"]

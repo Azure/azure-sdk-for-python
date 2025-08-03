@@ -11,13 +11,16 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import List, cast
 from ._client import ConversationAuthoringClient as AuthoringClientGenerated
 from ._client import ConversationAuthoringProjectClient as AuthoringProjectClientGenerated
-from .operations._patch import ProjectOperations
+from .operations._patch import (
+    ProjectOperations,
+    DeploymentOperations
+)
 
 
 class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
 
     #: Deployment operations group
-    # deployment_operations: DeploymentOperationsOperations
+    deployment_operations: DeploymentOperations
     #: Exported model operations group
     # exported_model: ExportedModelOperations
     #: Project operations group
@@ -37,9 +40,9 @@ class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
         self.project_operations = ProjectOperations(
             self._client, self._config, self._serialize, self._deserialize, project_name=project_name
         )
-        # self.deployment_operations = DeploymentOperationsOperations(
-        #     self._client, self._config, self._serialize, self._deserialize
-        # )
+        self.deployment_operations = DeploymentOperations(
+            self._client, self._config, self._serialize, self._deserialize, project_name=project_name
+        )
         # self.exported_model = ExportedModelOperations(
         #     self._client, self._config, self._serialize, self._deserialize
         # )
