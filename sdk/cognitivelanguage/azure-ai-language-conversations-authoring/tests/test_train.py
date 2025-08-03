@@ -51,14 +51,12 @@ class TestConversationsCase(TestConversations):
                 kind=ConversationAuthoringEvaluationKind.PERCENTAGE,
                 testing_split_percentage=20,
                 training_split_percentage=80,
-            )
+            ),
         )
 
         # Start training
-        poller = project_client.project_operations.begin_train(
-            body=training_job_details
-        )
-        
+        poller = project_client.project_operations.begin_train(body=training_job_details)
+
         # Grab the initial response without waiting for the result
         initial_response = poller._polling_method._initial_response.http_response
         operation_location = initial_response.headers.get("operation-location", "Not found")

@@ -187,18 +187,6 @@ class TestConversationAuthoringProjectProjectOperationsOperations(ConversationAu
 
     @ConversationAuthoringProjectPreparer()
     @recorded_by_proxy
-    def test_project_operations_get_import_status(self, conversationauthoringproject_endpoint):
-        client = self.create_client(endpoint=conversationauthoringproject_endpoint)
-        response = client.project_operations.get_import_status(
-            project_name="str",
-            job_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @ConversationAuthoringProjectPreparer()
-    @recorded_by_proxy
     def test_project_operations_copy_project_authorization(self, conversationauthoringproject_endpoint):
         client = self.create_client(endpoint=conversationauthoringproject_endpoint)
         response = client.project_operations.copy_project_authorization(

@@ -13,6 +13,7 @@ from ._client import ConversationAuthoringClient as AuthoringClientGenerated
 from ._client import ConversationAuthoringProjectClient as AuthoringProjectClientGenerated
 from .operations._patch import ProjectOperations
 
+
 class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
     def __init__(self, parent_client, project_name: str, **kwargs):
         super().__init__(
@@ -24,8 +25,7 @@ class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
         self._project_name = project_name
 
         self.project_operations = ProjectOperations(
-            self._client, self._config, self._serialize, self._deserialize,
-            project_name=project_name
+            self._client, self._config, self._serialize, self._deserialize, project_name=project_name
         )
 
 

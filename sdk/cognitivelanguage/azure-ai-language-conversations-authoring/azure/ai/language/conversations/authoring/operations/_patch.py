@@ -23,11 +23,13 @@ from ..models import (
     ConversationAuthoringCopyProjectDetails,
     ConversationAuthoringDeploymentResourcesState,
     ConversationAuthoringCopyProjectState,
-    ConversationAuthoringExportProjectState
+    ConversationAuthoringExportProjectState,
 )
 from collections.abc import MutableMapping
+
 JSON = MutableMapping[str, Any]
 _Unset: Any = object()
+
 
 class ProjectOperations(ProjectOperationsGenerated):
     """Patched ProjectOperationsOperations that auto-injects project_name."""
@@ -37,7 +39,7 @@ class ProjectOperations(ProjectOperationsGenerated):
         self._project_name = project_name
 
     @distributed_trace
-    def begin_assign_deployment_resources( # type: ignore[override]
+    def begin_assign_deployment_resources(  # type: ignore[override]
         self,
         body: Union[ConversationAuthoringAssignDeploymentResourcesDetails, JSON, IO[bytes]],
         *,
@@ -46,27 +48,18 @@ class ProjectOperations(ProjectOperationsGenerated):
     ) -> LROPoller[None]:
         """Assign deployment resources without requiring project_name explicitly."""
         return super().begin_assign_deployment_resources(
-            project_name=self._project_name,
-            body=body,
-            content_type=content_type,
-            **kwargs
+            project_name=self._project_name, body=body, content_type=content_type, **kwargs
         )
 
     @distributed_trace
-    def begin_cancel_training_job( # type: ignore[override]
-        self,
-        job_id: str,
-        **kwargs: Any
+    def begin_cancel_training_job(  # type: ignore[override]
+        self, job_id: str, **kwargs: Any
     ) -> LROPoller[ConversationAuthoringTrainingJobResult]:
         """Cancel a training job without requiring project_name explicitly."""
-        return super().begin_cancel_training_job(
-            project_name=self._project_name,
-            job_id=job_id,
-            **kwargs
-        )
+        return super().begin_cancel_training_job(project_name=self._project_name, job_id=job_id, **kwargs)
 
     @distributed_trace
-    def begin_copy_project( # type: ignore[override]
+    def begin_copy_project(  # type: ignore[override]
         self,
         body: Union[ConversationAuthoringCopyProjectDetails, JSON, IO[bytes]],
         *,
@@ -75,12 +68,9 @@ class ProjectOperations(ProjectOperationsGenerated):
     ) -> LROPoller[None]:
         """Copy a project without requiring project_name explicitly."""
         return super().begin_copy_project(
-            project_name=self._project_name,
-            body=body,
-            content_type=content_type,
-            **kwargs
+            project_name=self._project_name, body=body, content_type=content_type, **kwargs
         )
-    
+
     @distributed_trace
     def begin_train(  # type: ignore[override]
         self,
@@ -90,13 +80,8 @@ class ProjectOperations(ProjectOperationsGenerated):
         **kwargs: Any
     ) -> LROPoller[ConversationAuthoringTrainingJobResult]:
         """Begin training without requiring project_name explicitly."""
-        return super().begin_train(
-            project_name=self._project_name,
-            body=body,
-            content_type=content_type,
-            **kwargs
-        )
-    
+        return super().begin_train(project_name=self._project_name, body=body, content_type=content_type, **kwargs)
+
     @distributed_trace
     def begin_export(  # type: ignore[override]
         self,
@@ -125,10 +110,7 @@ class ProjectOperations(ProjectOperationsGenerated):
         **kwargs: Any
     ) -> LROPoller[None]:
         return super().begin_swap_deployments(
-            project_name=self._project_name,
-            body=body,
-            content_type=content_type,
-            **kwargs
+            project_name=self._project_name, body=body, content_type=content_type, **kwargs
         )
 
     @distributed_trace
@@ -140,10 +122,7 @@ class ProjectOperations(ProjectOperationsGenerated):
         **kwargs: Any
     ) -> LROPoller[None]:
         return super().begin_unassign_deployment_resources(
-            project_name=self._project_name,
-            body=body,
-            content_type=content_type,
-            **kwargs
+            project_name=self._project_name, body=body, content_type=content_type, **kwargs
         )
 
     @distributed_trace
@@ -169,39 +148,22 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @distributed_trace
     def get_assign_deployment_resources_status(  # type: ignore[override]
-        self,
-        job_id: str,
-        **kwargs: Any
+        self, job_id: str, **kwargs: Any
     ) -> ConversationAuthoringDeploymentResourcesState:
-        return super().get_assign_deployment_resources_status(
-            project_name=self._project_name,
-            job_id=job_id,
-            **kwargs
-        )
+        return super().get_assign_deployment_resources_status(project_name=self._project_name, job_id=job_id, **kwargs)
 
     @distributed_trace
     def get_copy_project_status(  # type: ignore[override]
-        self,
-        job_id: str,
-        **kwargs: Any
+        self, job_id: str, **kwargs: Any
     ) -> ConversationAuthoringCopyProjectState:
-        return super().get_copy_project_status(
-            project_name=self._project_name,
-            job_id=job_id,
-            **kwargs
-        )
+        return super().get_copy_project_status(project_name=self._project_name, job_id=job_id, **kwargs)
 
     @distributed_trace
     def get_export_status(  # type: ignore[override]
-        self,
-        job_id: str,
-        **kwargs: Any
+        self, job_id: str, **kwargs: Any
     ) -> ConversationAuthoringExportProjectState:
-        return super().get_export_status(
-            project_name=self._project_name,
-            job_id=job_id,
-            **kwargs
-        )
+        return super().get_export_status(project_name=self._project_name, job_id=job_id, **kwargs)
+
 
 def patch_sdk():
     """Do not remove from this file.
@@ -210,5 +172,6 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+
 
 __all__ = ["ProjectOperations"]

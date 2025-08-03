@@ -139,3 +139,27 @@ class TestConversationAuthoring(ConversationAuthoringClientTestBase):
 
         # please add some check logic here by yourself
         # ...
+
+    @ConversationAuthoringPreparer()
+    @recorded_by_proxy
+    def test_get_export_status(self, conversationauthoring_endpoint):
+        client = self.create_client(endpoint=conversationauthoring_endpoint)
+        response = client.get_export_status(
+            project_name="str",
+            job_id="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @ConversationAuthoringPreparer()
+    @recorded_by_proxy
+    def test_get_import_status(self, conversationauthoring_endpoint):
+        client = self.create_client(endpoint=conversationauthoring_endpoint)
+        response = client.get_import_status(
+            project_name="str",
+            job_id="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...

@@ -358,6 +358,60 @@ def build_conversation_authoring_import_method_request(  # pylint: disable=name-
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_conversation_authoring_get_export_status_request(  # pylint: disable=name-too-long
+    project_name: str, job_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-conversations/projects/{projectName}/export/jobs/{jobId}"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_conversation_authoring_get_import_status_request(  # pylint: disable=name-too-long
+    project_name: str, job_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-conversations/projects/{projectName}/import/jobs/{jobId}"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_deployment_operations_get_deployment_request(  # pylint: disable=name-too-long
     project_name: str, deployment_name: str, **kwargs: Any
 ) -> HttpRequest:
@@ -983,33 +1037,6 @@ def build_project_operations_get_export_status_request(  # pylint: disable=name-
 
     # Construct URL
     _url = "/authoring/analyze-conversations/projects/{projectName}/export/jobs/{jobId}"
-    path_format_arguments = {
-        "projectName": _SERIALIZER.url("project_name", project_name, "str"),
-        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_project_operations_get_import_status_request(  # pylint: disable=name-too-long
-    project_name: str, job_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/authoring/analyze-conversations/projects/{projectName}/import/jobs/{jobId}"
     path_format_arguments = {
         "projectName": _SERIALIZER.url("project_name", project_name, "str"),
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
@@ -2741,6 +2768,140 @@ class _ConversationAuthoringClientOperationsMixin(
                 deserialization_callback=get_long_running_output,
             )
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    def get_export_status(
+        self, project_name: str, job_id: str, **kwargs: Any
+    ) -> _models.ConversationAuthoringExportProjectState:
+        """Gets the status of an export job. Once job completes, returns the project metadata, and assets.
+
+        :param project_name: The new project name. Required.
+        :type project_name: str
+        :param job_id: The job ID. Required.
+        :type job_id: str
+        :return: ConversationAuthoringExportProjectState. The ConversationAuthoringExportProjectState
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringExportProjectState
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ConversationAuthoringExportProjectState] = kwargs.pop("cls", None)
+
+        _request = build_conversation_authoring_get_export_status_request(
+            project_name=project_name,
+            job_id=job_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ConversationAuthoringExportProjectState, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def get_import_status(
+        self, project_name: str, job_id: str, **kwargs: Any
+    ) -> _models.ConversationAuthoringImportProjectState:
+        """Gets the status for an import.
+
+        :param project_name: The new project name. Required.
+        :type project_name: str
+        :param job_id: The job ID. Required.
+        :type job_id: str
+        :return: ConversationAuthoringImportProjectState. The ConversationAuthoringImportProjectState
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringImportProjectState
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ConversationAuthoringImportProjectState] = kwargs.pop("cls", None)
+
+        _request = build_conversation_authoring_get_import_status_request(
+            project_name=project_name,
+            job_id=job_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ConversationAuthoringImportProjectState, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
 
 class DeploymentOperationsOperations:
@@ -5200,73 +5361,6 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(_models.ConversationAuthoringExportProjectState, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def get_import_status(
-        self, project_name: str, job_id: str, **kwargs: Any
-    ) -> _models.ConversationAuthoringImportProjectState:
-        """Gets the status for an import.
-
-        :param project_name: The new project name. Required.
-        :type project_name: str
-        :param job_id: The job ID. Required.
-        :type job_id: str
-        :return: ConversationAuthoringImportProjectState. The ConversationAuthoringImportProjectState
-         is compatible with MutableMapping
-        :rtype:
-         ~azure.ai.language.conversations.authoring.models.ConversationAuthoringImportProjectState
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.ConversationAuthoringImportProjectState] = kwargs.pop("cls", None)
-
-        _request = build_project_operations_get_import_status_request(
-            project_name=project_name,
-            job_id=job_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.ConversationAuthoringImportProjectState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
