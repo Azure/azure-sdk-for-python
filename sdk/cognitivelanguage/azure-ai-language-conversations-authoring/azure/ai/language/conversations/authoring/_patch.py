@@ -13,7 +13,8 @@ from ._client import ConversationAuthoringClient as AuthoringClientGenerated
 from ._client import ConversationAuthoringProjectClient as AuthoringProjectClientGenerated
 from .operations._patch import (
     ProjectOperations,
-    DeploymentOperations
+    DeploymentOperations,
+    ExportedModelOperations
 )
 
 
@@ -43,11 +44,11 @@ class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
         self.deployment_operations = DeploymentOperations(
             self._client, self._config, self._serialize, self._deserialize, project_name=project_name
         )
-        # self.exported_model = ExportedModelOperations(
-        #     self._client, self._config, self._serialize, self._deserialize
-        # )
+        self.exported_model = ExportedModelOperations(
+            self._client, self._config, self._serialize, self._deserialize, project_name=project_name
+        )
         # self.trained_model = TrainedModelOperations(
-        #     self._client, self._config, self._serialize, self._deserialize
+        #     self._client, self._config, self._serialize, self._deserialize, project_name=project_name
         # )
 
 

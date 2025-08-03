@@ -179,7 +179,7 @@ class ConversationAuthoringProjectClient:
         self.project_operations = ProjectOperationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.exported_model = ExportedModelOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.exported_model = ExportedModelOperations(self._client, self._config, self._serialize, self._deserialize) # type: ignore
         self.trained_model = TrainedModelOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:

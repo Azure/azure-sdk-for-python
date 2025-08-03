@@ -13,7 +13,8 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._operations import (
     ProjectOperationsOperations as ProjectOperationsGenerated,
-    DeploymentOperationsOperations as DeploymentOperationsGenerated
+    DeploymentOperationsOperations as DeploymentOperationsGenerated,
+    ExportedModelOperations as ExportedModelOperationsGenerated
 )
 
 from ..models import (
@@ -40,7 +41,10 @@ from ..models import (
     ConversationAuthoringDeleteDeploymentDetails,
     ConversationAuthoringCreateDeploymentDetails,
     ConversationAuthoringDeploymentDeleteFromResourcesState,
-    ConversationAuthoringDeploymentState
+    ConversationAuthoringDeploymentState,
+    ConversationAuthoringExportedModelDetails,
+    ConversationAuthoringExportedTrainedModel,
+    ConversationAuthoringExportedModelState,
 )
 from azure.core.paging import ItemPaged
 from collections.abc import MutableMapping
@@ -408,6 +412,67 @@ class DeploymentOperations(DeploymentOperationsGenerated):
             **kwargs
         )
     
+class ExportedModelOperations(ExportedModelOperationsGenerated):
+
+    def __init__(self, *args, project_name: str, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self._project_name = project_name
+
+    @distributed_trace
+    def begin_create_or_update_exported_model(  # type: ignore[override]
+        self,
+        exported_model_name: str,
+        body: Union[ConversationAuthoringExportedModelDetails, JSON, IO[bytes]],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        return super().begin_create_or_update_exported_model(
+            project_name=self._project_name,
+            exported_model_name=exported_model_name,
+            body=body,
+            content_type=content_type,
+            **kwargs,
+        )
+
+    @distributed_trace
+    def begin_delete_exported_model(  # type: ignore[override]
+        self,
+        exported_model_name: str,
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        return super().begin_delete_exported_model(
+            project_name=self._project_name,
+            exported_model_name=exported_model_name,
+            **kwargs,
+        )
+
+    @distributed_trace
+    def get_exported_model(  # type: ignore[override]
+        self,
+        exported_model_name: str,
+        **kwargs: Any
+    ) -> ConversationAuthoringExportedTrainedModel:
+        return super().get_exported_model(
+            project_name=self._project_name,
+            exported_model_name=exported_model_name,
+            **kwargs,
+        )
+
+    @distributed_trace
+    def get_exported_model_job_status(  # type: ignore[override]
+        self,
+        exported_model_name: str,
+        job_id: str,
+        **kwargs: Any
+    ) -> ConversationAuthoringExportedModelState:
+        return super().get_exported_model_job_status(
+            project_name=self._project_name,
+            exported_model_name=exported_model_name,
+            job_id=job_id,
+            **kwargs,
+        )
+    
 def patch_sdk():
     """Do not remove from this file.
 
@@ -417,4 +482,4 @@ def patch_sdk():
     """
 
 
-__all__ = ["ProjectOperations", "DeploymentOperations"]
+__all__ = ["ProjectOperations", "DeploymentOperations", "ExportedModelOperations"]
