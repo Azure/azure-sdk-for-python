@@ -32,7 +32,8 @@
 
 ### Breaking Changes
 
-  - For the use of parameters `etag`/`match_condition`, please refer to https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/operation_migration.md
+  - This version introduces new hybrid models which have dual dictionary and model nature. And please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for mgration.
   - Model `FleetMemberUpdate` deleted or renamed its instance variable `group`
   - Method `AutoUpgradeProfilesOperations.begin_create_or_update` renamed positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
   - Method `AutoUpgradeProfilesOperations.begin_delete` renamed positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
