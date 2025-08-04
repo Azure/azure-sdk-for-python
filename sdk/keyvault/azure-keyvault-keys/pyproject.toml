@@ -32,7 +32,7 @@ keywords = ["azure", "azure sdk"]
 
 dependencies = [
     "isodate>=0.6.1",
-    "azure-core>=1.31.0",
+    "azure-core>=1.35.0",
     "typing-extensions>=4.6.0",
     "cryptography>=2.1.4",
 ]
@@ -50,9 +50,9 @@ readme = {file = ["README.md"], content-type = "text/markdown"}
 [tool.setuptools.packages.find]
 exclude = [
     "tests*",
+    "samples*",
     "azure",
     "azure.keyvault",
-    "azure.keyvault.keys",
 ]
 
 [tool.setuptools.package-data]

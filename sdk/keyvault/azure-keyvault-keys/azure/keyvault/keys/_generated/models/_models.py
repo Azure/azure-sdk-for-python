@@ -32,16 +32,16 @@ class DeletedKeyBundle(_Model):
     """A DeletedKeyBundle consisting of a WebKey plus its Attributes and deletion info.
 
     :ivar key: The Json web key.
-    :vartype key: ~azure.keyvault.keys._generated.models.JsonWebKey
+    :vartype key: ~azure.keyvault.keys.models.JsonWebKey
     :ivar attributes: The key management attributes.
-    :vartype attributes: ~azure.keyvault.keys._generated.models.KeyAttributes
+    :vartype attributes: ~azure.keyvault.keys.models.KeyAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar managed: True if the key's lifetime is managed by key vault. If this is a key backing a
      certificate, then managed will be true.
     :vartype managed: bool
     :ivar release_policy: The policy rules under which the key can be exported.
-    :vartype release_policy: ~azure.keyvault.keys._generated.models.KeyReleasePolicy
+    :vartype release_policy: ~azure.keyvault.keys.models.KeyReleasePolicy
     :ivar recovery_id: The url of the recovery object, used to identify and recover the deleted
      key.
     :vartype recovery_id: str
@@ -107,7 +107,7 @@ class DeletedKeyItem(_Model):
     :ivar kid: Key identifier.
     :vartype kid: str
     :ivar attributes: The key management attributes.
-    :vartype attributes: ~azure.keyvault.keys._generated.models.KeyAttributes
+    :vartype attributes: ~azure.keyvault.keys.models.KeyAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar managed: True if the key's lifetime is managed by key vault. If this is a key backing a
@@ -205,7 +205,7 @@ class JsonWebKey(_Model):
      `https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40
      <https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40>`_. Known values are: "EC",
      "EC-HSM", "RSA", "RSA-HSM", "oct", and "oct-HSM".
-    :vartype kty: str or ~azure.keyvault.keys._generated.models.JsonWebKeyType
+    :vartype kty: str or ~azure.keyvault.keys.models.JsonWebKeyType
     :ivar key_ops: Json web key operations. For more information on possible key operations, see
      JsonWebKeyOperation.
     :vartype key_ops: list[str]
@@ -231,7 +231,7 @@ class JsonWebKey(_Model):
     :vartype t: bytes
     :ivar crv: Elliptic curve name. For valid values, see JsonWebKeyCurveName. Known values are:
      "P-256", "P-384", "P-521", and "P-256K".
-    :vartype crv: str or ~azure.keyvault.keys._generated.models.JsonWebKeyCurveName
+    :vartype crv: str or ~azure.keyvault.keys.models.JsonWebKeyCurveName
     :ivar x: X component of an EC public key.
     :vartype x: bytes
     :ivar y: Y component of an EC public key.
@@ -391,14 +391,14 @@ class KeyAttributes(_Model):
      values are: "Purgeable", "Recoverable+Purgeable", "Recoverable",
      "Recoverable+ProtectedSubscription", "CustomizedRecoverable+Purgeable",
      "CustomizedRecoverable", and "CustomizedRecoverable+ProtectedSubscription".
-    :vartype recovery_level: str or ~azure.keyvault.keys._generated.models.DeletionRecoveryLevel
+    :vartype recovery_level: str or ~azure.keyvault.keys.models.DeletionRecoveryLevel
     :ivar exportable: Indicates if the private key can be exported. Release policy must be provided
      when creating the first version of an exportable key.
     :vartype exportable: bool
     :ivar hsm_platform: The underlying HSM Platform.
     :vartype hsm_platform: str
     :ivar attestation: The key or key version attestation information.
-    :vartype attestation: ~azure.keyvault.keys._generated.models.KeyAttestation
+    :vartype attestation: ~azure.keyvault.keys.models.KeyAttestation
     """
 
     enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -460,16 +460,16 @@ class KeyBundle(_Model):
     """A KeyBundle consisting of a WebKey plus its attributes.
 
     :ivar key: The Json web key.
-    :vartype key: ~azure.keyvault.keys._generated.models.JsonWebKey
+    :vartype key: ~azure.keyvault.keys.models.JsonWebKey
     :ivar attributes: The key management attributes.
-    :vartype attributes: ~azure.keyvault.keys._generated.models.KeyAttributes
+    :vartype attributes: ~azure.keyvault.keys.models.KeyAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar managed: True if the key's lifetime is managed by key vault. If this is a key backing a
      certificate, then managed will be true.
     :vartype managed: bool
     :ivar release_policy: The policy rules under which the key can be exported.
-    :vartype release_policy: ~azure.keyvault.keys._generated.models.KeyReleasePolicy
+    :vartype release_policy: ~azure.keyvault.keys.models.KeyReleasePolicy
     """
 
     key: Optional["_models.JsonWebKey"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -514,23 +514,23 @@ class KeyCreateParameters(_Model):
 
     :ivar kty: The type of key to create. For valid values, see JsonWebKeyType. Required. Known
      values are: "EC", "EC-HSM", "RSA", "RSA-HSM", "oct", and "oct-HSM".
-    :vartype kty: str or ~azure.keyvault.keys._generated.models.JsonWebKeyType
+    :vartype kty: str or ~azure.keyvault.keys.models.JsonWebKeyType
     :ivar key_size: The key size in bits. For example: 2048, 3072, or 4096 for RSA.
     :vartype key_size: int
     :ivar public_exponent: The public exponent for a RSA key.
     :vartype public_exponent: int
     :ivar key_ops: Json web key operations. For more information on possible key operations, see
      JsonWebKeyOperation.
-    :vartype key_ops: list[str or ~azure.keyvault.keys._generated.models.JsonWebKeyOperation]
+    :vartype key_ops: list[str or ~azure.keyvault.keys.models.JsonWebKeyOperation]
     :ivar key_attributes: The attributes of a key managed by the key vault service.
-    :vartype key_attributes: ~azure.keyvault.keys._generated.models.KeyAttributes
+    :vartype key_attributes: ~azure.keyvault.keys.models.KeyAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar curve: Elliptic curve name. For valid values, see JsonWebKeyCurveName. Known values are:
      "P-256", "P-384", "P-521", and "P-256K".
-    :vartype curve: str or ~azure.keyvault.keys._generated.models.JsonWebKeyCurveName
+    :vartype curve: str or ~azure.keyvault.keys.models.JsonWebKeyCurveName
     :ivar release_policy: The policy rules under which the key can be exported.
-    :vartype release_policy: ~azure.keyvault.keys._generated.models.KeyReleasePolicy
+    :vartype release_policy: ~azure.keyvault.keys.models.KeyReleasePolicy
     """
 
     kty: Union[str, "_models.JsonWebKeyType"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -592,13 +592,13 @@ class KeyImportParameters(_Model):
     :ivar hsm: Whether to import as a hardware key (HSM) or software key.
     :vartype hsm: bool
     :ivar key: The Json web key. Required.
-    :vartype key: ~azure.keyvault.keys._generated.models.JsonWebKey
+    :vartype key: ~azure.keyvault.keys.models.JsonWebKey
     :ivar key_attributes: The key management attributes.
-    :vartype key_attributes: ~azure.keyvault.keys._generated.models.KeyAttributes
+    :vartype key_attributes: ~azure.keyvault.keys.models.KeyAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar release_policy: The policy rules under which the key can be exported.
-    :vartype release_policy: ~azure.keyvault.keys._generated.models.KeyReleasePolicy
+    :vartype release_policy: ~azure.keyvault.keys.models.KeyReleasePolicy
     """
 
     hsm: Optional[bool] = rest_field(name="Hsm", visibility=["read", "create", "update", "delete", "query"])
@@ -644,7 +644,7 @@ class KeyItem(_Model):
     :ivar kid: Key identifier.
     :vartype kid: str
     :ivar attributes: The key management attributes.
-    :vartype attributes: ~azure.keyvault.keys._generated.models.KeyAttributes
+    :vartype attributes: ~azure.keyvault.keys.models.KeyAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar managed: True if the key's lifetime is managed by key vault. If this is a key backing a
@@ -722,7 +722,7 @@ class KeyOperationsParameters(_Model):
      "RSA1_5", "A128GCM", "A192GCM", "A256GCM", "A128KW", "A192KW", "A256KW", "A128CBC", "A192CBC",
      "A256CBC", "A128CBCPAD", "A192CBCPAD", "A256CBCPAD", "CKM_AES_KEY_WRAP", and
      "CKM_AES_KEY_WRAP_PAD".
-    :vartype algorithm: str or ~azure.keyvault.keys._generated.models.JsonWebKeyEncryptionAlgorithm
+    :vartype algorithm: str or ~azure.keyvault.keys.models.JsonWebKeyEncryptionAlgorithm
     :ivar value: The value to operate on. Required.
     :vartype value: bytes
     :ivar iv: Cryptographically random, non-repeating initialization vector for symmetric
@@ -784,7 +784,7 @@ class KeyReleaseParameters(_Model):
     :vartype nonce: str
     :ivar enc: The encryption algorithm to use to protected the exported key material. Known values
      are: "CKM_RSA_AES_KEY_WRAP", "RSA_AES_KEY_WRAP_256", and "RSA_AES_KEY_WRAP_384".
-    :vartype enc: str or ~azure.keyvault.keys._generated.models.KeyEncryptionAlgorithm
+    :vartype enc: str or ~azure.keyvault.keys.models.KeyEncryptionAlgorithm
     """
 
     target_attestation_token: str = rest_field(
@@ -914,9 +914,9 @@ class KeyRotationPolicy(_Model):
     :ivar lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a key.
      For preview, lifetimeActions can only have two items at maximum: one for rotate, one for
      notify. Notification time would be default to 30 days before expiry and it is not configurable.
-    :vartype lifetime_actions: list[~azure.keyvault.keys._generated.models.LifetimeActions]
+    :vartype lifetime_actions: list[~azure.keyvault.keys.models.LifetimeActions]
     :ivar attributes: The key rotation policy attributes.
-    :vartype attributes: ~azure.keyvault.keys._generated.models.KeyRotationPolicyAttributes
+    :vartype attributes: ~azure.keyvault.keys.models.KeyRotationPolicyAttributes
     """
 
     id: Optional[str] = rest_field(visibility=["read"])
@@ -1000,7 +1000,7 @@ class KeySignParameters(_Model):
      possible algorithm types, see JsonWebKeySignatureAlgorithm. Required. Known values are:
      "PS256", "PS384", "PS512", "RS256", "RS384", "RS512", "HS256", "HS384", "HS512", "RSNULL",
      "ES256", "ES384", "ES512", and "ES256K".
-    :vartype algorithm: str or ~azure.keyvault.keys._generated.models.JsonWebKeySignatureAlgorithm
+    :vartype algorithm: str or ~azure.keyvault.keys.models.JsonWebKeySignatureAlgorithm
     :ivar value: The value to operate on. Required.
     :vartype value: bytes
     """
@@ -1039,13 +1039,13 @@ class KeyUpdateParameters(_Model):
 
     :ivar key_ops: Json web key operations. For more information on possible key operations, see
      JsonWebKeyOperation.
-    :vartype key_ops: list[str or ~azure.keyvault.keys._generated.models.JsonWebKeyOperation]
+    :vartype key_ops: list[str or ~azure.keyvault.keys.models.JsonWebKeyOperation]
     :ivar key_attributes: The attributes of a key managed by the key vault service.
-    :vartype key_attributes: ~azure.keyvault.keys._generated.models.KeyAttributes
+    :vartype key_attributes: ~azure.keyvault.keys.models.KeyAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar release_policy: The policy rules under which the key can be exported.
-    :vartype release_policy: ~azure.keyvault.keys._generated.models.KeyReleasePolicy
+    :vartype release_policy: ~azure.keyvault.keys.models.KeyReleasePolicy
     """
 
     key_ops: Optional[List[Union[str, "_models.JsonWebKeyOperation"]]] = rest_field(
@@ -1089,7 +1089,7 @@ class KeyVaultError(_Model):
     """The key vault error exception.
 
     :ivar error: The key vault server error.
-    :vartype error: ~azure.keyvault.keys._generated.models.KeyVaultErrorError
+    :vartype error: ~azure.keyvault.keys.models.KeyVaultErrorError
     """
 
     error: Optional["_models.KeyVaultErrorError"] = rest_field(visibility=["read"])
@@ -1104,7 +1104,7 @@ class KeyVaultErrorError(_Model):
     :ivar message: The error message.
     :vartype message: str
     :ivar inner_error: The key vault server error.
-    :vartype inner_error: ~azure.keyvault.keys._generated.models.KeyVaultErrorError
+    :vartype inner_error: ~azure.keyvault.keys.models.KeyVaultErrorError
     """
 
     code: Optional[str] = rest_field(visibility=["read"])
@@ -1122,7 +1122,7 @@ class KeyVerifyParameters(_Model):
      types, see JsonWebKeySignatureAlgorithm. Required. Known values are: "PS256", "PS384", "PS512",
      "RS256", "RS384", "RS512", "HS256", "HS384", "HS512", "RSNULL", "ES256", "ES384", "ES512", and
      "ES256K".
-    :vartype algorithm: str or ~azure.keyvault.keys._generated.models.JsonWebKeySignatureAlgorithm
+    :vartype algorithm: str or ~azure.keyvault.keys.models.JsonWebKeySignatureAlgorithm
     :ivar digest: The digest used for signing. Required.
     :vartype digest: bytes
     :ivar signature: The signature to be verified. Required.
@@ -1178,9 +1178,9 @@ class LifetimeActions(_Model):
     """Action and its trigger that will be performed by Key Vault over the lifetime of a key.
 
     :ivar trigger: The condition that will execute the action.
-    :vartype trigger: ~azure.keyvault.keys._generated.models.LifetimeActionsTrigger
+    :vartype trigger: ~azure.keyvault.keys.models.LifetimeActionsTrigger
     :ivar action: The action that will be executed.
-    :vartype action: ~azure.keyvault.keys._generated.models.LifetimeActionsType
+    :vartype action: ~azure.keyvault.keys.models.LifetimeActionsType
     """
 
     trigger: Optional["_models.LifetimeActionsTrigger"] = rest_field(
@@ -1257,7 +1257,7 @@ class LifetimeActionsType(_Model):
 
     :ivar type: The type of the action. The value should be compared case-insensitively. Known
      values are: "Rotate" and "Notify".
-    :vartype type: str or ~azure.keyvault.keys._generated.models.KeyRotationPolicyAction
+    :vartype type: str or ~azure.keyvault.keys.models.KeyRotationPolicyAction
     """
 
     type: Optional[Union[str, "_models.KeyRotationPolicyAction"]] = rest_field(
