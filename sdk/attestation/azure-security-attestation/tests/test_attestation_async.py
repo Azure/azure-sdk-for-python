@@ -27,7 +27,7 @@ import json
 
 from helpers import base64url_decode
 
-''' cspell:disable '''
+""" cspell:disable """
 _open_enclave_report = (
     "AQAAAAIAAADkEQAAAAAAAAMAAg"
     + "AAAAAABQAKAJOacjP3nEyplAoNs5V_Bgc42MPzGo7hPWS_h-3tExJrAAAAABERAwX_g"
@@ -135,7 +135,8 @@ _runtime_data = (
 )
 
 _attest_tpm_payload = "eyJwYXlsb2FkIjogeyJ0eXBlIjogImFpa2NlcnQifX0"
-''' cspell:enable '''
+""" cspell:enable """
+
 
 class TestAsyncAzureAttestation(AzureRecordedTestCase):
     @AttestationPreparer()
@@ -146,13 +147,8 @@ class TestAsyncAzureAttestation(AzureRecordedTestCase):
         print("{}".format(open_id_metadata))
         assert open_id_metadata["response_types_supported"] is not None
         if self.is_live:
-            assert (
-                open_id_metadata["jwks_uri"]
-                == self.shared_base_uri(attestation_location_short_name) + "/certs"
-            )
-            assert open_id_metadata["issuer"] == self.shared_base_uri(
-                attestation_location_short_name
-            )
+            assert open_id_metadata["jwks_uri"] == self.shared_base_uri(attestation_location_short_name) + "/certs"
+            assert open_id_metadata["issuer"] == self.shared_base_uri(attestation_location_short_name)
 
     @pytest.mark.live_test_only
     @AttestationPreparer()
@@ -176,9 +172,7 @@ class TestAsyncAzureAttestation(AzureRecordedTestCase):
 
     @AttestationPreparer()
     @recorded_by_proxy_async
-    async def test_shared_getsigningcertificatesasync(
-        self, **kwargs
-    ):
+    async def test_shared_getsigningcertificatesasync(self, **kwargs):
         attestation_location_short_name = kwargs.pop("attestation_location_short_name")
         attest_client = self.shared_client(attestation_location_short_name)
         signers = await attest_client.get_signing_certificates()
@@ -214,16 +208,12 @@ class TestAsyncAzureAttestation(AzureRecordedTestCase):
         attest_client = self.create_client(client_uri)
         oe_report = base64url_decode(_open_enclave_report)
         runtime_data = base64url_decode(_runtime_data)
-        response, _ = await attest_client.attest_open_enclave(
-            oe_report, runtime_data=runtime_data
-        )
+        response, _ = await attest_client.attest_open_enclave(oe_report, runtime_data=runtime_data)
         assert response.enclave_held_data == runtime_data
         assert response.sgx_collateral is not None
 
         # Now do the validation again, this time specifying runtime data as JSON.
-        response, token = await attest_client.attest_open_enclave(
-            oe_report, runtime_json=runtime_data
-        )
+        response, token = await attest_client.attest_open_enclave(oe_report, runtime_json=runtime_data)
         # Because the runtime data is JSON, enclave_held_data will be empty.
         assert response.enclave_held_data == None
         assert response.runtime_claims.get("jwk") is not None
@@ -245,16 +235,12 @@ class TestAsyncAzureAttestation(AzureRecordedTestCase):
         # Convert the OE report into an SGX quote by stripping off the first 16 bytes.
         quote = oe_report[16:]
         runtime_data = base64url_decode(_runtime_data)
-        response, _ = await attest_client.attest_sgx_enclave(
-            quote, runtime_data=runtime_data
-        )
+        response, _ = await attest_client.attest_sgx_enclave(quote, runtime_data=runtime_data)
         assert response.enclave_held_data == runtime_data
         assert response.sgx_collateral is not None
 
         # Now do the validation again, this time specifying runtime data as JSON.
-        response, _ = await attest_client.attest_sgx_enclave(
-            quote, runtime_json=runtime_data
-        )
+        response, _ = await attest_client.attest_sgx_enclave(quote, runtime_json=runtime_data)
         # Because the runtime data is JSON, enclave_held_data will be empty.
         assert response.enclave_held_data == None
         assert response.runtime_claims.get("jwk") is not None
@@ -353,6 +339,4 @@ class TestAsyncAzureAttestation(AzureRecordedTestCase):
         return self.create_client(self.shared_base_uri(location_name))
 
     def shared_base_uri(self, location_name: str):
-        return (
-            "https://shared" + location_name + "." + location_name + ".attest.azure.net"
-        )
+        return "https://shared" + location_name + "." + location_name + ".attest.azure.net"
