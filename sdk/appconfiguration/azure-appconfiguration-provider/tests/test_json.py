@@ -8,7 +8,7 @@ import unittest
 import json
 from azure.appconfiguration.provider._json import (
     remove_json_comments,
-    _strip_ignore_string,
+    _find_string_end,
     DOUBLE_QUOTE,
 )
 
@@ -105,36 +105,32 @@ class TestJsonUtils(unittest.TestCase):
         parsed = json.loads(result)
         self.assertEqual(parsed["key"], 'value with " escaped quote // not a comment')
 
-    def test_strip_ignore_string_basic(self):
-        # Test basic string stripping
+    def test_find_string_end_basic(self):
+        # Test basic string end finding
         text = '"string" more'
-        result = [DOUBLE_QUOTE]
-        new_result, idx = _strip_ignore_string(text, 1, result)
-        self.assertEqual("".join(new_result), '"string"')
-        self.assertEqual(idx, 8)
+        index = _find_string_end(text, 1)
+        self.assertEqual(index, 8)
+        self.assertEqual(text[1:index], "string\"")
 
-    def test_strip_ignore_string_escaped_quote(self):
+    def test_find_string_end_escaped_quote(self):
         # Test with escaped quotes
         text = '"escaped \\" quote" end'
-        result = [DOUBLE_QUOTE]
-        new_result, idx = _strip_ignore_string(text, 1, result)
-        self.assertEqual("".join(new_result), '"escaped \\" quote"')
-        self.assertEqual(idx, 18)
+        index = _find_string_end(text, 1)
+        self.assertEqual(index, 18)
+        self.assertEqual(text[1:index], 'escaped \\" quote"')
 
-    def test_strip_ignore_string_unterminated(self):
+    def test_find_string_end_unterminated(self):
         # Test with unterminated string
         text = '"unterminated string'
-        result = [DOUBLE_QUOTE]
         with self.assertRaises(ValueError):
-            _strip_ignore_string(text, 1, result)
+            _find_string_end(text, 1)
 
-    def test_strip_ignore_string_multiple_escapes(self):
+    def test_find_string_end_multiple_escapes(self):
         # Test with multiple escape characters
         text = '"multiple \\\\" end'
-        result = [DOUBLE_QUOTE]
-        new_result, idx = _strip_ignore_string(text, 1, result)
-        self.assertEqual("".join(new_result), '"multiple \\\\"')
-        self.assertEqual(idx, 13)
+        index = _find_string_end(text, 1)
+        self.assertEqual(index, 13)
+        self.assertEqual(text[1:index], 'multiple \\\\"')
 
     def test_remove_json_comments_unterminated_string(self):
         # Test with unterminated string

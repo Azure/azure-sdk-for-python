@@ -12,35 +12,32 @@ DOUBLE_QUOTE = '"'
 NEW_LINE = "\n"
 
 
-def _strip_ignore_string(text: str, i: int, result: list[str]) -> tuple[list[str], int]:
+def _find_string_end(text: str, current_index: int) -> int:
     """
-    Helper function to strip comments within a string literal.
-    Handles both single and double quotes, and escaped quotes.
-    Returns the updated index and the result list.
+    Helper function that finds the end of a string literal.
 
     :param text: The input text to process.
     :type text: str
-    :param i: The current index in the text.
-    :type i: int
-    :param result: The list to accumulate the processed characters.
-    :type result: list[str]
+    :param current_index: The current index in the text, should be the position right after the opening quote.
+    :type current_index: int
     :raises ValueError: If there is an unterminated string literal.
-    :return: A tuple containing the updated result list and the next index.
-    :rtype: tuple[list[str], int]
+    :return: The index of the closing quote.
+    :rtype: int
     """
-    while i < len(text):
-        current_char = text[i]
-        result.append(current_char)
+    while current_index < len(text):
+        current_char = text[current_index]
         if current_char == DOUBLE_QUOTE:
             # Check for escaped quote
             esc_count = 0
-            j = i - 1
+            j = current_index - 1
             while j >= 0 and text[j] == ESCAPE_CHAR:
                 esc_count += 1
                 j -= 1
             if esc_count % 2 == 0:
-                return result, i + 1
-        i += 1
+                # Found end of string
+                current_index += 1
+                return current_index
+        current_index += 1
     raise ValueError("Unterminated string literal")
 
 
@@ -56,39 +53,41 @@ def remove_json_comments(text: str) -> str:
     :rtype: str
     """
     result = []
-    i = 0
+    current_index = 0
     length = len(text)
-    while i < length:
-        current_char = text[i]
+    while current_index < length:
+        current_char = text[current_index]
         if current_char == DOUBLE_QUOTE:
             result.append(current_char)
-            i += 1
-            result, i = _strip_ignore_string(text, i, result)
-        elif text[i : i + 2] == DOUBLE_FORWARD_SLASH_COMMENT:
+            current_index += 1
+            string_end = _find_string_end(text, current_index)
+            result.append(text[current_index:string_end])
+            current_index = string_end
+        elif text[current_index : current_index + 2] == DOUBLE_FORWARD_SLASH_COMMENT:
             # Skip to end of line or end of file
-            i += 2
-            while i < length and text[i] != NEW_LINE:
-                i += 1
+            current_index += 2
+            while current_index < length and text[current_index] != NEW_LINE:
+                current_index += 1
             # If we found a newline, move past it
-            if i < length and text[i] == NEW_LINE:
-                i += 1
-        elif text[i : i + 2] == MULTI_LINE_COMMENT:
+            if current_index < length and text[current_index] == NEW_LINE:
+                current_index += 1
+        elif text[current_index : current_index + 2] == MULTI_LINE_COMMENT:
             # Skip to end of block comment
-            i += 2
+            current_index += 2
 
             # Search for the end of the comment
             found_end = False
-            while i < length - 1:
-                if i + 1 < length and text[i : i + 2] == END_MULTI_LINE_COMMENT:
+            while current_index < length - 1:
+                if current_index + 1 < length and text[current_index : current_index + 2] == END_MULTI_LINE_COMMENT:
                     found_end = True
-                    i += 2  # Skip past the end marker
+                    current_index += 2  # Skip past the end marker
                     break
-                i += 1
+                current_index += 1
 
             # If we reached the end without finding the comment closer, raise an error
             if not found_end:
                 raise ValueError("Unterminated multi-line comment")
         else:
             result.append(current_char)
-            i += 1
+            current_index += 1
     return "".join(result)
