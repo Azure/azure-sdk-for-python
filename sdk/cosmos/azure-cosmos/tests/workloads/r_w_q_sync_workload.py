@@ -1,12 +1,9 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-import os
-import sys
 import time
 
 from workload_utils import *
 from workload_configs import *
-sys.path.append(r"/")
 
 from azure.cosmos import CosmosClient, documents
 
