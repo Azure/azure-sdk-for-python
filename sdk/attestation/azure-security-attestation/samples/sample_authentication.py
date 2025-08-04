@@ -50,12 +50,8 @@ class AttestationClientCreateSamples(object):
         self.aad_url = os.environ.get("ATTESTATION_AAD_URL")
         self.isolated_url = os.environ.get("ATTESTATION_ISOLATED_URL")
         if self.isolated_url:
-            self.isolated_certificate = base64.b64decode(
-                os.getenv("ATTESTATION_ISOLATED_SIGNING_CERTIFICATE")
-            )
-            self.isolated_key = base64.b64decode(
-                os.getenv("ATTESTATION_ISOLATED_SIGNING_KEY")
-            )
+            self.isolated_certificate = base64.b64decode(os.getenv("ATTESTATION_ISOLATED_SIGNING_CERTIFICATE"))
+            self.isolated_key = base64.b64decode(os.getenv("ATTESTATION_ISOLATED_SIGNING_KEY"))
         shared_short_name = os.getenv("ATTESTATION_LOCATION_SHORT_NAME")
         self.shared_url = "https://shared{}.{}.attest.azure.net".format(
             shared_short_name, shared_short_name
@@ -92,13 +88,7 @@ class AttestationClientCreateSamples(object):
         from azure.security.attestation import AttestationClient
 
         shared_short_name = os.getenv("ATTESTATION_LOCATION_SHORT_NAME")
-        shared_url = (
-            "https://shared"
-            + shared_short_name
-            + "."
-            + shared_short_name
-            + ".attest.azure.net"
-        )
+        shared_url = "https://shared" + shared_short_name + "." + shared_short_name + ".attest.azure.net"
 
         with AttestationClient(shared_url, DefaultAzureCredential()) as client:
             print("Retrieve OpenID metadata from: ", shared_url)

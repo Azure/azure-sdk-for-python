@@ -24,7 +24,7 @@ from azure.security.attestation import (
     AttestationType,
 )
 
-''' cspell:disable '''
+""" cspell:disable """
 _open_enclave_report = (
     "AQAAAAIAAADkEQAAAAAAAAMAAg"
     + "AAAAAABQAKAJOacjP3nEyplAoNs5V_Bgc42MPzGo7hPWS_h-3tExJrAAAAABERAwX_g"
@@ -132,7 +132,8 @@ _runtime_data = (
 )
 
 _attest_tpm_payload = "eyJwYXlsb2FkIjogeyJ0eXBlIjogImFpa2NlcnQifX0"
-''' cspell:enable '''
+""" cspell:enable """
+
 
 class TestAttestation(AzureRecordedTestCase):
 
@@ -146,13 +147,8 @@ class TestAttestation(AzureRecordedTestCase):
         open_id_metadata = attest_client.get_open_id_metadata()
         assert open_id_metadata["response_types_supported"] is not None
         if self.is_live:
-            assert (
-                open_id_metadata["jwks_uri"]
-                == self.shared_base_uri(attestation_location_short_name) + "/certs"
-            )
-            assert open_id_metadata["issuer"] == self.shared_base_uri(
-                attestation_location_short_name
-            )
+            assert open_id_metadata["jwks_uri"] == self.shared_base_uri(attestation_location_short_name) + "/certs"
+            assert open_id_metadata["issuer"] == self.shared_base_uri(attestation_location_short_name)
 
     @pytest.mark.live_test_only
     @AttestationPreparer()
@@ -211,16 +207,12 @@ class TestAttestation(AzureRecordedTestCase):
         attest_client = self.create_client(client_uri)
         oe_report = base64url_decode(_open_enclave_report)
         runtime_data = base64url_decode(_runtime_data)
-        response, _ = attest_client.attest_open_enclave(
-            oe_report, runtime_data=runtime_data
-        )
+        response, _ = attest_client.attest_open_enclave(oe_report, runtime_data=runtime_data)
         assert response.enclave_held_data == runtime_data
         assert response.sgx_collateral is not None
 
         # Now do the validation again, this time specifying runtime data as JSON.
-        response, token = attest_client.attest_open_enclave(
-            oe_report, runtime_json=runtime_data
-        )
+        response, token = attest_client.attest_open_enclave(oe_report, runtime_json=runtime_data)
         # Because the runtime data is JSON, enclave_held_data will be empty.
         assert response.enclave_held_data == None
         assert response.runtime_claims.get("jwk") is not None
@@ -268,9 +260,7 @@ class TestAttestation(AzureRecordedTestCase):
         assert response.sgx_collateral is not None
 
         # Call into the attest API asking it to *not* validate the token.
-        response, _ = attest_client.attest_sgx_enclave(
-            quote, runtime_data=runtime_data, validate_token=False
-        )
+        response, _ = attest_client.attest_sgx_enclave(quote, runtime_data=runtime_data, validate_token=False)
 
     @AttestationPreparer()
     @AllInstanceTypes
@@ -371,11 +361,5 @@ class TestAttestation(AzureRecordedTestCase):
         # When run with recorded tests, the location_name may be 'None', deal with it.
         #        return 'https://shareduks.uks.test.attest.azure.net'
         if location_name is not None:
-            return (
-                "https://shared"
-                + location_name
-                + "."
-                + location_name
-                + ".attest.azure.net"
-            )
+            return "https://shared" + location_name + "." + location_name + ".attest.azure.net"
         return "https://sharedcus.cus.attest.azure.net"
