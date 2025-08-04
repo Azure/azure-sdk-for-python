@@ -1017,6 +1017,7 @@ __all__: List[str] = [
     "AttestationClient",
     "AttestationAdministrationClient",
     "AttestationType",
+    "AttestationToken"
 ]  # Add all objects you want publicly available to users at this package level
 
 
