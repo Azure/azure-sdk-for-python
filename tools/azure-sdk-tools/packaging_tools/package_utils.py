@@ -406,8 +406,15 @@ class CheckFile:
         for key, value in default_configs.items():
             if key not in azure_sdk_build:
                 _LOGGER.info(f"Adding {key} = {value} to pyproject.toml")
-                azure_sdk_build[key] = value == "true"  # Convert string to boolean
-
+                if isinstance(value, str):
+                    if value.lower() == "true":
+                        azure_sdk_build[key] = True
+                    elif value.lower() == "false":
+                        azure_sdk_build[key] = False
+                    else:
+                        azure_sdk_build[key] = value
+                else:
+                    azure_sdk_build[key] = value
         # Write back to file
         with open(toml_path, "wb") as file:
             tomlw.dump(toml_data, file)
