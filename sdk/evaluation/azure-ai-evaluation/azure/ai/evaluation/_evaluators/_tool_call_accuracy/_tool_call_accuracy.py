@@ -84,7 +84,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     _LLM_SCORE_KEY = "tool_calls_success_level"
 
-    id = "id"
+    id = "azureai://built-in/evaluators/tool_call_accuracy"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override

@@ -39,6 +39,7 @@ class TestEvaluatePerformance:
             data=big_f1_data_file,
             evaluators={"f1": f1_score_eval},
             _use_pf_client=False,
+            _use_run_submitter_client=False,
         )
         end = time.perf_counter()
         diff = end - start  # diff stored as variable just to make sure pytest output
@@ -61,9 +62,7 @@ class TestEvaluatePerformance:
         # run the evaluation with targets
         start = time.perf_counter()
         result = evaluate(
-            data=ten_queries_file,
-            evaluators={"slow": slow_eval},
-            _use_pf_client=False,
+            data=ten_queries_file, evaluators={"slow": slow_eval}, _use_pf_client=False, _use_run_submitter_client=False
         )
         end = time.perf_counter()
         # Time duration is stored as variable just to make sure pytest output

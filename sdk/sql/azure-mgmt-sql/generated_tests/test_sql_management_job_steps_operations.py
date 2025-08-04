@@ -26,7 +26,7 @@ class TestSqlManagementJobStepsOperations(AzureMgmtRecordedTestCase):
             server_name="str",
             job_agent_name="str",
             job_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -41,7 +41,7 @@ class TestSqlManagementJobStepsOperations(AzureMgmtRecordedTestCase):
             job_agent_name="str",
             job_name="str",
             step_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -82,7 +82,7 @@ class TestSqlManagementJobStepsOperations(AzureMgmtRecordedTestCase):
                 "targetGroup": "str",
                 "type": "str",
             },
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -97,7 +97,7 @@ class TestSqlManagementJobStepsOperations(AzureMgmtRecordedTestCase):
             job_agent_name="str",
             job_name="str",
             step_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -112,7 +112,7 @@ class TestSqlManagementJobStepsOperations(AzureMgmtRecordedTestCase):
             job_agent_name="str",
             job_name="str",
             job_version=0,
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -128,7 +128,7 @@ class TestSqlManagementJobStepsOperations(AzureMgmtRecordedTestCase):
             job_name="str",
             job_version=0,
             step_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself
