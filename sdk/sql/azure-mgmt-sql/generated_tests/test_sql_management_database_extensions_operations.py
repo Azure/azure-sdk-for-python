@@ -25,7 +25,7 @@ class TestSqlManagementDatabaseExtensionsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -39,7 +39,7 @@ class TestSqlManagementDatabaseExtensionsOperations(AzureMgmtRecordedTestCase):
             server_name="str",
             database_name="str",
             extension_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -69,7 +69,7 @@ class TestSqlManagementDatabaseExtensionsOperations(AzureMgmtRecordedTestCase):
                 "storageUri": "str",
                 "type": "str",
             },
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

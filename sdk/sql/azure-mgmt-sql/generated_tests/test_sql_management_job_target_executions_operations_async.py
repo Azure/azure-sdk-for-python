@@ -29,7 +29,7 @@ class TestSqlManagementJobTargetExecutionsOperationsAsync(AzureMgmtRecordedTestC
             job_name="str",
             job_execution_id="str",
             step_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestSqlManagementJobTargetExecutionsOperationsAsync(AzureMgmtRecordedTestC
             job_execution_id="str",
             step_name="str",
             target_id="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -61,7 +61,7 @@ class TestSqlManagementJobTargetExecutionsOperationsAsync(AzureMgmtRecordedTestC
             job_agent_name="str",
             job_name="str",
             job_execution_id="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

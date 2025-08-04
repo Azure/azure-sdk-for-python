@@ -26,11 +26,13 @@ class TestTelemetryAsync(TestBase):
         ) as project_client:
 
             print("[test_telemetry_async] Get the Application Insights connection string:")
-            connection_string = await project_client.telemetry.get_connection_string()
+            connection_string = await project_client.telemetry.get_application_insights_connection_string()
             assert connection_string
             if is_live():
                 assert bool(self.REGEX_APPINSIGHTS_CONNECTION_STRING.match(connection_string))
             else:
                 assert connection_string == "Sanitized-api-key"
-            assert connection_string == await project_client.telemetry.get_connection_string()  # Test cached value
+            assert (
+                connection_string == await project_client.telemetry.get_application_insights_connection_string()
+            )  # Test cached value
             print("Application Insights connection string = " + connection_string)

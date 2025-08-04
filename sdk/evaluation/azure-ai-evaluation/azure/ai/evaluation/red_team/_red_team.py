@@ -114,7 +114,7 @@ class RedTeam:
         application_scenario: Optional[str] = None,
         custom_attack_seed_prompts: Optional[str] = None,
         output_dir=".",
-        attack_success_thresholds: Optional[Dict[Union[RiskCategory, _InternalRiskCategory], int]] = None,
+        attack_success_thresholds: Optional[Dict[RiskCategory, int]] = None,
     ):
         """Initialize a new Red Team agent for AI model evaluation.
 
@@ -137,8 +137,11 @@ class RedTeam:
         :type custom_attack_seed_prompts: Optional[str]
         :param output_dir: Directory to save evaluation outputs and logs. Defaults to current working directory.
         :type output_dir: str
-        :param attack_success_thresholds: Threshold configuration for determining attack success
-        :type attack_success_thresholds: Optional[Dict[Union[RiskCategory, _InternalRiskCategory], int]]
+        :param attack_success_thresholds: Threshold configuration for determining attack success.
+            Should be a dictionary mapping risk categories (RiskCategory enum values) to threshold values,
+            or None to use default binary evaluation (evaluation results determine success).
+            When using thresholds, scores >= threshold are considered successful attacks.
+        :type attack_success_thresholds: Optional[Dict[RiskCategory, int]]
         """
 
         self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
