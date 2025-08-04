@@ -19,7 +19,7 @@
 
 ### Sample updates
 
-- Improved `sample_agents_deep_research.py` and `sample_agents_deep_research_async.py` for citations.
+- Updated `sample_agents_deep_research.py` and `sample_agents_deep_research_async.py` for citations.
   
 ## 1.1.0b4 (2025-07-11)
 
