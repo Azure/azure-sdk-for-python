@@ -104,7 +104,7 @@ fleet = client.fleets.begin_create_or_update(
     resource_group_name="rg",
     fleet_name="fleet1",
     resource=fleet_operation,
-    etag=<specific etag>,
+    etag="<specific etag>",
     match_condition=MatchConditions.IfNotModified
 )
 ```
