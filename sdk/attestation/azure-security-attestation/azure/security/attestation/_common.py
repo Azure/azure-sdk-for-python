@@ -69,23 +69,15 @@ def validate_signing_keys(signing_key_pem, certificate_pem):
     signing_key = serialization.load_pem_private_key(
         signing_key_pem.encode("utf-8"), password=None, backend=default_backend()
     )
-    certificate = load_pem_x509_certificate(
-        certificate_pem.encode("utf-8"), backend=default_backend()
-    )
+    certificate = load_pem_x509_certificate(certificate_pem.encode("utf-8"), backend=default_backend())
 
     # We only support ECDS and RSA keys in the MAA service.
-    if not isinstance(signing_key, RSAPrivateKey) and not isinstance(
-        signing_key, EllipticCurvePrivateKey
-    ):
+    if not isinstance(signing_key, RSAPrivateKey) and not isinstance(signing_key, EllipticCurvePrivateKey):
         raise ValueError("Signing keys must be either ECDS or RSA keys.")
 
     # Ensure that the public key in the certificate matches the public key of the key.
-    cert_public_key = certificate.public_key().public_bytes(
-        Encoding.PEM, PublicFormat.SubjectPublicKeyInfo
-    )
-    key_public_key = signing_key.public_key().public_bytes(
-        Encoding.PEM, PublicFormat.SubjectPublicKeyInfo
-    )
+    cert_public_key = certificate.public_key().public_bytes(Encoding.PEM, PublicFormat.SubjectPublicKeyInfo)
+    key_public_key = signing_key.public_key().public_bytes(Encoding.PEM, PublicFormat.SubjectPublicKeyInfo)
     if cert_public_key != key_public_key:
         raise ValueError("Signing key must match certificate public key")
     return signing_key, certificate
