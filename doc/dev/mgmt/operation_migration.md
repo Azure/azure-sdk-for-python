@@ -112,8 +112,8 @@ fleet = client.fleets.begin_create_or_update(
 **Migration steps:**
 
 - Import `MatchConditions` from `azure.core`
-- Replace `if_match=<specific etag>` with `etag=<specific etag>, match_condition=MatchConditions.IfNotModified`
-- Replace `if_none_match=<specific etag>` with `etag=<specific etag>, match_condition=MatchConditions.IfModified`
+- Replace `if_match="<specific etag>"` with `etag="<specific etag>", match_condition=MatchConditions.IfNotModified`
+- Replace `if_none_match="<specific etag>"` with `etag="<specific etag>", match_condition=MatchConditions.IfModified`
 - Replace `if_match="*"` with `match_condition=MatchConditions.IfPresent`
 - Replace `if_none_match="*"` with `match_condition=MatchConditions.IfMissing`
 
