@@ -8,7 +8,7 @@
 
 ### Bugs Fixed
 - Fixed issue #42337, added support for instrumentations-any to ensure better dependency detection.
-  ([]())
+  ([#42342](https://github.com/Azure/azure-sdk-for-python/pull/42342))
 
 ### Other Changes
 
