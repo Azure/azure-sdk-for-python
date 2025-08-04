@@ -100,3 +100,5 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+
+__all__ = ["ConversationAuthoringProjectClient", "ConversationAuthoringClient"]
