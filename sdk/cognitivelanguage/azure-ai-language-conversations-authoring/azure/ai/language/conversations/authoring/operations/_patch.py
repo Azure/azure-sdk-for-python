@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from ._operations import (
     ProjectOperationsOperations as ProjectOperationsGenerated,
     DeploymentOperationsOperations as DeploymentOperationsGenerated,
     ExportedModelOperations as ExportedModelOperationsGenerated,
-    TrainedModelOperations as TrainedModelOperationsGenerated
+    TrainedModelOperations as TrainedModelOperationsGenerated,
 )
 
 from ..models import (
@@ -53,7 +54,7 @@ from ..models import (
     ConversationAuthoringProjectTrainedModel,
     ConversationAuthoringEvalSummary,
     AnalyzeConversationAuthoringUtteranceEvaluationResult,
-    StringIndexType
+    StringIndexType,
 )
 from azure.core.paging import ItemPaged
 from collections.abc import MutableMapping
@@ -129,7 +130,7 @@ class ProjectOperations(ProjectOperationsGenerated):
             exported_project_format=exported_project_format,
             string_index_type=string_index_type,
             trained_model_label=trained_model_label,
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace
@@ -174,7 +175,7 @@ class ProjectOperations(ProjectOperationsGenerated):
             content_type=content_type,
             project_kind=project_kind,
             storage_input_container_name=storage_input_container_name,
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace
@@ -197,158 +198,81 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @distributed_trace
     def get_project(  # type: ignore[override]
-        self,
-        project_name: str = _Unset,
-        **kwargs: Any
+        self, project_name: str = _Unset, **kwargs: Any
     ) -> ConversationAuthoringProjectMetadata:
-        return super().get_project(
-            project_name=self._project_name,
-            **kwargs
-        )
+        return super().get_project(project_name=self._project_name, **kwargs)
 
     @distributed_trace
     def get_project_deletion_status(  # type: ignore[override]
-        self,
-        job_id: str,
-        **kwargs: Any
+        self, job_id: str, **kwargs: Any
     ) -> ConversationAuthoringProjectDeletionState:
-        return super().get_project_deletion_status(
-            project_name=self._project_name,
-            job_id=job_id,
-            **kwargs
-        )
+        return super().get_project_deletion_status(project_name=self._project_name, job_id=job_id, **kwargs)
 
     @distributed_trace
     def get_swap_deployments_status(  # type: ignore[override]
-        self,
-        job_id: str,
-        **kwargs: Any
+        self, job_id: str, **kwargs: Any
     ) -> ConversationAuthoringSwapDeploymentsState:
-        return super().get_swap_deployments_status(
-            project_name=self._project_name,
-            job_id=job_id,
-            **kwargs
-        )
+        return super().get_swap_deployments_status(project_name=self._project_name, job_id=job_id, **kwargs)
 
     @distributed_trace
     def get_training_status(  # type: ignore[override]
-        self,
-        job_id: str,
-        **kwargs: Any
+        self, job_id: str, **kwargs: Any
     ) -> ConversationAuthoringTrainingState:
-        return super().get_training_status(
-            project_name=self._project_name,
-            job_id=job_id,
-            **kwargs
-        )
+        return super().get_training_status(project_name=self._project_name, job_id=job_id, **kwargs)
 
     @distributed_trace
     def get_unassign_deployment_resources_status(  # type: ignore[override]
-        self,
-        job_id: str,
-        **kwargs: Any
+        self, job_id: str, **kwargs: Any
     ) -> ConversationAuthoringDeploymentResourcesState:
         return super().get_unassign_deployment_resources_status(
-            project_name=self._project_name,
-            job_id=job_id,
-            **kwargs
+            project_name=self._project_name, job_id=job_id, **kwargs
         )
 
     @distributed_trace
     def list_deployment_resources(  # type: ignore[override]
-        self,
-        *,
-        skip: Optional[int] = _Unset,
-        top: Optional[int] = _Unset,
-        **kwargs: Any
+        self, *, skip: Optional[int] = _Unset, top: Optional[int] = _Unset, **kwargs: Any
     ) -> ItemPaged[ConversationAuthoringAssignedDeploymentResource]:
-        return super().list_deployment_resources(
-            project_name=self._project_name,
-            skip=skip,
-            top=top,
-            **kwargs
-        )
+        return super().list_deployment_resources(project_name=self._project_name, skip=skip, top=top, **kwargs)
 
     @distributed_trace
     def list_deployments(  # type: ignore[override]
-        self,
-        *,
-        skip: Optional[int] = _Unset,
-        top: Optional[int] = _Unset,
-        **kwargs: Any
+        self, *, skip: Optional[int] = _Unset, top: Optional[int] = _Unset, **kwargs: Any
     ) -> ItemPaged[ConversationAuthoringProjectDeployment]:
-        return super().list_deployments(
-            project_name=self._project_name,
-            skip=skip,
-            top=top,
-            **kwargs
-        )
+        return super().list_deployments(project_name=self._project_name, skip=skip, top=top, **kwargs)
 
     @distributed_trace
     def list_exported_models(  # type: ignore[override]
-        self,
-        *,
-        skip: Optional[int] = _Unset,
-        top: Optional[int] = _Unset,
-        **kwargs: Any
+        self, *, skip: Optional[int] = _Unset, top: Optional[int] = _Unset, **kwargs: Any
     ) -> ItemPaged[ConversationAuthoringExportedTrainedModel]:
-        return super().list_exported_models(
-            project_name=self._project_name,
-            skip=skip,
-            top=top,
-            **kwargs
-        )
+        return super().list_exported_models(project_name=self._project_name, skip=skip, top=top, **kwargs)
 
     @distributed_trace
     def list_trained_models(  # type: ignore[override]
-        self,
-        *,
-        skip: Optional[int] = _Unset,
-        top: Optional[int] = _Unset,
-        **kwargs: Any
+        self, *, skip: Optional[int] = _Unset, top: Optional[int] = _Unset, **kwargs: Any
     ) -> ItemPaged[ConversationAuthoringProjectTrainedModel]:
-        return super().list_trained_models(
-            project_name=self._project_name,
-            skip=skip,
-            top=top,
-            **kwargs
-        )
+        return super().list_trained_models(project_name=self._project_name, skip=skip, top=top, **kwargs)
 
     @distributed_trace
     def list_training_jobs(  # type: ignore[override]
-        self,
-        *,
-        skip: Optional[int] = _Unset,
-        top: Optional[int] = _Unset,
-        **kwargs: Any
+        self, *, skip: Optional[int] = _Unset, top: Optional[int] = _Unset, **kwargs: Any
     ) -> ItemPaged[ConversationAuthoringTrainingState]:
-        return super().list_training_jobs(
-            project_name=self._project_name,
-            skip=skip,
-            top=top,
-            **kwargs
-        )
-    
+        return super().list_training_jobs(project_name=self._project_name, skip=skip, top=top, **kwargs)
+
+
 class DeploymentOperations(DeploymentOperationsGenerated):
-    
+
     def __init__(self, *args, project_name: str, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self._project_name = project_name
 
     @distributed_trace
-    def begin_delete_deployment( # type: ignore[override]
-        self,
-        deployment_name: str,
-        **kwargs: Any
-    ) -> LROPoller[None]:
+    def begin_delete_deployment(self, deployment_name: str, **kwargs: Any) -> LROPoller[None]:  # type: ignore[override]
         return super().begin_delete_deployment(
-            project_name=self._project_name,
-            deployment_name=deployment_name,
-            **kwargs
+            project_name=self._project_name, deployment_name=deployment_name, **kwargs
         )
 
     @distributed_trace
-    def begin_delete_deployment_from_resources( # type: ignore[override]
+    def begin_delete_deployment_from_resources(  # type: ignore[override]
         self,
         deployment_name: str,
         body: Union[ConversationAuthoringDeleteDeploymentDetails, JSON, IO[bytes]],
@@ -361,11 +285,11 @@ class DeploymentOperations(DeploymentOperationsGenerated):
             deployment_name=deployment_name,
             body=body,
             content_type=content_type,
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace
-    def begin_deploy_project( # type: ignore[override]
+    def begin_deploy_project(  # type: ignore[override]
         self,
         deployment_name: str,
         body: Union[ConversationAuthoringCreateDeploymentDetails, JSON, IO[bytes]],
@@ -378,49 +302,32 @@ class DeploymentOperations(DeploymentOperationsGenerated):
             deployment_name=deployment_name,
             body=body,
             content_type=content_type,
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace
-    def get_deployment( # type: ignore[override]
-        self,
-        deployment_name: str,
-        **kwargs: Any
+    def get_deployment(  # type: ignore[override]
+        self, deployment_name: str, **kwargs: Any
     ) -> ConversationAuthoringProjectDeployment:
-        return super().get_deployment(
-            project_name=self._project_name,
-            deployment_name=deployment_name,
-            **kwargs
-        )
+        return super().get_deployment(project_name=self._project_name, deployment_name=deployment_name, **kwargs)
 
     @distributed_trace
-    def get_deployment_delete_from_resources_status( # type: ignore[override]
-        self,
-        deployment_name: str,
-        job_id: str,
-        **kwargs: Any
+    def get_deployment_delete_from_resources_status(  # type: ignore[override]
+        self, deployment_name: str, job_id: str, **kwargs: Any
     ) -> ConversationAuthoringDeploymentDeleteFromResourcesState:
         return super().get_deployment_delete_from_resources_status(
-            project_name=self._project_name,
-            deployment_name=deployment_name,
-            job_id=job_id,
-            **kwargs
+            project_name=self._project_name, deployment_name=deployment_name, job_id=job_id, **kwargs
         )
 
     @distributed_trace
-    def get_deployment_status( # type: ignore[override]
-        self,
-        deployment_name: str,
-        job_id: str,
-        **kwargs: Any
+    def get_deployment_status(  # type: ignore[override]
+        self, deployment_name: str, job_id: str, **kwargs: Any
     ) -> ConversationAuthoringDeploymentState:
         return super().get_deployment_status(
-            project_name=self._project_name,
-            deployment_name=deployment_name,
-            job_id=job_id,
-            **kwargs
+            project_name=self._project_name, deployment_name=deployment_name, job_id=job_id, **kwargs
         )
-    
+
+
 class ExportedModelOperations(ExportedModelOperationsGenerated):
 
     def __init__(self, *args, project_name: str, **kwargs: Any) -> None:
@@ -446,9 +353,7 @@ class ExportedModelOperations(ExportedModelOperationsGenerated):
 
     @distributed_trace
     def begin_delete_exported_model(  # type: ignore[override]
-        self,
-        exported_model_name: str,
-        **kwargs: Any
+        self, exported_model_name: str, **kwargs: Any
     ) -> LROPoller[None]:
         return super().begin_delete_exported_model(
             project_name=self._project_name,
@@ -458,9 +363,7 @@ class ExportedModelOperations(ExportedModelOperationsGenerated):
 
     @distributed_trace
     def get_exported_model(  # type: ignore[override]
-        self,
-        exported_model_name: str,
-        **kwargs: Any
+        self, exported_model_name: str, **kwargs: Any
     ) -> ConversationAuthoringExportedTrainedModel:
         return super().get_exported_model(
             project_name=self._project_name,
@@ -470,10 +373,7 @@ class ExportedModelOperations(ExportedModelOperationsGenerated):
 
     @distributed_trace
     def get_exported_model_job_status(  # type: ignore[override]
-        self,
-        exported_model_name: str,
-        job_id: str,
-        **kwargs: Any
+        self, exported_model_name: str, job_id: str, **kwargs: Any
     ) -> ConversationAuthoringExportedModelState:
         return super().get_exported_model_job_status(
             project_name=self._project_name,
@@ -481,6 +381,7 @@ class ExportedModelOperations(ExportedModelOperationsGenerated):
             job_id=job_id,
             **kwargs,
         )
+
 
 class TrainedModelOperations(TrainedModelOperationsGenerated):
 
@@ -506,11 +407,7 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
         )
 
     @distributed_trace
-    def begin_load_snapshot(  # type: ignore[override]
-        self,
-        trained_model_label: str,
-        **kwargs: Any
-    ) -> LROPoller[None]:
+    def begin_load_snapshot(self, trained_model_label: str, **kwargs: Any) -> LROPoller[None]:  # type: ignore[override]
         return super().begin_load_snapshot(
             project_name=self._project_name,
             trained_model_label=trained_model_label,
@@ -518,11 +415,7 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
         )
 
     @distributed_trace
-    def delete_trained_model(  # type: ignore[override]
-        self,
-        trained_model_label: str,
-        **kwargs: Any
-    ) -> None:
+    def delete_trained_model(self, trained_model_label: str, **kwargs: Any) -> None:  # type: ignore[override]
         return super().delete_trained_model(
             project_name=self._project_name,
             trained_model_label=trained_model_label,
@@ -531,10 +424,7 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
 
     @distributed_trace
     def get_evaluation_status(  # type: ignore[override]
-        self,
-        trained_model_label: str,
-        job_id: str,
-        **kwargs: Any
+        self, trained_model_label: str, job_id: str, **kwargs: Any
     ) -> ConversationAuthoringEvaluationState:
         return super().get_evaluation_status(
             project_name=self._project_name,
@@ -545,10 +435,7 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
 
     @distributed_trace
     def get_load_snapshot_status(  # type: ignore[override]
-        self,
-        trained_model_label: str,
-        job_id: str,
-        **kwargs: Any
+        self, trained_model_label: str, job_id: str, **kwargs: Any
     ) -> ConversationAuthoringLoadSnapshotState:
         return super().get_load_snapshot_status(
             project_name=self._project_name,
@@ -578,9 +465,7 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
 
     @distributed_trace
     def get_model_evaluation_summary(  # type: ignore[override]
-        self,
-        trained_model_label: str,
-        **kwargs: Any
+        self, trained_model_label: str, **kwargs: Any
     ) -> ConversationAuthoringEvalSummary:
         return super().get_model_evaluation_summary(
             project_name=self._project_name,
@@ -590,16 +475,15 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
 
     @distributed_trace
     def get_trained_model(  # type: ignore[override]
-        self,
-        trained_model_label: str,
-        **kwargs: Any
+        self, trained_model_label: str, **kwargs: Any
     ) -> ConversationAuthoringProjectTrainedModel:
         return super().get_trained_model(
             project_name=self._project_name,
             trained_model_label=trained_model_label,
             **kwargs,
         )
-    
+
+
 def patch_sdk():
     """Do not remove from this file.
 

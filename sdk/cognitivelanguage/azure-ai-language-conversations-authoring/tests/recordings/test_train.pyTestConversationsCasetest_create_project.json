@@ -25,14 +25,14 @@
       "StatusCode": 202,
       "ResponseHeaders": {
         "Access-Control-Expose-Headers": "*",
-        "apim-request-id": "cd598fb0-74a3-4669-956b-f828b2b8cedb",
+        "apim-request-id": "dd8a8186-4108-453a-a9da-d330f33839eb",
         "Content-Length": "0",
-        "Date": "Sun, 03 Aug 2025 21:20:14 GMT",
-        "operation-location": "fake_resource.servicebus.windows.net/language/authoring/analyze-conversations/projects/EmailApp/train/jobs/84ca4c04-b4f6-40cf-a08a-eb605fa44446_638897760000000000?api-version=2025-05-15-preview",
-        "request-id": "cd598fb0-74a3-4669-956b-f828b2b8cedb",
+        "Date": "Mon, 04 Aug 2025 07:43:46 GMT",
+        "operation-location": "fake_resource.servicebus.windows.net/language/authoring/analyze-conversations/projects/EmailApp/train/jobs/d499b00a-6906-40e2-aea0-41c238edb927_638898624000000000?api-version=2025-05-15-preview",
+        "request-id": "dd8a8186-4108-453a-a9da-d330f33839eb",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "229",
+        "x-envoy-upstream-service-time": "341",
         "x-ms-region": "East US"
       },
       "ResponseBody": null
