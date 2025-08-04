@@ -21,14 +21,35 @@ load_dotenv()
 # For security, please avoid record sensitive identity information in recordings
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
-    authoring_subscription_id = os.environ.get("AUTHORING_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")
-    authoring_tenant_id = os.environ.get("AUTHORING_TENANT_ID", "00000000-0000-0000-0000-000000000000")
-    authoring_client_id = os.environ.get("AUTHORING_CLIENT_ID", "00000000-0000-0000-0000-000000000000")
-    authoring_client_secret = os.environ.get("AUTHORING_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=authoring_subscription_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=authoring_tenant_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=authoring_client_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=authoring_client_secret, value="00000000-0000-0000-0000-000000000000")
+    textauthoring_subscription_id = os.environ.get(
+        "TEXTAUTHORING_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000"
+    )
+    textauthoring_tenant_id = os.environ.get("TEXTAUTHORING_TENANT_ID", "00000000-0000-0000-0000-000000000000")
+    textauthoring_client_id = os.environ.get("TEXTAUTHORING_CLIENT_ID", "00000000-0000-0000-0000-000000000000")
+    textauthoring_client_secret = os.environ.get("TEXTAUTHORING_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=textauthoring_subscription_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=textauthoring_tenant_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=textauthoring_client_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=textauthoring_client_secret, value="00000000-0000-0000-0000-000000000000")
+
+    textauthoringproject_subscription_id = os.environ.get(
+        "TEXTAUTHORINGPROJECT_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000"
+    )
+    textauthoringproject_tenant_id = os.environ.get(
+        "TEXTAUTHORINGPROJECT_TENANT_ID", "00000000-0000-0000-0000-000000000000"
+    )
+    textauthoringproject_client_id = os.environ.get(
+        "TEXTAUTHORINGPROJECT_CLIENT_ID", "00000000-0000-0000-0000-000000000000"
+    )
+    textauthoringproject_client_secret = os.environ.get(
+        "TEXTAUTHORINGPROJECT_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000"
+    )
+    add_general_regex_sanitizer(
+        regex=textauthoringproject_subscription_id, value="00000000-0000-0000-0000-000000000000"
+    )
+    add_general_regex_sanitizer(regex=textauthoringproject_tenant_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=textauthoringproject_client_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=textauthoringproject_client_secret, value="00000000-0000-0000-0000-000000000000")
 
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
     add_header_regex_sanitizer(key="Cookie", value="cookie;")

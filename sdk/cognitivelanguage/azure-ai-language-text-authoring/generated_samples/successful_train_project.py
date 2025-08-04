@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.ai.language.text.authoring import AuthoringClient
+from azure.ai.language.text.authoring import TextAuthoringProjectClient
 
 """
 # PREREQUISITES
@@ -17,12 +17,12 @@ from azure.ai.language.text.authoring import AuthoringClient
 
 
 def main():
-    client = AuthoringClient(
+    client = TextAuthoringClient(
         endpoint="{Endpoint}",
         credential="CREDENTIAL",
     )
 
-    response = client.text_authoring_project.begin_train(
+    response = client.project.begin_train(
         project_name="LoanAgreements",
         body={
             "evaluationOptions": {"kind": "percentage", "testingSplitPercentage": 20, "trainingSplitPercentage": 80},

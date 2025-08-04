@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.ai.language.text.authoring import AuthoringClient
+from azure.ai.language.text.authoring import TextAuthoringProjectClient
 
 """
 # PREREQUISITES
@@ -17,12 +17,12 @@ from azure.ai.language.text.authoring import AuthoringClient
 
 
 def main():
-    client = AuthoringClient(
+    client = TextAuthoringClient(
         endpoint="{Endpoint}",
         credential="CREDENTIAL",
     )
 
-    response = client.text_authoring_deployment.get_deployment_delete_from_resources_status(
+    response = client.deployment.get_deployment_delete_from_resources_status(
         project_name="LoanAgreements",
         deployment_name="production",
         job_id="66fa9a67-a561-42f1-8a13-f3a879b1a324_637858368000000000",
