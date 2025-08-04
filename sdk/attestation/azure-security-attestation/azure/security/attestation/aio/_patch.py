@@ -8,7 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import base64
-from typing import List, Any, TYPE_CHECKING, Tuple, Union
+from typing import List, Any, TYPE_CHECKING, Tuple, Union, Dict
 from cryptography.hazmat.primitives import serialization
 from cryptography.x509.base import load_pem_x509_certificate
 import json
