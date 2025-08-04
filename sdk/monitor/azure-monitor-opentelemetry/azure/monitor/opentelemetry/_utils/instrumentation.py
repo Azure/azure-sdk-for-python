@@ -35,7 +35,12 @@ class DependencyConflict:
     required_any: Collection[str] = None
     found_any: Collection[str] = None
 
-    def __init__(self, required: str | None = None, found: str | None = None, required_any: Collection[str] = None, found_any: Collection[str] = None):
+    def __init__(
+        self, required: str | None = None,
+        found: str | None = None,
+        required_any: Collection[str] = None,
+        found_any: Collection[str] = None
+    ):
         self.required = required
         self.found = found
         self.required_any = required_any
@@ -43,7 +48,8 @@ class DependencyConflict:
 
     def __str__(self):
         if not self.required and (self.required_any or self.found_any):
-            return f'DependencyConflict: requested any of the following: "{self.required_any}" but found: "{self.found_any}"'
+            return (f'DependencyConflict: requested any of the following: "{self.required_any}" '
+                    f'but found: "{self.found_any}"')
         return f'DependencyConflict: requested: "{self.required}" but found: "{self.found}"'
 
 
@@ -97,7 +103,7 @@ def get_dependency_conflicts(
 
         if not req.specifier.contains(dist_version):
             return DependencyConflict(dep, f"{req.name} {dist_version}")  # type: ignore
-    
+
     if deps_any:
         return _get_dependency_conflicts_any(deps_any)
     return None
