@@ -2,8 +2,6 @@
 
 ## 1.0.3 (2025-08-04)
 
-### Features Added
-
 ### Bugs Fixed
 - `AgentsResponseFormatOption`, `MessageInputContent`, `MessageAttachmentToolDefinition`, `AgentsToolChoiceOption` are now public.
 - Fixed `update_agents` to execute with body as a keyword parameter.
