@@ -1,12 +1,13 @@
 # Release History
 
-## 1.0.3 (Unreleased)
+## 1.0.3 (2005-08-04)
 
 ### Features Added
 
 ### Bugs Fixed
 - `AgentsResponseFormatOption`, `MessageInputContent`, `MessageAttachmentToolDefinition`, `AgentsToolChoiceOption` are now public.
 - Fixed `update_agents` to execute with body as a keyword parameter.
+- New `tool_resources` parameter added to `runs.create` and `run.stream` method. This parameter represents overridden enabled tool resources that the agent should use to run the thread. Default value is None.
   
 ### Sample updates
 
