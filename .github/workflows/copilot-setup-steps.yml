@@ -8,10 +8,20 @@ jobs:
 
     permissions:
       contents: read
+      checks: read
+      statuses: write
+      id-token: write
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Azure Login with Workload Identity Federation
+        uses: azure/login@v2
+        with:
+          client-id: "936c56f0-298b-467f-b702-3ad5bf4b15c1"
+          tenant-id: "72f988bf-86f1-41af-91ab-2d7cd011db47"
+          allow-no-subscriptions: true
 
       - name: Setup Python
         uses: actions/setup-python@v4
