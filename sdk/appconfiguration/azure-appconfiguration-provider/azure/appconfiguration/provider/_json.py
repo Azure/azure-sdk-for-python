@@ -75,7 +75,7 @@ def remove_json_comments(text: str) -> str:
         elif text[i : i + 2] == MULTI_LINE_COMMENT:
             # Skip to end of block comment
             i += 2
-            
+
             # Search for the end of the comment
             found_end = False
             while i < length - 1:
@@ -84,7 +84,7 @@ def remove_json_comments(text: str) -> str:
                     i += 2  # Skip past the end marker
                     break
                 i += 1
-            
+
             # If we reached the end without finding the comment closer, raise an error
             if not found_end:
                 raise ValueError(f"Unterminated multi-line comment")
