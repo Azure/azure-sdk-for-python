@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 from ._configuration import ConversationAuthoringClientConfiguration, ConversationAuthoringProjectClientConfiguration
-from ._utils.serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 
 
 class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
