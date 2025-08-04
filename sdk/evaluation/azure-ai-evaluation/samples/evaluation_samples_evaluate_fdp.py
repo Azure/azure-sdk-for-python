@@ -67,7 +67,7 @@ class EvaluationEvaluateSamples(object):
                     },
                 },
             },
-            # Example of using tags for FDP (Fundamental Data Protection) compliance
+            # Example of using tags for "Foundry Projects"
             tags={
                 "compliance": "fdp_compliant",
                 "data_classification": "restricted",
