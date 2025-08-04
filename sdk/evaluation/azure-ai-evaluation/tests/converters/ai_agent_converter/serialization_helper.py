@@ -70,11 +70,9 @@ class ToolDecoder(json.JSONDecoder):
                                 file_id=result["file_id"],
                                 score=result["score"],
                                 content=[
-                                    FileSearchToolCallContent(
-                                        text=too_call_content["text"]
-                                        )
-                                        for too_call_content in result["content"]
-                                    ],
+                                    FileSearchToolCallContent(text=too_call_content["text"])
+                                    for too_call_content in result["content"]
+                                ],
                             )
                             for result in details["file_search"]["results"]
                         ],
