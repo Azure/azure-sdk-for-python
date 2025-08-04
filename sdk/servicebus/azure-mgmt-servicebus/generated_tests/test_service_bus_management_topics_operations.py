@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.servicebus.v2021_11_01 import ServiceBusManagementClient
+from azure.mgmt.servicebus import ServiceBusManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -25,7 +25,7 @@ class TestServiceBusManagementTopicsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             namespace_name="str",
             topic_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -54,7 +54,7 @@ class TestServiceBusManagementTopicsOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -68,7 +68,7 @@ class TestServiceBusManagementTopicsOperations(AzureMgmtRecordedTestCase):
             namespace_name="str",
             topic_name="str",
             authorization_rule_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -82,7 +82,7 @@ class TestServiceBusManagementTopicsOperations(AzureMgmtRecordedTestCase):
             namespace_name="str",
             topic_name="str",
             authorization_rule_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -96,7 +96,7 @@ class TestServiceBusManagementTopicsOperations(AzureMgmtRecordedTestCase):
             namespace_name="str",
             topic_name="str",
             authorization_rule_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -111,7 +111,7 @@ class TestServiceBusManagementTopicsOperations(AzureMgmtRecordedTestCase):
             topic_name="str",
             authorization_rule_name="str",
             parameters={"keyType": "str", "key": "str"},
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -123,7 +123,7 @@ class TestServiceBusManagementTopicsOperations(AzureMgmtRecordedTestCase):
         response = self.client.topics.list_by_namespace(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -173,7 +173,7 @@ class TestServiceBusManagementTopicsOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "updatedAt": "2020-02-20 00:00:00",
             },
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -186,7 +186,7 @@ class TestServiceBusManagementTopicsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             namespace_name="str",
             topic_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -199,7 +199,7 @@ class TestServiceBusManagementTopicsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             namespace_name="str",
             topic_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself

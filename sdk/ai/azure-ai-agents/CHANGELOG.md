@@ -2,6 +2,40 @@
 
 # Release History
 
+## 1.1.0b5 (Unreleased)
+
+### Bugs Fixed
+
+- Fixed `update_agent` to execute with body as a keyword parameter.
+
+### Features Added
+
+- Support `tool_resources` for run async operations.
+
+### Bugs Fixed
+
+- `AgentsResponseFormatOption`, `MessageInputContent`, `MessageAttachmentToolDefinition`, `AgentsToolChoiceOption` are now public.
+- Fixed issues where the `runs.create_and_process` API call did not correctly handle the `AzureAISearchTool`, `FileSearchTool`, and `CodeInterpreterTool` when specified in the toolset parameter.
+  
+## 1.1.0b4 (2025-07-11)
+
+### Features Added
+
+- Added support for MCP tool. For more information, see https://aka.ms/FoundryAgentMCPDoc.
+- New tool_resources parameter added to runs.create method. This parameter represents overridden enabled tool resources that the agent should use to run
+the thread. Default value is None.
+
+### Bugs Fixed
+
+- `_AgentsClientOperationsMixin` is now private.
+
+### Sample updates
+
+- Added a sample showing usage of MCP tool, [`sample_agents_mcp.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_tools/sample_agents_mcp.py).
+- Added a sample showing auto function call for a synchronous client, [`sample_agents_auto_function_call.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_tools/sample_agents_auto_function_call.py)
+- Added a sample showing auto function call for an asynchronous client, [`sample_agents_auto_function_call_async.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_async/sample_agents_auto_function_call_async.py).
+
+
 ## 1.1.0b3 (2025-06-30)
 
 ### Features Added

@@ -80,8 +80,9 @@ class HateUnfairnessEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             :caption: Initialize with threshold and call a HateUnfairnessEvaluator with a query and response.
     """
 
-    id = "azureml://registries/azureml/models/Hate-and-Unfairness-Evaluator/versions/4"
+    id = "azureai://built-in/evaluators/hate_unfairness"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
+    _OPTIONAL_PARAMS = ["query"]
 
     @override
     def __init__(
@@ -90,6 +91,7 @@ class HateUnfairnessEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
         azure_ai_project,
         *,
         threshold: int = 3,
+        **kwargs,
     ):
         super().__init__(
             eval_metric=EvaluationMetrics.HATE_FAIRNESS,
@@ -98,6 +100,7 @@ class HateUnfairnessEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
             conversation_aggregation_type=_AggregationType.MAX,
             threshold=threshold,
             _higher_is_better=False,
+            **kwargs,
         )
 
     @overload

@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines
+﻿# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -30,7 +30,7 @@ from azure.core.tracing.decorator import distributed_trace
 from . import models as _models
 from ._client import AgentsClient as AgentsClientGenerated
 from .operations._patch import _has_errors_in_toolcalls_output
-from . import _types
+from . import types as _types
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -140,10 +140,10 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :keyword response_format: Specifies the format for the responses, particularly for tool calls.
          Can be a string, response format mode, or structured response format object that defines how
          the agent should structure its outputs.
-        :type response_format: str or
-                               ~azure.ai.agents.models.AgentsApiResponseFormatMode or
-                               ~azure.ai.agents.models.AgentsApiResponseFormat or
-                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType
+        :paramtype response_format: Optional[Union[str,
+                               ~azure.ai.agents.models.AgentsResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsResponseFormat,
+                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword metadata: Custom key-value pairs for storing additional information about the agent.
          Useful for categorization, tracking, or storing application-specific data. Limited to 16 pairs,
          with keys up to 64 characters and values up to 512 characters each.
@@ -205,10 +205,10 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :keyword response_format: Specifies the format for the responses, particularly for tool calls.
          Can be a string, response format mode, or structured response format object that defines how
          the agent should structure its outputs.
-        :type response_format: str or
-                               ~azure.ai.agents.models.AgentsApiResponseFormatMode or
-                               ~azure.ai.agents.models.AgentsApiResponseFormat or
-                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType
+        :paramtype response_format: Optional[Union[str,
+                               ~azure.ai.agents.models.AgentsResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsResponseFormat,
+                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword metadata: Custom key-value pairs for storing additional information about the agent.
          Useful for categorization, tracking, or storing application-specific data. Limited to 16 pairs,
          with keys up to 64 characters and values up to 512 characters each.
@@ -295,10 +295,10 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :keyword response_format: Specifies the format for the responses, particularly for tool calls.
          Can be a string, response format mode, or structured response format object that defines how
          the agent should structure its outputs.
-        :type response_format: str or
-                               ~azure.ai.agents.models.AgentsApiResponseFormatMode or
-                               ~azure.ai.agents.models.AgentsApiResponseFormat or
-                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType
+        :paramtype response_format: Optional[Union[str,
+                               ~azure.ai.agents.models.AgentsResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsResponseFormat,
+                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword metadata: Custom key-value pairs for storing additional information about the agent.
         :paramtype metadata: Optional[Dict[str, str]]
         :keyword content_type: The MIME type of the request body when using body parameter.
@@ -392,10 +392,10 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :keyword response_format: Specifies the format for the responses, particularly for tool calls.
          Can be a string, response format mode, or structured response format object that defines how
          the agent should structure its outputs.
-        :type response_format: str or
-                               ~azure.ai.agents.models.AgentsApiResponseFormatMode or
-                               ~azure.ai.agents.models.AgentsApiResponseFormat or
-                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType
+        :paramtype response_format: Optional[Union[str,
+                               ~azure.ai.agents.models.AgentsResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsResponseFormat,
+                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -458,10 +458,10 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :keyword response_format: Specifies the format for the responses, particularly for tool calls.
          Can be a string, response format mode, or structured response format object that defines how
          the agent should structure its outputs.
-        :type response_format: str or
-                               ~azure.ai.agents.models.AgentsApiResponseFormatMode or
-                               ~azure.ai.agents.models.AgentsApiResponseFormat or
-                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType
+        :paramtype response_format: Optional[Union[str,
+                               ~azure.ai.agents.models.AgentsResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsResponseFormat,
+                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -569,10 +569,10 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :keyword response_format: Specifies the format for the responses, particularly for tool calls.
          Can be a string, response format mode, or structured response format object that defines how
          the agent should structure its outputs.
-        :type response_format: str or
-                               ~azure.ai.agents.models.AgentsApiResponseFormatMode or
-                               ~azure.ai.agents.models.AgentsApiResponseFormat or
-                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType
+        :paramtype response_format: Optional[Union[str,
+                               ~azure.ai.agents.models.AgentsResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsResponseFormat,
+                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -589,8 +589,8 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
 
         if body is not _Unset:
             if isinstance(body, io.IOBase):
-                return super().update_agent(body=body, content_type=content_type, **kwargs)
-            return super().update_agent(body=body, **kwargs)
+                return super().update_agent(agent_id, body, content_type=content_type, **kwargs)
+            return super().update_agent(agent_id, body, **kwargs)
 
         if toolset is not None:
             tools = toolset.definitions
@@ -701,45 +701,45 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         Creates a new agent thread and immediately starts a run using that new thread.
 
         :keyword agent_id: The ID of the agent for which the thread should be created. Required.
-        :type agent_id: str
+        :paramtype agent_id: str
         :keyword content_type: Body Parameter content-type for JSON body. Default is "application/json".
-        :type content_type: str
+        :paramtype content_type: str
         :keyword thread: The details used to create the new thread. If none provided, an empty thread is
                        created.
-        :type thread: ~azure.ai.agents.models.AgentThreadCreationOptions
+        :paramtype thread: ~azure.ai.agents.models.AgentThreadCreationOptions
         :keyword model: Override the model the agent uses for this run.
-        :type model: str
+        :paramtype model: str
         :keyword instructions: Override the system instructions for this run.
-        :type instructions: str
+        :paramtype instructions: str
         :keyword tools: Override the list of enabled tools for this run.
-        :type tools: list[~azure.ai.agents.models.ToolDefinition]
+        :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
         :keyword tool_resources: Override the tools the agent can use for this run.
-        :type tool_resources: ~azure.ai.agents.models.ToolResources
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
         :keyword temperature: Sampling temperature between 0 and 2. Higher = more random.
-        :type temperature: float
+        :paramtype temperature: float
         :keyword top_p: Nucleus sampling parameter between 0 and 1.
-        :type top_p: float
+        :paramtype top_p: float
         :keyword max_prompt_tokens: Max prompt tokens to use across the run.
-        :type max_prompt_tokens: int
+        :paramtype max_prompt_tokens: int
         :keyword max_completion_tokens: Max completion tokens to use across the run.
-        :type max_completion_tokens: int
+        :paramtype max_completion_tokens: int
         :keyword truncation_strategy: Strategy for dropping old messages as context grows.
-        :type truncation_strategy: ~azure.ai.agents.models.TruncationObject
+        :paramtype truncation_strategy: ~azure.ai.agents.models.TruncationObject
         :keyword tool_choice: Controls which tool the model will call.
-        :type tool_choice: str or
+        :paramtype tool_choice: str or
                           ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
                           ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format for the responses, particularly for tool calls.
          Can be a string, response format mode, or structured response format object that defines how
          the agent should structure its outputs.
-        :type response_format: str or
-                               ~azure.ai.agents.models.AgentsApiResponseFormatMode or
-                               ~azure.ai.agents.models.AgentsApiResponseFormat or
-                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType
+        :paramtype response_format: Optional[Union[str,
+                               ~azure.ai.agents.models.AgentsResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsResponseFormat,
+                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword parallel_tool_calls: If True, tools will be invoked in parallel.
-        :type parallel_tool_calls: bool
+        :paramtype parallel_tool_calls: bool
         :keyword metadata: Up to 16 key/value pairs for structured metadata on the run.
-        :type metadata: dict[str, str]
+        :paramtype metadata: dict[str, str]
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping.
         :rtype: ~azure.ai.agents.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -755,7 +755,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :param body: The request payload as a JSON-serializable dict.
         :type body: JSON
         :keyword content_type: Body Parameter content-type for JSON body. Default is "application/json".
-        :type content_type: str
+        :paramtype content_type: str
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping.
         :rtype: ~azure.ai.agents.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -771,7 +771,7 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :param body: The request payload as a byte-stream.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type for binary body. Default is "application/json".
-        :type content_type: str
+        :paramtype content_type: str
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping.
         :rtype: ~azure.ai.agents.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -807,43 +807,43 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         :type body: JSON or IO[bytes]
         :keyword agent_id: The ID of the agent for which the thread should be created.
                          Required when not using the JSON/body overload.
-        :type agent_id: str
+        :paramtype agent_id: str
         :keyword thread: The details used to create the new thread. If none provided, an empty thread is
                        created.
-        :type thread: ~azure.ai.agents.models.AgentThreadCreationOptions
+        :paramtype thread: ~azure.ai.agents.models.AgentThreadCreationOptions
         :keyword model: Override the model the agent uses for this run.
-        :type model: str
+        :paramtype model: str
         :keyword instructions: Override the system instructions for this run.
-        :type instructions: str
+        :paramtype instructions: str
         :keyword tools: Override the list of enabled tools for this run.
-        :type tools: list[~azure.ai.agents.models.ToolDefinition]
+        :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
         :keyword tool_resources: Override the tools the agent can use for this run.
-        :type tool_resources: ~azure.ai.agents.models.ToolResources
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
         :keyword temperature: Sampling temperature between 0 and 2. Higher = more random.
-        :type temperature: float
+        :paramtype temperature: float
         :keyword top_p: Nucleus sampling parameter between 0 and 1.
-        :type top_p: float
+        :paramtype top_p: float
         :keyword max_prompt_tokens: Max prompt tokens to use across the run.
-        :type max_prompt_tokens: int
+        :paramtype max_prompt_tokens: int
         :keyword max_completion_tokens: Max completion tokens to use across the run.
-        :type max_completion_tokens: int
+        :paramtype max_completion_tokens: int
         :keyword truncation_strategy: Strategy for dropping old messages as context grows.
-        :type truncation_strategy: ~azure.ai.agents.models.TruncationObject
+        :paramtype truncation_strategy: ~azure.ai.agents.models.TruncationObject
         :keyword tool_choice: Controls which tool the model will call.
-        :type tool_choice: str or
+        :paramtype tool_choice: str or
                           ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
                           ~azure.ai.agents.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format for the responses, particularly for tool calls.
          Can be a string, response format mode, or structured response format object that defines how
          the agent should structure its outputs.
-        :type response_format: str or
-                               ~azure.ai.agents.models.AgentsApiResponseFormatMode or
-                               ~azure.ai.agents.models.AgentsApiResponseFormat or
-                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType
+        :paramtype response_format: Optional[Union[str,
+                               ~azure.ai.agents.models.AgentsResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsResponseFormat,
+                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword parallel_tool_calls: If True, tools will be invoked in parallel.
-        :type parallel_tool_calls: bool
+        :paramtype parallel_tool_calls: bool
         :keyword metadata: Up to 16 key/value pairs for structured metadata on the run.
-        :type metadata: dict[str, str]
+        :paramtype metadata: dict[str, str]
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping.
         :rtype: ~azure.ai.agents.models.ThreadRun
         :raises ValueError: If the combination of arguments is invalid.
@@ -913,41 +913,41 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
         state, executing any required tool calls via the provided ToolSet.
 
         :keyword agent_id: The unique identifier of the agent to run. Required if `body` is unset.
-        :type agent_id: str
+        :paramtype agent_id: str
         :keyword thread: Options for creating the new thread (initial messages, metadata, tool resources).
-        :type thread: ~azure.ai.agents.models.AgentThreadCreationOptions
+        :paramtype thread: ~azure.ai.agents.models.AgentThreadCreationOptions
         :keyword model: Optional override of the model deployment name to use for this run.
-        :type model: str, optional
+        :paramtype model: str, optional
         :keyword instructions: Optional override of the system instructions for this run.
-        :type instructions: str, optional
+        :paramtype instructions: str, optional
         :keyword toolset: A ToolSet instance containing both `.definitions` and `.resources` for tools.
                         If provided, its definitions/resources are used; otherwise no tools are passed.
-        :type toolset: azure.ai.agents._tools.ToolSet, optional
+        :paramtype toolset: azure.ai.agents._tools.ToolSet, optional
         :keyword temperature: Sampling temperature for the model (0.0-2.0), higher is more random.
-        :type temperature: float, optional
+        :paramtype temperature: float, optional
         :keyword top_p: Nucleus sampling value (0.0-1.0), alternative to temperature.
-        :type top_p: float, optional
+        :paramtype top_p: float, optional
         :keyword max_prompt_tokens: Maximum total prompt tokens across turns; run ends “incomplete” if exceeded.
-        :type max_prompt_tokens: int, optional
+        :paramtype max_prompt_tokens: int, optional
         :keyword max_completion_tokens: Maximum total completion tokens across turns; run ends “incomplete” if exceeded.
-        :type max_completion_tokens: int, optional
+        :paramtype max_completion_tokens: int, optional
         :keyword truncation_strategy: Strategy for dropping old messages when context window overflows.
-        :type truncation_strategy: ~azure.ai.agents.models.TruncationObject, optional
+        :paramtype truncation_strategy: ~azure.ai.agents.models.TruncationObject, optional
         :keyword tool_choice: Controls which tool (if any) the model is allowed to call.
-        :type tool_choice: str or ~azure.ai.agents.models.AgentsToolChoiceOption, optional
+        :paramtype tool_choice: str or ~azure.ai.agents.models.AgentsToolChoiceOption, optional
         :keyword response_format: Specifies the format for the responses, particularly for tool calls.
          Can be a string, response format mode, or structured response format object that defines how
          the agent should structure its outputs.
-        :type response_format: str or
-                               ~azure.ai.agents.models.AgentsApiResponseFormatMode or
-                               ~azure.ai.agents.models.AgentsApiResponseFormat or
-                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType
+        :paramtype response_format: Optional[Union[str,
+                               ~azure.ai.agents.models.AgentsResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsResponseFormat,
+                               ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword parallel_tool_calls: If True, allows tool calls to be executed in parallel.
-        :type parallel_tool_calls: bool, optional
+        :paramtype parallel_tool_calls: bool, optional
         :keyword metadata: Optional metadata (up to 16 key/value pairs) to attach to the run.
-        :type metadata: dict[str, str], optional
+        :paramtype metadata: dict[str, str], optional
         :keyword polling_interval: Seconds to wait between polling attempts for run status. Default is 1.
-        :type polling_interval: int, optional
+        :paramtype polling_interval: int, optional
         :return: The final ThreadRun object, in a terminal state (succeeded, failed, or cancelled).
         :rtype: ~azure.ai.agents.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:

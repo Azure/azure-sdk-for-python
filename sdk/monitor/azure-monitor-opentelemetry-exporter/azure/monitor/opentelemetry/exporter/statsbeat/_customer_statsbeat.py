@@ -19,7 +19,8 @@ from azure.monitor.opentelemetry.exporter._constants import (
     CustomerStatsbeatProperties,
     DropCode,
     DropCodeType,
-    #RetryCode,
+    RetryCode,
+    RetryCodeType,
     CustomerStatsbeatMetricName,
     _CUSTOMER_STATSBEAT_LANGUAGE,
 )
@@ -39,8 +40,9 @@ class _CustomerStatsbeatTelemetryCounters:
     def __init__(self):
         self.total_item_success_count: Dict[str, Any] = {}
         self.total_item_drop_count: Dict[str, Dict[DropCodeType, Dict[str, int]]] = {}
+        self.total_item_retry_count: Dict[str, Dict[RetryCodeType, Dict[str, int]]] = {}
 
-class CustomerStatsbeatMetrics(metaclass=Singleton):
+class CustomerStatsbeatMetrics(metaclass=Singleton): # pylint: disable=too-many-instance-attributes
     def __init__(self, options):
         self._counters = _CustomerStatsbeatTelemetryCounters()
         self._language = _CUSTOMER_STATSBEAT_LANGUAGE
@@ -61,11 +63,13 @@ class CustomerStatsbeatMetrics(metaclass=Singleton):
             metric_readers=[self._customer_statsbeat_metric_reader]
         )
         self._customer_statsbeat_meter = self._customer_statsbeat_meter_provider.get_meter(__name__)
+
         self._customer_properties = CustomerStatsbeatProperties(
             language=self._language,
             version=VERSION,
             compute_type=get_compute_type(),
         )
+
         self._success_gauge = self._customer_statsbeat_meter.create_observable_gauge(
             name=CustomerStatsbeatMetricName.ITEM_SUCCESS_COUNT.value,
             description="Tracks successful telemetry items sent to Azure Monitor",
@@ -75,6 +79,11 @@ class CustomerStatsbeatMetrics(metaclass=Singleton):
             name=CustomerStatsbeatMetricName.ITEM_DROP_COUNT.value,
             description="Tracks dropped telemetry items sent to Azure Monitor",
             callbacks=[self._item_drop_callback]
+        )
+        self._retry_gauge = self._customer_statsbeat_meter.create_observable_gauge(
+            name=CustomerStatsbeatMetricName.ITEM_RETRY_COUNT.value,
+            description="Tracks retry attempts for telemetry items sent to Azure Monitor",
+            callbacks=[self._item_retry_callback]
         )
 
     def count_successful_items(self, count: int, telemetry_type: str) -> None:
@@ -107,6 +116,26 @@ class CustomerStatsbeatMetrics(metaclass=Singleton):
         reason = self._get_drop_reason(drop_code, exception_message)
 
         # Update the count for this reason
+        current_count = reason_map.get(reason, 0)
+        reason_map[reason] = current_count + count
+
+    def count_retry_items(
+        self, count: int, telemetry_type: str, retry_code: RetryCodeType,
+        exception_message: Optional[str] = None
+    ) -> None:
+        if not self._is_enabled or count <= 0:
+            return
+
+        if telemetry_type not in self._counters.total_item_retry_count:
+            self._counters.total_item_retry_count[telemetry_type] = {}
+        retry_code_map = self._counters.total_item_retry_count[telemetry_type]
+
+        if retry_code not in retry_code_map:
+            retry_code_map[retry_code] = {}
+        reason_map = retry_code_map[retry_code]
+
+        reason = self._get_retry_reason(retry_code, exception_message)
+
         current_count = reason_map.get(reason, 0)
         reason_map[reason] = current_count + count
 
@@ -146,6 +175,25 @@ class CustomerStatsbeatMetrics(metaclass=Singleton):
 
         return observations
 
+    def _item_retry_callback(self, options: CallbackOptions) -> Iterable[Observation]: # pylint: disable=unused-argument
+        if not getattr(self, "_is_enabled", False):
+            return []
+        observations: List[Observation] = []
+        for telemetry_type, retry_code_map in self._counters.total_item_retry_count.items():
+            for retry_code, reason_map in retry_code_map.items():
+                for reason, count in reason_map.items():
+                    attributes = {
+                        "language": self._customer_properties.language,
+                        "version": self._customer_properties.version,
+                        "compute_type": self._customer_properties.compute_type,
+                        "retry.code": retry_code,
+                        "retry.reason": reason,
+                        "telemetry_type": telemetry_type
+                    }
+                    observations.append(Observation(count, dict(attributes)))
+
+        return observations
+
     def _get_drop_reason(self, drop_code: DropCodeType, exception_message: Optional[str] = None) -> str:
         if isinstance(drop_code, int):
             return categorize_status_code(drop_code)
@@ -160,3 +208,16 @@ class CustomerStatsbeatMetrics(metaclass=Singleton):
         }
 
         return drop_code_reasons.get(drop_code, "unknown_reason")
+
+    def _get_retry_reason(self, retry_code: RetryCodeType, exception_message: Optional[str] = None) -> str:
+        if isinstance(retry_code, int):
+            return categorize_status_code(retry_code)
+
+        if retry_code == RetryCode.CLIENT_EXCEPTION:
+            return exception_message if exception_message else "unknown_exception"
+
+        retry_code_reasons = {
+            RetryCode.CLIENT_TIMEOUT: "client_timeout",
+            RetryCode.UNKNOWN: "unknown_reason",
+        }
+        return retry_code_reasons.get(retry_code, "unknown_reason")

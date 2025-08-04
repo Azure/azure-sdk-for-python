@@ -21,7 +21,7 @@ import asyncio
 import os
 from azure.communication.phonenumbers.aio import PhoneNumbersClient
 
-connection_str = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
+connection_str = os.environ["COMMUNICATION_SAMPLES_CONNECTION_STRING"]
 phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
 
 

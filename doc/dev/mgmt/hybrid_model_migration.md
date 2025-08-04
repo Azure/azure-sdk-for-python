@@ -60,6 +60,18 @@ print(json_model["myName"])  # Now returns camelCase key (matches REST API)
 - Replace `keep_readonly=True` with `exclude_readonly=False`
 - Update code expecting `snake_case` keys to use `camelCase` keys (consistent with REST API)
 
+**Backcompat option:**
+If you need `snake_case` keys and can't easily update your code:
+
+```python
+# Requires azure-core >= 1.35.0
+from azure.core.serialization import as_attribute_dict
+
+# Returns snake_case keys like the old models
+json_model = as_attribute_dict(model, exclude_readonly=False)
+print(json_model["my_name"])  # snake_case key preserved
+```
+
 ### Model Hierarchy Reflects REST API Structure
 
 **What changed**: Hybrid model generation preserves the actual REST API hierarchy instead of artificially flattening it.
@@ -98,6 +110,18 @@ print(model["properties"]["properties"]["name"])  # ✅ Mirrors actual API struc
 - Replace them with the actual nested property access using dot notation
 - Example: `obj.level1_level2_property` → `obj.level1.level2.property`
 - This new structure will match your REST API documentation exactly
+
+**Backcompat option:**
+For complex flattened property access where direct migration is difficult:
+
+```python
+# Requires azure-core >= 1.35.0
+from azure.core.serialization import as_attribute_dict
+
+# Handles flattened properties automatically
+model_dict = as_attribute_dict(model)
+print(model_dict["properties_properties_name"])  # Works with flattened names
+```
 
 ### Additional Properties Handling
 
@@ -235,6 +259,32 @@ model = Model(name="example", value=42)  # Still works as before
 - Test serialization format:
   - Verify the output format matches your expectations
   - Check that `camelCase` keys are handled correctly
+
+**Backcompat option:**
+If you need the exact same serialization format as the old `serialize()` method:
+
+```python
+# Requires azure-core >= 1.35.0
+from azure.core.serialization import as_attribute_dict
+
+# Returns the same format as old serialize() method with snake_case keys
+serialized_dict = as_attribute_dict(model, exclude_readonly=False)
+# For old serialize(keep_readonly=False) behavior:
+serialized_dict = as_attribute_dict(model, exclude_readonly=True)
+```
+
+---
+
+## Additional Helper Methods
+
+For edge cases and generic code that works with models, Azure Core (version 1.35.0 or later) provides these utility methods in `azure.core.serialization`:
+
+- **`is_generated_model(obj)`**: Check if an object is an SDK-generated model
+- **`attribute_list(model)`**: Get list of model attribute names (excluding additional properties)
+
+These are useful for writing generic code that needs to detect or introspect SDK models. These methods work with both the old and new hybrid models.
+
+---
 
 ## Why These Changes?
 
