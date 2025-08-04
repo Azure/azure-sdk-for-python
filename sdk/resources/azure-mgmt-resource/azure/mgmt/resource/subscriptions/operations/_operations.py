@@ -724,7 +724,7 @@ class TenantsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class SubscriptionClientOperationsMixin(
+class _SubscriptionClientOperationsMixin(
     ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], SubscriptionClientConfiguration]
 ):
 
