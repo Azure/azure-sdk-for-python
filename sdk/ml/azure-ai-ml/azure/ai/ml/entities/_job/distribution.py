@@ -66,7 +66,11 @@ class DistributionConfiguration(RestTranslatableMixin):
             data = obj.as_dict()
 
         type_str = data.pop("distribution_type", None) or data.pop("type", None)
-        klass = DISTRIBUTION_TYPE_MAP[type_str.lower()]
+        type_str = type_str.lower()
+        # designer service accepts "torch.distributed" but returns "pytorch" as distribution type, hence the below hack
+        if type_str == "pytorch":
+            type_str = "torch.distributed"
+        klass = DISTRIBUTION_TYPE_MAP[type_str]
         res: DistributionConfiguration = klass(**data)
         return res
 

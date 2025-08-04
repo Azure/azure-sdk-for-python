@@ -6,7 +6,7 @@
 class DistributionType:
     MPI = "mpi"
     TENSORFLOW = "tensorflow"
-    PYTORCH = "pytorch"
+    PYTORCH = "torch.distributed"
     RAY = "ray"
 
 
