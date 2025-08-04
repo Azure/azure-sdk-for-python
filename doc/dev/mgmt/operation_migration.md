@@ -87,7 +87,7 @@ fleet = client.fleets.begin_create_or_update(
     resource_group_name="rg",
     fleet_name="fleet1", 
     resource=fleet_operation,
-    if_match=<specific etag>
+    if_match="<specific etag>"
 )
 ```
 
