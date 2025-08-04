@@ -99,7 +99,7 @@ from azure.core import MatchConditions
 
 client = ContainerServiceFleetManagementClient(...)
 
-# Use enum to describe match conditions
+# Use enum to describe match condition
 fleet = client.fleets.begin_create_or_update(
     resource_group_name="rg",
     fleet_name="fleet1",
