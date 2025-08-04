@@ -1,5 +1,12 @@
 # Release History
 
+## 1.11.0 (Unreleased)
+
+### Breaking Changes
+
+### Features Added
+- Enhanced `GroundednessEvaluator` to support AI agent evaluation with tool calls. The evaluator now accepts agent response data containing tool calls and can extract context from `file_search` tool results for groundedness assessment. This enables evaluation of AI agents that use tools to retrieve information and generate responses. Note: Agent groundedness evaluation is currently supported only when the `file_search` tool is used.
+
 ## 1.10.0 (2025-07-29)
 
 ### Breaking Changes
