@@ -5,8 +5,11 @@ import os
 import random
 from datetime import datetime
 from logging.handlers import RotatingFileHandler
-
+from aiohttp import ClientSession
+from azure.core.credentials import TokenCredential, AccessToken
 from azure.monitor.opentelemetry import configure_azure_monitor
+
+from custom_tcp_connector import ProxiedTCPConnector
 from workload_configs import *
 
 _NOISY_ERRORS = set([404, 409, 412])
@@ -88,6 +91,16 @@ async def query_items_concurrently(container, excluded_locations, num_queries):
         tasks.append(perform_query_concurrently(container, excluded_locations))
     await asyncio.gather(*tasks)
 
+def create_custom_session():
+    proxied_connector = ProxiedTCPConnector(proxy_host=COSMOS_PROXY_URI,
+                         proxy_port=5100,
+                         limit=100,             # Max total open connections
+                         limit_per_host=10,     # Max per Cosmos DB host
+                         keepalive_timeout=30,  # Keep-alive duration for idle connections
+                         enable_cleanup_closed=True)  # Helpful for TLS/FIN issues
+
+    session = ClientSession(connector=proxied_connector)
+    return session
 
 async def perform_query_concurrently(container, excluded_locations):
     random_item = get_random_item()
