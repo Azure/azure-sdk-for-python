@@ -38,7 +38,7 @@ from ..models import (
     StoredAttestationPolicy as GeneratedStoredAttestationPolicy,
     PolicyCertificatesModificationResult as GeneratedPolicyCertificatesModificationResult,
 )
-from .._configuration import AttestationClientConfiguration
+from .._patch import AttestationClientConfiguration
 from .._common import pem_from_base64, validate_signing_keys, merge_validation_args
 
 if TYPE_CHECKING:
