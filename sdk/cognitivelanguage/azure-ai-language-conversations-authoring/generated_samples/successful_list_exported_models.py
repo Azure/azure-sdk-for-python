@@ -22,7 +22,7 @@ def main():
         credential="CREDENTIAL",
     )
 
-    response = client.project_operations.list_exported_models(
+    response = client.project.list_exported_models(
         project_name="LoanAgreements",
     )
     for item in response:

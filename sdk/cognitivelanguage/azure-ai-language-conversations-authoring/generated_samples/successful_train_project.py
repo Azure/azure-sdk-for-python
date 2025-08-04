@@ -23,7 +23,7 @@ def main():
         credential="CREDENTIAL",
     )
 
-    response = client.project_operations.begin_train(
+    response = client.project.begin_train(
         project_name="EmailApp",
         body={
             "dataGenerationSettings": {

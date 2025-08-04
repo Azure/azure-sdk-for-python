@@ -23,7 +23,7 @@ def main():
         credential="CREDENTIAL",
     )
 
-    response = client.project_operations.get_unassign_deployment_resources_status(
+    response = client.project.get_unassign_deployment_resources_status(
         project_name="EmailApp",
         job_id="66fa9a67-a561-42f1-8a13-f3a879b1a324_637858368000000000",
     )

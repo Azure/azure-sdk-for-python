@@ -22,7 +22,7 @@ def main():
         credential="CREDENTIAL",
     )
 
-    response = client.deployment_operations.get_deployment(
+    response = client.deployment.get_deployment(
         project_name="EmailApp",
         deployment_name="staging",
     )

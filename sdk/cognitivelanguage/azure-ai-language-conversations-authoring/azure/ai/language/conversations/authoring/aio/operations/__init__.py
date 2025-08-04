@@ -12,8 +12,8 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
-from ._operations import DeploymentOperationsOperations  # type: ignore
-from ._operations import ProjectOperationsOperations  # type: ignore
+from ._operations import DeploymentOperations  # type: ignore
+from ._operations import ProjectOperations  # type: ignore
 from ._operations import ExportedModelOperations  # type: ignore
 from ._operations import TrainedModelOperations  # type: ignore
 
@@ -22,8 +22,8 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "DeploymentOperationsOperations",
-    "ProjectOperationsOperations",
+    "DeploymentOperations",
+    "ProjectOperations",
     "ExportedModelOperations",
     "TrainedModelOperations",
 ]

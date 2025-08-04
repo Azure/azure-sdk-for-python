@@ -17,12 +17,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import ConversationAuthoringClientConfiguration, ConversationAuthoringProjectClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
-from .operations import (
-    DeploymentOperationsOperations,
-    ExportedModelOperations,
-    ProjectOperationsOperations,
-    TrainedModelOperations,
-)
+from .operations import DeploymentOperations, ExportedModelOperations, ProjectOperations, TrainedModelOperations
 from .operations._operations import _ConversationAuthoringClientOperationsMixin
 
 if TYPE_CHECKING:
@@ -114,12 +109,10 @@ class ConversationAuthoringClient(_ConversationAuthoringClientOperationsMixin):
 class ConversationAuthoringProjectClient:
     """ConversationAuthoringProjectClient.
 
-    :ivar deployment_operations: DeploymentOperationsOperations operations
-    :vartype deployment_operations:
-     azure.ai.language.conversations.authoring.operations.DeploymentOperationsOperations
-    :ivar project_operations: ProjectOperationsOperations operations
-    :vartype project_operations:
-     azure.ai.language.conversations.authoring.operations.ProjectOperationsOperations
+    :ivar deployment: DeploymentOperations operations
+    :vartype deployment: azure.ai.language.conversations.authoring.operations.DeploymentOperations
+    :ivar project: ProjectOperations operations
+    :vartype project: azure.ai.language.conversations.authoring.operations.ProjectOperations
     :ivar exported_model: ExportedModelOperations operations
     :vartype exported_model:
      azure.ai.language.conversations.authoring.operations.ExportedModelOperations
@@ -173,12 +166,8 @@ class ConversationAuthoringProjectClient:
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.deployment_operations = DeploymentOperationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.project_operations = ProjectOperationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.deployment = DeploymentOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.project = ProjectOperations(self._client, self._config, self._serialize, self._deserialize)
         self.exported_model = ExportedModelOperations(self._client, self._config, self._serialize, self._deserialize)
         self.trained_model = TrainedModelOperations(self._client, self._config, self._serialize, self._deserialize)
 

@@ -22,7 +22,7 @@ def main():
         credential="CREDENTIAL",
     )
 
-    client.project_operations.begin_swap_deployments(
+    client.project.begin_swap_deployments(
         project_name="EmailApp",
         body={"firstDeploymentName": "production", "secondDeploymentName": "staging"},
     ).result()

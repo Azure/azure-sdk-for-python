@@ -22,8 +22,9 @@ if TYPE_CHECKING:
 from ._configuration import ConversationAuthoringClientConfiguration, ConversationAuthoringProjectClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 
+
 class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
-    """Custom ConversationAuthoringProjectClient that bypasses generated __init__ 
+    """Custom ConversationAuthoringProjectClient that bypasses generated __init__
     and ensures project_name is mandatory.
     """
 
@@ -37,11 +38,7 @@ class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
     trained_model: TrainedModelOperations
 
     def __init__(
-        self,
-        endpoint: str,
-        credential: Union[AzureKeyCredential, "TokenCredential"],
-        project_name: str,
-        **kwargs: Any
+        self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], project_name: str, **kwargs: Any
     ) -> None:
         self._project_name = project_name
         _endpoint = f"{endpoint}/language"

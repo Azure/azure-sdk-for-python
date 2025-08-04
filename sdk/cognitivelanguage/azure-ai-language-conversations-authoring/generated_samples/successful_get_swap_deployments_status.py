@@ -22,7 +22,7 @@ def main():
         credential="CREDENTIAL",
     )
 
-    response = client.project_operations.get_swap_deployments_status(
+    response = client.project.get_swap_deployments_status(
         project_name="EmailApp",
         job_id="c36a8775-35b9-4cb5-a8db-665e7d91aafe_637858368000000000",
     )

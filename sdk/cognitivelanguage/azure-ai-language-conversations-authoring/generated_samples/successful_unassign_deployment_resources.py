@@ -23,7 +23,7 @@ def main():
         credential="CREDENTIAL",
     )
 
-    client.project_operations.begin_unassign_deployment_resources(
+    client.project.begin_unassign_deployment_resources(
         project_name="EmailApp",
         body={
             "assignedResourceIds": [

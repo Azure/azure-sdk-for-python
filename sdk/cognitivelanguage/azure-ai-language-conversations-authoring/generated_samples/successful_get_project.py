@@ -22,7 +22,7 @@ def main():
         credential="CREDENTIAL",
     )
 
-    response = client.project_operations.get_project(
+    response = client.project.get_project(
         project_name="myproject",
     )
     print(response)

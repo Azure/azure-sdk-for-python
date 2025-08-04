@@ -23,7 +23,7 @@ def main():
         credential="CREDENTIAL",
     )
 
-    client.deployment_operations.begin_deploy_project(
+    client.deployment.begin_deploy_project(
         project_name="EmailApp",
         deployment_name="production",
         body={

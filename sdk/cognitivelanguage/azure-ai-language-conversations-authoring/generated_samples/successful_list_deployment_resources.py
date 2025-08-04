@@ -22,7 +22,7 @@ def main():
         credential="CREDENTIAL",
     )
 
-    response = client.project_operations.list_deployment_resources(
+    response = client.project.list_deployment_resources(
         project_name="EmailApp",
     )
     for item in response:

@@ -23,7 +23,7 @@ def main():
         credential="CREDENTIAL",
     )
 
-    client.deployment_operations.begin_delete_deployment_from_resources(
+    client.deployment.begin_delete_deployment_from_resources(
         project_name="EmailApp",
         deployment_name="staging",
         body={

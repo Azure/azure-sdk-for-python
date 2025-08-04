@@ -23,7 +23,7 @@ def main():
         credential="CREDENTIAL",
     )
 
-    client.project_operations.begin_copy_project(
+    client.project.begin_copy_project(
         project_name="EmailApp",
         body={
             "accessToken": "103fcb47-b095-44c1-aedd-4024a5923275",

@@ -412,9 +412,7 @@ def build_conversation_authoring_get_import_status_request(  # pylint: disable=n
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_deployment_operations_get_deployment_request(  # pylint: disable=name-too-long
-    project_name: str, deployment_name: str, **kwargs: Any
-) -> HttpRequest:
+def build_deployment_get_deployment_request(project_name: str, deployment_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -439,9 +437,7 @@ def build_deployment_operations_get_deployment_request(  # pylint: disable=name-
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_deployment_operations_deploy_project_request(  # pylint: disable=name-too-long
-    project_name: str, deployment_name: str, **kwargs: Any
-) -> HttpRequest:
+def build_deployment_deploy_project_request(project_name: str, deployment_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -469,7 +465,7 @@ def build_deployment_operations_deploy_project_request(  # pylint: disable=name-
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_deployment_operations_delete_deployment_request(  # pylint: disable=name-too-long
+def build_deployment_delete_deployment_request(  # pylint: disable=name-too-long
     project_name: str, deployment_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -496,7 +492,7 @@ def build_deployment_operations_delete_deployment_request(  # pylint: disable=na
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_deployment_operations_delete_deployment_from_resources_request(  # pylint: disable=name-too-long
+def build_deployment_delete_deployment_from_resources_request(  # pylint: disable=name-too-long
     project_name: str, deployment_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -526,7 +522,7 @@ def build_deployment_operations_delete_deployment_from_resources_request(  # pyl
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_deployment_operations_get_deployment_delete_from_resources_status_request(  # pylint: disable=name-too-long
+def build_deployment_get_deployment_delete_from_resources_status_request(  # pylint: disable=name-too-long
     project_name: str, deployment_name: str, job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -554,7 +550,7 @@ def build_deployment_operations_get_deployment_delete_from_resources_status_requ
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_deployment_operations_get_deployment_status_request(  # pylint: disable=name-too-long
+def build_deployment_get_deployment_status_request(  # pylint: disable=name-too-long
     project_name: str, deployment_name: str, job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -582,7 +578,7 @@ def build_deployment_operations_get_deployment_status_request(  # pylint: disabl
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_project_operations_list_trained_models_request(  # pylint: disable=name-too-long
+def build_project_list_trained_models_request(  # pylint: disable=name-too-long
     project_name: str,
     *,
     top: Optional[int] = None,
@@ -619,7 +615,7 @@ def build_project_operations_list_trained_models_request(  # pylint: disable=nam
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_project_operations_list_training_jobs_request(  # pylint: disable=name-too-long
+def build_project_list_training_jobs_request(
     project_name: str,
     *,
     top: Optional[int] = None,
@@ -656,7 +652,7 @@ def build_project_operations_list_training_jobs_request(  # pylint: disable=name
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_project_operations_list_deployment_resources_request(  # pylint: disable=name-too-long
+def build_project_list_deployment_resources_request(  # pylint: disable=name-too-long
     project_name: str,
     *,
     top: Optional[int] = None,
@@ -693,7 +689,7 @@ def build_project_operations_list_deployment_resources_request(  # pylint: disab
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_project_operations_list_deployments_request(  # pylint: disable=name-too-long
+def build_project_list_deployments_request(
     project_name: str,
     *,
     top: Optional[int] = None,
@@ -730,7 +726,7 @@ def build_project_operations_list_deployments_request(  # pylint: disable=name-t
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_project_operations_list_exported_models_request(  # pylint: disable=name-too-long
+def build_project_list_exported_models_request(  # pylint: disable=name-too-long
     project_name: str,
     *,
     top: Optional[int] = None,
@@ -767,7 +763,7 @@ def build_project_operations_list_exported_models_request(  # pylint: disable=na
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_project_operations_assign_deployment_resources_request(  # pylint: disable=name-too-long
+def build_project_assign_deployment_resources_request(  # pylint: disable=name-too-long
     project_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -796,7 +792,7 @@ def build_project_operations_assign_deployment_resources_request(  # pylint: dis
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_project_operations_unassign_deployment_resources_request(  # pylint: disable=name-too-long
+def build_project_unassign_deployment_resources_request(  # pylint: disable=name-too-long
     project_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -825,7 +821,7 @@ def build_project_operations_unassign_deployment_resources_request(  # pylint: d
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_project_operations_get_assign_deployment_resources_status_request(  # pylint: disable=name-too-long
+def build_project_get_assign_deployment_resources_status_request(  # pylint: disable=name-too-long
     project_name: str, job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -852,7 +848,7 @@ def build_project_operations_get_assign_deployment_resources_status_request(  # 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_project_operations_get_unassign_deployment_resources_status_request(  # pylint: disable=name-too-long
+def build_project_get_unassign_deployment_resources_status_request(  # pylint: disable=name-too-long
     project_name: str, job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -879,9 +875,7 @@ def build_project_operations_get_unassign_deployment_resources_status_request(  
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_project_operations_swap_deployments_request(  # pylint: disable=name-too-long
-    project_name: str, **kwargs: Any
-) -> HttpRequest:
+def build_project_swap_deployments_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -908,7 +902,7 @@ def build_project_operations_swap_deployments_request(  # pylint: disable=name-t
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_project_operations_get_swap_deployments_status_request(  # pylint: disable=name-too-long
+def build_project_get_swap_deployments_status_request(  # pylint: disable=name-too-long
     project_name: str, job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -935,9 +929,7 @@ def build_project_operations_get_swap_deployments_status_request(  # pylint: dis
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_project_operations_get_project_request(  # pylint: disable=name-too-long
-    project_name: str, **kwargs: Any
-) -> HttpRequest:
+def build_project_get_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -961,7 +953,7 @@ def build_project_operations_get_project_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_project_operations_get_project_deletion_status_request(  # pylint: disable=name-too-long
+def build_project_get_project_deletion_status_request(  # pylint: disable=name-too-long
     job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -987,7 +979,7 @@ def build_project_operations_get_project_deletion_status_request(  # pylint: dis
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_project_operations_export_request(
+def build_project_export_request(
     project_name: str,
     *,
     string_index_type: Union[str, _models.StringIndexType],
@@ -1026,9 +1018,7 @@ def build_project_operations_export_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_project_operations_get_export_status_request(  # pylint: disable=name-too-long
-    project_name: str, job_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_project_get_export_status_request(project_name: str, job_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1053,7 +1043,7 @@ def build_project_operations_get_export_status_request(  # pylint: disable=name-
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_project_operations_copy_project_authorization_request(  # pylint: disable=name-too-long
+def build_project_copy_project_authorization_request(  # pylint: disable=name-too-long
     project_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1082,9 +1072,7 @@ def build_project_operations_copy_project_authorization_request(  # pylint: disa
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_project_operations_copy_project_request(  # pylint: disable=name-too-long
-    project_name: str, **kwargs: Any
-) -> HttpRequest:
+def build_project_copy_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1111,7 +1099,7 @@ def build_project_operations_copy_project_request(  # pylint: disable=name-too-l
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_project_operations_get_copy_project_status_request(  # pylint: disable=name-too-long
+def build_project_get_copy_project_status_request(  # pylint: disable=name-too-long
     project_name: str, job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1138,7 +1126,7 @@ def build_project_operations_get_copy_project_status_request(  # pylint: disable
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_project_operations_train_request(project_name: str, **kwargs: Any) -> HttpRequest:
+def build_project_train_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1165,7 +1153,7 @@ def build_project_operations_train_request(project_name: str, **kwargs: Any) -> 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_project_operations_get_training_status_request(  # pylint: disable=name-too-long
+def build_project_get_training_status_request(  # pylint: disable=name-too-long
     project_name: str, job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1192,7 +1180,7 @@ def build_project_operations_get_training_status_request(  # pylint: disable=nam
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_project_operations_cancel_training_job_request(  # pylint: disable=name-too-long
+def build_project_cancel_training_job_request(  # pylint: disable=name-too-long
     project_name: str, job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2904,14 +2892,14 @@ class _ConversationAuthoringClientOperationsMixin(
         return deserialized  # type: ignore
 
 
-class DeploymentOperationsOperations:
+class DeploymentOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.ai.language.conversations.authoring.ConversationAuthoringProjectClient`'s
-        :attr:`deployment_operations` attribute.
+        :attr:`deployment` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -2952,7 +2940,7 @@ class DeploymentOperationsOperations:
 
         cls: ClsType[_models.ConversationAuthoringProjectDeployment] = kwargs.pop("cls", None)
 
-        _request = build_deployment_operations_get_deployment_request(
+        _request = build_deployment_get_deployment_request(
             project_name=project_name,
             deployment_name=deployment_name,
             api_version=self._config.api_version,
@@ -3018,7 +3006,7 @@ class DeploymentOperationsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_deployment_operations_deploy_project_request(
+        _request = build_deployment_deploy_project_request(
             project_name=project_name,
             deployment_name=deployment_name,
             content_type=content_type,
@@ -3220,7 +3208,7 @@ class DeploymentOperationsOperations:
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_deployment_operations_delete_deployment_request(
+        _request = build_deployment_delete_deployment_request(
             project_name=project_name,
             deployment_name=deployment_name,
             api_version=self._config.api_version,
@@ -3348,7 +3336,7 @@ class DeploymentOperationsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_deployment_operations_delete_deployment_from_resources_request(
+        _request = build_deployment_delete_deployment_from_resources_request(
             project_name=project_name,
             deployment_name=deployment_name,
             content_type=content_type,
@@ -3579,7 +3567,7 @@ class DeploymentOperationsOperations:
 
         cls: ClsType[_models.ConversationAuthoringDeploymentDeleteFromResourcesState] = kwargs.pop("cls", None)
 
-        _request = build_deployment_operations_get_deployment_delete_from_resources_status_request(
+        _request = build_deployment_get_deployment_delete_from_resources_status_request(
             project_name=project_name,
             deployment_name=deployment_name,
             job_id=job_id,
@@ -3650,7 +3638,7 @@ class DeploymentOperationsOperations:
 
         cls: ClsType[_models.ConversationAuthoringDeploymentState] = kwargs.pop("cls", None)
 
-        _request = build_deployment_operations_get_deployment_status_request(
+        _request = build_deployment_get_deployment_status_request(
             project_name=project_name,
             deployment_name=deployment_name,
             job_id=job_id,
@@ -3690,14 +3678,14 @@ class DeploymentOperationsOperations:
         return deserialized  # type: ignore
 
 
-class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
+class ProjectOperations:  # pylint: disable=too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.ai.language.conversations.authoring.ConversationAuthoringProjectClient`'s
-        :attr:`project_operations` attribute.
+        :attr:`project` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -3743,7 +3731,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_project_operations_list_trained_models_request(
+                _request = build_project_list_trained_models_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
@@ -3841,7 +3829,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_project_operations_list_training_jobs_request(
+                _request = build_project_list_training_jobs_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
@@ -3942,7 +3930,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_project_operations_list_deployment_resources_request(
+                _request = build_project_list_deployment_resources_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
@@ -4040,7 +4028,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_project_operations_list_deployments_request(
+                _request = build_project_list_deployments_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
@@ -4143,7 +4131,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_project_operations_list_exported_models_request(
+                _request = build_project_list_exported_models_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
@@ -4239,7 +4227,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_project_operations_assign_deployment_resources_request(
+        _request = build_project_assign_deployment_resources_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -4456,7 +4444,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_project_operations_unassign_deployment_resources_request(
+        _request = build_project_unassign_deployment_resources_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -4663,7 +4651,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.ConversationAuthoringDeploymentResourcesState] = kwargs.pop("cls", None)
 
-        _request = build_project_operations_get_assign_deployment_resources_status_request(
+        _request = build_project_get_assign_deployment_resources_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -4735,7 +4723,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.ConversationAuthoringDeploymentResourcesState] = kwargs.pop("cls", None)
 
-        _request = build_project_operations_get_unassign_deployment_resources_status_request(
+        _request = build_project_get_unassign_deployment_resources_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -4800,7 +4788,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_project_operations_swap_deployments_request(
+        _request = build_project_swap_deployments_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -4993,7 +4981,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.ConversationAuthoringSwapDeploymentsState] = kwargs.pop("cls", None)
 
-        _request = build_project_operations_get_swap_deployments_status_request(
+        _request = build_project_get_swap_deployments_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -5055,7 +5043,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.ConversationAuthoringProjectMetadata] = kwargs.pop("cls", None)
 
-        _request = build_project_operations_get_project_request(
+        _request = build_project_get_project_request(
             project_name=project_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -5119,7 +5107,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.ConversationAuthoringProjectDeletionState] = kwargs.pop("cls", None)
 
-        _request = build_project_operations_get_project_deletion_status_request(
+        _request = build_project_get_project_deletion_status_request(
             job_id=job_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -5179,7 +5167,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_project_operations_export_request(
+        _request = build_project_export_request(
             project_name=project_name,
             string_index_type=string_index_type,
             exported_project_format=exported_project_format,
@@ -5329,7 +5317,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.ConversationAuthoringExportProjectState] = kwargs.pop("cls", None)
 
-        _request = build_project_operations_get_export_status_request(
+        _request = build_project_get_export_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -5510,7 +5498,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_project_operations_copy_project_authorization_request(
+        _request = build_project_copy_project_authorization_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -5581,7 +5569,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_project_operations_copy_project_request(
+        _request = build_project_copy_project_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -5783,7 +5771,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.ConversationAuthoringCopyProjectState] = kwargs.pop("cls", None)
 
-        _request = build_project_operations_get_copy_project_status_request(
+        _request = build_project_get_copy_project_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -5848,7 +5836,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_project_operations_train_request(
+        _request = build_project_train_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -6060,7 +6048,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.ConversationAuthoringTrainingState] = kwargs.pop("cls", None)
 
-        _request = build_project_operations_get_training_status_request(
+        _request = build_project_get_training_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -6112,7 +6100,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_project_operations_cancel_training_job_request(
+        _request = build_project_cancel_training_job_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,

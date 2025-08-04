@@ -22,7 +22,7 @@ def main():
         credential="CREDENTIAL",
     )
 
-    response = client.deployment_operations.get_deployment_status(
+    response = client.deployment.get_deployment_status(
         project_name="EmailApp",
         deployment_name="production",
         job_id="66fa9a67-a561-42f1-8a13-f3a879b1a324_637858368000000000",

@@ -22,7 +22,7 @@ def main():
         credential="CREDENTIAL",
     )
 
-    client.project_operations.begin_export(
+    client.project.begin_export(
         project_name="EmailApp",
         string_index_type="Utf16CodeUnit",
     ).result()

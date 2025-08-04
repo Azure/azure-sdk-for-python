@@ -22,7 +22,7 @@ def main():
         credential="CREDENTIAL",
     )
 
-    response = client.project_operations.get_training_status(
+    response = client.project.get_training_status(
         project_name="EmailApp",
         job_id="8ccf2ffe-e758-4d04-a44a-31512918c7e8_637858368000000000",
     )

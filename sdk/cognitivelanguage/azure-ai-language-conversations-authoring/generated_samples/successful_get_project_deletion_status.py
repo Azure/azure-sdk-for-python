@@ -22,7 +22,7 @@ def main():
         credential="CREDENTIAL",
     )
 
-    response = client.project_operations.get_project_deletion_status(
+    response = client.project.get_project_deletion_status(
         job_id="129d3182-625d-496c-bcf9-43686e85160b_637858368000000000",
     )
     print(response)

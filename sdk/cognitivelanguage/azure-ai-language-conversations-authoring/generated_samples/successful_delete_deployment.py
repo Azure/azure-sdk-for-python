@@ -22,7 +22,7 @@ def main():
         credential="CREDENTIAL",
     )
 
-    client.deployment_operations.begin_delete_deployment(
+    client.deployment.begin_delete_deployment(
         project_name="EmailApp",
         deployment_name="staging",
     ).result()

@@ -22,7 +22,7 @@ def main():
         credential="CREDENTIAL",
     )
 
-    response = client.project_operations.list_trained_models(
+    response = client.project.list_trained_models(
         project_name="EmailApp",
     )
     for item in response:

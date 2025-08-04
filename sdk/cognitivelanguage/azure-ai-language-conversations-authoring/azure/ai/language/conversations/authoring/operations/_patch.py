@@ -13,8 +13,8 @@ from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
 from ._operations import (
-    ProjectOperationsOperations as ProjectOperationsGenerated,
-    DeploymentOperationsOperations as DeploymentOperationsGenerated,
+    ProjectOperations as ProjectOperationsGenerated,
+    DeploymentOperations as DeploymentOperationsGenerated,
     ExportedModelOperations as ExportedModelOperationsGenerated,
     TrainedModelOperations as TrainedModelOperationsGenerated,
 )

@@ -22,7 +22,7 @@ def main():
         credential="CREDENTIAL",
     )
 
-    response = client.project_operations.get_export_status(
+    response = client.project.get_export_status(
         project_name="EmailApp",
         job_id="c95efa2a-44e8-461e-8aa5-04b4677bfa84_637858368000000000",
     )

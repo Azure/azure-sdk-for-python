@@ -21,8 +21,9 @@ if TYPE_CHECKING:
 from ._configuration import ConversationAuthoringClientConfiguration, ConversationAuthoringProjectClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 
+
 class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
-    """Custom ConversationAuthoringProjectClient that bypasses generated __init__ 
+    """Custom ConversationAuthoringProjectClient that bypasses generated __init__
     and ensures project_name is mandatory.
     """
 
@@ -93,6 +94,7 @@ class ConversationAuthoringClient(AuthoringClientGenerated):
             project_name=project_name,
         )
 
+
 def patch_sdk():
     """Do not remove from this file.
 
@@ -100,5 +102,6 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+
 
 __all__ = ["ConversationAuthoringProjectClient", "ConversationAuthoringClient"]

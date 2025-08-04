@@ -50,37 +50,37 @@ from ...operations._operations import (
     build_conversation_authoring_list_supported_languages_request,
     build_conversation_authoring_list_supported_prebuilt_entities_request,
     build_conversation_authoring_list_training_config_versions_request,
-    build_deployment_operations_delete_deployment_from_resources_request,
-    build_deployment_operations_delete_deployment_request,
-    build_deployment_operations_deploy_project_request,
-    build_deployment_operations_get_deployment_delete_from_resources_status_request,
-    build_deployment_operations_get_deployment_request,
-    build_deployment_operations_get_deployment_status_request,
+    build_deployment_delete_deployment_from_resources_request,
+    build_deployment_delete_deployment_request,
+    build_deployment_deploy_project_request,
+    build_deployment_get_deployment_delete_from_resources_status_request,
+    build_deployment_get_deployment_request,
+    build_deployment_get_deployment_status_request,
     build_exported_model_create_or_update_exported_model_request,
     build_exported_model_delete_exported_model_request,
     build_exported_model_get_exported_model_job_status_request,
     build_exported_model_get_exported_model_request,
-    build_project_operations_assign_deployment_resources_request,
-    build_project_operations_cancel_training_job_request,
-    build_project_operations_copy_project_authorization_request,
-    build_project_operations_copy_project_request,
-    build_project_operations_export_request,
-    build_project_operations_get_assign_deployment_resources_status_request,
-    build_project_operations_get_copy_project_status_request,
-    build_project_operations_get_export_status_request,
-    build_project_operations_get_project_deletion_status_request,
-    build_project_operations_get_project_request,
-    build_project_operations_get_swap_deployments_status_request,
-    build_project_operations_get_training_status_request,
-    build_project_operations_get_unassign_deployment_resources_status_request,
-    build_project_operations_list_deployment_resources_request,
-    build_project_operations_list_deployments_request,
-    build_project_operations_list_exported_models_request,
-    build_project_operations_list_trained_models_request,
-    build_project_operations_list_training_jobs_request,
-    build_project_operations_swap_deployments_request,
-    build_project_operations_train_request,
-    build_project_operations_unassign_deployment_resources_request,
+    build_project_assign_deployment_resources_request,
+    build_project_cancel_training_job_request,
+    build_project_copy_project_authorization_request,
+    build_project_copy_project_request,
+    build_project_export_request,
+    build_project_get_assign_deployment_resources_status_request,
+    build_project_get_copy_project_status_request,
+    build_project_get_export_status_request,
+    build_project_get_project_deletion_status_request,
+    build_project_get_project_request,
+    build_project_get_swap_deployments_status_request,
+    build_project_get_training_status_request,
+    build_project_get_unassign_deployment_resources_status_request,
+    build_project_list_deployment_resources_request,
+    build_project_list_deployments_request,
+    build_project_list_exported_models_request,
+    build_project_list_trained_models_request,
+    build_project_list_training_jobs_request,
+    build_project_swap_deployments_request,
+    build_project_train_request,
+    build_project_unassign_deployment_resources_request,
     build_trained_model_delete_trained_model_request,
     build_trained_model_evaluate_model_request,
     build_trained_model_get_evaluation_status_request,
@@ -1435,14 +1435,14 @@ class _ConversationAuthoringClientOperationsMixin(
         return deserialized  # type: ignore
 
 
-class DeploymentOperationsOperations:
+class DeploymentOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.ai.language.conversations.authoring.aio.ConversationAuthoringProjectClient`'s
-        :attr:`deployment_operations` attribute.
+        :attr:`deployment` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -1483,7 +1483,7 @@ class DeploymentOperationsOperations:
 
         cls: ClsType[_models.ConversationAuthoringProjectDeployment] = kwargs.pop("cls", None)
 
-        _request = build_deployment_operations_get_deployment_request(
+        _request = build_deployment_get_deployment_request(
             project_name=project_name,
             deployment_name=deployment_name,
             api_version=self._config.api_version,
@@ -1549,7 +1549,7 @@ class DeploymentOperationsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_deployment_operations_deploy_project_request(
+        _request = build_deployment_deploy_project_request(
             project_name=project_name,
             deployment_name=deployment_name,
             content_type=content_type,
@@ -1754,7 +1754,7 @@ class DeploymentOperationsOperations:
 
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_deployment_operations_delete_deployment_request(
+        _request = build_deployment_delete_deployment_request(
             project_name=project_name,
             deployment_name=deployment_name,
             api_version=self._config.api_version,
@@ -1885,7 +1885,7 @@ class DeploymentOperationsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_deployment_operations_delete_deployment_from_resources_request(
+        _request = build_deployment_delete_deployment_from_resources_request(
             project_name=project_name,
             deployment_name=deployment_name,
             content_type=content_type,
@@ -2117,7 +2117,7 @@ class DeploymentOperationsOperations:
 
         cls: ClsType[_models.ConversationAuthoringDeploymentDeleteFromResourcesState] = kwargs.pop("cls", None)
 
-        _request = build_deployment_operations_get_deployment_delete_from_resources_status_request(
+        _request = build_deployment_get_deployment_delete_from_resources_status_request(
             project_name=project_name,
             deployment_name=deployment_name,
             job_id=job_id,
@@ -2188,7 +2188,7 @@ class DeploymentOperationsOperations:
 
         cls: ClsType[_models.ConversationAuthoringDeploymentState] = kwargs.pop("cls", None)
 
-        _request = build_deployment_operations_get_deployment_status_request(
+        _request = build_deployment_get_deployment_status_request(
             project_name=project_name,
             deployment_name=deployment_name,
             job_id=job_id,
@@ -2228,14 +2228,14 @@ class DeploymentOperationsOperations:
         return deserialized  # type: ignore
 
 
-class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
+class ProjectOperations:  # pylint: disable=too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.ai.language.conversations.authoring.aio.ConversationAuthoringProjectClient`'s
-        :attr:`project_operations` attribute.
+        :attr:`project` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -2281,7 +2281,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_project_operations_list_trained_models_request(
+                _request = build_project_list_trained_models_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
@@ -2379,7 +2379,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_project_operations_list_training_jobs_request(
+                _request = build_project_list_training_jobs_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
@@ -2480,7 +2480,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_project_operations_list_deployment_resources_request(
+                _request = build_project_list_deployment_resources_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
@@ -2578,7 +2578,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_project_operations_list_deployments_request(
+                _request = build_project_list_deployments_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
@@ -2681,7 +2681,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_project_operations_list_exported_models_request(
+                _request = build_project_list_exported_models_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
@@ -2777,7 +2777,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_project_operations_assign_deployment_resources_request(
+        _request = build_project_assign_deployment_resources_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2995,7 +2995,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_project_operations_unassign_deployment_resources_request(
+        _request = build_project_unassign_deployment_resources_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -3203,7 +3203,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.ConversationAuthoringDeploymentResourcesState] = kwargs.pop("cls", None)
 
-        _request = build_project_operations_get_assign_deployment_resources_status_request(
+        _request = build_project_get_assign_deployment_resources_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -3275,7 +3275,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.ConversationAuthoringDeploymentResourcesState] = kwargs.pop("cls", None)
 
-        _request = build_project_operations_get_unassign_deployment_resources_status_request(
+        _request = build_project_get_unassign_deployment_resources_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -3340,7 +3340,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_project_operations_swap_deployments_request(
+        _request = build_project_swap_deployments_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -3534,7 +3534,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.ConversationAuthoringSwapDeploymentsState] = kwargs.pop("cls", None)
 
-        _request = build_project_operations_get_swap_deployments_status_request(
+        _request = build_project_get_swap_deployments_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -3596,7 +3596,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.ConversationAuthoringProjectMetadata] = kwargs.pop("cls", None)
 
-        _request = build_project_operations_get_project_request(
+        _request = build_project_get_project_request(
             project_name=project_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3660,7 +3660,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.ConversationAuthoringProjectDeletionState] = kwargs.pop("cls", None)
 
-        _request = build_project_operations_get_project_deletion_status_request(
+        _request = build_project_get_project_deletion_status_request(
             job_id=job_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3720,7 +3720,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_project_operations_export_request(
+        _request = build_project_export_request(
             project_name=project_name,
             string_index_type=string_index_type,
             exported_project_format=exported_project_format,
@@ -3871,7 +3871,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.ConversationAuthoringExportProjectState] = kwargs.pop("cls", None)
 
-        _request = build_project_operations_get_export_status_request(
+        _request = build_project_get_export_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -4052,7 +4052,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_project_operations_copy_project_authorization_request(
+        _request = build_project_copy_project_authorization_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -4123,7 +4123,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_project_operations_copy_project_request(
+        _request = build_project_copy_project_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -4326,7 +4326,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.ConversationAuthoringCopyProjectState] = kwargs.pop("cls", None)
 
-        _request = build_project_operations_get_copy_project_status_request(
+        _request = build_project_get_copy_project_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -4391,7 +4391,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_project_operations_train_request(
+        _request = build_project_train_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -4604,7 +4604,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.ConversationAuthoringTrainingState] = kwargs.pop("cls", None)
 
-        _request = build_project_operations_get_training_status_request(
+        _request = build_project_get_training_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -4656,7 +4656,7 @@ class ProjectOperationsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_project_operations_cancel_training_job_request(
+        _request = build_project_cancel_training_job_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
