@@ -221,10 +221,14 @@ class TestXxxOperations(AzureMgmtRecordedTestCase):
 ```
 
 > **Important**: 
+- One test file may contain multi test cases and update test case **one by one** with order **create, update, get , list and delete".
+- DO update fake value of parameter with meaningful value when call SDK API
+- WHEN FOCUS on one test case, leave other test cases unchanged for now 
 - Ensure parameter keys in the `parameters` dictionary exactly match the variable names expected by your ARM template file.
 - Run command in virtual environment
 - Follow this guideline Step by Step.
 - ONLY change according to error message for live test result.
+- DO use ARM template instead of SDK API to create resource
 
 
 
