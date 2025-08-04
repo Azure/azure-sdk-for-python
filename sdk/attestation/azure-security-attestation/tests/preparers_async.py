@@ -33,9 +33,7 @@ def AllAttestationTypes(func: Callable[..., Awaitable[T]] = None, **kwargs: Any)
     return wrapper
 
 
-def AllInstanceTypes(
-    func: Callable[..., Awaitable[T]] = None, include_shared: bool = True, **kwargs: Any
-):
+def AllInstanceTypes(func: Callable[..., Awaitable[T]] = None, include_shared: bool = True, **kwargs: Any):
     """Decorator to apply to function to add instance_url kwarg for each instance type."""
 
     async def wrapper(*args, **kwargs) -> Callable[..., Awaitable[T]]:
