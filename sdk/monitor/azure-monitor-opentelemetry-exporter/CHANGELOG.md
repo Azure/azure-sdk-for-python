@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b41 (Unreleased)
+## 1.0.0b42 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,20 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.0.0b41 (2025-07-31)
+
+### Features Added
+
+- Added RateLimited Sampler 
+  ([#41954](https://github.com/Azure/azure-sdk-for-python/pull/41954))
+- Refactored Application Insights Sampler Code
+  ([#42210](https://github.com/Azure/azure-sdk-for-python/pull/42210))
+
+### Other Changes
+
+- Update minimum version of OpenTelemetry. Remove Python 3.8 support.
+    ([#42246](https://github.com/Azure/azure-sdk-for-python/pull/42246))
 
 ## 1.0.0b40 (2025-07-17)
 
@@ -22,10 +36,6 @@
   ([#41950](https://github.com/Azure/azure-sdk-for-python/pull/41950))
 - Customer Facing Statsbeat: Added logic for retry item count
   ([#41971](https://github.com/Azure/azure-sdk-for-python/pull/41971))
-- Added RateLimited Sampler 
-  ([#41954](https://github.com/Azure/azure-sdk-for-python/pull/41954))
-- Refactored Application Insights Sampler Code
-  ([#42210](https://github.com/Azure/azure-sdk-for-python/pull/42210))
 - Support AI Foundry by Handling GEN_AI_SYSTEM Attributes with [Spec](https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/blob/main/ApplicationInsights/genai_semconv_mapping.md) ([#41705](https://github.com/Azure/azure-sdk-for-python/pull/41705))
 - Distinguish Azure AI SDKs in statsbeats ([#42016](https://github.com/Azure/azure-sdk-for-python/pull/42016))
 

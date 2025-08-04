@@ -1181,18 +1181,18 @@ class DeepResearchBingGroundingConnection(_Model):
 class DeepResearchDetails(_Model):
     """The details of the Deep Research tool.
 
-    :ivar deep_research_model: The deep research model deployment name. Required.
-    :vartype deep_research_model: str
-    :ivar deep_research_bing_grounding_connections: The array containing Bing grounding connection
-     IDs to enhance deep research capabilities. Required.
-    :vartype deep_research_bing_grounding_connections:
+    :ivar model: The deep research model deployment name. Required.
+    :vartype model: str
+    :ivar bing_grounding_connections: The array containing Bing grounding connection IDs to enhance
+     deep research capabilities. Required.
+    :vartype bing_grounding_connections:
      list[~azure.ai.agents.models.DeepResearchBingGroundingConnection]
     """
 
-    deep_research_model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    model: str = rest_field(name="deep_research_model", visibility=["read", "create", "update", "delete", "query"])
     """The deep research model deployment name. Required."""
-    deep_research_bing_grounding_connections: List["_models.DeepResearchBingGroundingConnection"] = rest_field(
-        name="bing_grounding_connections", visibility=["read", "create", "update", "delete", "query"]
+    bing_grounding_connections: List["_models.DeepResearchBingGroundingConnection"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
     )
     """The array containing Bing grounding connection IDs to enhance deep research capabilities.
      Required."""
@@ -1201,8 +1201,8 @@ class DeepResearchDetails(_Model):
     def __init__(
         self,
         *,
-        deep_research_model: str,
-        deep_research_bing_grounding_connections: List["_models.DeepResearchBingGroundingConnection"],
+        model: str,
+        bing_grounding_connections: List["_models.DeepResearchBingGroundingConnection"],
     ) -> None: ...
 
     @overload
@@ -1753,6 +1753,39 @@ class IncompleteRunDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
+class MCPApprovalPerTool(_Model):
+    """Customized MCP approval object, listing tools requiring and not requiring approvals.
+
+    :ivar never: The list of tools, not requiring approval.
+    :vartype never: ~azure.ai.agents.models.MCPToolList
+    :ivar always: The list of tools, always requiring approval.
+    :vartype always: ~azure.ai.agents.models.MCPToolList
+    """
+
+    never: Optional["_models.MCPToolList"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The list of tools, not requiring approval."""
+    always: Optional["_models.MCPToolList"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The list of tools, always requiring approval."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        never: Optional["_models.MCPToolList"] = None,
+        always: Optional["_models.MCPToolList"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class MCPToolDefinition(ToolDefinition, discriminator="mcp"):
     """The input definition information for a MCP tool which defines a MCP server endpoint.
 
@@ -1795,6 +1828,34 @@ class MCPToolDefinition(ToolDefinition, discriminator="mcp"):
         super().__init__(*args, type="mcp", **kwargs)
 
 
+class MCPToolList(_Model):
+    """The object, containing list of tools for approvals.
+
+    :ivar tool_names: The list of tools for approval. Required.
+    :vartype tool_names: list[str]
+    """
+
+    tool_names: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The list of tools for approval. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tool_names: List[str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class MCPToolResource(_Model):
     """A set of resources that are used by the ``mcp`` tool.
 
@@ -1802,20 +1863,20 @@ class MCPToolResource(_Model):
     :vartype server_label: str
     :ivar headers: The headers for the MCP server updates. Required.
     :vartype headers: dict[str, str]
-    :ivar require_approval: Does MCP server require approval. Is one of the following types:
-     Literal["never"], Literal["always"], str
-    :vartype require_approval: str or str or str
+    :ivar require_approval: Does MCP server require approval. Is one of the following types: str,
+     Literal["never"], Literal["always"], MCPApprovalPerTool
+    :vartype require_approval: str or str or str or ~azure.ai.agents.models.MCPApprovalPerTool
     """
 
     server_label: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The label for the MCP server. Required."""
     headers: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The headers for the MCP server updates. Required."""
-    require_approval: Optional[Union[Literal["never"], Literal["always"], str]] = rest_field(
+    require_approval: Optional["_types.MCPRequiredApproval"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Does MCP server require approval. Is one of the following types: Literal[\"never\"],
-     Literal[\"always\"], str"""
+    """Does MCP server require approval. Is one of the following types: str, Literal[\"never\"],
+     Literal[\"always\"], MCPApprovalPerTool"""
 
     @overload
     def __init__(
@@ -1823,7 +1884,7 @@ class MCPToolResource(_Model):
         *,
         server_label: str,
         headers: Dict[str, str],
-        require_approval: Optional[Union[Literal["never"], Literal["always"], str]] = None,
+        require_approval: Optional["_types.MCPRequiredApproval"] = None,
     ) -> None: ...
 
     @overload
@@ -4653,7 +4714,7 @@ class RunStepDeltaToolCall(_Model):
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     RunStepDeltaCodeInterpreterToolCall, RunStepDeltaFileSearchToolCall,
-    RunStepDeltaFunctionToolCall
+    RunStepDeltaFunctionToolCall, RunStepDeltaMcpToolCall
 
     :ivar index: The index of the tool call detail in the run step's tool_calls array. Required.
     :vartype index: int
@@ -4739,7 +4800,7 @@ class RunStepDeltaDetail(_Model):
     """Represents a single run step detail item in a streaming run step's delta payload.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    RunStepDeltaMessageCreation, RunStepDeltaToolCallObject
+    RunStepDeltaMCPObject, RunStepDeltaMessageCreation, RunStepDeltaToolCallObject
 
     :ivar type: The object type for the run step detail object. Required. Default value is None.
     :vartype type: str
@@ -4885,6 +4946,78 @@ class RunStepDeltaFunctionToolCall(RunStepDeltaToolCall, discriminator="function
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, type="function", **kwargs)
+
+
+class RunStepDeltaMCPObject(RunStepDeltaDetail, discriminator="mcp"):
+    """Represents an invocation of mcp as part of a streaming run step.
+
+    :ivar type: The object type, which is always "mcp". Required. Default value is "mcp".
+    :vartype type: str
+    :ivar tool_calls: The collection of tool calls for the tool call detail item.
+    :vartype tool_calls: list[~azure.ai.agents.models.RunStepDeltaMcpToolCall]
+    """
+
+    type: Literal["mcp"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always \"mcp\". Required. Default value is \"mcp\"."""
+    tool_calls: Optional[List["_models.RunStepDeltaMcpToolCall"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The collection of tool calls for the tool call detail item."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tool_calls: Optional[List["_models.RunStepDeltaMcpToolCall"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="mcp", **kwargs)
+
+
+class RunStepDeltaMcpToolCall(RunStepDeltaToolCall, discriminator="mcp"):
+    """Represents the function data in a streaming run step MCP call.*.
+
+    :ivar id: The ID of the tool call, used when submitting outputs to the run. Required.
+    :vartype id: str
+    :ivar type: The object type, which is always "mcp". Required. Default value is "mcp".
+    :vartype type: str
+    :ivar index: The index of a response. Required.
+    :vartype index: int
+    :ivar arguments: The arguments for MCP call. Required.
+    :vartype arguments: str
+    """
+
+    type: Literal["mcp"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always \"mcp\". Required. Default value is \"mcp\"."""
+    arguments: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The arguments for MCP call. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        index: int,
+        arguments: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="mcp", **kwargs)
 
 
 class RunStepDeltaMessageCreation(RunStepDeltaDetail, discriminator="message_creation"):

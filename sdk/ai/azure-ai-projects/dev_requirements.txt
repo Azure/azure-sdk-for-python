@@ -4,4 +4,3 @@
 aiohttp
 azure.ai.inference
 openai
-prompty

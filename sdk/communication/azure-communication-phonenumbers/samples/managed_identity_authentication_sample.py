@@ -24,7 +24,7 @@ from azure.communication.phonenumbers import PhoneNumbersClient
 from azure.communication.phonenumbers._shared.utils import parse_connection_str
 from azure.identity import DefaultAzureCredential
 
-connection_str = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
+connection_str = os.environ["COMMUNICATION_SAMPLES_CONNECTION_STRING"]
 endpoint, _ = parse_connection_str(connection_str)
 phone_numbers_client = PhoneNumbersClient(endpoint, DefaultAzureCredential())
 
