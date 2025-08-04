@@ -1,0 +1,48 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/authoring/analyze-conversations/projects/MyPythonProject0802?api-version=2025-05-15-preview",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "173",
+        "Content-Type": "application/merge-patch+json",
+        "Ocp-Apim-Subscription-Key": "Sanitized",
+        "User-Agent": "azsdk-python-ai-language-conversations-authoring/1.0.0b1 Python/3.13.5 (Windows-11-10.0.26100-SP0)"
+      },
+      "RequestBody": {
+        "projectKind": "Conversation",
+        "projectName": "MyPythonProject0802",
+        "language": "en-us",
+        "multilingual": true,
+        "description": "Project created for testing via Python SDK"
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "*",
+        "apim-request-id": "158615ae-9014-43bf-a820-513698b7474f",
+        "Content-Length": "251",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Sun, 03 Aug 2025 06:07:47 GMT",
+        "Location": "https://example.com",
+        "request-id": "158615ae-9014-43bf-a820-513698b7474f",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "118",
+        "x-ms-region": "East US"
+      },
+      "ResponseBody": {
+        "createdDateTime": "2025-08-03T06:07:48Z",
+        "lastModifiedDateTime": "2025-08-03T06:07:48Z",
+        "projectKind": "Conversation",
+        "projectName": "MyPythonProject0802",
+        "multilingual": true,
+        "description": "Project created for testing via Python SDK",
+        "language": "en-us"
+      }
+    }
+  ],
+  "Variables": {}
+}
