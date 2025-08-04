@@ -7,6 +7,8 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fixed issue #42337, added support for instrumentations-any to ensure better dependency detection.
+  ([]())
 
 ### Other Changes
 
