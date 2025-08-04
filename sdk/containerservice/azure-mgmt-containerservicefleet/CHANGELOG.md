@@ -1,6 +1,6 @@
 # Release History
 
-## 4.0.0b1 (2025-08-01)
+## 4.0.0b1 (2025-08-04)
 
 ### Features Added
 
@@ -32,6 +32,7 @@
 
 ### Breaking Changes
 
+  - For the use of parameters `etag`/`match_condition`, please refer to https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/operation_migration.md
   - Model `FleetMemberUpdate` deleted or renamed its instance variable `group`
   - Method `AutoUpgradeProfilesOperations.begin_create_or_update` renamed positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
   - Method `AutoUpgradeProfilesOperations.begin_delete` renamed positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
