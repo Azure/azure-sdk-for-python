@@ -87,7 +87,7 @@ def remove_json_comments(text: str) -> str:
 
             # If we reached the end without finding the comment closer, raise an error
             if not found_end:
-                raise ValueError(f"Unterminated multi-line comment")
+                raise ValueError("Unterminated multi-line comment")
         else:
             result.append(current_char)
             i += 1
