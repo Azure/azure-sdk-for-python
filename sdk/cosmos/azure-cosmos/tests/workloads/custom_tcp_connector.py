@@ -27,9 +27,7 @@ class ProxiedTCPConnector(TCPConnector):
         Args:
             proxy_host (str): The hostname of the proxy server.
             proxy_port (int): The port number of the proxy server.
-            label (str | None): A label to prefix metric names. Defaults to "aiohttp".
-            tags (list[str] | None): Additional tags to include in metrics. Defaults to None.
-            **kwargs: Additional keyword arguments passed to the base TrackedTCPConnector.
+            **kwargs: Additional keyword arguments passed to the base TCPConnector.
         """
         super().__init__(**kwargs)
         self.__proxy_host = proxy_host

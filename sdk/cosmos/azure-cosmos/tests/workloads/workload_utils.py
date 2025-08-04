@@ -6,7 +6,6 @@ import random
 from datetime import datetime
 from logging.handlers import RotatingFileHandler
 from aiohttp import ClientSession
-from azure.core.credentials import TokenCredential, AccessToken
 from azure.monitor.opentelemetry import configure_azure_monitor
 
 from custom_tcp_connector import ProxiedTCPConnector

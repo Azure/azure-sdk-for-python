@@ -2,7 +2,7 @@
 
 # Check if the correct number of arguments are provided
 if [ "$#" -ne 5 ]; then
-    echo "Usage: $0 <template_file_path> <output_envoy_config_file> <account_name>"
+    echo "Usage: $0 <template_file_path> <output_envoy_config_file> <account_name> <write_region> <read_region>"
     exit 1
 fi
 
