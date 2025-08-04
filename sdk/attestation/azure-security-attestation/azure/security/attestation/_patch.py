@@ -38,6 +38,10 @@ from .models import (
     PolicyCertificatesModificationResult as GeneratedPolicyCertificatesModificationResult,
     AttestationPolicyResult,
     AttestationPolicyCertificateResult,
+    AttestationTokenValidationException,
+    AttestationPolicyToken,
+    PolicyModification,
+    CertificateModification,
 )
 from ._configuration import AttestationClientConfiguration
 from ._common import pem_from_base64, validate_signing_keys, merge_validation_args
@@ -1017,7 +1021,11 @@ __all__: List[str] = [
     "AttestationClient",
     "AttestationAdministrationClient",
     "AttestationType",
-    "AttestationToken"
+    "AttestationToken",
+    "AttestationTokenValidationException",
+    "AttestationPolicyToken",
+    "PolicyModification",
+    "CertificateModification",
 ]  # Add all objects you want publicly available to users at this package level
 
 
