@@ -511,9 +511,10 @@ class ToolDefinition(_Model):
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureAISearchToolDefinition, AzureFunctionToolDefinition, BingCustomSearchToolDefinition,
-    BingGroundingToolDefinition, CodeInterpreterToolDefinition, ConnectedAgentToolDefinition,
-    DeepResearchToolDefinition, MicrosoftFabricToolDefinition, FileSearchToolDefinition,
-    FunctionToolDefinition, MCPToolDefinition, OpenApiToolDefinition, SharepointToolDefinition
+    BingGroundingToolDefinition, BrowserAutomationToolDefinition, CodeInterpreterToolDefinition,
+    ConnectedAgentToolDefinition, DeepResearchToolDefinition, MicrosoftFabricToolDefinition,
+    FileSearchToolDefinition, FunctionToolDefinition, MCPToolDefinition, OpenApiToolDefinition,
+    SharepointToolDefinition
 
     :ivar type: The object type. Required. Default value is None.
     :vartype type: str
@@ -1003,6 +1004,101 @@ class BingGroundingToolDefinition(ToolDefinition, discriminator="bing_grounding"
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, type="bing_grounding", **kwargs)
+
+
+class BrowserAutomationToolConnectionParameters(_Model):  # pylint: disable=name-too-long
+    """Definition of input parameters for the connection used by the Browser Automation Tool.
+
+    :ivar id: The ID of the connection to your Azure Playwright resource. Required.
+    :vartype id: str
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the connection to your Azure Playwright resource. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BrowserAutomationToolDefinition(ToolDefinition, discriminator="browser_automation"):
+    """The input definition information for a Browser Automation Tool, as used to configure an Agent.
+
+    :ivar type: The object type, which is always 'browser_automation'. Required. Default value is
+     "browser_automation".
+    :vartype type: str
+    :ivar browser_automation: The Browser Automation Tool parameters. Required.
+    :vartype browser_automation: ~azure.ai.agents.models.BrowserAutomationToolParameters
+    """
+
+    type: Literal["browser_automation"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'browser_automation'. Required. Default value is
+     \"browser_automation\"."""
+    browser_automation: "_models.BrowserAutomationToolParameters" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Browser Automation Tool parameters. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        browser_automation: "_models.BrowserAutomationToolParameters",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="browser_automation", **kwargs)
+
+
+class BrowserAutomationToolParameters(_Model):
+    """Definition of input parameters for the Browser Automation Tool.
+
+    :ivar connection: The connection parameters associated with the Browser Automation Tool.
+     Required.
+    :vartype connection: ~azure.ai.agents.models.BrowserAutomationToolConnectionParameters
+    """
+
+    connection: "_models.BrowserAutomationToolConnectionParameters" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The connection parameters associated with the Browser Automation Tool. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection: "_models.BrowserAutomationToolConnectionParameters",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class CodeInterpreterToolDefinition(ToolDefinition, discriminator="code_interpreter"):
