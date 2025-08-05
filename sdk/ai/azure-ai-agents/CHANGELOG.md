@@ -2,7 +2,11 @@
 
 # Release History
 
-## 1.1.0b5 (Unreleased)
+## 1.2.0b1 (2025-08-05)
+
+### Breaking Changes
+- **Version Lineage Change**: This beta release continues the experimental feature development from `1.1.0b4`, adding new functionality and improvements.
+- **Important Version Context**: The stable release `1.1.0` is based on `1.0.2` and does not include beta features. This `1.2.0b1` beta release preserves and extends all experimental features from the `1.1.0b1`-`1.1.0b4` beta series.
 
 ### Bugs Fixed
 
