@@ -11,15 +11,14 @@
 import datetime
 from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from .. import _model_base
-from .._model_base import rest_discriminator, rest_field
+from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import ExperimentMetricType
 
 if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AggregatedValue(_model_base.Model):
+class AggregatedValue(_Model):
     """An event property value aggregated by a metric.
 
     :ivar event_name: The name of the event. Required.
@@ -57,7 +56,7 @@ class AggregatedValue(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ExperimentMetricDefinition(_model_base.Model):
+class ExperimentMetricDefinition(_Model):
     """The metric definition, which determines how the metric value is calculated from event data.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -70,7 +69,7 @@ class ExperimentMetricDefinition(_model_base.Model):
     :vartype type: str or ~azure.onlineexperimentation.models.ExperimentMetricType
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
+    __mapping__: Dict[str, _Model] = {}
     type: str = rest_discriminator(name="type")
     """Discriminator property for ExperimentMetricDefinition. Required. Known values are:
      \"EventCount\", \"UserCount\", \"EventRate\", \"UserRate\", \"Sum\", \"Average\", and
@@ -128,7 +127,7 @@ class AverageMetricDefinition(ExperimentMetricDefinition, discriminator="Average
         super().__init__(*args, type=ExperimentMetricType.AVERAGE, **kwargs)
 
 
-class DiagnosticDetail(_model_base.Model):
+class DiagnosticDetail(_Model):
     """Diagnostic details for validation errors.
 
     :ivar message: A human-readable error message. Required.
@@ -221,7 +220,7 @@ class EventRateMetricDefinition(ExperimentMetricDefinition, discriminator="Event
         super().__init__(*args, type=ExperimentMetricType.EVENT_RATE, **kwargs)
 
 
-class ExperimentMetric(_model_base.Model):
+class ExperimentMetric(_Model):
     """Defines experiment metric metadata and computation details.
 
     :ivar id: Identifier for this experiment metric. Must start with a lowercase letter and contain
@@ -244,8 +243,8 @@ class ExperimentMetric(_model_base.Model):
     :ivar definition: The metric definition specifying how the metric value is calculated from
      event data. Required.
     :vartype definition: ~azure.onlineexperimentation.models.ExperimentMetricDefinition
-    :ivar e_tag: ETag of the experiment metric. Required.
-    :vartype e_tag: str
+    :ivar etag: ETag of the experiment metric. Required.
+    :vartype etag: str
     :ivar last_modified_at: The timestamp (UTC) of the last modification to the experiment metric
      resource. Required.
     :vartype last_modified_at: ~datetime.datetime
@@ -276,7 +275,7 @@ class ExperimentMetric(_model_base.Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The metric definition specifying how the metric value is calculated from event data. Required."""
-    e_tag: str = rest_field(name="eTag", visibility=["read"])
+    etag: str = rest_field(name="eTag", visibility=["read"])
     """ETag of the experiment metric. Required."""
     last_modified_at: datetime.datetime = rest_field(name="lastModifiedAt", visibility=["read"], format="rfc3339")
     """The timestamp (UTC) of the last modification to the experiment metric resource. Required."""
@@ -304,7 +303,7 @@ class ExperimentMetric(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ExperimentMetricValidationResult(_model_base.Model):
+class ExperimentMetricValidationResult(_Model):
     """The result of validating an experiment metric.
 
     :ivar is_valid: Indicates whether the experiment metric is valid. Required.
@@ -336,7 +335,7 @@ class ExperimentMetricValidationResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ObservedEvent(_model_base.Model):
+class ObservedEvent(_Model):
     """An event observed by a metric.
 
     :ivar event_name: The name of the event. Required.

@@ -68,6 +68,7 @@ with project_client:
     )
     print(f"Created message, message ID {message.id}")
 
+    # Process Agent run and stream events back to the client. It may take a few minutes for the agent to complete the run.
     with agents_client.runs.stream(thread_id=thread.id, agent_id=agent.id) as stream:
 
         for event_type, event_data, _ in stream:

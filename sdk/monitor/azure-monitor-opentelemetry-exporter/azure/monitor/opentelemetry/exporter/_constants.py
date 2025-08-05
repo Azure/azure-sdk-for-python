@@ -2,11 +2,17 @@
 # Licensed under the MIT License.
 # cSpell:disable
 
+from enum import Enum
+from typing import Union
 from opentelemetry.semconv.metrics import MetricInstruments
 from opentelemetry.semconv.metrics.http_metrics import (
     HTTP_CLIENT_REQUEST_DURATION,
     HTTP_SERVER_REQUEST_DURATION,
 )
+# pylint:disable=no-name-in-module
+from fixedint import Int32
+from azure.core import CaseInsensitiveEnumMeta
+
 
 # Environment variables
 
@@ -15,6 +21,7 @@ _APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED = (
     "APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED"
 )
 _APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN = "APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN"
+_APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED = "APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED"
 _APPLICATIONINSIGHTS_AUTHENTICATION_STRING = "APPLICATIONINSIGHTS_AUTHENTICATION_STRING"
 
 # RPs
@@ -61,6 +68,10 @@ _EXCEPTION_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Exception"
 _MESSAGE_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Message"
 _REQUEST_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Request"
 _REMOTE_DEPENDENCY_ENVELOPE_NAME = "Microsoft.ApplicationInsights.RemoteDependency"
+_EVENT_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Event"
+_PAGE_VIEW_ENVELOPE_NAME = "Microsoft.ApplicationInsights.PageView"
+_PERFORMANCE_COUNTER_ENVELOPE_NAME = "Microsoft.ApplicationInsights.PerformanceCounter"
+_AVAILABILITY_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Availability"
 
 # Feature constants
 _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE = "APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE"
@@ -68,7 +79,6 @@ _AZURE_MONITOR_DISTRO_VERSION_ARG = "distro_version"
 _MICROSOFT_CUSTOM_EVENT_NAME = "microsoft.custom_event.name"
 
 # Statsbeat
-
 # (OpenTelemetry metric name, Statsbeat metric name)
 _ATTACH_METRIC_NAME = ("attach", "Attach")
 _FEATURE_METRIC_NAME = ("feature", "Feature")
@@ -114,11 +124,80 @@ _EU_ENDPOINTS = [
     "ukwest",
 ]
 
+# Telemetry Types
+_AVAILABILITY = "AVAILABILITY"
+_CUSTOM_EVENT = "CUSTOM_EVENT"
+_CUSTOM_METRIC = "CUSTOM_METRIC"
+_DEPENDENCY = "DEPENDENCY"
+_EXCEPTION = "EXCEPTION"
+_PAGE_VIEW = "PAGE_VIEW"
+_PERFORMANCE_COUNTER = "PERFORMANCE_COUNTER"
+_REQUEST = "REQUEST"
+_TRACE = "TRACE"
+_UNKNOWN = "UNKNOWN"
+
+# Customer Facing Statsbeat
+_APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW = "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW"
+
+_CUSTOMER_STATSBEAT_LANGUAGE = "python"
+
+class DropCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    CLIENT_READONLY = "CLIENT_READONLY"
+    CLIENT_EXCEPTION = "CLIENT_EXCEPTION"
+    CLIENT_PERSISTENCE_CAPACITY = "CLIENT_PERSISTENCE_CAPACITY"
+    CLIENT_STORAGE_DISABLED = "CLIENT_STORAGE_DISABLED"
+    UNKNOWN = "UNKNOWN"
+
+DropCodeType = Union[DropCode, int]
+
+class RetryCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    CLIENT_EXCEPTION = "CLIENT_EXCEPTION"
+    CLIENT_TIMEOUT = "CLIENT_TIMEOUT"
+    UNKNOWN = "UNKNOWN"
+
+RetryCodeType = Union[RetryCode, int]
+
+class CustomerStatsbeatMetricName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    ITEM_SUCCESS_COUNT = "preview.item.success.count"
+    ITEM_DROP_COUNT = "preview.item.dropped.count"
+    ITEM_RETRY_COUNT = "preview.item.retry.count"
+
+class CustomerStatsbeatProperties:
+    language: str
+    version: str
+    compute_type: str
+    def __init__(self, language: str, version: str, compute_type: str):
+        self.language = language
+        self.version = version
+        self.compute_type = compute_type
+
+## Map from Azure Monitor envelope names to TelemetryType
+_TYPE_MAP = {
+                _EVENT_ENVELOPE_NAME: _CUSTOM_EVENT,
+                _METRIC_ENVELOPE_NAME: _CUSTOM_METRIC,
+                _REMOTE_DEPENDENCY_ENVELOPE_NAME: _DEPENDENCY,
+                _EXCEPTION_ENVELOPE_NAME: _EXCEPTION,
+                _PAGE_VIEW_ENVELOPE_NAME: _PAGE_VIEW,
+                _MESSAGE_ENVELOPE_NAME: _TRACE,
+                _REQUEST_ENVELOPE_NAME: _REQUEST,
+                _PERFORMANCE_COUNTER_ENVELOPE_NAME: _PERFORMANCE_COUNTER,
+                _AVAILABILITY_ENVELOPE_NAME: _AVAILABILITY,
+            }
+
+# Map RP names
+class _RP_Names(Enum):
+    APP_SERVICE = "appsvc"
+    FUNCTIONS = "functions"
+    AKS = "aks"
+    VM = "vm"
+    UNKNOWN = "unknown"
+
 # Instrumentations
 
 # Special constant for azure-sdk opentelemetry instrumentation
 _AZURE_SDK_OPENTELEMETRY_NAME = "azure-sdk-opentelemetry"
 _AZURE_SDK_NAMESPACE_NAME = "az.namespace"
+_AZURE_AI_SDK_NAME = "azure-ai-opentelemetry"
 
 _BASE = 2
 
@@ -136,7 +215,7 @@ _INSTRUMENTATIONS_LIST = [
     "requests",
     "sqlalchemy",
     "aio-pika",
-    "aiohttp-client",
+    "aiohttp_client",
     "aiopg",
     "asgi",
     "asyncpg",
@@ -149,7 +228,7 @@ _INSTRUMENTATIONS_LIST = [
     "grpc",
     "httpx",
     "jinja2",
-    "kafka-python",
+    "kafka",
     "pika",
     "pymemcache",
     "redis",
@@ -157,20 +236,28 @@ _INSTRUMENTATIONS_LIST = [
     "sklearn",
     "sqlite3",
     "starlette",
-    "system-metrics",
+    "system_metrics",
     "tornado",
     "urllib",
     "urllib3",
     _AZURE_SDK_OPENTELEMETRY_NAME,
-    # Instrumentations below this line have not been added to statsbeat report yet
     "cassandra",
     "tortoiseorm",
-    "aiohttp-server",
+    "aiohttp_server",
     "asyncio",
     "mysqlclient",
     "psycopg",
     "threading",
     "wsgi",
+    "aiokafka",
+    "asyncclick",
+    "click",
+    "pymssql",
+    "google_genai",
+    "openai_v2",
+    "vertexai",
+    # Instrumentations below this line have not been added to statsbeat report yet
+    _AZURE_AI_SDK_NAME
 ]
 
 _INSTRUMENTATIONS_BIT_MAP = {_INSTRUMENTATIONS_LIST[i]: _BASE**i for i in range(len(_INSTRUMENTATIONS_LIST))}
@@ -210,6 +297,9 @@ _INSTRUMENTATION_SUPPORTING_METRICS_LIST = (
 # sampleRate
 
 _SAMPLE_RATE_KEY = "_MS.sampleRate"
+_SAMPLING_HASH = 5381
+_INTEGER_MAX: int = Int32.maxval
+_INTEGER_MIN: int = Int32.minval
 
 # AAD Auth
 

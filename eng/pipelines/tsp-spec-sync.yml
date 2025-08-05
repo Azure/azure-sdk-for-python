@@ -29,9 +29,9 @@ extends:
                 displayName: 'Configure Git'
 
               - script: |
-                  tsp-client update --local-spec-repo ../../specs/scratch/
+                  tsp-client update --local-spec-repo ../../specs/modeltypes
                 displayName: 'Run TSP Client Update'
-                workingDirectory: '$(Build.SourcesDirectory)/sdk/core/azure-core/tests/specs_sdk/scratch'
+                workingDirectory: '$(Build.SourcesDirectory)/sdk/core/azure-core/tests/specs_sdk/modeltypes'
 
               - script: |
                   changes=$(git status --porcelain)

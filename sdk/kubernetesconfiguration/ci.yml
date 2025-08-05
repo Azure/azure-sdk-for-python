@@ -36,3 +36,5 @@ extends:
       safeName: azuremgmtkubernetesconfigurationextensiontypes
     - name: azure-mgmt-kubernetesconfiguration-fluxconfigurations
       safeName: azuremgmtkubernetesconfigurationfluxconfigurations
+    - name: azure-mgmt-kubernetesconfiguration-privatelinkscopes
+      safeName: azuremgmtkubernetesconfigurationprivatelinkscopes

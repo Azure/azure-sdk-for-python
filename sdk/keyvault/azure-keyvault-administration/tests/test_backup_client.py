@@ -33,8 +33,8 @@ class TestBackupClientTests(KeyVaultTestCase):
         set_bodiless_matcher()
         # backup the vault
         container_uri = kwargs.pop("container_uri")
-        check_result = client.begin_pre_backup(container_uri, use_managed_identity=True).result()
-        assert check_result.error is None
+        # make sure an error isn't raised by pre-backup check; i.e. ensure the backup can be done
+        client.begin_pre_backup(container_uri, use_managed_identity=True).wait()
         backup_poller = client.begin_backup(container_uri, use_managed_identity=True)
         backup_operation = backup_poller.result()
         assert backup_operation.folder_url
@@ -45,8 +45,8 @@ class TestBackupClientTests(KeyVaultTestCase):
             time.sleep(15)
 
         # restore the backup
-        check_result = client.begin_pre_restore(backup_operation.folder_url, use_managed_identity=True).result()
-        assert check_result.error is None
+        # make sure an error isn't raised by pre-restore check; i.e. ensure the restore can be done
+        client.begin_pre_restore(backup_operation.folder_url, use_managed_identity=True).wait()
         restore_poller = client.begin_restore(backup_operation.folder_url, use_managed_identity=True)
         restore_poller.wait()
         if self.is_live:
@@ -190,8 +190,7 @@ class TestBackupClientTests(KeyVaultTestCase):
         if self.is_live and not sas_token:
             pytest.skip("SAS token is required for live tests. Please set the BLOB_STORAGE_SAS_TOKEN environment variable.")
 
-        check_result = client.begin_pre_backup(container_uri, sas_token=sas_token).result()
-        assert check_result.error is None
+        client.begin_pre_backup(container_uri, sas_token=sas_token).wait()
         backup_poller = client.begin_backup(container_uri, sas_token)  # Test positional SAS token for backwards compat
         backup_operation = backup_poller.result()
         assert backup_operation.folder_url
@@ -200,8 +199,7 @@ class TestBackupClientTests(KeyVaultTestCase):
             time.sleep(15)  # Additional waiting to ensure backup will be available for restore
 
         # restore the backup
-        check_result = client.begin_pre_restore(backup_operation.folder_url, sas_token=sas_token).result()
-        assert check_result.error is None
+        client.begin_pre_restore(backup_operation.folder_url, sas_token=sas_token).wait()
         restore_poller = client.begin_restore(backup_operation.folder_url, sas_token)  # Test positional SAS token
         restore_poller.wait()
         if self.is_live:

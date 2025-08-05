@@ -7,8 +7,14 @@
 
 from checkers.removed_method_overloads_checker import RemovedMethodOverloadChecker
 from checkers.added_method_overloads_checker import AddedMethodOverloadChecker
+from checkers.unflattened_models_checker import UnflattenedModelsChecker
 
 CHECKERS = [
     RemovedMethodOverloadChecker(),
     AddedMethodOverloadChecker(),
+]
+
+POST_PROCESSING_CHECKERS = [
+    # Add any post-processing checkers here
+    UnflattenedModelsChecker(),
 ]

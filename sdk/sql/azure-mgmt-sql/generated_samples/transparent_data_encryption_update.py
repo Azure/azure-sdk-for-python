@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -35,11 +36,11 @@ def main():
         server_name="securitytde-42",
         database_name="testdb",
         tde_name="current",
-        parameters={"properties": {"state": "Enabled"}},
+        parameters={"properties": {"scanState": "Suspend", "state": "Enabled"}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2024-05-01-preview/examples/TransparentDataEncryptionUpdate.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2024-11-01-preview/examples/TransparentDataEncryptionUpdate.json
 if __name__ == "__main__":
     main()

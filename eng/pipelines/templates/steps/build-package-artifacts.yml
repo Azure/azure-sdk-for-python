@@ -105,7 +105,7 @@ steps:
 
   - script: |
       sudo apt-get update
-      sudo apt-get install -y qemu-user-static
+      sudo apt-get install -y qemu-user-static binfmt-support
       sudo update-binfmts --enable qemu-aarch64
     displayName: 'Install QEMU Dependencies'
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))

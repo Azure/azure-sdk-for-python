@@ -28,7 +28,7 @@ from azure.ai.evaluation import (
 from azure.ai.evaluation._constants import (
     DEFAULT_EVALUATION_RESULTS_FILE_NAME,
     _AggregationType,
-    EvaluationRunProperties
+    EvaluationRunProperties,
 )
 from azure.ai.evaluation._evaluate._evaluate import (
     _aggregate_metrics,
@@ -76,9 +76,11 @@ def evaluate_test_data_jsonl_file():
 def evaluate_test_data_conversion_jsonl_file():
     return _get_file("evaluate_test_data_conversation.jsonl")
 
+
 @pytest.fixture
 def evaluate_test_data_alphanumeric():
     return _get_file("evaluate_test_data_alphanumeric.jsonl")
+
 
 @pytest.fixture
 def questions_file():
@@ -98,6 +100,7 @@ def questions_answers_file():
 @pytest.fixture
 def questions_answers_basic_file():
     return _get_file("questions_answers_basic.jsonl")
+
 
 @pytest.fixture
 def questions_answers_korean_file():
@@ -407,7 +410,6 @@ class TestEvaluate:
             {"query": "${foo.query}"},
             {"query": "${data.query"},
             {"query": "data.query", "response": "target.response"},
-            {"query": "${data.query}", "response": "${target.response.one}"},
         ],
     )
     def test_evaluate_invalid_column_mapping(self, mock_model_config, evaluate_test_data_jsonl_file, column_mapping):
@@ -423,10 +425,10 @@ class TestEvaluate:
                 },
             )
 
-            assert (
-                "Unexpected references detected in 'column_mapping'. Ensure only ${target.} and ${data.} are used."
-                in exc_info.value.args[0]
-            )
+        assert (
+            "Unexpected references detected in 'column_mapping'. Ensure only ${target.} and ${data.} are used."
+            in exc_info.value.args[0]
+        )
 
     def test_evaluate_valid_column_mapping_with_numeric_chars(self, mock_model_config, evaluate_test_data_alphanumeric):
         # Valid column mappings that include numeric characters
@@ -437,8 +439,8 @@ class TestEvaluate:
         column_mappings_with_numbers = {
             "response": "${data.response123}",
             "query": "${data.query456}",
-            "context": "${data.context789}"
-        } # This should not raise an exception with the updated regex for column mapping format validation
+            "context": "${data.context789}",
+        }  # This should not raise an exception with the updated regex for column mapping format validation
         # The test passes if no exception about "Unexpected references" is raised
         result = evaluate(
             data=evaluate_test_data_alphanumeric,
@@ -448,9 +450,9 @@ class TestEvaluate:
                     "column_mapping": column_mappings_with_numbers,
                 }
             },
-            fail_on_evaluator_errors=False
+            fail_on_evaluator_errors=False,
         )
-        
+
         # Verify that the test completed without errors related to column mapping format
         # The test data has the fields with numeric characters, so it should work correctly
         assert result is not None
@@ -698,6 +700,7 @@ class TestEvaluate:
                 "no": NoInputEval(),
             },
             _use_pf_client=False,
+            _use_run_submitter_client=False,
         )  # type: ignore
 
         first_row = results["rows"][0]
@@ -713,6 +716,7 @@ class TestEvaluate:
                     "non": NonOptionalEval(),
                 },
                 _use_pf_client=False,
+                _use_run_submitter_client=False,
             )  # type: ignore
 
         expected_message = "Some evaluators are missing required inputs:\n" "- non: ['response']\n"
@@ -723,6 +727,7 @@ class TestEvaluate:
             data=questions_file,
             evaluators={"half": HalfOptionalEval(), "opt": OptionalEval(), "no": NoInputEval()},
             _use_pf_client=False,
+            _use_run_submitter_client=False,
         )  # type: ignore
 
         first_row_2 = only_question_results["rows"][0]
@@ -739,6 +744,7 @@ class TestEvaluate:
             target=_new_answer_target,
             evaluators={"echo": EchoEval()},
             _use_pf_client=False,
+            _use_run_submitter_client=False,
         )  # type: ignore
 
         assert target_answer_results["rows"][0]["outputs.echo.echo_query"] == "How long is flight from Earth to LV-426?"
@@ -751,6 +757,7 @@ class TestEvaluate:
             target=_question_override_target,
             evaluators={"echo": EchoEval()},
             _use_pf_client=False,
+            _use_run_submitter_client=False,
         )  # type: ignore
 
         assert question_override_results["rows"][0]["outputs.echo.echo_query"] == "new query"
@@ -762,6 +769,7 @@ class TestEvaluate:
             target=_question_answer_override_target,
             evaluators={"echo": EchoEval()},
             _use_pf_client=False,
+            _use_run_submitter_client=False,
         )  # type: ignore
         assert double_override_results["rows"][0]["outputs.echo.echo_query"] == "new query"
         assert double_override_results["rows"][0]["outputs.echo.echo_response"] == "new response"
@@ -853,20 +861,20 @@ class TestEvaluate:
             return sum(values) + 1
 
         os.environ["AI_EVALS_BATCH_USE_ASYNC"] = use_async
-        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators, _use_pf_client=True)
         counting_eval._set_conversation_aggregation_type(_AggregationType.MIN)
-        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators, _use_pf_client=True)
         counting_eval._set_conversation_aggregation_type(_AggregationType.SUM)
-        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators, _use_pf_client=True)
         counting_eval._set_conversation_aggregation_type(_AggregationType.MAX)
-        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+        _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators, _use_pf_client=True)
         if use_async == "true":
             counting_eval._set_conversation_aggregator(custom_aggregator)
-            _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+            _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators, _use_pf_client=True)
         else:
             with pytest.raises(EvaluationException) as exc_info:
                 counting_eval._set_conversation_aggregator(custom_aggregator)
-                _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
+                _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators, _use_pf_client=True)
             assert "TestEvaluate.test_aggregation_serialization.<locals>.custom_aggregator" in exc_info.value.args[0]
 
     def test_unsupported_file_inputs(self, mock_model_config, unsupported_file_type):
@@ -906,7 +914,7 @@ class TestEvaluate:
             )
 
         assert "Evaluation target failed to produce any results. Please check the logs at " in str(exc_info.value)
-    
+
     def test_evaluate_korean_characters_result(self, questions_answers_korean_file):
         output_path = "eval_test_results_korean.jsonl"
 
@@ -942,9 +950,10 @@ class TestEvaluate:
         # Test with splits (dump of test map is 66 characters long)
         result = _convert_name_map_into_property_entries(test_map, segment_length=40)
         assert result[EvaluationRunProperties.NAME_MAP_LENGTH] == 2
-        combined_strings = (result[f"{EvaluationRunProperties.NAME_MAP}_0"] + 
-                            result[f"{EvaluationRunProperties.NAME_MAP}_1"])
-        #breakpoint()
+        combined_strings = (
+            result[f"{EvaluationRunProperties.NAME_MAP}_0"] + result[f"{EvaluationRunProperties.NAME_MAP}_1"]
+        )
+        # breakpoint()
         assert result[f"{EvaluationRunProperties.NAME_MAP}_0"] == map_dump[0:40]
         assert result[f"{EvaluationRunProperties.NAME_MAP}_1"] == map_dump[40:]
         assert combined_strings == map_dump
@@ -952,15 +961,17 @@ class TestEvaluate:
         # Test with exact split
         result = _convert_name_map_into_property_entries(test_map, segment_length=22)
         assert result[EvaluationRunProperties.NAME_MAP_LENGTH] == 3
-        combined_strings = (result[f"{EvaluationRunProperties.NAME_MAP}_0"] + 
-                            result[f"{EvaluationRunProperties.NAME_MAP}_1"] + 
-                            result[f"{EvaluationRunProperties.NAME_MAP}_2"])
+        combined_strings = (
+            result[f"{EvaluationRunProperties.NAME_MAP}_0"]
+            + result[f"{EvaluationRunProperties.NAME_MAP}_1"]
+            + result[f"{EvaluationRunProperties.NAME_MAP}_2"]
+        )
         assert result[f"{EvaluationRunProperties.NAME_MAP}_0"] == map_dump[0:22]
         assert result[f"{EvaluationRunProperties.NAME_MAP}_1"] == map_dump[22:44]
         assert result[f"{EvaluationRunProperties.NAME_MAP}_2"] == map_dump[44:]
         assert combined_strings == map_dump
 
         # Test failure case
-        result = _convert_name_map_into_property_entries(test_map, segment_length=10, max_segments = 1)
+        result = _convert_name_map_into_property_entries(test_map, segment_length=10, max_segments=1)
         assert result[EvaluationRunProperties.NAME_MAP_LENGTH] == -1
         assert len(result) == 1

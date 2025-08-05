@@ -234,7 +234,9 @@ def get_github_total_issue_link(label: str) -> str:
 
 def is_package_inactive(package_path: str) -> bool:
     setup_py = os.path.join(package_path, "setup.py")
-    return not os.path.exists(setup_py) or INACTIVE_CLASSIFIER in ParsedSetup.from_path(package_path).classifiers
+    pyproject_toml = os.path.join(package_path, "pyproject.toml")
+    has_project_file = os.path.exists(setup_py) or os.path.exists(pyproject_toml)
+    return not has_project_file or INACTIVE_CLASSIFIER in ParsedSetup.from_path(package_path).classifiers
 
 
 def skip_package(package_name: str) -> bool:

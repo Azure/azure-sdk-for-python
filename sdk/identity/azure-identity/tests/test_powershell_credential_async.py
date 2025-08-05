@@ -115,6 +115,7 @@ async def test_get_token(stderr, get_token_method):
     decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
     assert "tenantId = ''" in decoded_script
     assert f"'ResourceUrl' = '{scope}'" in decoded_script
+    assert "-is [System.Security.SecureString]" in decoded_script
 
     assert mock_exec().result().communicate.call_count == 1
 

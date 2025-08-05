@@ -51,28 +51,6 @@ _SERVICE_PARAMS = {
 
 class AsyncStorageAccountHostsMixin(object):
 
-    def __enter__(self):
-        raise TypeError("Async client only supports 'async with'.")
-
-    def __exit__(self, *args):
-        pass
-
-    async def __aenter__(self):
-        await self._client.__aenter__()
-        return self
-
-    async def __aexit__(self, *args):
-        await self._client.__aexit__(*args)
-
-    async def close(self) -> None:
-        """This method is to close the sockets opened by the client.
-        It need not be used when using with a context manager.
-
-        :return: None
-        :rtype: None
-        """
-        await self._client.close()
-
     def _format_query_string(
         self,
         sas_token: Optional[str],
