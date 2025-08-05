@@ -466,6 +466,7 @@ def gen_typespec(
                     content = yaml.safe_load(file_in)
                     if content.get("options", {}).get("@azure-tools/typespec-python"):
                         content["options"]["@azure-tools/typespec-python"]["api-version"] = api_version
+                        content["options"]["@azure-tools/typespec-python"]["keep-setup-py"] = False
                 with open(tspconfig, "w") as file_out:
                     yaml.dump(content, file_out)
             cmd = f"tsp-client init --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {repo_url}"
