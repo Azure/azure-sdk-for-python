@@ -29,8 +29,11 @@
 
 ## 1.0.0b1 (2024-08-15)
 
-- Azure Health Deidentification client library
-
 ### Features Added
 
-- Azure Health Deidentification client library
+- Added support for `SURROGATE_ONLY` operation type in `DeidentificationOperationType`, which allows for more precise control over which PHI entities are replaced with surrogate values.
+- Added `input_locale` parameter to `DeidentificationCustomizationOptions` for better PHI detection by specifying the locale of the input text.
+- Added new sample files demonstrating `SURROGATE_ONLY` operation:
+    - `deidentify_text_surrogate_only.py` - synchronous example
+    - `deidentify_text_surrogate_only_async.py` - asynchronous example
+- Enhanced existing samples to demonstrate `input_locale` parameter usage.
