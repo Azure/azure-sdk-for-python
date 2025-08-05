@@ -68,19 +68,6 @@ class TestConversationAuthoringProjectTrainedModelOperationsAsync(ConversationAu
 
     @ConversationAuthoringProjectPreparer()
     @recorded_by_proxy_async
-    async def test_trained_model_get_evaluation_status(self, conversationauthoringproject_endpoint):
-        client = self.create_async_client(endpoint=conversationauthoringproject_endpoint)
-        response = await client.trained_model.get_evaluation_status(
-            project_name="str",
-            trained_model_label="str",
-            job_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @ConversationAuthoringProjectPreparer()
-    @recorded_by_proxy_async
     async def test_trained_model_get_model_evaluation_results(self, conversationauthoringproject_endpoint):
         client = self.create_async_client(endpoint=conversationauthoringproject_endpoint)
         response = client.trained_model.get_model_evaluation_results(
@@ -99,19 +86,6 @@ class TestConversationAuthoringProjectTrainedModelOperationsAsync(ConversationAu
         response = await client.trained_model.get_model_evaluation_summary(
             project_name="str",
             trained_model_label="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @ConversationAuthoringProjectPreparer()
-    @recorded_by_proxy_async
-    async def test_trained_model_get_load_snapshot_status(self, conversationauthoringproject_endpoint):
-        client = self.create_async_client(endpoint=conversationauthoringproject_endpoint)
-        response = await client.trained_model.get_load_snapshot_status(
-            project_name="str",
-            trained_model_label="str",
-            job_id="str",
         )
 
         # please add some check logic here by yourself

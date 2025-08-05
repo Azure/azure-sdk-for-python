@@ -77,29 +77,3 @@ class TestConversationAuthoringProjectDeploymentOperationsAsync(ConversationAuth
 
         # please add some check logic here by yourself
         # ...
-
-    @ConversationAuthoringProjectPreparer()
-    @recorded_by_proxy_async
-    async def test_deployment_get_deployment_delete_from_resources_status(self, conversationauthoringproject_endpoint):
-        client = self.create_async_client(endpoint=conversationauthoringproject_endpoint)
-        response = await client.deployment.get_deployment_delete_from_resources_status(
-            project_name="str",
-            deployment_name="str",
-            job_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @ConversationAuthoringProjectPreparer()
-    @recorded_by_proxy_async
-    async def test_deployment_get_deployment_status(self, conversationauthoringproject_endpoint):
-        client = self.create_async_client(endpoint=conversationauthoringproject_endpoint)
-        response = await client.deployment.get_deployment_status(
-            project_name="str",
-            deployment_name="str",
-            job_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...

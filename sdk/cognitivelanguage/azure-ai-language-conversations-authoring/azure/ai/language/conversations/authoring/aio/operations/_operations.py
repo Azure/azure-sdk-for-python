@@ -1277,7 +1277,7 @@ class _ConversationAuthoringClientOperationsMixin(
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace_async
-    async def get_export_status(self, project_name: str, job_id: str, **kwargs: Any) -> _models.ExportProjectState:
+    async def _get_export_status(self, project_name: str, job_id: str, **kwargs: Any) -> _models.ExportProjectState:
         """Gets the status of an export job. Once job completes, returns the project metadata, and assets.
 
         :param project_name: The new project name. Required.
@@ -1340,7 +1340,7 @@ class _ConversationAuthoringClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_import_status(self, project_name: str, job_id: str, **kwargs: Any) -> _models.ImportProjectState:
+    async def _get_import_status(self, project_name: str, job_id: str, **kwargs: Any) -> _models.ImportProjectState:
         """Gets the status for an import.
 
         :param project_name: The new project name. Required.
@@ -2047,7 +2047,7 @@ class DeploymentOperations:
         params_added_on={"2023-04-15-preview": ["api_version", "project_name", "deployment_name", "job_id", "accept"]},
         api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
     )
-    async def get_deployment_delete_from_resources_status(  # pylint: disable=name-too-long
+    async def _get_deployment_delete_from_resources_status(  # pylint: disable=name-too-long
         self, project_name: str, deployment_name: str, job_id: str, **kwargs: Any
     ) -> _models.DeploymentDeleteFromResourcesState:
         """Gets the status of an existing delete deployment from specific resources job.
@@ -2116,7 +2116,7 @@ class DeploymentOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_deployment_status(
+    async def _get_deployment_status(
         self, project_name: str, deployment_name: str, job_id: str, **kwargs: Any
     ) -> _models.DeploymentState:
         """Gets the status of an existing deployment job.
@@ -3109,7 +3109,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         params_added_on={"2023-04-15-preview": ["api_version", "project_name", "job_id", "accept"]},
         api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
     )
-    async def get_assign_deployment_resources_status(
+    async def _get_assign_deployment_resources_status(
         self, project_name: str, job_id: str, **kwargs: Any
     ) -> _models.DeploymentResourcesState:
         """Gets the status of an existing assign deployment resources job.
@@ -3180,7 +3180,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         params_added_on={"2023-04-15-preview": ["api_version", "project_name", "job_id", "accept"]},
         api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
     )
-    async def get_unassign_deployment_resources_status(
+    async def _get_unassign_deployment_resources_status(  # pylint: disable=name-too-long
         self, project_name: str, job_id: str, **kwargs: Any
     ) -> _models.DeploymentResourcesState:
         """Gets the status of an existing unassign deployment resources job.
@@ -3430,7 +3430,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace_async
-    async def get_swap_deployments_status(
+    async def _get_swap_deployments_status(
         self, project_name: str, job_id: str, **kwargs: Any
     ) -> _models.SwapDeploymentsState:
         """Gets the status of an existing swap deployment job.
@@ -3555,7 +3555,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_project_deletion_status(self, job_id: str, **kwargs: Any) -> _models.ProjectDeletionState:
+    async def _get_project_deletion_status(self, job_id: str, **kwargs: Any) -> _models.ProjectDeletionState:
         """Gets the status for a project deletion job.
 
         :param job_id: The job ID. Required.
@@ -3760,7 +3760,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace_async
-    async def get_export_status(self, project_name: str, job_id: str, **kwargs: Any) -> _models.ExportProjectState:
+    async def _get_export_status(self, project_name: str, job_id: str, **kwargs: Any) -> _models.ExportProjectState:
         """Gets the status of an export job. Once job completes, returns the project metadata, and assets.
 
         :param project_name: The new project name. Required.
@@ -4194,7 +4194,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         params_added_on={"2023-04-15-preview": ["api_version", "project_name", "job_id", "accept"]},
         api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
     )
-    async def get_copy_project_status(self, project_name: str, job_id: str, **kwargs: Any) -> _models.CopyProjectState:
+    async def _get_copy_project_status(self, project_name: str, job_id: str, **kwargs: Any) -> _models.CopyProjectState:
         """Gets the status of an existing copy project job.
 
         :param project_name: The new project name. Required.
@@ -4459,7 +4459,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         )
 
     @distributed_trace_async
-    async def get_training_status(self, project_name: str, job_id: str, **kwargs: Any) -> _models.TrainingState:
+    async def _get_training_status(self, project_name: str, job_id: str, **kwargs: Any) -> _models.TrainingState:
         """Gets the status for a training job.
 
         :param project_name: The new project name. Required.
@@ -5092,7 +5092,7 @@ class ExportedModelOperations:
         },
         api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
     )
-    async def get_exported_model_job_status(
+    async def _get_exported_model_job_status(
         self, project_name: str, exported_model_name: str, job_id: str, **kwargs: Any
     ) -> _models.ExportedModelState:
         """Gets the status for an existing job to create or update an exported model.
@@ -5662,7 +5662,7 @@ class TrainedModelOperations:
         },
         api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
     )
-    async def get_evaluation_status(
+    async def _get_evaluation_status(
         self, project_name: str, trained_model_label: str, job_id: str, **kwargs: Any
     ) -> _models.EvaluationState:
         """Gets the status for an evaluation job.
@@ -5910,7 +5910,7 @@ class TrainedModelOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_load_snapshot_status(
+    async def _get_load_snapshot_status(
         self, project_name: str, trained_model_label: str, job_id: str, **kwargs: Any
     ) -> _models.LoadSnapshotState:
         """Gets the status for loading a snapshot.

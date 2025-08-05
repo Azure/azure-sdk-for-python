@@ -92,11 +92,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @distributed_trace
     async def begin_copy_project(  # type: ignore[override]
-        self,
-        body: Union[CopyProjectDetails, JSON, IO[bytes]],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: Union[CopyProjectDetails, JSON, IO[bytes]], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Copy a project without requiring project_name explicitly."""
         return await super().begin_copy_project(
@@ -105,11 +101,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @distributed_trace
     async def begin_train(  # type: ignore[override]
-        self,
-        body: Union[TrainingJobDetails, JSON, IO[bytes]],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: Union[TrainingJobDetails, JSON, IO[bytes]], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[TrainingJobResult]:
         """Begin training without requiring project_name explicitly."""
         return await super().begin_train(
@@ -181,54 +173,46 @@ class ProjectOperations(ProjectOperationsGenerated):
         )
 
     @distributed_trace
-    async def get_assign_deployment_resources_status(  # type: ignore[override]
+    async def _get_assign_deployment_resources_status(  # type: ignore[override]
         self, job_id: str, **kwargs: Any
     ) -> DeploymentResourcesState:
-        return await super().get_assign_deployment_resources_status(
+        return await super()._get_assign_deployment_resources_status(
             project_name=self._project_name, job_id=job_id, **kwargs
         )
 
     @distributed_trace
-    async def get_copy_project_status(  # type: ignore[override]
-        self, job_id: str, **kwargs: Any
-    ) -> CopyProjectState:
-        return await super().get_copy_project_status(project_name=self._project_name, job_id=job_id, **kwargs)
+    async def _get_copy_project_status(self, job_id: str, **kwargs: Any) -> CopyProjectState:  # type: ignore[override]
+        return await super()._get_copy_project_status(project_name=self._project_name, job_id=job_id, **kwargs)
 
     @distributed_trace
-    async def get_export_status(  # type: ignore[override]
-        self, job_id: str, **kwargs: Any
-    ) -> ExportProjectState:
-        return await super().get_export_status(project_name=self._project_name, job_id=job_id, **kwargs)
+    async def _get_export_status(self, job_id: str, **kwargs: Any) -> ExportProjectState:  # type: ignore[override]
+        return await super()._get_export_status(project_name=self._project_name, job_id=job_id, **kwargs)
 
     @distributed_trace
-    async def get_project(  # type: ignore[override]
-        self, project_name: str = _Unset, **kwargs: Any
-    ) -> ProjectMetadata:
+    async def get_project(self, project_name: str = _Unset, **kwargs: Any) -> ProjectMetadata:  # type: ignore[override]
         return await super().get_project(project_name=self._project_name, **kwargs)
 
     @distributed_trace
-    async def get_project_deletion_status(  # type: ignore[override]
+    async def _get_project_deletion_status(  # type: ignore[override]
         self, job_id: str, **kwargs: Any
     ) -> ProjectDeletionState:
-        return await super().get_project_deletion_status(project_name=self._project_name, job_id=job_id, **kwargs)
+        return await super()._get_project_deletion_status(project_name=self._project_name, job_id=job_id, **kwargs)
 
     @distributed_trace
-    async def get_swap_deployments_status(  # type: ignore[override]
+    async def _get_swap_deployments_status(  # type: ignore[override]
         self, job_id: str, **kwargs: Any
     ) -> SwapDeploymentsState:
-        return await super().get_swap_deployments_status(project_name=self._project_name, job_id=job_id, **kwargs)
+        return await super()._get_swap_deployments_status(project_name=self._project_name, job_id=job_id, **kwargs)
 
     @distributed_trace
-    async def get_training_status(  # type: ignore[override]
-        self, job_id: str, **kwargs: Any
-    ) -> TrainingState:
-        return await super().get_training_status(project_name=self._project_name, job_id=job_id, **kwargs)
+    async def _get_training_status(self, job_id: str, **kwargs: Any) -> TrainingState:  # type: ignore[override]
+        return await super()._get_training_status(project_name=self._project_name, job_id=job_id, **kwargs)
 
     @distributed_trace
-    async def get_unassign_deployment_resources_status(  # type: ignore[override]
+    async def _get_unassign_deployment_resources_status(  # type: ignore[override]
         self, job_id: str, **kwargs: Any
     ) -> DeploymentResourcesState:
-        return await super().get_unassign_deployment_resources_status(
+        return await super()._get_unassign_deployment_resources_status(
             project_name=self._project_name, job_id=job_id, **kwargs
         )
 
@@ -310,24 +294,22 @@ class DeploymentOperations(DeploymentOperationsGenerated):
         )
 
     @distributed_trace
-    async def get_deployment(  # type: ignore[override]
-        self, deployment_name: str, **kwargs: Any
-    ) -> ProjectDeployment:
+    async def get_deployment(self, deployment_name: str, **kwargs: Any) -> ProjectDeployment:  # type: ignore[override]
         return await super().get_deployment(project_name=self._project_name, deployment_name=deployment_name, **kwargs)
 
     @distributed_trace
-    async def get_deployment_delete_from_resources_status(  # type: ignore[override]
+    async def _get_deployment_delete_from_resources_status(  # type: ignore[override]
         self, deployment_name: str, job_id: str, **kwargs: Any
     ) -> DeploymentDeleteFromResourcesState:
-        return await super().get_deployment_delete_from_resources_status(
+        return await super()._get_deployment_delete_from_resources_status(
             project_name=self._project_name, deployment_name=deployment_name, job_id=job_id, **kwargs
         )
 
     @distributed_trace
-    async def get_deployment_status(  # type: ignore[override]
+    async def _get_deployment_status(  # type: ignore[override]
         self, deployment_name: str, job_id: str, **kwargs: Any
     ) -> DeploymentState:
-        return await super().get_deployment_status(
+        return await super()._get_deployment_status(
             project_name=self._project_name, deployment_name=deployment_name, job_id=job_id, **kwargs
         )
 
@@ -376,10 +358,10 @@ class ExportedModelOperations(ExportedModelOperationsGenerated):
         )
 
     @distributed_trace
-    async def get_exported_model_job_status(  # type: ignore[override]
+    async def _get_exported_model_job_status(  # type: ignore[override]
         self, exported_model_name: str, job_id: str, **kwargs: Any
     ) -> ExportedModelState:
-        return await super().get_exported_model_job_status(
+        return await super()._get_exported_model_job_status(
             project_name=self._project_name,
             exported_model_name=exported_model_name,
             job_id=job_id,
@@ -427,10 +409,10 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
         )
 
     @distributed_trace
-    async def get_evaluation_status(  # type: ignore[override]
+    async def _get_evaluation_status(  # type: ignore[override]
         self, trained_model_label: str, job_id: str, **kwargs: Any
     ) -> EvaluationState:
-        return await super().get_evaluation_status(
+        return await super()._get_evaluation_status(
             project_name=self._project_name,
             trained_model_label=trained_model_label,
             job_id=job_id,
@@ -438,10 +420,10 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
         )
 
     @distributed_trace
-    async def get_load_snapshot_status(  # type: ignore[override]
+    async def _get_load_snapshot_status(  # type: ignore[override]
         self, trained_model_label: str, job_id: str, **kwargs: Any
     ) -> LoadSnapshotState:
-        return await super().get_load_snapshot_status(
+        return await super()._get_load_snapshot_status(
             project_name=self._project_name,
             trained_model_label=trained_model_label,
             job_id=job_id,

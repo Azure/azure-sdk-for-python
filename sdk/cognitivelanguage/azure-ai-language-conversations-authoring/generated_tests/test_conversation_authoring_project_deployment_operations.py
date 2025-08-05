@@ -70,29 +70,3 @@ class TestConversationAuthoringProjectDeploymentOperations(ConversationAuthoring
 
         # please add some check logic here by yourself
         # ...
-
-    @ConversationAuthoringProjectPreparer()
-    @recorded_by_proxy
-    def test_deployment_get_deployment_delete_from_resources_status(self, conversationauthoringproject_endpoint):
-        client = self.create_client(endpoint=conversationauthoringproject_endpoint)
-        response = client.deployment.get_deployment_delete_from_resources_status(
-            project_name="str",
-            deployment_name="str",
-            job_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @ConversationAuthoringProjectPreparer()
-    @recorded_by_proxy
-    def test_deployment_get_deployment_status(self, conversationauthoringproject_endpoint):
-        client = self.create_client(endpoint=conversationauthoringproject_endpoint)
-        response = client.deployment.get_deployment_status(
-            project_name="str",
-            deployment_name="str",
-            job_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...

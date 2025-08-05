@@ -48,16 +48,3 @@ class TestConversationAuthoringProjectExportedModelOperations(ConversationAuthor
 
         # please add some check logic here by yourself
         # ...
-
-    @ConversationAuthoringProjectPreparer()
-    @recorded_by_proxy
-    def test_exported_model_get_exported_model_job_status(self, conversationauthoringproject_endpoint):
-        client = self.create_client(endpoint=conversationauthoringproject_endpoint)
-        response = client.exported_model.get_exported_model_job_status(
-            project_name="str",
-            exported_model_name="str",
-            job_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
