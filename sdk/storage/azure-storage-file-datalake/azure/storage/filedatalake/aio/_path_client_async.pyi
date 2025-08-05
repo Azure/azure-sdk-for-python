@@ -7,7 +7,7 @@
 
 from datetime import datetime
 from typing import (
-    Any, Awaitable, Callable, cast, Dict, Optional, Union,
+    Any, Awaitable, Callable, Dict, Optional, Union,
 )
 from types import TracebackType
 from typing_extensions import Self
@@ -15,37 +15,17 @@ from typing_extensions import Self
 from azure.core import MatchConditions
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.storage.blob.aio import BlobClient
-from ._data_lake_lease_async import DataLakeLeaseClient
-from .._deserialize import process_storage_error
-from .._generated.aio import AzureDataLakeStorageRESTAPI
 from .._models import (
-    AccessControlChangeCounters,
-    AccessControlChangeFailure,
     AccessControlChangeResult,
     AccessControlChanges,
     ContentSettings,
     CustomerProvidedEncryptionKey,
     DirectoryProperties,
     FileProperties,
-    LocationMode,
 )
-from .._path_client_helpers import (
-    _create_path_options,
-    _delete_path_options,
-    _format_url,
-    _get_access_control_options,
-    _parse_url,
-    _rename_path_options,
-    _set_access_control_options,
-    _set_access_control_recursive_options
-)
-from .._serialize import compare_api_versions, convert_dfs_url_to_blob_url, get_api_version
-from .._shared.base_client import parse_query, StorageAccountHostsMixin
+from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
-from .._shared.policies_async import ExponentialRetry
 from ._data_lake_lease_async import DataLakeLeaseClient
 
 
@@ -70,7 +50,7 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
     async def _create(
         self,
         resource_type: str,
-        content_settings: Optional["ContentSettings"] = None,
+        content_settings: Optional[ContentSettings] = None,
         metadata: Optional[Dict[str, str]] = None,
         *,
         lease: Optional[Union[DataLakeLeaseClient, str]] = None,
@@ -91,612 +71,154 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Union[str, datetime]]: ...
-    async def _delete(self, **kwargs: Any) -> Dict[str, Any]:
-        """
-        Marks the specified path for deletion.
-
-        :keyword lease:
-            Required if the file/directory has an active lease. Value can be a LeaseClient object
-            or the lease ID as a string.
-        :paramtype lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
-        :keyword ~datetime.datetime if_modified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only
-            if the resource has been modified since the specified time.
-        :keyword ~datetime.datetime if_unmodified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only if
-            the resource has not been modified since the specified date/time.
-        :keyword str etag:
-            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
-            and act according to the condition specified by the `match_condition` parameter.
-        :keyword ~azure.core.MatchConditions match_condition:
-            The match condition to use upon the etag.
-        :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see
-            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
-            This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
-            #other-client--per-operation-configuration>`_.
-        :returns: A dictionary of response headers.
-        :rtype: Dict[str, Any]
-        """
-        # Perform paginated delete only if using OAuth, deleting a directory, and api version is 2023-08-03 or later
-        # The pagination is only for ACL checks, the final request remains the atomic delete operation
-        paginated = None
-        if (compare_api_versions(self.api_version, '2023-08-03') >= 0 and
-            hasattr(self.credential, 'get_token') and
-            kwargs.get('recursive')):  # Directory delete will always specify recursive
-            paginated = True
-
-        options = _delete_path_options(paginated, **kwargs)
-        try:
-            response_headers = await self._client.path.delete(**options)
-            # Loop until continuation token is None for paginated delete
-            while response_headers['continuation']:
-                response_headers = await self._client.path.delete(
-                    continuation=response_headers['continuation'],
-                    **options)
-
-            return response_headers
-        except HttpResponseError as error:
-            process_storage_error(error)
-
+    async def _delete(
+        self,
+        *,
+        lease: Optional[Union[DataLakeLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]: ...
     @distributed_trace_async
     async def set_access_control(
-        self, owner: Optional[str] = None,
+        self,
+        owner: Optional[str] = None,
         group: Optional[str] = None,
         permissions: Optional[str] = None,
         acl: Optional[str] = None,
+        *,
+        lease: Optional[Union[DataLakeLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        timeout: Optional[int] = None,
         **kwargs: Any
-    ) -> Dict[str, Union[str, datetime]]:
-        """
-        Set the owner, group, permissions, or access control list for a path.
-
-        :param owner:
-            Optional. The owner of the file or directory.
-        :type owner: str
-        :param group:
-            Optional. The owning group of the file or directory.
-        :type group: str
-        :param permissions:
-            Optional and only valid if Hierarchical Namespace
-            is enabled for the account. Sets POSIX access permissions for the file
-            owner, the file owning group, and others. Each class may be granted
-            read, write, or execute permission.  The sticky bit is also supported.
-            Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
-            supported.
-            permissions and acl are mutually exclusive.
-        :type permissions: str
-        :param acl:
-            Sets POSIX access control rights on files and directories.
-            The value is a comma-separated list of access control entries. Each
-            access control entry (ACE) consists of a scope, a type, a user or
-            group identifier, and permissions in the format
-            "[scope:][type]:[id]:[permissions]".
-            permissions and acl are mutually exclusive.
-        :type acl: str
-        :keyword lease:
-            Required if the file/directory has an active lease. Value can be a LeaseClient object
-            or the lease ID as a string.
-        :paramtype lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
-        :keyword ~datetime.datetime if_modified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only
-            if the resource has been modified since the specified time.
-        :keyword ~datetime.datetime if_unmodified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only if
-            the resource has not been modified since the specified date/time.
-        :keyword str etag:
-            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
-            and act according to the condition specified by the `match_condition` parameter.
-        :keyword ~azure.core.MatchConditions match_condition:
-            The match condition to use upon the etag.
-        :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see
-            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
-            This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
-            #other-client--per-operation-configuration>`_.
-        :returns: A dictionary of response headers.
-        :rtype: Dict[str, Union[str, ~datetime.datetime]]
-        """
-        if not any([owner, group, permissions, acl]):
-            raise ValueError("At least one parameter should be set for set_access_control API")
-        options = _set_access_control_options(owner=owner, group=group, permissions=permissions, acl=acl, **kwargs)
-        try:
-            return await self._client.path.set_access_control(**options)
-        except HttpResponseError as error:
-            process_storage_error(error)
-
+    ) -> Dict[str, Union[str, datetime]]: ...
     @distributed_trace_async
-    async def get_access_control(self, upn: Optional[bool] = None, **kwargs: Any) -> Dict[str, Any]:
-        """
-        Get the owner, group, permissions, or access control list for a path.
-
-        :param upn:
-            Optional. Valid only when Hierarchical Namespace is
-            enabled for the account. If "true", the user identity values returned
-            in the x-ms-owner, x-ms-group, and x-ms-acl response headers will be
-            transformed from Azure Active Directory Object IDs to User Principal
-            Names.  If "false", the values will be returned as Azure Active
-            Directory Object IDs. The default value is false. Note that group and
-            application Object IDs are not translated because they do not have
-            unique friendly names.
-        :type upn: bool
-        :keyword lease:
-            Required if the file/directory has an active lease. Value can be a LeaseClient object
-            or the lease ID as a string.
-        :paramtype lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
-        :keyword ~datetime.datetime if_modified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only
-            if the resource has been modified since the specified time.
-        :keyword ~datetime.datetime if_unmodified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only if
-            the resource has not been modified since the specified date/time.
-        :keyword str etag:
-            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
-            and act according to the condition specified by the `match_condition` parameter.
-        :keyword ~azure.core.MatchConditions match_condition:
-            The match condition to use upon the etag.
-        :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see
-            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
-            This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
-            #other-client--per-operation-configuration>`_.
-        :returns: A dictionary of response headers.
-        :rtype: Dict[str, Any]
-        """
-        options = _get_access_control_options(upn=upn, **kwargs)
-        try:
-            return await self._client.path.get_properties(**options)
-        except HttpResponseError as error:
-            process_storage_error(error)
-
+    async def get_access_control(
+        self,
+        upn: Optional[bool] = None,
+        *,
+        lease: Optional[Union[DataLakeLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]: ...
     @distributed_trace_async
-    async def set_access_control_recursive(self, acl: str, **kwargs: Any) -> AccessControlChangeResult:
-        """
-        Sets the Access Control on a path and sub-paths.
-
-        :param acl:
-            Sets POSIX access control rights on files and directories.
-            The value is a comma-separated list of access control entries. Each
-            access control entry (ACE) consists of a scope, a type, a user or
-            group identifier, and permissions in the format
-            "[scope:][type]:[id]:[permissions]".
-        :type acl: str
-        :keyword Optional[Callable[[AccessControlChanges], Awaitable[Any]]] progress_hook:
-            Callback where the caller can track progress of the operation
-            as well as collect paths that failed to change Access Control.
-        :keyword str continuation_token:
-            Optional continuation token that can be used to resume previously stopped operation.
-        :keyword int batch_size:
-            Optional. If data set size exceeds batch size then operation will be split into multiple
-            requests so that progress can be tracked. Batch size should be between 1 and 2000.
-            The default when unspecified is 2000.
-        :keyword int max_batches:
-            Optional. Defines maximum number of batches that single change Access Control operation can execute.
-            If maximum is reached before all sub-paths are processed,
-            then continuation token can be used to resume operation.
-            Empty value indicates that maximum number of batches in unbound and operation continues till end.
-        :keyword bool continue_on_failure:
-            If set to False, the operation will terminate quickly on encountering user errors (4XX).
-            If True, the operation will ignore user errors and proceed with the operation on other sub-entities of
-            the directory.
-            Continuation token will only be returned when continue_on_failure is True in case of user errors.
-            If not set the default value is False for this.
-        :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see
-            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
-            This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
-            #other-client--per-operation-configuration>`_.
-        :return: A summary of the recursive operations, including the count of successes and failures,
-            as well as a continuation token in case the operation was terminated prematurely.
-        :rtype: ~azure.storage.filedatalake.AccessControlChangeResult
-        :raises ~azure.core.exceptions.AzureError:
-            User can restart the operation using continuation_token field of AzureError if the token is available.
-        """
-        if not acl:
-            raise ValueError("The Access Control List must be set for this operation")
-
-        progress_hook = kwargs.pop('progress_hook', None)
-        max_batches = kwargs.pop('max_batches', None)
-        options = _set_access_control_recursive_options(mode='set', acl=acl, **kwargs)
-        return await self._set_access_control_internal(options=options, progress_hook=progress_hook,
-                                                       max_batches=max_batches)
-
+    async def set_access_control_recursive(
+        self,
+        acl: str,
+        *,
+        progress_hook: Optional[Callable[[AccessControlChanges], Awaitable[Any]]] = None,
+        continuation_token: Optional[str] = None,
+        batch_size: Optional[int] = None,
+        max_batches: Optional[int] = None,
+        continue_on_failure: Optional[bool] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> AccessControlChangeResult: ...
     @distributed_trace_async
-    async def update_access_control_recursive(self, acl: str, **kwargs: Any) -> AccessControlChangeResult:
-        """
-        Modifies the Access Control on a path and sub-paths.
-
-        :param acl:
-            Modifies POSIX access control rights on files and directories.
-            The value is a comma-separated list of access control entries. Each
-            access control entry (ACE) consists of a scope, a type, a user or
-            group identifier, and permissions in the format
-            "[scope:][type]:[id]:[permissions]".
-        :type acl: str
-        :keyword Optional[Callable[[AccessControlChanges], Awaitable[Any]]] progress_hook:
-            Callback where the caller can track progress of the operation
-            as well as collect paths that failed to change Access Control.
-        :keyword str continuation_token:
-            Optional continuation token that can be used to resume previously stopped operation.
-        :keyword int batch_size:
-            Optional. If data set size exceeds batch size then operation will be split into multiple
-            requests so that progress can be tracked. Batch size should be between 1 and 2000.
-            The default when unspecified is 2000.
-        :keyword int max_batches:
-            Optional. Defines maximum number of batches that single,
-            change Access Control operation can execute.
-            If maximum is reached before all sub-paths are processed,
-            then continuation token can be used to resume operation.
-            Empty value indicates that maximum number of batches in unbound and operation continues till end.
-        :keyword bool continue_on_failure:
-            If set to False, the operation will terminate quickly on encountering user errors (4XX).
-            If True, the operation will ignore user errors and proceed with the operation on other sub-entities of
-            the directory.
-            Continuation token will only be returned when continue_on_failure is True in case of user errors.
-            If not set the default value is False for this.
-        :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see
-            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
-            This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
-            #other-client--per-operation-configuration>`_.
-        :return: A summary of the recursive operations, including the count of successes and failures,
-            as well as a continuation token in case the operation was terminated prematurely.
-        :rtype: ~azure.storage.filedatalake.AccessControlChangeResult
-        :raises ~azure.core.exceptions.AzureError:
-            User can restart the operation using continuation_token field of AzureError if the token is available.
-        """
-        if not acl:
-            raise ValueError("The Access Control List must be set for this operation")
-
-        progress_hook = kwargs.pop('progress_hook', None)
-        max_batches = kwargs.pop('max_batches', None)
-        options = _set_access_control_recursive_options(mode='modify', acl=acl, **kwargs)
-        return await self._set_access_control_internal(options=options, progress_hook=progress_hook,
-                                                       max_batches=max_batches)
-
+    async def update_access_control_recursive(
+        self,
+        acl: str,
+        *,
+        progress_hook: Optional[Callable[[AccessControlChanges], Awaitable[Any]]] = None,
+        continuation_token: Optional[str] = None,
+        batch_size: Optional[int] = None,
+        max_batches: Optional[int] = None,
+        continue_on_failure: Optional[bool] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> AccessControlChangeResult: ...
     @distributed_trace_async
-    async def remove_access_control_recursive(self, acl: str, **kwargs: Any) -> AccessControlChangeResult:
-        """
-        Removes the Access Control on a path and sub-paths.
-
-        :param acl:
-            Removes POSIX access control rights on files and directories.
-            The value is a comma-separated list of access control entries. Each
-            access control entry (ACE) consists of a scope, a type, and a user or
-            group identifier in the format "[scope:][type]:[id]".
-        :type acl: str
-        :keyword Optional[Callable[[AccessControlChanges], Awaitable[Any]]] progress_hook:
-            Callback where the caller can track progress of the operation
-            as well as collect paths that failed to change Access Control.
-        :keyword str continuation_token:
-            Optional continuation token that can be used to resume previously stopped operation.
-        :keyword int batch_size:
-            Optional. If data set size exceeds batch size then operation will be split into multiple
-            requests so that progress can be tracked. Batch size should be between 1 and 2000.
-            The default when unspecified is 2000.
-        :keyword int max_batches:
-            Optional. Defines maximum number of batches that single change Access Control operation can execute.
-            If maximum is reached before all sub-paths are processed,
-            then continuation token can be used to resume operation.
-            Empty value indicates that maximum number of batches in unbound and operation continues till end.
-        :keyword bool continue_on_failure:
-            If set to False, the operation will terminate quickly on encountering user errors (4XX).
-            If True, the operation will ignore user errors and proceed with the operation on other sub-entities of
-            the directory.
-            Continuation token will only be returned when continue_on_failure is True in case of user errors.
-            If not set the default value is False for this.
-        :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see
-            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
-            This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
-            #other-client--per-operation-configuration>`_.
-        :return: A summary of the recursive operations, including the count of successes and failures,
-            as well as a continuation token in case the operation was terminated prematurely.
-        :rtype: ~azure.storage.filedatalake.AccessControlChangeResult
-        :raises ~azure.core.exceptions.AzureError:
-            User can restart the operation using continuation_token field of AzureError if the token is available.
-        """
-        if not acl:
-            raise ValueError("The Access Control List must be set for this operation")
-
-        progress_hook = kwargs.pop('progress_hook', None)
-        max_batches = kwargs.pop('max_batches', None)
-        options = _set_access_control_recursive_options(mode='remove', acl=acl, **kwargs)
-        return await self._set_access_control_internal(options=options, progress_hook=progress_hook,
-                                                       max_batches=max_batches)
-
-    async def _rename_path(self, rename_source: str, **kwargs: Any) -> Dict[str, Any]:
-        """
-        Rename directory or file
-
-        :param rename_source: The value must have the following format: "/{filesystem}/{path}".
-        :type rename_source: str
-        :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
-            ContentSettings object used to set path properties.
-        :keyword source_lease: A lease ID for the source path. If specified,
-            the source path must have an active lease and the lease ID must
-            match.
-        :paramtype source_lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
-        :keyword lease:
-            Required if the file/directory has an active lease. Value can be a LeaseClient object
-            or the lease ID as a string.
-        :paramtype lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
-        :keyword ~datetime.datetime if_modified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only
-            if the resource has been modified since the specified time.
-        :keyword ~datetime.datetime if_unmodified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only if
-            the resource has not been modified since the specified date/time.
-        :keyword str etag:
-            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
-            and act according to the condition specified by the `match_condition` parameter.
-        :keyword ~azure.core.MatchConditions match_condition:
-            The match condition to use upon the etag.
-        :keyword ~datetime.datetime source_if_modified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only
-            if the resource has been modified since the specified time.
-        :keyword ~datetime.datetime source_if_unmodified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only if
-            the resource has not been modified since the specified date/time.
-        :keyword str source_etag:
-            The source ETag value, or the wildcard character (*). Used to check if the resource has changed,
-            and act according to the condition specified by the `match_condition` parameter.
-        :keyword ~azure.core.MatchConditions source_match_condition:
-            The source match condition to use upon the etag.
-        :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see
-            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
-            This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
-            #other-client--per-operation-configuration>`_.
-        :returns: A dictionary of response headers.
-        :rtype: Dict[str, Any]
-        """
-        options = _rename_path_options(rename_source, **kwargs)
-        try:
-            return await self._client.path.create(**options)
-        except HttpResponseError as error:
-            process_storage_error(error)
-
-    async def _get_path_properties(self, **kwargs: Any) -> Union[DirectoryProperties, FileProperties]:
-        """Returns all user-defined metadata, standard HTTP properties, and
-        system properties for the file or directory. It does not return the content of the directory or file.
-
-        :keyword lease:
-            Required if the directory or file has an active lease. Value can be a DataLakeLeaseClient object
-            or the lease ID as a string.
-        :paramtype lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
-        :keyword ~datetime.datetime if_modified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only
-            if the resource has been modified since the specified time.
-        :keyword ~datetime.datetime if_unmodified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only if
-            the resource has not been modified since the specified date/time.
-        :keyword str etag:
-            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
-            and act according to the condition specified by the `match_condition` parameter.
-        :keyword ~azure.core.MatchConditions match_condition:
-            The match condition to use upon the etag.
-        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
-            Decrypts the data on the service-side with the given key.
-            Use of customer-provided keys must be done over HTTPS.
-            Required if the file/directory was created with a customer-provided key.
-        :keyword bool upn:
-            If True, the user identity values returned in the x-ms-owner, x-ms-group,
-            and x-ms-acl response headers will be transformed from Azure Active Directory Object IDs to User
-            Principal Names in the owner, group, and acl fields of the respective property object returned.
-            If False, the values will be returned as Azure Active Directory Object IDs.
-            The default value is False. Note that group and application Object IDs are not translate
-            because they do not have unique friendly names.
-        :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see
-            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
-            This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
-            #other-client--per-operation-configuration>`_.
-        :returns:
-            Information including user-defined metadata, standard HTTP properties,
-            and system properties for the file or directory.
-        :rtype: DirectoryProperties or FileProperties
-        """
-        upn = kwargs.pop('upn', None)
-        if upn:
-            headers = kwargs.pop('headers', {})
-            headers['x-ms-upn'] = str(upn)
-            kwargs['headers'] = headers
-        path_properties = await self._blob_client.get_blob_properties(**kwargs)
-        return cast(Union[DirectoryProperties, FileProperties], path_properties)
-
-    async def _exists(self, **kwargs: Any) -> bool:
-        """
-        Returns True if a path exists and returns False otherwise.
-
-        :kwarg int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see
-            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
-            This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
-            #other-client--per-operation-configuration>`_.
-        :returns: True if a path exists, False otherwise.
-        :rtype: bool
-        """
-        return await self._blob_client.exists(**kwargs)
-
+    async def remove_access_control_recursive(
+        self,
+        acl: str,
+        *,
+        progress_hook: Optional[Callable[[AccessControlChanges], Awaitable[Any]]] = None,
+        continuation_token: Optional[str] = None,
+        batch_size: Optional[int] = None,
+        max_batches: Optional[int] = None,
+        continue_on_failure: Optional[bool] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> AccessControlChangeResult: ...
+    async def _rename_path(
+        self,
+        rename_source: str,
+        *,
+        content_settings: Optional[ContentSettings] = None,
+        source_lease: Optional[Union[DataLakeLeaseClient, str]] = None,
+        lease: Optional[Union[DataLakeLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        source_if_modified_since: Optional[datetime] = None,
+        source_if_unmodified_since: Optional[datetime] = None,
+        source_etag: Optional[str] = None,
+        source_match_condition: Optional[MatchConditions] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]: ...
+    async def  _get_path_properties(
+        self,
+        *,
+        lease: Optional[Union[DataLakeLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        cpk: Optional[CustomerProvidedEncryptionKey] = None,
+        upn: Optional[bool] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> Union[DirectoryProperties, FileProperties]: ...
+    async def _exists(self, *, timeout: Optional[int] = None, **kwargs: Any) -> bool: ...
     @distributed_trace_async
-    async def set_metadata(self, metadata: Dict[str, str], **kwargs: Any) -> Dict[str, Union[str, datetime]]:
-        """Sets one or more user-defined name-value pairs for the specified
-        file system. Each call to this operation replaces all existing metadata
-        attached to the file system. To remove all metadata from the file system,
-        call this operation with no metadata dict.
-
-        :param metadata:
-            A dict containing name-value pairs to associate with the file system as
-            metadata. Example: {'category':'test'}
-        :type metadata: Dict[str, str]
-        :keyword lease:
-            If specified, set_file_system_metadata only succeeds if the
-            file system's lease is active and matches this ID.
-        :paramtype lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
-        :keyword ~datetime.datetime if_modified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only
-            if the resource has been modified since the specified time.
-        :keyword ~datetime.datetime if_unmodified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only if
-            the resource has not been modified since the specified date/time.
-        :keyword str etag:
-            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
-            and act according to the condition specified by the `match_condition` parameter.
-        :keyword ~azure.core.MatchConditions match_condition:
-            The match condition to use upon the etag.
-        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
-            Encrypts the data on the service-side with the given key.
-            Use of customer-provided keys must be done over HTTPS.
-        :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see
-            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
-            This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
-            #other-client--per-operation-configuration>`_.
-        :returns: A dictionary of response headers.
-        :rtype: Dict[str, Union[str, ~datetime.datetime]]
-        """
-        return await self._blob_client.set_blob_metadata(metadata=metadata, **kwargs)
-
+    async def set_metadata(
+        self,
+        metadata: Dict[str, str],
+        *,
+        lease: Optional[Union[DataLakeLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        cpk: Optional[CustomerProvidedEncryptionKey] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> Dict[str, Union[str, datetime]]: ...
     @distributed_trace_async
     async def set_http_headers(
-        self, content_settings: Optional["ContentSettings"] = None,
+        self,
+        content_settings: Optional[ContentSettings] = None,
+        *,
+        lease: Optional[Union[DataLakeLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        timeout: Optional[int] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
-        """Sets system properties on the file or directory.
-
-        If one property is set for the content_settings, all properties will be overridden.
-
-        :param ~azure.storage.filedatalake.ContentSettings content_settings:
-            ContentSettings object used to set file/directory properties.
-        :keyword lease:
-            If specified, set_file_system_metadata only succeeds if the
-            file system's lease is active and matches this ID.
-        :paramtype lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
-        :keyword ~datetime.datetime if_modified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only
-            if the resource has been modified since the specified time.
-        :keyword ~datetime.datetime if_unmodified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only if
-            the resource has not been modified since the specified date/time.
-        :keyword str etag:
-            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
-            and act according to the condition specified by the `match_condition` parameter.
-        :keyword ~azure.core.MatchConditions match_condition:
-            The match condition to use upon the etag.
-        :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see
-            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
-            This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
-            #other-client--per-operation-configuration>`_.
-        :returns: A dictionary of response headers.
-        :rtype: Dict[str, Any]
-        """
-        return await self._blob_client.set_http_headers(content_settings=content_settings, **kwargs)
-
+    ) -> Dict[str, Any]: ...
     @distributed_trace_async
     async def acquire_lease(
-        self, lease_duration: int = -1,
+        self,
+        lease_duration: int = -1,
         lease_id: Optional[str] = None,
+        *,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        timeout: Optional[int] = None,
         **kwargs: Any
-    ) -> DataLakeLeaseClient:
-        """
-        Requests a new lease. If the file or directory does not have an active lease,
-        the DataLake service creates a lease on the file/directory and returns a new
-        lease ID.
-
-        :param int lease_duration:
-            Specifies the duration of the lease, in seconds, or negative one
-            (-1) for a lease that never expires. A non-infinite lease can be
-            between 15 and 60 seconds. A lease duration cannot be changed
-            using renew or change. Default is -1 (infinite lease).
-        :param str lease_id:
-            Proposed lease ID, in a GUID string format. The DataLake service returns
-            400 (Invalid request) if the proposed lease ID is not in the correct format.
-        :keyword ~datetime.datetime if_modified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only
-            if the resource has been modified since the specified time.
-        :keyword ~datetime.datetime if_unmodified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only if
-            the resource has not been modified since the specified date/time.
-        :keyword str etag:
-            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
-            and act according to the condition specified by the `match_condition` parameter.
-        :keyword ~azure.core.MatchConditions match_condition:
-            The match condition to use upon the etag.
-        :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see
-            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
-            This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
-            #other-client--per-operation-configuration>`_.
-        :returns: A DataLakeLeaseClient object, that can be run in a context manager.
-        :rtype: ~azure.storage.filedatalake.aio.DataLakeLeaseClient
-        """
-        lease = DataLakeLeaseClient(self, lease_id=lease_id)
-        await lease.acquire(lease_duration=lease_duration, **kwargs)
-        return lease
+    ) -> DataLakeLeaseClient: ...
