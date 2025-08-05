@@ -7,9 +7,8 @@
 FILE: deidentify_text_surrogate_only_async.py
 
 DESCRIPTION:
-    This sample demonstrates de-identification using the SurrogateOnly operation asynchronously, which replaces only
-    specifically tagged PHI entities with surrogate values. This allows for more precise control over
-    which entities are replaced compared to the regular Surrogate operation.
+    This sample demonstrates de-identification using the SurrogateOnly operation, which returns output text
+    where user-defined PHI entities are replaced with realistic replacement values.
 
 USAGE:
     python deidentify_text_surrogate_only_async.py
