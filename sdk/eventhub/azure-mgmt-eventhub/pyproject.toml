@@ -1,3 +1,48 @@
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]  # Requires 61.0.0 for dynamic version
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-mgmt-eventhub"
+authors = [
+    {name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com"},
+]
+description = "Microsoft Azure Event Hub Management Client Library for Python"
+keywords = ["azure", "azure sdk"]
+requires-python = ">=3.9"
+license = {text = "MIT License"}
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+]
+dependencies = [
+    "isodate>=0.6.1",
+    "typing-extensions>=4.6.0",
+    "azure-common>=1.1",
+    "azure-mgmt-core>=1.5.0",
+]
+dynamic = ["version", "readme"]
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python"
+
+[tool.setuptools.dynamic]
+version = {attr = "azure.mgmt.eventhub._version.VERSION"}
+readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
+
+[tool.setuptools.packages.find]
+exclude = ["samples*", "tests*", "generated_samples*", "generated_tests*", "azure", "azure.mgmt"]
+
+[tool.setuptools.package-data]
+pytyped = ["py.typed"]
+
 [tool.azure-sdk-build]
 breaking = false
 black = false
