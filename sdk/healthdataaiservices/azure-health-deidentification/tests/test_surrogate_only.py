@@ -13,11 +13,15 @@ class TestHealthDeidentificationHelloWorld(DeidBaseTestCase):
         client = self.make_client(healthdataaiservices_deid_service_endpoint)
         assert client is not None
 
-        tagged_entities: TaggedPhiEntities = TaggedPhiEntities(encoding=TextEncodingType.CODE_POINT, entities=[SimplePhiEntity(category=PhiCategory.PATIENT, offset=18, length=10)])
+        tagged_entities: TaggedPhiEntities = TaggedPhiEntities(
+            encoding=TextEncodingType.CODE_POINT,
+            entities=[SimplePhiEntity(category=PhiCategory.PATIENT, offset=18, length=10)],
+        )
 
         content = DeidentificationContent(
-            input_text="Hello, my name is John Smith.", operation_type=DeidentificationOperationType.SURROGATE_ONLY,
-            tagged_entities=tagged_entities
+            input_text="Hello, my name is John Smith.",
+            operation_type=DeidentificationOperationType.SURROGATE_ONLY,
+            tagged_entities=tagged_entities,
         )
 
         result: DeidentificationResult = client.deidentify_text(content)

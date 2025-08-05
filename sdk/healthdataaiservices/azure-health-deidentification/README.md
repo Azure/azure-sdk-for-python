@@ -320,13 +320,7 @@ client = DeidentificationClient(endpoint, credential)
 # Define the entities to be surrogated - targeting "John Smith" at position 18-28
 tagged_entities = TaggedPhiEntities(
     encoding=TextEncodingType.CODE_POINT,
-    entities=[
-        SimplePhiEntity(
-            category=PhiCategory.PATIENT,
-            offset=18,
-            length=10
-        )
-    ]
+    entities=[SimplePhiEntity(category=PhiCategory.PATIENT, offset=18, length=10)],
 )
 
 # Use SurrogateOnly operation with input locale specification
@@ -336,7 +330,7 @@ body = DeidentificationContent(
     tagged_entities=tagged_entities,
     customizations=DeidentificationCustomizationOptions(
         input_locale="en-US"  # Specify input text locale for better PHI detection
-    )
+    ),
 )
 
 result: DeidentificationResult = client.deidentify_text(body)
