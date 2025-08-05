@@ -75,20 +75,25 @@ class ReadItemsHelperSync:
         if not items_by_partition:
             return CosmosList([], response_headers=CaseInsensitiveDict())
 
+        query_chunks = self._create_query_chunks(items_by_partition)
+
         # Use the provided executor if available, otherwise create one with max_concurrency
         if self.executor is not None:
-            return self._execute_with_executor(self.executor, items_by_partition)
+            return self._execute_with_executor(self.executor, query_chunks)
 
         with ThreadPoolExecutor(max_workers=self.max_concurrency) as executor:
-            return self._execute_with_executor(executor, items_by_partition)
+            return self._execute_with_executor(executor, query_chunks)
 
-    def _execute_with_executor(self, executor: ThreadPoolExecutor,
-                               items_by_partition: Dict[str, List[Tuple[int, str, "_PartitionKeyType"]]]) -> CosmosList:
+    def _execute_with_executor(
+            self,
+            executor: ThreadPoolExecutor,
+            query_chunks: List[Dict[str, List[Tuple[int, str, "_PartitionKeyType"]]]]
+    ) -> CosmosList:
         """Execute the queries using the provided executor with improved error handling.
 
         :param ThreadPoolExecutor executor: The ThreadPoolExecutor to use
-        :param Dict[str, List[Tuple[int, str, "_PartitionKeyType"]]] items_by_partition:
-                    Dictionary of items grouped by partition key range ID
+        :param query_chunks: A list of query chunks to be executed.
+        :type query_chunks: list[dict[str, list[tuple[int, str, "_PartitionKeyType"]]]]
         :return: A list of the retrieved items in original order
         :rtype: ~azure.cosmos.CosmosList
         """
@@ -98,12 +103,11 @@ class ReadItemsHelperSync:
         # Create a clear mapping of futures to chunks for better error handling
         future_to_chunk = {}
 
-        for partition_id, partition_items in items_by_partition.items():
-            for i in range(0, len(partition_items), self.max_items_per_query):
-                chunk = partition_items[i:i + self.max_items_per_query]
-                future = executor.submit(self._execute_query_chunk_worker, partition_id, chunk)
+        for chunk in query_chunks:
+            for partition_id, partition_items in chunk.items():
+                future = executor.submit(self._execute_query_chunk_worker, partition_id, partition_items)
                 futures.append(future)
-                future_to_chunk[future] = (partition_id, i)
+                future_to_chunk[future] = (partition_id, partition_items)
 
         try:
             for future in as_completed(futures):
@@ -113,9 +117,9 @@ class ReadItemsHelperSync:
         except (Exception, KeyboardInterrupt) as e:
             self.logger.error("Error in query execution: %s", str(e))
             # Cancel all pending futures
-            for future in futures:
-                if not future.done():
-                    future.cancel()
+            for f in futures:
+                if not f.done():
+                    f.cancel()
 
             if self.executor is None:
                 executor.shutdown(wait=False, cancel_futures=True)
@@ -163,7 +167,7 @@ class ReadItemsHelperSync:
             pk_value = pk_items[0][2]
             epk_range = partition_key._get_epk_range_for_partition_key(pk_value)
             overlapping_ranges = self.client._routing_map_provider.get_overlapping_ranges(
-                collection_rid, [epk_range] , self.options
+                collection_rid, [epk_range], self.options
             )
             if overlapping_ranges:
                 range_id = overlapping_ranges[0]["id"]
@@ -172,6 +176,26 @@ class ReadItemsHelperSync:
                 items_by_partition[range_id].extend(pk_items)
 
         return items_by_partition
+
+
+    def _create_query_chunks(
+            self,
+            items_by_partition: Dict[str, List[Tuple[int, str, "_PartitionKeyType"]]]
+    ) -> List[Dict[str, List[Tuple[int, str, "_PartitionKeyType"]]]]:
+        """Create query chunks for concurrency control while preserving original indices.
+
+        :param items_by_partition: A dictionary mapping partition key range IDs to lists of items with indices.
+        :type items_by_partition: dict[str, list[tuple[int, str, "_PartitionKeyType"]]]
+        :return: A list of query chunks, where each chunk is a dictionary with a single partition.
+        :rtype: list[dict[str, list[tuple[int, str, "_PartitionKeyType"]]]]
+        """
+        query_chunks = []
+        for partition_id, partition_items in items_by_partition.items():
+            # Split large partitions into chunks of self.max_items_per_query
+            for i in range(0, len(partition_items), self.max_items_per_query):
+                chunk = partition_items[i:i + self.max_items_per_query]
+                query_chunks.append({partition_id: chunk})
+        return query_chunks
 
     def _execute_query_chunk_worker(
             self, partition_id: str, chunk_partition_items: List[Tuple[int, str, "_PartitionKeyType"]]

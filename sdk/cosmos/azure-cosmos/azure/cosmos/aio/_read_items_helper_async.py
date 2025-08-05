@@ -103,8 +103,13 @@ class ReadItemsHelperAsync:
         indexed_results.sort(key=lambda x: x[0])
         # Remove the index from results
         all_results = [item[1] for item in indexed_results]
+        cosmos_list = CosmosList(all_results, response_headers=combined_headers)
 
-        return CosmosList(all_results, response_headers=combined_headers)
+        # Call the original response hook with the final results if provided
+        if 'response_hook' in self.kwargs:
+            self.kwargs['response_hook'](combined_headers, cosmos_list)
+
+        return cosmos_list
 
     async def partition_items_by_range(
             self,
@@ -273,10 +278,6 @@ class ReadItemsHelperAsync:
 
         final_headers = CaseInsensitiveDict()
         final_headers['x-ms-request-charge'] = str(total_request_charge)
-
-        # Call the original response hook with the final results if provided
-        if 'response_hook' in kwargs:
-            kwargs['response_hook'](final_headers, indexed_results)
 
         return indexed_results, final_headers
 
