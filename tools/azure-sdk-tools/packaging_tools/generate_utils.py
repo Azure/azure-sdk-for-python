@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import re
+
 try:
     # py 311 adds this library natively
     import tomllib as toml
@@ -461,12 +462,13 @@ def gen_typespec(
             tsp_dir = (Path(spec_folder) / typespec_relative_path).resolve()
             repo_url = rest_repo_url.replace("https://github.com/", "")
             tspconfig = tsp_dir / "tspconfig.yaml"
-            if api_version and tspconfig.exists():
+            if tspconfig.exists():
                 with open(tspconfig, "r") as file_in:
                     content = yaml.safe_load(file_in)
                     if content.get("options", {}).get("@azure-tools/typespec-python"):
-                        content["options"]["@azure-tools/typespec-python"]["api-version"] = api_version
                         content["options"]["@azure-tools/typespec-python"]["keep-setup-py"] = False
+                        if api_version:
+                            content["options"]["@azure-tools/typespec-python"]["api-version"] = api_version
                 with open(tspconfig, "w") as file_out:
                     yaml.dump(content, file_out)
             cmd = f"tsp-client init --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {repo_url}"
