@@ -4,7 +4,7 @@ import os
 import sys
 
 from workload_utils import create_logger
-from workload_configs import COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS
+from workload_configs import COSMOS_URI, COSMOS_CREDENTIAL, PREFERRED_LOCATIONS
 
 sys.path.append(r"./")
 
@@ -16,7 +16,7 @@ from datetime import datetime
 
 
 async def run_workload(client_id: str):
-    async with AsyncClient(COSMOS_URI, COSMOS_KEY, preferred_locations=PREFERRED_LOCATIONS,
+    async with AsyncClient(COSMOS_URI, COSMOS_CREDENTIAL, preferred_locations=PREFERRED_LOCATIONS,
                            enable_diagnostics_logging=True, logger=logger,
                            user_agent=client_id + "-" + datetime.now().strftime(
                                "%Y%m%d-%H%M%S")) as client:
