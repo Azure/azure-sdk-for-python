@@ -1,6 +1,10 @@
 # Release History
 
-## 1.0.3 (2025-08-04)
+## 1.1.0 (2025-08-05)
+
+### Breaking Changes
+- **Version Lineage Change**: This stable release is based on `1.0.2` and does not include the experimental features that were introduced in the beta versions `1.1.0b1` through `1.1.0b5`. This means that any beta-specific functionality you may have been using is not available in this stable release.
+- **Migration Path**: If you need to continue using the experimental features from the beta releases, please upgrade to `1.2.0b1` which continues the beta feature development line.
 
 ### Bugs Fixed
 - `AgentsResponseFormatOption`, `MessageInputContent`, `MessageAttachmentToolDefinition`, `AgentsToolChoiceOption` are now public.
