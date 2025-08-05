@@ -1,5 +1,12 @@
 # Release History
 
+## 1.11.0 (Unreleased)
+
+### Features Added
+
+- Added support for user-supplied tags in the `evaluate` function. Tags are key-value pairs that can be used for experiment tracking, A/B testing, filtering, and organizing evaluation runs. The function accepts a `tags` parameter.
+
+
 ## 1.10.0 (2025-07-31)
 
 ### Breaking Changes
