@@ -306,6 +306,16 @@ input-file:
 output-folder: $(python-sdks-folder)/v2025_01_01_preview
 ```
 
+### Tag: v2024-04-01-dataplanepreview
+
+These settings apply only when `--tag=v2024-04-01-dataplanepreview` is specified on the command line.
+
+```yaml $(tag) == 'v2024-04-01-dataplanepreview'
+input-file:
+  - Microsoft.MachineLearningServices/preview/2024-04-01-dataplanepreview/azure-ai-assets.json
+output-folder: $(python-sdks-folder)/v2024-04-01-dataplanepreview
+```
+
 ### Tag: multiapi
 
 These settings apply only when `--multiapi` is specified on the command line.
