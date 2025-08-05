@@ -72,10 +72,11 @@ client = DeidentificationClient(endpoint, credential)
 ## Key concepts
 
 ### De-identification operations:
-Given an input text, the de-identification service can perform three main operations:
+Given an input text, the de-identification service can perform four main operations:
 - `Tag` returns the category and location within the text of detected PHI entities.
 - `Redact` returns output text where detected PHI entities are replaced with placeholder text. For example `John` replaced with `[name]`.
 - `Surrogate` returns output text where detected PHI entities are replaced with realistic replacement values. For example, `My name is John Smith` could become `My name is Tom Jones`.
+- `SurrogateOnly` returns output text where only specifically tagged PHI entities are replaced with realistic replacement values, providing more precise control over the de-identification process.
 
 ### String Encoding
 When using the `Tag` operation, the service will return the locations of PHI entities in the input text. These locations will be represented as offsets and lengths, each of which is a [StringIndex][string_index] containing
@@ -197,6 +198,7 @@ The following sections provide code samples covering some of the most common cli
 - [Discover PHI in unstructured text](#discover-phi-in-unstructured-text)
 - [Replace PHI in unstructured text with placeholder values](#replace-phi-in-unstructured-text-with-placeholder-values)
 - [Replace PHI in unstructured text with realistic surrogate values](#replace-phi-in-unstructured-text-with-realistic-surrogate-values)
+- [Replace only specific PHI entities with surrogate values](#replace-only-specific-phi-entities-with-surrogate-values)
 
 See the [samples][samples] for code files illustrating common patterns, including creating and managing jobs to de-identify documents in Azure Storage. 
 
@@ -288,6 +290,58 @@ body = DeidentificationContent(
 result: DeidentificationResult = client.deidentify_text(body)
 print(f'\nOriginal Text:     "{body.input_text}"')
 print(f'Surrogated Text:   "{result.output_text}"')  # Surrogated output: Hello, my name is <synthetic name>.
+```
+
+<!-- END SNIPPET -->
+
+### Replace only specific PHI entities with surrogate values
+The `SURROGATE_ONLY` operation provides more precise control by allowing you to specify exactly which PHI entities should be replaced with surrogate values. You can also specify the input locale for better PHI detection:
+<!-- SNIPPET: deidentify_text_surrogate_only.surrogate_only -->
+
+```python
+from azure.health.deidentification import DeidentificationClient
+from azure.health.deidentification.models import (
+    DeidentificationContent,
+    DeidentificationCustomizationOptions,
+    DeidentificationOperationType,
+    DeidentificationResult,
+    PhiCategory,
+    SimplePhiEntity,
+    TaggedPhiEntities,
+    TextEncodingType,
+)
+from azure.identity import DefaultAzureCredential
+import os
+
+endpoint = os.environ["HEALTHDATAAISERVICES_DEID_SERVICE_ENDPOINT"]
+credential = DefaultAzureCredential()
+client = DeidentificationClient(endpoint, credential)
+
+# Define the entities to be surrogated
+tagged_entities = TaggedPhiEntities(
+    encoding=TextEncodingType.CODE_POINT,
+    entities=[
+        SimplePhiEntity(
+            category=PhiCategory.PATIENT,
+            offset=18, 
+            length=10
+        )
+    ]
+)
+
+# Use SurrogateOnly operation with input locale specification
+body = DeidentificationContent(
+    input_text="Hello, my name is John Smith.",
+    operation_type=DeidentificationOperationType.SURROGATE_ONLY,
+    tagged_entities=tagged_entities,
+    customizations=DeidentificationCustomizationOptions(
+        input_locale="en-US"  # Specify input text locale for better PHI detection
+    )
+)
+
+result: DeidentificationResult = client.deidentify_text(body)
+print(f'\nOriginal Text:        "{body.input_text}"')
+print(f'Surrogate Only Text:  "{result.output_text}"')  # Only "John Smith" is replaced
 ```
 
 <!-- END SNIPPET -->
