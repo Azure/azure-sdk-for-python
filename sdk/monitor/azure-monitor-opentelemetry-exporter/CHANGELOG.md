@@ -5,7 +5,7 @@
 ### Features Added
 
 - Configuration manager/worker fetch via OneSettings part 1
-  ([#41549] https://github.com/Azure/azure-sdk-for-python/pull/41549)
+  ([#42360] https://github.com/Azure/azure-sdk-for-python/pull/42360)
 - Added RateLimited Sampler 
   ([#41954](https://github.com/Azure/azure-sdk-for-python/pull/41954))
 - Refactored Application Insights Sampler Code
