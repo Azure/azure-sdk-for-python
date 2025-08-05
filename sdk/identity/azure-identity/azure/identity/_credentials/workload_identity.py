@@ -11,6 +11,13 @@ from .client_assertion import ClientAssertionCredential
 from .._constants import EnvironmentVariables
 
 
+WORKLOAD_CONFIG_ERROR = (
+    "WorkloadIdentityCredential authentication unavailable. The workload options are not fully "
+    "configured. See the troubleshooting guide for more information: "
+    "https://aka.ms/azsdk/python/identity/workloadidentitycredential"
+)
+
+
 class TokenFileMixin:
 
     _token_file_path: str
@@ -72,21 +79,25 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
         tenant_id = tenant_id or os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
         client_id = client_id or os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
         token_file_path = token_file_path or os.environ.get(EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE)
+
+        missing_args = []
         if not tenant_id:
-            raise ValueError(
-                "'tenant_id' is required. Please pass it in or set the "
-                f"{EnvironmentVariables.AZURE_TENANT_ID} environment variable"
-            )
+            missing_args.append("'tenant_id'")
         if not client_id:
-            raise ValueError(
-                "'client_id' is required. Please pass it in or set the "
-                f"{EnvironmentVariables.AZURE_CLIENT_ID} environment variable"
-            )
+            missing_args.append("'client_id'")
         if not token_file_path:
-            raise ValueError(
-                "'token_file_path' is required. Please pass it in or set the "
-                f"{EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE} environment variable"
-            )
+            missing_args.append("'token_file_path'")
+
+        if missing_args:
+            missing_args_str = ", ".join(missing_args)
+            error_message = f"{WORKLOAD_CONFIG_ERROR}. Missing required arguments: {missing_args_str}."
+            raise ValueError(error_message)
+
+        # Type assertions since we've validated these are not None
+        assert tenant_id is not None
+        assert client_id is not None
+        assert token_file_path is not None
+
         self._token_file_path = token_file_path
         super(WorkloadIdentityCredential, self).__init__(
             tenant_id=tenant_id,
