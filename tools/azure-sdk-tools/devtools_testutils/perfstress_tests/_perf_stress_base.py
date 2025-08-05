@@ -9,7 +9,10 @@ import multiprocessing
 import argparse
 import pstats
 import cProfile
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
 
 
 PSTATS_PRINT_DEFAULT_SORT_KEY = pstats.SortKey.TIME
@@ -218,6 +221,35 @@ class _PerfTestBase(_PerfTestABC):
         if not value:
             raise ValueError("Undefined environment variable {}".format(variable))
         return value
+    
+    @staticmethod
+    def get_credential(is_async: bool = False) -> "TokenCredential":
+        # If AzurePipelinesCredential is detected, use it.
+        service_connection_id = os.environ.get("AZURESUBSCRIPTION_SERVICE_CONNECTION_ID")
+        client_id = os.environ.get("AZURESUBSCRIPTION_CLIENT_ID")
+        tenant_id = os.environ.get("AZURESUBSCRIPTION_TENANT_ID")
+        system_access_token = os.environ.get("SYSTEM_ACCESSTOKEN")
+        if service_connection_id and client_id and tenant_id and system_access_token:
+            if is_async:
+                from azure.identity.aio import AzurePipelinesCredential
+            else:
+                from azure.identity import AzurePipelinesCredential
+
+            return AzurePipelinesCredential(
+                tenant_id=tenant_id,
+                client_id=client_id,
+                service_connection_id=service_connection_id,
+                system_access_token=system_access_token,
+            )
+
+        # Fall back to DefaultAzureCredential
+        if is_async:
+            from azure.identity.aio import DefaultAzureCredential
+        else:
+            from azure.identity import DefaultAzureCredential
+
+        return DefaultAzureCredential(exclude_managed_identity_credential=True)
+
 
     def _save_profile(self, sync: str, output_path: Optional[str] = None) -> None:
         """

@@ -624,6 +624,16 @@ class ImplementationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AZURE_POWER_SHELL = "AzurePowerShell"
 
 
+class InaccessibilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Root cause kind. Allowed values are “TransparentDataEncryption”, “DatabaseReplication”, and
+    “Unknown”.
+    """
+
+    UNKNOWN = "Unknown"
+    TRANSPARENT_DATA_ENCRYPTION = "TransparentDataEncryption"
+    DATABASE_REPLICATION = "DatabaseReplication"
+
+
 class InstanceFailoverGroupReplicationRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Local replication role of the failover group instance."""
 
@@ -814,6 +824,7 @@ class ManagedInstanceDatabaseFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta
 
     ALWAYS_UP_TO_DATE = "AlwaysUpToDate"
     SQL_SERVER2022 = "SQLServer2022"
+    SQL_SERVER2025 = "SQLServer2025"
 
 
 class ManagedInstanceLicenseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -880,17 +891,6 @@ class ManagementOperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FAILED = "Failed"
     CANCEL_IN_PROGRESS = "CancelInProgress"
     CANCELLED = "Cancelled"
-
-
-class ManagementOperationStepState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ManagementOperationStepState."""
-
-    NOT_STARTED = "NotStarted"
-    IN_PROGRESS = "InProgress"
-    SLOWED_DOWN = "SlowedDown"
-    COMPLETED = "Completed"
-    FAILED = "Failed"
-    CANCELED = "Canceled"
 
 
 class MaxSizeUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -961,7 +961,9 @@ class PerformanceLevelUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class Phase(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operation phase."""
 
+    LOG_TRANSITION_IN_PROGRESS = "LogTransitionInProgress"
     COPYING = "Copying"
+    BUILDING_HYPERSCALE_COMPONENTS = "BuildingHyperscaleComponents"
     CATCHUP = "Catchup"
     WAITING_FOR_CUTOVER = "WaitingForCutover"
     CUTOVER_IN_PROGRESS = "CutoverInProgress"
@@ -1305,6 +1307,13 @@ class ServerConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PROXY = "Proxy"
 
 
+class ServerCreateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Create mode for server, only valid values for this are Normal and Restore."""
+
+    NORMAL = "Normal"
+    RESTORE = "Restore"
+
+
 class ServerKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The encryption protector type like 'ServiceManaged', 'AzureKeyVault'."""
 
@@ -1352,6 +1361,15 @@ class ServicePrincipalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     NONE = "None"
     SYSTEM_ASSIGNED = "SystemAssigned"
+
+
+class SetLegalHoldImmutability(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The setting for whether LegalHold is enabled or disabled on the LTR backup. When LegalHold is
+    enabled, the backup cannot be deleted until the LegalHold is removed.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
 
 
 class ShortTermRetentionPolicyName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1494,10 +1512,38 @@ class TableTemporalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SYSTEM_VERSIONED_TEMPORAL_TABLE = "SystemVersionedTemporalTable"
 
 
+class TimeBasedImmutability(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The setting for whether or not time-based immutability is enabled for the LTR backup. When
+    time-based immutability is enabled and locked, the backup cannot be deleted until
+    BackupExpirationTime.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+
+class TimeBasedImmutabilityMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The time-based immutability mode. Only applicable if time-based immutability is enabled."""
+
+    LOCKED = "Locked"
+    UNLOCKED = "Unlocked"
+
+
 class TransparentDataEncryptionName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """TransparentDataEncryptionName."""
 
     CURRENT = "current"
+
+
+class TransparentDataEncryptionScanState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the encryption scan state of the transparent data encryption."""
+
+    NONE = "None"
+    RESUME = "Resume"
+    RUNNING = "Running"
+    SUSPEND = "Suspend"
+    ABORTED = "Aborted"
+    COMPLETED = "Completed"
 
 
 class TransparentDataEncryptionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1505,6 +1551,17 @@ class TransparentDataEncryptionState(str, Enum, metaclass=CaseInsensitiveEnumMet
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
+
+
+class UpsertManagedServerOperationStepWithEstimatesAndDurationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """UpsertManagedServerOperationStepWithEstimatesAndDurationStatus."""
+
+    NOT_STARTED = "NotStarted"
+    IN_PROGRESS = "InProgress"
+    SLOWED_DOWN = "SlowedDown"
+    COMPLETED = "Completed"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
 
 
 class VirtualNetworkRuleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

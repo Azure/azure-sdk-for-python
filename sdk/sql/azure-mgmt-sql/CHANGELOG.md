@@ -1,5 +1,51 @@
 # Release History
 
+## 4.0.0b22 (2025-07-30)
+
+### Features Added
+
+  - Added operation LongTermRetentionBackupsOperations.begin_lock_time_based_immutability
+  - Added operation LongTermRetentionBackupsOperations.begin_lock_time_based_immutability_by_resource_group
+  - Added operation LongTermRetentionBackupsOperations.begin_remove_legal_hold_immutability
+  - Added operation LongTermRetentionBackupsOperations.begin_remove_legal_hold_immutability_by_resource_group
+  - Added operation LongTermRetentionBackupsOperations.begin_remove_time_based_immutability
+  - Added operation LongTermRetentionBackupsOperations.begin_remove_time_based_immutability_by_resource_group
+  - Added operation LongTermRetentionBackupsOperations.begin_set_legal_hold_immutability
+  - Added operation LongTermRetentionBackupsOperations.begin_set_legal_hold_immutability_by_resource_group
+  - Added operation ManagedDatabasesOperations.begin_reevaluate_inaccessible_database_state
+  - Added operation ManagedInstancesOperations.begin_reevaluate_inaccessible_database_state
+  - Added operation ManagedInstancesOperations.begin_validate_azure_key_vault_encryption_key
+  - Added operation TransparentDataEncryptionsOperations.begin_resume
+  - Added operation TransparentDataEncryptionsOperations.begin_suspend
+  - Added operation VirtualClustersOperations.begin_create_or_update
+  - Model DatabaseKey has a new parameter key_version
+  - Model EncryptionProtector has a new parameter key_version
+  - Model LocationCapabilities has a new parameter is_zone_resilient_provisioning_allowed
+  - Model LogicalDatabaseTransparentDataEncryption has a new parameter scan_state
+  - Model LongTermRetentionBackup has a new parameter legal_hold_immutability
+  - Model LongTermRetentionBackup has a new parameter time_based_immutability
+  - Model LongTermRetentionBackup has a new parameter time_based_immutability_mode
+  - Model LongTermRetentionPolicy has a new parameter time_based_immutability
+  - Model LongTermRetentionPolicy has a new parameter time_based_immutability_mode
+  - Model ManagedDatabase has a new parameter extended_accessibility_info
+  - Model ManagedDatabaseUpdate has a new parameter extended_accessibility_info
+  - Model ManagedInstance has a new parameter memory_size_in_gb
+  - Model ManagedInstance has a new parameter requested_logical_availability_zone
+  - Model ManagedInstanceUpdate has a new parameter memory_size_in_gb
+  - Model ManagedInstanceUpdate has a new parameter requested_logical_availability_zone
+  - Model ManagedInstanceVcoresCapability has a new parameter supported_memory_sizes_in_gb
+  - Model Server has a new parameter create_mode
+  - Model Server has a new parameter retention_days
+  - Model ServerKey has a new parameter key_version
+  - Model ServerUpdate has a new parameter create_mode
+  - Model ServerUpdate has a new parameter retention_days
+
+### Breaking Changes
+
+  - Model ManagedInstance no longer has parameter total_memory_mb
+  - Model ManagedInstanceUpdate no longer has parameter total_memory_mb
+  - Model ManagedInstanceVcoresCapability no longer has parameter supported_memory_limits_mb
+
 ## 4.0.0b21 (2025-03-23)
 
 ### Features Added

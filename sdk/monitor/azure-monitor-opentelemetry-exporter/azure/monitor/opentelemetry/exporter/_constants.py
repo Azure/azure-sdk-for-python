@@ -9,7 +9,10 @@ from opentelemetry.semconv.metrics.http_metrics import (
     HTTP_CLIENT_REQUEST_DURATION,
     HTTP_SERVER_REQUEST_DURATION,
 )
+# pylint:disable=no-name-in-module
+from fixedint import Int32
 from azure.core import CaseInsensitiveEnumMeta
+
 
 # Environment variables
 
@@ -141,8 +144,8 @@ _CUSTOMER_STATSBEAT_LANGUAGE = "python"
 class DropCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CLIENT_READONLY = "CLIENT_READONLY"
     CLIENT_EXCEPTION = "CLIENT_EXCEPTION"
-    CLIENT_STALE_DATA = "CLIENT_STALE_DATA"
     CLIENT_PERSISTENCE_CAPACITY = "CLIENT_PERSISTENCE_CAPACITY"
+    CLIENT_STORAGE_DISABLED = "CLIENT_STORAGE_DISABLED"
     UNKNOWN = "UNKNOWN"
 
 DropCodeType = Union[DropCode, int]
@@ -294,6 +297,9 @@ _INSTRUMENTATION_SUPPORTING_METRICS_LIST = (
 # sampleRate
 
 _SAMPLE_RATE_KEY = "_MS.sampleRate"
+_SAMPLING_HASH = 5381
+_INTEGER_MAX: int = Int32.maxval
+_INTEGER_MIN: int = Int32.minval
 
 # AAD Auth
 

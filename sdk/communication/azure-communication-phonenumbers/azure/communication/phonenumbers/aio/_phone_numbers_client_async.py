@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 # pylint: disable=docstring-keyword-should-match-keyword-only
-from typing import List, Optional, Union, Any
+from typing import List, Optional, Union, Any, cast, Dict
 import uuid
 
 from azure.core.credentials_async import AsyncTokenCredential
@@ -102,7 +102,7 @@ class PhoneNumbersClient:
         """
         endpoint, access_key = parse_connection_str(conn_str)
 
-        return cls(endpoint, access_key, **kwargs)
+        return cls(endpoint, AzureKeyCredential(access_key), **kwargs)
 
     @distributed_trace_async
     async def begin_purchase_phone_numbers(
@@ -361,14 +361,14 @@ class PhoneNumbersClient:
          ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.PhoneNumberOffering]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return self._phone_number_client.phone_numbers.list_offerings(
+        return cast(AsyncItemPaged[PhoneNumberOffering], self._phone_number_client.phone_numbers.list_offerings(
             country_code,
             phone_number_type=phone_number_type,
             assignment_type=assignment_type,
             accept_language=self._accepted_language,
             skip=skip,
             **kwargs
-        )
+        ))
 
     @distributed_trace
     def list_available_area_codes(
@@ -405,7 +405,7 @@ class PhoneNumbersClient:
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.PhoneNumberAreaCode]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return self._phone_number_client.phone_numbers.list_area_codes(
+        return cast(AsyncItemPaged[PhoneNumberAreaCode], self._phone_number_client.phone_numbers.list_area_codes(
             country_code,
             phone_number_type=phone_number_type,
             accept_language=self._accepted_language,
@@ -414,7 +414,7 @@ class PhoneNumbersClient:
             administrative_division=administrative_division,
             skip=skip,
             **kwargs
-        )
+        ))
 
     @distributed_trace_async
     async def search_operator_information(
@@ -486,9 +486,9 @@ class PhoneNumbersClient:
          ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.PhoneNumbersReservation]
         """
 
-        return self._phone_number_client.phone_numbers.list_reservations(
+        return cast(AsyncItemPaged[PhoneNumbersReservation], self._phone_number_client.phone_numbers.list_reservations(
             max_page_size=max_page_size,
-            **kwargs)
+            **kwargs))
 
     @distributed_trace_async
     async def create_or_update_reservation(
@@ -524,15 +524,18 @@ class PhoneNumbersClient:
         except ValueError as exc:
             raise ValueError("reservation_id must be in valid UUID format") from exc
 
-        phone_numbers = {}
+        phone_numbers: Dict[str, Optional[AvailablePhoneNumber]] = {}
         if numbers_to_add:
             for number in numbers_to_add:
-                phone_numbers[number.id] = number
+                if number.id is not None:
+                    phone_numbers[number.id] = number
         if numbers_to_remove:
-            for number in numbers_to_remove:
-                phone_numbers[number] = None
+            for number_id in numbers_to_remove:
+                phone_numbers[number_id] = None
 
-        reservation = PhoneNumbersReservation(phone_numbers=phone_numbers)
+        # Cast to satisfy type checker - merge-patch operations allow None values
+        reservation = PhoneNumbersReservation(
+            phone_numbers=cast(Optional[Dict[str, AvailablePhoneNumber]], phone_numbers))
 
         return await self._phone_number_client.phone_numbers.create_or_update_reservation(
             reservation_id, reservation, **kwargs

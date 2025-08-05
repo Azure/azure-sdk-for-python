@@ -4,6 +4,7 @@
 import base64
 import json
 import time
+import os
 import unittest
 from io import StringIO
 
@@ -130,6 +131,38 @@ class TestAADAsync(unittest.IsolatedAsyncioTestCase):
             assert e.status_code == 403
             print("403 error assertion success")
 
+    async def test_aad_scope_override_async(self):
+        override_scope = "https://my.custom.scope/.default"
+        os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"] = override_scope
+
+        scopes_captured = []
+        original_get_token = CosmosEmulatorCredential.get_token
+
+        async def capturing_get_token(self, *scopes, **kwargs):
+            scopes_captured.extend(scopes)
+            # Await the original method!
+            return await original_get_token(self, *scopes, **kwargs)
+
+        CosmosEmulatorCredential.get_token = capturing_get_token
+
+        try:
+            credential = CosmosEmulatorCredential()
+            client = CosmosClient(self.host, credential)
+            database = client.get_database_client(self.configs.TEST_DATABASE_ID)
+            container = database.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
+
+            await container.create_item(get_test_item(1))
+            item = await container.read_item(item='Item_1', partition_key='pk')
+            assert item["id"] == "Item_1"
+            assert override_scope in scopes_captured
+        finally:
+            CosmosEmulatorCredential.get_token = original_get_token
+            del os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"]
+            try:
+                await container.delete_item(item='Item_1', partition_key='pk')
+            except Exception:
+                pass
+            await client.close()
 
 if __name__ == "__main__":
     unittest.main()
