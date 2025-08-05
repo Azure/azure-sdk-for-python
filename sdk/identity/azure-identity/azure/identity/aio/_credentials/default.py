@@ -8,6 +8,7 @@ from typing import List, Optional, Any, cast
 
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
 from azure.core.credentials_async import AsyncTokenCredential, AsyncSupportsTokenInfo
+from ... import CredentialUnavailableError
 from ..._constants import EnvironmentVariables
 from ..._internal import get_default_authority, normalize_authority, within_dac, process_credential_exclusions
 from .azure_cli import AzureCliCredential
@@ -22,6 +23,34 @@ from .workload_identity import WorkloadIdentityCredential
 
 
 _LOGGER = logging.getLogger(__name__)
+
+
+class AsyncFailedDACCredential:
+    """Async version of FailedDACCredential for use in async credential chains.
+
+    This acts as a substitute for an async credential that has failed to initialize in the DAC chain.
+    """
+
+    def __init__(self, credential_name: str, error: str) -> None:
+        self._error = error
+        self._credential_name = credential_name
+
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+        raise CredentialUnavailableError(self._error)
+
+    async def get_token_info(
+        self, *scopes, options: Optional[TokenRequestOptions] = None, **kwargs: Any
+    ) -> AccessTokenInfo:
+        raise CredentialUnavailableError(self._error)
+
+    async def __aexit__(self, *args: Any, **kwargs: Any) -> None:
+        pass
+
+    async def __aenter__(self) -> "AsyncFailedDACCredential":
+        return self
+
+    async def close(self) -> None:
+        pass
 
 
 class DefaultAzureCredential(ChainedTokenCredential):
@@ -180,16 +209,17 @@ class DefaultAzureCredential(ChainedTokenCredential):
         if not exclude_environment_credential:
             credentials.append(EnvironmentCredential(authority=authority, _within_dac=True, **kwargs))
         if not exclude_workload_identity_credential:
-            if all(os.environ.get(var) for var in EnvironmentVariables.WORKLOAD_IDENTITY_VARS):
-                client_id = workload_identity_client_id
+            try:
                 credentials.append(
                     WorkloadIdentityCredential(
-                        client_id=cast(str, client_id),
+                        client_id=cast(str, workload_identity_client_id),
                         tenant_id=workload_identity_tenant_id,
-                        token_file_path=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
+                        token_file_path=os.environ.get(EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE),
                         **kwargs,
                     )
                 )
+            except ValueError as ex:
+                credentials.append(AsyncFailedDACCredential("WorkloadIdentityCredential", error=str(ex)))
         if not exclude_managed_identity_credential:
             credentials.append(
                 ManagedIdentityCredential(
