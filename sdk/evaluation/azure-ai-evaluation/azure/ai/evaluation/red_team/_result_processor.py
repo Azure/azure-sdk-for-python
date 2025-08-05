@@ -86,41 +86,40 @@ class ResultProcessor:
                                         risk_assessment = {}
 
                                         # If we have evaluation results, try to extract attack success and risk assessment
+                                        eval_row = None
                                         if eval_result:
-                                            # Look for this conversation in the evaluation results
-                                            rows = eval_result.get("rows", [])
-                                            for r in rows:
-                                                if r.get("inputs.conversation", {}).get("messages") == messages:
-                                                    # Found matching conversation
-                                                    if f"outputs.{risk_category}.{risk_category}_result" in r:
-                                                        attack_success = get_attack_success(
-                                                            r[f"outputs.{risk_category}.{risk_category}_result"]
-                                                        )
+                                            key = hashlib.sha256(json.dumps(messages, sort_keys=True).encode("utf-8")).hexdigest()
+                                            eval_row = eval_row_lookup.get(key)
+                                            if eval_row:
+                                                if f"outputs.{risk_category}.{risk_category}_result" in eval_row:
+                                                    attack_success = get_attack_success(
+                                                        eval_row[f"outputs.{risk_category}.{risk_category}_result"]
+                                                    )
 
-                                                    # Extract risk assessments for all categories
-                                                    for risk in self.risk_categories:
-                                                        risk_value = risk.value
-                                                        if (
-                                                            f"outputs.{risk_value}.{risk_value}" in r
-                                                            or f"outputs.{risk_value}.{risk_value}_reason" in r
-                                                        ):
-                                                            risk_assessment[risk_value] = {
-                                                                "severity_label": (
-                                                                    r[f"outputs.{risk_value}.{risk_value}"]
-                                                                    if f"outputs.{risk_value}.{risk_value}" in r
-                                                                    else (
-                                                                        r[f"outputs.{risk_value}.{risk_value}_result"]
-                                                                        if f"outputs.{risk_value}.{risk_value}_result"
-                                                                        in r
-                                                                        else None
-                                                                    )
-                                                                ),
-                                                                "reason": (
-                                                                    r[f"outputs.{risk_value}.{risk_value}_reason"]
-                                                                    if f"outputs.{risk_value}.{risk_value}_reason" in r
+                                                # Extract risk assessments for all categories
+                                                for risk in self.risk_categories:
+                                                    risk_value = risk.value
+                                                    if (
+                                                        f"outputs.{risk_value}.{risk_value}" in eval_row
+                                                        or f"outputs.{risk_value}.{risk_value}_reason" in eval_row
+                                                    ):
+                                                        risk_assessment[risk_value] = {
+                                                            "severity_label": (
+                                                                eval_row[f"outputs.{risk_value}.{risk_value}"]
+                                                                if f"outputs.{risk_value}.{risk_value}" in eval_row
+                                                                else (
+                                                                    eval_row[f"outputs.{risk_value}.{risk_value}_result"]
+                                                                    if f"outputs.{risk_value}.{risk_value}_result"
+                                                                    in eval_row
                                                                     else None
-                                                                ),
-                                                            }
+                                                                )
+                                                            ),
+                                                            "reason": (
+                                                                eval_row[f"outputs.{risk_value}.{risk_value}_reason"]
+                                                                if f"outputs.{risk_value}.{risk_value}_reason" in eval_row
+                                                                else None
+                                                            ),
+                                                        }
 
                                         # Add to tracking arrays for statistical analysis
                                         converters.append(strategy_name)
