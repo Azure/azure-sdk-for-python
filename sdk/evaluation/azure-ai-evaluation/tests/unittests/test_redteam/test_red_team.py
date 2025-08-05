@@ -148,10 +148,10 @@ def red_team_instance(mock_azure_ai_project, mock_credential):
         rt.scan_output_dir = "mock_scan_output_dir_for_crescendo"
         rt.red_team_info = {}  # Initialize for tests that might modify it
         rt.task_statuses = {}  # Initialize for tests that might modify it
-        
+
         # Initialize component managers for tests that need them
         rt._setup_component_managers()
-        
+
         return rt
 
 
@@ -226,12 +226,12 @@ class TestRedTeamMlflowIntegration:
         # Mock mlflow entirely
         mock_mlflow.set_tracking_uri = MagicMock()
         mock_mlflow.set_experiment = MagicMock()
-        
+
         # Mock Azure credentials first
         mock_credential = MagicMock()
         mock_credential.get_token.return_value = MagicMock(token="fake-token")
         mock_azure_credential.return_value = mock_credential
-        
+
         mock_rai_client.return_value = MagicMock()
         trace_destination = "azureml://subscriptions/test-sub/resourceGroups/test-rg/providers/Microsoft.MachineLearningServices/workspaces/test-ws"
         mock_trace_destination.return_value = trace_destination
@@ -244,12 +244,16 @@ class TestRedTeamMlflowIntegration:
         # Mock the client workspace call to avoid HTTP request
         workspace_info = MagicMock()
         workspace_info.ml_flow_tracking_uri = "mock-tracking-uri"
-        mock_lite_ml_client.return_value.workspace_get_info.return_value = workspace_info        # Create a mock EvalRun with the expected attributes
+        mock_lite_ml_client.return_value.workspace_get_info.return_value = (
+            workspace_info  # Create a mock EvalRun with the expected attributes
+        )
         mock_eval_run_instance = MagicMock()
         mock_eval_run.return_value = mock_eval_run_instance
 
         # Call the method
-        eval_run = red_team.mlflow_integration.start_redteam_mlflow_run(azure_ai_project=mock_azure_ai_project, run_name="test-run")
+        eval_run = red_team.mlflow_integration.start_redteam_mlflow_run(
+            azure_ai_project=mock_azure_ai_project, run_name="test-run"
+        )
 
         # Assert the results and mock calls
         assert eval_run is not None
@@ -901,14 +905,17 @@ class TestCrescendoOrchestrator:
 
         # Mock _write_pyrit_outputs_to_file to prevent file writing and FileNotFoundError
         with patch(
-            "azure.ai.evaluation.red_team._utils.formatting_utils.write_pyrit_outputs_to_file", return_value="mocked_file_path"
+            "azure.ai.evaluation.red_team._utils.formatting_utils.write_pyrit_outputs_to_file",
+            return_value="mocked_file_path",
         ) as mock_write_pyrit, patch(
             "pyrit.orchestrator.multi_turn.crescendo_orchestrator.CrescendoOrchestrator",
             return_value=mock_crescendo_orchestrator_instance,
         ) as mock_crescendo_class, patch(
-            "azure.ai.evaluation.red_team._utils._rai_service_target.AzureRAIServiceTarget", AsyncMock(spec=AzureRAIServiceTarget)
+            "azure.ai.evaluation.red_team._utils._rai_service_target.AzureRAIServiceTarget",
+            AsyncMock(spec=AzureRAIServiceTarget),
         ) as mock_rai_target, patch(
-            "azure.ai.evaluation.red_team._utils._rai_service_eval_chat_target.RAIServiceEvalChatTarget", AsyncMock(spec=RAIServiceEvalChatTarget)
+            "azure.ai.evaluation.red_team._utils._rai_service_eval_chat_target.RAIServiceEvalChatTarget",
+            AsyncMock(spec=RAIServiceEvalChatTarget),
         ) as mock_rai_eval_target, patch(
             "azure.ai.evaluation.red_team._utils._rai_service_true_false_scorer.AzureRAIServiceTrueFalseScorer",
             AsyncMock(spec=AzureRAIServiceTrueFalseScorer),
@@ -952,9 +959,11 @@ class TestCrescendoOrchestrator:
             "pyrit.orchestrator.multi_turn.crescendo_orchestrator.CrescendoOrchestrator",
             return_value=mock_crescendo_orchestrator_instance,
         ), patch(
-            "azure.ai.evaluation.red_team._utils._rai_service_target.AzureRAIServiceTarget", AsyncMock(spec=AzureRAIServiceTarget)
+            "azure.ai.evaluation.red_team._utils._rai_service_target.AzureRAIServiceTarget",
+            AsyncMock(spec=AzureRAIServiceTarget),
         ), patch(
-            "azure.ai.evaluation.red_team._utils._rai_service_eval_chat_target.RAIServiceEvalChatTarget", AsyncMock(spec=RAIServiceEvalChatTarget)
+            "azure.ai.evaluation.red_team._utils._rai_service_eval_chat_target.RAIServiceEvalChatTarget",
+            AsyncMock(spec=RAIServiceEvalChatTarget),
         ), patch(
             "azure.ai.evaluation.red_team._utils._rai_service_true_false_scorer.AzureRAIServiceTrueFalseScorer",
             AsyncMock(spec=AzureRAIServiceTrueFalseScorer),
@@ -988,7 +997,7 @@ class TestRedTeamProcessing:
     async def test_write_pyrit_outputs_to_file(self, red_team, mock_orchestrator):
         """Test write_pyrit_outputs_to_file utility function."""
         from azure.ai.evaluation.red_team._utils.formatting_utils import write_pyrit_outputs_to_file
-        
+
         # Create a synchronous mock for _message_to_dict to avoid any async behavior
         message_to_dict_mock = MagicMock(return_value={"role": "user", "content": "test content"})
 
@@ -1000,13 +1009,9 @@ class TestRedTeamProcessing:
         mock_prompt_piece.to_chat_message.return_value = MagicMock(role="user", content="test message")
         mock_memory.get_prompt_request_pieces.return_value = [mock_prompt_piece]
 
-        with patch(
-            "uuid.uuid4", return_value="test-uuid"
-        ), patch("pathlib.Path.open", mock_open()), patch(
+        with patch("uuid.uuid4", return_value="test-uuid"), patch("pathlib.Path.open", mock_open()), patch(
             "azure.ai.evaluation.red_team._utils.formatting_utils.message_to_dict", message_to_dict_mock
-        ), patch(
-            "pyrit.memory.CentralMemory.get_memory_instance", return_value=mock_memory
-        ), patch(
+        ), patch("pyrit.memory.CentralMemory.get_memory_instance", return_value=mock_memory), patch(
             "os.path.exists", return_value=False
         ), patch(
             "os.path.join", lambda *args: "/".join(args)
@@ -1014,11 +1019,11 @@ class TestRedTeamProcessing:
 
             # Call the utility function directly
             output_path = write_pyrit_outputs_to_file(
-                orchestrator=mock_orchestrator, 
-                strategy_name="test_strategy", 
+                orchestrator=mock_orchestrator,
+                strategy_name="test_strategy",
                 risk_category="test_risk",
                 output_path="/test/output",
-                logger=red_team.logger
+                logger=red_team.logger,
             )
 
             # Verify the result
@@ -1128,7 +1133,8 @@ class TestRedTeamProcessing:
         with patch.object(
             red_team.orchestrator_manager, "_prompt_sending_orchestrator", return_value=mock_internal_orchestrator
         ) as mock_prompt_sending_orchestrator, patch(
-            "azure.ai.evaluation.red_team._utils.formatting_utils.write_pyrit_outputs_to_file", return_value="/path/to/data.jsonl"
+            "azure.ai.evaluation.red_team._utils.formatting_utils.write_pyrit_outputs_to_file",
+            return_value="/path/to/data.jsonl",
         ) as mock_write_outputs, patch.object(
             red_team.evaluation_processor, "evaluate", new_callable=AsyncMock
         ) as mock_evaluate, patch.object(
@@ -1142,7 +1148,9 @@ class TestRedTeamProcessing:
         ), patch(
             "azure.ai.evaluation.red_team._utils.strategy_utils.get_converter_for_strategy", return_value=mock_converter
         ), patch.object(
-            red_team.orchestrator_manager, "get_orchestrator_for_attack_strategy", return_value=mock_prompt_sending_orchestrator
+            red_team.orchestrator_manager,
+            "get_orchestrator_for_attack_strategy",
+            return_value=mock_prompt_sending_orchestrator,
         ) as mock_get_orchestrator, patch(
             "os.path.join", lambda *args: "/".join(args)
         ):
@@ -1197,9 +1205,12 @@ class TestRedTeamProcessing:
         red_team.logger = mock_logger
 
         with patch.object(
-            red_team.orchestrator_manager, "_prompt_sending_orchestrator", side_effect=Exception("Test orchestrator error")
+            red_team.orchestrator_manager,
+            "_prompt_sending_orchestrator",
+            side_effect=Exception("Test orchestrator error"),
         ) as mock_prompt_sending_orchestrator, patch(
-            "azure.ai.evaluation.red_team._utils.formatting_utils.write_pyrit_outputs_to_file", return_value="/path/to/data.jsonl"
+            "azure.ai.evaluation.red_team._utils.formatting_utils.write_pyrit_outputs_to_file",
+            return_value="/path/to/data.jsonl",
         ) as mock_write_outputs, patch.object(
             red_team.evaluation_processor, "evaluate", new_callable=AsyncMock
         ) as mock_evaluate, patch.object(
@@ -1213,7 +1224,9 @@ class TestRedTeamProcessing:
         ), patch(
             "azure.ai.evaluation.red_team._utils.strategy_utils.get_converter_for_strategy", return_value=mock_converter
         ), patch.object(
-            red_team.orchestrator_manager, "get_orchestrator_for_attack_strategy", return_value=mock_prompt_sending_orchestrator
+            red_team.orchestrator_manager,
+            "get_orchestrator_for_attack_strategy",
+            return_value=mock_prompt_sending_orchestrator,
         ) as mock_get_orchestrator, patch(
             "os.path.join", lambda *args: "/".join(args)
         ):
@@ -1457,19 +1470,25 @@ class TestRedTeamOrchestratorSelection:
         assert single_func == red_team.orchestrator_manager._prompt_sending_orchestrator
 
         # Test composed non-MultiTurn
-        composed_func = red_team.orchestrator_manager.get_orchestrator_for_attack_strategy([AttackStrategy.Base64, AttackStrategy.Caesar])
+        composed_func = red_team.orchestrator_manager.get_orchestrator_for_attack_strategy(
+            [AttackStrategy.Base64, AttackStrategy.Caesar]
+        )
         assert composed_func == red_team.orchestrator_manager._prompt_sending_orchestrator
 
     def test_get_orchestrator_for_crescendo_strategy(self, red_team_instance):
         """Test that get_orchestrator_for_attack_strategy returns _crescendo_orchestrator for Crescendo strategy."""
-        orchestrator_func = red_team_instance.orchestrator_manager.get_orchestrator_for_attack_strategy(AttackStrategy.Crescendo)
+        orchestrator_func = red_team_instance.orchestrator_manager.get_orchestrator_for_attack_strategy(
+            AttackStrategy.Crescendo
+        )
         assert orchestrator_func == red_team_instance.orchestrator_manager._crescendo_orchestrator
 
         # Test with a list containing Crescendo
         with pytest.raises(
             ValueError, match="MultiTurn and Crescendo strategies are not supported in composed attacks."
         ):
-            red_team_instance.orchestrator_manager.get_orchestrator_for_attack_strategy([AttackStrategy.Crescendo, AttackStrategy.Base64])
+            red_team_instance.orchestrator_manager.get_orchestrator_for_attack_strategy(
+                [AttackStrategy.Crescendo, AttackStrategy.Base64]
+            )
 
 
 @pytest.mark.unittest
@@ -1529,7 +1548,7 @@ class TestRedTeamAttackSuccessThresholds:
         red_team.attack_success_thresholds = {"violence": 3}
 
         # Test with string values - get_attack_success only takes result string
-        # Based on EVALUATION_PASS_FAIL_MAPPING: False -> "fail", True -> "pass" 
+        # Based on EVALUATION_PASS_FAIL_MAPPING: False -> "fail", True -> "pass"
         # get_attack_success returns True when result equals mapping[False] which is "fail"
         assert get_attack_success("fail") is True  # Attack succeeded
         assert get_attack_success("pass") is False  # Attack failed
@@ -1559,11 +1578,12 @@ class TestRedTeamAttackSuccessThresholds:
         # Create a new result processor instance to avoid state pollution
         from azure.ai.evaluation.red_team._result_processor import ResultProcessor
         import logging
+
         clean_result_processor = ResultProcessor(
             logger=logging.getLogger("test"),
             attack_success_thresholds={},
             application_scenario="test",
-            risk_categories=[]
+            risk_categories=[],
         )
 
         formatted = clean_result_processor._format_thresholds_for_output()
