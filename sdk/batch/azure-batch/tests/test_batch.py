@@ -1200,6 +1200,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         except azure.core.exceptions.ResourceNotFoundError as e:
             assert e.response is not None
             assert hasattr(e, 'model')
+            assert '(PoolNotFound) The specified pool does not exist.' in str(e)
             if hasattr(e, 'error') and hasattr(e.error, 'code'):
                 assert e.error.code in ['PoolNotFound']
 
@@ -1236,7 +1237,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         except azure.core.exceptions.ResourceExistsError as e:
             assert e.response is not None
             assert hasattr(e, 'model')
-
+            assert '(JobExists) The specified job already exists.' in str(e)
             if hasattr(e, 'error') and hasattr(e.error, 'code'):
                 assert e.error.code in ['JobExists']
         finally:
