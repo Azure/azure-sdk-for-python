@@ -124,6 +124,7 @@ def _getlocale():
             # by continuing to use getdefaultlocale() even though it has been deprecated.
             # we ignore the deprecation warnings to reduce noise
             warnings.simplefilter("ignore", category=DeprecationWarning)
+            # pylint: disable=deprecated-method
             return locale.getdefaultlocale()[0]
     except AttributeError:
         # locale.getlocal() has issues on Windows: https://github.com/python/cpython/issues/82986

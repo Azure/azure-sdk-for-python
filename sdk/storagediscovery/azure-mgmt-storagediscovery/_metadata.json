@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2025-06-01-preview",
+  "commit": "97f789aeb52adfc1e20c386005839f5276874d7d",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/storagediscovery/Microsoft.StorageDiscovery.Management",
+  "emitterVersion": "0.46.0"
+}

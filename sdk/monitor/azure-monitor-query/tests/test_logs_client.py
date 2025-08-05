@@ -196,7 +196,6 @@ class TestLogsClient(AzureMonitorQueryLogsTestCase):
         assert response is not None
         assert len(response.tables[0].rows) == 2
 
-    @pytest.mark.skip("Flaky deserialization issues with msrest. Re-enable after removing msrest dependency.")
     @pytest.mark.live_test_only("Issues recording dynamic 'id' values in requests/responses")
     def test_logs_query_batch_additional_workspaces(self, monitor_info):
         client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
@@ -298,12 +297,13 @@ class TestLogsClient(AzureMonitorQueryLogsTestCase):
 
     def test_client_different_endpoint(self):
         credential = self.get_credential(LogsQueryClient)
-        endpoint = "https://api.loganalytics.azure.cn/v1"
+        endpoint = "https://api.loganalytics.azure.cn"
         client = LogsQueryClient(credential, endpoint=endpoint)
 
         assert client._endpoint == endpoint
-        assert "https://api.loganalytics.azure.cn/.default" in client._client._config.authentication_policy._scopes
+        assert client._config.authentication_policy
+        assert "https://api.loganalytics.azure.cn/.default" in client._config.authentication_policy._scopes
 
     def test_client_user_agent(self):
         client: LogsQueryClient = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
-        assert f"monitor-query/{VERSION}" in client._client._config.user_agent_policy.user_agent
+        assert f"monitor-query/{VERSION}" in client._config.user_agent_policy.user_agent
