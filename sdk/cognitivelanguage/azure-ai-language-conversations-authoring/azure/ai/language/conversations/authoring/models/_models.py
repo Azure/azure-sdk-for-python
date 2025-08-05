@@ -20,311 +20,6 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AnalyzeConversationAuthoringConfusionMatrixCell(_Model):  # pylint: disable=name-too-long
-    """Represents a cell in a confusion matrix.
-
-    :ivar normalized_value: Represents normalized value in percentages. Required.
-    :vartype normalized_value: float
-    :ivar raw_value: Represents raw value. Required.
-    :vartype raw_value: float
-    """
-
-    normalized_value: float = rest_field(
-        name="normalizedValue", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents normalized value in percentages. Required."""
-    raw_value: float = rest_field(name="rawValue", visibility=["read", "create", "update", "delete", "query"])
-    """Represents raw value. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        normalized_value: float,
-        raw_value: float,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AnalyzeConversationAuthoringConfusionMatrixRow(_Model):  # pylint: disable=name-too-long
-    """AnalyzeConversationAuthoringConfusionMatrixRow."""
-
-
-class AnalyzeConversationAuthoringDataGenerationConnectionInfo(_Model):  # pylint: disable=name-too-long
-    """Represents the connection info for the Azure resource to use during data generation.
-
-    :ivar kind: Connection type for data generation settings. Currently only supports Azure OpenAI.
-     Required. "AzureOpenAI"
-    :vartype kind: str or
-     ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringDataGenerationConnectionKind
-    :ivar deployment_name: Deployment name of model to be used for synthetic data generation.
-     Required.
-    :vartype deployment_name: str
-    :ivar resource_id: Resource ID for the data generation resource. Looks something like
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{resourceName}".
-    :vartype resource_id: str
-    """
-
-    kind: Union[str, "_models.AnalyzeConversationAuthoringDataGenerationConnectionKind"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Connection type for data generation settings. Currently only supports Azure OpenAI. Required.
-     \"AzureOpenAI\""""
-    deployment_name: str = rest_field(name="deploymentName", visibility=["read", "create", "update", "delete", "query"])
-    """Deployment name of model to be used for synthetic data generation. Required."""
-    resource_id: Optional[str] = rest_field(
-        name="resourceId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Resource ID for the data generation resource. Looks something like
-     \"/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{resourceName}\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        kind: Union[str, "_models.AnalyzeConversationAuthoringDataGenerationConnectionKind"],
-        deployment_name: str,
-        resource_id: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AnalyzeConversationAuthoringDataGenerationSettings(_Model):  # pylint: disable=name-too-long
-    """Settings to enable data generation for training augmentation.
-
-    :ivar enable_data_generation: Must be explicitly set to True to enable data generation to
-     augment training data. Required.
-    :vartype enable_data_generation: bool
-    :ivar data_generation_connection_info: Must be filled out to enable data generation to augment
-     training data. Required.
-    :vartype data_generation_connection_info:
-     ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringDataGenerationConnectionInfo
-    """
-
-    enable_data_generation: bool = rest_field(
-        name="enableDataGeneration", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Must be explicitly set to True to enable data generation to augment training data. Required."""
-    data_generation_connection_info: "_models.AnalyzeConversationAuthoringDataGenerationConnectionInfo" = rest_field(
-        name="dataGenerationConnectionInfo", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Must be filled out to enable data generation to augment training data. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        enable_data_generation: bool,
-        data_generation_connection_info: "_models.AnalyzeConversationAuthoringDataGenerationConnectionInfo",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AnalyzeConversationAuthoringEntityEvaluationSummary(_Model):  # pylint: disable=name-too-long
-    """Represents the evaluation result for an entity.
-
-    :ivar f1: Represents the model F1 score. Required.
-    :vartype f1: float
-    :ivar precision: Represents the model precision. Required.
-    :vartype precision: float
-    :ivar recall: Represents the model precision. Required.
-    :vartype recall: float
-    :ivar true_positive_count: Represents the count of true positive. Required.
-    :vartype true_positive_count: int
-    :ivar true_negative_count: Represents the count of true negative. Required.
-    :vartype true_negative_count: int
-    :ivar false_positive_count: Represents the count of false positive. Required.
-    :vartype false_positive_count: int
-    :ivar false_negative_count: Represents the count of false negative. Required.
-    :vartype false_negative_count: int
-    """
-
-    f1: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Represents the model F1 score. Required."""
-    precision: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Represents the model precision. Required."""
-    recall: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Represents the model precision. Required."""
-    true_positive_count: int = rest_field(
-        name="truePositiveCount", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the count of true positive. Required."""
-    true_negative_count: int = rest_field(
-        name="trueNegativeCount", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the count of true negative. Required."""
-    false_positive_count: int = rest_field(
-        name="falsePositiveCount", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the count of false positive. Required."""
-    false_negative_count: int = rest_field(
-        name="falseNegativeCount", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the count of false negative. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        f1: float,
-        precision: float,
-        recall: float,
-        true_positive_count: int,
-        true_negative_count: int,
-        false_positive_count: int,
-        false_negative_count: int,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AnalyzeConversationAuthoringUtteranceEntitiesEvaluationResult(_Model):  # pylint: disable=name-too-long
-    """Represents the comparison between the expected and predicted entities for an utterance.
-
-    :ivar expected_entities: Represents the expected entity labels. Required.
-    :vartype expected_entities:
-     list[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringUtteranceEntityEvaluationResult]
-    :ivar predicted_entities: Represents the predicted entity labels. Required.
-    :vartype predicted_entities:
-     list[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringUtteranceEntityEvaluationResult]
-    """
-
-    expected_entities: List["_models.AnalyzeConversationAuthoringUtteranceEntityEvaluationResult"] = rest_field(
-        name="expectedEntities", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the expected entity labels. Required."""
-    predicted_entities: List["_models.AnalyzeConversationAuthoringUtteranceEntityEvaluationResult"] = rest_field(
-        name="predictedEntities", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the predicted entity labels. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        expected_entities: List["_models.AnalyzeConversationAuthoringUtteranceEntityEvaluationResult"],
-        predicted_entities: List["_models.AnalyzeConversationAuthoringUtteranceEntityEvaluationResult"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AnalyzeConversationAuthoringUtteranceEntityEvaluationResult(_Model):  # pylint: disable=name-too-long
-    """Represents the evaluation output of an entity label or prediction.
-
-    :ivar category: Represents the entity category. Required.
-    :vartype category: str
-    :ivar offset: Represents the entity offset index relative to the original text. Required.
-    :vartype offset: int
-    :ivar length: Represents the entity length. Required.
-    :vartype length: int
-    """
-
-    category: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Represents the entity category. Required."""
-    offset: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Represents the entity offset index relative to the original text. Required."""
-    length: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Represents the entity length. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        category: str,
-        offset: int,
-        length: int,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AnalyzeConversationAuthoringUtteranceIntentsEvaluationResult(_Model):  # pylint: disable=name-too-long
-    """Represents the comparison between the expected and the predicted intent for an utterance.
-
-    :ivar expected_intent: Represents the utterance's expected intent. Required.
-    :vartype expected_intent: str
-    :ivar predicted_intent: Represents the utterance's predicted intent. Required.
-    :vartype predicted_intent: str
-    """
-
-    expected_intent: str = rest_field(name="expectedIntent", visibility=["read", "create", "update", "delete", "query"])
-    """Represents the utterance's expected intent. Required."""
-    predicted_intent: str = rest_field(
-        name="predictedIntent", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents the utterance's predicted intent. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        expected_intent: str,
-        predicted_intent: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class AssignDeploymentResourcesDetails(_Model):
     """Represents the options for assigning Azure resources to a project.
 
@@ -462,6 +157,45 @@ class AssignedProjectDeploymentsMetadata(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class ConfusionMatrixCell(_Model):
+    """Represents a cell in a confusion matrix.
+
+    :ivar normalized_value: Represents normalized value in percentages. Required.
+    :vartype normalized_value: float
+    :ivar raw_value: Represents raw value. Required.
+    :vartype raw_value: float
+    """
+
+    normalized_value: float = rest_field(
+        name="normalizedValue", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents normalized value in percentages. Required."""
+    raw_value: float = rest_field(name="rawValue", visibility=["read", "create", "update", "delete", "query"])
+    """Represents raw value. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        normalized_value: float,
+        raw_value: float,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ConfusionMatrixRow(_Model):
+    """ConfusionMatrixRow."""
 
 
 class ConversationExportedAssociatedEntityLabel(_Model):  # pylint: disable=name-too-long
@@ -997,6 +731,94 @@ class CreateProjectDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
+class DataGenerationConnectionInfo(_Model):
+    """Represents the connection info for the Azure resource to use during data generation.
+
+    :ivar kind: Connection type for data generation settings. Currently only supports Azure OpenAI.
+     Required. "AzureOpenAI"
+    :vartype kind: str or
+     ~azure.ai.language.conversations.authoring.models.DataGenerationConnectionKind
+    :ivar deployment_name: Deployment name of model to be used for synthetic data generation.
+     Required.
+    :vartype deployment_name: str
+    :ivar resource_id: Resource ID for the data generation resource. Looks something like
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{resourceName}".
+    :vartype resource_id: str
+    """
+
+    kind: Union[str, "_models.DataGenerationConnectionKind"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Connection type for data generation settings. Currently only supports Azure OpenAI. Required.
+     \"AzureOpenAI\""""
+    deployment_name: str = rest_field(name="deploymentName", visibility=["read", "create", "update", "delete", "query"])
+    """Deployment name of model to be used for synthetic data generation. Required."""
+    resource_id: Optional[str] = rest_field(
+        name="resourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Resource ID for the data generation resource. Looks something like
+     \"/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{resourceName}\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: Union[str, "_models.DataGenerationConnectionKind"],
+        deployment_name: str,
+        resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DataGenerationSettings(_Model):
+    """Settings to enable data generation for training augmentation.
+
+    :ivar enable_data_generation: Must be explicitly set to True to enable data generation to
+     augment training data. Required.
+    :vartype enable_data_generation: bool
+    :ivar data_generation_connection_info: Must be filled out to enable data generation to augment
+     training data. Required.
+    :vartype data_generation_connection_info:
+     ~azure.ai.language.conversations.authoring.models.DataGenerationConnectionInfo
+    """
+
+    enable_data_generation: bool = rest_field(
+        name="enableDataGeneration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Must be explicitly set to True to enable data generation to augment training data. Required."""
+    data_generation_connection_info: "_models.DataGenerationConnectionInfo" = rest_field(
+        name="dataGenerationConnectionInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Must be filled out to enable data generation to augment training data. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enable_data_generation: bool,
+        data_generation_connection_info: "_models.DataGenerationConnectionInfo",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class DeleteDeploymentDetails(_Model):
     """Represents the options for deleting a project deployment.
 
@@ -1108,14 +930,14 @@ class DeploymentResource(_Model):
     :vartype region: str
     :ivar assigned_aoai_resource: Represents the AOAI resource assigned for data generation.
     :vartype assigned_aoai_resource:
-     ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringDataGenerationConnectionInfo
+     ~azure.ai.language.conversations.authoring.models.DataGenerationConnectionInfo
     """
 
     resource_id: str = rest_field(name="resourceId", visibility=["read", "create", "update", "delete", "query"])
     """Represents the Azure resource Id. Required."""
     region: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Represents the resource region. Required."""
-    assigned_aoai_resource: Optional["_models.AnalyzeConversationAuthoringDataGenerationConnectionInfo"] = rest_field(
+    assigned_aoai_resource: Optional["_models.DataGenerationConnectionInfo"] = rest_field(
         name="assignedAoaiResource", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the AOAI resource assigned for data generation."""
@@ -1126,7 +948,7 @@ class DeploymentResource(_Model):
         *,
         resource_id: str,
         region: str,
-        assigned_aoai_resource: Optional["_models.AnalyzeConversationAuthoringDataGenerationConnectionInfo"] = None,
+        assigned_aoai_resource: Optional["_models.DataGenerationConnectionInfo"] = None,
     ) -> None: ...
 
     @overload
@@ -1281,10 +1103,10 @@ class EntitiesEvaluationSummary(_Model):
      can be the same). The matrix is between the entity that was labelled and the entity that was
      predicted. Required.
     :vartype confusion_matrix: dict[str,
-     ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringConfusionMatrixRow]
+     ~azure.ai.language.conversations.authoring.models.ConfusionMatrixRow]
     :ivar entities: Represents the entities evaluation summary. Required.
     :vartype entities: dict[str,
-     ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringEntityEvaluationSummary]
+     ~azure.ai.language.conversations.authoring.models.EntityEvaluationSummary]
     :ivar micro_f1: Represents the micro F1. Expected value is a float between 0 and 1 inclusive.
      Required.
     :vartype micro_f1: float
@@ -1305,12 +1127,12 @@ class EntitiesEvaluationSummary(_Model):
     :vartype macro_recall: float
     """
 
-    confusion_matrix: Dict[str, "_models.AnalyzeConversationAuthoringConfusionMatrixRow"] = rest_field(
+    confusion_matrix: Dict[str, "_models.ConfusionMatrixRow"] = rest_field(
         name="confusionMatrix", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the confusion matrix between two entities (the two entities can be the same). The
      matrix is between the entity that was labelled and the entity that was predicted. Required."""
-    entities: Dict[str, "_models.AnalyzeConversationAuthoringEntityEvaluationSummary"] = rest_field(
+    entities: Dict[str, "_models.EntityEvaluationSummary"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the entities evaluation summary. Required."""
@@ -1335,14 +1157,80 @@ class EntitiesEvaluationSummary(_Model):
     def __init__(
         self,
         *,
-        confusion_matrix: Dict[str, "_models.AnalyzeConversationAuthoringConfusionMatrixRow"],
-        entities: Dict[str, "_models.AnalyzeConversationAuthoringEntityEvaluationSummary"],
+        confusion_matrix: Dict[str, "_models.ConfusionMatrixRow"],
+        entities: Dict[str, "_models.EntityEvaluationSummary"],
         micro_f1: float,
         micro_precision: float,
         micro_recall: float,
         macro_f1: float,
         macro_precision: float,
         macro_recall: float,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EntityEvaluationSummary(_Model):
+    """Represents the evaluation result for an entity.
+
+    :ivar f1: Represents the model F1 score. Required.
+    :vartype f1: float
+    :ivar precision: Represents the model precision. Required.
+    :vartype precision: float
+    :ivar recall: Represents the model precision. Required.
+    :vartype recall: float
+    :ivar true_positive_count: Represents the count of true positive. Required.
+    :vartype true_positive_count: int
+    :ivar true_negative_count: Represents the count of true negative. Required.
+    :vartype true_negative_count: int
+    :ivar false_positive_count: Represents the count of false positive. Required.
+    :vartype false_positive_count: int
+    :ivar false_negative_count: Represents the count of false negative. Required.
+    :vartype false_negative_count: int
+    """
+
+    f1: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Represents the model F1 score. Required."""
+    precision: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Represents the model precision. Required."""
+    recall: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Represents the model precision. Required."""
+    true_positive_count: int = rest_field(
+        name="truePositiveCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the count of true positive. Required."""
+    true_negative_count: int = rest_field(
+        name="trueNegativeCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the count of true negative. Required."""
+    false_positive_count: int = rest_field(
+        name="falsePositiveCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the count of false positive. Required."""
+    false_negative_count: int = rest_field(
+        name="falseNegativeCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the count of false negative. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        f1: float,
+        precision: float,
+        recall: float,
+        true_positive_count: int,
+        true_negative_count: int,
+        false_positive_count: int,
+        false_negative_count: int,
     ) -> None: ...
 
     @overload
@@ -2499,7 +2387,7 @@ class IntentsEvaluationSummary(_Model):
      can be the same). The matrix is between the intent that was labelled and the intent that was
      predicted. Required.
     :vartype confusion_matrix: dict[str,
-     ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringConfusionMatrixRow]
+     ~azure.ai.language.conversations.authoring.models.ConfusionMatrixRow]
     :ivar intents: Represents the intents evaluation summary. Required.
     :vartype intents: dict[str,
      ~azure.ai.language.conversations.authoring.models.IntentEvaluationSummary]
@@ -2523,7 +2411,7 @@ class IntentsEvaluationSummary(_Model):
     :vartype macro_recall: float
     """
 
-    confusion_matrix: Dict[str, "_models.AnalyzeConversationAuthoringConfusionMatrixRow"] = rest_field(
+    confusion_matrix: Dict[str, "_models.ConfusionMatrixRow"] = rest_field(
         name="confusionMatrix", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the confusion matrix between two intents (the two intents can be the same). The
@@ -2553,7 +2441,7 @@ class IntentsEvaluationSummary(_Model):
     def __init__(
         self,
         *,
-        confusion_matrix: Dict[str, "_models.AnalyzeConversationAuthoringConfusionMatrixRow"],
+        confusion_matrix: Dict[str, "_models.ConfusionMatrixRow"],
         intents: Dict[str, "_models.IntentEvaluationSummary"],
         micro_f1: float,
         micro_precision: float,
@@ -3423,7 +3311,7 @@ class TrainingJobDetails(_Model):
     :ivar data_generation_settings: For customers to populate if they wish to use data generation
      for their model training job.
     :vartype data_generation_settings:
-     ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringDataGenerationSettings
+     ~azure.ai.language.conversations.authoring.models.DataGenerationSettings
     """
 
     model_label: str = rest_field(name="modelLabel", visibility=["read", "create", "update", "delete", "query"])
@@ -3443,7 +3331,7 @@ class TrainingJobDetails(_Model):
     )
     """Represents the evaluation options. By default, the evaluation kind is percentage, with training
      split percentage as 80, and testing split percentage as 20."""
-    data_generation_settings: Optional["_models.AnalyzeConversationAuthoringDataGenerationSettings"] = rest_field(
+    data_generation_settings: Optional["_models.DataGenerationSettings"] = rest_field(
         name="dataGenerationSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """For customers to populate if they wish to use data generation for their model training job."""
@@ -3456,7 +3344,7 @@ class TrainingJobDetails(_Model):
         training_mode: Union[str, "_models.TrainingMode"],
         training_config_version: Optional[str] = None,
         evaluation_options: Optional["_models.EvaluationDetails"] = None,
-        data_generation_settings: Optional["_models.AnalyzeConversationAuthoringDataGenerationSettings"] = None,
+        data_generation_settings: Optional["_models.DataGenerationSettings"] = None,
     ) -> None: ...
 
     @overload
@@ -3644,6 +3532,83 @@ class UnassignDeploymentResourcesDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
+class UtteranceEntitiesEvaluationResult(_Model):
+    """Represents the comparison between the expected and predicted entities for an utterance.
+
+    :ivar expected_entities: Represents the expected entity labels. Required.
+    :vartype expected_entities:
+     list[~azure.ai.language.conversations.authoring.models.UtteranceEntityEvaluationResult]
+    :ivar predicted_entities: Represents the predicted entity labels. Required.
+    :vartype predicted_entities:
+     list[~azure.ai.language.conversations.authoring.models.UtteranceEntityEvaluationResult]
+    """
+
+    expected_entities: List["_models.UtteranceEntityEvaluationResult"] = rest_field(
+        name="expectedEntities", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the expected entity labels. Required."""
+    predicted_entities: List["_models.UtteranceEntityEvaluationResult"] = rest_field(
+        name="predictedEntities", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the predicted entity labels. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        expected_entities: List["_models.UtteranceEntityEvaluationResult"],
+        predicted_entities: List["_models.UtteranceEntityEvaluationResult"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class UtteranceEntityEvaluationResult(_Model):
+    """Represents the evaluation output of an entity label or prediction.
+
+    :ivar category: Represents the entity category. Required.
+    :vartype category: str
+    :ivar offset: Represents the entity offset index relative to the original text. Required.
+    :vartype offset: int
+    :ivar length: Represents the entity length. Required.
+    :vartype length: int
+    """
+
+    category: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Represents the entity category. Required."""
+    offset: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Represents the entity offset index relative to the original text. Required."""
+    length: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Represents the entity length. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        category: str,
+        offset: int,
+        length: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class UtteranceEvaluationResult(_Model):
     """Represents the evaluation result for an utterance.
 
@@ -3654,10 +3619,10 @@ class UtteranceEvaluationResult(_Model):
     :vartype language: str
     :ivar entities_result: Represents the entities results for the utterance. Required.
     :vartype entities_result:
-     ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringUtteranceEntitiesEvaluationResult
+     ~azure.ai.language.conversations.authoring.models.UtteranceEntitiesEvaluationResult
     :ivar intents_result: Represents the intents results for the utterance. Required.
     :vartype intents_result:
-     ~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringUtteranceIntentsEvaluationResult
+     ~azure.ai.language.conversations.authoring.models.UtteranceIntentsEvaluationResult
     """
 
     text: str = rest_field(visibility=["read"])
@@ -3665,11 +3630,11 @@ class UtteranceEvaluationResult(_Model):
     language: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Represents the utterance language. This is BCP-47 representation of a language. For example,
      use \"en\" for English, \"en-gb\" for English (UK), \"es\" for Spanish etc. Required."""
-    entities_result: "_models.AnalyzeConversationAuthoringUtteranceEntitiesEvaluationResult" = rest_field(
+    entities_result: "_models.UtteranceEntitiesEvaluationResult" = rest_field(
         name="entitiesResult", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the entities results for the utterance. Required."""
-    intents_result: "_models.AnalyzeConversationAuthoringUtteranceIntentsEvaluationResult" = rest_field(
+    intents_result: "_models.UtteranceIntentsEvaluationResult" = rest_field(
         name="intentsResult", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents the intents results for the utterance. Required."""
@@ -3679,8 +3644,43 @@ class UtteranceEvaluationResult(_Model):
         self,
         *,
         language: str,
-        entities_result: "_models.AnalyzeConversationAuthoringUtteranceEntitiesEvaluationResult",
-        intents_result: "_models.AnalyzeConversationAuthoringUtteranceIntentsEvaluationResult",
+        entities_result: "_models.UtteranceEntitiesEvaluationResult",
+        intents_result: "_models.UtteranceIntentsEvaluationResult",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class UtteranceIntentsEvaluationResult(_Model):
+    """Represents the comparison between the expected and the predicted intent for an utterance.
+
+    :ivar expected_intent: Represents the utterance's expected intent. Required.
+    :vartype expected_intent: str
+    :ivar predicted_intent: Represents the utterance's predicted intent. Required.
+    :vartype predicted_intent: str
+    """
+
+    expected_intent: str = rest_field(name="expectedIntent", visibility=["read", "create", "update", "delete", "query"])
+    """Represents the utterance's expected intent. Required."""
+    predicted_intent: str = rest_field(
+        name="predictedIntent", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents the utterance's predicted intent. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        expected_intent: str,
+        predicted_intent: str,
     ) -> None: ...
 
     @overload

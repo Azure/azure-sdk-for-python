@@ -10,12 +10,6 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AnalyzeConversationAuthoringDataGenerationConnectionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Represents the connection kind for Azure OpenAI deployment."""
-
-    AZURE_OPEN_AI = "AzureOpenAI"
-
-
 class CompositionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of CompositionMode."""
 
@@ -30,6 +24,12 @@ class CompositionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COMBINE_COMPONENTS = "combineComponents"
     """When two or more components are found in the text and overlap, the components' spans are merged
     together into one span combining all of them."""
+
+
+class DataGenerationConnectionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Represents the connection kind for Azure OpenAI deployment."""
+
+    AZURE_OPEN_AI = "AzureOpenAI"
 
 
 class DatasetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
