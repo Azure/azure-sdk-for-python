@@ -17,6 +17,10 @@
 - `AgentsResponseFormatOption`, `MessageInputContent`, `MessageAttachmentToolDefinition`, `AgentsToolChoiceOption` are now public.
 - Fixed issues where the `runs.create_and_process` API call did not correctly handle the `AzureAISearchTool`, `FileSearchTool`, and `CodeInterpreterTool` when specified in the toolset parameter.
 - Fixed `update_agent` to execute with body as a keyword parameter.
+
+### Sample updates
+
+- Updated `sample_agents_deep_research.py` and `sample_agents_deep_research_async.py` for citations.
   
 ## 1.1.0b4 (2025-07-11)
 
