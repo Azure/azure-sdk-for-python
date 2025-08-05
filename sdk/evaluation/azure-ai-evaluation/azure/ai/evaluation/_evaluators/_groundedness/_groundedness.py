@@ -277,7 +277,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                                                 for content in content_list:
                                                     text = content.get("text")
                                                     if text:
-                                                        context += str(text)
+                                                        context = context + "\n" + str(text)
         except Exception as ex:
             logger.debug(f"Error extracting context from agent response : {str(ex)}")
             context = ""
