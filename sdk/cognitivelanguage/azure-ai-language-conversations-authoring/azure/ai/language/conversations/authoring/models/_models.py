@@ -662,7 +662,7 @@ class CreateDeploymentDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CreateProjectDetails(_Model):
+class CreateProjectOptions(_Model):
     """Represents the options used to create or update a project.
 
     :ivar project_kind: Represents the project kind. Required. Known values are: "Conversation",
@@ -1606,14 +1606,14 @@ class ExportedEntityListSynonym(_Model):
     :ivar language: Represents the language of the synonyms. This is BCP-47 representation of a
      language. For example, use "en" for English, "en-gb" for English (UK), "es" for Spanish etc.
     :vartype language: str
-    :ivar values_property: The list of synonyms.
-    :vartype values_property: list[str]
+    :ivar synonyms: The list of synonyms.
+    :vartype synonyms: list[str]
     """
 
     language: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Represents the language of the synonyms. This is BCP-47 representation of a language. For
      example, use \"en\" for English, \"en-gb\" for English (UK), \"es\" for Spanish etc."""
-    values_property: Optional[List[str]] = rest_field(
+    synonyms: Optional[List[str]] = rest_field(
         name="values", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of synonyms."""
@@ -1623,7 +1623,7 @@ class ExportedEntityListSynonym(_Model):
         self,
         *,
         language: Optional[str] = None,
-        values_property: Optional[List[str]] = None,
+        synonyms: Optional[List[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1968,7 +1968,7 @@ class ExportedProject(_Model):
     :vartype string_index_type: str or
      ~azure.ai.language.conversations.authoring.models.StringIndexType
     :ivar metadata: Represents the project metadata. Required.
-    :vartype metadata: ~azure.ai.language.conversations.authoring.models.CreateProjectDetails
+    :vartype metadata: ~azure.ai.language.conversations.authoring.models.CreateProjectOptions
     :ivar assets: Represents the project assets.
     :vartype assets: ~azure.ai.language.conversations.authoring.models.ExportedProjectAsset
     """
@@ -1983,7 +1983,7 @@ class ExportedProject(_Model):
     """Specifies the method used to interpret string offsets. For additional information see
      `https://aka.ms/text-analytics-offsets <https://aka.ms/text-analytics-offsets>`_. Required.
      Known values are: \"Utf16CodeUnit\", \"Utf8CodeUnit\", and \"Utf32CodeUnit\"."""
-    metadata: "_models.CreateProjectDetails" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    metadata: "_models.CreateProjectOptions" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Represents the project metadata. Required."""
     assets: Optional["_models.ExportedProjectAsset"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -1996,7 +1996,7 @@ class ExportedProject(_Model):
         *,
         project_file_version: str,
         string_index_type: Union[str, "_models.StringIndexType"],
-        metadata: "_models.CreateProjectDetails",
+        metadata: "_models.CreateProjectOptions",
         assets: Optional["_models.ExportedProjectAsset"] = None,
     ) -> None: ...
 
@@ -2833,7 +2833,7 @@ class ProjectDeployment(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProjectMetadata(_Model):
+class ProjectDetails(_Model):
     """Represents the metadata of a project.
 
     :ivar created_on: Represents the project creation datetime. Required.

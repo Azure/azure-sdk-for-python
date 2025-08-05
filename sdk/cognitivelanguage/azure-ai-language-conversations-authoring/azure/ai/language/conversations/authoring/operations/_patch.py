@@ -31,7 +31,7 @@ from ..models import (
     DeploymentResourcesState,
     CopyProjectState,
     ExportProjectState,
-    ProjectMetadata,
+    ProjectDetails,
     ProjectDeletionState,
     SwapDeploymentsState,
     TrainingState,
@@ -185,7 +185,7 @@ class ProjectOperations(ProjectOperationsGenerated):
         return super()._get_export_status(project_name=self._project_name, job_id=job_id, **kwargs)
 
     @distributed_trace
-    def get_project(self, project_name: str = _Unset, **kwargs: Any) -> ProjectMetadata:  # type: ignore[override]
+    def get_project(self, project_name: str = _Unset, **kwargs: Any) -> ProjectDetails:  # type: ignore[override]
         return super().get_project(project_name=self._project_name, **kwargs)
 
     @distributed_trace
