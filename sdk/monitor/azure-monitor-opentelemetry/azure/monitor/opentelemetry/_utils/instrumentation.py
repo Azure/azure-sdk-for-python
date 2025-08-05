@@ -32,14 +32,15 @@ class DependencyConflict:
     required: str | None = None
     found: str | None = None
     # The following fields are used when an instrumentation requires any of a set of dependencies rather than all.
-    required_any: Collection[str] = None
-    found_any: Collection[str] = None
+    required_any: list[str] | None = None
+    found_any: list[str] | None = None
 
     def __init__(
-        self, required: str | None = None,
+        self,
+        required: str | None = None,
         found: str | None = None,
-        required_any: Collection[str] = None,
-        found_any: Collection[str] = None
+        required_any: list[str] | None = None,
+        found_any: list[str] | None = None
     ):
         self.required = required
         self.found = found
@@ -114,8 +115,8 @@ def _get_dependency_conflicts_any(
     if not deps_any:
         return None
     is_dependency_conflict = True
-    required_any: Collection[str] = []
-    found_any: Collection[str] = []
+    required_any: list[str] = []
+    found_any: list[str] = []
     for dep in deps_any:
         if isinstance(dep, Requirement):
             req = dep
