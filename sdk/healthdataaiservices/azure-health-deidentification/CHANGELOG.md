@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.0b1 (2024-08-15)
+## 1.1.0b1 (2024-08-05)
 
 ### Features Added
 
@@ -33,3 +33,11 @@
 - Changed `path` field to `location` in `SourceStorageLocation` and `TargetStorageLocation`.
 - Changed `outputPrefix` behavior to no longer include `job_name` by default.
 - Deprecated `path` and `location` from `TaggerResult` model.
+
+## 1.0.0b1 (2024-08-15)
+
+- Azure Health Deidentification client library
+
+### Features Added
+
+- Azure Health Deidentification client library
