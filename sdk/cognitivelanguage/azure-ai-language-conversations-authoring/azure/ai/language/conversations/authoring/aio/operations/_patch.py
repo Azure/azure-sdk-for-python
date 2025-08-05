@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -111,7 +112,9 @@ class ProjectOperations(ProjectOperationsGenerated):
         **kwargs: Any
     ) -> AsyncLROPoller[ConversationAuthoringTrainingJobResult]:
         """Begin training without requiring project_name explicitly."""
-        return await super().begin_train(project_name=self._project_name, body=body, content_type=content_type, **kwargs)
+        return await super().begin_train(
+            project_name=self._project_name, body=body, content_type=content_type, **kwargs
+        )
 
     @distributed_trace
     async def begin_export(  # type: ignore[override]
@@ -181,7 +184,9 @@ class ProjectOperations(ProjectOperationsGenerated):
     async def get_assign_deployment_resources_status(  # type: ignore[override]
         self, job_id: str, **kwargs: Any
     ) -> ConversationAuthoringDeploymentResourcesState:
-        return await super().get_assign_deployment_resources_status(project_name=self._project_name, job_id=job_id, **kwargs)
+        return await super().get_assign_deployment_resources_status(
+            project_name=self._project_name, job_id=job_id, **kwargs
+        )
 
     @distributed_trace
     async def get_copy_project_status(  # type: ignore[override]

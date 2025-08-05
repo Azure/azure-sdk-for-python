@@ -16,8 +16,8 @@ class AnalyzeConversationAuthoringDataGenerationConnectionKind(str, Enum, metacl
     AZURE_OPEN_AI = "AzureOpenAI"
 
 
-class ConversationAuthoringCompositionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of ConversationAuthoringCompositionMode."""
+class CompositionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of CompositionMode."""
 
     RETURN_LONGEST_OVERLAP = "returnLongestOverlap"
     """When two or more components are found in the text and overlap, the component with the longest
@@ -32,8 +32,17 @@ class ConversationAuthoringCompositionMode(str, Enum, metaclass=CaseInsensitiveE
     together into one span combining all of them."""
 
 
-class ConversationAuthoringEvaluationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of ConversationAuthoringEvaluationKind."""
+class DatasetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The dataset for this utterance. Allowed values are 'Train' and 'Test'."""
+
+    TRAIN = "Train"
+    """Split the data into training and test sets according to user-defined percentages."""
+    TEST = "Test"
+    """Split the data according to the chosen dataset for every example in the data."""
+
+
+class EvaluationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of EvaluationKind."""
 
     PERCENTAGE = "percentage"
     """Split the data into training and test sets according to user-defined percentages."""
@@ -41,8 +50,8 @@ class ConversationAuthoringEvaluationKind(str, Enum, metaclass=CaseInsensitiveEn
     """Split the data according to the chosen dataset for every example in the data."""
 
 
-class ConversationAuthoringExportedProjectFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of ConversationAuthoringExportedProjectFormat."""
+class ExportedProjectFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ExportedProjectFormat."""
 
     CONVERSATION = "Conversation"
     """Specifies the format for a conversational project."""
@@ -50,8 +59,8 @@ class ConversationAuthoringExportedProjectFormat(str, Enum, metaclass=CaseInsens
     """Specifies the format for an application that was exported from LUIS."""
 
 
-class ConversationAuthoringOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of ConversationAuthoringOperationStatus."""
+class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of OperationStatus."""
 
     NOT_STARTED = "notStarted"
     RUNNING = "running"
@@ -62,8 +71,16 @@ class ConversationAuthoringOperationStatus(str, Enum, metaclass=CaseInsensitiveE
     PARTIALLY_COMPLETED = "partiallyCompleted"
 
 
-class ConversationAuthoringProjectKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of ConversationAuthoringProjectKind."""
+class OrchestrationTargetProjectKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of OrchestrationTargetProjectKind."""
+
+    LUIS = "Luis"
+    CONVERSATION = "Conversation"
+    QUESTION_ANSWERING = "QuestionAnswering"
+
+
+class ProjectKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ProjectKind."""
 
     CONVERSATION = "Conversation"
     """A project to build natural language into apps, bots, and IoT devices."""
@@ -75,32 +92,6 @@ class ConversationAuthoringProjectKind(str, Enum, metaclass=CaseInsensitiveEnumM
     conversations."""
 
 
-class ConversationAuthoringTrainingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of ConversationAuthoringTrainingMode."""
-
-    ADVANCED = "advanced"
-    """Trains using fine-tuned neural network transformer models. Can train multilingual projects."""
-    STANDARD = "standard"
-    """Faster training times for quicker iterations."""
-
-
-class DatasetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The dataset for this utterance. Allowed values are 'Train' and 'Test'."""
-
-    TRAIN = "Train"
-    """Split the data into training and test sets according to user-defined percentages."""
-    TEST = "Test"
-    """Split the data according to the chosen dataset for every example in the data."""
-
-
-class OrchestrationTargetProjectKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of OrchestrationTargetProjectKind."""
-
-    LUIS = "Luis"
-    CONVERSATION = "Conversation"
-    QUESTION_ANSWERING = "QuestionAnswering"
-
-
 class StringIndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of StringIndexType."""
 
@@ -109,3 +100,12 @@ class StringIndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     application is written in a language that support Unicode, for example Java, JavaScript."""
     UTF8_CODE_UNIT = "Utf8CodeUnit"
     UTF32_CODE_UNIT = "Utf32CodeUnit"
+
+
+class TrainingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of TrainingMode."""
+
+    ADVANCED = "advanced"
+    """Trains using fine-tuned neural network transformer models. Can train multilingual projects."""
+    STANDARD = "standard"
+    """Faster training times for quicker iterations."""
