@@ -258,7 +258,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
                         **kwargs,
                     )
                 )
-            except Exception as ex:  # pylint:disable=broad-except
+            except ValueError as ex:
                 credentials.append(FailedDACCredential("WorkloadIdentityCredential", error=str(ex)))
         if not exclude_managed_identity_credential:
             credentials.append(
