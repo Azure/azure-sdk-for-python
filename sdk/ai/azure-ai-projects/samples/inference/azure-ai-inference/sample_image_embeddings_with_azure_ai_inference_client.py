@@ -6,7 +6,7 @@
 
 """
 DESCRIPTION:
-    Given an AI Foundry Project endpoint, this sample demonstrates how to get an authenticated 
+    Given an AI Foundry Project endpoint, this sample demonstrates how to get an authenticated
     ImageEmbeddingsClient from the azure.ai.inference package, and perform one image
     embeddings operation. For more information on the azure.ai.inference package see
     https://pypi.org/project/azure-ai-inference/.
@@ -34,9 +34,9 @@ from azure.ai.inference.models import ImageEmbeddingInput
 endpoint = os.environ["PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 
-# Project endpoint has the form:   https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/<your-project-name>
-# Inference endpoint has the form: https://<your-ai-services-account-name>.services.ai.azure.com/models
-# Strip the "/api/projects/<your-project-name>" part and replace with "/models":
+# Project endpoint has the form:   https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name
+# Inference endpoint has the form: https://your-ai-services-account-name.services.ai.azure.com/models
+# Strip the "/api/projects/your-project-name" part and replace with "/models":
 inference_endpoint = f"https://{urlparse(endpoint).netloc}/models"
 
 # Construct the path to the image file used in this sample
