@@ -6,10 +6,10 @@
 
 import unittest
 import json
+from json import JSONDecodeError
 from azure.appconfiguration.provider._json import (
     remove_json_comments,
     _find_string_end,
-    DOUBLE_QUOTE,
 )
 
 
@@ -88,14 +88,9 @@ class TestJsonUtils(unittest.TestCase):
             "key": "value"
         }"""
         result = remove_json_comments(input_json)
-
-        # Fix the expected output to make it valid JSON for testing
-        valid_json = """{
-            "key": "value"
-        }"""
-        # Verify the json is valid after comment removal and fixing
-        parsed = json.loads(valid_json)
-        self.assertEqual(parsed["key"], "value")
+        # Verify the json is valid after comment removal, we don't support nested comments
+        with self.assertRaises(JSONDecodeError):
+            json.loads(result)
 
     def test_remove_json_comments_escaped_quotes(self):
         # Test with escaped quotes
@@ -110,7 +105,7 @@ class TestJsonUtils(unittest.TestCase):
         text = '"string" more'
         index = _find_string_end(text, 1)
         self.assertEqual(index, 8)
-        self.assertEqual(text[1:index], "string\"")
+        self.assertEqual(text[1:index], 'string"')
 
     def test_find_string_end_escaped_quote(self):
         # Test with escaped quotes
