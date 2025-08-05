@@ -167,3 +167,4 @@ def _parse_onesettings_response(response: requests.Response) -> OneSettingsRespo
         logger.warning("Internal server error from OneSettings: %s", response.content)
 
     return OneSettingsResponse(etag, refresh_interval, settings, version)
+
