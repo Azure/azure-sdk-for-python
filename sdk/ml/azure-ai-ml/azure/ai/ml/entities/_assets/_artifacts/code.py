@@ -25,8 +25,8 @@ class Code(Artifact):
     :type name: str
     :param version: Version of the resource.
     :type version: str
-    :param path: A local path or a remote uri. A datastore remote uri example is like,
-        "azureml://subscriptions/{}/resourcegroups/{}/workspaces/{}/datastores/{}/paths/path_on_datastore/"
+    :param path: A local path or a remote uri. A storage remote uri example is like,
+        "https://{storage_account}.blob.core.windows.net/{container}/{path}"
     :type path: str
     :param description: Description of the resource.
     :type description: str
