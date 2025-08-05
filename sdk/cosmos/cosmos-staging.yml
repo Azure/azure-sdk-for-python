@@ -34,7 +34,7 @@ jobs:
 
         pip install tox==4.5.0
 
-        tox -c ../../../eng/tox/tox.ini --root . -e whl -- -k 'not cosmosEmulator'
+        tox -c ../../../eng/tox/tox.ini --root . -e whl -- -k 'not cosmosEmulator and not cosmosMultiRegion and not cosmosCircuitBreaker and not cosmosCircuitBreakerMultiRegion'
   - task: AzurePowerShell@5
     displayName: Clean up resources
     condition: always()
