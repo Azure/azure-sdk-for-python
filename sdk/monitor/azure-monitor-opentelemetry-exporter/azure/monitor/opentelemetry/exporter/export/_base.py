@@ -199,6 +199,20 @@ class BaseExporter:
             elif result == ExportResult.SUCCESS:
                 # Try to send any cached events
                 self._transmit_from_storage()
+
+            # If filesystem is readonly, track dropped items in customer statsbeat
+            if self.storage.filesystem_is_readonly:
+                if self._customer_statsbeat_metrics and self._should_collect_customer_statsbeat():
+                    _track_dropped_items(self._customer_statsbeat_metrics, envelopes, DropCode.CLIENT_READONLY)
+
+            if self.storage.exception_occurred is not None:
+                if self._customer_statsbeat_metrics and self._should_collect_customer_statsbeat():
+                    _track_dropped_items(self._customer_statsbeat_metrics, envelopes, DropCode.CLIENT_EXCEPTION, self.storage.exception_occurred)
+
+            # If data has to be dropped due to persistent storage being full, track dropped items
+            if not self.storage.persistent_storage_full:
+                if self._customer_statsbeat_metrics and self._should_collect_customer_statsbeat():
+                    _track_dropped_items(self._customer_statsbeat_metrics, envelopes, DropCode.CLIENT_PERSISTENCE_CAPACITY)
         else:
             # Track items that would have been retried but are dropped since client has local storage disabled
             if self._customer_statsbeat_metrics and self._should_collect_customer_statsbeat():
@@ -448,7 +462,7 @@ class BaseExporter:
     # check to see whether its the case of customer stats collection
     def _should_collect_customer_statsbeat(self):
         # Import here to avoid circular dependencies
-        from azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat import get_customer_statsbeat_shutdown
+        from azure.monitor.opentelemetry.exporter.statsbeat._state import get_customer_statsbeat_shutdown
 
         env_value = os.environ.get("APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW", "")
         is_customer_statsbeat_enabled = env_value.lower() == "true"

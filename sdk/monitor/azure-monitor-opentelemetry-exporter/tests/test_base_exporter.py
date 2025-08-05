@@ -1221,7 +1221,7 @@ class TestBaseExporter(unittest.TestCase):
 
     def test_customer_statsbeat_shutdown_state(self):
         """Test that customer statsbeat shutdown state works correctly"""
-        from azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat import (
+        from azure.monitor.opentelemetry.exporter.statsbeat._state import (
             get_customer_statsbeat_shutdown,
             _CUSTOMER_STATSBEAT_STATE,
             _CUSTOMER_STATSBEAT_STATE_LOCK
@@ -1388,6 +1388,435 @@ class TestBaseExporter(unittest.TestCase):
         self.assertIsNone(exporter.storage)
         
         exporter._transmit_from_storage()
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    @mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items')
+    def test_handle_transmit_from_storage_client_readonly_tracked(self, mock_track_dropped):
+        """Test that CLIENT_READONLY drop code is tracked when filesystem is readonly due to EROFS error."""
+        
+        # Create exporter with storage initially disabled
+        exporter = BaseExporter(disable_offline_storage=True)
+        mock_customer_statsbeat = mock.Mock()
+        exporter._customer_statsbeat_metrics = mock_customer_statsbeat
+        
+        # Mock the _should_collect_customer_statsbeat method to return True
+        exporter._should_collect_customer_statsbeat = mock.Mock(return_value=True)
+        
+        # Create a mock storage that simulates the state after EROFS error detection
+        # The key insight is that storage should be enabled but have readonly filesystem flag set
+        mock_storage = mock.Mock()
+        mock_storage._enabled = True  # Storage is enabled (not completely disabled)
+        mock_storage._check_and_set_folder_permissions = False  # Permissions check result is False (failed)
+        mock_storage.filesystem_is_readonly = True  # EROFS was detected and flag was set
+        mock_storage.exception_occurred = None  # EROFS is handled specifically, not as general exception
+        mock_storage.persistent_storage_full = True  # Storage is NOT full
+        mock_storage.put = mock.Mock()  # Mock the put method
+        
+        # Assign the mock storage to the exporter
+        exporter.storage = mock_storage
+        
+        test_envelopes = [
+            TelemetryItem(name="test1", time=datetime.now()),
+            TelemetryItem(name="test2", time=datetime.now()),
+        ]
+        
+        # Call the method under test
+        exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+        
+        # Verify that _track_dropped_items was called with CLIENT_READONLY
+        mock_track_dropped.assert_called_with(mock_customer_statsbeat, test_envelopes, DropCode.CLIENT_READONLY)
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    @mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items')
+    def test_handle_transmit_from_storage_client_persistence_capacity_tracked(self, mock_track_dropped):
+        """Test that CLIENT_PERSISTENCE_CAPACITY drop code is tracked when storage is full."""
+        exporter = BaseExporter(disable_offline_storage=False)
+        mock_customer_statsbeat = mock.Mock()
+        exporter._customer_statsbeat_metrics = mock_customer_statsbeat
+        
+        # Mock the _should_collect_customer_statsbeat method to return True
+        exporter._should_collect_customer_statsbeat = mock.Mock(return_value=True)
+        
+        # Mock storage with full capacity
+        exporter.storage = mock.Mock()
+        exporter.storage._check_and_set_folder_permissions = True  # Permissions are OK
+        exporter.storage.filesystem_is_readonly = False  # Filesystem is not readonly
+        exporter.storage.exception_occurred = None
+        exporter.storage.persistent_storage_full = False  # Storage is full
+        exporter.storage.put = mock.Mock()  # Mock the put method
+        
+        test_envelopes = [
+            TelemetryItem(name="test1", time=datetime.now()),
+            TelemetryItem(name="test2", time=datetime.now()),
+        ]
+        
+        # Call the method under test
+        exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+        
+        # Verify that _track_dropped_items was called with CLIENT_PERSISTENCE_CAPACITY
+        mock_track_dropped.assert_called_with(mock_customer_statsbeat, test_envelopes, DropCode.CLIENT_PERSISTENCE_CAPACITY)
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    @mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items')
+    def test_handle_transmit_from_storage_client_persistence_capacity_not_tracked_when_storage_not_full(self, mock_track_dropped):
+        """Test that CLIENT_PERSISTENCE_CAPACITY drop code is NOT tracked when storage is NOT full."""
+        exporter = BaseExporter(disable_offline_storage=False)
+        mock_customer_statsbeat = mock.Mock()
+        exporter._customer_statsbeat_metrics = mock_customer_statsbeat
+        
+        # Mock the _should_collect_customer_statsbeat method to return True
+        exporter._should_collect_customer_statsbeat = mock.Mock(return_value=True)
+        
+        # Mock storage with adequate capacity
+        exporter.storage = mock.Mock()
+        exporter.storage._check_and_set_folder_permissions = True  # Permissions are OK
+        exporter.storage.filesystem_is_readonly = False  # Filesystem is not readonly
+        exporter.storage.exception_occurred = None
+        exporter.storage.persistent_storage_full = True  # Storage is NOT full
+        exporter.storage.put = mock.Mock()  # Mock the put method
+        
+        test_envelopes = [
+            TelemetryItem(name="test1", time=datetime.now()),
+            TelemetryItem(name="test2", time=datetime.now()),
+        ]
+        
+        # Call the method under test
+        exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+        
+        # Verify that _track_dropped_items was NOT called (since storage is not full)
+        mock_track_dropped.assert_not_called()
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    @mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items')
+    def test_handle_transmit_from_storage_client_exception_tracked(self, mock_track_dropped):
+        """Test that CLIENT_EXCEPTION drop code is tracked when storage exception occurs."""
+        exporter = BaseExporter(disable_offline_storage=False)
+        mock_customer_statsbeat = mock.Mock()
+        exporter._customer_statsbeat_metrics = mock_customer_statsbeat
+        
+        # Mock the _should_collect_customer_statsbeat method to return True
+        exporter._should_collect_customer_statsbeat = mock.Mock(return_value=True)
+        
+        # Mock storage with exception
+        exporter.storage = mock.Mock()
+        exporter.storage._check_and_set_folder_permissions = False  # Permissions check failed (required for exception path)
+        exporter.storage.filesystem_is_readonly = False  # Filesystem is not readonly
+        exporter.storage.exception_occurred = "Storage write failed: Permission denied"  # Exception occurred
+        exporter.storage.persistent_storage_full = True  # Storage is NOT full
+        exporter.storage.put = mock.Mock()  # Mock the put method
+        
+        test_envelopes = [
+            TelemetryItem(name="test1", time=datetime.now()),
+            TelemetryItem(name="test2", time=datetime.now()),
+        ]
+        
+        # Call the method under test
+        exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+        
+        # Verify that _track_dropped_items was called with CLIENT_EXCEPTION and the exception message
+        mock_track_dropped.assert_called_with(mock_customer_statsbeat, test_envelopes, DropCode.CLIENT_EXCEPTION, "Storage write failed: Permission denied")
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    @mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items')
+    def test_handle_transmit_from_storage_client_exception_not_tracked_when_no_exception(self, mock_track_dropped):
+        """Test that CLIENT_EXCEPTION drop code is NOT tracked when no storage exception occurs."""
+        exporter = BaseExporter(disable_offline_storage=False)
+        mock_customer_statsbeat = mock.Mock()
+        exporter._customer_statsbeat_metrics = mock_customer_statsbeat
+        
+        # Mock the _should_collect_customer_statsbeat method to return True
+        exporter._should_collect_customer_statsbeat = mock.Mock(return_value=True)
+        
+        # Mock storage without exception
+        exporter.storage = mock.Mock()
+        exporter.storage._check_and_set_folder_permissions = False  # Permissions check failed (required for exception path)
+        exporter.storage.filesystem_is_readonly = False  # Filesystem is not readonly
+        exporter.storage.exception_occurred = None  # No exception occurred
+        exporter.storage.persistent_storage_full = True  # Storage is NOT full
+        exporter.storage.put = mock.Mock()  # Mock the put method
+        
+        test_envelopes = [
+            TelemetryItem(name="test1", time=datetime.now()),
+            TelemetryItem(name="test2", time=datetime.now()),
+        ]
+        
+        # Call the method under test
+        exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+        
+        # Verify that _track_dropped_items was NOT called (since no exception occurred)
+        mock_track_dropped.assert_not_called()
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    @mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items')
+    def test_handle_transmit_from_storage_client_exception_tracked_oserror_non_erofs(self, mock_track_dropped):
+        """Test that CLIENT_EXCEPTION drop code is tracked when OSError (non-EROFS) occurs during storage setup."""
+        exporter = BaseExporter(disable_offline_storage=False)
+        mock_customer_statsbeat = mock.Mock()
+        exporter._customer_statsbeat_metrics = mock_customer_statsbeat
+        
+        # Mock the _should_collect_customer_statsbeat method to return True
+        exporter._should_collect_customer_statsbeat = mock.Mock(return_value=True)
+        
+        # Mock storage with OSError exception (non-EROFS, e.g., PermissionError)
+        exporter.storage = mock.Mock()
+        exporter.storage._check_and_set_folder_permissions = False  # Permissions check failed
+        exporter.storage.filesystem_is_readonly = False  # Not a readonly filesystem error
+        exporter.storage.exception_occurred = "[Errno 13] Permission denied: /path/to/storage"  # OSError message
+        exporter.storage.persistent_storage_full = True  # Storage is NOT full
+        exporter.storage.put = mock.Mock()  # Mock the put method
+        
+        test_envelopes = [
+            TelemetryItem(name="test1", time=datetime.now()),
+            TelemetryItem(name="test2", time=datetime.now()),
+        ]
+        
+        # Call the method under test
+        exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+        
+        # Verify that _track_dropped_items was called with CLIENT_EXCEPTION and the OSError message
+        mock_track_dropped.assert_called_with(
+            mock_customer_statsbeat, 
+            test_envelopes, 
+            DropCode.CLIENT_EXCEPTION, 
+            "[Errno 13] Permission denied: /path/to/storage"
+        )
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    @mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items')
+    def test_handle_transmit_from_storage_client_exception_tracked_general_exception(self, mock_track_dropped):
+        """Test that CLIENT_EXCEPTION drop code is tracked when general Exception (non-OSError) occurs during storage setup."""
+        exporter = BaseExporter(disable_offline_storage=False)
+        mock_customer_statsbeat = mock.Mock()
+        exporter._customer_statsbeat_metrics = mock_customer_statsbeat
+        
+        # Mock the _should_collect_customer_statsbeat method to return True
+        exporter._should_collect_customer_statsbeat = mock.Mock(return_value=True)
+        
+        # Mock storage with general exception (e.g., ValueError, TypeError, ImportError)
+        exporter.storage = mock.Mock()
+        exporter.storage._check_and_set_folder_permissions = False  # Permissions check failed
+        exporter.storage.filesystem_is_readonly = False  # Not a readonly filesystem error
+        exporter.storage.exception_occurred = "ValueError: Invalid configuration parameter 'max_size'"  # General exception message
+        exporter.storage.persistent_storage_full = True  # Storage is NOT full
+        exporter.storage.put = mock.Mock()  # Mock the put method
+        
+        test_envelopes = [
+            TelemetryItem(name="test1", time=datetime.now()),
+            TelemetryItem(name="test2", time=datetime.now()),
+        ]
+        
+        # Call the method under test
+        exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+        
+        # Verify that _track_dropped_items was called with CLIENT_EXCEPTION and the general exception message
+        mock_track_dropped.assert_called_with(
+            mock_customer_statsbeat, 
+            test_envelopes, 
+            DropCode.CLIENT_EXCEPTION, 
+            "ValueError: Invalid configuration parameter 'max_size'"
+        )
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    @mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items')
+    def test_handle_transmit_from_storage_client_exception_tracked_multiple_errors(self, mock_track_dropped):
+        """Test that when both readonly and exception occur together, both are tracked correctly."""
+        exporter = BaseExporter(disable_offline_storage=False)
+        mock_customer_statsbeat = mock.Mock()
+        exporter._customer_statsbeat_metrics = mock_customer_statsbeat
+        
+        # Mock the _should_collect_customer_statsbeat method to return True
+        exporter._should_collect_customer_statsbeat = mock.Mock(return_value=True)
+        
+        # Mock storage with both readonly filesystem AND exception
+        exporter.storage = mock.Mock()
+        exporter.storage._check_and_set_folder_permissions = False  # Permissions check failed
+        exporter.storage.filesystem_is_readonly = True  # EROFS detected
+        exporter.storage.exception_occurred = "Additional error: Failed to create temp directory"  # Also has exception
+        exporter.storage.persistent_storage_full = True  # Storage is NOT full
+        exporter.storage.put = mock.Mock()  # Mock the put method
+        
+        test_envelopes = [
+            TelemetryItem(name="test1", time=datetime.now()),
+            TelemetryItem(name="test2", time=datetime.now()),
+        ]
+        
+        # Call the method under test
+        exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+        
+        # Verify that _track_dropped_items was called twice - once for readonly, once for exception
+        expected_calls = [
+            mock.call(mock_customer_statsbeat, test_envelopes, DropCode.CLIENT_READONLY),
+            mock.call(mock_customer_statsbeat, test_envelopes, DropCode.CLIENT_EXCEPTION, "Additional error: Failed to create temp directory")
+        ]
+        mock_track_dropped.assert_has_calls(expected_calls, any_order=False)
+        self.assertEqual(mock_track_dropped.call_count, 2)
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    @mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items')
+    def test_handle_transmit_from_storage_all_drop_codes_tracked(self, mock_track_dropped):
+        """Test that all drop codes can be tracked simultaneously when all conditions are met."""
+        exporter = BaseExporter(disable_offline_storage=False)
+        mock_customer_statsbeat = mock.Mock()
+        exporter._customer_statsbeat_metrics = mock_customer_statsbeat
+        
+        # Mock the _should_collect_customer_statsbeat method to return True
+        exporter._should_collect_customer_statsbeat = mock.Mock(return_value=True)
+        
+        # Mock storage with ALL issues: readonly, exception, AND storage full
+        exporter.storage = mock.Mock()
+        exporter.storage._check_and_set_folder_permissions = False  # Permissions check failed
+        exporter.storage.filesystem_is_readonly = True  # EROFS detected
+        exporter.storage.exception_occurred = "Runtime error during storage initialization"  # Exception occurred
+        exporter.storage.persistent_storage_full = False  # Storage is also full
+        exporter.storage.put = mock.Mock()  # Mock the put method
+        
+        test_envelopes = [
+            TelemetryItem(name="test1", time=datetime.now()),
+            TelemetryItem(name="test2", time=datetime.now()),
+        ]
+        
+        # Call the method under test
+        exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+        
+        # Verify that _track_dropped_items was called three times - for all three drop codes
+        expected_calls = [
+            mock.call(mock_customer_statsbeat, test_envelopes, DropCode.CLIENT_READONLY),
+            mock.call(mock_customer_statsbeat, test_envelopes, DropCode.CLIENT_EXCEPTION, "Runtime error during storage initialization"),
+            mock.call(mock_customer_statsbeat, test_envelopes, DropCode.CLIENT_PERSISTENCE_CAPACITY)
+        ]
+        mock_track_dropped.assert_has_calls(expected_calls, any_order=False)
+        self.assertEqual(mock_track_dropped.call_count, 3)
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    @mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items')
+    def test_handle_transmit_from_storage_no_tracking_when_statsbeat_disabled(self, mock_track_dropped):
+        """Test that no drop codes are tracked when customer statsbeat is disabled."""
+        exporter = BaseExporter(disable_offline_storage=False)
+        mock_customer_statsbeat = mock.Mock()
+        exporter._customer_statsbeat_metrics = mock_customer_statsbeat
+        
+        # Mock the _should_collect_customer_statsbeat method to return False (disabled)
+        exporter._should_collect_customer_statsbeat = mock.Mock(return_value=False)
+        
+        # Mock storage with all issues present
+        exporter.storage = mock.Mock()
+        exporter.storage._check_and_set_folder_permissions = False  # Permissions check failed
+        exporter.storage.filesystem_is_readonly = True  # EROFS detected
+        exporter.storage.exception_occurred = "Storage error occurred"  # Exception occurred
+        exporter.storage.persistent_storage_full = False  # Storage is full
+        exporter.storage.put = mock.Mock()  # Mock the put method
+        
+        test_envelopes = [
+            TelemetryItem(name="test1", time=datetime.now()),
+            TelemetryItem(name="test2", time=datetime.now()),
+        ]
+        
+        # Call the method under test
+        exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+        
+        # Verify that _track_dropped_items was NOT called since statsbeat is disabled
+        mock_track_dropped.assert_not_called()
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    @mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items')
+    def test_handle_transmit_from_storage_exception_empty_string(self, mock_track_dropped):
+        """Test that CLIENT_EXCEPTION is tracked even when exception message is empty string."""
+        exporter = BaseExporter(disable_offline_storage=False)
+        mock_customer_statsbeat = mock.Mock()
+        exporter._customer_statsbeat_metrics = mock_customer_statsbeat
+        
+        # Mock the _should_collect_customer_statsbeat method to return True
+        exporter._should_collect_customer_statsbeat = mock.Mock(return_value=True)
+        
+        # Mock storage with empty exception string
+        exporter.storage = mock.Mock()
+        exporter.storage._check_and_set_folder_permissions = False  # Permissions check failed
+        exporter.storage.filesystem_is_readonly = False  # Not readonly
+        exporter.storage.exception_occurred = ""  # Empty string exception message
+        exporter.storage.persistent_storage_full = True  # Storage is NOT full
+        exporter.storage.put = mock.Mock()  # Mock the put method
+        
+        test_envelopes = [
+            TelemetryItem(name="test1", time=datetime.now()),
+            TelemetryItem(name="test2", time=datetime.now()),
+        ]
+        
+        # Call the method under test
+        exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+        
+        # Verify that _track_dropped_items was called with CLIENT_EXCEPTION and empty string
+        mock_track_dropped.assert_called_with(
+            mock_customer_statsbeat, 
+            test_envelopes, 
+            DropCode.CLIENT_EXCEPTION, 
+            ""
+        )
 
     @mock.patch.dict(
         os.environ,
@@ -1838,7 +2267,7 @@ class TestBaseExporter(unittest.TestCase):
     def test_should_collect_customer_statsbeat_with_regular_exporter_flag_test(self):
         """Test that regular exporters should collect customer statsbeat when enabled."""
         # Mock customer statsbeat shutdown state and storage method
-        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat.get_customer_statsbeat_shutdown", return_value=False), \
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._state.get_customer_statsbeat_shutdown", return_value=False), \
              mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat.collect_customer_statsbeat"):
             exporter = BaseExporter(
                 connection_string="InstrumentationKey=12345678-1234-1234-1234-123456789abc",
@@ -1852,7 +2281,7 @@ class TestBaseExporter(unittest.TestCase):
     def test_should_collect_customer_statsbeat_with_customer_statsbeat_exporter_flag_test(self):
         """Test that customer statsbeat exporters should NOT collect customer statsbeat."""
         # Mock customer statsbeat shutdown state
-        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat.get_customer_statsbeat_shutdown", return_value=False):
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._state.get_customer_statsbeat_shutdown", return_value=False):
             exporter = AzureMonitorMetricExporter(
                 connection_string="InstrumentationKey=12345678-1234-1234-1234-123456789abc",
                 instrumentation_collection=True
@@ -1954,7 +2383,7 @@ class TestBaseExporter(unittest.TestCase):
     def test_integration_scenario_mixed_exporters_flag_test(self):
         """Integration test with mixed exporter types to ensure no interference."""
         # Mock customer statsbeat shutdown state and storage method
-        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat.get_customer_statsbeat_shutdown", return_value=False), \
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._state.get_customer_statsbeat_shutdown", return_value=False), \
              mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat.collect_customer_statsbeat"):
             # Create various types of exporters with storage disabled
             trace_exporter = AzureMonitorTraceExporter(

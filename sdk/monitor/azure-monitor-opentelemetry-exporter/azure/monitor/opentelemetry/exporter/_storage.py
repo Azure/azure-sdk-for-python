@@ -7,6 +7,7 @@ import logging
 import os
 import random
 import subprocess
+import errno
 
 from azure.monitor.opentelemetry.exporter._utils import PeriodicTask
 
@@ -96,7 +97,9 @@ class LocalFileStorage:
         self._max_size = max_size
         self._retention_period = retention_period
         self._write_timeout = write_timeout
-
+        self.filesystem_is_readonly = False
+        self.exception_occurred = None
+        self.persistent_storage_full = True
         self._enabled = self._check_and_set_folder_permissions()
         if self._enabled:
             self._maintenance_routine()
@@ -235,8 +238,13 @@ class LocalFileStorage:
             else:
                 os.chmod(self._path, 0o700)
                 return True
-        except Exception:
-            pass  # keep silent
+        except OSError as error:
+            if getattr(error, 'errno', None) == errno.EROFS:  # cspell:disable-line
+                self.filesystem_is_readonly = True
+            else:
+                self.exception_occurred = str(error)
+        except Exception as ex:
+            self.exception_occurred = str(ex)
         return False
 
     def _check_storage_size(self):
@@ -265,6 +273,7 @@ class LocalFileStorage:
                                 str(size / 1024)
                             )
                         )
+                        self.persistent_storage_full = False
                         return False
         return True
 
