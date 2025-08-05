@@ -21,7 +21,7 @@ class OneSettingsResponse:
 
     Attributes:
         etag (Optional[str]): ETag header value for caching and conditional requests
-        refresh_interval (float): Interval in seconds for the next configuration refresh
+        refresh_interval (int): Interval in seconds for the next configuration refresh
         settings (Dict[str, str]): Dictionary of configuration key-value pairs
         version (Optional[int]): Configuration version number for change tracking
     """
@@ -37,7 +37,7 @@ class OneSettingsResponse:
 
         Args:
             etag (Optional[str], optional): ETag header value for caching. Defaults to None.
-            refresh_interval (float, optional): Refresh interval in seconds.
+            refresh_interval (int, optional): Refresh interval in seconds.
                 Defaults to _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS.
             settings (Optional[Dict[str, str]], optional): Configuration settings dictionary.
                 Defaults to empty dict if None.

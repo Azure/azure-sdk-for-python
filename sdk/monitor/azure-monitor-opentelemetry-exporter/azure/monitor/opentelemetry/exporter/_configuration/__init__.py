@@ -61,7 +61,7 @@ class _ConfigurationManager:
         :type query_dict: Optional[Dict[str, str]]
 
         :return: Updated refresh interval in seconds for the next configuration check.
-        :rtype: float
+        :rtype: int
         
         Thread Safety:
             This method is thread-safe and uses multiple locks to ensure consistent
