@@ -26,7 +26,7 @@ class TestSqlManagementSensitivityLabelsOperationsAsync(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -68,7 +68,7 @@ class TestSqlManagementSensitivityLabelsOperationsAsync(AzureMgmtRecordedTestCas
                     }
                 ]
             },
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -81,7 +81,7 @@ class TestSqlManagementSensitivityLabelsOperationsAsync(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -98,7 +98,7 @@ class TestSqlManagementSensitivityLabelsOperationsAsync(AzureMgmtRecordedTestCas
             table_name="str",
             column_name="str",
             sensitivity_label_source="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -131,7 +131,7 @@ class TestSqlManagementSensitivityLabelsOperationsAsync(AzureMgmtRecordedTestCas
                 "type": "str",
             },
             sensitivity_label_source="current",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -148,7 +148,7 @@ class TestSqlManagementSensitivityLabelsOperationsAsync(AzureMgmtRecordedTestCas
             table_name="str",
             column_name="str",
             sensitivity_label_source="current",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -165,7 +165,7 @@ class TestSqlManagementSensitivityLabelsOperationsAsync(AzureMgmtRecordedTestCas
             table_name="str",
             column_name="str",
             sensitivity_label_source="recommended",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -182,7 +182,7 @@ class TestSqlManagementSensitivityLabelsOperationsAsync(AzureMgmtRecordedTestCas
             table_name="str",
             column_name="str",
             sensitivity_label_source="recommended",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -195,7 +195,7 @@ class TestSqlManagementSensitivityLabelsOperationsAsync(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

@@ -25,7 +25,7 @@ class TestEventGridManagementPartnerTopicsOperationsAsync(AzureMgmtRecordedTestC
         response = await self.client.partner_topics.get(
             resource_group_name=resource_group.name,
             partner_topic_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -76,7 +76,7 @@ class TestEventGridManagementPartnerTopicsOperationsAsync(AzureMgmtRecordedTestC
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -89,7 +89,7 @@ class TestEventGridManagementPartnerTopicsOperationsAsync(AzureMgmtRecordedTestC
             await self.client.partner_topics.begin_delete(
                 resource_group_name=resource_group.name,
                 partner_topic_name="str",
-                api_version="2025-02-15",
+                api_version="2025-04-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -111,7 +111,7 @@ class TestEventGridManagementPartnerTopicsOperationsAsync(AzureMgmtRecordedTestC
                 },
                 "tags": {"str": "str"},
             },
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -121,7 +121,7 @@ class TestEventGridManagementPartnerTopicsOperationsAsync(AzureMgmtRecordedTestC
     @recorded_by_proxy_async
     async def test_partner_topics_list_by_subscription(self, resource_group):
         response = self.client.partner_topics.list_by_subscription(
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -132,7 +132,7 @@ class TestEventGridManagementPartnerTopicsOperationsAsync(AzureMgmtRecordedTestC
     async def test_partner_topics_list_by_resource_group(self, resource_group):
         response = self.client.partner_topics.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -144,7 +144,7 @@ class TestEventGridManagementPartnerTopicsOperationsAsync(AzureMgmtRecordedTestC
         response = await self.client.partner_topics.activate(
             resource_group_name=resource_group.name,
             partner_topic_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -156,7 +156,7 @@ class TestEventGridManagementPartnerTopicsOperationsAsync(AzureMgmtRecordedTestC
         response = await self.client.partner_topics.deactivate(
             resource_group_name=resource_group.name,
             partner_topic_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself

@@ -54,6 +54,8 @@ from ._models import (
     FileSearchToolResource,
     FunctionDefinition,
     FunctionToolDefinition,
+    MCPToolDefinition,
+    MCPToolResource,
     MessageImageFileContent,
     MessageTextContent,
     MessageTextFileCitationAnnotation,
@@ -90,7 +92,7 @@ from ._models import MessageDeltaChunk as MessageDeltaChunkGenerated
 from ._models import ThreadMessage as ThreadMessageGenerated
 from ._models import MessageAttachment as MessageAttachmentGenerated
 
-from .. import _types
+from .. import types as _types
 
 
 logger = logging.getLogger(__name__)
@@ -791,6 +793,176 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
     def execute(self, tool_call: Any) -> None:
         """
         OpenApiTool does not execute client-side.
+        :param Any tool_call: The tool call to execute.
+        :type tool_call: Any
+        """
+
+
+class McpTool(Tool[MCPToolDefinition]):
+    """
+    A tool that connects to Model Context Protocol (MCP) servers.
+    Initialized with server configuration, this class supports managing MCP server connections
+    and allowed tools dynamically.
+    """
+
+    def __init__(
+        self,
+        server_label: str,
+        server_url: str,
+        allowed_tools: Optional[List[str]] = None,
+    ) -> None:
+        """
+        Constructor initializes the tool with MCP server configuration.
+
+        :param server_label: The label for the MCP server.
+        :type server_label: str
+        :param server_url: The endpoint for the MCP server.
+        :type server_url: str
+        :param allowed_tools: List of allowed tools for MCP server.
+        :type allowed_tools: Optional[List[str]]
+        """
+        self._server_label = server_label
+        self._server_url = server_url
+        self._allowed_tools = allowed_tools or []
+        self._require_approval = "always"
+        self._headers: Dict[str, str] = {}
+        self._definition = MCPToolDefinition(
+            server_label=server_label,
+            server_url=server_url,
+            allowed_tools=self._allowed_tools if self._allowed_tools else None,
+        )
+        self._resource = MCPToolResource(
+            server_label=self._server_label, headers=self._headers, require_approval=self._require_approval
+        )
+
+    @property
+    def definitions(self) -> List[MCPToolDefinition]:
+        """
+        Get the MCP tool definition.
+
+        :return: A list containing the MCP tool definition.
+        :rtype: List[MCPToolDefinition]
+        """
+        return [self._definition]
+
+    def allow_tool(self, tool_name: str) -> None:
+        """
+        Add a tool to the list of allowed tools.
+
+        :param tool_name: The name of the tool to allow.
+        :type tool_name: str
+        """
+        if tool_name not in self._allowed_tools:
+            self._allowed_tools.append(tool_name)
+            # Update the definition
+            self._definition = MCPToolDefinition(
+                server_label=self._server_label,
+                server_url=self._server_url,
+                allowed_tools=self._allowed_tools if self._allowed_tools else None,
+            )
+
+    def disallow_tool(self, tool_name: str) -> None:
+        """
+        Remove a tool from the list of allowed tools.
+
+        :param tool_name: The name of the tool to remove from allowed tools.
+        :type tool_name: str
+        :raises ValueError: If the tool is not in the allowed tools list.
+        """
+        if tool_name in self._allowed_tools:
+            self._allowed_tools.remove(tool_name)
+            # Update the definition
+            self._definition = MCPToolDefinition(
+                server_label=self._server_label,
+                server_url=self._server_url,
+                allowed_tools=self._allowed_tools if self._allowed_tools else None,
+            )
+        else:
+            raise ValueError(f"Tool '{tool_name}' is not in the allowed tools list.")
+
+    def set_approval_mode(self, require_approval: str) -> None:
+        """
+        Update the headers for the MCP tool.
+
+        :param require_approval: The require_approval setting to update.
+        :type require_approval: str
+        """
+        self._require_approval = require_approval
+        self._resource = MCPToolResource(
+            server_label=self._server_label, headers=self._headers, require_approval=self._require_approval
+        )
+
+    def update_headers(self, key: str, value: str) -> None:
+        """
+        Update the headers for the MCP tool.
+
+        :param key: The header key to update.
+        :type key: str
+        :param value: The new value for the header key.
+        :type value: str
+        :raises ValueError: If the key is empty.
+        """
+        if key:
+            self._headers[key] = value
+            self._resource = MCPToolResource(
+                server_label=self._server_label, headers=self._headers, require_approval=self._require_approval
+            )
+        else:
+            raise ValueError("Header key cannot be empty.")
+
+    @property
+    def server_label(self) -> str:
+        """
+        Get the server label for the MCP tool.
+
+        :return: The label identifying the MCP server.
+        :rtype: str
+        """
+        return self._server_label
+
+    @property
+    def server_url(self) -> str:
+        """
+        Get the server URL for the MCP tool.
+
+        :return: The endpoint URL for the MCP server.
+        :rtype: str
+        """
+        return self._server_url
+
+    @property
+    def allowed_tools(self) -> List[str]:
+        """
+        Get the list of allowed tools for the MCP server.
+
+        :return: A copy of the list of tool names that are allowed to be executed on this MCP server.
+        :rtype: List[str]
+        """
+        return self._allowed_tools.copy()
+
+    @property
+    def headers(self) -> Dict[str, str]:
+        """
+        Get the headers for the MCP tool.
+
+        :return: Dictionary of HTTP headers to be sent with MCP server requests.
+        :rtype: Dict[str, str]
+        """
+        return self._resource.headers
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the tool resources for the agent.
+
+        :return: ToolResources with MCP configuration.
+        :rtype: ToolResources
+        """
+        return ToolResources(mcp=[self._resource])
+
+    def execute(self, tool_call: Any) -> None:
+        """
+        McpTool approvals should currently be handled client-side.
 
         :param Any tool_call: The tool call to execute.
         :type tool_call: Any
@@ -913,8 +1085,8 @@ class DeepResearchTool(Tool[DeepResearchToolDefinition]):
             )
 
         self._deep_research_details = DeepResearchDetails(
-            deep_research_model=deep_research_model,
-            deep_research_bing_grounding_connections=[
+            model=deep_research_model,
+            bing_grounding_connections=[
                 DeepResearchBingGroundingConnection(connection_id=bing_grounding_connection_id)
             ],
         )
@@ -1937,6 +2109,7 @@ __all__: List[str] = [
     "AsyncAgentEventHandler",
     "FileSearchTool",
     "FunctionTool",
+    "McpTool",
     "OpenApiTool",
     "BingGroundingTool",
     "FabricTool",

@@ -3,8 +3,10 @@ import os, tempfile, shutil
 
 import pytest
 
+from ci_tools.dependency_analysis import get_lib_deps
 from ci_tools.parsing import update_build_config, get_build_config, get_config_setting
 from ci_tools.environment_exclusions import is_check_enabled
+from ci_tools.variables import discover_repo_root
 
 integration_folder = os.path.join(os.path.dirname(__file__), "integration")
 pyproject_folder = os.path.join(integration_folder, "scenarios", "pyproject_build_config")
@@ -89,3 +91,12 @@ def test_pyproject_update_check_override():
 
         reloaded_build_config = get_build_config(temp_dir)
         assert reloaded_build_config == update_result
+
+
+def test_pyproject_get_lib_deps():
+    all_packages, _ = get_lib_deps(discover_repo_root())
+    # Ensure that libraries with pyproject.toml files are fetched correctly; azure-keyvault-keys is an example
+    pyproject_info = all_packages["azure-keyvault-keys"]
+    assert pyproject_info["version"]
+    assert pyproject_info["source"]
+    assert len(pyproject_info["deps"]) > 0

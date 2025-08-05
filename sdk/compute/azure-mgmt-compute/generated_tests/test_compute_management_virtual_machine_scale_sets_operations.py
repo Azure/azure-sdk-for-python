@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.compute import ComputeManagementClient
+from azure.mgmt.compute.v2024_11_01 import ComputeManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -26,6 +26,39 @@ class TestComputeManagementVirtualMachineScaleSetsOperations(AzureMgmtRecordedTe
             api_version="2024-11-01",
         )
         result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_virtual_machine_scale_sets_list_all(self, resource_group):
+        response = self.client.virtual_machine_scale_sets.list_all(
+            api_version="2024-11-01",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_virtual_machine_scale_sets_list(self, resource_group):
+        response = self.client.virtual_machine_scale_sets.list(
+            resource_group_name=resource_group.name,
+            api_version="2024-11-01",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_virtual_machine_scale_sets_get(self, resource_group):
+        response = self.client.virtual_machine_scale_sets.get(
+            resource_group_name=resource_group.name,
+            vm_scale_set_name="str",
+            api_version="2024-11-01",
+        )
+
         # please add some check logic here by yourself
         # ...
 
@@ -78,6 +111,14 @@ class TestComputeManagementVirtualMachineScaleSetsOperations(AzureMgmtRecordedTe
                 "sku": {"capacity": 0, "name": "str", "tier": "str"},
                 "skuProfile": {"allocationStrategy": "str", "vmSizes": [{"name": "str", "rank": 0}]},
                 "spotRestorePolicy": {"enabled": bool, "restoreTimeout": "str"},
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
                 "tags": {"str": "str"},
                 "timeCreated": "2020-02-20 00:00:00",
                 "type": "str",
@@ -580,10 +621,23 @@ class TestComputeManagementVirtualMachineScaleSetsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_virtual_machine_scale_sets_get(self, resource_group):
-        response = self.client.virtual_machine_scale_sets.get(
+    def test_virtual_machine_scale_sets_begin_approve_rolling_upgrade(self, resource_group):
+        response = self.client.virtual_machine_scale_sets.begin_approve_rolling_upgrade(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
+            api_version="2024-11-01",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_virtual_machine_scale_sets_convert_to_single_placement_group(self, resource_group):
+        response = self.client.virtual_machine_scale_sets.convert_to_single_placement_group(
+            resource_group_name=resource_group.name,
+            vm_scale_set_name="str",
+            parameters={"activePlacementGroupId": "str"},
             api_version="2024-11-01",
         )
 
@@ -617,6 +671,19 @@ class TestComputeManagementVirtualMachineScaleSetsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
+    def test_virtual_machine_scale_sets_force_recovery_service_fabric_platform_update_domain_walk(self, resource_group):
+        response = self.client.virtual_machine_scale_sets.force_recovery_service_fabric_platform_update_domain_walk(
+            resource_group_name=resource_group.name,
+            vm_scale_set_name="str",
+            platform_update_domain=0,
+            api_version="2024-11-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_virtual_machine_scale_sets_get_instance_view(self, resource_group):
         response = self.client.virtual_machine_scale_sets.get_instance_view(
             resource_group_name=resource_group.name,
@@ -629,34 +696,14 @@ class TestComputeManagementVirtualMachineScaleSetsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_virtual_machine_scale_sets_list(self, resource_group):
-        response = self.client.virtual_machine_scale_sets.list(
-            resource_group_name=resource_group.name,
-            api_version="2024-11-01",
-        )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_virtual_machine_scale_sets_list_all(self, resource_group):
-        response = self.client.virtual_machine_scale_sets.list_all(
-            api_version="2024-11-01",
-        )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_virtual_machine_scale_sets_list_skus(self, resource_group):
-        response = self.client.virtual_machine_scale_sets.list_skus(
+    def test_virtual_machine_scale_sets_begin_update_instances(self, resource_group):
+        response = self.client.virtual_machine_scale_sets.begin_update_instances(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
+            vm_instance_i_ds={"instanceIds": ["str"]},
             api_version="2024-11-01",
-        )
-        result = [r for r in response]
+        ).result()  # call '.result()' to poll until service return final result
+
         # please add some check logic here by yourself
         # ...
 
@@ -674,32 +721,20 @@ class TestComputeManagementVirtualMachineScaleSetsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
+    def test_virtual_machine_scale_sets_begin_perform_maintenance(self, resource_group):
+        response = self.client.virtual_machine_scale_sets.begin_perform_maintenance(
+            resource_group_name=resource_group.name,
+            vm_scale_set_name="str",
+            api_version="2024-11-01",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_virtual_machine_scale_sets_begin_power_off(self, resource_group):
         response = self.client.virtual_machine_scale_sets.begin_power_off(
-            resource_group_name=resource_group.name,
-            vm_scale_set_name="str",
-            api_version="2024-11-01",
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_virtual_machine_scale_sets_begin_restart(self, resource_group):
-        response = self.client.virtual_machine_scale_sets.begin_restart(
-            resource_group_name=resource_group.name,
-            vm_scale_set_name="str",
-            api_version="2024-11-01",
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_virtual_machine_scale_sets_begin_start(self, resource_group):
-        response = self.client.virtual_machine_scale_sets.begin_start(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             api_version="2024-11-01",
@@ -734,31 +769,6 @@ class TestComputeManagementVirtualMachineScaleSetsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_virtual_machine_scale_sets_begin_perform_maintenance(self, resource_group):
-        response = self.client.virtual_machine_scale_sets.begin_perform_maintenance(
-            resource_group_name=resource_group.name,
-            vm_scale_set_name="str",
-            api_version="2024-11-01",
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_virtual_machine_scale_sets_begin_update_instances(self, resource_group):
-        response = self.client.virtual_machine_scale_sets.begin_update_instances(
-            resource_group_name=resource_group.name,
-            vm_scale_set_name="str",
-            vm_instance_i_ds={"instanceIds": ["str"]},
-            api_version="2024-11-01",
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
     def test_virtual_machine_scale_sets_begin_reimage(self, resource_group):
         response = self.client.virtual_machine_scale_sets.begin_reimage(
             resource_group_name=resource_group.name,
@@ -783,38 +793,12 @@ class TestComputeManagementVirtualMachineScaleSetsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_virtual_machine_scale_sets_begin_approve_rolling_upgrade(self, resource_group):
-        response = self.client.virtual_machine_scale_sets.begin_approve_rolling_upgrade(
+    def test_virtual_machine_scale_sets_begin_restart(self, resource_group):
+        response = self.client.virtual_machine_scale_sets.begin_restart(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_virtual_machine_scale_sets_force_recovery_service_fabric_platform_update_domain_walk(self, resource_group):
-        response = self.client.virtual_machine_scale_sets.force_recovery_service_fabric_platform_update_domain_walk(
-            resource_group_name=resource_group.name,
-            vm_scale_set_name="str",
-            platform_update_domain=0,
-            api_version="2024-11-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_virtual_machine_scale_sets_convert_to_single_placement_group(self, resource_group):
-        response = self.client.virtual_machine_scale_sets.convert_to_single_placement_group(
-            resource_group_name=resource_group.name,
-            vm_scale_set_name="str",
-            parameters={"activePlacementGroupId": "str"},
-            api_version="2024-11-01",
-        )
 
         # please add some check logic here by yourself
         # ...
@@ -826,6 +810,30 @@ class TestComputeManagementVirtualMachineScaleSetsOperations(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             parameters={"action": "str", "serviceName": "str"},
+            api_version="2024-11-01",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_virtual_machine_scale_sets_list_skus(self, resource_group):
+        response = self.client.virtual_machine_scale_sets.list_skus(
+            resource_group_name=resource_group.name,
+            vm_scale_set_name="str",
+            api_version="2024-11-01",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_virtual_machine_scale_sets_begin_start(self, resource_group):
+        response = self.client.virtual_machine_scale_sets.begin_start(
+            resource_group_name=resource_group.name,
+            vm_scale_set_name="str",
             api_version="2024-11-01",
         ).result()  # call '.result()' to poll until service return final result
 

@@ -17,7 +17,7 @@ from azure.mgmt.core import AsyncARMPipelineClient
 from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 from ._configuration import CarbonOptimizationMgmtClientConfiguration
 from .operations import CarbonServiceOperations, Operations
 
