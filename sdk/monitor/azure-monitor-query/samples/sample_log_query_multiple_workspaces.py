@@ -12,7 +12,7 @@ USAGE:
     1) LOGS_WORKSPACE_ID - The first (primary) workspace ID.
     2) SECONDARY_WORKSPACE_ID - An additional workspace.
 
-This example uses DefaultAzureCredential, which requests a token from Azure Active Directory.
+This example uses DefaultAzureCredential, which requests a token from Microsoft Entra ID.
 For more information on DefaultAzureCredential, see https://learn.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
 
 **Note** - Although this example uses pandas to print the response, it's optional and

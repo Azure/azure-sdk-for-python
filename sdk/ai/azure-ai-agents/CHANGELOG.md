@@ -2,11 +2,11 @@
 
 # Release History
 
-## 1.1.0b5 (Unreleased)
+## 1.2.0b1 (2025-08-05)
 
-### Bugs Fixed
-
-- Fixed `update_agent` to execute with body as a keyword parameter.
+### Breaking Changes
+- **Version Lineage Change**: This beta release continues the experimental feature development from `1.1.0b4`, adding new functionality and improvements.
+- **Important Version Context**: The stable release `1.1.0` is based on `1.0.2` and does not include beta features. This `1.2.0b1` beta release preserves and extends all experimental features from the `1.1.0b1`-`1.1.0b4` beta series.
 
 ### Features Added
 
@@ -16,6 +16,7 @@
 
 - `AgentsResponseFormatOption`, `MessageInputContent`, `MessageAttachmentToolDefinition`, `AgentsToolChoiceOption` are now public.
 - Fixed issues where the `runs.create_and_process` API call did not correctly handle the `AzureAISearchTool`, `FileSearchTool`, and `CodeInterpreterTool` when specified in the toolset parameter.
+- Fixed `update_agent` to execute with body as a keyword parameter.
 
 ### Sample updates
 

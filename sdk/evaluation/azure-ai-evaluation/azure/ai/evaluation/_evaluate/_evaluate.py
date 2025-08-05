@@ -9,7 +9,7 @@ import os
 import re
 import tempfile
 import json
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, Union, cast
+from typing import Any, Callable, Dict, List, Literal, Optional, Set, Tuple, TypedDict, Union, cast
 
 from openai import OpenAI, AzureOpenAI
 from azure.ai.evaluation._legacy._adapters._constants import LINE_NUMBER
@@ -464,7 +464,7 @@ def _validate_columns_for_evaluators(
         )
 
 
-def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_project, evaluation_name):
+def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_project, evaluation_name, tags):
     if data is None:
         msg = "The 'data' parameter is required for evaluation."
         raise EvaluationException(
@@ -725,6 +725,7 @@ def evaluate(
     azure_ai_project: Optional[Union[str, AzureAIProject]] = None,
     output_path: Optional[Union[str, os.PathLike]] = None,
     fail_on_evaluator_errors: bool = False,
+    tags: Optional[Dict[str, str]] = None,
     **kwargs,
 ) -> EvaluationResult:
     """Evaluates target or data with built-in or custom evaluators. If both target and data are provided,
@@ -757,6 +758,10 @@ def evaluate(
         Defaults to false, which means that evaluations will continue regardless of failures.
         If such failures occur, metrics may be missing, and evidence of failures can be found in the evaluation's logs.
     :paramtype fail_on_evaluator_errors: bool
+    :keyword tags: A dictionary of tags to be added to the evaluation run for tracking and organization purposes.
+        Keys and values must be strings. For more information about tag limits, see:
+        https://learn.microsoft.com/en-us/azure/machine-learning/resource-limits-capacity?view=azureml-api-2#runs
+    :paramtype tags: Optional[Dict[str, str]]
     :keyword user_agent: A string to append to the default user-agent sent with evaluation http requests
     :paramtype user_agent: Optional[str]
     :return: Evaluation results.
@@ -793,6 +798,7 @@ def evaluate(
                 azure_ai_project=azure_ai_project,
                 output_path=output_path,
                 fail_on_evaluator_errors=fail_on_evaluator_errors,
+                tags=tags,
                 **kwargs,
             )
     except Exception as e:
@@ -861,6 +867,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     azure_ai_project: Optional[Union[str, AzureAIProject]] = None,
     output_path: Optional[Union[str, os.PathLike]] = None,
     fail_on_evaluator_errors: bool = False,
+    tags: Optional[Dict[str, str]] = None,
     **kwargs,
 ) -> EvaluationResult:
     if fail_on_evaluator_errors:
@@ -876,6 +883,8 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
         output_path=output_path,
         azure_ai_project=azure_ai_project,
         evaluation_name=evaluation_name,
+        fail_on_evaluator_errors=fail_on_evaluator_errors,
+        tags=tags,
         **kwargs,
     )
 
@@ -955,7 +964,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     name_map = _map_names_to_builtins(evaluators, graders)
     if is_onedp_project(azure_ai_project):
         studio_url = _log_metrics_and_instance_results_onedp(
-            metrics, results_df, azure_ai_project, evaluation_name, name_map, **kwargs
+            metrics, results_df, azure_ai_project, evaluation_name, name_map, tags=tags, **kwargs
         )
     else:
         # Since tracing is disabled, pass None for target_run so a dummy evaluation run will be created each time.
@@ -963,7 +972,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
         studio_url = None
         if trace_destination:
             studio_url = _log_metrics_and_instance_results(
-                metrics, results_df, trace_destination, None, evaluation_name, name_map, **kwargs
+                metrics, results_df, trace_destination, None, evaluation_name, name_map, tags=tags, **kwargs
             )
 
     result_df_dict = results_df.to_dict("records")
@@ -983,6 +992,8 @@ def _preprocess_data(
     output_path: Optional[Union[str, os.PathLike]] = None,
     azure_ai_project: Optional[Union[str, AzureAIProject]] = None,
     evaluation_name: Optional[str] = None,
+    fail_on_evaluator_errors: bool = False,
+    tags: Optional[Dict[str, str]] = None,
     **kwargs,
 ) -> __ValidatedData:
     # Process evaluator config to replace ${target.} with ${data.}
@@ -990,7 +1001,7 @@ def _preprocess_data(
         evaluator_config = {}
 
     input_data_df = _validate_and_load_data(
-        target, data, evaluators_and_graders, output_path, azure_ai_project, evaluation_name
+        target, data, evaluators_and_graders, output_path, azure_ai_project, evaluation_name, tags
     )
     if target is not None:
         _validate_columns_for_target(input_data_df, target)
@@ -1016,15 +1027,49 @@ def _preprocess_data(
     batch_run_client: BatchClient
     batch_run_data: Union[str, os.PathLike, pd.DataFrame] = data
 
-    if kwargs.pop("_use_run_submitter_client", False):
-        batch_run_client = RunSubmitterClient()
+    def get_client_type(evaluate_kwargs: Dict[str, Any]) -> Literal["run_submitter", "pf_client", "code_client"]:
+        """Determines the BatchClient to use from provided kwargs (_use_run_submitter_client and _use_pf_client)"""
+        _use_run_submitter_client = cast(Optional[bool], kwargs.pop("_use_run_submitter_client", None))
+        _use_pf_client = cast(Optional[bool], kwargs.pop("_use_pf_client", None))
+
+        if _use_run_submitter_client is None and _use_pf_client is None:
+            # If both are unset, return default
+            return "run_submitter"
+
+        if _use_run_submitter_client and _use_pf_client:
+            raise EvaluationException(
+                message="Only one of _use_pf_client and _use_run_submitter_client should be set to True.",
+                target=ErrorTarget.EVALUATE,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
+
+        if _use_run_submitter_client == False and _use_pf_client == False:
+            return "code_client"
+
+        if _use_run_submitter_client:
+            return "run_submitter"
+        if _use_pf_client:
+            return "pf_client"
+
+        if _use_run_submitter_client is None and _use_pf_client == False:
+            return "run_submitter"
+        if _use_run_submitter_client == False and _use_pf_client is None:
+            return "pf_client"
+
+        assert False, "This should be impossible"
+
+    client_type: Literal["run_submitter", "pf_client", "code_client"] = get_client_type(kwargs)
+
+    if client_type == "run_submitter":
+        batch_run_client = RunSubmitterClient(raise_on_errors=fail_on_evaluator_errors)
         batch_run_data = input_data_df
-    elif kwargs.pop("_use_pf_client", True):
+    elif client_type == "pf_client":
         batch_run_client = ProxyClient(user_agent=UserAgentSingleton().value)
         # Ensure the absolute path is passed to pf.run, as relative path doesn't work with
         # multiple evaluators. If the path is already absolute, abspath will return the original path.
         batch_run_data = os.path.abspath(data)
-    else:
+    elif client_type == "code_client":
         batch_run_client = CodeClient()
         batch_run_data = input_data_df
 
