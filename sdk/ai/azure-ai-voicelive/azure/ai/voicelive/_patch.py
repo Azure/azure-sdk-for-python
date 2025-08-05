@@ -13,13 +13,15 @@ from typing import Any, Dict, Iterator, List, Optional, Sequence, Tuple, Union
 from typing_extensions import TypedDict
 
 from urllib.parse import urlparse, urlunparse, urlencode, parse_qs
-from azure.core.credentials import AzureKeyCredential
+from azure.ai.voicelive.models._enums import ClientEventType
+from azure.ai.voicelive.models._models import ClientEventConversationItemCreate, ClientEventConversationItemDelete, ClientEventConversationItemRetrieve, ClientEventConversationItemTruncate, ClientEventInputAudioBufferAppend, ClientEventInputAudioBufferClear, ClientEventInputAudioBufferCommit, ClientEventResponseCancel, ClientEventResponseCreate, ClientEventSessionUpdate
+from azure.core.credentials import AzureKeyCredential, TokenCredential
+from azure.core.exceptions import AzureError
 
-from ._client import VoiceLiveClient as VoiceLiveClientGenerated
 from .models import ClientEvent, ServerEvent, RequestSession
 
 __all__: List[str] = [
-    "VoiceLiveClient",
+    "connect",
     "WebsocketConnectionOptions",
     "ConnectionError",
     "ConnectionClosed",
@@ -50,7 +52,7 @@ class WebsocketConnectionOptions(TypedDict, total=False):
     write_limit: Optional[Union[int, Tuple[int, Optional[int]]]]
 
 
-class ConnectionError(Exception):
+class ConnectionError(AzureError):
     """Base exception for VoiceLive WebSocket connection errors."""
 
     pass
@@ -86,8 +88,8 @@ class SessionResource:
         """
         if isinstance(session, RequestSession):
             session = session.as_dict()
-        
-        event = {"type": "session.update", "session": session}
+
+        event = ClientEventSessionUpdate(session=session)
         if event_id:
             event["event_id"] = event_id
 
@@ -117,7 +119,7 @@ class ResponseResource:
         :param event_id: Optional ID for the event.
         :type event_id: Optional[str]
         """
-        event = {"type": "response.create"}
+        event = ClientEventResponseCreate()
         if response:
             event["response"] = response
         if event_id:
@@ -136,7 +138,7 @@ class ResponseResource:
         :param event_id: Optional ID for the event.
         :type event_id: Optional[str]
         """
-        event = {"type": "response.cancel"}
+        event = ClientEventResponseCancel()
         if response_id:
             event["response_id"] = response_id
         if event_id:
@@ -168,7 +170,7 @@ class InputAudioBufferResource:
         :param event_id: Optional ID for the event.
         :type event_id: Optional[str]
         """
-        event = {"type": "input_audio_buffer.append", "audio": audio}
+        event = ClientEventInputAudioBufferAppend(audio=audio)
         if event_id:
             event["event_id"] = event_id
 
@@ -184,7 +186,7 @@ class InputAudioBufferResource:
         :param event_id: Optional ID for the event.
         :type event_id: Optional[str]
         """
-        event = {"type": "input_audio_buffer.commit"}
+        event = ClientEventInputAudioBufferCommit()
         if event_id:
             event["event_id"] = event_id
 
@@ -198,7 +200,7 @@ class InputAudioBufferResource:
         :param event_id: Optional ID for the event.
         :type event_id: Optional[str]
         """
-        event = {"type": "input_audio_buffer.clear"}
+        event = ClientEventInputAudioBufferClear()
         if event_id:
             event["event_id"] = event_id
 
@@ -258,7 +260,7 @@ class ConversationItemResource:
         :param event_id: Optional ID for the event.
         :type event_id: Optional[str]
         """
-        event = {"type": "conversation.item.create", "item": item}
+        event = ClientEventConversationItemCreate(item=item)
         if previous_item_id:
             event["previous_item_id"] = previous_item_id
         if event_id:
@@ -276,9 +278,7 @@ class ConversationItemResource:
         :param event_id: Optional ID for the event.
         :type event_id: Optional[str]
         """
-        event = {"type": "conversation.item.delete", "item_id": item_id}
-        if event_id:
-            event["event_id"] = event_id
+        event = ClientEventConversationItemDelete(item_id=item_id)
 
         self._connection.send(event)
 
@@ -292,7 +292,7 @@ class ConversationItemResource:
         :param event_id: Optional ID for the event.
         :type event_id: Optional[str]
         """
-        event = {"type": "conversation.item.retrieve", "item_id": item_id}
+        event = ClientEventConversationItemRetrieve(item_id=item_id)
         if event_id:
             event["event_id"] = event_id
 
@@ -312,12 +312,8 @@ class ConversationItemResource:
         :param event_id: Optional ID for the event.
         :type event_id: Optional[str]
         """
-        event = {
-            "type": "conversation.item.truncate",
-            "item_id": item_id,
-            "audio_end_ms": audio_end_ms,
-            "content_index": content_index,
-        }
+        event = ClientEventConversationItemTruncate(item_id=item_id, audio_end_ms=audio_end_ms, content_index=content_index)
+
         if event_id:
             event["event_id"] = event_id
 
@@ -364,7 +360,22 @@ class TranscriptionSessionResource:
 
 
 class VoiceLiveConnection:
-    """Represents a live WebSocket connection to the Voice Live API."""
+    """
+    Represents a live WebSocket connection to the Voice Live API.
+
+    :ivar session: Resource for managing session configuration and updates.
+    :vartype session: ~azure.ai.voicelive.SessionResource
+    :ivar response: Resource for creating and cancelling model responses.
+    :vartype response: ~azure.ai.voicelive.ResponseResource
+    :ivar input_audio_buffer: Resource for appending, committing, and clearing input audio.
+    :vartype input_audio_buffer: ~azure.ai.voicelive.InputAudioBufferResource
+    :ivar output_audio_buffer: Resource for clearing generated audio output.
+    :vartype output_audio_buffer: ~azure.ai.voicelive.OutputAudioBufferResource
+    :ivar conversation: Resource for managing the conversation and its items.
+    :vartype conversation: ~azure.ai.voicelive.ConversationResource
+    :ivar transcription_session: Resource for updating transcription session parameters.
+    :vartype transcription_session: ~azure.ai.voicelive.TranscriptionSessionResource
+    """
 
     def __init__(self, connection) -> None:
         """Initialize a VoiceLiveConnection.
@@ -434,7 +445,7 @@ class VoiceLiveConnection:
             if isinstance(event, dict):
                 data = json.dumps(event)
             else:
-                data = event.serialize()
+                data = ClientEvent.serialize(event)
             self._connection.send(data)
         except Exception as e:
             log.error(f"Failed to send event: {e}")
@@ -460,14 +471,18 @@ class VoiceLiveConnectionManager:
     def __init__(
         self,
         *,
-        client: "VoiceLiveClient",
+        credential: Union[AzureKeyCredential, TokenCredential],
+        endpoint: str,
         model: str,
         api_version: str = "2024-10-01",
         extra_query: Dict[str, Any],
         extra_headers: Dict[str, Any],
         connection_options: WebsocketConnectionOptions = {},
+        **kwargs: Any,
     ) -> None:
-        self.__client = client
+        self._credential = credential
+        self._endpoint = endpoint
+        self.__credential_scopes = kwargs.pop("credential_scopes", "https://cognitiveservices.azure.com/.default")
         self.__model = model
         self.__apiVersion = api_version
         self.__connection = None
@@ -517,17 +532,17 @@ class VoiceLiveConnectionManager:
         :return: A dictionary of authentication headers.
         :rtype: Dict[str, str]
         """
-        if isinstance(self.__client._config.credential, AzureKeyCredential):
-            return {"api-key": self.__client._config.credential.key}
+        if isinstance(self._credential, AzureKeyCredential):
+            return {"api-key": self._credential.key}
         else:
             # Use token credential to get a token
-            token = self.__client._config.credential.get_token(self.__client._config.credential_scopes)
+            token = self._credential.get_token(self.__credential_scopes)
             return {"Authorization": f"Bearer {token.token}"}
 
     def _prepare_url(self) -> str:
         """Prepare the WebSocket URL."""
         # Parse the base URL
-        parsed = urlparse(self.__client._config.endpoint)
+        parsed = urlparse(self._endpoint)
 
         # Ensure WebSocket scheme
         if parsed.scheme.startswith("http"):
@@ -565,39 +580,59 @@ class VoiceLiveConnectionManager:
             self.__connection.close()
 
 
-class VoiceLiveClient(VoiceLiveClientGenerated):
-    """Extended VoiceLiveClient with WebSocket support."""
+def connect(
+    *,
+    endpoint: str,
+    credential: Union[AzureKeyCredential, TokenCredential],
+    model: str,
+    api_version: str = "2025-05-01-preview",
+    query: Dict[str, Any] = {},
+    headers: Dict[str, Any] = {},
+    connection_options: WebsocketConnectionOptions = {},
+    **kwargs: Any,
+) -> VoiceLiveConnectionManager:
+    """
+    Establish a WebSocket connection to the Azure Voice Live API.
 
-    def connect(
-        self,
-        *,
-        model: str,
-        api_version: str = "2025-05-01-preview",
-        query: Dict[str, Any] = {},
-        headers: Dict[str, Any] = {},
-        connection_options: WebsocketConnectionOptions = {},
-    ) -> VoiceLiveConnectionManager:
-        """Connect to the VoiceLive API via WebSocket.
+    Example:
+        >>> with connect(
+        >>>     endpoint="https://<region>.api.cognitive.microsoft.com",
+        >>>     credential=AzureKeyCredential("<api-key>"),
+        >>>     model="my-model-id"
+        >>> ) as connection:
+        >>>     connection.session.update(session={...})
 
-        :param model: The model to use for the connection.
-        :type model: str
-        :param extra_query: Additional query parameters to include in the WebSocket URL.
-        :type extra_query: Dict[str, Any]
-        :param extra_headers: Additional headers to include in the WebSocket handshake.
-        :type extra_headers: Dict[str, Any]
-        :param connection_options: Options for the WebSocket connection.
-        :type connection_options: WebsocketConnectionOptions
-        :return: A connection manager that can be used as a context manager.
-        :rtype: ~azure.ai.voicelive.VoiceLiveConnectionManager
-        """
-        return VoiceLiveConnectionManager(
-            client=self,
-            model=model,
-            api_version=api_version,
-            extra_query=query,
-            extra_headers=headers,
-            connection_options=connection_options,
-        )
+    :param endpoint: The service endpoint, e.g. "https://<region>.api.cognitive.microsoft.com".
+    :type endpoint: str
+    :param credential: Credential used to authenticate the WebSocket connection.
+        Either an API key (`AzureKeyCredential`) or a token-based credential (`TokenCredential`).
+    :type credential: Union[~azure.core.credentials.AzureKeyCredential, ~azure.core.credentials.TokenCredential]
+    :param model: The model ID to use for the Voice Live session.
+    :type model: str
+    :param api_version: The API version to use (default is "2025-05-01-preview").
+    :type api_version: str
+    :param query: Additional query parameters to include in the WebSocket URL.
+    :type query: Dict[str, Any]
+    :param headers: Additional headers to include in the WebSocket handshake.
+    :type headers: Dict[str, Any]
+    :param connection_options: Advanced WebSocket options (e.g. compression, max size).
+    :type connection_options: WebsocketConnectionOptions
+    :param kwargs: Additional keyword arguments passed to the connection manager.
+    :type kwargs: Any
+
+    :return: A connection manager for managing the Voice Live WebSocket session.
+    :rtype: VoiceLiveConnectionManager
+    """
+    return VoiceLiveConnectionManager(
+        credential=credential,
+        endpoint=endpoint,
+        model=model,
+        api_version=api_version,
+        extra_query=query,
+        extra_headers=headers,
+        connection_options=connection_options,
+        **kwargs,
+    )
 
 
 def patch_sdk():

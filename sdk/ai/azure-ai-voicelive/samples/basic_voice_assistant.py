@@ -38,7 +38,8 @@ import argparse
 import signal
 import threading
 import queue
-from typing import Optional, Dict, Any
+from azure.ai.voicelive.models import ServerEventType
+from typing import Union
 from concurrent.futures import ThreadPoolExecutor
 import logging
 
@@ -58,20 +59,11 @@ except ImportError:
     print("Note: python-dotenv not installed. Using existing environment variables.")
 
 # Azure VoiceLive SDK imports
-from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.identity import DefaultAzureCredential, InteractiveBrowserCredential
 
-from azure.ai.voicelive import VoiceLiveClient
+from azure.ai.voicelive import connect
 from azure.ai.voicelive.models import (
-    ServerEventSessionUpdated,
-    ServerEventInputAudioBufferSpeechStarted,
-    ServerEventInputAudioBufferSpeechStopped,
-    ServerEventResponseAudioDelta,
-    ServerEventResponseAudioDone,
-    ServerEventError,
-    ServerEventResponseCreated,
-    ServerEventResponseDone,
-    ServerEventConversationItemCreated,
     RequestSession,
     ServerVad,
     AzureStandardVoice,
@@ -307,8 +299,16 @@ class AudioProcessor:
 class BasicVoiceAssistant:
     """Basic voice assistant implementing the VoiceLive SDK patterns."""
 
-    def __init__(self, client: VoiceLiveClient, model: str, voice: str, instructions: str):
-        self.client = client
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, TokenCredential],
+        model: str,
+        voice: str,
+        instructions: str,
+    ):
+        self.endpoint = endpoint
+        self.credential = credential
         self.model = model
         self.voice = voice
         self.instructions = instructions
@@ -323,7 +323,9 @@ class BasicVoiceAssistant:
             logger.info(f"Connecting to VoiceLive API with model {self.model}")
 
             # Connect to VoiceLive WebSocket API
-            with self.client.connect(
+            with connect(
+                endpoint=self.endpoint,
+                credential=self.credential,
                 model=self.model,
                 connection_options={
                     "max_size": 10 * 1024 * 1024,  # 10 MB
@@ -408,14 +410,14 @@ class BasicVoiceAssistant:
         """Handle different types of events from VoiceLive."""
         logger.debug(f"Received event: {event.type}")
 
-        if isinstance(event, ServerEventSessionUpdated):
-            logger.info(f"Session ready: {event.session.id}")
+        if event.type == ServerEventType.SESSION_UPDATED:
+            logger.info(f"Session ready: {event}")
             self.session_ready = True
 
             # Start audio capture once session is ready
             await self.audio_processor.start_capture()
 
-        elif isinstance(event, ServerEventInputAudioBufferSpeechStarted):
+        elif event.type == ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STARTED:
             logger.info("🎤 User started speaking - stopping playback")
             print("🎤 Listening...")
 
@@ -428,33 +430,33 @@ class BasicVoiceAssistant:
             except Exception as e:
                 logger.debug(f"No response to cancel: {e}")
 
-        elif isinstance(event, ServerEventInputAudioBufferSpeechStopped):
+        elif event.type == ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STOPPED:
             logger.info("🎤 User stopped speaking")
             print("🤔 Processing...")
 
             # Restart playback system for response
             await self.audio_processor.start_playback()
 
-        elif isinstance(event, ServerEventResponseCreated):
+        elif event.type == ServerEventType.RESPONSE_CREATED:
             logger.info("🤖 Assistant response created")
 
-        elif isinstance(event, ServerEventResponseAudioDelta):
+        elif event.type == ServerEventType.RESPONSE_AUDIO_DELTA:
             # Stream audio response to speakers
             logger.debug("Received audio delta")
             await self.audio_processor.queue_audio(event.delta)
 
-        elif isinstance(event, ServerEventResponseAudioDone):
+        elif event.type == ServerEventType.RESPONSE_AUDIO_DONE:
             logger.info("🤖 Assistant finished speaking")
             print("🎤 Ready for next input...")
 
-        elif isinstance(event, ServerEventResponseDone):
+        elif event.type == ServerEventType.RESPONSE_DONE:
             logger.info("✅ Response complete")
 
-        elif isinstance(event, ServerEventError):
+        elif event.type == ServerEventType.ERROR:
             logger.error(f"❌ VoiceLive error: {event.error.message}")
             print(f"Error: {event.error.message}")
 
-        elif isinstance(event, ServerEventConversationItemCreated):
+        elif event.type == ServerEventType.CONVERSATION_ITEM_CREATED:
             logger.debug(f"Conversation item created: {event.item.id}")
 
         else:
@@ -545,21 +547,15 @@ async def main():
     try:
         # Create client with appropriate credential
         if args.use_token_credential:
-            credential = InteractiveBrowserCredential() # or DefaultAzureCredential() if needed
+            credential = InteractiveBrowserCredential()  # or DefaultAzureCredential() if needed
             logger.info("Using Azure token credential")
         else:
             credential = AzureKeyCredential(args.api_key)
             logger.info("Using API key credential")
 
-        # Initialize VoiceLive client
-        client = VoiceLiveClient(
-            credential=credential,
-            endpoint=args.endpoint,
-        )
-
         # Create and start voice assistant
         assistant = BasicVoiceAssistant(
-            client=client, model=args.model, voice=args.voice, instructions=args.instructions
+            endpoint=args.endpoint, credential=credential, model=args.model, voice=args.voice, instructions=args.instructions
         )
 
         # Setup signal handlers for graceful shutdown

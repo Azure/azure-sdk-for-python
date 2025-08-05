@@ -46,7 +46,7 @@ from ._models import (
 )
 from ._enums import ServerEventType, ClientEventType
 
-__all__: List[str] = [
+__all__ = [
     "ClientEvent",
     "ServerEvent",
 ]  # Add all objects you want publicly available to users at this package level
@@ -57,42 +57,42 @@ log = logging.getLogger(__name__)
 class ClientEvent(ClientEventGenerated):
     """Extended ClientEvent with serialization."""
 
-    def to_dict(self) -> Dict[str, Any]:
-        """Convert the event to a dictionary.
+    @classmethod
+    def to_dict(cls, event: "ClientEvent") -> Dict[str, Any]:
+        """Recursively convert the event to a JSON-serializable dictionary."""
+        result = {"type": event.type}
 
-        :return: Dictionary representation of the event.
-        :rtype: Dict[str, Any]
-        """
-        result = {"type": self.type}
+        if hasattr(event, "event_id") and event.event_id is not None:
+            result["event_id"] = event.event_id
 
-        # Add event_id if present
-        if hasattr(self, "event_id") and self.event_id is not None:
-            result["event_id"] = self.event_id
+        # Include all other public attributes that are not methods or base fields
+        for attr in dir(event):
+            if attr.startswith("_") or attr in ("type", "event_id") or callable(getattr(event, attr)):
+                continue
 
-        # Add specific fields based on event type
-        if self.type == ClientEventType.SESSION_UPDATE:
-            result["session"] = {}
-            if hasattr(self, "session") and self.session is not None:
-                # Use Model's serialize_data if available, otherwise convert to dict manually
-                if hasattr(self.session, "serialize_data"):
-                    result["session"] = self.session.serialize_data()
-                else:
-                    # Include all public properties
-                    for attr in dir(self.session):
-                        if not attr.startswith("_") and not callable(getattr(self.session, attr)):
-                            value = getattr(self.session, attr)
-                            if value is not None:
-                                result["session"][attr] = value
+            value = getattr(event, attr)
+            result[attr] = cls._to_jsonable(value)
 
         return result
 
-    def serialize(self) -> str:
-        """Serialize the event to JSON.
+    @staticmethod
+    def _to_jsonable(obj: Any) -> Any:
+        """Convert objects to a JSON-serializable format."""
+        if hasattr(obj, "serialize_data"):
+            return obj.serialize_data()
+        elif isinstance(obj, (list, tuple)):
+            return [ClientEvent._to_jsonable(v) for v in obj]
+        elif isinstance(obj, dict):
+            return {k: ClientEvent._to_jsonable(v) for k, v in obj.items()}
+        elif hasattr(obj, "__dict__"):
+            return {k: ClientEvent._to_jsonable(v) for k, v in vars(obj).items() if not k.startswith("_")}
+        else:
+            return obj
 
-        :return: JSON string representation of the event.
-        :rtype: str
-        """
-        return json.dumps(self.to_dict())
+    @classmethod
+    def serialize(cls, event: "ClientEvent") -> str:
+        """Serialize the event to a JSON string."""
+        return json.dumps(cls.to_dict(event))
 
 
 class ServerEvent(ServerEventGenerated):
