@@ -6,10 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import json
-import os
-from datetime import datetime
-
 from azure.ai.contentunderstanding import ContentUnderstandingClient
 from azure.core.credentials import AzureKeyCredential
 from azure.identity import DefaultAzureCredential

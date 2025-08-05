@@ -11,8 +11,9 @@ from testpreparer import ContentUnderstandingPreparer
 from testpreparer_async import ContentUnderstandingClientTestBaseAsync
 
 
-@pytest.mark.skip("you may need to update the auto-generated test case before run it")
+# @pytest.mark.skip("you may need to update the auto-generated test case before run it")
 class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandingClientTestBaseAsync):
+    @pytest.mark.skip(reason="Skipping test_content_analyzers_get_operation_status")
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_analyzers_get_operation_status(self, contentunderstanding_endpoint):
@@ -25,6 +26,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         # please add some check logic here by yourself
         # ...
 
+    @pytest.mark.skip(reason="Skipping all tests except test_content_analyzers_get")
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_analyzers_begin_create_or_replace(self, contentunderstanding_endpoint):
@@ -97,6 +99,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         # please add some check logic here by yourself
         # ...
 
+    @pytest.mark.skip(reason="Skipping all tests except test_content_analyzers_get")
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_analyzers_update(self, contentunderstanding_endpoint):
@@ -172,12 +175,19 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
     async def test_content_analyzers_get(self, contentunderstanding_endpoint):
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
         response = await client.content_analyzers.get(
-            analyzer_id="str",
+            analyzer_id="prebuilt-documentAnalyzer",
         )
+        assert response is not None
+        print(response)
+        assert response.analyzer_id == "prebuilt-documentAnalyzer"
+        assert len(response.description) > 0
+        assert response.status == "ready"
+        assert response.created_at is not None
+        assert response.config is not None
+        assert response.processing_location is not None
+        assert len(response.warnings) == 0
 
-        # please add some check logic here by yourself
-        # ...
-
+    @pytest.mark.skip(reason="Skipping all tests except test_content_analyzers_get")
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_analyzers_delete(self, contentunderstanding_endpoint):
@@ -189,6 +199,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         # please add some check logic here by yourself
         # ...
 
+    @pytest.mark.skip(reason="Skipping all tests except test_content_analyzers_get")
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_analyzers_list(self, contentunderstanding_endpoint):
@@ -198,6 +209,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         # please add some check logic here by yourself
         # ...
 
+    @pytest.mark.skip(reason="Skipping all tests except test_content_analyzers_get")
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_analyzers_begin_analyze(self, contentunderstanding_endpoint):
@@ -216,6 +228,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         # please add some check logic here by yourself
         # ...
 
+    @pytest.mark.skip(reason="Skipping all tests except test_content_analyzers_get")
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_analyzers_begin_analyze_binary(self, contentunderstanding_endpoint):
@@ -231,6 +244,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         # please add some check logic here by yourself
         # ...
 
+    @pytest.mark.skip(reason="Skipping all tests except test_content_analyzers_get")
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_analyzers_get_result(self, contentunderstanding_endpoint):
@@ -238,10 +252,19 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         response = await client.content_analyzers.get_result(
             operation_id="str",
         )
+        # Check response is not None
+        assert response is not None
+        # Check response.contents is not None
+        assert response.contents is not None
+        # Check response.contents is not empty
+        assert len(response.contents) > 0
+        # Check response.contents[0].markdown is not None
+        assert response.contents[0].markdown is not None
 
         # please add some check logic here by yourself
         # ...
 
+    @pytest.mark.skip(reason="Skipping all tests except test_content_analyzers_get")
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_analyzers_get_result_file(self, contentunderstanding_endpoint):
