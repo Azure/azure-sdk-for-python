@@ -22,6 +22,27 @@
 
 - Updated `sample_agents_deep_research.py` and `sample_agents_deep_research_async.py` for citations.
   
+## 1.1.0 (2025-08-05)
+
+### Breaking Changes
+- **Version Lineage Change**: This stable release is based on `1.0.2` and does not include the experimental features that were introduced in the beta versions `1.1.0b1` through `1.1.0b5`. This means that any beta-specific functionality you may have been using is not available in this stable release.
+- **Migration Path**: If you need to continue using the experimental features from the beta releases, please upgrade to `1.2.0b1` which continues the beta feature development line.
+
+### Bugs Fixed
+- `AgentsResponseFormatOption`, `MessageInputContent`, `MessageAttachmentToolDefinition`, `AgentsToolChoiceOption` are now public.
+- Fixed `update_agents` to execute with body as a keyword parameter.
+- New `tool_resources` parameter added to `runs.create` and `run.stream` method. This parameter represents overridden enabled tool resources that the agent should use to run the thread. Default value is None.
+  
+### Sample updates
+
+- Added a sample showing auto function call for a synchronous client, [`sample_agents_auto_function_call.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_tools/sample_agents_auto_function_call.py)
+- Added a sample showing auto function call for an asynchronous client, [`sample_agents_auto_function_call_async.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-agents/samples/agents_async/sample_agents_auto_function_call_async.py).
+
+### Bugs Fixed
+
+- `_AgentsClientOperationsMixin` is now private.
+
+
 ## 1.1.0b4 (2025-07-11)
 
 ### Features Added
@@ -80,6 +101,19 @@ the thread. Default value is None.
 ### Bugs Fixed
 
 - Adding instrumentation for create_thread_and_run
+
+## 1.0.2 (2025-07-01)
+
+### Bugs Fixed
+- Fixed a tracing related bug that caused an error when process was ending if messages or run steps were listed and the resulting list was not iterated completely.
+
+## 1.0.1 (2025-06-09)
+
+### Bugs Fixed
+
+- `asyncio.gather` is used to make function tool calls in parallel for `async` scenario.
+- Adding instrumentation for create_thread_and_run.
+- Fixed a tracing related bug that caused process_thread_run span to not appear when streaming is used without event handler.
 
 ## 1.0.0 (2025-05-15)
 
