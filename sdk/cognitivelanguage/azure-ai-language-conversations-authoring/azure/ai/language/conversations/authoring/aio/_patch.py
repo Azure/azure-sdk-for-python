@@ -30,11 +30,11 @@ class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
     #: Deployment operations group
     deployment_operations: DeploymentOperations
     #: Exported model operations group
-    exported_model: ExportedModelOperations
+    exported_model_operations: ExportedModelOperations
     #: Project operations group
     project_operations: ProjectOperations
     #: Trained model operations group
-    trained_model: TrainedModelOperations
+    trained_model_operations: TrainedModelOperations
 
     def __init__(
         self,
@@ -78,10 +78,10 @@ class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
         self.project_operations = ProjectOperations(
             self._client, self._config, self._serialize, self._deserialize, project_name=project_name
         )
-        self.exported_model = ExportedModelOperations(
+        self.exported_model_operations = ExportedModelOperations(
             self._client, self._config, self._serialize, self._deserialize, project_name=project_name
         )
-        self.trained_model = TrainedModelOperations(
+        self.trained_model_operations = TrainedModelOperations(
             self._client, self._config, self._serialize, self._deserialize, project_name=project_name
         )
 
