@@ -4482,6 +4482,134 @@ class RunStepDelta(_Model):
         super().__init__(*args, **kwargs)
 
 
+class RunStepDeltaToolCall(_Model):
+    """The abstract base representation of a single tool call within a streaming run step's delta tool
+    call details.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    RunStepDeltaAzureAISearchToolCall, RunStepDeltaBingGroundingToolCall,
+    RunStepDeltaCodeInterpreterToolCall, RunStepDeltaDeepResearchToolCall,
+    RunStepDeltaFileSearchToolCall, RunStepDeltaFunctionToolCall, RunStepDeltaMcpToolCall,
+    RunStepDeltaOpenAPIToolCall
+
+    :ivar index: The index of the tool call detail in the run step's tool_calls array. Required.
+    :vartype index: int
+    :ivar id: The ID of the tool call, used when submitting outputs to the run. Required.
+    :vartype id: str
+    :ivar type: The type of the tool call detail item in a streaming run step's details. Required.
+     Default value is None.
+    :vartype type: str
+    """
+
+    __mapping__: Dict[str, _Model] = {}
+    index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The index of the tool call detail in the run step's tool_calls array. Required."""
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the tool call, used when submitting outputs to the run. Required."""
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """The type of the tool call detail item in a streaming run step's details. Required. Default
+     value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index: int,
+        id: str,  # pylint: disable=redefined-builtin
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RunStepDeltaAzureAISearchToolCall(RunStepDeltaToolCall, discriminator="azure_ai_search"):
+    """Represents the Azure AI Search in a streaming run step.
+
+    :ivar index: The index of the tool call detail in the run step's tool_calls array. Required.
+    :vartype index: int
+    :ivar id: The ID of the tool call, used when submitting outputs to the run. Required.
+    :vartype id: str
+    :ivar type: The object type, which is always "azure_ai_search". Required. Default value is
+     "azure_ai_search".
+    :vartype type: str
+    :ivar azure_ai_search: Reserved for future use. Required.
+    :vartype azure_ai_search: dict[str, str]
+    """
+
+    type: Literal["azure_ai_search"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always \"azure_ai_search\". Required. Default value is
+     \"azure_ai_search\"."""
+    azure_ai_search: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Reserved for future use. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index: int,
+        id: str,  # pylint: disable=redefined-builtin
+        azure_ai_search: Dict[str, str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="azure_ai_search", **kwargs)
+
+
+class RunStepDeltaBingGroundingToolCall(RunStepDeltaToolCall, discriminator="bing_grounding"):
+    """Represents the bing grounding tool call in a streaming run step.
+
+    :ivar index: The index of the tool call detail in the run step's tool_calls array. Required.
+    :vartype index: int
+    :ivar id: The ID of the tool call, used when submitting outputs to the run. Required.
+    :vartype id: str
+    :ivar type: The object type, which is always "bing_grounding". Required. Default value is
+     "bing_grounding".
+    :vartype type: str
+    :ivar bing_grounding: Reserved for future use. Required.
+    :vartype bing_grounding: dict[str, str]
+    """
+
+    type: Literal["bing_grounding"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always \"bing_grounding\". Required. Default value is
+     \"bing_grounding\"."""
+    bing_grounding: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Reserved for future use. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index: int,
+        id: str,  # pylint: disable=redefined-builtin
+        bing_grounding: Dict[str, str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="bing_grounding", **kwargs)
+
+
 class RunStepDeltaChunk(_Model):
     """Represents a run step delta i.e. any changed fields on a run step during streaming.
 
@@ -4708,52 +4836,6 @@ class RunStepDeltaCodeInterpreterLogOutput(RunStepDeltaCodeInterpreterOutput, di
         super().__init__(*args, type="logs", **kwargs)
 
 
-class RunStepDeltaToolCall(_Model):
-    """The abstract base representation of a single tool call within a streaming run step's delta tool
-    call details.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    RunStepDeltaCodeInterpreterToolCall, RunStepDeltaFileSearchToolCall,
-    RunStepDeltaFunctionToolCall, RunStepDeltaMcpToolCall
-
-    :ivar index: The index of the tool call detail in the run step's tool_calls array. Required.
-    :vartype index: int
-    :ivar id: The ID of the tool call, used when submitting outputs to the run. Required.
-    :vartype id: str
-    :ivar type: The type of the tool call detail item in a streaming run step's details. Required.
-     Default value is None.
-    :vartype type: str
-    """
-
-    __mapping__: Dict[str, _Model] = {}
-    index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The index of the tool call detail in the run step's tool_calls array. Required."""
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The ID of the tool call, used when submitting outputs to the run. Required."""
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """The type of the tool call detail item in a streaming run step's details. Required. Default
-     value is None."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        index: int,
-        id: str,  # pylint: disable=redefined-builtin
-        type: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class RunStepDeltaCodeInterpreterToolCall(RunStepDeltaToolCall, discriminator="code_interpreter"):
     """Represents a Code Interpreter tool call within a streaming run step's tool call details.
 
@@ -4796,11 +4878,54 @@ class RunStepDeltaCodeInterpreterToolCall(RunStepDeltaToolCall, discriminator="c
         super().__init__(*args, type="code_interpreter", **kwargs)
 
 
+class RunStepDeltaDeepResearchToolCall(RunStepDeltaToolCall, discriminator="deep_research"):
+    """Represents the Deep research in a streaming run step.
+
+    :ivar index: The index of the tool call detail in the run step's tool_calls array. Required.
+    :vartype index: int
+    :ivar id: The ID of the tool call, used when submitting outputs to the run. Required.
+    :vartype id: str
+    :ivar type: The object type, which is always "deep_research". Required. Default value is
+     "deep_research".
+    :vartype type: str
+    :ivar deep_research: The details of DeepResearch tool call. Required.
+    :vartype deep_research: ~azure.ai.agents.models.RunStepDeepResearchToolCallDetails
+    """
+
+    type: Literal["deep_research"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always \"deep_research\". Required. Default value is
+     \"deep_research\"."""
+    deep_research: "_models.RunStepDeepResearchToolCallDetails" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The details of DeepResearch tool call. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index: int,
+        id: str,  # pylint: disable=redefined-builtin
+        deep_research: "_models.RunStepDeepResearchToolCallDetails",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="deep_research", **kwargs)
+
+
 class RunStepDeltaDetail(_Model):
     """Represents a single run step detail item in a streaming run step's delta payload.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    RunStepDeltaMCPObject, RunStepDeltaMessageCreation, RunStepDeltaToolCallObject
+    RunStepDeltaMCPObject, RunStepDeltaMessageCreation, RunStepDeltaOpenAPIObject,
+    RunStepDeltaToolCallObject
 
     :ivar type: The object type for the run step detail object. Required. Default value is None.
     :vartype type: str
@@ -5082,6 +5207,78 @@ class RunStepDeltaMessageCreationObject(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class RunStepDeltaOpenAPIObject(RunStepDeltaDetail, discriminator="openapi"):
+    """Represents an invocation of openapi as part of a streaming run step.
+
+    :ivar type: The object type, which is always "openapi". Required. Default value is "openapi".
+    :vartype type: str
+    :ivar tool_calls: The collection of tool calls for the tool call detail item.
+    :vartype tool_calls: list[~azure.ai.agents.models.RunStepDeltaOpenAPIToolCall]
+    """
+
+    type: Literal["openapi"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always \"openapi\". Required. Default value is \"openapi\"."""
+    tool_calls: Optional[List["_models.RunStepDeltaOpenAPIToolCall"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The collection of tool calls for the tool call detail item."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tool_calls: Optional[List["_models.RunStepDeltaOpenAPIToolCall"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="openapi", **kwargs)
+
+
+class RunStepDeltaOpenAPIToolCall(RunStepDeltaToolCall, discriminator="openapi"):
+    """Represents the openapi tool call in a streaming run step.
+
+    :ivar index: The index of the tool call detail in the run step's tool_calls array. Required.
+    :vartype index: int
+    :ivar id: The ID of the tool call, used when submitting outputs to the run. Required.
+    :vartype id: str
+    :ivar type: The object type, which is always "openapi". Required. Default value is "openapi".
+    :vartype type: str
+    :ivar open_api: Reserved for future use. Required.
+    :vartype open_api: dict[str, str]
+    """
+
+    type: Literal["openapi"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always \"openapi\". Required. Default value is \"openapi\"."""
+    open_api: Dict[str, str] = rest_field(name="openapi", visibility=["read", "create", "update", "delete", "query"])
+    """Reserved for future use. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index: int,
+        id: str,  # pylint: disable=redefined-builtin
+        open_api: Dict[str, str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="openapi", **kwargs)
 
 
 class RunStepDeltaToolCallObject(RunStepDeltaDetail, discriminator="tool_calls"):
