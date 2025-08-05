@@ -39,7 +39,7 @@ jobs:
     displayName: Clean up resources
     condition: always()
     inputs:
-      ConnectedServiceNameARM: d71e80c4-c3df-4a27-9fc7-f25563bbb0d1
+      ConnectedServiceNameARM: 136f7343-9f47-40ec-badb-d988cb1429a2
       ScriptType: InlineScript
       Inline: "$uri = New-Object System.Uri(\"$(ACCOUNT_HOST)\")\n\n$accountName = $uri.Host.Split('.')[0]\nWrite-Host \"Clean up databases from $accountName\"\n\n$res = Get-AzResource -Name $accountName -ResourceType \"Microsoft.DocumentDb/databaseAccounts\"\n\nif ($res -ne $null) {\n\n    $account = Get-AzCosmosDBAccount -ResourceId $res.ResourceId\n\n    $dbs = Get-AzCosmosDBSqlDatabase -ParentObject $account\n\n    $dbs | Write-Output\n\n    $dbs | Remove-AzCosmosDBSqlDatabase\n    \n    Write-Host \"$accountName is cleaned\"\n}\nelse {\n   Write-Host \"Unable to find $accountName\"\n}"
       errorActionPreference: continue
