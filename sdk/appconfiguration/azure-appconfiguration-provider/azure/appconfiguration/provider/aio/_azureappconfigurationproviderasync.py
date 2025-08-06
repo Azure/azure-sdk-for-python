@@ -527,7 +527,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 try:
                     # If the value is not a valid JSON, check if it has comments and remove them
                     return json.loads(remove_json_comments(config.value))
-                except json.JSONDecodeError:
+                except (json.JSONDecodeError, ValueError):
                     # If the value is not a valid JSON, treat it like regular string value
                     return config.value
         return config.value
