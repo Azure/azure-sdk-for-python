@@ -48,10 +48,13 @@ def create_random_item():
         "description": paragraph1 + "\n\n" + paragraph2
     }
 
+def _get_upsert_item():
+    # 10 percent of the time, create a new item instead of updating an existing one
+    return create_random_item() if random.random() < 0.1 else get_existing_random_item()
+
 def upsert_item(container, excluded_locations, num_upserts):
+    item = _get_upsert_item()
     for _ in range(num_upserts):
-        # 10 percent of the time, create a new item instead of updating an existing one
-        item = create_random_item() if random.random() < 0.1 else get_existing_random_item()
         if excluded_locations:
             container.upsert_item(item, etag=None, match_condition=None,
                                   excluded_locations=excluded_locations)
@@ -91,11 +94,12 @@ def perform_query(container, excluded_locations):
 async def upsert_item_concurrently(container, excluded_locations, num_upserts):
     tasks = []
     for _ in range(num_upserts):
+        item = _get_upsert_item()
         if excluded_locations:
-            tasks.append(container.upsert_item(get_existing_random_item(), etag=None, match_condition=None,
+            tasks.append(container.upsert_item(item, etag=None, match_condition=None,
                                                excluded_locations=excluded_locations))
         else:
-            tasks.append(container.upsert_item(get_existing_random_item(), etag=None, match_condition=None))
+            tasks.append(container.upsert_item(item, etag=None, match_condition=None))
     await asyncio.gather(*tasks)
 
 
