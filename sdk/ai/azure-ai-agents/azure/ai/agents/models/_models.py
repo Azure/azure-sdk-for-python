@@ -4377,47 +4377,7 @@ class RunStepCompletionUsage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RunStepConnectedAgentToolCall(RunStepToolCall, discriminator="connected_agent"):
-    """A record of a call to the connected agent.
-
-    :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
-     Required.
-    :vartype id: str
-    :ivar type: The object type, which is always 'connected_agent'. Required. Default value is
-     "connected_agent".
-    :vartype type: str
-    :ivar connected_agent: Required.
-    :vartype connected_agent: ~azure.ai.agents.models.RunStepConnectedAgentToolDetails
-    """
-
-    type: Literal["connected_agent"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The object type, which is always 'connected_agent'. Required. Default value is
-     \"connected_agent\"."""
-    connected_agent: "_models.RunStepConnectedAgentToolDetails" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        connected_agent: "_models.RunStepConnectedAgentToolDetails",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="connected_agent", **kwargs)
-
-
-class RunStepConnectedAgentToolDetails(_Model):
+class RunStepConnectedAgent(_Model):
     """The detailed information about connected agent tool call.
 
     :ivar name: The name of connected agent.
@@ -4470,6 +4430,46 @@ class RunStepConnectedAgentToolDetails(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class RunStepConnectedAgentToolCall(RunStepToolCall, discriminator="connected_agent"):
+    """A record of a call to the connected agent.
+
+    :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
+     Required.
+    :vartype id: str
+    :ivar type: The object type, which is always 'connected_agent'. Required. Default value is
+     "connected_agent".
+    :vartype type: str
+    :ivar connected_agent: The connected agent step information. Required.
+    :vartype connected_agent: ~azure.ai.agents.models.RunStepConnectedAgent
+    """
+
+    type: Literal["connected_agent"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'connected_agent'. Required. Default value is
+     \"connected_agent\"."""
+    connected_agent: "_models.RunStepConnectedAgent" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The connected agent step information. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        connected_agent: "_models.RunStepConnectedAgent",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="connected_agent", **kwargs)
 
 
 class RunStepDeepResearchToolCall(RunStepToolCall, discriminator="deep_research"):
@@ -4983,14 +4983,14 @@ class RunStepDeltaConnectedAgentToolCall(RunStepDeltaToolCall, discriminator="co
     :ivar type: The object type, which is always "connected_agent". Required. Default value is
      "connected_agent".
     :vartype type: str
-    :ivar tool_calls: The collection of tool calls for the tool call detail item. Required.
-    :vartype tool_calls: ~azure.ai.agents.models.RunStepConnectedAgentToolDetails
+    :ivar connected_agent: The collection of tool calls for the tool call detail item. Required.
+    :vartype connected_agent: ~azure.ai.agents.models.RunStepConnectedAgent
     """
 
     type: Literal["connected_agent"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always \"connected_agent\". Required. Default value is
      \"connected_agent\"."""
-    tool_calls: "_models.RunStepConnectedAgentToolDetails" = rest_field(
+    connected_agent: "_models.RunStepConnectedAgent" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The collection of tool calls for the tool call detail item. Required."""
@@ -5001,7 +5001,7 @@ class RunStepDeltaConnectedAgentToolCall(RunStepDeltaToolCall, discriminator="co
         *,
         index: int,
         id: str,  # pylint: disable=redefined-builtin
-        tool_calls: "_models.RunStepConnectedAgentToolDetails",
+        connected_agent: "_models.RunStepConnectedAgent",
     ) -> None: ...
 
     @overload

@@ -2335,7 +2335,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             run = await ai_client.runs.get(thread_id=thread_run.thread_id, run_id=thread_run.id)
             assert run is not None
         else:
-            run = await ai_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, polling_interval=self._sleep_time())
+            run = await ai_client.runs.create_and_process(
+                thread_id=thread.id, agent_id=agent.id, polling_interval=self._sleep_time()
+            )
         await ai_client.vector_stores.delete(vector_store.id)
         assert run.status == "completed", f"Error in run: {run.last_error}"
         messages = [m async for m in ai_client.messages.list(thread_id=thread.id)]
@@ -2400,7 +2402,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         )
         assert message.id, "The message was not created."
 
-        run = await ai_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, polling_interval=self._sleep_time())
+        run = await ai_client.runs.create_and_process(
+            thread_id=thread.id, agent_id=agent.id, polling_interval=self._sleep_time()
+        )
         assert run.id, "The run was not created."
         await self._remove_file_maybe(file_id, ai_client)
         await ai_client.delete_agent(agent.id)
@@ -2451,7 +2455,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         )
         assert message.id, "The message was not created."
 
-        run = await ai_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, polling_interval=self._sleep_time())
+        run = await ai_client.runs.create_and_process(
+            thread_id=thread.id, agent_id=agent.id, polling_interval=self._sleep_time()
+        )
         assert run.status == "completed", f"Error in run: {run.last_error}"
         messages = [m async for m in ai_client.messages.list(thread_id=thread.id)]
         assert messages
@@ -2512,7 +2518,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         )
         assert message.id, "The message was not created."
 
-        run = await ai_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, polling_interval=self._sleep_time())
+        run = await ai_client.runs.create_and_process(
+            thread_id=thread.id, agent_id=agent.id, polling_interval=self._sleep_time()
+        )
         assert run.id, "The run was not created."
         await self._remove_file_maybe(file_id, ai_client)
         assert run.status == "completed", f"Error in run: {run.last_error}"
@@ -2574,7 +2582,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         )
         assert message.id, "The message was not created."
 
-        run = await ai_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, polling_interval=self._sleep_time())
+        run = await ai_client.runs.create_and_process(
+            thread_id=thread.id, agent_id=agent.id, polling_interval=self._sleep_time()
+        )
         assert run.id, "The run was not created."
         await self._remove_file_maybe(file_id, ai_client)
         assert run.status == "completed", f"Error in run: {run.last_error}"
@@ -2624,7 +2634,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         )
         assert message.id, "The message was not created."
 
-        run = await ai_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, polling_interval=self._sleep_time())
+        run = await ai_client.runs.create_and_process(
+            thread_id=thread.id, agent_id=agent.id, polling_interval=self._sleep_time()
+        )
         assert run.status == "completed", f"Error in run: {run.last_error}"
         messages = [m async for m in ai_client.messages.list(thread_id=thread.id)]
         assert messages
@@ -2682,7 +2694,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         thread = await ai_client.threads.create(messages=[message])
         assert thread.id
 
-        run = await ai_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, polling_interval=self._sleep_time())
+        run = await ai_client.runs.create_and_process(
+            thread_id=thread.id, agent_id=agent.id, polling_interval=self._sleep_time()
+        )
         assert run.status == "completed", f"Error in run: {run.last_error}"
         messages = [m async for m in ai_client.messages.list(thread_id=thread.id)]
         assert messages
@@ -2840,7 +2854,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
                             print("Stream completed.")
                             break
             else:
-                run = await ai_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, include=include, polling_interval=self._sleep_time())
+                run = await ai_client.runs.create_and_process(
+                    thread_id=thread.id, agent_id=agent.id, include=include, polling_interval=self._sleep_time()
+                )
                 assert run.status == RunStatus.COMPLETED
             assert run is not None
             steps = [s async for s in ai_client.run_steps.list(thread_id=thread.id, run_id=run.id, include=include)]
@@ -2923,7 +2939,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             )
             assert message.id
 
-            run = await ai_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, polling_interval=self._sleep_time())
+            run = await ai_client.runs.create_and_process(
+                thread_id=thread.id, agent_id=agent.id, polling_interval=self._sleep_time()
+            )
 
             assert run.status == RunStatus.COMPLETED, run.last_error.message
 
@@ -2974,7 +2992,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
                 bing_grounding_connection_id=bing_conn_id,
                 deep_research_model=deep_research_model,
             )
-            
+
             await self._do_test_tool(
                 client=client,
                 model_name="gpt-4o",
@@ -2990,10 +3008,10 @@ class TestAgentClientAsync(AzureRecordedTestCase):
     @recorded_by_proxy_async
     async def test_tool_streaming_connected_agent(self, **kwargs):
         async with self.create_client(**kwargs, by_endpoint=True) as client:
-            model_name = 'gpt-4o'
+            model_name = "gpt-4o"
             connected_agent_name = "stock_bot"
             connected_agent = await self._get_connected_agent_tool(client, model_name, connected_agent_name)
-            
+
             try:
                 await self._do_test_tool_streaming(
                     client=client,
@@ -3010,10 +3028,10 @@ class TestAgentClientAsync(AzureRecordedTestCase):
     @recorded_by_proxy_async
     async def test_connected_agent_tool(self, **kwargs):
         async with self.create_client(**kwargs, by_endpoint=True) as client:
-            model_name = 'gpt-4o'
+            model_name = "gpt-4o"
             connected_agent_name = "stock_bot"
             connected_agent = await self._get_connected_agent_tool(client, model_name, connected_agent_name)
-            
+
             try:
                 await self._do_test_tool(
                     client=client,
@@ -3027,26 +3045,27 @@ class TestAgentClientAsync(AzureRecordedTestCase):
                 await client.delete_agent(connected_agent.connected_agent.id)
 
     async def _do_test_tool(
-            self,
-            client,
-            model_name,
-            tool_to_test,
-            instructions,
-            prompt,
-            expected_class,
-            headers=None,
-            polling_interval=1,
-            specific_message_text=None,
-            minimal_text_length=1,
-            **kwargs):
+        self,
+        client,
+        model_name,
+        tool_to_test,
+        instructions,
+        prompt,
+        expected_class,
+        headers=None,
+        polling_interval=1,
+        specific_message_text=None,
+        minimal_text_length=1,
+        **kwargs,
+    ):
         """
-        The helper method to test the non-interactive tools in the non-steaming scenarios.
+        The helper method to test the non-interactive tools in the non-streaming scenarios.
 
-        Note: kwargs may take  
+        Note: kwargs may take
             - connected_agent_name for checking connected tool.
         :param client: The agent client used in this experiment.
         :param model_name: The model deployment name to be used.
-        :param tool_to_test: The pre ceated tool to be used.
+        :param tool_to_test: The pre created tool to be used.
         :param instructions: The instructions, given to an agent.
         :param prompt: The prompt, given in the first user message.
         :param headers: The headers used to call the agents.
@@ -3057,12 +3076,12 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         if headers is None:
             headers = {}
         agent = await client.create_agent(
-                model=model_name,
-                name="my-assistant",
-                instructions=instructions,
-                tools=tool_to_test.definitions,
-                tool_resources=tool_to_test.resources,
-                headers=headers,
+            model=model_name,
+            name="my-assistant",
+            instructions=instructions,
+            tools=tool_to_test.definitions,
+            tool_resources=tool_to_test.resources,
+            headers=headers,
         )
         thread = await client.threads.create()
         await client.messages.create(
@@ -3070,31 +3089,37 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             role=MessageRole.USER,
             content=prompt,
         )
-        run = await client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, polling_interval=self._sleep_time(polling_interval))
+        run = await client.runs.create_and_process(
+            thread_id=thread.id, agent_id=agent.id, polling_interval=self._sleep_time(polling_interval)
+        )
         try:
             assert run.status != RunStatus.FAILED, run.last_error
-        
+
             # Fetch and log all messages
             messages = [m async for m in client.messages.list(thread_id=thread.id)]
             assert len(messages) > 1
-            
+
             # Find the agent's response
             agent_messages = [msg for msg in messages if msg.role == MessageRole.AGENT]
             assert len(agent_messages) > 0, "No agent response found"
-        
+
             # Verify the response contains some content
             agent_response = agent_messages[0]
             assert agent_response.content, "Agent response has no content"
-        
+
             # Check if response has text content
             text_messages = agent_response.text_messages
             assert len(text_messages) > 0, "No text content in agent response"
-            assert len(text_messages[0].text.value) > minimal_text_length, "Response too short - may not have completed research"
-            
+            assert (
+                len(text_messages[0].text.value) > minimal_text_length
+            ), "Response too short - may not have completed research"
+
             # Search for the specific message when asked.
             if specific_message_text:
-                assert any(specific_message_text in t.text.value.lower() for t in text_messages), f"{specific_message_text} was not found in messages."
-        
+                assert any(
+                    specific_message_text in t.text.value.lower() for t in text_messages
+                ), f"{specific_message_text} was not found in messages."
+
             if expected_class is not None:
                 found_step = False
                 async for run_step in client.run_steps.list(thread_id=thread.id, run_id=run.id):
@@ -3102,31 +3127,22 @@ class TestAgentClientAsync(AzureRecordedTestCase):
                         for tool_call in run_step.step_details.tool_calls:
                             if isinstance(tool_call, expected_class):
                                 found_step = True
-                                if 'connected_agent_name' in kwargs:
-                                    assert tool_call.connected_agent.name == kwargs['connected_agent_name']
+                                if "connected_agent_name" in kwargs:
+                                    assert tool_call.connected_agent.name == kwargs["connected_agent_name"]
                 assert found_step, f"The {expected_class} was not found."
         finally:
             await client.delete_agent(agent.id)
             await client.threads.delete(thread.id)
-        
+
     async def _do_test_tool_streaming(
-            self,
-            client,
-            model_name,
-            tool_to_test,
-            instructions,
-            prompt,
-            expected_delta_class,
-            headers=None
-        ):
+        self, client, model_name, tool_to_test, instructions, prompt, expected_delta_class, headers=None
+    ):
         """
-        Test tool output in streaming scenarios.
-        
-        The helper method to test the non-interactive tools in the steaming scenarios.
+        The helper method to test the non-interactive tools in the streaming scenarios.
 
         :param client: The agent client used in this experiment.
         :param model_name: The model deployment name to be used.
-        :param tool_to_test: The pre ceated tool to be used.
+        :param tool_to_test: The pre created tool to be used.
         :param instructions: The instructions, given to an agent.
         :param prompt: The prompt, given in the first user message.
         :param headers: The headers used to call the agents.
@@ -3135,12 +3151,12 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         if headers is None:
             headers = {}
         agent = await client.create_agent(
-                model=model_name,
-                name="my-assistant",
-                instructions=instructions,
-                tools=tool_to_test.definitions,
-                tool_resources=tool_to_test.resources,
-                headers=headers,
+            model=model_name,
+            name="my-assistant",
+            instructions=instructions,
+            tools=tool_to_test.definitions,
+            tool_resources=tool_to_test.resources,
+            headers=headers,
         )
         thread = await client.threads.create()
         await client.messages.create(
@@ -3148,44 +3164,44 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             role=MessageRole.USER,
             content=prompt,
         )
-        
+
         try:
             async with await client.runs.stream(thread_id=thread.id, agent_id=agent.id) as stream:
 
-                is_started = False;
-                received_message = False;
-                got_expected_delta = False;
-                is_completed = False;
-                is_run_step_created = False;
+                is_started = False
+                received_message = False
+                got_expected_delta = False
+                is_completed = False
+                is_run_step_created = False
                 async for event_type, event_data, _ in stream:
-        
+
                     if isinstance(event_data, MessageDeltaChunk):
-                        received_message=True
-        
+                        received_message = True
+
                     elif isinstance(event_data, RunStepDeltaChunk):
                         if expected_delta_class is not None:
-                            tool_calls_details = getattr(event_data.delta.step_details, 'tool_calls')
+                            tool_calls_details = getattr(event_data.delta.step_details, "tool_calls")
                             if isinstance(tool_calls_details, list):
                                 for tool_call in tool_calls_details:
                                     if isinstance(tool_call, expected_delta_class):
                                         got_expected_delta = True
                     elif event_type == AgentStreamEvent.THREAD_RUN_STEP_CREATED:
                         is_run_step_created = True
-                        
+
                     elif event_type == AgentStreamEvent.THREAD_RUN_CREATED:
                         is_started = True
                         assert isinstance(event_data, ThreadRun)
                         assert event_data.status != "failed", event_data.last_error
-                    
+
                     elif isinstance(event_data, ThreadRun):
                         assert event_data.status != "failed", event_data.last_error
-        
+
                     elif event_type == AgentStreamEvent.ERROR:
                         assert False, event_data
-        
+
                     elif event_type == AgentStreamEvent.DONE:
                         is_completed = True
-                
+
                 assert is_started, "The stream is missing Start event."
                 assert received_message, "The message was never received."
                 assert got_expected_delta, f"The delta tool call of type {expected_delta_class} was not found."
