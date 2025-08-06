@@ -14,7 +14,7 @@ from .._constants import EnvironmentVariables
 WORKLOAD_CONFIG_ERROR = (
     "WorkloadIdentityCredential authentication unavailable. The workload options are not fully "
     "configured. See the troubleshooting guide for more information: "
-    "https://aka.ms/azsdk/python/identity/workloadidentitycredential"
+    "https://aka.ms/azsdk/python/identity/workloadidentitycredential/troubleshoot"
 )
 
 
