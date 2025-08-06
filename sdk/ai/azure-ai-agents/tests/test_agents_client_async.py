@@ -86,11 +86,14 @@ agentClientPreparer = functools.partial(
     # TODO: uncomment this endpoint when re running with 1DP
     # azure_ai_agents_tests_project_endpoint="https://aiservices-id.services.ai.azure.com/api/projects/project-name",
     # TODO: remove this endpoint when re running with 1DP
-    azure_ai_agents_tests_project_endpoint="https://Sanitized.api.azureml.ms/agents/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/",
+    azure_ai_agents_tests_project_connection_string="https://Sanitized.api.azureml.ms/agents/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/",
+    azure_ai_agents_tests_project_endpoint="https://Sanitized.services.ai.azure.com/api/projects/00000",
     azure_ai_agents_tests_data_path="azureml://subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-resour-cegr-oupfoo1/workspaces/abcd-abcdabcdabcda-abcdefghijklm/datastores/workspaceblobstore/paths/LocalUpload/000000000000/product_info_1.md",
     azure_ai_agents_tests_storage_queue="https://foobar.queue.core.windows.net",
     azure_ai_agents_tests_search_index_name="sample_index",
     azure_ai_agents_tests_search_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/someindex",
+    azure_ai_agents_tests_bing_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.CognitiveServices/accounts/00000/projects/00000/connections/00000",
+    azure_ai_agents_tests_deep_research_model="gpt-4o-deep-research",
     azure_ai_agents_tests_is_test_run="True",
 )
 
@@ -129,10 +132,12 @@ user_functions_live = {fetch_current_datetime_live}
 class TestAgentClientAsync(AzureRecordedTestCase):
 
     # helper function: create client using environment variables
-    def create_client(self, **kwargs):
+    def create_client(self, by_endpoint=False, **kwargs) -> AgentsClient:
         # fetch environment variables
-        endpoint = kwargs.pop("azure_ai_agents_tests_project_endpoint")
-        credential = self.get_credential(AgentsClient, is_async=True)
+        endpoint = kwargs.pop("azure_ai_agents_tests_project_connection_string")
+        if by_endpoint:
+            endpoint = kwargs.pop("azure_ai_agents_tests_project_endpoint")
+        credential = self.get_credential(AgentsClient, is_async=False)
 
         # create and return client
         client = AgentsClient(

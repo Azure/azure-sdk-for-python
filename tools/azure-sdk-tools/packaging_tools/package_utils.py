@@ -2,6 +2,14 @@ import os
 import ast
 import time
 import shutil
+
+try:
+    # py 311 adds this library natively
+    import tomllib as toml
+except:
+    # otherwise fall back to pypi package tomli
+    import tomli as toml
+import tomli_w as tomlw
 from typing import Optional, Tuple, Dict, Any, List
 from pathlib import Path
 import logging
@@ -223,28 +231,21 @@ class CheckFile:
         if not title:
             _LOGGER.info(f"Can not find the title for {self.whole_package_name}")
 
-        # add `title` and update `is_stable` in sdk_packaging.toml
-        toml = Path(self.whole_package_name) / "sdk_packaging.toml"
-        stable_config = f'is_stable = {"true" if self.tag_is_stable and self.next_version != "1.0.0b1" else "false"}\n'
-        if toml.exists():
-
-            def edit_toml(content: List[str]):
-                has_title = False
-                has_isstable = False
-                for idx in range(len(content)):
-                    if "title" in content[idx]:
-                        has_title = True
-                    if "is_stable" in content[idx]:
-                        has_isstable = True
-                        content[idx] = stable_config
-                if not has_title:
-                    content.append(f'title = "{title}"\n')
-                if not has_isstable:
-                    content.append(stable_config)
-
-            modify_file(str(toml), edit_toml)
+        # add `title` and update `is_stable` in pyproject.toml
+        pyproject_toml = Path(self.whole_package_name) / "pyproject.toml"
+        if pyproject_toml.exists():
+            with open(pyproject_toml, "rb") as fd:
+                toml_data = toml.load(fd)
+            if "packaging" not in toml_data:
+                toml_data["packaging"] = {}
+            if title and not toml_data["packaging"].get("title"):
+                toml_data["packaging"]["title"] = title
+            toml_data["packaging"]["is_stable"] = self.tag_is_stable and self.next_version != "1.0.0b1"
+            with open(pyproject_toml, "wb") as fd:
+                tomlw.dump(toml_data, fd)
+            _LOGGER.info(f"Update {pyproject_toml} successfully")
         else:
-            _LOGGER.info(f"{os.getcwd()}/{toml} does not exist")
+            _LOGGER.info(f"{os.getcwd()}/{pyproject_toml} does not exist")
 
         build_packaging(output_folder=".", packages=[self.whole_package_name], build_conf=True)
         _LOGGER.info("packaging_tools --build-conf successfully")
@@ -381,42 +382,44 @@ class CheckFile:
             "mypy": "false",
         }
 
-        # Create new pyproject.toml if it doesn't exist
-        if not toml_path.exists():
-            with open(toml_path, "w") as file:
-                file.write("[tool.azure-sdk-build]\n")
-                for key, value in default_configs.items():
-                    file.write(f"{key} = {value}\n")
-                _LOGGER.info("Created pyproject.toml with default configurations")
-            return
+        # Load existing TOML or create new structure
+        if toml_path.exists():
+            try:
+                with open(toml_path, "rb") as file:
+                    toml_data = toml.load(file)
+            except Exception as e:
+                _LOGGER.warning(f"Error parsing pyproject.toml: {e}, creating new one")
+                toml_data = {}
+        else:
+            toml_data = {}
 
-        # If file exists, ensure all required configurations are present
-        def edit_toml(content: List[str]):
-            # Track if we have the [tool.azure-sdk-build] section
-            has_section = False
-            config_exists = {key: False for key in default_configs}
+        # Ensure [tool.azure-sdk-build] section exists
+        if "tool" not in toml_data:
+            toml_data["tool"] = {}
 
-            # Check for existing configurations and section
-            for i, line in enumerate(content):
-                if "[tool.azure-sdk-build]" in line:
-                    has_section = True
+        if "azure-sdk-build" not in toml_data["tool"]:
+            toml_data["tool"]["azure-sdk-build"] = {}
 
-                # Check for each configuration
-                for key in default_configs:
-                    if f"{key} = " in line:
-                        config_exists[key] = True
+        # Update configurations
+        azure_sdk_build = toml_data["tool"]["azure-sdk-build"]
 
-            # Add section if it doesn't exist
-            if not has_section:
-                content.append("\n[tool.azure-sdk-build]\n")
+        for key, value in default_configs.items():
+            if key not in azure_sdk_build:
+                _LOGGER.info(f"Adding {key} = {value} to pyproject.toml")
+                if isinstance(value, str):
+                    if value.lower() == "true":
+                        azure_sdk_build[key] = True
+                    elif value.lower() == "false":
+                        azure_sdk_build[key] = False
+                    else:
+                        azure_sdk_build[key] = value
+                else:
+                    azure_sdk_build[key] = value
+        # Write back to file
+        with open(toml_path, "wb") as file:
+            tomlw.dump(toml_data, file)
 
-            # Add missing configurations
-            for key, value in default_configs.items():
-                if not config_exists[key]:
-                    _LOGGER.info(f"Adding {key} = {value} to pyproject.toml")
-                    content.append(f"{key} = {value}\n")
-
-        modify_file(str(toml_path), edit_toml)
+        _LOGGER.info("Updated pyproject.toml with required azure-sdk-build configurations")
 
     def run(self):
         self.check_file_with_packaging_tool()
