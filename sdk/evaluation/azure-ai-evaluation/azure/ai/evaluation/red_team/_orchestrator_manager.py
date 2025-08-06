@@ -40,6 +40,46 @@ from ._utils.constants import DATA_EXT, TASK_STATUS
 from ._utils.logging_utils import log_strategy_start, log_error
 
 
+def network_retry_decorator(retry_config, logger, strategy_name, risk_category_name, prompt_idx=None):
+    """Create a reusable retry decorator for network operations.
+
+    :param retry_config: Retry configuration dictionary
+    :param logger: Logger instance for logging warnings
+    :param strategy_name: Name of the attack strategy
+    :param risk_category_name: Name of the risk category
+    :param prompt_idx: Optional prompt index for detailed logging
+    :return: Configured retry decorator
+    """
+
+    def decorator(func):
+        @retry(**retry_config["network_retry"])
+        async def wrapper(*args, **kwargs):
+            try:
+                return await func(*args, **kwargs)
+            except (
+                httpx.ConnectTimeout,
+                httpx.ReadTimeout,
+                httpx.ConnectError,
+                httpx.HTTPError,
+                ConnectionError,
+                TimeoutError,
+                OSError,
+                asyncio.TimeoutError,
+                httpcore.ReadTimeout,
+                httpx.HTTPStatusError,
+            ) as e:
+                prompt_detail = f" for prompt {prompt_idx}" if prompt_idx is not None else ""
+                logger.warning(
+                    f"Network error{prompt_detail} for {strategy_name}/{risk_category_name}: {type(e).__name__}: {str(e)}"
+                )
+                await asyncio.sleep(2)
+                raise
+
+        return wrapper
+
+    return decorator
+
+
 class OrchestratorManager:
     """Manages PyRIT orchestrators for different attack strategies."""
 
@@ -70,6 +110,32 @@ class OrchestratorManager:
         self._one_dp_project = one_dp_project
         self.retry_config = retry_config
         self.scan_output_dir = scan_output_dir
+
+    def _calculate_timeout(self, base_timeout: int, orchestrator_type: str) -> int:
+        """Calculate appropriate timeout based on orchestrator type.
+
+        Multi-turn and crescendo orchestrators need more generous timeouts due to their
+        iterative nature and multiple API calls per prompt.
+
+        :param base_timeout: Base timeout value in seconds
+        :param orchestrator_type: Type of orchestrator ('single', 'multi_turn', 'crescendo')
+        :return: Calculated timeout in seconds
+        """
+        timeout_multipliers = {
+            "single": 1.0,  # Standard timeout for single-turn
+            "multi_turn": 3.0,  # 3x timeout for multi-turn interactions
+            "crescendo": 4.0,  # 4x timeout for crescendo with backtracks
+        }
+
+        multiplier = timeout_multipliers.get(orchestrator_type, 1.0)
+        calculated_timeout = int(base_timeout * multiplier)
+
+        self.logger.debug(
+            f"Calculated timeout for {orchestrator_type} orchestrator: {calculated_timeout}s "
+            f"(base: {base_timeout}s, multiplier: {multiplier}x)"
+        )
+
+        return calculated_timeout
 
     def get_orchestrator_for_attack_strategy(
         self, attack_strategy: Union[AttackStrategy, List[AttackStrategy]]
@@ -176,38 +242,24 @@ class OrchestratorManager:
             # Process all prompts at once
             self.logger.debug(f"Processing {len(all_prompts)} prompts for {strategy_name}/{risk_category_name}")
             start_time = datetime.now()
-            try:
 
-                @retry(**self.retry_config["network_retry"])
+            # Calculate appropriate timeout for single-turn orchestrator
+            calculated_timeout = self._calculate_timeout(timeout, "single")
+
+            try:
+                # Create retry-enabled function using the reusable decorator
+                @network_retry_decorator(self.retry_config, self.logger, strategy_name, risk_category_name)
                 async def send_all_with_retry():
-                    try:
-                        return await asyncio.wait_for(
-                            orchestrator.send_prompts_async(
-                                prompt_list=all_prompts,
-                                memory_labels={
-                                    "risk_strategy_path": output_path,
-                                    "batch": 1,
-                                },
-                            ),
-                            timeout=timeout,
-                        )
-                    except (
-                        httpx.ConnectTimeout,
-                        httpx.ReadTimeout,
-                        httpx.ConnectError,
-                        httpx.HTTPError,
-                        ConnectionError,
-                        TimeoutError,
-                        OSError,
-                        asyncio.TimeoutError,
-                        httpcore.ReadTimeout,
-                        httpx.HTTPStatusError,
-                    ) as e:
-                        self.logger.warning(
-                            f"Network error for {strategy_name}/{risk_category_name}: {type(e).__name__}: {str(e)}"
-                        )
-                        await asyncio.sleep(2)
-                        raise
+                    return await asyncio.wait_for(
+                        orchestrator.send_prompts_async(
+                            prompt_list=all_prompts,
+                            memory_labels={
+                                "risk_strategy_path": output_path,
+                                "batch": 1,
+                            },
+                        ),
+                        timeout=calculated_timeout,
+                    )
 
                 # Execute the retry-enabled function
                 await send_all_with_retry()
@@ -217,7 +269,7 @@ class OrchestratorManager:
                 )
             except (asyncio.TimeoutError, tenacity.RetryError):
                 self.logger.warning(
-                    f"Prompt processing for {strategy_name}/{risk_category_name} timed out after {timeout} seconds, continuing with partial results"
+                    f"Prompt processing for {strategy_name}/{risk_category_name} timed out after {calculated_timeout} seconds, continuing with partial results"
                 )
                 print(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category_name}")
                 if task_statuses:
@@ -323,6 +375,9 @@ class OrchestratorManager:
         if red_team_info:
             red_team_info[strategy_name][risk_category_name]["data_file"] = output_path
 
+        # Calculate appropriate timeout for multi-turn orchestrator
+        calculated_timeout = self._calculate_timeout(timeout, "multi_turn")
+
         for prompt_idx, prompt in enumerate(all_prompts):
             prompt_start_time = datetime.now()
             self.logger.debug(f"Processing prompt {prompt_idx+1}/{len(all_prompts)}")
@@ -360,36 +415,21 @@ class OrchestratorManager:
                 self.logger.debug(f"Current prompt (truncated): {prompt[:50]}...")
 
                 try:
-
-                    @retry(**self.retry_config["network_retry"])
+                    # Create retry-enabled function using the reusable decorator
+                    @network_retry_decorator(
+                        self.retry_config, self.logger, strategy_name, risk_category_name, prompt_idx + 1
+                    )
                     async def send_prompt_with_retry():
-                        try:
-                            return await asyncio.wait_for(
-                                orchestrator.run_attack_async(
-                                    objective=prompt,
-                                    memory_labels={
-                                        "risk_strategy_path": output_path,
-                                        "batch": 1,
-                                    },
-                                ),
-                                timeout=timeout,
-                            )
-                        except (
-                            httpx.ConnectTimeout,
-                            httpx.ReadTimeout,
-                            httpx.ConnectError,
-                            httpx.HTTPError,
-                            ConnectionError,
-                            TimeoutError,
-                            asyncio.TimeoutError,
-                            httpcore.ReadTimeout,
-                            httpx.HTTPStatusError,
-                        ) as e:
-                            self.logger.warning(
-                                f"Network error in prompt {prompt_idx+1} for {strategy_name}/{risk_category_name}: {type(e).__name__}: {str(e)}"
-                            )
-                            await asyncio.sleep(1)
-                            raise
+                        return await asyncio.wait_for(
+                            orchestrator.run_attack_async(
+                                objective=prompt,
+                                memory_labels={
+                                    "risk_strategy_path": output_path,
+                                    "batch": 1,
+                                },
+                            ),
+                            timeout=calculated_timeout,
+                        )
 
                     # Execute the retry-enabled function
                     await send_prompt_with_retry()
@@ -406,7 +446,7 @@ class OrchestratorManager:
 
                 except (asyncio.TimeoutError, tenacity.RetryError):
                     self.logger.warning(
-                        f"Batch {prompt_idx+1} for {strategy_name}/{risk_category_name} timed out after {timeout} seconds, continuing with partial results"
+                        f"Batch {prompt_idx+1} for {strategy_name}/{risk_category_name} timed out after {calculated_timeout} seconds, continuing with partial results"
                     )
                     print(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category_name}, Batch {prompt_idx+1}")
                     # Set task status to TIMEOUT
@@ -496,6 +536,9 @@ class OrchestratorManager:
         if red_team_info:
             red_team_info[strategy_name][risk_category_name]["data_file"] = output_path
 
+        # Calculate appropriate timeout for crescendo orchestrator
+        calculated_timeout = self._calculate_timeout(timeout, "crescendo")
+
         for prompt_idx, prompt in enumerate(all_prompts):
             prompt_start_time = datetime.now()
             self.logger.debug(f"Processing prompt {prompt_idx+1}/{len(all_prompts)}")
@@ -540,36 +583,21 @@ class OrchestratorManager:
                 self.logger.debug(f"Current prompt (truncated): {prompt[:50]}...")
 
                 try:
-
-                    @retry(**self.retry_config["network_retry"])
+                    # Create retry-enabled function using the reusable decorator
+                    @network_retry_decorator(
+                        self.retry_config, self.logger, strategy_name, risk_category_name, prompt_idx + 1
+                    )
                     async def send_prompt_with_retry():
-                        try:
-                            return await asyncio.wait_for(
-                                orchestrator.run_attack_async(
-                                    objective=prompt,
-                                    memory_labels={
-                                        "risk_strategy_path": output_path,
-                                        "batch": prompt_idx + 1,
-                                    },
-                                ),
-                                timeout=timeout,
-                            )
-                        except (
-                            httpx.ConnectTimeout,
-                            httpx.ReadTimeout,
-                            httpx.ConnectError,
-                            httpx.HTTPError,
-                            ConnectionError,
-                            TimeoutError,
-                            asyncio.TimeoutError,
-                            httpcore.ReadTimeout,
-                            httpx.HTTPStatusError,
-                        ) as e:
-                            self.logger.warning(
-                                f"Network error in prompt {prompt_idx+1} for {strategy_name}/{risk_category_name}: {type(e).__name__}: {str(e)}"
-                            )
-                            await asyncio.sleep(1)
-                            raise
+                        return await asyncio.wait_for(
+                            orchestrator.run_attack_async(
+                                objective=prompt,
+                                memory_labels={
+                                    "risk_strategy_path": output_path,
+                                    "batch": prompt_idx + 1,
+                                },
+                            ),
+                            timeout=calculated_timeout,
+                        )
 
                     # Execute the retry-enabled function
                     await send_prompt_with_retry()
@@ -586,7 +614,7 @@ class OrchestratorManager:
 
                 except (asyncio.TimeoutError, tenacity.RetryError):
                     self.logger.warning(
-                        f"Batch {prompt_idx+1} for {strategy_name}/{risk_category_name} timed out after {timeout} seconds, continuing with partial results"
+                        f"Batch {prompt_idx+1} for {strategy_name}/{risk_category_name} timed out after {calculated_timeout} seconds, continuing with partial results"
                     )
                     print(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category_name}, Batch {prompt_idx+1}")
                     # Set task status to TIMEOUT

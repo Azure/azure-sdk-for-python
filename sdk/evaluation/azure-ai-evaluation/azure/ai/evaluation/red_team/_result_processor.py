@@ -7,6 +7,7 @@ Result processing module for Red Team Agent.
 This module handles the processing, aggregation, and formatting of red team evaluation results.
 """
 
+import hashlib
 import json
 import math
 import os
@@ -70,6 +71,80 @@ class ResultProcessor:
 
                 data_file = data.get("data_file", "")
                 eval_result = data.get("evaluation_result")
+                eval_result_file = data.get("evaluation_result_file", "")
+
+                # Initialize evaluation lookup structures
+                eval_row_lookup = {}
+                rows = []
+
+                # Process evaluation results if available
+                if eval_result:
+                    try:
+                        # EvaluationResult is a TypedDict with structure: {"metrics": Dict, "rows": List[Dict], "studio_url": str}
+                        self.logger.debug(
+                            f"Evaluation result type for {strategy_name}/{risk_category}: {type(eval_result)}"
+                        )
+                        if isinstance(eval_result, dict) and "rows" in eval_result:
+                            rows = eval_result["rows"]
+                            self.logger.debug(f"Found {len(rows)} evaluation rows for {strategy_name}/{risk_category}")
+                        else:
+                            self.logger.warning(
+                                f"Unexpected evaluation result format for {strategy_name}/{risk_category}: {type(eval_result)}"
+                            )
+                            self.logger.debug(
+                                f"Evaluation result keys: {list(eval_result.keys()) if isinstance(eval_result, dict) else 'Not a dict'}"
+                            )
+                            rows = []
+
+                        # Create lookup dictionary for faster access
+                        for row in rows:
+                            if "inputs.conversation" in row and "messages" in row["inputs.conversation"]:
+                                messages = row["inputs.conversation"]["messages"]
+                                key = hashlib.sha256(json.dumps(messages, sort_keys=True).encode("utf-8")).hexdigest()
+                                eval_row_lookup[key] = row
+
+                    except Exception as e:
+                        self.logger.warning(
+                            f"Error processing evaluation results for {strategy_name}/{risk_category}: {str(e)}"
+                        )
+                        rows = []
+                        eval_row_lookup = {}
+                elif eval_result_file and os.path.exists(eval_result_file):
+                    # Try to load evaluation results from file if eval_result is None
+                    try:
+                        self.logger.debug(
+                            f"Loading evaluation results from file for {strategy_name}/{risk_category}: {eval_result_file}"
+                        )
+                        with open(eval_result_file, "r", encoding="utf-8") as f:
+                            file_eval_result = json.load(f)
+
+                        if isinstance(file_eval_result, dict) and "rows" in file_eval_result:
+                            rows = file_eval_result["rows"]
+                            self.logger.debug(
+                                f"Loaded {len(rows)} evaluation rows from file for {strategy_name}/{risk_category}"
+                            )
+
+                            # Create lookup dictionary for faster access
+                            for row in rows:
+                                if "inputs.conversation" in row and "messages" in row["inputs.conversation"]:
+                                    messages = row["inputs.conversation"]["messages"]
+                                    key = hashlib.sha256(
+                                        json.dumps(messages, sort_keys=True).encode("utf-8")
+                                    ).hexdigest()
+                                    eval_row_lookup[key] = row
+                        else:
+                            self.logger.warning(
+                                f"Evaluation file has unexpected format for {strategy_name}/{risk_category}"
+                            )
+
+                    except Exception as e:
+                        self.logger.warning(
+                            f"Error loading evaluation results from file for {strategy_name}/{risk_category}: {str(e)}"
+                        )
+                        rows = []
+                        eval_row_lookup = {}
+                else:
+                    self.logger.debug(f"No evaluation results available for {strategy_name}/{risk_category}")
 
                 # Process data file to extract conversations
                 if data_file and os.path.exists(data_file):
@@ -88,7 +163,9 @@ class ResultProcessor:
                                         # If we have evaluation results, try to extract attack success and risk assessment
                                         eval_row = None
                                         if eval_result:
-                                            key = hashlib.sha256(json.dumps(messages, sort_keys=True).encode("utf-8")).hexdigest()
+                                            key = hashlib.sha256(
+                                                json.dumps(messages, sort_keys=True).encode("utf-8")
+                                            ).hexdigest()
                                             eval_row = eval_row_lookup.get(key)
                                             if eval_row:
                                                 if f"outputs.{risk_category}.{risk_category}_result" in eval_row:
@@ -108,7 +185,9 @@ class ResultProcessor:
                                                                 eval_row[f"outputs.{risk_value}.{risk_value}"]
                                                                 if f"outputs.{risk_value}.{risk_value}" in eval_row
                                                                 else (
-                                                                    eval_row[f"outputs.{risk_value}.{risk_value}_result"]
+                                                                    eval_row[
+                                                                        f"outputs.{risk_value}.{risk_value}_result"
+                                                                    ]
                                                                     if f"outputs.{risk_value}.{risk_value}_result"
                                                                     in eval_row
                                                                     else None
@@ -116,7 +195,8 @@ class ResultProcessor:
                                                             ),
                                                             "reason": (
                                                                 eval_row[f"outputs.{risk_value}.{risk_value}_reason"]
-                                                                if f"outputs.{risk_value}.{risk_value}_reason" in eval_row
+                                                                if f"outputs.{risk_value}.{risk_value}_reason"
+                                                                in eval_row
                                                                 else None
                                                             ),
                                                         }

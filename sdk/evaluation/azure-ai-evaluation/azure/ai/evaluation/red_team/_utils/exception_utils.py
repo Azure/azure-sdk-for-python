@@ -78,24 +78,22 @@ class ExceptionHandler:
         import httpcore
 
         # Network-related errors
-        if isinstance(
-            exception,
-            (
-                httpx.ConnectTimeout,
-                httpx.ReadTimeout,
-                httpx.ConnectError,
-                httpx.HTTPError,
-                httpx.TimeoutException,
-                httpcore.ReadTimeout,
-                ConnectionError,
-                ConnectionRefusedError,
-                ConnectionResetError,
-                TimeoutError,
-            ),
-        ):
+        network_exceptions = (
+            httpx.ConnectTimeout,
+            httpx.ReadTimeout,
+            httpx.ConnectError,
+            httpx.HTTPError,
+            httpx.TimeoutException,
+            httpcore.ReadTimeout,
+            ConnectionError,
+            ConnectionRefusedError,
+            ConnectionResetError,
+        )
+
+        if isinstance(exception, network_exceptions):
             return ErrorCategory.NETWORK
 
-        # Timeout errors
+        # Timeout errors (separate from network to handle asyncio.TimeoutError)
         if isinstance(exception, (TimeoutError, asyncio.TimeoutError)):
             return ErrorCategory.TIMEOUT
 
@@ -103,22 +101,31 @@ class ExceptionHandler:
         if isinstance(exception, (IOError, OSError, FileNotFoundError, PermissionError)):
             return ErrorCategory.FILE_IO
 
-        # Authentication errors
-        if "authentication" in str(exception).lower() or "unauthorized" in str(exception).lower():
-            return ErrorCategory.AUTHENTICATION
+        # HTTP status code specific errors
+        if hasattr(exception, "response") and hasattr(exception.response, "status_code"):
+            status_code = exception.response.status_code
+            if 500 <= status_code < 600:
+                return ErrorCategory.NETWORK
+            elif status_code == 401:
+                return ErrorCategory.AUTHENTICATION
+            elif status_code == 403:
+                return ErrorCategory.CONFIGURATION
 
-        # Configuration errors
-        if "configuration" in str(exception).lower() or "config" in str(exception).lower():
-            return ErrorCategory.CONFIGURATION
-
-        # Check exception message for hints
+        # String-based categorization
         message = str(exception).lower()
-        if "orchestrator" in message:
-            return ErrorCategory.ORCHESTRATOR
-        elif "evaluation" in message or "evaluate" in message:
-            return ErrorCategory.EVALUATION
-        elif "data" in message or "json" in message:
-            return ErrorCategory.DATA_PROCESSING
+
+        # Define keyword mappings for cleaner logic
+        keyword_mappings = {
+            ErrorCategory.AUTHENTICATION: ["authentication", "unauthorized"],
+            ErrorCategory.CONFIGURATION: ["configuration", "config"],
+            ErrorCategory.ORCHESTRATOR: ["orchestrator"],
+            ErrorCategory.EVALUATION: ["evaluation", "evaluate", "model_error"],
+            ErrorCategory.DATA_PROCESSING: ["data", "json"],
+        }
+
+        for category, keywords in keyword_mappings.items():
+            if any(keyword in message for keyword in keywords):
+                return category
 
         return ErrorCategory.UNKNOWN
 

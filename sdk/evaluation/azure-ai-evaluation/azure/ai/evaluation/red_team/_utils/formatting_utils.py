@@ -180,10 +180,13 @@ def write_pyrit_outputs_to_file(
     :param output_path: Path to write the output file
     :type output_path: str
     :param logger: Logger instance for logging
-    :param batch_idx: Optional batch index for multi-batch processing
+    :param batch_idx: Optional batch index for multi-batch processing, used to distinguish between different batches of the same strategy
     :type batch_idx: Optional[int]
     :return: Path to the output file
     :rtype: str
+    :raises IOError: If the output file cannot be read or written
+    :raises PermissionError: If there are insufficient permissions to access the output file
+    :raises Exception: For other unexpected errors during file operations or memory retrieval
     """
     import itertools
     import os
