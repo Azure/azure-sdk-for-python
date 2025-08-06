@@ -37,7 +37,7 @@ version = {attr = "azure.eventhub._version.VERSION"}
 readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
 
 [tool.setuptools.packages.find]
-exclude = ["samples*", "tests*", "stress*", "azure"]
+exclude = ["samples*", "tests*", "doc*", "stress*", "azure"]
 
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]
