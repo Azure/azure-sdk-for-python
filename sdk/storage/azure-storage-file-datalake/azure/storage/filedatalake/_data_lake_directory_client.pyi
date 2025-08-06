@@ -7,7 +7,10 @@
 
 from datetime import datetime
 from typing import (
-    Any, Dict, Optional, Union,
+    Any,
+    Dict,
+    Optional,
+    Union,
 )
 from types import TracebackType
 from typing_extensions import Self
@@ -18,22 +21,16 @@ from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from ._data_lake_lease import DataLakeLeaseClient
 from ._data_lake_file_client import DataLakeFileClient
-from ._models import (
-    ContentSettings,
-    CustomerProvidedEncryptionKey,
-    DirectoryProperties,
-    FileProperties,
-    PathProperties
-)
+from ._models import ContentSettings, CustomerProvidedEncryptionKey, DirectoryProperties, FileProperties, PathProperties
 from ._path_client import PathClient
-
 
 class DataLakeDirectoryClient(PathClient):
     url: str
     primary_endpoint: str
     primary_hostname: str
     def __init__(
-        self, account_url: str,
+        self,
+        account_url: str,
         file_system_name: str,
         directory_name: str,
         credential: Optional[

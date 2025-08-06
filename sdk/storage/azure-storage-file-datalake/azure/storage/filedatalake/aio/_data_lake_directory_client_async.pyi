@@ -7,7 +7,10 @@
 
 from datetime import datetime
 from typing import (
-    Any, Dict, Optional, Union,
+    Any,
+    Dict,
+    Optional,
+    Union,
 )
 from types import TracebackType
 from typing_extensions import Self
@@ -23,12 +26,11 @@ from .._models import (
     CustomerProvidedEncryptionKey,
     DirectoryProperties,
     FileProperties,
-    PathProperties
+    PathProperties,
 )
 from ._data_lake_file_client_async import DataLakeFileClient
 from ._data_lake_lease_async import DataLakeLeaseClient
 from ._path_client_async import PathClient
-
 
 class DataLakeDirectoryClient(PathClient):
     url: str
@@ -54,7 +56,8 @@ class DataLakeDirectoryClient(PathClient):
     async def close(self) -> None: ...
     @classmethod
     def from_connection_string(
-        cls, conn_str: str,
+        cls,
+        conn_str: str,
         file_system_name: str,
         directory_name: str,
         credential: Optional[
@@ -195,7 +198,8 @@ class DataLakeDirectoryClient(PathClient):
     ) -> DataLakeFileClient: ...
     @distributed_trace
     def get_paths(
-        self, *,
+        self,
+        *,
         recursive: bool = True,
         max_results: Optional[int] = None,
         upn: Optional[bool] = None,
