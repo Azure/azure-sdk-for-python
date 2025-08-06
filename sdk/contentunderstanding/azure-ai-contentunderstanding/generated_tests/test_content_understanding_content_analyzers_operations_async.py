@@ -135,6 +135,34 @@ def new_simple_content_analyzer_object(analyzer_id: str, description: Optional[s
     )
 
 
+def new_marketing_video_analyzer_object(analyzer_id: str, description: Optional[str] = None, tags: Optional[Dict[str, str]] = None) -> ContentAnalyzer:
+    """Create a marketing video ContentAnalyzer object based on the marketing video template.
+    
+    Args:
+        analyzer_id: The analyzer ID
+        description: Optional description for the analyzer
+        tags: Optional tags for the analyzer
+        
+    Returns:
+        ContentAnalyzer: A configured ContentAnalyzer object for video analysis
+    """
+    if description is None:
+        description = f"marketing video analyzer: {analyzer_id}"
+    if tags is None:
+        tags = {"test_type": "marketing_video"}
+        
+    return ContentAnalyzer(
+        base_analyzer_id="prebuilt-videoAnalyzer",
+        config=ContentAnalyzerConfig(
+            return_details=True,
+        ),
+        description=description,
+        mode=AnalysisMode.STANDARD,
+        processing_location=ProcessingLocation.GLOBAL,
+        tags=tags,
+    )
+
+
 def assert_poller_properties(poller, poller_name: str = "Poller"):
     """Assert common poller properties for any AsyncLROPoller.
     
@@ -145,7 +173,6 @@ def assert_poller_properties(poller, poller_name: str = "Poller"):
     Raises:
         AssertionError: If any poller property assertion fails
     """
-    print(f"{poller_name}:\n{poller}")
     assert poller is not None, f"{poller_name} should not be None"
     assert poller.status() is not None, f"{poller_name} status should not be None"
     assert poller.status() is not "", f"{poller_name} status should not be empty"
@@ -195,14 +222,15 @@ def assert_simple_content_analyzer_result(analysis_result, result_name: str = "A
     print(f"Total amount field validation successful")
 
 
-def save_analysis_result_to_file(analysis_result, test_name: str, identifier: Optional[str] = None, output_dir: str = "test_output") -> str:
+def save_analysis_result_to_file(analysis_result, test_name: str, test_pyfile_dir: str, identifier: Optional[str] = None, output_dir: str = "test_output") -> str:
     """Save analysis result to output file using pytest naming convention.
     
     Args:
         analysis_result: The analysis result object to save
         test_name: Name of the test case (e.g., function name)
+        test_pyfile_dir: Directory where pytest files are located
         identifier: Optional unique identifier for the result (e.g., analyzer_id)
-        output_dir: Directory to save the output file (default: "test_output")
+        output_dir: Directory name to save the output file (default: "test_output")
         
     Returns:
         str: Path to the saved output file
@@ -215,23 +243,77 @@ def save_analysis_result_to_file(analysis_result, test_name: str, identifier: Op
     from datetime import datetime
     
     # Create output directory if it doesn't exist
-    os.makedirs(output_dir, exist_ok=True)
+    output_dir_path = os.path.join(test_pyfile_dir, output_dir)
+    os.makedirs(output_dir_path, exist_ok=True)
     
     # Generate output filename with timestamp
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     
     # Build filename with test name and optional identifier
     if identifier:
-        output_filename = f"{output_dir}/{test_name}_{identifier}_{timestamp}.json"
+        output_filename = f"{test_name}_{identifier}_{timestamp}.json"
     else:
-        output_filename = f"{output_dir}/{test_name}_{timestamp}.json"
+        output_filename = f"{test_name}_{timestamp}.json"
+    
+    saved_file_path = os.path.join(output_dir_path, output_filename)
     
     # Save the analysis result
-    with open(output_filename, "w") as output_file:
+    with open(saved_file_path, "w") as output_file:
         json.dump(analysis_result.as_dict(), output_file, indent=2)
     
-    print(f"Analysis result saved to: {output_filename}")
-    return output_filename
+    print(f"Analysis result saved to: {saved_file_path}")
+    return saved_file_path
+
+
+def save_keyframe_image_to_file(
+    image_content: bytes, 
+    keyframe_id: str, 
+    test_name: str, 
+    test_pyfile_dir: str, 
+    identifier: Optional[str] = None,
+    output_dir: str = "test_output"
+) -> str:
+    """Save keyframe image to output file using pytest naming convention.
+    
+    Args:
+        image_content: The binary image content to save
+        keyframe_id: The keyframe ID (e.g., "keyFrame.1")
+        test_name: Name of the test case (e.g., function name)
+        test_pyfile_dir: Directory where pytest files are located
+        identifier: Optional unique identifier to avoid conflicts (e.g., analyzer_id)
+        output_dir: Directory name to save the output file (default: "test_output")
+        
+    Returns:
+        str: Path to the saved image file
+        
+    Raises:
+        OSError: If there are issues creating directory or writing file
+    """
+    import os
+    from datetime import datetime
+    
+    # Generate timestamp and frame ID
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    frame_id = keyframe_id.replace('keyFrame.', '')
+    
+    # Create output directory if it doesn't exist
+    output_dir_path = os.path.join(test_pyfile_dir, output_dir)
+    os.makedirs(output_dir_path, exist_ok=True)
+    
+    # Generate output filename with optional identifier to avoid conflicts
+    if identifier:
+        output_filename = f"{test_name}_{identifier}_{timestamp}_{frame_id}.jpg"
+    else:
+        output_filename = f"{test_name}_{timestamp}_{frame_id}.jpg"
+    
+    saved_file_path = os.path.join(output_dir_path, output_filename)
+    
+    # Write the image content to file
+    with open(saved_file_path, "wb") as image_file:
+        image_file.write(image_content)
+    
+    print(f"Image file saved to: {saved_file_path}")
+    return saved_file_path
 
 
 async def create_analyzer_and_assert(
@@ -252,7 +334,7 @@ async def create_analyzer_and_assert(
     Raises:
         AssertionError: If the creation fails or assertions fail
     """
-    print(f"Creating analyzer {analyzer_id}")
+    print(f"\nCreating analyzer {analyzer_id}")
     
     # Start the analyzer creation operation
     poller = await client.content_analyzers.begin_create_or_replace(
@@ -262,10 +344,10 @@ async def create_analyzer_and_assert(
 
     # Extract operation_id from the poller using the helper function
     operation_id = extract_operation_id_from_poller(poller, PollerType.ANALYZER_CREATION)
-    print(f"Extracted operation_id: {operation_id}")
+    print(f"  Extracted operation_id: {operation_id}")
 
     # Check operation status while it's running
-    print(f"Checking operation status for operation_id: {operation_id}")
+    print(f"  Checking operation status for operation_id: {operation_id}")
     status_response = await client.content_analyzers.get_operation_status(
         analyzer_id=analyzer_id,
         operation_id=operation_id,
@@ -273,7 +355,7 @@ async def create_analyzer_and_assert(
 
     # Verify the operation status response
     assert status_response is not None
-    print(f"Operation status: {status_response}")
+    print(f"  Operation status: {status_response}")
     
     # Check that the operation status has expected fields
     assert hasattr(status_response, 'status') or hasattr(status_response, 'operation_status')
@@ -281,12 +363,12 @@ async def create_analyzer_and_assert(
     assert status_response.id == operation_id
     
     # Wait for the operation to complete
-    print(f"Waiting for analyzer {analyzer_id} to be created")
+    print(f"  Waiting for analyzer {analyzer_id} to be created")
     response = await poller.result()
     assert response is not None
     assert poller.status() == "Succeeded"
     assert poller.done()
-    print(f"Analyzer {analyzer_id} is created successfully")
+    print(f"  Analyzer {analyzer_id} is created successfully")
     
     # Additional poller assertions
     assert poller is not None
@@ -296,9 +378,106 @@ async def create_analyzer_and_assert(
     
     # Verify the analyzer is in the list
     assert await analyzer_in_list(client, analyzer_id), f"Created analyzer with ID '{analyzer_id}' was not found in the list"
-    print(f"Verified analyzer {analyzer_id} is in the list")
+    print(f"  Verified analyzer {analyzer_id} is in the list")
     
     return poller, operation_id
+
+async def download_keyframes_and_assert(client, analysis_operation_id: str, result, test_pyfile_dir: str, identifier: Optional[str] = None) -> None:
+    """Download keyframes from video analysis result and assert their existence.
+
+    Downloads up to 3 keyframes: first, middle, and last frame to avoid duplicates.
+    
+    Args:
+        client: The ContentUnderstandingClient instance
+        analysis_operation_id: The operation ID from the analysis
+        result: The analysis result containing markdown with keyframes
+        test_pyfile_dir: The directory where pytest files are located
+        identifier: Optional unique identifier to avoid conflicts (e.g., analyzer_id)
+        
+    Returns:
+        None
+        
+    Raises:
+        AssertionError: If no keyframes are found in the analysis result
+    """
+    import re
+    import os
+    from datetime import datetime
+    
+    keyframe_ids = set()
+    
+    # Iterate over contents to find keyframes from markdown
+    for content in result.contents:
+        # Extract keyframe IDs from "markdown" if it exists and is a string
+        markdown_content = getattr(content, 'markdown', '')
+        if isinstance(markdown_content, str):
+            # Use the same regex pattern as the official sample: (keyFrame\.d+)\.jpg
+            keyframe_ids.update(re.findall(r"(keyFrame\.\d+)\.jpg", markdown_content))
+    
+    print(f"Found keyframe IDs in markdown: {keyframe_ids}")
+    
+    # Assert that keyframe IDs were found in the video analysis
+    assert keyframe_ids, "No keyframe IDs were found in the video analysis markdown content. Video analysis should generate keyframes that can be extracted using regex pattern."
+    
+    print(f"Successfully extracted {len(keyframe_ids)} keyframe IDs from video analysis")
+    
+    # Sort keyframes by frame number to get first, middle, and last
+    sorted_keyframes = sorted(keyframe_ids, key=lambda x: int(x.replace('keyFrame.', '')))
+    
+    # Create a set with first, middle, and last frames (automatically removes duplicates)
+    frames_set = {sorted_keyframes[0], sorted_keyframes[-1], sorted_keyframes[len(sorted_keyframes) // 2]}
+    
+    # Convert set to list for processing
+    frames_to_download = list(frames_set)
+    
+    print(f"Selected frames to download: {frames_to_download}")
+    
+    # Try to retrieve the selected keyframe images using get_result_file API
+    files_retrieved = 0
+    
+    for keyframe_id in frames_to_download:
+        print(f"Trying to get result file with path: {keyframe_id}")
+        response = await client.content_analyzers.get_result_file(
+            operation_id=analysis_operation_id,
+            path=keyframe_id,  # Use keyframe_id directly as path, no .jpg extension
+        )
+        
+        # Handle the response - it's an async iterator that needs to be collected
+        if hasattr(response, '__aiter__'):
+            # It's an async iterator, collect all bytes efficiently
+            chunks = []
+            async for chunk in response:
+                chunks.append(chunk)
+            response = b''.join(chunks)
+        
+        # Assert that we successfully get a response and it's valid image data
+        assert response is not None, f"Response for path {keyframe_id} should not be None"
+        assert isinstance(response, bytes), f"Response for {keyframe_id} should be bytes (image data), got {type(response)}"
+        assert len(response) > 0, f"Image file content for {keyframe_id} should not be empty"
+        
+        print(f"Successfully retrieved image file for path: {keyframe_id}")
+        print(f"Image file content length: {len(response)} bytes")
+        
+        # Save the image file using the helper function
+        saved_file_path = save_keyframe_image_to_file(
+            image_content=response,
+            keyframe_id=keyframe_id,
+            test_name="test_content_analyzers_get_result_file",
+            test_pyfile_dir=test_pyfile_dir,
+            identifier=identifier
+        )
+        
+        # Verify the saved file exists and has content
+        assert os.path.exists(saved_file_path), f"Saved image file should exist at {saved_file_path}"
+        assert os.path.getsize(saved_file_path) > 0, f"Saved image file should not be empty"
+        
+        files_retrieved += 1
+        print(f"Successfully downloaded keyframe image: {keyframe_id}")
+    
+    # Assert that we successfully downloaded all expected files
+    assert files_retrieved == len(frames_to_download), f"Expected to download {len(frames_to_download)} files, but only downloaded {files_retrieved}"
+    print(f"Successfully completed get_result_file test - downloaded {files_retrieved} keyframe images")
+
 
 class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandingClientTestBaseAsync):
     @ContentUnderstandingPreparer()
@@ -695,9 +874,12 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             # Wait for analysis completion
             print(f"Waiting for analysis completion")
             analysis_result = await analysis_poller.result()
-            print(f"Analysis completed")
+            print(f"  Analysis completed")
             
-            output_filename = save_analysis_result_to_file(analysis_result, "test_content_analyzers_begin_analyze_url", analyzer_id)
+            # Get test file directory for saving output
+            import os
+            test_file_dir = os.path.dirname(os.path.abspath(__file__))
+            output_filename = save_analysis_result_to_file(analysis_result, "test_content_analyzers_begin_analyze_url", test_file_dir, analyzer_id)
 
             # Now assert the field results
             assert_simple_content_analyzer_result(analysis_result, "Analysis result")
@@ -766,9 +948,9 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             # Wait for analysis completion
             print(f"Waiting for analysis completion")
             analysis_result = await analysis_poller.result()
-            print(f"Analysis completed")
+            print(f"  Analysis completed")
             
-            output_filename = save_analysis_result_to_file(analysis_result, "test_content_analyzers_begin_analyze_binary", analyzer_id)
+            output_filename = save_analysis_result_to_file(analysis_result, "test_content_analyzers_begin_analyze_binary", test_file_dir, analyzer_id)
 
             # Now assert the field results
             assert_simple_content_analyzer_result(analysis_result, "Analysis result")
@@ -836,16 +1018,16 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             # Wait for analysis completion first
             print(f"Waiting for analysis completion")
             _ = await analysis_poller.result()
-            print(f"Analysis completed")
+            print(f"  Analysis completed")
 
             # Extract operation ID for get_result test - this should not fail
             analysis_operation_id = extract_operation_id_from_poller(analysis_poller, PollerType.ANALYZE_CALL)
             assert analysis_operation_id is not None, "Operation ID should not be None"
             assert len(analysis_operation_id) > 0, "Operation ID should not be empty"
-            print(f"Analysis operation ID: {analysis_operation_id}")
+            print(f"  Analysis operation ID: {analysis_operation_id}")
 
             # Now use get_result to retrieve the result by operation ID
-            print(f"Getting result by operation ID: {analysis_operation_id}")
+            print(f"  Getting result by operation ID: {analysis_operation_id}")
             operation_status = await client.content_analyzers.get_result(
                 operation_id=analysis_operation_id,
             )
@@ -864,11 +1046,15 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             analysis_result = operation_status.result
             assert analysis_result is not None, "Analysis result should not be None"
             
-            # Save the analysis result to file (not the wrapper operation_status)
-            output_filename = save_analysis_result_to_file(analysis_result, "test_content_analyzers_get_result", analysis_operation_id)
+            # Get test file directory for saving output
+            import os
+            test_file_dir = os.path.dirname(os.path.abspath(__file__))
             
-            print(f"Successfully retrieved result for operation {analysis_operation_id}")
-            print(f"Result contains {len(analysis_result.contents)} contents")
+            # Save the analysis result to file (not the wrapper operation_status)
+            output_filename = save_analysis_result_to_file(analysis_result, "test_content_analyzers_get_result", test_file_dir, analysis_operation_id)
+            
+            print(f"  Successfully retrieved result for operation {analysis_operation_id}")
+            print(f"  Result contains {len(analysis_result.contents)} contents")
 
             # Now assert the field results using the same validation as binary test
             assert_simple_content_analyzer_result(analysis_result, "Get result response")
@@ -892,50 +1078,53 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
     async def test_content_analyzers_get_result_file(self, contentunderstanding_endpoint):
         """
         Test Summary:
-        - Create simple analyzer for binary analysis to get operation ID
-        - Read sample invoice PDF file
-        - Begin binary analysis operation with analyzer
+        - Create marketing video analyzer based on the marketing video template
+        - Read FlightSimulator.mp4 file
+        - Begin video analysis operation with analyzer
         - Wait for analysis completion
-        - Use get_result_file to retrieve specific result files by operation ID and path
-        - Verify file content is returned (if available)
+        - Use get_result_file to retrieve image files generated from video analysis
+        - Verify image file content is returned and save to test_output
         - Clean up created analyzer
         """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
         analyzer_id = generate_analyzer_id()
         created_analyzer = False
 
-        # Create a simple analyzer for binary analysis
-        content_analyzer = new_simple_content_analyzer_object(
+        # Create a marketing video analyzer based on the template
+        video_analyzer = new_marketing_video_analyzer_object(
             analyzer_id=analyzer_id,
-            description=f"test analyzer for get result file test: {analyzer_id}",
-            tags={"test_type": "get_result_file"}
+            description=f"marketing video analyzer for get result file test: {analyzer_id}",
+            tags={"test_type": "get_result_file_video"}
         )
 
         try:
             # Create analyzer using the refactored function
-            poller, operation_id = await create_analyzer_and_assert(client, analyzer_id, content_analyzer)
+            poller, operation_id = await create_analyzer_and_assert(client, analyzer_id, video_analyzer)
             created_analyzer = True
 
-            # Read the sample invoice PDF file using absolute path based on this test file's location
+            # Read the FlightSimulator.mp4 video file using absolute path based on this test file's location
             import os
             test_file_dir = os.path.dirname(os.path.abspath(__file__))
-            pdf_path = os.path.join(test_file_dir, "test_data", "sample_invoice.pdf")
-            with open(pdf_path, "rb") as pdf_file:
-                pdf_content = pdf_file.read()
+            video_path = os.path.join(test_file_dir, "test_data", "FlightSimulator.mp4")
+            with open(video_path, "rb") as video_file:
+                video_content = video_file.read()
 
-            print(f"Starting binary analysis to get operation ID")
+            print(f"Starting video analysis to get operation ID")
             
-            # Begin binary analysis operation
+            # Begin video analysis operation
             analysis_poller = await client.content_analyzers.begin_analyze_binary(
                 analyzer_id=analyzer_id,
-                input=pdf_content,
-                content_type="application/pdf",
+                input=video_content,
+                content_type="video/mp4",
             )
 
             # Wait for analysis completion first
             print(f"Waiting for analysis completion")
             analysis_result = await analysis_poller.result()
             print(f"Analysis completed")
+
+            # Save the analysis result to file
+            output_filename = save_analysis_result_to_file(analysis_result, "test_content_analyzers_get_result_file", test_file_dir, analyzer_id)            
 
             # Extract operation ID for get_result_file test - this should not fail
             analysis_operation_id = extract_operation_id_from_poller(analysis_poller, PollerType.ANALYZE_CALL)
@@ -944,46 +1133,21 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             print(f"Analysis operation ID: {analysis_operation_id}")
 
             # Get the result first to see what files are available
-            result = await client.content_analyzers.get_result(
+            operation_status = await client.content_analyzers.get_result(
                 operation_id=analysis_operation_id,
             )
 
-            # Try to get a specific result file - typically there might be a markdown file or the original analyzed content
-            # Common paths might include "content.md", "result.json", or the original filename
-            test_paths = ["content.md", "result.json", "sample_invoice.pdf"]
+            # Check operation_status is not None and has result
+            assert operation_status is not None, "Operation status should not be None"
+            assert hasattr(operation_status, 'result'), "Operation status should have result property"
             
-            file_retrieved = False
-            for test_path in test_paths:
-                try:
-                    print(f"Trying to get result file with path: {test_path}")
-                    response = await client.content_analyzers.get_result_file(
-                        operation_id=analysis_operation_id,
-                        path=test_path,
-                    )
-                    
-                    # If we successfully get a response, verify it's not None
-                    assert response is not None, f"Response for path {test_path} should not be None"
-                    print(f"Successfully retrieved result file for path: {test_path}")
-                    print(f"File content type: {type(response)}")
-                    
-                    # If it's bytes, check length
-                    if isinstance(response, bytes):
-                        assert len(response) > 0, f"File content for {test_path} should not be empty"
-                        print(f"File content length: {len(response)} bytes")
-                    elif hasattr(response, '__len__'):
-                        assert len(response) > 0, f"File content for {test_path} should not be empty"
-                    
-                    file_retrieved = True
-                    break
-                    
-                except Exception as e:
-                    print(f"Could not retrieve file with path {test_path}: {e}")
-                    continue
-            
-            # If no specific files are available, that's also acceptable for this test
-            # The main goal is to verify the API call works
-            if not file_retrieved:
-                assert(False, "No specific result files were available, but API calls succeeded")
+            # The actual analysis result is in operation_status.result
+            result = operation_status.result
+            assert result is not None, "Analysis result should not be None"
+            print(f"Analysis result contains {len(result.contents)} contents")
+
+            # Use the refactored function to download keyframes by calling client.content_analyzers.get_result_file
+            await download_keyframes_and_assert(client, analysis_operation_id, result, test_file_dir, analyzer_id)
 
         finally:
             # Always clean up the created analyzer, even if the test fails
