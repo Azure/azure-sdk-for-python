@@ -176,7 +176,7 @@ class DataLakeFileClient(PathClient):
         retain_uncommitted_data: Optional[bool] = False,
         *,
         content_settings: Optional[ContentSettings] = None,
-        close: Optional[bool] = None,
+        close: bool = False,
         if_modified_since: Optional[datetime] = None,
         if_unmodified_since: Optional[datetime] = None,
         etag: Optional[str] = None,

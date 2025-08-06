@@ -588,7 +588,7 @@ class DataLakeFileClient(PathClient):
             been closed). If "false" a change notification is raised indicating
             the file has changed. The default is false. This query parameter is
             set to true by the Hadoop ABFS driver to indicate that the file stream
-            has been closed."
+            has been closed.
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
