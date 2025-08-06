@@ -24,6 +24,33 @@ def generate_analyzer_id() -> str:
     return f"python-sdk-test-analyzer-{date_str}-{time_str}-{guid}"
 
 
+def extract_operation_id_from_poller(poller) -> str:
+    """Extract operation ID from an AsyncLROPoller.
+    
+    The AsyncLROPoller stores the initial response in `_initial_response`, which contains
+    the Operation-Location header. This is the standard way to get operation IDs in Azure SDKs.
+    
+    Args:
+        poller: The AsyncLROPoller instance
+        
+    Returns:
+        str: The operation ID extracted from the poller
+        
+    Raises:
+        ValueError: If no operation ID can be extracted from the poller
+    """
+    # Extract from Operation-Location header (standard approach)
+    initial_response = poller.polling_method()._initial_response
+    operation_location = initial_response.http_response.headers.get("Operation-Location")
+    
+    if operation_location:
+        # Extract operation ID from URL: https://endpoint/.../operations/{operation_id}?api-version=...
+        operation_id = operation_location.split("/operations/")[1].split("?")[0]
+        return operation_id
+    
+    raise ValueError("Could not extract operation ID from poller")
+
+
 async def analyzer_in_list(client, analyzer_id: str) -> bool:
     """Check if an analyzer with the given ID exists in the list of analyzers.
     
@@ -41,18 +68,104 @@ async def analyzer_in_list(client, analyzer_id: str) -> bool:
     return False
 
 class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandingClientTestBaseAsync):
-    @pytest.mark.skip(reason="Skipping test_content_analyzers_get_operation_status")
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_analyzers_get_operation_status(self, contentunderstanding_endpoint):
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        response = await client.content_analyzers.get_operation_status(
-            analyzer_id="str",
-            operation_id="str",
+        analyzer_id = generate_analyzer_id()
+        created_analyzer = False
+        operation_id = None
+
+        content_analyzer = ContentAnalyzer(
+            base_analyzer_id="prebuilt-documentAnalyzer",
+            config=ContentAnalyzerConfig(
+                enable_formula=True,
+                enable_layout=True,
+                enable_ocr=True,
+                estimate_field_source_and_confidence=True,
+                return_details=True,
+            ),
+            description=f"test analyzer for operation status: {analyzer_id}",
+            field_schema=FieldSchema(
+                fields={
+                    "total_amount": FieldDefinition(
+                        description="Total amount of this table",
+                        method=GenerationMethod.EXTRACT,
+                        type=FieldType.NUMBER,
+                    )
+                },
+                description="schema for operation status test",
+                name="operation_status_test_schema",
+            ),
+            mode=AnalysisMode.STANDARD,
+            processing_location=ProcessingLocation.GLOBAL,
+            tags={"test_type": "operation_status"},
         )
 
-        # please add some check logic here by yourself
-        # ...
+        try:
+            print(f"Creating analyzer {analyzer_id} to test operation status")
+            
+            # Start the analyzer creation operation
+            poller = await client.content_analyzers.begin_create_or_replace(
+                analyzer_id=analyzer_id,
+                resource=content_analyzer,
+            )
+
+            # Extract operation_id from the poller using the helper function
+            operation_id = extract_operation_id_from_poller(poller)
+            print(f"Extracted operation_id: {operation_id}")
+
+            # Check operation status while it's running
+            print(f"Checking operation status for operation_id: {operation_id}")
+            status_response = await client.content_analyzers.get_operation_status(
+                analyzer_id=analyzer_id,
+                operation_id=operation_id,
+            )
+
+            # Verify the operation status response
+            assert status_response is not None
+            print(f"Operation status: {status_response}")
+            
+            # Check that the operation status has expected fields
+            assert hasattr(status_response, 'status') or hasattr(status_response, 'operation_status')
+            assert hasattr(status_response, 'id')
+            assert status_response.id == operation_id
+            
+            # Wait for the operation to complete
+            print(f"Waiting for analyzer {analyzer_id} to be created")
+            response = await poller.result()
+            assert response is not None
+            assert poller.status() == "Succeeded"
+            assert poller.done()
+            print(f"Analyzer {analyzer_id} is created successfully")
+            created_analyzer = True
+
+            # Check final operation status after completion
+            final_status_response = await client.content_analyzers.get_operation_status(
+                analyzer_id=analyzer_id,
+                operation_id=operation_id,
+            )
+            
+            assert final_status_response is not None
+            print(f"Final operation status: {final_status_response}")
+            
+            # Verify the analyzer is in the list
+            assert await analyzer_in_list(client, analyzer_id), f"Created analyzer with ID '{analyzer_id}' was not found in the list"
+            print(f"Verified analyzer {analyzer_id} is in the list")
+
+        finally:
+            # Always clean up the created analyzer, even if the test fails
+            if created_analyzer:
+                print(f"Cleaning up analyzer {analyzer_id}")
+                try:
+                    await client.content_analyzers.delete(analyzer_id=analyzer_id)
+                    # Verify deletion
+                    assert not await analyzer_in_list(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
+                    print(f"Analyzer {analyzer_id} is deleted successfully")
+                except Exception as e:
+                    print(f"Warning: Failed to delete analyzer {analyzer_id}: {e}")
+            else:
+                print(f"Analyzer {analyzer_id} was not created, no cleanup needed")
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
