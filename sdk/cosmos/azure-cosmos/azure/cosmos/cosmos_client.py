@@ -295,9 +295,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     def create_database(  # pylint:disable=docstring-missing-param
         self,
         id: str,
+        *,
         populate_query_metrics: Optional[bool] = None,
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
-        *,
         initial_headers: Optional[Dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         throughput_bucket: Optional[int] = None,
@@ -400,9 +400,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     def create_database_if_not_exists(  # pylint:disable=docstring-missing-param
         self,
         id: str,
+        *,
         populate_query_metrics: Optional[bool] = None,
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
-        *,
         initial_headers: Optional[Dict[str, str]] = None,
         throughput_bucket: Optional[int] = None,
         return_properties: bool = False,
