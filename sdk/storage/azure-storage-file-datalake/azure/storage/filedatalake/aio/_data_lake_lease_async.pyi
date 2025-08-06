@@ -13,9 +13,9 @@ from types import TracebackType
 from typing_extensions import Self
 
 from azure.core import MatchConditions
-from azure.core.tracing.decorator import distributed_trace
-from ._file_system_client import FileSystemClient
-from ._path_client import PathClient
+from azure.core.tracing.decorator_async import distributed_trace_async
+from ._file_system_client_async import FileSystemClient
+from ._path_client_async import PathClient
 
 
 class DataLakeLeaseClient:
@@ -23,17 +23,16 @@ class DataLakeLeaseClient:
     etag: Optional[str]
     last_modified: Optional[datetime]
     def __init__(
-        self,
-        client: Union[FileSystemClient, PathClient],
+        self, client: Union[FileSystemClient, PathClient],
         lease_id: Optional[str] = None
     ) -> None: ...
-    def __enter__(self) -> Self: ...
-    def __exit__(
+    async def __aenter__(self) -> Self: ...
+    async def __aexit__(
         self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
     ) -> None: ...
-    def close(self) -> None: ...
-    @distributed_trace
-    def acquire(
+    async def close(self) -> None: ...  # type: ignore
+    @distributed_trace_async
+    async def acquire(
         self,
         lease_duration: int = -1,
         *,
@@ -44,8 +43,8 @@ class DataLakeLeaseClient:
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> None: ...
-    @distributed_trace
-    def renew(
+    @distributed_trace_async
+    async def renew(
         self,
         *,
         if_modified_since: Optional[datetime] = None,
@@ -55,8 +54,8 @@ class DataLakeLeaseClient:
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> None: ...
-    @distributed_trace
-    def release(
+    @distributed_trace_async
+    async def release(
         self,
         *,
         if_modified_since: Optional[datetime] = None,
@@ -66,8 +65,8 @@ class DataLakeLeaseClient:
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> None: ...
-    @distributed_trace
-    def change(
+    @distributed_trace_async
+    async def change(
         self,
         proposed_lease_id: str,
         *,
@@ -78,8 +77,8 @@ class DataLakeLeaseClient:
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> None: ...
-    @distributed_trace
-    def break_lease(
+    @distributed_trace_async
+    async def break_lease(
         self,
         lease_break_period: Optional[int] = None,
         *,
