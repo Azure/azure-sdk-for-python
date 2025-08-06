@@ -9,6 +9,7 @@ steps:
       Write-Host $env:PATH
       Write-Host $env:VIRTUAL_ENV
       Write-Host $env:PYTHONHOME
+      python -m pip install twine
     displayName: 'Display Environment Variables'
 
   - bash: |
@@ -16,13 +17,13 @@ steps:
       echo "Running pip version: $(pip --version)"
       echo "Running pip list:"
       which python
-      python -m pip freeze
+      python -m pip list
     displayName: 'Verify VENV Activation'
 
   - pwsh: |
       echo "Running Python version: $(python --version)"
       echo "Running pip version: $(pip --version)"
       echo "Running pip list:"
-      Get-Command python
-      python -m pip freeze
+      Write-Host (Get-Command python).Source
+      python -m pip list
     displayName: 'Verify VENV Activation PowerShell'
