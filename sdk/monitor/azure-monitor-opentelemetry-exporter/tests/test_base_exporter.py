@@ -1398,7 +1398,7 @@ class TestBaseExporter(unittest.TestCase):
     )
     @mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items')
     def test_handle_transmit_from_storage_client_readonly_tracked(self, mock_track_dropped):
-        """Test that CLIENT_READONLY drop code is tracked when filesystem is readonly due to EROFS error."""
+        """Test that CLIENT_READONLY drop code is tracked when filesystem is readonly."""
         
         # Create exporter with storage initially disabled
         exporter = BaseExporter(disable_offline_storage=True)
@@ -1408,13 +1408,13 @@ class TestBaseExporter(unittest.TestCase):
         # Mock the _should_collect_customer_statsbeat method to return True
         exporter._should_collect_customer_statsbeat = mock.Mock(return_value=True)
         
-        # Create a mock storage that simulates the state after EROFS error detection
+        # Create a mock storage that simulates the state after readonly error detection
         # The key insight is that storage should be enabled but have readonly filesystem flag set
         mock_storage = mock.Mock()
         mock_storage._enabled = True  # Storage is enabled (not completely disabled)
         mock_storage._check_and_set_folder_permissions = False  # Permissions check result is False (failed)
-        mock_storage.filesystem_is_readonly = True  # EROFS was detected and flag was set
-        mock_storage.exception_occurred = None  # EROFS is handled specifically, not as general exception
+        mock_storage.filesystem_is_readonly = True  # Readonly error was detected and flag was set
+        mock_storage.exception_occurred = None  # Readonly error is handled specifically, not as general exception
         mock_storage.persistent_storage_full = True  # Storage is NOT full
         mock_storage.put = mock.Mock()  # Mock the put method
         
@@ -1584,8 +1584,8 @@ class TestBaseExporter(unittest.TestCase):
         },
     )
     @mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items')
-    def test_handle_transmit_from_storage_client_exception_tracked_oserror_non_erofs(self, mock_track_dropped):
-        """Test that CLIENT_EXCEPTION drop code is tracked when OSError (non-EROFS) occurs during storage setup."""
+    def test_handle_transmit_from_storage_client_exception_tracked_other_oserror(self, mock_track_dropped):
+        """Test that CLIENT_EXCEPTION drop code is tracked when other OSError occur during storage setup."""
         exporter = BaseExporter(disable_offline_storage=False)
         mock_customer_statsbeat = mock.Mock()
         exporter._customer_statsbeat_metrics = mock_customer_statsbeat
@@ -1593,7 +1593,7 @@ class TestBaseExporter(unittest.TestCase):
         # Mock the _should_collect_customer_statsbeat method to return True
         exporter._should_collect_customer_statsbeat = mock.Mock(return_value=True)
         
-        # Mock storage with OSError exception (non-EROFS, e.g., PermissionError)
+        # Mock storage with other OSError exception (e.g., PermissionError)
         exporter.storage = mock.Mock()
         exporter.storage._check_and_set_folder_permissions = False  # Permissions check failed
         exporter.storage.filesystem_is_readonly = False  # Not a readonly filesystem error
@@ -1678,7 +1678,7 @@ class TestBaseExporter(unittest.TestCase):
         # Mock storage with both readonly filesystem AND exception
         exporter.storage = mock.Mock()
         exporter.storage._check_and_set_folder_permissions = False  # Permissions check failed
-        exporter.storage.filesystem_is_readonly = True  # EROFS detected
+        exporter.storage.filesystem_is_readonly = True  # Readonly error detected
         exporter.storage.exception_occurred = "Additional error: Failed to create temp directory"  # Also has exception
         exporter.storage.persistent_storage_full = True  # Storage is NOT full
         exporter.storage.put = mock.Mock()  # Mock the put method
@@ -1719,7 +1719,7 @@ class TestBaseExporter(unittest.TestCase):
         # Mock storage with ALL issues: readonly, exception, AND storage full
         exporter.storage = mock.Mock()
         exporter.storage._check_and_set_folder_permissions = False  # Permissions check failed
-        exporter.storage.filesystem_is_readonly = True  # EROFS detected
+        exporter.storage.filesystem_is_readonly = True  # Readonly error detected
         exporter.storage.exception_occurred = "Runtime error during storage initialization"  # Exception occurred
         exporter.storage.persistent_storage_full = False  # Storage is also full
         exporter.storage.put = mock.Mock()  # Mock the put method
@@ -1761,7 +1761,7 @@ class TestBaseExporter(unittest.TestCase):
         # Mock storage with all issues present
         exporter.storage = mock.Mock()
         exporter.storage._check_and_set_folder_permissions = False  # Permissions check failed
-        exporter.storage.filesystem_is_readonly = True  # EROFS detected
+        exporter.storage.filesystem_is_readonly = True  # Readonly error detected
         exporter.storage.exception_occurred = "Storage error occurred"  # Exception occurred
         exporter.storage.persistent_storage_full = False  # Storage is full
         exporter.storage.put = mock.Mock()  # Mock the put method
