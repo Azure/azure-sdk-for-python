@@ -61,8 +61,10 @@ jobs:
 
         import azure.cosmos.cosmos_client as cosmos_client
 
-        host = os.environ.get("ACCOUNT_HOST", "")
+        host = os.environ.get("ACCOUNT_HOST", "") 
+
         key = os.environ.get("ACCOUNT_KEY", "")
+        
         client = cosmos_client.CosmosClient(host, key)
 
 
