@@ -1,5 +1,11 @@
 # Release History
 
+## 1.1.0b2 (2025-08-05)
+
+### Bugs Fixed
+
+Fix regression in Red-Team operations, in the definition of the class `AzureOpenAIModelConfiguration`.
+
 ## 1.1.0b1 (2025-08-01)
 
 First beta version following the 1.0.0 stable release. It brings back the Evaluation and Red-Team operations which are still in preview.

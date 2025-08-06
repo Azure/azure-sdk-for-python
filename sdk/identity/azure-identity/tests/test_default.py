@@ -6,6 +6,7 @@ import os
 import sys
 
 from azure.core.credentials import AccessToken, AccessTokenInfo
+from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import (
     AzureCliCredential,
     AzureDeveloperCliCredential,
@@ -504,3 +505,68 @@ def test_broker_credential_requirements_not_installed():
         broker_cred = broker_credentials[0]
         with pytest.raises(CredentialUnavailableError) as exc_info:
             broker_cred.get_token_info("https://management.azure.com/.default")
+
+
+def test_failed_dac_credential_error_reporting():
+    """Test that FailedDACCredential properly reports initialization errors"""
+    from azure.identity._credentials.default import FailedDACCredential
+
+    credential_name = "WorkloadIdentityCredential"
+    error_message = "Failed to initialize: missing required environment variable AZURE_FEDERATED_TOKEN_FILE"
+
+    failed_credential = FailedDACCredential(credential_name, error_message)
+
+    # Test get_token raises CredentialUnavailableError with the original error
+    with pytest.raises(CredentialUnavailableError) as exc_info:
+        failed_credential.get_token("https://management.azure.com/.default")
+
+    assert str(exc_info.value) == error_message
+
+    # Test get_token_info raises CredentialUnavailableError with the original error
+    with pytest.raises(CredentialUnavailableError) as exc_info:
+        failed_credential.get_token_info("https://management.azure.com/.default")
+
+    assert str(exc_info.value) == error_message
+
+    # Test context manager support
+    with failed_credential:
+        pass  # Should not raise during context entry/exit
+
+    # Test close method
+    failed_credential.close()  # Should not raise
+
+
+def test_failed_dac_credential_in_chain():
+    """Test that FailedDACCredential errors are properly reported when DefaultAzureCredential fails"""
+    from azure.identity._credentials.default import FailedDACCredential
+
+    # Create a mock successful credential to ensure the chain doesn't fail immediately
+    successful_credential = Mock(
+        spec_set=["get_token", "get_token_info"],
+        get_token=Mock(return_value=AccessToken("***", 42)),
+        get_token_info=Mock(return_value=AccessTokenInfo("***", 42)),
+    )
+
+    # Create a DefaultAzureCredential and replace its credentials with a failed credential and successful one
+    credential = DefaultAzureCredential()
+    failed_cred = FailedDACCredential("WorkloadIdentityCredential", "initialization error")
+    credential.credentials = (failed_cred, successful_credential)
+
+    # The chain should succeed using the successful credential
+    token = credential.get_token("https://management.azure.com/.default")
+    assert token.token == "***"
+    assert token.expires_on == 42
+
+    # Test with only failed credentials to ensure error propagation
+    credential_all_failed = DefaultAzureCredential()
+    failed_cred1 = FailedDACCredential("WorkloadIdentityCredential", "workload identity error")
+    failed_cred2 = FailedDACCredential("TestCredential", "test credential error")
+    credential_all_failed.credentials = (failed_cred1, failed_cred2)
+
+    # Should raise an error that includes both credential errors
+    with pytest.raises(ClientAuthenticationError) as exc_info:
+        credential_all_failed.get_token("https://management.azure.com/.default")
+
+    # The error should mention the failed credentials
+    error_str = str(exc_info.value)
+    assert "workload identity error" in error_str or "test credential error" in error_str

@@ -32,7 +32,6 @@ def create_session_uniquifier():
         with open(uniquifier_file, "w") as file:
             file.write(uniquifier)
     else:
-        print("Using existing")
         with open(uniquifier_file, "r") as file:
             uniquifier = file.read()
             os.environ["HEALTHDATAAISERVICES_UNIQUIFIER"] = uniquifier
