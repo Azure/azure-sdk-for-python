@@ -44,7 +44,7 @@ class ReceiverLink(Link):
         try:
             return await self._on_transfer(frame, message)
         except Exception as e:  # pylint: disable=broad-except
-            _LOGGER.error("Transfer callback function failed with error: %r", e, extra=self.network_trace_params)
+            _LOGGER.debug("Transfer callback function failed with error: %r", e, extra=self.network_trace_params)
         return None
 
     async def _incoming_attach(self, frame):
