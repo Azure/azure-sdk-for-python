@@ -9,7 +9,7 @@ file when run. These logs are named in this format `<file name>-<process id>-<da
    - 32 GB RAM
    - Ubuntu
    - Accelerated networking
-1. Give the VM necessary [permissions](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/how-to-grant-data-plane-access?tabs=built-in-definition%2Ccsharp&pivots=azure-interface-cli) to access the Cosmos DB account if using AAD (Optional). 
+1. Give the VM necessary [permissions](https://learn.microsoft.com/azure/cosmos-db/nosql/how-to-grant-data-plane-access?tabs=built-in-definition%2Ccsharp&pivots=azure-interface-cli) to access the Cosmos DB account if using AAD (Optional). 
 1. Create an Azure App Insights Resource (Optional)
 1. Fork and clone this repository
 1. Go to azure cosmos folder

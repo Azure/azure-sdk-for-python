@@ -1,4 +1,5 @@
 #!/bin/bash
+# cspell:disable
 # setup_env.sh - Automates Azure Cosmos SDK scale testing environment setup
 # Usage: bash setup_env.sh
 

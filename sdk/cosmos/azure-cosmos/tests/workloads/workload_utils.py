@@ -20,7 +20,7 @@ def get_user_agent(client_id):
     prefix = USER_AGENT_PREFIX + "-" if USER_AGENT_PREFIX else ""
     return prefix + str(client_id) + "-" + datetime.now().strftime("%Y%m%d-%H%M%S")
 
-def get_exisiting_random_item():
+def get_existing_random_item():
     random_int = random.randint(0, NUMBER_OF_LOGICAL_PARTITIONS)
     item = create_random_item()
     item["id"] = "test-" + str(random_int)
@@ -64,7 +64,7 @@ def upsert_item(container, excluded_locations, num_upserts):
 
 def read_item(container, excluded_locations, num_reads):
     for _ in range(num_reads):
-        item = get_exisiting_random_item()
+        item = get_existing_random_item()
         if excluded_locations:
             container.read_item(item["id"], item[PARTITION_KEY], etag=None, match_condition=None,
                                 excluded_locations=excluded_locations)
@@ -77,7 +77,7 @@ def query_items(container, excluded_locations, num_queries):
 
 
 def perform_query(container, excluded_locations):
-    random_item = get_exisiting_random_item()
+    random_item = get_existing_random_item()
     if excluded_locations:
         results = container.query_items(query="SELECT * FROM c where c.id=@id and c.pk=@pk",
                                         parameters=[{"name": "@id", "value": random_item["id"]},
@@ -95,17 +95,17 @@ async def upsert_item_concurrently(container, excluded_locations, num_upserts):
     tasks = []
     for _ in range(num_upserts):
         if excluded_locations:
-            tasks.append(container.upsert_item(get_exisiting_random_item(), etag=None, match_condition=None,
+            tasks.append(container.upsert_item(get_existing_random_item(), etag=None, match_condition=None,
                                                excluded_locations=excluded_locations))
         else:
-            tasks.append(container.upsert_item(get_exisiting_random_item(), etag=None, match_condition=None))
+            tasks.append(container.upsert_item(get_existing_random_item(), etag=None, match_condition=None))
     await asyncio.gather(*tasks)
 
 
 async def read_item_concurrently(container, excluded_locations, num_reads):
     tasks = []
     for _ in range(num_reads):
-        item = get_exisiting_random_item()
+        item = get_existing_random_item()
         if excluded_locations:
             tasks.append(container.read_item(item["id"], item[PARTITION_KEY], etag=None, match_condition=None,
                                              excluded_locations=excluded_locations))
@@ -132,7 +132,7 @@ def create_custom_session():
     return session
 
 async def perform_query_concurrently(container, excluded_locations):
-    random_item = get_exisiting_random_item()
+    random_item = get_existing_random_item()
     if excluded_locations:
         results = container.query_items(query="SELECT * FROM c where c.id=@id and c.pk=@pk",
                                         parameters=[{"name": "@id", "value": random_item["id"]},
