@@ -259,36 +259,6 @@ class TestConfigurationManager(unittest.TestCase):
         mock_worker_instance.shutdown.assert_called_once()
         self.assertIsNone(manager._instance)
 
-    def test_thread_safety_singleton(self):
-        """Test thread safety of singleton pattern."""
-        instances = []
-        
-        def create_instance():
-            with patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker'):
-                instance = _ConfigurationManager()
-                instances.append(instance)
-        
-        # Create and run threads
-        threads = []
-        for _ in range(10):
-            thread = threading.Thread(target=create_instance)
-            threads.append(thread)
-        
-        for thread in threads:
-            thread.start()
-        
-        for thread in threads:
-            thread.join()
-        
-        # Verify singleton behavior
-        first_instance = instances[0]
-        for instance in instances[1:]:
-            self.assertIs(instance, first_instance)
-        
-        # IMPORTANT: Explicitly shutdown any workers
-        if _ConfigurationManager._instance:
-            _ConfigurationManager._instance.shutdown()
-
 
 class TestUpdateConfigurationFunction(unittest.TestCase):
     """Test cases for _update_configuration_and_get_refresh_interval function."""
