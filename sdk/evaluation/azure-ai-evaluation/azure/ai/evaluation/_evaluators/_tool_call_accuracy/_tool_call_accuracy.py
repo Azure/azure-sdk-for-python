@@ -5,7 +5,7 @@ import math
 import os
 import logging
 import re
-from typing import Dict, List, Union, TypeVar, cast
+from typing import Dict, List, Union, TypeVar, Optional
 from typing_extensions import overload, override
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._exceptions import (
@@ -16,11 +16,40 @@ from azure.ai.evaluation._exceptions import (
 )
 from ..._common.utils import check_score_is_valid
 from azure.ai.evaluation._common._experimental import experimental
-from ._built_in_tools import BuiltInTools
+from ..._converters._models import (
+    _BUILT_IN_DESCRIPTIONS,
+    _BUILT_IN_PARAMS,
+)
 
 logger = logging.getLogger(__name__)
 
 T_EvalValue = TypeVar("T_EvalValue")
+
+
+def _get_built_in_definition(tool_name: str):
+    """Get the definition for the built-in tool."""
+    if tool_name in _BUILT_IN_DESCRIPTIONS:
+        return {
+            "type": tool_name,
+            "description": _BUILT_IN_DESCRIPTIONS[tool_name],
+            "name": tool_name,
+            "parameters": _BUILT_IN_PARAMS.get(tool_name, {})
+        }
+    return None
+
+
+def _get_needed_built_in_definitions(tool_calls: List[Dict]) -> List[Dict]:
+    """Extract tool definitions needed for the given built-in tool calls."""
+    needed_definitions = []
+    for tool_call in tool_calls:
+        if isinstance(tool_call, dict):
+            tool_type = tool_call.get("type")
+            if tool_type in _BUILT_IN_DESCRIPTIONS:
+                built_in_def = _get_built_in_definition(tool_type)
+                if built_in_def and built_in_def not in needed_definitions:
+                    needed_definitions.append(built_in_def)
+    
+    return needed_definitions
 
 
 @experimental
@@ -287,7 +316,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         needed_tool_definitions.extend(tool_definitions)
 
         # Add the needed built-in tool definitions (if they are called)
-        built_in_definitions = BuiltInTools.get_needed_built_in_definitions(tool_calls)
+        built_in_definitions = _get_needed_built_in_definitions(tool_calls)
         needed_tool_definitions.extend(built_in_definitions)
 
         # Validate that all tool calls have corresponding definitions
@@ -296,7 +325,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 tool_type = tool_call.get("type")
                 
                 # Check if this is a built-in tool (has "type" and is in built-in types)
-                if tool_type and BuiltInTools.get_built_in_definition(tool_type):
+                if tool_type and _get_built_in_definition(tool_type):
                     # This is a built-in tool, already handled above
                     continue
                 
@@ -341,6 +370,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                     category=ErrorCategory.INVALID_VALUE,
                     target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
                 )
+            
         return needed_tool_definitions
 
     @override
