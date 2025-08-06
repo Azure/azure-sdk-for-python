@@ -46,6 +46,9 @@ from ._models import (
     AzureFunctionToolDefinition,
     AzureFunctionBinding,
     BingGroundingToolDefinition,
+    BrowserAutomationToolConnectionParameters,
+    BrowserAutomationToolDefinition,
+    BrowserAutomationToolParameters,
     CodeInterpreterToolDefinition,
     CodeInterpreterToolResource,
     ConnectedAgentToolDefinition,
@@ -1113,6 +1116,56 @@ class DeepResearchTool(Tool[DeepResearchToolDefinition]):
         pass
 
 
+class BrowserAutomationTool(Tool[BrowserAutomationToolDefinition]):
+    """
+    A tool that allows your Agent to perform real-world web browser navigation tasks through natural language prompts.
+    """
+
+    def __init__(self, connection_id: str):
+        """
+        Initialize a Browser Automation tool with the ID of the connection to an Azure Playwright service.
+
+        :param connection_id: Connection ID to an Azure Playwright service, to be used by tool. Browser Automation tool allows only one connection.
+        :raises ValueError: If the connection ID is invalid.
+        """
+
+        if not _is_valid_connection_id(connection_id):
+            raise ValueError(
+                "Connection ID '"
+                + connection_id
+                + "' does not fit the format:"
+                + "'/subscriptions/<subscription_id>/resourceGroups/<resource_group_name>/"
+                + "providers/<provider_name>/accounts/<account_name>/projects/<project_name>/connections/<connection_name>'"
+            )
+
+        self._browser_automation_tool_parameters = BrowserAutomationToolParameters(connection=BrowserAutomationToolConnectionParameters(id=connection_id))
+
+    @property
+    def definitions(self) -> List[BrowserAutomationToolDefinition]:
+        """
+        Get the Browser Automation tool definitions.
+
+        :rtype: List[ToolDefinition]
+        """
+        return [
+            BrowserAutomationToolDefinition(
+                browser_automation=self._browser_automation_tool_parameters
+            )
+        ]
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the tool resources.
+
+        :rtype: ToolResources
+        """
+        return ToolResources()
+
+    def execute(self, tool_call: Any) -> Any:
+        pass
+
+
 class BingGroundingTool(Tool[BingGroundingToolDefinition]):
     """
     A tool that searches for information using Bing.
@@ -2103,6 +2156,7 @@ __all__: List[str] = [
     "AzureFunctionTool",
     "BaseAsyncAgentEventHandler",
     "BaseAgentEventHandler",
+    "BrowserAutomationTool",
     "CodeInterpreterTool",
     "ConnectedAgentTool",
     "DeepResearchTool",
