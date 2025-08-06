@@ -214,7 +214,7 @@ class RecordingStorageKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class RedactionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Gets or sets the type of PII redaction to be used."""
+    """Value indicating the PII redaction type to be used."""
 
     MASK_WITH_CHARACTER = "maskWithCharacter"
 
@@ -242,7 +242,7 @@ class TranscriptionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TRANSCRIPTION_RESUMED = "transcriptionResumed"
     TRANSCRIPTION_UPDATED = "transcriptionUpdated"
     TRANSCRIPTION_STOPPED = "transcriptionStopped"
-    CALL_SUMMARY_UPDATE = "callSummaryUpdate"
+    CALL_SUMMARY_UPDATED = "callSummaryUpdated"
     UNSPECIFIED_ERROR = "unspecifiedError"
 
 

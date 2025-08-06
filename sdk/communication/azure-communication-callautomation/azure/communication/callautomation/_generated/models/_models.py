@@ -3198,9 +3198,9 @@ class PhoneNumberIdentifierModel(_serialization.Model):
 class PiiRedactionOptions(_serialization.Model):
     """PII redaction configuration options.
 
-    :ivar enable: Gets or sets a value indicating whether PII redaction is enabled.
+    :ivar enable: Value indicating if PII redaction is enabled.
     :vartype enable: bool
-    :ivar redaction_type: Gets or sets the type of PII redaction to be used. "maskWithCharacter"
+    :ivar redaction_type: Value indicating the PII redaction type to be used. "maskWithCharacter"
     :vartype redaction_type: str or ~azure.communication.callautomation.models.RedactionType
     """
 
@@ -3217,9 +3217,10 @@ class PiiRedactionOptions(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword enable: Gets or sets a value indicating whether PII redaction is enabled.
+        :keyword enable: Value indicating if PII redaction is enabled.
         :paramtype enable: bool
-        :keyword redaction_type: Gets or sets the type of PII redaction to be used. "maskWithCharacter"
+        :keyword redaction_type: Value indicating the PII redaction type to be used.
+         "maskWithCharacter"
         :paramtype redaction_type: str or ~azure.communication.callautomation.models.RedactionType
         """
         super().__init__(**kwargs)
@@ -3854,10 +3855,10 @@ class RecognizeOptions(_serialization.Model):
      ~azure.communication.callautomation.models.CommunicationIdentifierModel
     :ivar speech_language: Speech language to be recognized, If not set default is en-US.
     :vartype speech_language: str
-    :ivar speech_languages: Gets or sets a list of languages for Language Identification.
+    :ivar speech_languages: List of locales for Language Identification.
+     Supports upto 4 locales in the format: ["en-us", "fr-fr", "hi-in"] etc.
     :vartype speech_languages: list[str]
-    :ivar enable_sentiment_analysis: Gets or sets a value indicating if sentiment analysis should
-     be used.
+    :ivar enable_sentiment_analysis: Value indicating if sentiment analysis should be used.
     :vartype enable_sentiment_analysis: bool
     :ivar speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
     :vartype speech_recognition_model_endpoint_id: str
@@ -3913,10 +3914,10 @@ class RecognizeOptions(_serialization.Model):
          ~azure.communication.callautomation.models.CommunicationIdentifierModel
         :keyword speech_language: Speech language to be recognized, If not set default is en-US.
         :paramtype speech_language: str
-        :keyword speech_languages: Gets or sets a list of languages for Language Identification.
+        :keyword speech_languages: List of locales for Language Identification.
+         Supports upto 4 locales in the format: ["en-us", "fr-fr", "hi-in"] etc.
         :paramtype speech_languages: list[str]
-        :keyword enable_sentiment_analysis: Gets or sets a value indicating if sentiment analysis
-         should be used.
+        :keyword enable_sentiment_analysis: Value indicating if sentiment analysis should be used.
         :paramtype enable_sentiment_analysis: bool
         :keyword speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
         :paramtype speech_recognition_model_endpoint_id: str
@@ -4718,9 +4719,10 @@ class SentimentAnalysisResult(_serialization.Model):
 class SipDiagnosticInfo(_serialization.Model):
     """SipDiagnosticInfo.
 
-    :ivar code:
+    :ivar code: Represents the diagnostic code returned by the SIP service, used for identifying
+     specific issues or statuses.
     :vartype code: int
-    :ivar message:
+    :ivar message: Message associated with the code for diagnosing.
     :vartype message: str
     """
 
@@ -4731,9 +4733,10 @@ class SipDiagnosticInfo(_serialization.Model):
 
     def __init__(self, *, code: Optional[int] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword code:
+        :keyword code: Represents the diagnostic code returned by the SIP service, used for identifying
+         specific issues or statuses.
         :paramtype code: int
-        :keyword message:
+        :keyword message: Message associated with the code for diagnosing.
         :paramtype message: str
         """
         super().__init__(**kwargs)
@@ -5675,8 +5678,8 @@ class TextSource(_serialization.Model):
         self.custom_voice_endpoint_id = custom_voice_endpoint_id
 
 
-class TranscriptionCallSummaryUpdate(_serialization.Model):
-    """TranscriptionCallSummaryUpdate.
+class TranscriptionCallSummaryUpdated(_serialization.Model):
+    """TranscriptionCallSummaryUpdated.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -6040,7 +6043,7 @@ class TranscriptionUpdate(_serialization.Model):
     """TranscriptionUpdate.
 
     :ivar transcription_status: Known values are: "transcriptionStarted", "transcriptionFailed",
-     "transcriptionResumed", "transcriptionUpdated", "transcriptionStopped", "callSummaryUpdate",
+     "transcriptionResumed", "transcriptionUpdated", "transcriptionStopped", "callSummaryUpdated",
      and "unspecifiedError".
     :vartype transcription_status: str or
      ~azure.communication.callautomation.models.TranscriptionStatus
@@ -6052,7 +6055,7 @@ class TranscriptionUpdate(_serialization.Model):
      "callSummarySuccess", and "callSummaryFailure".
     :vartype transcription_status_details: str or
      ~azure.communication.callautomation.models.TranscriptionStatusDetails
-    :ivar message:
+    :ivar message: Optional message providing additional context about the transcription update.
     :vartype message: str
     """
 
@@ -6072,7 +6075,7 @@ class TranscriptionUpdate(_serialization.Model):
     ) -> None:
         """
         :keyword transcription_status: Known values are: "transcriptionStarted", "transcriptionFailed",
-         "transcriptionResumed", "transcriptionUpdated", "transcriptionStopped", "callSummaryUpdate",
+         "transcriptionResumed", "transcriptionUpdated", "transcriptionStopped", "callSummaryUpdated",
          and "unspecifiedError".
         :paramtype transcription_status: str or
          ~azure.communication.callautomation.models.TranscriptionStatus
@@ -6084,7 +6087,7 @@ class TranscriptionUpdate(_serialization.Model):
          "callSummarySuccess", and "callSummaryFailure".
         :paramtype transcription_status_details: str or
          ~azure.communication.callautomation.models.TranscriptionStatusDetails
-        :keyword message:
+        :keyword message: Optional message providing additional context about the transcription update.
         :paramtype message: str
         """
         super().__init__(**kwargs)
@@ -6511,9 +6514,10 @@ class WebSocketTranscriptionOptions(TranscriptionOptions):
     :vartype enable_intermediate_results: bool
     :ivar pii_redaction_options: PII redaction configuration options.
     :vartype pii_redaction_options: ~azure.communication.callautomation.models.PiiRedactionOptions
-    :ivar enable_sentiment_analysis: Indicating if sentiment analysis should be used.
+    :ivar enable_sentiment_analysis: Indicating if sentiment analysis should be enabled.
     :vartype enable_sentiment_analysis: bool
-    :ivar locales: List of languages for Language Identification.
+    :ivar locales: List of locales for Language Identification.
+     Supports upto 4 locales in the format: ["en-us", "fr-fr", "hi-in"] etc.
     :vartype locales: list[str]
     :ivar summarization_options: Summarization configuration options.
     :vartype summarization_options: ~azure.communication.callautomation.models.SummarizationOptions
@@ -6566,9 +6570,10 @@ class WebSocketTranscriptionOptions(TranscriptionOptions):
         :keyword pii_redaction_options: PII redaction configuration options.
         :paramtype pii_redaction_options:
          ~azure.communication.callautomation.models.PiiRedactionOptions
-        :keyword enable_sentiment_analysis: Indicating if sentiment analysis should be used.
+        :keyword enable_sentiment_analysis: Indicating if sentiment analysis should be enabled.
         :paramtype enable_sentiment_analysis: bool
-        :keyword locales: List of languages for Language Identification.
+        :keyword locales: List of locales for Language Identification.
+         Supports upto 4 locales in the format: ["en-us", "fr-fr", "hi-in"] etc.
         :paramtype locales: list[str]
         :keyword summarization_options: Summarization configuration options.
         :paramtype summarization_options:
