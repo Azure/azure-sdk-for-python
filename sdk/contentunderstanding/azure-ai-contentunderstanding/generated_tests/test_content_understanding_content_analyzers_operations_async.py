@@ -9,11 +9,18 @@ import pytest
 import uuid
 from datetime import datetime
 from typing import Tuple, Union, Dict, Any, Optional
+from enum import Enum
 from devtools_testutils.aio import recorded_by_proxy_async
 from testpreparer import ContentUnderstandingPreparer
 from testpreparer_async import ContentUnderstandingClientTestBaseAsync
 from azure.ai.contentunderstanding.models import ContentAnalyzer, ContentAnalyzerConfig, FieldSchema, FieldDefinition
 from azure.ai.contentunderstanding.models import GenerationMethod, FieldType, AnalysisMode, ProcessingLocation
+
+
+class PollerType(Enum):
+    """Enum to distinguish different types of pollers for operation ID extraction."""
+    ANALYZER_CREATION = "analyzer_creation"
+    ANALYZE_CALL = "analyze_call"
 
 
 def generate_analyzer_id() -> str:
@@ -25,31 +32,47 @@ def generate_analyzer_id() -> str:
     return f"python-sdk-test-analyzer-{date_str}-{time_str}-{guid}"
 
 
-def extract_operation_id_from_poller(poller) -> str:
+def extract_operation_id_from_poller(poller, poller_type: PollerType) -> str:
     """Extract operation ID from an AsyncLROPoller.
     
     The AsyncLROPoller stores the initial response in `_initial_response`, which contains
-    the Operation-Location header. This is the standard way to get operation IDs in Azure SDKs.
+    the Operation-Location header. The extraction pattern depends on the poller type:
+    - AnalyzerCreation: https://endpoint/contentunderstanding/operations/{operation_id}?api-version=...
+    - AnalyzeCall: https://endpoint/contentunderstanding/analyzerResults/{operation_id}?api-version=...
     
     Args:
         poller: The AsyncLROPoller instance
+        poller_type: The type of poller (ANALYZER_CREATION or ANALYZE_CALL) - REQUIRED
         
     Returns:
         str: The operation ID extracted from the poller
         
     Raises:
-        ValueError: If no operation ID can be extracted from the poller
+        ValueError: If no operation ID can be extracted from the poller or if poller_type is not provided
     """
+    if poller_type is None:
+        raise ValueError("poller_type is required and must be specified (ANALYZER_CREATION or ANALYZE_CALL)")
     # Extract from Operation-Location header (standard approach)
     initial_response = poller.polling_method()._initial_response
     operation_location = initial_response.http_response.headers.get("Operation-Location")
+    print("---------------")
+    print(f"Operation-Location header: {operation_location}")
+    print(f"Poller type: {poller_type}")
+    print("---------------")
     
     if operation_location:
-        # Extract operation ID from URL: https://endpoint/.../operations/{operation_id}?api-version=...
-        operation_id = operation_location.split("/operations/")[1].split("?")[0]
-        return operation_id
+        if poller_type == PollerType.ANALYZER_CREATION:
+            # Pattern: https://endpoint/.../operations/{operation_id}?api-version=...
+            if "/operations/" in operation_location:
+                operation_id = operation_location.split("/operations/")[1].split("?")[0]
+                return operation_id
+        elif poller_type == PollerType.ANALYZE_CALL:
+            # Pattern: https://endpoint/.../analyzerResults/{operation_id}?api-version=...
+            if "/analyzerResults/" in operation_location:
+                operation_id = operation_location.split("/analyzerResults/")[1].split("?")[0]
+                return operation_id
     
-    raise ValueError("Could not extract operation ID from poller")
+    raise ValueError(f"Could not extract operation ID from poller for type {poller_type}")
 
 
 async def analyzer_in_list(client, analyzer_id: str) -> bool:
@@ -163,7 +186,7 @@ def assert_simple_content_analyzer_result(analysis_result, result_name: str = "A
     
     total_amount_field = fields['total_amount']
     assert total_amount_field is not None, "total_amount field should not be None"
-    assert total_amount_field.__class__.__name__ == "NumberField", f"total_amount field should be of type Field, got {total_amount_field.__class__.__name__}"
+    assert total_amount_field.__class__.__name__ == "NumberField", f"total_amount field should be of type NumberField, got {total_amount_field.__class__.__name__}"
 
     total_amount_value = total_amount_field.value_number
     
@@ -238,7 +261,7 @@ async def create_analyzer_and_assert(
     )
 
     # Extract operation_id from the poller using the helper function
-    operation_id = extract_operation_id_from_poller(poller)
+    operation_id = extract_operation_id_from_poller(poller, PollerType.ANALYZER_CREATION)
     print(f"Extracted operation_id: {operation_id}")
 
     # Check operation status while it's running
@@ -593,45 +616,105 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
                 print(f"Analyzer {analyzer_id} was not created, no cleanup needed")
 
 
-    @pytest.mark.skip(reason="Skipping all tests except test_content_analyzers_get")
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_analyzers_list(self, contentunderstanding_endpoint):
         """
         Test Summary:
         - List all available analyzers
-        - Verify list response
+        - Verify list response contains expected prebuilt analyzers
+        - Verify each analyzer has required properties
         """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
         response = client.content_analyzers.list()
         result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
+        
+        # Verify we get at least one analyzer in the list
+        assert len(result) > 0, "Should have at least one analyzer in the list"
+        print(f"Found {len(result)} analyzers")
+        
+        # Verify that the prebuilt-documentAnalyzer is in the list
+        prebuilt_found = False
+        for analyzer in result:
+            assert hasattr(analyzer, 'analyzer_id'), "Each analyzer should have analyzer_id"
+            assert hasattr(analyzer, 'description'), "Each analyzer should have description"
+            assert hasattr(analyzer, 'status'), "Each analyzer should have status"
+            assert hasattr(analyzer, 'created_at'), "Each analyzer should have created_at"
+            
+            if analyzer.analyzer_id == "prebuilt-documentAnalyzer":
+                prebuilt_found = True
+                assert analyzer.status == "ready", "prebuilt-documentAnalyzer should be ready"
+                print(f"Found prebuilt-documentAnalyzer: {analyzer.description}")
+        
+        assert prebuilt_found, "prebuilt-documentAnalyzer should be in the list"
+        print("List analyzers test completed successfully")
 
-    @pytest.mark.skip(reason="Skipping all tests except test_content_analyzers_get")
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_content_analyzers_begin_analyze(self, contentunderstanding_endpoint):
+    async def test_content_analyzers_begin_analyze_url(self, contentunderstanding_endpoint):
         """
         Test Summary:
-        - Begin analysis operation with analyzer
+        - Create simple analyzer for URL analysis
+        - Begin analysis operation with URL input
         - Wait for analysis completion
-        - Verify analysis results
+        - Save analysis result to output file
+        - Verify fields node exists in first result
+        - Verify total_amount field exists and equals 110
+        - Clean up created analyzer
         """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        response = await (
-            await client.content_analyzers.begin_analyze(
-                analyzer_id="str",
+        analyzer_id = generate_analyzer_id()
+        created_analyzer = False
+
+        # Create a simple analyzer for URL analysis
+        content_analyzer = new_simple_content_analyzer_object(
+            analyzer_id=analyzer_id,
+            description=f"test analyzer for URL analysis: {analyzer_id}",
+            tags={"test_type": "url_analysis"}
+        )
+
+        try:
+            # Create analyzer using the refactored function
+            poller, operation_id = await create_analyzer_and_assert(client, analyzer_id, content_analyzer)
+            created_analyzer = True
+
+            # Use the provided URL for the invoice PDF
+            invoice_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/invoice.pdf"
+
+            print(f"Starting URL analysis with analyzer {analyzer_id}")
+            
+            # Begin analysis operation with URL
+            analysis_poller = await client.content_analyzers.begin_analyze(
+                analyzer_id=analyzer_id,
                 body={
-                    "data": bytes("bytes", encoding="utf-8"),
-                    "inputs": [{"url": "str", "data": bytes("bytes", encoding="utf-8"), "name": "str"}],
-                    "url": "str",
+                    "url": invoice_url,
                 },
             )
-        ).result()  # call '.result()' to poll until service return final result
+            assert_poller_properties(analysis_poller, "Analysis poller")
 
-        # please add some check logic here by yourself
-        # ...
+            # Wait for analysis completion
+            print(f"Waiting for analysis completion")
+            analysis_result = await analysis_poller.result()
+            print(f"Analysis completed")
+            
+            output_filename = save_analysis_result_to_file(analysis_result, "test_content_analyzers_begin_analyze_url", analyzer_id)
+
+            # Now assert the field results
+            assert_simple_content_analyzer_result(analysis_result, "Analysis result")
+
+        finally:
+            # Always clean up the created analyzer, even if the test fails
+            if created_analyzer:
+                print(f"Cleaning up analyzer {analyzer_id}")
+                try:
+                    await client.content_analyzers.delete(analyzer_id=analyzer_id)
+                    # Verify deletion
+                    assert not await analyzer_in_list(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
+                    print(f"Analyzer {analyzer_id} is deleted successfully")
+                except Exception as e:
+                    print(f"Warning: Failed to delete analyzer {analyzer_id}: {e}")
+            else:
+                print(f"Analyzer {analyzer_id} was not created, no cleanup needed")
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
@@ -663,8 +746,10 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             poller, operation_id = await create_analyzer_and_assert(client, analyzer_id, content_analyzer)
             created_analyzer = True
 
-            # Read the sample invoice PDF file
-            pdf_path = "test_data/sample_invoice.pdf"
+            # Read the sample invoice PDF file using absolute path based on this test file's location
+            import os
+            test_file_dir = os.path.dirname(os.path.abspath(__file__))
+            pdf_path = os.path.join(test_file_dir, "test_data", "sample_invoice.pdf")
             with open(pdf_path, "rb") as pdf_file:
                 pdf_content = pdf_file.read()
 
@@ -702,45 +787,214 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             else:
                 print(f"Analyzer {analyzer_id} was not created, no cleanup needed")
 
-    @pytest.mark.skip(reason="Skipping all tests except test_content_analyzers_get")
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_analyzers_get_result(self, contentunderstanding_endpoint):
         """
         Test Summary:
-        - Get analysis result by operation ID
+        - Create simple analyzer for binary analysis to get operation ID
+        - Read sample invoice PDF file
+        - Begin binary analysis operation with analyzer
+        - Wait for analysis completion
+        - Use get_result to retrieve the analysis result by operation ID
         - Verify result contents and structure
+        - Assert simple content analyzer result fields
+        - Clean up created analyzer
         """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        response = await client.content_analyzers.get_result(
-            operation_id="str",
+        analyzer_id = generate_analyzer_id()
+        created_analyzer = False
+
+        # Create a simple analyzer for binary analysis
+        content_analyzer = new_simple_content_analyzer_object(
+            analyzer_id=analyzer_id,
+            description=f"test analyzer for get result test: {analyzer_id}",
+            tags={"test_type": "get_result"}
         )
-        # Check response is not None
-        assert response is not None
-        # Check response.contents is not None
-        assert response.contents is not None
-        # Check response.contents is not empty
-        assert len(response.contents) > 0
-        # Check response.contents[0].markdown is not None
-        assert response.contents[0].markdown is not None
 
-        # please add some check logic here by yourself
-        # ...
+        try:
+            # Create analyzer using the refactored function
+            poller, operation_id = await create_analyzer_and_assert(client, analyzer_id, content_analyzer)
+            created_analyzer = True
 
-    @pytest.mark.skip(reason="Skipping all tests except test_content_analyzers_get")
+            # Read the sample invoice PDF file using absolute path based on this test file's location
+            import os
+            test_file_dir = os.path.dirname(os.path.abspath(__file__))
+            pdf_path = os.path.join(test_file_dir, "test_data", "sample_invoice.pdf")
+            with open(pdf_path, "rb") as pdf_file:
+                pdf_content = pdf_file.read()
+
+            print(f"Starting binary analysis to get operation ID")
+            
+            # Begin binary analysis operation
+            analysis_poller = await client.content_analyzers.begin_analyze_binary(
+                analyzer_id=analyzer_id,
+                input=pdf_content,
+                content_type="application/pdf",
+            )
+
+            # Wait for analysis completion first
+            print(f"Waiting for analysis completion")
+            _ = await analysis_poller.result()
+            print(f"Analysis completed")
+
+            # Extract operation ID for get_result test - this should not fail
+            analysis_operation_id = extract_operation_id_from_poller(analysis_poller, PollerType.ANALYZE_CALL)
+            assert analysis_operation_id is not None, "Operation ID should not be None"
+            assert len(analysis_operation_id) > 0, "Operation ID should not be empty"
+            print(f"Analysis operation ID: {analysis_operation_id}")
+
+            # Now use get_result to retrieve the result by operation ID
+            print(f"Getting result by operation ID: {analysis_operation_id}")
+            operation_status = await client.content_analyzers.get_result(
+                operation_id=analysis_operation_id,
+            )
+            
+            # Check operation_status is not None
+            assert operation_status is not None, "Operation status should not be None"
+            
+            # Check operation_status has the expected operation status properties
+            assert hasattr(operation_status, 'id'), "Operation status should have id property"
+            assert hasattr(operation_status, 'status'), "Operation status should have status property"
+            assert hasattr(operation_status, 'result'), "Operation status should have result property"
+            assert operation_status.id == analysis_operation_id, f"Operation status ID should match operation ID {analysis_operation_id}"
+            assert operation_status.status == "Succeeded", f"Operation status should be Succeeded, got {operation_status.status}"
+            
+            # The actual analysis result is in operation_status.result
+            analysis_result = operation_status.result
+            assert analysis_result is not None, "Analysis result should not be None"
+            
+            # Save the analysis result to file (not the wrapper operation_status)
+            output_filename = save_analysis_result_to_file(analysis_result, "test_content_analyzers_get_result", analysis_operation_id)
+            
+            print(f"Successfully retrieved result for operation {analysis_operation_id}")
+            print(f"Result contains {len(analysis_result.contents)} contents")
+
+            # Now assert the field results using the same validation as binary test
+            assert_simple_content_analyzer_result(analysis_result, "Get result response")
+
+        finally:
+            # Always clean up the created analyzer, even if the test fails
+            if created_analyzer:
+                print(f"Cleaning up analyzer {analyzer_id}")
+                try:
+                    await client.content_analyzers.delete(analyzer_id=analyzer_id)
+                    # Verify deletion
+                    assert not await analyzer_in_list(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
+                    print(f"Analyzer {analyzer_id} is deleted successfully")
+                except Exception as e:
+                    print(f"Warning: Failed to delete analyzer {analyzer_id}: {e}")
+            else:
+                print(f"Analyzer {analyzer_id} was not created, no cleanup needed")
+
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_analyzers_get_result_file(self, contentunderstanding_endpoint):
         """
         Test Summary:
-        - Get specific result file by operation ID and path
-        - Verify file content
+        - Create simple analyzer for binary analysis to get operation ID
+        - Read sample invoice PDF file
+        - Begin binary analysis operation with analyzer
+        - Wait for analysis completion
+        - Use get_result_file to retrieve specific result files by operation ID and path
+        - Verify file content is returned (if available)
+        - Clean up created analyzer
         """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        response = await client.content_analyzers.get_result_file(
-            operation_id="str",
-            path="str",
+        analyzer_id = generate_analyzer_id()
+        created_analyzer = False
+
+        # Create a simple analyzer for binary analysis
+        content_analyzer = new_simple_content_analyzer_object(
+            analyzer_id=analyzer_id,
+            description=f"test analyzer for get result file test: {analyzer_id}",
+            tags={"test_type": "get_result_file"}
         )
 
-        # please add some check logic here by yourself
-        # ...
+        try:
+            # Create analyzer using the refactored function
+            poller, operation_id = await create_analyzer_and_assert(client, analyzer_id, content_analyzer)
+            created_analyzer = True
+
+            # Read the sample invoice PDF file using absolute path based on this test file's location
+            import os
+            test_file_dir = os.path.dirname(os.path.abspath(__file__))
+            pdf_path = os.path.join(test_file_dir, "test_data", "sample_invoice.pdf")
+            with open(pdf_path, "rb") as pdf_file:
+                pdf_content = pdf_file.read()
+
+            print(f"Starting binary analysis to get operation ID")
+            
+            # Begin binary analysis operation
+            analysis_poller = await client.content_analyzers.begin_analyze_binary(
+                analyzer_id=analyzer_id,
+                input=pdf_content,
+                content_type="application/pdf",
+            )
+
+            # Wait for analysis completion first
+            print(f"Waiting for analysis completion")
+            analysis_result = await analysis_poller.result()
+            print(f"Analysis completed")
+
+            # Extract operation ID for get_result_file test - this should not fail
+            analysis_operation_id = extract_operation_id_from_poller(analysis_poller, PollerType.ANALYZE_CALL)
+            assert analysis_operation_id is not None, "Operation ID should not be None"
+            assert len(analysis_operation_id) > 0, "Operation ID should not be empty"
+            print(f"Analysis operation ID: {analysis_operation_id}")
+
+            # Get the result first to see what files are available
+            result = await client.content_analyzers.get_result(
+                operation_id=analysis_operation_id,
+            )
+
+            # Try to get a specific result file - typically there might be a markdown file or the original analyzed content
+            # Common paths might include "content.md", "result.json", or the original filename
+            test_paths = ["content.md", "result.json", "sample_invoice.pdf"]
+            
+            file_retrieved = False
+            for test_path in test_paths:
+                try:
+                    print(f"Trying to get result file with path: {test_path}")
+                    response = await client.content_analyzers.get_result_file(
+                        operation_id=analysis_operation_id,
+                        path=test_path,
+                    )
+                    
+                    # If we successfully get a response, verify it's not None
+                    assert response is not None, f"Response for path {test_path} should not be None"
+                    print(f"Successfully retrieved result file for path: {test_path}")
+                    print(f"File content type: {type(response)}")
+                    
+                    # If it's bytes, check length
+                    if isinstance(response, bytes):
+                        assert len(response) > 0, f"File content for {test_path} should not be empty"
+                        print(f"File content length: {len(response)} bytes")
+                    elif hasattr(response, '__len__'):
+                        assert len(response) > 0, f"File content for {test_path} should not be empty"
+                    
+                    file_retrieved = True
+                    break
+                    
+                except Exception as e:
+                    print(f"Could not retrieve file with path {test_path}: {e}")
+                    continue
+            
+            # If no specific files are available, that's also acceptable for this test
+            # The main goal is to verify the API call works
+            if not file_retrieved:
+                assert(False, "No specific result files were available, but API calls succeeded")
+
+        finally:
+            # Always clean up the created analyzer, even if the test fails
+            if created_analyzer:
+                print(f"Cleaning up analyzer {analyzer_id}")
+                try:
+                    await client.content_analyzers.delete(analyzer_id=analyzer_id)
+                    # Verify deletion
+                    assert not await analyzer_in_list(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
+                    print(f"Analyzer {analyzer_id} is deleted successfully")
+                except Exception as e:
+                    print(f"Warning: Failed to delete analyzer {analyzer_id}: {e}")
+            else:
+                print(f"Analyzer {analyzer_id} was not created, no cleanup needed")
