@@ -7,7 +7,7 @@
 """
 DESCRIPTION:
     This sample demonstrates how to use agent operations with the
-    Model Context Protocol (MCP) tool from the Azure Agents service, and 
+    Model Context Protocol (MCP) tool from the Azure Agents service, and
     iteration in streaming. It uses a synchronous client.
     To learn more about Model Context Protocol, visit https://modelcontextprotocol.io/
 
@@ -41,7 +41,7 @@ from azure.ai.agents.models import (
     MessageDeltaTextUrlCitationAnnotation,
     RequiredMcpToolCall,
     SubmitToolApprovalAction,
-    ToolApproval
+    ToolApproval,
 )
 from azure.identity import DefaultAzureCredential
 
@@ -83,9 +83,7 @@ with project_client:
     print(f"Created thread, thread ID {thread.id}")
 
     message = agents_client.messages.create(
-        thread_id=thread.id,
-        role=MessageRole.USER,
-        content="Please summarize the Azure REST API specifications Readme"
+        thread_id=thread.id, role=MessageRole.USER, content="Please summarize the Azure REST API specifications Readme"
     )
     print(f"Created message, message ID {message.id}")
 
@@ -148,7 +146,10 @@ with project_client:
                         # Once we receive 'requires_action' status, the next event will be DONE.
                         # Here we associate our existing event handler to the next stream.
                         agents_client.runs.submit_tool_outputs_stream(
-                            thread_id=event_data.thread_id, run_id=event_data.id, tool_approvals=tool_approvals, event_handler=stream
+                            thread_id=event_data.thread_id,
+                            run_id=event_data.id,
+                            tool_approvals=tool_approvals,
+                            event_handler=stream,
                         )
 
             elif isinstance(event_data, RunStep):
