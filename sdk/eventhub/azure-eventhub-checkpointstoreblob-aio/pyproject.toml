@@ -33,7 +33,7 @@ dependencies = [
 dynamic = ["version", "readme"]
 
 [project.urls]
-repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk
+repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk"
 
 [tool.setuptools.dynamic]
 version = {attr = "azure.eventhub.extensions.checkpointstoreblobaio._version.VERSION"}
