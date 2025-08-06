@@ -79,18 +79,18 @@
   - Added model `TagsResource`
   - Added model `VMInsightsOnboardingStatus`
   - Added model `WorkspaceInfo`
-  - Added model `DiagnosticSettingsCategoryOperations`
-  - Added model `DiagnosticSettingsOperations`
-  - Added model `GuestDiagnosticsSettingsAssociationOperations`
-  - Added model `GuestDiagnosticsSettingsOperations`
-  - Added model `PrivateEndpointConnectionsOperations`
-  - Added model `PrivateLinkResourcesOperations`
-  - Added model `PrivateLinkScopeOperationStatusOperations`
-  - Added model `PrivateLinkScopedResourcesOperations`
-  - Added model `PrivateLinkScopesOperations`
-  - Added model `ServiceDiagnosticSettingsOperations`
-  - Added model `SubscriptionDiagnosticSettingsOperations`
-  - Added model `VMInsightsOperations`
+  - Added operation group `DiagnosticSettingsCategoryOperations`
+  - Added operation group `DiagnosticSettingsOperations`
+  - Added operation group `GuestDiagnosticsSettingsAssociationOperations`
+  - Added operation group `GuestDiagnosticsSettingsOperations`
+  - Added operation group `PrivateEndpointConnectionsOperations`
+  - Added operation group `PrivateLinkResourcesOperations`
+  - Added operation group `PrivateLinkScopeOperationStatusOperations`
+  - Added operation group `PrivateLinkScopedResourcesOperations`
+  - Added operation group `PrivateLinkScopesOperations`
+  - Added operation group `ServiceDiagnosticSettingsOperations`
+  - Added operation group `SubscriptionDiagnosticSettingsOperations`
+  - Added operation group `VMInsightsOperations`
 
 ### Breaking Changes
 
