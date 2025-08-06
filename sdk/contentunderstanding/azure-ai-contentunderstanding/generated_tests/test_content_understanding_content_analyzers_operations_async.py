@@ -314,75 +314,117 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             else:
                 print(f"Analyzer {analyzer_id} was not created, no cleanup needed")
 
-    @pytest.mark.skip(reason="Skipping all tests except test_content_analyzers_get")
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_analyzers_update(self, contentunderstanding_endpoint):
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        response = await client.content_analyzers.update(
-            analyzer_id="str",
-            resource={
-                "analyzerId": "str",
-                "createdAt": "2020-02-20 00:00:00",
-                "lastModifiedAt": "2020-02-20 00:00:00",
-                "status": "str",
-                "baseAnalyzerId": "str",
-                "config": {
-                    "disableContentFiltering": bool,
-                    "disableFaceBlurring": bool,
-                    "enableFace": bool,
-                    "enableFormula": bool,
-                    "enableLayout": bool,
-                    "enableOcr": bool,
-                    "estimateFieldSourceAndConfidence": bool,
-                    "locales": ["str"],
-                    "personDirectoryId": "str",
-                    "returnDetails": bool,
-                    "segmentationDefinition": "str",
-                    "segmentationMode": "str",
-                    "tableFormat": "str",
+        analyzer_id = generate_analyzer_id()
+        created_analyzer = False
+
+        # Create initial analyzer
+        initial_analyzer = ContentAnalyzer(
+            base_analyzer_id="prebuilt-documentAnalyzer",
+            config=ContentAnalyzerConfig(
+                enable_formula=True,
+                enable_layout=True,
+                enable_ocr=True,
+                estimate_field_source_and_confidence=True,
+                return_details=True,
+            ),
+            description=f"Initial analyzer for update test: {analyzer_id}",
+            field_schema=FieldSchema(
+                fields={
+                    "total_amount": FieldDefinition(
+                        description="Total amount of this table",
+                        method=GenerationMethod.EXTRACT,
+                        type=FieldType.NUMBER,
+                    )
                 },
-                "description": "str",
-                "fieldSchema": {
-                    "fields": {
-                        "str": {
-                            "$ref": "str",
-                            "description": "str",
-                            "enum": ["str"],
-                            "enumDescriptions": {"str": "str"},
-                            "examples": ["str"],
-                            "items": ...,
-                            "method": "str",
-                            "properties": {"str": ...},
-                            "type": "str",
-                        }
-                    },
-                    "definitions": {
-                        "str": {
-                            "$ref": "str",
-                            "description": "str",
-                            "enum": ["str"],
-                            "enumDescriptions": {"str": "str"},
-                            "examples": ["str"],
-                            "items": ...,
-                            "method": "str",
-                            "properties": {"str": ...},
-                            "type": "str",
-                        }
-                    },
-                    "description": "str",
-                    "name": "str",
-                },
-                "knowledgeSources": ["knowledge_source"],
-                "mode": "str",
-                "processingLocation": "str",
-                "tags": {"str": "str"},
-                "trainingData": "data_source",
-            },
+                description="Initial schema for update test",
+                name="initial_schema",
+            ),
+            mode=AnalysisMode.STANDARD,
+            processing_location=ProcessingLocation.GLOBAL,
+            tags={"initial_tag": "initial_value"},
         )
 
-        # please add some check logic here by yourself
-        # ...
+        try:
+            print(f"Creating initial analyzer {analyzer_id} for update test")
+            
+            # Create the initial analyzer
+            poller = await client.content_analyzers.begin_create_or_replace(
+                analyzer_id=analyzer_id,
+                resource=initial_analyzer,
+            )
+            
+            await poller.result()
+            assert poller.status() == "Succeeded"
+            print(f"Initial analyzer {analyzer_id} created successfully")
+            created_analyzer = True
+
+            # Verify initial analyzer exists
+            assert await analyzer_in_list(client, analyzer_id), f"Initial analyzer with ID '{analyzer_id}' was not found in the list"
+
+            # Get the analyzer before update to verify initial state
+            print(f"Getting analyzer {analyzer_id} before update")
+            analyzer_before_update = await client.content_analyzers.get(analyzer_id=analyzer_id)
+            assert analyzer_before_update is not None
+            assert analyzer_before_update.analyzer_id == analyzer_id
+            assert analyzer_before_update.description == f"Initial analyzer for update test: {analyzer_id}"
+            assert analyzer_before_update.tags == {"initial_tag": "initial_value"}
+            print(f"Initial analyzer state verified - description: {analyzer_before_update.description}, tags: {analyzer_before_update.tags}")
+
+            # Create updated analyzer with only allowed properties (description and tags)
+            updated_analyzer = ContentAnalyzer(
+                description=f"Updated analyzer for update test: {analyzer_id}",
+                tags={"initial_tag": "initial_value", "tag1_field": "updated_value"},
+            )
+
+            print(f"Updating analyzer {analyzer_id} with new tag and description")
+            
+            # Update the analyzer
+            response = await client.content_analyzers.update(
+                analyzer_id=analyzer_id,
+                resource=updated_analyzer,
+            )
+
+            # Verify the update response
+            assert response is not None
+            print(f"Update response: {response}")
+            
+            # Verify the updated analyzer has the new tag and updated description
+            assert response.analyzer_id == analyzer_id
+            assert "tag1_field" in response.tags
+            assert response.tags["tag1_field"] == "updated_value"
+            assert response.description == f"Updated analyzer for update test: {analyzer_id}"
+            
+            print(f"Successfully updated analyzer {analyzer_id} with new tag and description")
+
+            # Get the analyzer after update to verify the changes persisted
+            print(f"Getting analyzer {analyzer_id} after update")
+            analyzer_after_update = await client.content_analyzers.get(analyzer_id=analyzer_id)
+            assert analyzer_after_update is not None
+            assert analyzer_after_update.analyzer_id == analyzer_id
+            assert analyzer_after_update.description == f"Updated analyzer for update test: {analyzer_id}"
+            assert analyzer_after_update.tags == {"initial_tag": "initial_value", "tag1_field": "updated_value"}
+            print(f"Updated analyzer state verified - description: {analyzer_after_update.description}, tags: {analyzer_after_update.tags}")
+
+            # Verify the updated analyzer is in the list
+            assert await analyzer_in_list(client, analyzer_id), f"Updated analyzer with ID '{analyzer_id}' was not found in the list"
+
+        finally:
+            # Always clean up the created analyzer, even if the test fails
+            if created_analyzer:
+                print(f"Cleaning up analyzer {analyzer_id}")
+                try:
+                    await client.content_analyzers.delete(analyzer_id=analyzer_id)
+                    # Verify deletion
+                    assert not await analyzer_in_list(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
+                    print(f"Analyzer {analyzer_id} is deleted successfully")
+                except Exception as e:
+                    print(f"Warning: Failed to delete analyzer {analyzer_id}: {e}")
+            else:
+                print(f"Analyzer {analyzer_id} was not created, no cleanup needed")
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
