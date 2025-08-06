@@ -53,72 +53,72 @@ class TestConfigurationManager(unittest.TestCase):
         # Worker should only be initialized once
         mock_worker_class.assert_called_once()
 
-    # @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
-    # def test_worker_initialization(self, mock_worker_class):
-    #     """Test that ConfigurationWorker is initialized properly."""
-    #     mock_worker_instance = Mock()
-    #     mock_worker_class.return_value = mock_worker_instance
+    @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
+    def test_worker_initialization(self, mock_worker_class):
+        """Test that ConfigurationWorker is initialized properly."""
+        mock_worker_instance = Mock()
+        mock_worker_class.return_value = mock_worker_instance
         
-    #     manager = _ConfigurationManager()
+        manager = _ConfigurationManager()
         
-    #     # Verify worker was created with correct refresh interval
-    #     mock_worker_class.assert_called_once_with(_ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
-    #     self.assertEqual(manager._configuration_worker, mock_worker_instance)
+        # Verify worker was created with correct refresh interval
+        mock_worker_class.assert_called_once_with(_ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
+        self.assertEqual(manager._configuration_worker, mock_worker_instance)
 
-    # @patch('azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request')
-    # @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
-    # def test_get_configuration_and_refresh_interval(self, mock_worker_class, mock_request):
-    #     """Test get_configuration_and_refresh_interval method."""
-    #     # Setup
-    #     mock_response = OneSettingsResponse(
-    #         etag="test-etag",
-    #         refresh_interval=1800.0,
-    #         settings={"key1": "value1"},
-    #         version=5
-    #     )
-    #     mock_request.return_value = mock_response
+    @patch('azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request')
+    @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
+    def test_get_configuration_and_refresh_interval(self, mock_worker_class, mock_request):
+        """Test get_configuration_and_refresh_interval method."""
+        # Setup
+        mock_response = OneSettingsResponse(
+            etag="test-etag",
+            refresh_interval=1800.0,
+            settings={"key1": "value1"},
+            version=5
+        )
+        mock_request.return_value = mock_response
         
-    #     manager = _ConfigurationManager()
+        manager = _ConfigurationManager()
         
-    #     # Execute
-    #     result = manager.get_configuration_and_refresh_interval({"param": "value"})
+        # Execute
+        result = manager.get_configuration_and_refresh_interval({"param": "value"})
         
-    #     # Verify
-    #     self.assertEqual(result, 1800.0)
-    #     self.assertEqual(manager._etag, "test-etag")
-    #     self.assertEqual(manager._refresh_interval, 1800.0)
-    #     self.assertEqual(manager._version_cache, 5)
+        # Verify
+        self.assertEqual(result, 1800.0)
+        self.assertEqual(manager._etag, "test-etag")
+        self.assertEqual(manager._refresh_interval, 1800.0)
+        self.assertEqual(manager._version_cache, 5)
         
-    #     # Verify request was made with correct parameters
-    #     mock_request.assert_called_once()
-    #     call_args = mock_request.call_args
-    #     self.assertEqual(call_args[0][0], _ONE_SETTINGS_CHANGE_URL)  # URL
-    #     self.assertEqual(call_args[0][1], {"param": "value"})  # query_dict
+        # Verify request was made with correct parameters
+        mock_request.assert_called_once()
+        call_args = mock_request.call_args
+        self.assertEqual(call_args[0][0], _ONE_SETTINGS_CHANGE_URL)  # URL
+        self.assertEqual(call_args[0][1], {"param": "value"})  # query_dict
 
-    # @patch('azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request')
-    # @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
-    # def test_etag_headers(self, mock_worker_class, mock_request):
-    #     """Test that etag is included in request headers."""
-    #     # Setup - first call sets etag
-    #     mock_response1 = OneSettingsResponse(etag="test-etag", refresh_interval=1800.0)
-    #     mock_request.return_value = mock_response1
+    @patch('azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request')
+    @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
+    def test_etag_headers(self, mock_worker_class, mock_request):
+        """Test that etag is included in request headers."""
+        # Setup - first call sets etag
+        mock_response1 = OneSettingsResponse(etag="test-etag", refresh_interval=1800.0)
+        mock_request.return_value = mock_response1
         
-    #     manager = _ConfigurationManager()
-    #     manager.get_configuration_and_refresh_interval()
+        manager = _ConfigurationManager()
+        manager.get_configuration_and_refresh_interval()
         
-    #     # Setup - second call should include etag
-    #     mock_response2 = OneSettingsResponse(etag="new-etag", refresh_interval=2400.0)
-    #     mock_request.return_value = mock_response2
+        # Setup - second call should include etag
+        mock_response2 = OneSettingsResponse(etag="new-etag", refresh_interval=2400.0)
+        mock_request.return_value = mock_response2
         
-    #     # Execute second call
-    #     manager.get_configuration_and_refresh_interval()
+        # Execute second call
+        manager.get_configuration_and_refresh_interval()
         
-    #     # Verify second call included etag in headers
-    #     self.assertEqual(mock_request.call_count, 2)
-    #     second_call_args = mock_request.call_args
-    #     headers = second_call_args[0][2]  # headers parameter
-    #     self.assertEqual(headers["If-None-Match"], "test-etag")
-    #     self.assertEqual(headers["x-ms-onesetinterval"], "1800.0")
+        # Verify second call included etag in headers
+        self.assertEqual(mock_request.call_count, 2)
+        second_call_args = mock_request.call_args
+        headers = second_call_args[0][2]  # headers parameter
+        self.assertEqual(headers["If-None-Match"], "test-etag")
+        self.assertEqual(headers["x-ms-onesetinterval"], "1800.0")
 
     # @patch('azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request')
     # @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
