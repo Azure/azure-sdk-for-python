@@ -6,12 +6,40 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
+import uuid
+from datetime import datetime
 from devtools_testutils.aio import recorded_by_proxy_async
 from testpreparer import ContentUnderstandingPreparer
 from testpreparer_async import ContentUnderstandingClientTestBaseAsync
+from azure.ai.contentunderstanding.models import ContentAnalyzer, ContentAnalyzerConfig, FieldSchema, FieldDefinition
+from azure.ai.contentunderstanding.models import GenerationMethod, FieldType, AnalysisMode, ProcessingLocation
 
 
-# @pytest.mark.skip("you may need to update the auto-generated test case before run it")
+def generate_analyzer_id() -> str:
+    """Generate a unique analyzer ID with current date, time, and GUID."""
+    now = datetime.now()
+    date_str = now.strftime("%Y%m%d")
+    time_str = now.strftime("%H%M%S")
+    guid = str(uuid.uuid4()).replace("-", "")[:8]
+    return f"python-sdk-test-analyzer-{date_str}-{time_str}-{guid}"
+
+
+async def analyzer_in_list(client, analyzer_id: str) -> bool:
+    """Check if an analyzer with the given ID exists in the list of analyzers.
+    
+    Args:
+        client: The ContentUnderstandingClient instance
+        analyzer_id: The analyzer ID to search for
+        
+    Returns:
+        bool: True if the analyzer is found, False otherwise
+    """
+    response = client.content_analyzers.list()
+    async for r in response:
+        if hasattr(r, 'analyzer_id') and r.analyzer_id == analyzer_id:
+            return True
+    return False
+
 class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandingClientTestBaseAsync):
     @pytest.mark.skip(reason="Skipping test_content_analyzers_get_operation_status")
     @ContentUnderstandingPreparer()
@@ -26,78 +54,152 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         # please add some check logic here by yourself
         # ...
 
-    @pytest.mark.skip(reason="Skipping all tests except test_content_analyzers_get")
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_content_analyzers_begin_create_or_replace(self, contentunderstanding_endpoint):
+    async def test_content_analyzers_begin_create_with_content_analyzer(self, contentunderstanding_endpoint):
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        response = await (
-            await client.content_analyzers.begin_create_or_replace(
-                analyzer_id="str",
+        analyzer_id = generate_analyzer_id()
+        created_analyzer = False
+
+        content_analyzer = ContentAnalyzer(
+            base_analyzer_id="prebuilt-documentAnalyzer",
+            config=ContentAnalyzerConfig(
+                disable_content_filtering=False,
+                disable_face_blurring=False,
+                enable_face=False,
+                enable_formula=True,
+                enable_layout=True,
+                enable_ocr=True,
+                estimate_field_source_and_confidence=True,
+                return_details=True,
+            ),
+            description=f"test analyzer: {analyzer_id}",
+            field_schema=FieldSchema(
+                fields={
+                    "total_amount": FieldDefinition(
+                        description="Total amount of this table",
+                        method=GenerationMethod.EXTRACT,
+                        type=FieldType.NUMBER,
+                    )
+                },
+                description="schema description here",
+                name="schema name here",
+            ),
+            mode=AnalysisMode.STANDARD,
+            processing_location=ProcessingLocation.GLOBAL,
+            tags={"tag1_name": "tag1_value"},
+        )
+
+        try:
+            print(f"Trying to create an analyzer with analyzer_id: {analyzer_id}")
+            poller = await client.content_analyzers.begin_create_or_replace(
+                analyzer_id=analyzer_id,
+                resource=content_analyzer,
+            )
+
+            assert poller is not None
+            assert poller.status() is not None
+            assert poller.status() is not ""
+            assert poller.continuation_token() is not None
+
+            print(f"Waiting for analyzer {analyzer_id} to be created")
+            response = await poller.result()
+            assert response is not None
+            assert poller.status() == "Succeeded"
+            assert poller.done()
+            print(f"Analyzer {analyzer_id} is created successfully")
+            created_analyzer = True
+
+            # Verify the analyzer is in the list
+            assert await analyzer_in_list(client, analyzer_id), f"Created analyzer with ID '{analyzer_id}' was not found in the list"
+            print(f"Verified analyzer {analyzer_id} is in the list")
+
+        finally:
+            # Always clean up the created analyzer, even if the test fails
+            if created_analyzer:
+                print(f"Cleaning up analyzer {analyzer_id}")
+                try:
+                    await client.content_analyzers.delete(analyzer_id=analyzer_id)
+                    # Verify deletion
+                    assert not await analyzer_in_list(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
+                    print(f"Analyzer {analyzer_id} is deleted successfully")
+                except Exception as e:
+                    print(f"Warning: Failed to delete analyzer {analyzer_id}: {e}")
+            else:
+                print(f"Analyzer {analyzer_id} was not created, no cleanup needed")
+
+    @ContentUnderstandingPreparer()
+    @recorded_by_proxy_async
+    async def test_content_analyzers_begin_create_with_json(self, contentunderstanding_endpoint):
+        client = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        analyzer_id = generate_analyzer_id()
+        created_analyzer = False
+
+        try:
+            print(f"Trying to create an analyzer with analyzer_id: {analyzer_id}")
+            poller = await client.content_analyzers.begin_create_or_replace(
+                analyzer_id=analyzer_id,
                 resource={
-                    "analyzerId": "str",
-                    "createdAt": "2020-02-20 00:00:00",
-                    "lastModifiedAt": "2020-02-20 00:00:00",
-                    "status": "str",
-                    "baseAnalyzerId": "str",
+                    "analyzerId": analyzer_id,
+                    "baseAnalyzerId": "prebuilt-documentAnalyzer",
                     "config": {
-                        "disableContentFiltering": bool,
-                        "disableFaceBlurring": bool,
-                        "enableFace": bool,
-                        "enableFormula": bool,
-                        "enableLayout": bool,
-                        "enableOcr": bool,
-                        "estimateFieldSourceAndConfidence": bool,
-                        "locales": ["str"],
-                        "personDirectoryId": "str",
-                        "returnDetails": bool,
-                        "segmentationDefinition": "str",
-                        "segmentationMode": "str",
-                        "tableFormat": "str",
+                        "disableContentFiltering": False,
+                        "disableFaceBlurring": False,
+                        "enableFace": False,
+                        "enableFormula": True,
+                        "enableLayout": True,
+                        "enableOcr": True,
+                        "estimateFieldSourceAndConfidence": True,
+                        "returnDetails": True,
                     },
-                    "description": "str",
+                    "description": f"test analyzer: {analyzer_id}",
                     "fieldSchema": {
                         "fields": {
-                            "str": {
-                                "$ref": "str",
-                                "description": "str",
-                                "enum": ["str"],
-                                "enumDescriptions": {"str": "str"},
-                                "examples": ["str"],
-                                "items": ...,
-                                "method": "str",
-                                "properties": {"str": ...},
-                                "type": "str",
+                            "total_amount": {
+                                "description": "Total amount of this table",
+                                "method": "extract",
+                                "type": "number",
                             }
                         },
-                        "definitions": {
-                            "str": {
-                                "$ref": "str",
-                                "description": "str",
-                                "enum": ["str"],
-                                "enumDescriptions": {"str": "str"},
-                                "examples": ["str"],
-                                "items": ...,
-                                "method": "str",
-                                "properties": {"str": ...},
-                                "type": "str",
-                            }
-                        },
-                        "description": "str",
-                        "name": "str",
+                        "description": "schema description here",
+                        "name": "schema name here",
                     },
-                    "knowledgeSources": ["knowledge_source"],
-                    "mode": "str",
-                    "processingLocation": "str",
-                    "tags": {"str": "str"},
-                    "trainingData": "data_source",
-                    "warnings": [~azure.core.ODataV4Format],
+                    "mode": "standard",
+                    "processingLocation": "global",
+                    "tags": {"tag1_name": "tag1_value"},
                 },
             )
-        ).result()  # call '.result()' to poll until service return final result
 
-        # please add some check logic here by yourself
-        # ...
+            assert poller is not None
+            assert poller.status() is not None
+            assert poller.status() is not ""
+            assert poller.continuation_token() is not None
+
+            print(f"Waiting for analyzer {analyzer_id} to be created")
+            response = await poller.result()
+            assert response is not None
+            assert poller.status() == "Succeeded"
+            assert poller.done()
+            print(f"Analyzer {analyzer_id} is created successfully")
+            created_analyzer = True
+
+            # Verify the analyzer is in the list
+            assert await analyzer_in_list(client, analyzer_id), f"Created analyzer with ID '{analyzer_id}' was not found in the list"
+            print(f"Verified analyzer {analyzer_id} is in the list")
+
+        finally:
+            # Always clean up the created analyzer, even if the test fails
+            if created_analyzer:
+                print(f"Cleaning up analyzer {analyzer_id}")
+                try:
+                    await client.content_analyzers.delete(analyzer_id=analyzer_id)
+                    # Verify deletion
+                    assert not await analyzer_in_list(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
+                    print(f"Analyzer {analyzer_id} is deleted successfully")
+                except Exception as e:
+                    print(f"Warning: Failed to delete analyzer {analyzer_id}: {e}")
+            else:
+                print(f"Analyzer {analyzer_id} was not created, no cleanup needed")
 
     @pytest.mark.skip(reason="Skipping all tests except test_content_analyzers_get")
     @ContentUnderstandingPreparer()
@@ -163,7 +265,6 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
                 "processingLocation": "str",
                 "tags": {"str": "str"},
                 "trainingData": "data_source",
-                "warnings": [~azure.core.ODataV4Format],
             },
         )
 
