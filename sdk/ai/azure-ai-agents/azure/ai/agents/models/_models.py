@@ -1049,20 +1049,20 @@ class BrowserAutomationToolCallDetails(_Model):
 class BrowserAutomationToolCallStep(_Model):
     """Describes a single step of a Browser Automation tool execution.
 
-    :ivar last_step_result: The input provided to the Browser Automation tool. Required.
+    :ivar last_step_result: The result of the last step executed with the Browser. Required.
     :vartype last_step_result: str
-    :ivar current_state: The output returned by the Browser Automation tool. Required.
+    :ivar current_state: The current state of execution with the Browser. Required.
     :vartype current_state: str
-    :ivar next_step: The next step to execute. Required.
+    :ivar next_step: The next step to execute with the Browser. Required.
     :vartype next_step: str
     """
 
     last_step_result: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The input provided to the Browser Automation tool. Required."""
+    """The result of the last step executed with the Browser. Required."""
     current_state: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The output returned by the Browser Automation tool. Required."""
+    """The current state of execution with the Browser. Required."""
     next_step: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The next step to execute. Required."""
+    """The next step to execute with the Browser. Required."""
 
     @overload
     def __init__(
