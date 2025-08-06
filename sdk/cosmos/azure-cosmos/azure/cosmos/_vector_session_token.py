@@ -118,9 +118,9 @@ class VectorSessionToken(object):
     def merge(self, other: "VectorSessionToken"):
         if other is None:
             raise ValueError("Invalid Session Token (should not be None)")
-        false_progress_merge_endabled = (os.environ.get(_Constants.SESSION_TOKEN_FALSE_PROGRESS_MERGE_CONFIG,
-                                                        _Constants.SESSION_TOKEN_FALSE_PROGRESS_MERGE_CONFIG_DEFAULT)
-                                         .lower() == "true")
+        false_progress_merge_enabled = (os.environ.get(_Constants.SESSION_TOKEN_FALSE_PROGRESS_MERGE_CONFIG,
+                                                       _Constants.SESSION_TOKEN_FALSE_PROGRESS_MERGE_CONFIG_DEFAULT)
+                                        .lower() == "true")
 
         if self.version == other.version and len(self.local_lsn_by_region) != len(other.local_lsn_by_region):
             raise exceptions.CosmosHttpResponseError(
@@ -158,7 +158,7 @@ class VectorSessionToken(object):
             else:
                 highest_local_lsn_by_region[region_id] = local_lsn1
         global_lsn = max(self.global_lsn, other.global_lsn)
-        if false_progress_merge_endabled and self.version != other.version:
+        if false_progress_merge_enabled and self.version != other.version:
             global_lsn = session_token_with_higher_version.global_lsn
 
         return VectorSessionToken(
