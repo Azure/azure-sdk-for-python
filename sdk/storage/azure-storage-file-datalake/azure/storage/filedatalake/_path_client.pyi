@@ -57,7 +57,7 @@ class PathClient(StorageAccountHostsMixin):
         group: Optional[str] = None,
         acl: Optional[str] = None,
         lease_id: Optional[str] = None,
-        lease_duration: Optional[int] = None,
+        lease_duration: int = -1,
         expires_on: Optional[Union[datetime, int]] = None,
         permissions: Optional[str] = None,
         if_modified_since: Optional[datetime] = None,
