@@ -23,35 +23,23 @@ USAGE:
        the "Models + endpoints" tab in your Azure AI Foundry project.
     3) AZURE_PLAYWRIGHT_CONNECTION_ID - The ID of the Azure Playwright Workspaces connection, in the format of:
        /subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace-name}/connections/{connection-name}
+       You can also get the connection ID programmatically from AIProjectClient, using the call `project_client.connections.get("<playwright-connection-name>").id`.
 """
 
 import os
 from azure.ai.projects import AIProjectClient
-from azure.ai.agents.models import MessageRole, RunStepToolCallDetails, BrowserAutomationTool
+from azure.ai.agents.models import (
+    MessageRole,
+    RunStepToolCallDetails,
+    BrowserAutomationTool,
+    RunStepBrowserAutomationToolCall,
+)
 from azure.identity import DefaultAzureCredential
 
- 
-# TODO: Remove console logging
-if False:
-    import sys
-    import logging
-    azure_logger = logging.getLogger("azure")
-    azure_logger.setLevel(logging.DEBUG)
-    azure_logger.addHandler(logging.StreamHandler(stream=sys.stdout))
-    identity_logger = logging.getLogger("azure.identity")
-    identity_logger.setLevel(logging.ERROR)
-# End logging
+project_client = AIProjectClient(endpoint=os.environ["PROJECT_ENDPOINT"], credential=DefaultAzureCredential())
 
-project_client = AIProjectClient(
-    endpoint=os.environ["PROJECT_ENDPOINT"],
-    credential=DefaultAzureCredential(),
-    logging_enable=True
-)
-
-# [START create_agent_with_azure_playwright_tool]
+# [START create_agent_with_browser_automation]
 connection_id = os.environ["AZURE_PLAYWRIGHT_CONNECTION_ID"]
-# connection = project_client.connections.get(os.environ["CONNECTION_NAME"])
-# print(connection)
 
 # Initialize Browser Automation tool and add the connection id
 browser_automation = BrowserAutomationTool(connection_id=connection_id)
@@ -62,15 +50,14 @@ with project_client:
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
-        instructions=
-            """
+        instructions="""
             You are an Agent helping with browser automation tasks. 
             You can answer questions, provide information, and assist with various tasks 
             related to web browsing using the Browser Automation tool available to you.
             """,
         tools=browser_automation.definitions,
     )
-    # [END create_agent_with_azure_playwright_tool]
+    # [END create_agent_with_browser_automation]
 
     print(f"Created agent, ID: {agent.id}")
 
@@ -82,19 +69,15 @@ with project_client:
     message = agents_client.messages.create(
         thread_id=thread.id,
         role=MessageRole.USER,
-        content=
-        """
-        Navigate to the web site finance.yahoo.com.
-        """,
-        # """
-        # Your goal is to report the percent of Microsoft year-to-date stock price change.
-        # To do that, go to the website finance.yahoo.com.
-        # At the top of the page, you will find a search bar.
-        # Enter the value 'MSFT', to get information about the Microsoft stock price.
-        # At the top of the resulting page you will see a default chart of Microsoft stock price.
-        # Click on 'YTD' at the top of that chart, and report the percent value that shows up just below it.
-        # This is the value you should report back.
-        # """,
+        content="""
+            Your goal is to report the percent of Microsoft year-to-date stock price change.
+            To do that, go to the website finance.yahoo.com.
+            At the top of the page, you will find a search bar.
+            Enter the value 'MSFT', to get information about the Microsoft stock price.
+            At the top of the resulting page you will see a default chart of Microsoft stock price.
+            Click on 'YTD' at the top of that chart, and report the percent value that shows up just below it.
+            This is the value you should report back.
+            """,
     )
     print(f"Created message, ID: {message.id}")
 
@@ -114,16 +97,25 @@ with project_client:
         if isinstance(step.step_details, RunStepToolCallDetails):
             print("  Tool calls:")
             tool_calls = step.step_details.tool_calls
+
             for call in tool_calls:
                 print(f"    Tool call ID: {call.id}")
                 print(f"    Tool call type: {call.type}")
-                print(call)
 
-                #if call.type == "browser_automation":  # TODO: Create an enum for call types in TypeSpec!
-                #     #print(f"    Browser Automation ID: {browser_automation_details.get('requesturl')}")
-                #     print(browser_automation_details)
+                if isinstance(call, RunStepBrowserAutomationToolCall):
+                    print(f"    Browser automation input: {call.browser_automation.input}")
+                    print(f"    Browser automation output: {call.browser_automation.output}")
 
-        print()  # add an extra newline between steps
+                    print("    Steps:")
+                    for tool_step in call.browser_automation.steps:
+                        print(f"      Last step result: {tool_step.last_step_result}")
+                        print(f"      Current state: {tool_step.current_state}")
+                        print(f"      Next step: {tool_step.next_step}")
+                        print()  # add an extra newline between tool steps
+
+                print()  # add an extra newline between tool calls
+
+        print()  # add an extra newline between run steps
 
     # Delete the agent when done
     agents_client.delete_agent(agent.id)

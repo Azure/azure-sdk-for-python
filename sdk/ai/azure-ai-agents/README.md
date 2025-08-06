@@ -36,6 +36,7 @@ To report an issue with the client library, or request additional features, plea
     - [Function call](#create-agent-with-function-call)
     - [Azure Function Call](#create-agent-with-azure-function-call)
     - [OpenAPI](#create-agent-with-openapi)
+    - [Browser Automation](#create-agent-with-browser-automation)
     - [Fabric data](#create-an-agent-with-fabric)
     - [Connected agents](#create-an-agent-using-another-agents)
     - [Deep Research](#create-agent-with-deep-research)
@@ -861,6 +862,37 @@ with project_client:
 
 <!-- END SNIPPET -->
 
+### Create Agent with Browser Automation
+
+To enable your Agent to perform automated Browser navigation tasks, you will need the `BrowserAutomationTool`, along with a connection to
+a [Microsoft Playwright Workspace](https://azure.microsoft.com/products/playwright-testing) resource.
+
+Here is an example:
+
+<!-- SNIPPET:sample_agents_browser_automation.create_agent_with_browser_automation -->
+
+```python
+connection_id = os.environ["AZURE_PLAYWRIGHT_CONNECTION_ID"]
+
+# Initialize Browser Automation tool and add the connection id
+browser_automation = BrowserAutomationTool(connection_id=connection_id)
+
+# Create an Agent with the Browser Automation tool and process an Agent run
+with project_client:
+    agents_client = project_client.agents
+    agent = agents_client.create_agent(
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
+        name="my-agent",
+        instructions="""
+            You are an Agent helping with browser automation tasks. 
+            You can answer questions, provide information, and assist with various tasks 
+            related to web browsing using the Browser Automation tool available to you.
+            """,
+        tools=browser_automation.definitions,
+    )
+```
+
+<!-- END SNIPPET -->
 
 ### Create an Agent with Fabric
 

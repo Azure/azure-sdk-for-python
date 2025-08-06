@@ -1138,7 +1138,9 @@ class BrowserAutomationTool(Tool[BrowserAutomationToolDefinition]):
                 + "providers/<provider_name>/accounts/<account_name>/projects/<project_name>/connections/<connection_name>'"
             )
 
-        self._browser_automation_tool_parameters = BrowserAutomationToolParameters(connection=BrowserAutomationToolConnectionParameters(id=connection_id))
+        self._browser_automation_tool_parameters = BrowserAutomationToolParameters(
+            connection=BrowserAutomationToolConnectionParameters(id=connection_id)
+        )
 
     @property
     def definitions(self) -> List[BrowserAutomationToolDefinition]:
@@ -1147,11 +1149,7 @@ class BrowserAutomationTool(Tool[BrowserAutomationToolDefinition]):
 
         :rtype: List[ToolDefinition]
         """
-        return [
-            BrowserAutomationToolDefinition(
-                browser_automation=self._browser_automation_tool_parameters
-            )
-        ]
+        return [BrowserAutomationToolDefinition(browser_automation=self._browser_automation_tool_parameters)]
 
     @property
     def resources(self) -> ToolResources:
