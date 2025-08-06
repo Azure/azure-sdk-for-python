@@ -8,6 +8,7 @@
 import pytest
 import uuid
 from datetime import datetime
+from typing import Tuple, Union, Dict, Any
 from devtools_testutils.aio import recorded_by_proxy_async
 from testpreparer import ContentUnderstandingPreparer
 from testpreparer_async import ContentUnderstandingClientTestBaseAsync
@@ -67,6 +68,73 @@ async def analyzer_in_list(client, analyzer_id: str) -> bool:
             return True
     return False
 
+
+async def create_analyzer_and_assert(
+    client, 
+    analyzer_id: str, 
+    resource: Union[ContentAnalyzer, Dict[str, Any]]
+) -> Tuple[Any, str]:
+    """Create an analyzer and perform basic assertions.
+    
+    Args:
+        client: The ContentUnderstandingClient instance
+        analyzer_id: The analyzer ID to create
+        resource: The analyzer resource (ContentAnalyzer object or dict)
+        
+    Returns:
+        Tuple[Any, str]: A tuple containing (poller, operation_id)
+        
+    Raises:
+        AssertionError: If the creation fails or assertions fail
+    """
+    print(f"Creating analyzer {analyzer_id}")
+    
+    # Start the analyzer creation operation
+    poller = await client.content_analyzers.begin_create_or_replace(
+        analyzer_id=analyzer_id,
+        resource=resource,
+    )
+
+    # Extract operation_id from the poller using the helper function
+    operation_id = extract_operation_id_from_poller(poller)
+    print(f"Extracted operation_id: {operation_id}")
+
+    # Check operation status while it's running
+    print(f"Checking operation status for operation_id: {operation_id}")
+    status_response = await client.content_analyzers.get_operation_status(
+        analyzer_id=analyzer_id,
+        operation_id=operation_id,
+    )
+
+    # Verify the operation status response
+    assert status_response is not None
+    print(f"Operation status: {status_response}")
+    
+    # Check that the operation status has expected fields
+    assert hasattr(status_response, 'status') or hasattr(status_response, 'operation_status')
+    assert hasattr(status_response, 'id')
+    assert status_response.id == operation_id
+    
+    # Wait for the operation to complete
+    print(f"Waiting for analyzer {analyzer_id} to be created")
+    response = await poller.result()
+    assert response is not None
+    assert poller.status() == "Succeeded"
+    assert poller.done()
+    print(f"Analyzer {analyzer_id} is created successfully")
+    
+    # Additional poller assertions
+    assert poller is not None
+    assert poller.status() is not None
+    assert poller.status() is not ""
+    assert poller.continuation_token() is not None
+    
+    # Verify the analyzer is in the list
+    assert await analyzer_in_list(client, analyzer_id), f"Created analyzer with ID '{analyzer_id}' was not found in the list"
+    print(f"Verified analyzer {analyzer_id} is in the list")
+    
+    return poller, operation_id
+
 class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandingClientTestBaseAsync):
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
@@ -74,7 +142,6 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
         analyzer_id = generate_analyzer_id()
         created_analyzer = False
-        operation_id = None
 
         content_analyzer = ContentAnalyzer(
             base_analyzer_id="prebuilt-documentAnalyzer",
@@ -103,41 +170,8 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         )
 
         try:
-            print(f"Creating analyzer {analyzer_id} to test operation status")
-            
-            # Start the analyzer creation operation
-            poller = await client.content_analyzers.begin_create_or_replace(
-                analyzer_id=analyzer_id,
-                resource=content_analyzer,
-            )
-
-            # Extract operation_id from the poller using the helper function
-            operation_id = extract_operation_id_from_poller(poller)
-            print(f"Extracted operation_id: {operation_id}")
-
-            # Check operation status while it's running
-            print(f"Checking operation status for operation_id: {operation_id}")
-            status_response = await client.content_analyzers.get_operation_status(
-                analyzer_id=analyzer_id,
-                operation_id=operation_id,
-            )
-
-            # Verify the operation status response
-            assert status_response is not None
-            print(f"Operation status: {status_response}")
-            
-            # Check that the operation status has expected fields
-            assert hasattr(status_response, 'status') or hasattr(status_response, 'operation_status')
-            assert hasattr(status_response, 'id')
-            assert status_response.id == operation_id
-            
-            # Wait for the operation to complete
-            print(f"Waiting for analyzer {analyzer_id} to be created")
-            response = await poller.result()
-            assert response is not None
-            assert poller.status() == "Succeeded"
-            assert poller.done()
-            print(f"Analyzer {analyzer_id} is created successfully")
+            # Create analyzer using the refactored function
+            poller, operation_id = await create_analyzer_and_assert(client, analyzer_id, content_analyzer)
             created_analyzer = True
 
             # Check final operation status after completion
@@ -148,10 +182,6 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             
             assert final_status_response is not None
             print(f"Final operation status: {final_status_response}")
-            
-            # Verify the analyzer is in the list
-            assert await analyzer_in_list(client, analyzer_id), f"Created analyzer with ID '{analyzer_id}' was not found in the list"
-            print(f"Verified analyzer {analyzer_id} is in the list")
 
         finally:
             # Always clean up the created analyzer, even if the test fails
@@ -204,28 +234,9 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         )
 
         try:
-            print(f"Trying to create an analyzer with analyzer_id: {analyzer_id}")
-            poller = await client.content_analyzers.begin_create_or_replace(
-                analyzer_id=analyzer_id,
-                resource=content_analyzer,
-            )
-
-            assert poller is not None
-            assert poller.status() is not None
-            assert poller.status() is not ""
-            assert poller.continuation_token() is not None
-
-            print(f"Waiting for analyzer {analyzer_id} to be created")
-            response = await poller.result()
-            assert response is not None
-            assert poller.status() == "Succeeded"
-            assert poller.done()
-            print(f"Analyzer {analyzer_id} is created successfully")
+            # Create analyzer using the refactored function
+            poller, operation_id = await create_analyzer_and_assert(client, analyzer_id, content_analyzer)
             created_analyzer = True
-
-            # Verify the analyzer is in the list
-            assert await analyzer_in_list(client, analyzer_id), f"Created analyzer with ID '{analyzer_id}' was not found in the list"
-            print(f"Verified analyzer {analyzer_id} is in the list")
 
         finally:
             # Always clean up the created analyzer, even if the test fails
@@ -249,10 +260,11 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         created_analyzer = False
 
         try:
-            print(f"Trying to create an analyzer with analyzer_id: {analyzer_id}")
-            poller = await client.content_analyzers.begin_create_or_replace(
-                analyzer_id=analyzer_id,
-                resource={
+            # Create analyzer using the refactored function with JSON resource
+            poller, operation_id = await create_analyzer_and_assert(
+                client, 
+                analyzer_id, 
+                {
                     "analyzerId": analyzer_id,
                     "baseAnalyzerId": "prebuilt-documentAnalyzer",
                     "config": {
@@ -280,25 +292,9 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
                     "mode": "standard",
                     "processingLocation": "global",
                     "tags": {"tag1_name": "tag1_value"},
-                },
+                }
             )
-
-            assert poller is not None
-            assert poller.status() is not None
-            assert poller.status() is not ""
-            assert poller.continuation_token() is not None
-
-            print(f"Waiting for analyzer {analyzer_id} to be created")
-            response = await poller.result()
-            assert response is not None
-            assert poller.status() == "Succeeded"
-            assert poller.done()
-            print(f"Analyzer {analyzer_id} is created successfully")
             created_analyzer = True
-
-            # Verify the analyzer is in the list
-            assert await analyzer_in_list(client, analyzer_id), f"Created analyzer with ID '{analyzer_id}' was not found in the list"
-            print(f"Verified analyzer {analyzer_id} is in the list")
 
         finally:
             # Always clean up the created analyzer, even if the test fails
@@ -349,21 +345,9 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         )
 
         try:
-            print(f"Creating initial analyzer {analyzer_id} for update test")
-            
-            # Create the initial analyzer
-            poller = await client.content_analyzers.begin_create_or_replace(
-                analyzer_id=analyzer_id,
-                resource=initial_analyzer,
-            )
-            
-            await poller.result()
-            assert poller.status() == "Succeeded"
-            print(f"Initial analyzer {analyzer_id} created successfully")
+            # Create the initial analyzer using the refactored function
+            poller, operation_id = await create_analyzer_and_assert(client, analyzer_id, initial_analyzer)
             created_analyzer = True
-
-            # Verify initial analyzer exists
-            assert await analyzer_in_list(client, analyzer_id), f"Initial analyzer with ID '{analyzer_id}' was not found in the list"
 
             # Get the analyzer before update to verify initial state
             print(f"Getting analyzer {analyzer_id} before update")
