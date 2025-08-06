@@ -228,9 +228,7 @@ def write_pyrit_outputs_to_file(
                         json.dumps(
                             {
                                 "conversation": {
-                                    "messages": [
-                                        message_to_dict(message[0], message[1]) for message in conversation
-                                    ]
+                                    "messages": [message_to_dict(message[0], message[1]) for message in conversation]
                                 }
                             }
                         )
@@ -258,14 +256,14 @@ def write_pyrit_outputs_to_file(
                 # Skip system messages in the output
                 continue
             json_lines += (
-                    json.dumps(
-                        {
-                            "conversation": {
-                                "messages": [message_to_dict(message[0], message[1]) for message in conversation]
-                            }
+                json.dumps(
+                    {
+                        "conversation": {
+                            "messages": [message_to_dict(message[0], message[1]) for message in conversation]
                         }
-                    )
-                    + "\n"
+                    }
+                )
+                + "\n"
             )
         with Path(output_path).open("w") as f:
             f.writelines(json_lines)

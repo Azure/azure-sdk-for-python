@@ -399,11 +399,11 @@ class RedTeam:
             if "messages" in obj and len(obj["messages"]) > 0:
                 message = obj["messages"][0]
                 if isinstance(message, dict) and "content" in message:
-                        content = message["content"]
-                        context = message.get("context", "")
-                        selected_prompts.append(content)
-                        # Store mapping of content to context for later evaluation
-                        self.prompt_to_context[content] = context
+                    content = message["content"]
+                    context = message.get("context", "")
+                    selected_prompts.append(content)
+                    # Store mapping of content to context for later evaluation
+                    self.prompt_to_context[content] = context
 
         # Store in cache and return
         self._cache_attack_objectives(current_key, risk_cat_value, strategy, selected_prompts, selected_cat_objectives)
@@ -546,11 +546,11 @@ class RedTeam:
             if "messages" in obj and len(obj["messages"]) > 0:
                 message = obj["messages"][0]
                 if isinstance(message, dict) and "content" in message:
-                        content = message["content"]
-                        context = message.get("context", "")
-                        selected_prompts.append(content)
-                        # Store mapping of content to context for later evaluation
-                        self.prompt_to_context[content] = context
+                    content = message["content"]
+                    context = message.get("context", "")
+                    selected_prompts.append(content)
+                    # Store mapping of content to context for later evaluation
+                    self.prompt_to_context[content] = context
         return selected_prompts
 
     def _cache_attack_objectives(
@@ -572,9 +572,9 @@ class RedTeam:
             context = ""
             if "messages" in obj and len(obj["messages"]) > 0:
 
-                    message = obj["messages"][0]
-                    content = message.get("content", "")
-                    context = message.get("context", "")
+                message = obj["messages"][0]
+                content = message.get("content", "")
+                context = message.get("context", "")
             if content:
                 obj_data = {"id": obj_id, "content": content, "context": context}
                 objectives_by_category[risk_cat_value].append(obj_data)
@@ -671,7 +671,7 @@ class RedTeam:
                 risk_category=risk_category.value,
                 output_path=self.red_team_info[strategy_name][risk_category.value]["data_file"],
                 logger=self.logger,
-                prompt_to_context=self.prompt_to_context
+                prompt_to_context=self.prompt_to_context,
             )
             orchestrator.dispose_db_engine()
 
@@ -950,7 +950,6 @@ class RedTeam:
                 "Tense strategy is not compatible with XPIA or UngroundedAttributes risk categories. Skipping Tense strategy."
             )
             raise ValueError("Tense strategy is not compatible with XPIA or UngroundedAttributes risk categories.")
-
 
     def _initialize_tracking_dict(self, flattened_attack_strategies: List):
         """Initialize the red_team_info tracking dictionary."""
