@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
+import os
 
 import pytest
 
@@ -85,6 +86,24 @@ class TestSessionTokenUnitTest(unittest.TestCase):
             self.assertEqual(str(e),
                              "Status code: 500\nCompared session tokens '1#101#1=20#2=5#3=30' "
                              "and '1#100#1=20#2=5#3=30#4=40' have unexpected regions.")
+
+    def test_session_token_false_progress_merge(self):
+        # Test that false progress merge is enabled by default and that global lsn is used from higher version token
+        # when enabled
+        session_token1 = VectorSessionToken.create("1#200#1=20#2=5#3=30")
+        session_token2 = VectorSessionToken.create("2#100#1=10#2=8#3=30")
+        self.assertIsNotNone(session_token1)
+        self.assertIsNotNone(session_token2)
+        self.assertTrue(session_token1.merge(session_token2).equals(
+            VectorSessionToken.create("2#100#1=20#2=8#3=30")))
+
+        # test that reverting to old behavior works
+        os.environ["AZURE_COSMOS_SESSION_TOKEN_FALSE_PROGRESS_MERGE"] = "false"
+
+        self.assertTrue(session_token1.merge(session_token2).equals(
+            VectorSessionToken.create("2#200#1=20#2=8#3=30")))
+
+        del os.environ["AZURE_COSMOS_SESSION_TOKEN_FALSE_PROGRESS_MERGE"]
 
 
 if __name__ == '__main__':
