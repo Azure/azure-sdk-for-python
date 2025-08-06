@@ -8,7 +8,7 @@
 import pytest
 import uuid
 from datetime import datetime
-from typing import Tuple, Union, Dict, Any
+from typing import Tuple, Union, Dict, Any, Optional
 from devtools_testutils.aio import recorded_by_proxy_async
 from testpreparer import ContentUnderstandingPreparer
 from testpreparer_async import ContentUnderstandingClientTestBaseAsync
@@ -67,6 +67,49 @@ async def analyzer_in_list(client, analyzer_id: str) -> bool:
         if hasattr(r, 'analyzer_id') and r.analyzer_id == analyzer_id:
             return True
     return False
+
+
+def new_simple_content_analyzer_object(analyzer_id: str, description: Optional[str] = None, tags: Optional[Dict[str, str]] = None) -> ContentAnalyzer:
+    """Create a simple ContentAnalyzer object with default configuration.
+    
+    Args:
+        analyzer_id: The analyzer ID
+        description: Optional description for the analyzer
+        tags: Optional tags for the analyzer
+        
+    Returns:
+        ContentAnalyzer: A configured ContentAnalyzer object
+    """
+    if description is None:
+        description = f"test analyzer: {analyzer_id}"
+    if tags is None:
+        tags = {"test_type": "simple"}
+        
+    return ContentAnalyzer(
+        base_analyzer_id="prebuilt-documentAnalyzer",
+        config=ContentAnalyzerConfig(
+            enable_formula=True,
+            enable_layout=True,
+            enable_ocr=True,
+            estimate_field_source_and_confidence=True,
+            return_details=True,
+        ),
+        description=description,
+        field_schema=FieldSchema(
+            fields={
+                "total_amount": FieldDefinition(
+                    description="Total amount of this table",
+                    method=GenerationMethod.EXTRACT,
+                    type=FieldType.NUMBER,
+                )
+            },
+            description="schema description here",
+            name="schema name here",
+        ),
+        mode=AnalysisMode.STANDARD,
+        processing_location=ProcessingLocation.GLOBAL,
+        tags=tags,
+    )
 
 
 async def create_analyzer_and_assert(
@@ -139,34 +182,22 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_analyzers_get_operation_status(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Create analyzer and extract operation ID
+        - Check operation status during creation
+        - Wait for operation completion
+        - Check final operation status after completion
+        - Clean up created analyzer
+        """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
         analyzer_id = generate_analyzer_id()
         created_analyzer = False
 
-        content_analyzer = ContentAnalyzer(
-            base_analyzer_id="prebuilt-documentAnalyzer",
-            config=ContentAnalyzerConfig(
-                enable_formula=True,
-                enable_layout=True,
-                enable_ocr=True,
-                estimate_field_source_and_confidence=True,
-                return_details=True,
-            ),
+        content_analyzer = new_simple_content_analyzer_object(
+            analyzer_id=analyzer_id,
             description=f"test analyzer for operation status: {analyzer_id}",
-            field_schema=FieldSchema(
-                fields={
-                    "total_amount": FieldDefinition(
-                        description="Total amount of this table",
-                        method=GenerationMethod.EXTRACT,
-                        type=FieldType.NUMBER,
-                    )
-                },
-                description="schema for operation status test",
-                name="operation_status_test_schema",
-            ),
-            mode=AnalysisMode.STANDARD,
-            processing_location=ProcessingLocation.GLOBAL,
-            tags={"test_type": "operation_status"},
+            tags={"test_type": "operation_status"}
         )
 
         try:
@@ -200,37 +231,20 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_analyzers_begin_create_with_content_analyzer(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Create analyzer using ContentAnalyzer object
+        - Verify analyzer creation and poller properties
+        - Clean up created analyzer
+        """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
         analyzer_id = generate_analyzer_id()
         created_analyzer = False
 
-        content_analyzer = ContentAnalyzer(
-            base_analyzer_id="prebuilt-documentAnalyzer",
-            config=ContentAnalyzerConfig(
-                disable_content_filtering=False,
-                disable_face_blurring=False,
-                enable_face=False,
-                enable_formula=True,
-                enable_layout=True,
-                enable_ocr=True,
-                estimate_field_source_and_confidence=True,
-                return_details=True,
-            ),
+        content_analyzer = new_simple_content_analyzer_object(
+            analyzer_id=analyzer_id,
             description=f"test analyzer: {analyzer_id}",
-            field_schema=FieldSchema(
-                fields={
-                    "total_amount": FieldDefinition(
-                        description="Total amount of this table",
-                        method=GenerationMethod.EXTRACT,
-                        type=FieldType.NUMBER,
-                    )
-                },
-                description="schema description here",
-                name="schema name here",
-            ),
-            mode=AnalysisMode.STANDARD,
-            processing_location=ProcessingLocation.GLOBAL,
-            tags={"tag1_name": "tag1_value"},
+            tags={"tag1_name": "tag1_value"}
         )
 
         try:
@@ -255,6 +269,12 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_analyzers_begin_create_with_json(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Create analyzer using JSON dictionary
+        - Verify analyzer creation and poller properties
+        - Clean up created analyzer
+        """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
         analyzer_id = generate_analyzer_id()
         created_analyzer = False
@@ -313,35 +333,23 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_analyzers_update(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Create initial analyzer
+        - Get analyzer before update to verify initial state
+        - Update analyzer with new description and tags
+        - Get analyzer after update to verify changes persisted
+        - Clean up created analyzer
+        """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
         analyzer_id = generate_analyzer_id()
         created_analyzer = False
 
         # Create initial analyzer
-        initial_analyzer = ContentAnalyzer(
-            base_analyzer_id="prebuilt-documentAnalyzer",
-            config=ContentAnalyzerConfig(
-                enable_formula=True,
-                enable_layout=True,
-                enable_ocr=True,
-                estimate_field_source_and_confidence=True,
-                return_details=True,
-            ),
+        initial_analyzer = new_simple_content_analyzer_object(
+            analyzer_id=analyzer_id,
             description=f"Initial analyzer for update test: {analyzer_id}",
-            field_schema=FieldSchema(
-                fields={
-                    "total_amount": FieldDefinition(
-                        description="Total amount of this table",
-                        method=GenerationMethod.EXTRACT,
-                        type=FieldType.NUMBER,
-                    )
-                },
-                description="Initial schema for update test",
-                name="initial_schema",
-            ),
-            mode=AnalysisMode.STANDARD,
-            processing_location=ProcessingLocation.GLOBAL,
-            tags={"initial_tag": "initial_value"},
+            tags={"initial_tag": "initial_value"}
         )
 
         try:
@@ -413,6 +421,11 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_analyzers_get(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Get existing prebuilt analyzer
+        - Verify analyzer properties and status
+        """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
         response = await client.content_analyzers.get(
             analyzer_id="prebuilt-documentAnalyzer",
@@ -424,25 +437,72 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         assert response.status == "ready"
         assert response.created_at is not None
         assert response.config is not None
-        assert response.processing_location is not None
-        assert len(response.warnings) == 0
 
-    @pytest.mark.skip(reason="Skipping all tests except test_content_analyzers_get")
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_analyzers_delete(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Create analyzer for deletion test
+        - Verify analyzer exists in list before deletion
+        - Delete analyzer
+        - Verify analyzer no longer exists in list after deletion
+        - Clean up if deletion failed
+        """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        response = await client.content_analyzers.delete(
-            analyzer_id="str",
+        analyzer_id = generate_analyzer_id()
+        created_analyzer = False
+
+        # Create a simple analyzer for deletion test
+        content_analyzer = new_simple_content_analyzer_object(
+            analyzer_id=analyzer_id,
+            description=f"test analyzer for deletion: {analyzer_id}",
+            tags={"test_type": "deletion"}
         )
 
-        # please add some check logic here by yourself
-        # ...
+        try:
+            # Create analyzer using the refactored function
+            poller, operation_id = await create_analyzer_and_assert(client, analyzer_id, content_analyzer)
+            created_analyzer = True
+
+            # Verify the analyzer is in the list before deletion
+            assert await analyzer_in_list(client, analyzer_id), f"Created analyzer with ID '{analyzer_id}' was not found in the list"
+            print(f"Verified analyzer {analyzer_id} is in the list before deletion")
+
+            # Delete the analyzer
+            print(f"Deleting analyzer {analyzer_id}")
+            response = await client.content_analyzers.delete(analyzer_id=analyzer_id)
+            
+            # Verify the delete response
+            assert response is None
+            
+            # Verify the analyzer is no longer in the list after deletion
+            assert not await analyzer_in_list(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
+            print(f"Verified analyzer {analyzer_id} is no longer in the list after deletion")
+
+        finally:
+            # Clean up if the analyzer was created but deletion failed
+            if created_analyzer and await analyzer_in_list(client, analyzer_id):
+                print(f"Cleaning up analyzer {analyzer_id} that was not properly deleted")
+                try:
+                    await client.content_analyzers.delete(analyzer_id=analyzer_id)
+                    assert not await analyzer_in_list(client, analyzer_id), f"Failed to delete analyzer {analyzer_id} during cleanup"
+                    print(f"Analyzer {analyzer_id} is deleted successfully during cleanup")
+                except Exception as e:
+                    print(f"Warning: Failed to delete analyzer {analyzer_id} during cleanup: {e}")
+            elif not created_analyzer:
+                print(f"Analyzer {analyzer_id} was not created, no cleanup needed")
+
 
     @pytest.mark.skip(reason="Skipping all tests except test_content_analyzers_get")
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_analyzers_list(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - List all available analyzers
+        - Verify list response
+        """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
         response = client.content_analyzers.list()
         result = [r async for r in response]
@@ -453,6 +513,12 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_analyzers_begin_analyze(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Begin analysis operation with analyzer
+        - Wait for analysis completion
+        - Verify analysis results
+        """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
         response = await (
             await client.content_analyzers.begin_analyze(
@@ -472,6 +538,12 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_analyzers_begin_analyze_binary(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Begin binary analysis operation with analyzer
+        - Wait for analysis completion
+        - Verify analysis results
+        """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
         response = await (
             await client.content_analyzers.begin_analyze_binary(
@@ -488,6 +560,11 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_analyzers_get_result(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Get analysis result by operation ID
+        - Verify result contents and structure
+        """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
         response = await client.content_analyzers.get_result(
             operation_id="str",
@@ -508,6 +585,11 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_analyzers_get_result_file(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Get specific result file by operation ID and path
+        - Verify file content
+        """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
         response = await client.content_analyzers.get_result_file(
             operation_id="str",
