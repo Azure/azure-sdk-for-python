@@ -72,6 +72,7 @@ class DataLakeFileClient(PathClient):
         self,
         content_settings: Optional[ContentSettings] = None,
         metadata: Optional[Dict[str, str]] = None,
+        *,
         lease: Optional[Union[DataLakeLeaseClient, str]] = None,
         umask: Optional[str] = None,
         owner: Optional[str] = None,
@@ -86,6 +87,7 @@ class DataLakeFileClient(PathClient):
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         cpk: Optional[CustomerProvidedEncryptionKey] = None,
+        encryption_context: Optional[str] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Union[str, datetime]]: ...
