@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2025-05-01-preview",
+  "commit": "4a4afb3773fa2c15ac51e3abc909bf520f686bc0",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/ai/ContentUnderstanding",
+  "emitterVersion": "0.47.0"
+}
