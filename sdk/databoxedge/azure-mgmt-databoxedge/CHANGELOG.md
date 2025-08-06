@@ -1,6 +1,6 @@
 # Release History
 
-## 3.0.0 (2025-08-06)
+## 3.0.0b1 (2025-08-06)
 
 ### Breaking Changes
 
