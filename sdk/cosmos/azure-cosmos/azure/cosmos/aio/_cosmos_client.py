@@ -274,7 +274,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             throughput_bucket: Optional[int] = None,
             return_properties: Literal[True],
             **kwargs: Any
-    ) -> CosmosDict:
+    ) -> tuple[DatabaseProxy, CosmosDict]:
+
         ...
 
     @distributed_trace_async
@@ -287,7 +288,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         throughput_bucket: Optional[int] = None,
         return_properties: bool = False,
         **kwargs: Any
-    ) -> Union[DatabaseProxy, CosmosDict]:
+    ) -> DatabaseProxy | tuple[DatabaseProxy, CosmosDict]:
         """
         Create a new database with the given ID (name).
 
@@ -300,8 +301,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: Database with the given ID already exists.
-        :returns: A DatabaseProxy instance representing the database or a CosmosDict with the response headers
-        :rtype: ~azure.cosmos.aio.DatabaseProxy or CosmosDict
+        :returns: A DatabaseProxy instance representing the database or a tuple of DatabaseProxy and CosmosDict with the response headers
+        :rtype: ~azure.cosmos.DatabaseProxy or tuple [DatabaseProxy, CosmosDict]
 
         .. admonition:: Example:
 
@@ -342,7 +343,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         if not return_properties:
             return DatabaseProxy(self.client_connection, id=result["id"], properties=result)
         else:
-            return result
+            return  DatabaseProxy(self.client_connection, id=result["id"], properties=result), result
 
     @overload
     async def create_database_if_not_exists(  # pylint: disable=redefined-builtin
@@ -367,7 +368,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             throughput_bucket: Optional[int] = None,
             return_properties: Literal[True],
             **kwargs: Any
-    ) -> CosmosDict:
+    ) -> tuple[DatabaseProxy, CosmosDict]:
+
         ...
 
     @distributed_trace_async
@@ -380,7 +382,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         throughput_bucket: Optional[int] = None,
         return_properties: bool = False,
         **kwargs: Any
-    ) -> Union[DatabaseProxy, CosmosDict]:
+    ) -> DatabaseProxy | tuple[DatabaseProxy, CosmosDict]:
 
         """
         Create the database if it does not exist already.
@@ -400,8 +402,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The database read or creation failed.
-        :returns: A DatabaseProxy instance representing the database or a CosmosDict with the response headers
-        :rtype: ~azure.cosmos.DatabaseProxy or CosmosDict
+        :returns: A DatabaseProxy instance representing the database or a tuple of DatabaseProxy and CosmosDict with the response headers
+        :rtype: ~azure.cosmos.DatabaseProxy or tuple [DatabaseProxy, CosmosDict]
         """
         session_token = kwargs.get('session_token')
         if session_token is not None:
@@ -431,7 +433,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             if not return_properties:
                 return database_proxy
             else:
-                return result
+                return database_proxy, result
         except CosmosResourceNotFoundError:
             return await self.create_database(
                 id,

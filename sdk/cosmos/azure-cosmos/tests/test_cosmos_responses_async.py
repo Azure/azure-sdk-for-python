@@ -76,7 +76,7 @@ class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
     async def test_create_database_headers_async(self):
         first_response = await self.client.create_database(id="responses_test" + str(uuid.uuid4()), return_properties=True)
 
-        assert len(first_response.get_response_headers()) > 0
+        assert len(first_response[1].get_response_headers()) > 0
 
     async def test_create_database_returns_database_proxy_async(self):
         first_response = await self.client.create_database(id="responses_test" + str(uuid.uuid4()))
@@ -84,17 +84,17 @@ class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_create_database_if_not_exists_headers_async(self):
         first_response = await self.client.create_database_if_not_exists(id="responses_test" + str(uuid.uuid4()), return_properties=True)
-        assert len(first_response.get_response_headers()) > 0
+        assert len(first_response[1].get_response_headers()) > 0
 
     async def test_create_database_if_not_exists_headers_negative_async(self):
         first_response = await self.client.create_database_if_not_exists(id="responses_test", return_properties=True)
         second_response = await self.client.create_database_if_not_exists(id="responses_test", return_properties=True)
-        assert len(second_response.get_response_headers()) > 0
+        assert len(second_response[1].get_response_headers()) > 0
 
     async def test_create_container_headers_async(self):
         first_response = await self.test_database.create_container(id="responses_test" + str(uuid.uuid4()),
                                                                    partition_key=PartitionKey(path="/company"), return_properties=True)
-        assert len(first_response.get_response_headers()) > 0
+        assert len(first_response[1].get_response_headers()) > 0
 
     async def test_create_container_returns_container_proxy_async(self):
         first_response = await self.test_database.create_container(id="responses_test" + str(uuid.uuid4()),
@@ -104,21 +104,21 @@ class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
     async def test_create_container_if_not_exists_headers_async(self):
         first_response = await self.test_database.create_container_if_not_exists(id="responses_test" + str(uuid.uuid4()),
                                                         partition_key=PartitionKey(path="/company"), return_properties=True)
-        assert len(first_response.get_response_headers()) > 0
+        assert len(first_response[1].get_response_headers()) > 0
 
     async def test_create_container_if_not_exists_headers_negative_async(self):
-        first_response = await self.test_database.create_container_if_not_exists(id="responses_test",
+        first_response = await self.test_database.create_container_if_not_exists(id="responses_test1",
                                                         partition_key=PartitionKey(path="/company"), return_properties=True)
-        second_response = await self.test_database.create_container_if_not_exists(id="responses_test",
+        second_response = await self.test_database.create_container_if_not_exists(id="responses_test1",
                                                         partition_key=PartitionKey(path="/company"), return_properties=True)
-        assert len(second_response.get_response_headers()) > 0
+        assert len(second_response[1].get_response_headers()) > 0
 
     async def test_replace_container_headers_async(self):
         first_response = await self.test_database.create_container_if_not_exists(id="responses_test" + str(uuid.uuid4()),
                                                         partition_key=PartitionKey(path="/company"))
         second_response = await self.test_database.replace_container(first_response.id,
                                                                partition_key=PartitionKey(path="/company"), return_properties=True)
-        assert len(second_response.get_response_headers()) > 0
+        assert len(second_response[1].get_response_headers()) > 0
 
     async def test_database_read_headers_async(self):
         db = await self.client.create_database(id="responses_test" + str(uuid.uuid4()))

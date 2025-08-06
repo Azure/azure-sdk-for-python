@@ -287,7 +287,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             throughput_bucket: Optional[int] = None,
             return_properties: Literal[True],
             **kwargs: Any
-    ) -> CosmosDict:
+    ) -> tuple[DatabaseProxy, CosmosDict]:
+
         ...
 
     @distributed_trace
@@ -302,7 +303,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         throughput_bucket: Optional[int] = None,
         return_properties: bool = False,
         **kwargs: Any
-    ) -> Union[DatabaseProxy, CosmosDict]:
+    ) -> DatabaseProxy | tuple[DatabaseProxy, CosmosDict]:
         """
         Create a new database with the given ID (name).
 
@@ -314,8 +315,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword response_hook: A callable invoked with the response metadata.
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :paramtype response_hook: Callable[[Mapping[str, str]], None]
-        :returns: A DatabaseProxy instance representing the database or a CosmosDict with the response headers
-        :rtype: ~azure.cosmos.DatabaseProxy or CosmosDict
+        :returns: A DatabaseProxy instance representing the database or a tuple of DatabaseProxy and CosmosDict with the response headers
+        :rtype: ~azure.cosmos.DatabaseProxy or tuple [DatabaseProxy, CosmosDict]
         :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: Database with the given ID already exists.
 
         .. admonition:: Example:
@@ -364,7 +365,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         if not return_properties:
             return DatabaseProxy(self.client_connection, id=result["id"], properties=result)
         else:
-            return result
+            return DatabaseProxy(self.client_connection, id=result["id"], properties=result), result
 
     @overload
     def create_database_if_not_exists(  # pylint:disable=docstring-missing-param
@@ -391,7 +392,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             throughput_bucket: Optional[int] = None,
             return_properties: Literal[True],
             **kwargs: Any
-    ) -> CosmosDict:
+    ) -> tuple[DatabaseProxy, CosmosDict]:
+
         ...
 
     @distributed_trace
@@ -405,7 +407,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         throughput_bucket: Optional[int] = None,
         return_properties: bool = False,
         **kwargs: Any
-    ) -> Union[DatabaseProxy, CosmosDict]:
+    ) -> DatabaseProxy | tuple[DatabaseProxy, CosmosDict]:
         """
         Create the database if it does not exist already.
         If the database already exists, the existing settings are returned.
@@ -422,8 +424,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :returns: A DatabaseProxy instance representing the database or a CosmosDict with the response headers
-        :rtype: ~azure.cosmos.DatabaseProxy or CosmosDict
+        :returns: A DatabaseProxy instance representing the database or a tuple of DatabaseProxy and CosmosDict with the response headers
+        :rtype: ~azure.cosmos.DatabaseProxy or tuple [DatabaseProxy, CosmosDict]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The database read or creation failed.
         """
         session_token = kwargs.get('session_token')
@@ -457,7 +459,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             if not return_properties:
                 return database_proxy
             else:
-                return result
+                return database_proxy, result
         except CosmosResourceNotFoundError:
             return self.create_database(
                 id,

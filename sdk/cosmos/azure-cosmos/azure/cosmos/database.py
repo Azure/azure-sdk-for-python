@@ -201,7 +201,7 @@ class DatabaseProxy(object):
             full_text_policy: Optional[Dict[str, Any]] = None,
             return_properties: Literal[True],
             **kwargs: Any
-    ) -> CosmosDict:
+    ) -> tuple[ContainerProxy, CosmosDict]:
         ...
 
     @distributed_trace
@@ -224,7 +224,7 @@ class DatabaseProxy(object):
         full_text_policy: Optional[Dict[str, Any]] = None,
         return_properties: bool = False,
         **kwargs: Any
-    ) -> Union[ContainerProxy, CosmosDict]:
+    ) -> ContainerProxy | tuple[ContainerProxy, CosmosDict]:
         """Create a new container with the given ID (name).
 
         If a container with the given ID already exists, a CosmosResourceExistsError is raised.
@@ -254,9 +254,9 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :returns: A `ContainerProxy` instance representing the new container or a CosmosDict with the response headers.
+        :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy and CosmosDict with the response headers.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
-        :rtype: ~azure.cosmos.ContainerProxy or CosmosDict
+        :rtype: ~azure.cosmos.ContainerProxy or tuple[ContainerProxy, CosmosDict]
 
         .. admonition:: Example:
 
@@ -336,7 +336,7 @@ class DatabaseProxy(object):
         if not return_properties:
             return ContainerProxy(self.client_connection, self.database_link, result["id"], properties=result)
         else:
-            return result
+            return ContainerProxy(self.client_connection, self.database_link, result["id"], properties=result), result
 
     @overload
     def create_container_if_not_exists(  # pylint:disable=docstring-missing-param
@@ -381,7 +381,7 @@ class DatabaseProxy(object):
             full_text_policy: Optional[Dict[str, Any]] = None,
             return_properties: Literal[True],
             **kwargs: Any
-    ) -> CosmosDict:
+    ) -> tuple[ContainerProxy, CosmosDict]:
         ...
 
     @distributed_trace
@@ -404,7 +404,7 @@ class DatabaseProxy(object):
         full_text_policy: Optional[Dict[str, Any]] = None,
         return_properties: bool = False,
         **kwargs: Any
-    ) -> Union[ContainerProxy, CosmosDict]:
+    ) -> ContainerProxy | tuple[ContainerProxy, CosmosDict]:
         """Create a container if it does not exist already.
 
         If the container already exists, the existing settings are returned.
@@ -436,9 +436,9 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :returns: A `ContainerProxy` instance representing the container or a CosmosDict with the response headers.
+        :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy and CosmosDict with the response headers.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container read or creation failed.
-        :rtype: ~azure.cosmos.ContainerProxy or CosmosDict
+        :rtype: ~azure.cosmos.ContainerProxy or tuple[ContainerProxy, CosmosDict]
         """
         session_token = kwargs.get('session_token')
         if session_token is not None:
@@ -469,7 +469,7 @@ class DatabaseProxy(object):
             if not return_properties:
                 return container_proxy
             else:
-                return headers
+                return container_proxy, headers
         except CosmosResourceNotFoundError:
             return self.create_container(
                 id=id,
@@ -709,7 +709,7 @@ class DatabaseProxy(object):
             full_text_policy: Optional[Dict[str, Any]] = None,
             return_properties: Literal[True],
             **kwargs: Any
-    ) -> CosmosDict:
+    ) -> tuple[ContainerProxy, CosmosDict]:
         ...
 
     @distributed_trace
@@ -728,7 +728,7 @@ class DatabaseProxy(object):
         full_text_policy: Optional[Dict[str, Any]] = None,
         return_properties: bool = False,
         **kwargs: Any
-    ) -> Union[ContainerProxy, CosmosDict]:
+    ) -> ContainerProxy | tuple[ContainerProxy, CosmosDict]:
         """Reset the properties of the container.
 
         Property changes are persisted immediately. Any properties not specified
@@ -754,10 +754,10 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :returns: A `ContainerProxy` instance representing the new container or a CosmosDict with the response headers.
+        :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy and CosmosDict with the response headers.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
             This includes if the container with given id does not exist.
-        :rtype: ~azure.cosmos.ContainerProxy or CosmosDict
+        :rtype: ~azure.cosmos.ContainerProxy or tuple[ContainerProxy, CosmosDict]
 
         .. admonition:: Example:
 
@@ -818,9 +818,14 @@ class DatabaseProxy(object):
 
         if return_properties == "ContainerProxy":
             return ContainerProxy(
-                self.client_connection, self.database_link, container_properties["id"], properties=container_properties)
+                self.client_connection,
+                self.database_link, container_properties["id"],
+                properties=container_properties)
         else:
-            return container_properties
+            return ContainerProxy(
+                self.client_connection,
+                self.database_link, container_properties["id"],
+                properties=container_properties), container_properties
 
     @distributed_trace
     def list_users(
