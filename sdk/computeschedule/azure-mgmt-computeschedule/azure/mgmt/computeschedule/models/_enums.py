@@ -19,6 +19,19 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Actions are for internal-only APIs."""
 
 
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of entity that created the resource."""
+
+    USER = "User"
+    """The entity was created by a user."""
+    APPLICATION = "Application"
+    """The entity was created by an application."""
+    MANAGED_IDENTITY = "ManagedIdentity"
+    """The entity was created by a managed identity."""
+    KEY = "Key"
+    """The entity was created by a key."""
+
+
 class DeadlineType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The types of deadlines supported by ScheduledActions."""
 
@@ -28,6 +41,70 @@ class DeadlineType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Initiate the operation at the given deadline."""
     COMPLETE_BY = "CompleteBy"
     """Complete the operation by the given deadline."""
+
+
+class Language(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The notification languages currently supported."""
+
+    EN_US = "en-us"
+    """American english language"""
+
+
+class Month(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Representation of the months available selection in a gregorian calendar."""
+
+    JANUARY = "January"
+    """The January month."""
+    FEBRUARY = "February"
+    """The February month."""
+    MARCH = "March"
+    """The March month."""
+    APRIL = "April"
+    """The April month."""
+    MAY = "May"
+    """The May month."""
+    JUNE = "June"
+    """The June month."""
+    JULY = "July"
+    """The July month."""
+    AUGUST = "August"
+    """The August month."""
+    SEPTEMBER = "September"
+    """The September month."""
+    OCTOBER = "October"
+    """The October month."""
+    NOVEMBER = "November"
+    """The November month."""
+    DECEMBER = "December"
+    """The December month."""
+    ALL = "All"
+    """All months"""
+
+
+class NotificationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of notification supported."""
+
+    EMAIL = "Email"
+    """Notify through e-mail"""
+
+
+class OccurrenceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state the occurrence is at a given time."""
+
+    CREATED = "Created"
+    """The occurrence was created"""
+    RESCHEDULING = "Rescheduling"
+    """The occurrence is being rescheduled"""
+    SCHEDULED = "Scheduled"
+    """The occurrence has been scheduled"""
+    SUCCEEDED = "Succeeded"
+    """The occurrence has successfully ran"""
+    FAILED = "Failed"
+    """The occurrence has failed during its scheduling"""
+    CANCELLING = "Cancelling"
+    """The occurrence is going through cancellation"""
+    CANCELED = "Canceled"
+    """The occurrence has been canceled"""
 
 
 class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -77,6 +154,28 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the operation is initiated by a user or system."""
 
 
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state."""
+
+    SUCCEEDED = "Succeeded"
+    """Resource has been created."""
+    FAILED = "Failed"
+    """Resource creation failed."""
+    CANCELED = "Canceled"
+    """Resource creation was canceled."""
+    DELETING = "Deleting"
+    """Resource is being deleted."""
+
+
+class ResourceOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state the resource is on after the resource operation is applied."""
+
+    SUCCEEDED = "Succeeded"
+    """The resource operation was successful"""
+    FAILED = "Failed"
+    """The resource operation has failed."""
+
+
 class ResourceOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of operation types that can be performed on resources using ScheduledActions."""
 
@@ -88,3 +187,55 @@ class ResourceOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Deallocate operations on the resources"""
     HIBERNATE = "Hibernate"
     """Hibernate operations on the resources"""
+
+
+class ResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of a resource type."""
+
+    SUCCEEDED = "Succeeded"
+    """Resource has been created."""
+    FAILED = "Failed"
+    """Resource creation failed."""
+    CANCELED = "Canceled"
+    """Resource creation was canceled."""
+
+
+class ResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of resource being targeted."""
+
+    VIRTUAL_MACHINE = "VirtualMachine"
+    """Resources defined are Virtual Machines"""
+    VIRTUAL_MACHINE_SCALE_SET = "VirtualMachineScaleSet"
+    """Resources defined are Virtual Machines Scale Sets"""
+
+
+class ScheduledActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specify which action user wants to be performed on the resources."""
+
+    START = "Start"
+    """Perform a start action on the specified resources"""
+    DEALLOCATE = "Deallocate"
+    """Perform a deallocate action on the specified resources"""
+    HIBERNATE = "Hibernate"
+    """Perform hibernate and deallocate on the specified resources"""
+
+
+class WeekDay(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Representation of the possible selection of days in a week in a gregorian calendar."""
+
+    MONDAY = "Monday"
+    """Monday weekday."""
+    TUESDAY = "Tuesday"
+    """Tuesday weekday."""
+    WEDNESDAY = "Wednesday"
+    """Wednesday weekday."""
+    THURSDAY = "Thursday"
+    """Thursday weekday."""
+    FRIDAY = "Friday"
+    """Friday weekday."""
+    SATURDAY = "Saturday"
+    """Saturday weekday."""
+    SUNDAY = "Sunday"
+    """Sunday weekday."""
+    ALL = "All"
+    """All week days"""

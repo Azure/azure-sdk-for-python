@@ -2,7 +2,6 @@
 pylint = false
 pyright = false
 mypy = true
-type_check_samples = false
 verifytypes = false
 sphinx = false
 whl_no_aio= false

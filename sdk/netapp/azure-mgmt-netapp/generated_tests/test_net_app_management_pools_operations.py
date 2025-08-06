@@ -24,7 +24,7 @@ class TestNetAppManagementPoolsOperations(AzureMgmtRecordedTestCase):
         response = self.client.pools.list(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-01-01-preview",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestNetAppManagementPoolsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
-            api_version="2025-01-01-preview",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -55,7 +55,6 @@ class TestNetAppManagementPoolsOperations(AzureMgmtRecordedTestCase):
                 "serviceLevel": "Premium",
                 "size": 4398046511104,
                 "coolAccess": False,
-                "customThroughputMibps": 0.0,
                 "encryptionType": "Single",
                 "etag": "str",
                 "id": "str",
@@ -76,7 +75,7 @@ class TestNetAppManagementPoolsOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "utilizedThroughputMibps": 0.0,
             },
-            api_version="2025-01-01-preview",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -91,7 +90,6 @@ class TestNetAppManagementPoolsOperations(AzureMgmtRecordedTestCase):
             pool_name="str",
             body={
                 "coolAccess": bool,
-                "customThroughputMibps": 0.0,
                 "id": "str",
                 "location": "str",
                 "name": "str",
@@ -100,7 +98,7 @@ class TestNetAppManagementPoolsOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-01-01-preview",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -113,7 +111,7 @@ class TestNetAppManagementPoolsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
-            api_version="2025-01-01-preview",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

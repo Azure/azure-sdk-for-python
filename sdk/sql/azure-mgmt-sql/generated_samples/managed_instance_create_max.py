@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -57,6 +58,7 @@ def main():
                 "proxyOverride": "Redirect",
                 "publicDataEndpointEnabled": False,
                 "requestedBackupStorageRedundancy": "Geo",
+                "requestedLogicalAvailabilityZone": "1",
                 "servicePrincipal": {"type": "SystemAssigned"},
                 "storageSizeInGB": 1024,
                 "subnetId": "/subscriptions/20D7082A-0FC7-4468-82BD-542694D5042B/resourceGroups/testrg/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1",
@@ -70,6 +72,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2024-05-01-preview/examples/ManagedInstanceCreateMax.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2024-11-01-preview/examples/ManagedInstanceCreateMax.json
 if __name__ == "__main__":
     main()

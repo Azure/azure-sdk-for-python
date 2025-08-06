@@ -1,4 +1,4 @@
-﻿# pylint: disable=line-too-long,useless-suppression,too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -141,8 +141,8 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
          Can be a string, response format mode, or structured response format object that defines how
          the agent should structure its outputs.
         :paramtype response_format: Optional[Union[str,
-                               ~azure.ai.agents.models.AgentsApiResponseFormatMode,
-                               ~azure.ai.agents.models.AgentsApiResponseFormat,
+                               ~azure.ai.agents.models.AgentsResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsResponseFormat,
                                ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword metadata: Custom key-value pairs for storing additional information about the agent.
          Useful for categorization, tracking, or storing application-specific data. Limited to 16 pairs,
@@ -206,8 +206,8 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
          Can be a string, response format mode, or structured response format object that defines how
          the agent should structure its outputs.
         :paramtype response_format: Optional[Union[str,
-                               ~azure.ai.agents.models.AgentsApiResponseFormatMode,
-                               ~azure.ai.agents.models.AgentsApiResponseFormat,
+                               ~azure.ai.agents.models.AgentsResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsResponseFormat,
                                ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword metadata: Custom key-value pairs for storing additional information about the agent.
          Useful for categorization, tracking, or storing application-specific data. Limited to 16 pairs,
@@ -296,8 +296,8 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
          Can be a string, response format mode, or structured response format object that defines how
          the agent should structure its outputs.
         :paramtype response_format: Optional[Union[str,
-                               ~azure.ai.agents.models.AgentsApiResponseFormatMode,
-                               ~azure.ai.agents.models.AgentsApiResponseFormat,
+                               ~azure.ai.agents.models.AgentsResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsResponseFormat,
                                ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword metadata: Custom key-value pairs for storing additional information about the agent.
         :paramtype metadata: Optional[Dict[str, str]]
@@ -393,8 +393,8 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
          Can be a string, response format mode, or structured response format object that defines how
          the agent should structure its outputs.
         :paramtype response_format: Optional[Union[str,
-                               ~azure.ai.agents.models.AgentsApiResponseFormatMode,
-                               ~azure.ai.agents.models.AgentsApiResponseFormat,
+                               ~azure.ai.agents.models.AgentsResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsResponseFormat,
                                ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
@@ -459,8 +459,8 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
          Can be a string, response format mode, or structured response format object that defines how
          the agent should structure its outputs.
         :paramtype response_format: Optional[Union[str,
-                               ~azure.ai.agents.models.AgentsApiResponseFormatMode,
-                               ~azure.ai.agents.models.AgentsApiResponseFormat,
+                               ~azure.ai.agents.models.AgentsResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsResponseFormat,
                                ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
@@ -570,8 +570,8 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
          Can be a string, response format mode, or structured response format object that defines how
          the agent should structure its outputs.
         :paramtype response_format: Optional[Union[str,
-                               ~azure.ai.agents.models.AgentsApiResponseFormatMode,
-                               ~azure.ai.agents.models.AgentsApiResponseFormat,
+                               ~azure.ai.agents.models.AgentsResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsResponseFormat,
                                ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -589,8 +589,8 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
 
         if body is not _Unset:
             if isinstance(body, io.IOBase):
-                return super().update_agent(body=body, content_type=content_type, **kwargs)
-            return super().update_agent(body=body, **kwargs)
+                return super().update_agent(agent_id, body, content_type=content_type, **kwargs)
+            return super().update_agent(agent_id, body, **kwargs)
 
         if toolset is not None:
             tools = toolset.definitions
@@ -733,8 +733,8 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
          Can be a string, response format mode, or structured response format object that defines how
          the agent should structure its outputs.
         :paramtype response_format: Optional[Union[str,
-                               ~azure.ai.agents.models.AgentsApiResponseFormatMode,
-                               ~azure.ai.agents.models.AgentsApiResponseFormat,
+                               ~azure.ai.agents.models.AgentsResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsResponseFormat,
                                ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword parallel_tool_calls: If True, tools will be invoked in parallel.
         :paramtype parallel_tool_calls: bool
@@ -837,8 +837,8 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
          Can be a string, response format mode, or structured response format object that defines how
          the agent should structure its outputs.
         :paramtype response_format: Optional[Union[str,
-                               ~azure.ai.agents.models.AgentsApiResponseFormatMode,
-                               ~azure.ai.agents.models.AgentsApiResponseFormat,
+                               ~azure.ai.agents.models.AgentsResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsResponseFormat,
                                ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword parallel_tool_calls: If True, tools will be invoked in parallel.
         :paramtype parallel_tool_calls: bool
@@ -939,8 +939,8 @@ class AgentsClient(AgentsClientGenerated):  # pylint: disable=client-accepts-api
          Can be a string, response format mode, or structured response format object that defines how
          the agent should structure its outputs.
         :paramtype response_format: Optional[Union[str,
-                               ~azure.ai.agents.models.AgentsApiResponseFormatMode,
-                               ~azure.ai.agents.models.AgentsApiResponseFormat,
+                               ~azure.ai.agents.models.AgentsResponseFormatMode,
+                               ~azure.ai.agents.models.AgentsResponseFormat,
                                ~azure.ai.agents.models.ResponseFormatJsonSchemaType]]
         :keyword parallel_tool_calls: If True, allows tool calls to be executed in parallel.
         :paramtype parallel_tool_calls: bool, optional

@@ -23,7 +23,7 @@ class TestQuickpulseLogRecordProcessor(unittest.TestCase):
     def test_emit(self):
         processor = _QuickpulseLogRecordProcessor()
         log_data = mock.Mock()
-        processor.emit(log_data)
+        processor.on_emit(log_data)
         self.qpm._record_log_record.assert_called_once_with(log_data)
 
 

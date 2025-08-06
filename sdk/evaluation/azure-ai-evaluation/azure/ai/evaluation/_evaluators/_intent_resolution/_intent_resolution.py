@@ -57,7 +57,7 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _MAX_INTENT_RESOLUTION_SCORE = 5
     _DEFAULT_INTENT_RESOLUTION_THRESHOLD = 3
 
-    id = None
+    id = "azureai://built-in/evaluators/intent_resolution"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
