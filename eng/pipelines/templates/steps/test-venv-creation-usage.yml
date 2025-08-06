@@ -1,0 +1,22 @@
+
+steps:
+  - template: /eng/pipelines/templates/steps/use-venv.yml
+    parameters:
+      VirtualEnvironmentName: 'test-venv'
+      Activate: true
+
+  - bash: |
+      echo "Running Python version: $(python --version)"
+      echo "Running pip version: $(pip --version)"
+      echo "Running pip list:"
+      which python
+      python -m pip freeze
+    displayName: 'Verify VENV Activation'
+
+  - pwsh: |
+      echo "Running Python version: $(python --version)"
+      echo "Running pip version: $(pip --version)"
+      echo "Running pip list:"
+      Get-Command python
+      python -m pip freeze
+    displayName: 'Verify VENV Activation PowerShell'

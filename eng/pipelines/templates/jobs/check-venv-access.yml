@@ -1,0 +1,35 @@
+jobs:
+  - job:
+    displayName: 'Check VENV'
+
+    strategy:
+      matrix:
+        linux:
+          Pool: 'azsdk-pool'
+          OSVmImage: 'ubuntu-24.04'
+        windows:
+          Pool: 'azsdk-pool'
+          OSVmImage: 'windows-2022'
+
+    pool:
+      name: $(Pool)
+      demands: ImageOverride -equals $(OSVmImage)
+
+    steps:
+    - template: /eng/pipelines/templates/steps/test-venv-creation-usage.yml
+
+  - job:
+    displayName: 'Check VENV Mac'
+
+    strategy:
+      matrix:
+        linux:
+          Pool: 'Azure Pipelines'
+          OSVmImage: 'macos-latest'
+
+    pool:
+      name: $(Pool)
+      vmImage: $(OSVmImage)
+
+    steps:
+    - template: /eng/pipelines/templates/steps/test-venv-creation-usage.yml
