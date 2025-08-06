@@ -3269,13 +3269,13 @@ class TestAgentClient(AzureRecordedTestCase):
             minimal_text_length=1,
             **kwargs):
         """
-        The helper method to test the non-interactive tools in the non-steaming scenarios.
+        The helper method to test the non-interactive tools in the non-streaming scenarios.
 
-        Note: kwargs may take  
+        Note: kwargs may take:
             - connected_agent_name for checking connected tool.
         :param client: The agent client used in this experiment.
         :param model_name: The model deployment name to be used.
-        :param tool_to_test: The pre ceated tool to be used.
+        :param tool_to_test: The pre created tool to be used.
         :param instructions: The instructions, given to an agent.
         :param prompt: The prompt, given in the first user message.
         :param headers: The headers used to call the agents.
@@ -3349,13 +3349,11 @@ class TestAgentClient(AzureRecordedTestCase):
             headers=None
         ):
         """
-        Test tool output in streaming scenarios.
-        
-        The helper method to test the non-interactive tools in the steaming scenarios.
+        The helper method to test the non-interactive tools in the streaming scenarios.
 
         :param client: The agent client used in this experiment.
         :param model_name: The model deployment name to be used.
-        :param tool_to_test: The pre ceated tool to be used.
+        :param tool_to_test: The pre created tool to be used.
         :param instructions: The instructions, given to an agent.
         :param prompt: The prompt, given in the first user message.
         :param headers: The headers used to call the agents.
