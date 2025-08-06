@@ -19,6 +19,7 @@ __all__: List[str] = [
     "BatchFileProperties",
 ]  # Add all objects you want publicly available to users at this package level
 
+
 class CreateTasksError(HttpResponseError):
     """Aggregate Exception containing details for any failures from a task add operation.
 
@@ -62,8 +63,8 @@ class CreateTasksError(HttpResponseError):
                 )
         super(CreateTasksError, self).__init__(self.message)
 
-class BatchFileProperties:
 
+class BatchFileProperties:
     """Information about a file or directory on a Compute Node with additional properties.
 
     :ivar url: The URL of the file.
@@ -84,7 +85,7 @@ class BatchFileProperties:
     :vartype file_mode: str
     """
 
-    url: Optional[str] 
+    url: Optional[str]
     """The URL of the file."""
     is_directory: Optional[bool]
     """Whether the object represents a directory."""
@@ -118,6 +119,7 @@ class BatchFileProperties:
         self.content_length = content_length
         self.content_type = content_type
         self.file_mode = file_mode
+
 
 def patch_sdk():
     """Do not remove from this file.

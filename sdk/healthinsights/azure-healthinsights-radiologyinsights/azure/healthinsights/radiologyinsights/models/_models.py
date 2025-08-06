@@ -1268,16 +1268,26 @@ class HealthInsightsErrorResponse(_Model):
 
     :ivar error: The error object. Required.
     :vartype error: ~azure.core.ODataV4Format
+    :ivar error_code: String error code indicating what went wrong.
+    :vartype error_code: str
+    :ivar request_id: An opaque, globally-unique, server-generated string identifier for the
+     request.
+    :vartype request_id: str
     """
 
     error: ODataV4Format = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The error object. Required."""
+    error_code: Optional[str] = rest_field(name="errorCode", visibility=["read", "create", "update", "delete", "query"])
+    """String error code indicating what went wrong."""
+    request_id: Optional[str] = rest_field(name="requestId", visibility=["read"])
+    """An opaque, globally-unique, server-generated string identifier for the request."""
 
     @overload
     def __init__(
         self,
         *,
         error: ODataV4Format,
+        error_code: Optional[str] = None,
     ) -> None: ...
 
     @overload

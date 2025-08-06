@@ -16,13 +16,13 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import OnlineExperimentationClientConfiguration
-from ._operations import OnlineExperimentationClientOperationsMixin
+from ._operations import _OnlineExperimentationClientOperationsMixin
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class OnlineExperimentationClient(OnlineExperimentationClientOperationsMixin):
+class OnlineExperimentationClient(_OnlineExperimentationClientOperationsMixin):
     """OnlineExperimentationClient.
 
     :param endpoint: Endpoint URL for the Online Experimentation workspace. Required.
