@@ -1,12 +1,9 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import os
-import sys
 
 from workload_utils import create_logger
 from workload_configs import COSMOS_URI, COSMOS_CREDENTIAL, PREFERRED_LOCATIONS
-
-sys.path.append(r"./")
 
 from azure.cosmos.aio import CosmosClient as AsyncClient
 import asyncio
