@@ -163,8 +163,9 @@ def assert_simple_content_analyzer_result(analysis_result, result_name: str = "A
     
     total_amount_field = fields['total_amount']
     assert total_amount_field is not None, "total_amount field should not be None"
+    assert total_amount_field.__class__.__name__ == "NumberField", f"total_amount field should be of type Field, got {total_amount_field.__class__.__name__}"
 
-    total_amount_value = total_amount_field.get('valueNumber')
+    total_amount_value = total_amount_field.value_number
     
     print(f"Total amount field value: {total_amount_value}")
     assert total_amount_value == 110, f"Expected total_amount to be 110, but got {total_amount_value}"
