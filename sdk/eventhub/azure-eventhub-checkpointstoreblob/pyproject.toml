@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61.0.0", "wheel"]  # Requires 61.0.0 for dynamic version
+requires = ["setuptools>=77.0.3", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -10,7 +10,7 @@ authors = [
 description = "Microsoft Azure Event Hubs checkpointer implementation with Blob Storage Client Library for Python"
 keywords = ["azure", "azure sdk"]
 requires-python = ">=3.9"
-license = {text = "MIT License"}
+license = "MIT"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python",
@@ -21,7 +21,6 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
-    "License :: OSI Approved :: MIT License",
 ]
 dependencies = [
     "azure-core>=1.30.0",
@@ -33,14 +32,14 @@ dependencies = [
 dynamic = ["version", "readme"]
 
 [project.urls]
-repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub-checkpointstoreblob"
+repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk
 
 [tool.setuptools.dynamic]
 version = {attr = "azure.eventhub.extensions.checkpointstoreblob._version.VERSION"}
-readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
+readme = {file = ["README.md"], content-type = "text/markdown"}
 
 [tool.setuptools.packages.find]
-exclude = ["samples*", "tests*", "azure", "azure.eventhub", "azure.eventhub.extensions"]
+exclude = ["samples*", "tests*", "doc*", "azure", "azure.eventhub", "azure.eventhub.extensions"]
 
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]
