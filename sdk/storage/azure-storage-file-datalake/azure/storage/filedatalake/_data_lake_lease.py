@@ -30,8 +30,7 @@ class DataLakeLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
         The client of the file system, directory, or file to lease.
     :type client:
         ~azure.storage.filedatalake.FileSystemClient or
-        ~azure.storage.filedatalake.DataLakeDirectoryClient or
-        ~azure.storage.filedatalake.DataLakeFileClient
+        ~azure.storage.filedatalake.PathClient
     :param str lease_id:
         A string representing the lease ID of an existing lease. This value does not
         need to be specified in order to acquire a new lease, or break one.
