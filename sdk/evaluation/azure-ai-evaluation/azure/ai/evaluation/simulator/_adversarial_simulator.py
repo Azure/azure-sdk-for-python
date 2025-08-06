@@ -257,13 +257,28 @@ class AdversarialSimulator:
                 for parameter in template.template_parameters:
                     template_parameter_pairs.append((template, parameter))
         else:
-            # Use original logic for other scenarios - zip parameters
-            parameter_lists = [t.template_parameters for t in templates]
-            zipped_parameters = list(zip(*parameter_lists))
-
-            for param_group in zipped_parameters:
-                for template, parameter in zip(templates, param_group):
+            # Improved logic for other scenarios - avoid duplicate template-parameter combinations
+            # Each template should be paired with its own parameters to prevent duplicates
+            for template in templates:
+                if not template.template_parameters:
+                    continue
+                for parameter in template.template_parameters:
                     template_parameter_pairs.append((template, parameter))
+
+        # Remove potential duplicates by using a set to track unique combinations
+        # This prevents duplicate queries when templates have overlapping parameters
+        unique_pairs = []
+        seen_combinations = set()
+        for template, parameter in template_parameter_pairs:
+            # Create a unique key based on template id and parameter content
+            param_key = str(sorted(parameter.items())) if isinstance(parameter, dict) else str(parameter)
+            combination_key = (id(template), param_key)
+            
+            if combination_key not in seen_combinations:
+                unique_pairs.append((template, parameter))
+                seen_combinations.add(combination_key)
+        
+        template_parameter_pairs = unique_pairs
 
         # Limit to max_simulation_results if needed
         if len(template_parameter_pairs) > max_simulation_results:
