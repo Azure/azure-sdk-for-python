@@ -28,6 +28,10 @@ jobs:
     inputs:
       targetType: inline
       script: >-
+        export ACCOUNT_HOST=$(ACCOUNT_HOST)
+
+        export ACCOUNT_KEY=$(ACCOUNT_KEY)
+        
         cd ./sdk/cosmos/azure-cosmos
 
         pip install tox==4.5.0
@@ -64,7 +68,7 @@ jobs:
         host = os.environ.get("ACCOUNT_HOST", "") 
 
         key = os.environ.get("ACCOUNT_KEY", "")
-        
+
         client = cosmos_client.CosmosClient(host, key)
 
 
