@@ -88,11 +88,9 @@ steps:
   - template: /eng/pipelines/templates/steps/use-venv.yml
     parameters:
       VirtualEnvironmentName: "venv"
-      Activate: false
       Condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
 
   - pwsh: |
-      $(VENV_ACTIVATION_SCRIPT)
       which python
       python -m pip install --force -r eng/ci_tools.txt
       if ($env:AGENT_OS -eq "Linux") {
@@ -111,7 +109,6 @@ steps:
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
 
   - pwsh: |
-      $(VENV_ACTIVATION_SCRIPT)
       which python
       sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --inactive
     displayName: 'Generate Packages'
@@ -121,7 +118,7 @@ steps:
       CIBW_BUILD_VERBOSITY: 3
 
   - pwsh: |
-      $(VENV_ACTIVATION_SCRIPT)
+      which python
       twine check $(Build.ArtifactStagingDirectory)/**/*.whl
       twine check $(Build.ArtifactStagingDirectory)/**/*.tar.gz
     displayName: 'Verify Readme'

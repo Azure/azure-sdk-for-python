@@ -5,6 +5,12 @@ steps:
       VirtualEnvironmentName: 'test-venv'
       Activate: true
 
+  - pwsh: |
+      Write-Host $env:PATH
+      Write-Host $env:VIRTUAL_ENV
+      Write-Host $env:PYTHONHOME
+    displayName: 'Display Environment Variables'
+
   - bash: |
       echo "Running Python version: $(python --version)"
       echo "Running pip version: $(pip --version)"

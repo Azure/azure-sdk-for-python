@@ -44,7 +44,11 @@ else {
     $env:PATH = "$venvBinPath`:$($env:PATH)"
 }
 
-Write-Host "Activating virtual environment '$VenvName' at $venvPath via AzDO to the value '$($env:PATH)'"
+Write-Host "Activating virtual environment '$VenvName' via VIRTUAL_ENV variable at $venvPath.'"
 Write-Host "##vso[task.setvariable variable=VIRTUAL_ENV]$($env:VIRTUAL_ENV)"
-Write-Host "##vso[task.prependpath]$($env:PATH)"
-Write-HOST "##vso[task.setvariable variable=PYTHONHOME]" # attempt an unset
+
+Write-Host "Prepending path with $venvBinPath"
+Write-Host "##vso[task.prependpath]$venvBinPath"
+
+Write-Host "Attempting unset of PYTHONHOME"
+Write-Host "##vso[task.setvariable variable=PYTHONHOME]"
