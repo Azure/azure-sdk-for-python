@@ -23,7 +23,8 @@ USAGE:
        the "Models + endpoints" tab in your Azure AI Foundry project.
     3) AZURE_PLAYWRIGHT_CONNECTION_ID - The ID of the Azure Playwright Workspaces connection, in the format of:
        /subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace-name}/connections/{connection-name}
-       You can also get the connection ID programmatically from AIProjectClient, using the call `project_client.connections.get("<playwright-connection-name>").id`.
+       You can also get the connection ID programmatically from AIProjectClient, using the call
+       `project_client.connections.get("<playwright-connection-name>").id`.
 """
 
 import os
@@ -76,7 +77,6 @@ with project_client:
             Enter the value 'MSFT', to get information about the Microsoft stock price.
             At the top of the resulting page you will see a default chart of Microsoft stock price.
             Click on 'YTD' at the top of that chart, and report the percent value that shows up just below it.
-            This is the value you should report back.
             """,
     )
     print(f"Created message, ID: {message.id}")
