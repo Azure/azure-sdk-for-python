@@ -120,74 +120,74 @@ class TestConfigurationManager(unittest.TestCase):
         self.assertEqual(headers["If-None-Match"], "test-etag")
         self.assertEqual(headers["x-ms-onesetinterval"], "1800.0")
 
-    # @patch('azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request')
-    # @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
-    # def test_version_cache_logic(self, mock_worker_class, mock_request):
-    #     """Test version cache update logic."""
-    #     manager = _ConfigurationManager()
+    @patch('azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request')
+    @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
+    def test_version_cache_logic(self, mock_worker_class, mock_request):
+        """Test version cache update logic."""
+        manager = _ConfigurationManager()
         
-    #     # Test version increase (should update cache)
-    #     mock_response = OneSettingsResponse(
-    #         settings={"key": "value"},
-    #         version=5
-    #     )
-    #     mock_request.return_value = mock_response
+        # Test version increase (should update cache)
+        mock_response = OneSettingsResponse(
+            settings={"key": "value"},
+            version=5
+        )
+        mock_request.return_value = mock_response
         
-    #     manager.get_configuration_and_refresh_interval()
-    #     self.assertEqual(manager._version_cache, 5)
+        manager.get_configuration_and_refresh_interval()
+        self.assertEqual(manager._version_cache, 5)
         
-    #     # Test same version (should not change cache)
-    #     mock_response = OneSettingsResponse(
-    #         settings={"key": "value"},
-    #         version=5
-    #     )
-    #     mock_request.return_value = mock_response
+        # Test same version (should not change cache)
+        mock_response = OneSettingsResponse(
+            settings={"key": "value"},
+            version=5
+        )
+        mock_request.return_value = mock_response
         
-    #     manager.get_configuration_and_refresh_interval()
-    #     self.assertEqual(manager._version_cache, 5)
+        manager.get_configuration_and_refresh_interval()
+        self.assertEqual(manager._version_cache, 5)
         
-    #     # Test version increase again
-    #     mock_response = OneSettingsResponse(
-    #         settings={"key": "value"},
-    #         version=7
-    #     )
-    #     mock_request.return_value = mock_response
+        # Test version increase again
+        mock_response = OneSettingsResponse(
+            settings={"key": "value"},
+            version=7
+        )
+        mock_request.return_value = mock_response
         
-    #     manager.get_configuration_and_refresh_interval()
-    #     self.assertEqual(manager._version_cache, 7)
+        manager.get_configuration_and_refresh_interval()
+        self.assertEqual(manager._version_cache, 7)
 
-    # @patch('azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request')
-    # @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
-    # @patch('azure.monitor.opentelemetry.exporter._configuration.logger')
-    # def test_version_decrease_warning(self, mock_logger, mock_worker_class, mock_request):
-    #     """Test warning when version decreases."""
-    #     manager = _ConfigurationManager()
+    @patch('azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request')
+    @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
+    @patch('azure.monitor.opentelemetry.exporter._configuration.logger')
+    def test_version_decrease_warning(self, mock_logger, mock_worker_class, mock_request):
+        """Test warning when version decreases."""
+        manager = _ConfigurationManager()
         
-    #     # Set initial version
-    #     mock_response = OneSettingsResponse(
-    #         settings={"key": "value"},
-    #         version=10
-    #     )
-    #     mock_request.return_value = mock_response
-    #     manager.get_configuration_and_refresh_interval()
+        # Set initial version
+        mock_response = OneSettingsResponse(
+            settings={"key": "value"},
+            version=10
+        )
+        mock_request.return_value = mock_response
+        manager.get_configuration_and_refresh_interval()
         
-    #     # Test version decrease (should log warning)
-    #     mock_response = OneSettingsResponse(
-    #         settings={"key": "value"},
-    #         version=5
-    #     )
-    #     mock_request.return_value = mock_response
+        # Test version decrease (should log warning)
+        mock_response = OneSettingsResponse(
+            settings={"key": "value"},
+            version=5
+        )
+        mock_request.return_value = mock_response
         
-    #     manager.get_configuration_and_refresh_interval()
+        manager.get_configuration_and_refresh_interval()
         
-    #     # Verify warning was logged
-    #     mock_logger.warning.assert_called_once()
-    #     warning_message = mock_logger.warning.call_args[0][0]
-    #     self.assertIn("CHANGE_VERSION", warning_message)
-    #     self.assertIn("less than", warning_message)
+        # Verify warning was logged
+        mock_logger.warning.assert_called_once()
+        warning_message = mock_logger.warning.call_args[0][0]
+        self.assertIn("CHANGE_VERSION", warning_message)
+        self.assertIn("less than", warning_message)
         
-    #     # Version cache should not be updated
-    #     self.assertEqual(manager._version_cache, 10)
+        # Version cache should not be updated
+        self.assertEqual(manager._version_cache, 10)
 
     # def test_get_python_configuration_call(self):
     #     """Test _update_configuration_and_get_refresh_interval function calls manager correctly."""
@@ -244,20 +244,20 @@ class TestConfigurationManager(unittest.TestCase):
     #         refresh_interval = manager._refresh_interval
     #         # These should be accessible without error
 
-    # @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
-    # def test_shutdown(self, mock_worker_class):
-    #     """Test shutdown method."""
-    #     mock_worker_instance = Mock()
-    #     mock_worker_class.return_value = mock_worker_instance
+    @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
+    def test_shutdown(self, mock_worker_class):
+        """Test shutdown method."""
+        mock_worker_instance = Mock()
+        mock_worker_class.return_value = mock_worker_instance
         
-    #     manager = _ConfigurationManager()
+        manager = _ConfigurationManager()
         
-    #     # Call shutdown
-    #     manager.shutdown()
+        # Call shutdown
+        manager.shutdown()
         
-    #     # Verify worker shutdown was called
-    #     mock_worker_instance.shutdown.assert_called_once()
-    #     self.assertIsNone(manager._instance)
+        # Verify worker shutdown was called
+        mock_worker_instance.shutdown.assert_called_once()
+        self.assertIsNone(manager._instance)
 
 
 class TestUpdateConfigurationFunction(unittest.TestCase):
