@@ -112,6 +112,104 @@ def new_simple_content_analyzer_object(analyzer_id: str, description: Optional[s
     )
 
 
+def assert_poller_properties(poller, poller_name: str = "Poller"):
+    """Assert common poller properties for any AsyncLROPoller.
+    
+    Args:
+        poller: The AsyncLROPoller instance to validate
+        poller_name: Optional name for the poller in log messages
+        
+    Raises:
+        AssertionError: If any poller property assertion fails
+    """
+    print(f"{poller_name}:\n{poller}")
+    assert poller is not None, f"{poller_name} should not be None"
+    assert poller.status() is not None, f"{poller_name} status should not be None"
+    assert poller.status() is not "", f"{poller_name} status should not be empty"
+    assert poller.continuation_token() is not None, f"{poller_name} continuation_token should not be None"
+    print(f"{poller_name} properties verified successfully")
+
+
+def assert_simple_content_analyzer_result(analysis_result, result_name: str = "Analysis result"):
+    """Assert simple content analyzer result properties and field extraction.
+    
+    Args:
+        analysis_result: The analysis result object to validate
+        result_name: Optional name for the result in log messages
+        
+    Raises:
+        AssertionError: If any analysis result property assertion fails
+    """
+    print(f"Validating {result_name} properties")
+    assert analysis_result is not None, f"{result_name} should not be None"
+    assert analysis_result.__class__.__name__ == "AnalyzeResult", f"{result_name} should be AnalyzeResult, got {analysis_result.__class__.__name__}"
+    assert analysis_result.contents is not None, f"{result_name} should have contents"
+    assert len(analysis_result.contents) > 0, f"{result_name} should have at least one content"
+    
+    print(f"{result_name} properties verified successfully")
+
+    # Verify fields node exists in the first result of contents
+    
+    first_content = analysis_result.contents[0]
+    assert hasattr(first_content, 'fields'), "First content should have fields"
+    print(f"Verified fields node exists in first result")
+
+    # Verify total_amount field exists and equals 110
+    fields = first_content.fields
+    
+    # Fields is expected to be a dictionary
+    assert isinstance(fields, dict), f"Fields should be a dictionary, got {type(fields)}"
+    assert 'total_amount' in fields, f"Fields should contain total_amount. Available fields: {list(fields.keys())}"
+    
+    total_amount_field = fields['total_amount']
+    assert total_amount_field is not None, "total_amount field should not be None"
+
+    total_amount_value = total_amount_field.get('valueNumber')
+    
+    print(f"Total amount field value: {total_amount_value}")
+    assert total_amount_value == 110, f"Expected total_amount to be 110, but got {total_amount_value}"
+    print(f"Total amount field validation successful")
+
+
+def save_analysis_result_to_file(analysis_result, test_name: str, identifier: Optional[str] = None, output_dir: str = "test_output") -> str:
+    """Save analysis result to output file using pytest naming convention.
+    
+    Args:
+        analysis_result: The analysis result object to save
+        test_name: Name of the test case (e.g., function name)
+        identifier: Optional unique identifier for the result (e.g., analyzer_id)
+        output_dir: Directory to save the output file (default: "test_output")
+        
+    Returns:
+        str: Path to the saved output file
+        
+    Raises:
+        OSError: If there are issues creating directory or writing file
+    """
+    import json
+    import os
+    from datetime import datetime
+    
+    # Create output directory if it doesn't exist
+    os.makedirs(output_dir, exist_ok=True)
+    
+    # Generate output filename with timestamp
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    
+    # Build filename with test name and optional identifier
+    if identifier:
+        output_filename = f"{output_dir}/{test_name}_{identifier}_{timestamp}.json"
+    else:
+        output_filename = f"{output_dir}/{test_name}_{timestamp}.json"
+    
+    # Save the analysis result
+    with open(output_filename, "w") as output_file:
+        json.dump(analysis_result.as_dict(), output_file, indent=2)
+    
+    print(f"Analysis result saved to: {output_filename}")
+    return output_filename
+
+
 async def create_analyzer_and_assert(
     client, 
     analyzer_id: str, 
@@ -534,27 +632,74 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         # please add some check logic here by yourself
         # ...
 
-    @pytest.mark.skip(reason="Skipping all tests except test_content_analyzers_get")
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_analyzers_begin_analyze_binary(self, contentunderstanding_endpoint):
         """
         Test Summary:
+        - Create simple analyzer for binary analysis
+        - Read sample invoice PDF file
         - Begin binary analysis operation with analyzer
         - Wait for analysis completion
-        - Verify analysis results
+        - Save analysis result to output file
+        - Verify fields node exists in first result
+        - Verify total_amount field exists and equals 110
+        - Clean up created analyzer
         """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        response = await (
-            await client.content_analyzers.begin_analyze_binary(
-                analyzer_id="str",
-                input=bytes("bytes", encoding="utf-8"),
-                content_type="str",
-            )
-        ).result()  # call '.result()' to poll until service return final result
+        analyzer_id = generate_analyzer_id()
+        created_analyzer = False
 
-        # please add some check logic here by yourself
-        # ...
+        # Create a simple analyzer for binary analysis
+        content_analyzer = new_simple_content_analyzer_object(
+            analyzer_id=analyzer_id,
+            description=f"test analyzer for binary analysis: {analyzer_id}",
+            tags={"test_type": "binary_analysis"}
+        )
+
+        try:
+            # Create analyzer using the refactored function
+            poller, operation_id = await create_analyzer_and_assert(client, analyzer_id, content_analyzer)
+            created_analyzer = True
+
+            # Read the sample invoice PDF file
+            pdf_path = "test_data/sample_invoice.pdf"
+            with open(pdf_path, "rb") as pdf_file:
+                pdf_content = pdf_file.read()
+
+            print(f"Starting binary analysis with analyzer {analyzer_id}")
+            
+            # Begin binary analysis operation
+            analysis_poller = await client.content_analyzers.begin_analyze_binary(
+                analyzer_id=analyzer_id,
+                input=pdf_content,
+                content_type="application/pdf",
+            )
+            assert_poller_properties(analysis_poller, "Analysis poller")
+
+            # Wait for analysis completion
+            print(f"Waiting for analysis completion")
+            analysis_result = await analysis_poller.result()
+            print(f"Analysis completed")
+            
+            output_filename = save_analysis_result_to_file(analysis_result, "test_content_analyzers_begin_analyze_binary", analyzer_id)
+
+            # Now assert the field results
+            assert_simple_content_analyzer_result(analysis_result, "Analysis result")
+
+        finally:
+            # Always clean up the created analyzer, even if the test fails
+            if created_analyzer:
+                print(f"Cleaning up analyzer {analyzer_id}")
+                try:
+                    await client.content_analyzers.delete(analyzer_id=analyzer_id)
+                    # Verify deletion
+                    assert not await analyzer_in_list(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
+                    print(f"Analyzer {analyzer_id} is deleted successfully")
+                except Exception as e:
+                    print(f"Warning: Failed to delete analyzer {analyzer_id}: {e}")
+            else:
+                print(f"Analyzer {analyzer_id} was not created, no cleanup needed")
 
     @pytest.mark.skip(reason="Skipping all tests except test_content_analyzers_get")
     @ContentUnderstandingPreparer()
