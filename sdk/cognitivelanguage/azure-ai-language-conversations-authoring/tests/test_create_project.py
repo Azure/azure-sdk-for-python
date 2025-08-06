@@ -5,9 +5,9 @@ import pytest
 from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, recorded_by_proxy
 from azure.ai.language.conversations.authoring import ConversationAuthoringClient
 from azure.ai.language.conversations.authoring.models import (
-    ConversationAuthoringCreateProjectDetails,
-    ConversationAuthoringProjectMetadata,
-    ConversationAuthoringProjectKind,
+    CreateProjectOptions,
+    ProjectDetails,
+    ProjectKind,
 )
 
 from azure.core.credentials import AzureKeyCredential
@@ -39,8 +39,8 @@ class TestConversationsCase(TestConversations):
         project_name = "MyPythonProject0802"
 
         # Create the project body
-        body = ConversationAuthoringCreateProjectDetails(
-            project_kind=ConversationAuthoringProjectKind.CONVERSATION,
+        body = CreateProjectOptions(
+            project_kind=ProjectKind.CONVERSATION,
             project_name=project_name,
             language="en-us",
             multilingual=True,
@@ -51,6 +51,6 @@ class TestConversationsCase(TestConversations):
         result = authoring_client.create_project(project_name=project_name, body=body)
 
         # Assert
-        assert isinstance(result, ConversationAuthoringProjectMetadata)
+        assert isinstance(result, ProjectDetails)
         assert result.project_name == project_name
         print(f"Created project: {result.project_name}, language: {result.language}, kind: {result.project_kind}")
