@@ -268,24 +268,26 @@ class TestConfigurationManager(unittest.TestCase):
                 instance = _ConfigurationManager()
                 instances.append(instance)
         
-        # Create multiple threads
+        # Create and run threads
         threads = []
         for _ in range(10):
             thread = threading.Thread(target=create_instance)
             threads.append(thread)
         
-        # Start all threads
         for thread in threads:
             thread.start()
         
-        # Wait for all threads to complete
         for thread in threads:
             thread.join()
         
-        # All instances should be the same
+        # Verify singleton behavior
         first_instance = instances[0]
         for instance in instances[1:]:
             self.assertIs(instance, first_instance)
+        
+        # IMPORTANT: Explicitly shutdown any workers
+        if _ConfigurationManager._instance:
+            _ConfigurationManager._instance.shutdown()
 
 
 class TestUpdateConfigurationFunction(unittest.TestCase):
