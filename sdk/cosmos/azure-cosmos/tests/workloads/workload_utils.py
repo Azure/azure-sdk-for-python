@@ -27,9 +27,6 @@ def get_existing_random_item():
     item["pk"] = "pk-" + str(random_int)
     return item
 
-def get_new_random_item():
-    return create_random_item()
-
 def create_random_item():
     paragraph1 = (
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
@@ -54,7 +51,7 @@ def create_random_item():
 def upsert_item(container, excluded_locations, num_upserts):
     for _ in range(num_upserts):
         # 10 percent of the time, create a new item instead of updating an existing one
-        item = get_new_random_item() if random.random() < 0.1 else create_random_item()
+        item = create_random_item() if random.random() < 0.1 else get_existing_random_item()
         if excluded_locations:
             container.upsert_item(item, etag=None, match_condition=None,
                                   excluded_locations=excluded_locations)
