@@ -8,7 +8,10 @@
 from datetime import datetime
 from types import TracebackType
 from typing import (
-    Any, Dict, Optional, Union,
+    Any,
+    Dict,
+    Optional,
+    Union,
 )
 from typing_extensions import Self
 
@@ -31,10 +34,9 @@ from ._models import (
     PublicAccess,
     RetentionPolicy,
     StaticWebsite,
-    UserDelegationKey
+    UserDelegationKey,
 )
 from ._shared.base_client import StorageAccountHostsMixin
-
 
 class DataLakeServiceClient(StorageAccountHostsMixin):
     url: str
@@ -67,12 +69,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
     ) -> Self: ...
     @distributed_trace
     def get_user_delegation_key(
-        self,
-        key_start_time: datetime,
-        key_expiry_time: datetime,
-        *,
-        timeout: Optional[int] = None,
-        **kwargs: Any
+        self, key_start_time: datetime, key_expiry_time: datetime, *, timeout: Optional[int] = None, **kwargs: Any
     ) -> UserDelegationKey: ...
     @distributed_trace
     def list_file_systems(
@@ -108,11 +105,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
     ) -> FileSystemClient: ...
     @distributed_trace
     def undelete_file_system(
-        self,
-        name: str,
-        deleted_version: str,
-        timeout: Optional[int] = None,
-        **kwargs: Any
+        self, name: str, deleted_version: str, timeout: Optional[int] = None, **kwargs: Any
     ) -> FileSystemClient: ...
     @distributed_trace
     def delete_file_system(
@@ -129,9 +122,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
     ) -> FileSystemClient: ...
     def get_file_system_client(self, file_system: Union[FileSystemProperties, str]) -> FileSystemClient: ...
     def get_directory_client(
-        self,
-        file_system: Union[FileSystemProperties, str],
-        directory: Union[DirectoryProperties, str]
+        self, file_system: Union[FileSystemProperties, str], directory: Union[DirectoryProperties, str]
     ) -> DataLakeDirectoryClient: ...
     def get_file_client(
         self,

@@ -7,7 +7,10 @@
 
 from datetime import datetime
 from typing import (
-    Any, Dict, Optional, Union,
+    Any,
+    Dict,
+    Optional,
+    Union,
 )
 from types import TracebackType
 from typing_extensions import Self
@@ -29,7 +32,7 @@ from .._models import (
     PublicAccess,
     RetentionPolicy,
     StaticWebsite,
-    UserDelegationKey
+    UserDelegationKey,
 )
 from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
@@ -37,7 +40,6 @@ from ._data_lake_directory_client_async import DataLakeDirectoryClient
 from ._data_lake_file_client_async import DataLakeFileClient
 from ._data_lake_lease_async import DataLakeLeaseClient
 from ._file_system_client_async import FileSystemClient
-
 
 class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # type: ignore [misc]
     url: str
@@ -73,12 +75,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
     ) -> Self: ...
     @distributed_trace_async
     async def get_user_delegation_key(
-        self,
-        key_start_time: datetime,
-        key_expiry_time: datetime,
-        *,
-        timeout: Optional[int] = None,
-        **kwargs: Any
+        self, key_start_time: datetime, key_expiry_time: datetime, *, timeout: Optional[int] = None, **kwargs: Any
     ) -> UserDelegationKey: ...
     @distributed_trace
     def list_file_systems(
@@ -114,12 +111,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
     ) -> FileSystemClient: ...
     @distributed_trace_async
     async def undelete_file_system(
-        self,
-        name: str,
-        deleted_version: str,
-        *,
-        timeout: Optional[int] = None,
-        **kwargs: Any
+        self, name: str, deleted_version: str, *, timeout: Optional[int] = None, **kwargs: Any
     ) -> FileSystemClient: ...
     @distributed_trace_async
     async def delete_file_system(
@@ -136,14 +128,10 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
     ) -> FileSystemClient: ...
     def get_file_system_client(self, file_system: Union[FileSystemProperties, str]) -> FileSystemClient: ...
     def get_directory_client(
-        self,
-        file_system: Union[FileSystemProperties,str],
-        directory: Union[DirectoryProperties, str]
+        self, file_system: Union[FileSystemProperties, str], directory: Union[DirectoryProperties, str]
     ) -> DataLakeDirectoryClient: ...
     def get_file_client(
-        self,
-        file_system: Union[FileSystemProperties, str],
-        file_path: Union[FileProperties, str]
+        self, file_system: Union[FileSystemProperties, str], file_path: Union[FileProperties, str]
     ) -> DataLakeFileClient: ...
     @distributed_trace_async
     async def set_service_properties(
