@@ -8,6 +8,7 @@ import os
 import random
 import subprocess
 import errno
+from enum import Enum
 
 from azure.monitor.opentelemetry.exporter._utils import PeriodicTask
 
@@ -28,6 +29,10 @@ def _now():
 def _seconds(seconds):
     return datetime.timedelta(seconds=seconds)
 
+class StorageExportResult(Enum):
+    CLIENT_STORAGE_DISABLED = 1
+    CLIENT_PERSISTENCE_CAPACITY_REACHED = 2
+    CLIENT_READONLY = 3
 
 # pylint: disable=broad-except
 class LocalFileBlob:
@@ -99,7 +104,6 @@ class LocalFileStorage:
         self._write_timeout = write_timeout
         self.filesystem_is_readonly = False
         self.exception_occurred = None
-        self.persistent_storage_full = True
         self._enabled = self._check_and_set_folder_permissions()
         if self._enabled:
             self._maintenance_routine()
@@ -185,22 +189,30 @@ class LocalFileStorage:
         return None
 
     def put(self, data, lease_period=None):
-        if not self._enabled:
-            return None
-        if not self._check_storage_size():
-            return None
-        blob = LocalFileBlob(
-            os.path.join(
-                self._path,
-                "{}-{}.blob".format(
-                    _fmt(_now()),
-                    "{:08x}".format(random.getrandbits(32)),  # thread-safe random
-                ),
+        try:
+            if not self._enabled:
+                if self.filesystem_is_readonly:
+                    return StorageExportResult.CLIENT_READONLY
+                if self.exception_occurred is not None:
+                    return self.exception_occurred
+                return StorageExportResult.CLIENT_STORAGE_DISABLED
+            if not self._check_storage_size():
+                return StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED
+            blob = LocalFileBlob(
+                os.path.join(
+                    self._path,
+                    "{}-{}.blob".format(
+                        _fmt(_now()),
+                        "{:08x}".format(random.getrandbits(32)),  # thread-safe random
+                    ),
+                )
             )
-        )
-        if lease_period is None:
-            lease_period = self._lease_period
-        return blob.put(data, lease_period=lease_period)
+            if lease_period is None:
+                lease_period = self._lease_period
+            return blob.put(data, lease_period=lease_period)
+        except Exception as ex:
+            return str(ex)
+
 
     def _check_and_set_folder_permissions(self):
         """
@@ -273,7 +285,6 @@ class LocalFileStorage:
                                 str(size / 1024)
                             )
                         )
-                        self.persistent_storage_full = False
                         return False
         return True
 

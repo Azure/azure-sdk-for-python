@@ -45,7 +45,10 @@ from azure.monitor.opentelemetry.exporter._constants import (
     DropCode,
 )
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
-from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage
+from azure.monitor.opentelemetry.exporter._storage import (
+    LocalFileStorage,
+    StorageExportResult,
+)
 from azure.monitor.opentelemetry.exporter._utils import _get_auth_policy
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     get_statsbeat_initial_success,
@@ -178,6 +181,7 @@ class BaseExporter:
             collect_customer_statsbeat(self)
 
     def _transmit_from_storage(self) -> None:
+        all_envelopes: List[TelemetryItem] = []  # Track ALL envelopes processed from storage
         if not self.storage:
             return
         for blob in self.storage.gets():
@@ -185,11 +189,42 @@ class BaseExporter:
             # to reduce the chance of race (for perf consideration)
             if blob.lease(self._timeout + 5):
                 envelopes = [_format_storage_telemetry_item(TelemetryItem.from_dict(x)) for x in blob.get()]
+                all_envelopes.extend(envelopes)
                 result = self._transmit(envelopes)
                 if result == ExportResult.FAILED_RETRYABLE:
                     blob.lease(1)
                 else:
                     blob.delete()
+
+        if all_envelopes:
+            envelopes_to_store = []
+            for envelope in all_envelopes:
+                if hasattr(envelope, 'as_dict'):
+                    envelopes_to_store.append(envelope.as_dict())
+                elif isinstance(envelope, dict):
+                    envelopes_to_store.append(envelope)
+                else:
+                    # Handle other cases by converting to dict if possible
+                    envelopes_to_store.append(envelope.__dict__ if hasattr(envelope, '__dict__') else envelope)
+
+            result_from_storage_put = self.storage.put(envelopes_to_store)
+
+            if result_from_storage_put == StorageExportResult.CLIENT_STORAGE_DISABLED:
+                # Track items that would have been retried but are dropped since client has local storage disabled
+                if self._customer_statsbeat_metrics and self._should_collect_customer_statsbeat():
+                    _track_dropped_items(self._customer_statsbeat_metrics, all_envelopes, DropCode.CLIENT_STORAGE_DISABLED)
+            elif result_from_storage_put == StorageExportResult.CLIENT_READONLY:
+                # If filesystem is readonly, track dropped items in customer statsbeat
+                if self._customer_statsbeat_metrics and self._should_collect_customer_statsbeat():
+                    _track_dropped_items(self._customer_statsbeat_metrics, all_envelopes, DropCode.CLIENT_READONLY)
+            elif result_from_storage_put == StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED:
+                # If data has to be dropped due to persistent storage being full, track dropped items
+                if self._customer_statsbeat_metrics and self._should_collect_customer_statsbeat():
+                    _track_dropped_items(self._customer_statsbeat_metrics, all_envelopes, DropCode.CLIENT_PERSISTENCE_CAPACITY)
+            else:
+                # For any exceptions occurred, track dropped item with reason
+                if self._customer_statsbeat_metrics and self._should_collect_customer_statsbeat():
+                    _track_dropped_items(self._customer_statsbeat_metrics, all_envelopes, DropCode.CLIENT_EXCEPTION, result_from_storage_put)
 
     def _handle_transmit_from_storage(self, envelopes: List[TelemetryItem], result: ExportResult) -> None:
         if self.storage:
@@ -200,19 +235,6 @@ class BaseExporter:
                 # Try to send any cached events
                 self._transmit_from_storage()
 
-            # If filesystem is readonly, track dropped items in customer statsbeat
-            if self.storage.filesystem_is_readonly:
-                if self._customer_statsbeat_metrics and self._should_collect_customer_statsbeat():
-                    _track_dropped_items(self._customer_statsbeat_metrics, envelopes, DropCode.CLIENT_READONLY)
-
-            if self.storage.exception_occurred is not None:
-                if self._customer_statsbeat_metrics and self._should_collect_customer_statsbeat():
-                    _track_dropped_items(self._customer_statsbeat_metrics, envelopes, DropCode.CLIENT_EXCEPTION, self.storage.exception_occurred)
-
-            # If data has to be dropped due to persistent storage being full, track dropped items
-            if not self.storage.persistent_storage_full:
-                if self._customer_statsbeat_metrics and self._should_collect_customer_statsbeat():
-                    _track_dropped_items(self._customer_statsbeat_metrics, envelopes, DropCode.CLIENT_PERSISTENCE_CAPACITY)
         else:
             # Track items that would have been retried but are dropped since client has local storage disabled
             if self._customer_statsbeat_metrics and self._should_collect_customer_statsbeat():
