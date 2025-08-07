@@ -6,243 +6,877 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
+import os
+import re
+from typing import Tuple, Union, Dict, Any, Optional
 from devtools_testutils import recorded_by_proxy
-from testpreparer import ContentUnderstandingClientTestBase, ContentUnderstandingPreparer
+from testpreparer import ContentUnderstandingPreparer
+from testpreparer import ContentUnderstandingClientTestBase
+from azure.ai.contentunderstanding.models import ContentAnalyzer
+from test_helpers import (
+    generate_analyzer_id,
+    extract_operation_id_from_poller,
+    new_simple_content_analyzer_object,
+    new_marketing_video_analyzer_object,
+    assert_poller_properties,
+    assert_simple_content_analyzer_result,
+    save_analysis_result_to_file,
+    save_keyframe_image_to_file,
+    PollerType
+)
 
 
-@pytest.mark.skip("you may need to update the auto-generated test case before run it")
+def analyzer_in_list_sync(client, analyzer_id: str) -> bool:
+    """Check if an analyzer with the given ID exists in the list of analyzers (sync version).
+    
+    Args:
+        client: The ContentUnderstandingClient instance
+        analyzer_id: The analyzer ID to search for
+        
+    Returns:
+        bool: True if the analyzer is found, False otherwise
+    """
+    response = client.content_analyzers.list()
+    for r in response:
+        if hasattr(r, 'analyzer_id') and r.analyzer_id == analyzer_id:
+            return True
+    return False
+
+
+def create_analyzer_and_assert_sync(
+    client, 
+    analyzer_id: str, 
+    resource: Union[ContentAnalyzer, Dict[str, Any]]
+) -> Tuple[Any, str]:
+    """Create an analyzer and perform basic assertions (sync version).
+    
+    Args:
+        client: The ContentUnderstandingClient instance
+        analyzer_id: The analyzer ID to create
+        resource: The analyzer resource (ContentAnalyzer object or dict)
+        
+    Returns:
+        Tuple[Any, str]: A tuple containing (poller, operation_id)
+        
+    Raises:
+        AssertionError: If the creation fails or assertions fail
+    """
+    print(f"\nCreating analyzer {analyzer_id}")
+    
+    # Start the analyzer creation operation
+    poller = client.content_analyzers.begin_create_or_replace(
+        analyzer_id=analyzer_id,
+        resource=resource,
+    )
+
+    # Extract operation_id from the poller using the helper function
+    operation_id = extract_operation_id_from_poller(poller, PollerType.ANALYZER_CREATION)
+    print(f"  Extracted operation_id: {operation_id}")
+
+    # Check operation status while it's running
+    print(f"  Checking operation status for operation_id: {operation_id}")
+    status_response = client.content_analyzers.get_operation_status(
+        analyzer_id=analyzer_id,
+        operation_id=operation_id,
+    )
+
+    # Verify the operation status response
+    assert status_response is not None
+    print(f"  Operation status: {status_response}")
+    
+    # Check that the operation status has expected fields
+    assert hasattr(status_response, 'status') or hasattr(status_response, 'operation_status')
+    assert hasattr(status_response, 'id')
+    assert status_response.id == operation_id
+    
+    # Wait for the operation to complete
+    print(f"  Waiting for analyzer {analyzer_id} to be created")
+    response = poller.result()
+    assert response is not None
+    assert poller.status() == "Succeeded"
+    assert poller.done()
+    print(f"  Analyzer {analyzer_id} is created successfully")
+    
+    # Additional poller assertions
+    assert poller is not None
+    assert poller.status() is not None
+    assert poller.status() is not ""
+    assert poller.continuation_token() is not None
+    
+    # Verify the analyzer is in the list
+    assert analyzer_in_list_sync(client, analyzer_id), f"Created analyzer with ID '{analyzer_id}' was not found in the list"
+    print(f"  Verified analyzer {analyzer_id} is in the list")
+    
+    return poller, operation_id
+
+
+def download_keyframes_and_assert_sync(client, analysis_operation_id: str, result, test_pyfile_dir: str, identifier: Optional[str] = None) -> None:
+    """Download keyframes from video analysis result and assert their existence (sync version).
+
+    Downloads up to 3 keyframes: first, middle, and last frame to avoid duplicates.
+    
+    Args:
+        client: The ContentUnderstandingClient instance
+        analysis_operation_id: The operation ID from the analysis
+        result: The analysis result containing markdown with keyframes
+        test_pyfile_dir: The directory where pytest files are located
+        identifier: Optional unique identifier to avoid conflicts (e.g., analyzer_id)
+        
+    Returns:
+        None
+        
+    Raises:
+        AssertionError: If no keyframes are found in the analysis result
+    """
+    keyframe_ids = set()
+    
+    # Iterate over contents to find keyframes from markdown
+    for content in result.contents:
+        # Extract keyframe IDs from "markdown" if it exists and is a string
+        markdown_content = getattr(content, 'markdown', '')
+        if isinstance(markdown_content, str):
+            # Use the same regex pattern as the official sample: (keyFrame\.d+)\.jpg
+            keyframe_ids.update(re.findall(r"(keyFrame\.\d+)\.jpg", markdown_content))
+    
+    print(f"Found keyframe IDs in markdown: {keyframe_ids}")
+    
+    # Assert that keyframe IDs were found in the video analysis
+    assert keyframe_ids, "No keyframe IDs were found in the video analysis markdown content. Video analysis should generate keyframes that can be extracted using regex pattern."
+    
+    print(f"Successfully extracted {len(keyframe_ids)} keyframe IDs from video analysis")
+    
+    # Sort keyframes by frame number to get first, middle, and last
+    sorted_keyframes = sorted(keyframe_ids, key=lambda x: int(x.replace('keyFrame.', '')))
+    
+    # Create a set with first, middle, and last frames (automatically removes duplicates)
+    frames_set = {sorted_keyframes[0], sorted_keyframes[-1], sorted_keyframes[len(sorted_keyframes) // 2]}
+    
+    # Convert set to list for processing
+    frames_to_download = list(frames_set)
+    
+    print(f"Selected frames to download: {frames_to_download}")
+    
+    # Try to retrieve the selected keyframe images using get_result_file API
+    files_retrieved = 0
+    
+    for keyframe_id in frames_to_download:
+        print(f"Trying to get result file with path: {keyframe_id}")
+        response = client.content_analyzers.get_result_file(
+            operation_id=analysis_operation_id,
+            path=keyframe_id,  # Use keyframe_id directly as path, no .jpg extension
+        )
+        
+        # Handle the response - it's an iterator that needs to be collected
+        if hasattr(response, '__iter__'):
+            # It's an iterator, collect all bytes efficiently
+            chunks = []
+            for chunk in response:
+                chunks.append(chunk)
+            response = b''.join(chunks)
+        
+        # Assert that we successfully get a response and it's valid image data
+        assert response is not None, f"Response for path {keyframe_id} should not be None"
+        assert isinstance(response, bytes), f"Response for {keyframe_id} should be bytes (image data), got {type(response)}"
+        assert len(response) > 0, f"Image file content for {keyframe_id} should not be empty"
+        
+        print(f"Successfully retrieved image file for path: {keyframe_id}")
+        print(f"Image file content length: {len(response)} bytes")
+        
+        # Save the image file using the helper function
+        saved_file_path = save_keyframe_image_to_file(
+            image_content=response,
+            keyframe_id=keyframe_id,
+            test_name="test_content_analyzers_get_result_file",
+            test_pyfile_dir=test_pyfile_dir,
+            identifier=identifier
+        )
+        
+        # Verify the saved file exists and has content
+        assert os.path.exists(saved_file_path), f"Saved image file should exist at {saved_file_path}"
+        assert os.path.getsize(saved_file_path) > 0, f"Saved image file should not be empty"
+        
+        files_retrieved += 1
+        print(f"Successfully downloaded keyframe image: {keyframe_id}")
+    
+    # Assert that we successfully downloaded all expected files
+    assert files_retrieved == len(frames_to_download), f"Expected to download {len(frames_to_download)} files, but only downloaded {files_retrieved}"
+    print(f"Successfully completed get_result_file test - downloaded {files_retrieved} keyframe images")
+
+
 class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingClientTestBase):
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
     def test_content_analyzers_get_operation_status(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Create analyzer and extract operation ID
+        - Check operation status during creation
+        - Wait for operation completion
+        - Check final operation status after completion
+        - Clean up created analyzer
+        """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        response = client.content_analyzers.get_operation_status(
-            analyzer_id="str",
-            operation_id="str",
+        analyzer_id = generate_analyzer_id()
+        created_analyzer = False
+
+        content_analyzer = new_simple_content_analyzer_object(
+            analyzer_id=analyzer_id,
+            description=f"test analyzer for operation status: {analyzer_id}",
+            tags={"test_type": "operation_status"}
         )
 
-        # please add some check logic here by yourself
-        # ...
+        try:
+            # Create analyzer using the refactored function
+            poller, operation_id = create_analyzer_and_assert_sync(client, analyzer_id, content_analyzer)
+            created_analyzer = True
+
+            # Check final operation status after completion
+            final_status_response = client.content_analyzers.get_operation_status(
+                analyzer_id=analyzer_id,
+                operation_id=operation_id,
+            )
+            
+            assert final_status_response is not None
+            print(f"Final operation status: {final_status_response}")
+
+        finally:
+            # Always clean up the created analyzer, even if the test fails
+            if created_analyzer:
+                print(f"Cleaning up analyzer {analyzer_id}")
+                try:
+                    client.content_analyzers.delete(analyzer_id=analyzer_id)
+                    # Verify deletion
+                    assert not analyzer_in_list_sync(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
+                    print(f"Analyzer {analyzer_id} is deleted successfully")
+                except Exception as e:
+                    print(f"Warning: Failed to delete analyzer {analyzer_id}: {e}")
+            else:
+                print(f"Analyzer {analyzer_id} was not created, no cleanup needed")
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_content_analyzers_begin_create_or_replace(self, contentunderstanding_endpoint):
+    def test_content_analyzers_begin_create_with_content_analyzer(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Create analyzer using ContentAnalyzer object
+        - Verify analyzer creation and poller properties
+        - Clean up created analyzer
+        """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        response = client.content_analyzers.begin_create_or_replace(
-            analyzer_id="str",
-            resource={
-                "analyzerId": "str",
-                "createdAt": "2020-02-20 00:00:00",
-                "lastModifiedAt": "2020-02-20 00:00:00",
-                "status": "str",
-                "baseAnalyzerId": "str",
-                "config": {
-                    "disableContentFiltering": bool,
-                    "disableFaceBlurring": bool,
-                    "enableFace": bool,
-                    "enableFormula": bool,
-                    "enableLayout": bool,
-                    "enableOcr": bool,
-                    "estimateFieldSourceAndConfidence": bool,
-                    "locales": ["str"],
-                    "personDirectoryId": "str",
-                    "returnDetails": bool,
-                    "segmentationDefinition": "str",
-                    "segmentationMode": "str",
-                    "tableFormat": "str",
-                },
-                "description": "str",
-                "fieldSchema": {
-                    "fields": {
-                        "str": {
-                            "$ref": "str",
-                            "description": "str",
-                            "enum": ["str"],
-                            "enumDescriptions": {"str": "str"},
-                            "examples": ["str"],
-                            "items": ...,
-                            "method": "str",
-                            "properties": {"str": ...},
-                            "type": "str",
-                        }
-                    },
-                    "definitions": {
-                        "str": {
-                            "$ref": "str",
-                            "description": "str",
-                            "enum": ["str"],
-                            "enumDescriptions": {"str": "str"},
-                            "examples": ["str"],
-                            "items": ...,
-                            "method": "str",
-                            "properties": {"str": ...},
-                            "type": "str",
-                        }
-                    },
-                    "description": "str",
-                    "name": "str",
-                },
-                "knowledgeSources": ["knowledge_source"],
-                "mode": "str",
-                "processingLocation": "str",
-                "tags": {"str": "str"},
-                "trainingData": "data_source",
-                "warnings": [~azure.core.ODataV4Format],
-            },
-        ).result()  # call '.result()' to poll until service return final result
+        analyzer_id = generate_analyzer_id()
+        created_analyzer = False
 
-        # please add some check logic here by yourself
-        # ...
+        content_analyzer = new_simple_content_analyzer_object(
+            analyzer_id=analyzer_id,
+            description=f"test analyzer: {analyzer_id}",
+            tags={"tag1_name": "tag1_value"}
+        )
+
+        try:
+            # Create analyzer using the refactored function
+            poller, operation_id = create_analyzer_and_assert_sync(client, analyzer_id, content_analyzer)
+            created_analyzer = True
+
+        finally:
+            # Always clean up the created analyzer, even if the test fails
+            if created_analyzer:
+                print(f"Cleaning up analyzer {analyzer_id}")
+                try:
+                    client.content_analyzers.delete(analyzer_id=analyzer_id)
+                    # Verify deletion
+                    assert not analyzer_in_list_sync(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
+                    print(f"Analyzer {analyzer_id} is deleted successfully")
+                except Exception as e:
+                    print(f"Warning: Failed to delete analyzer {analyzer_id}: {e}")
+            else:
+                print(f"Analyzer {analyzer_id} was not created, no cleanup needed")
+
+    @ContentUnderstandingPreparer()
+    @recorded_by_proxy
+    def test_content_analyzers_begin_create_with_json(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Create analyzer using JSON dictionary
+        - Verify analyzer creation and poller properties
+        - Clean up created analyzer
+        """
+        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        analyzer_id = generate_analyzer_id()
+        created_analyzer = False
+
+        try:
+            # Create analyzer using the refactored function with JSON resource
+            poller, operation_id = create_analyzer_and_assert_sync(
+                client, 
+                analyzer_id, 
+                {
+                    "analyzerId": analyzer_id,
+                    "baseAnalyzerId": "prebuilt-documentAnalyzer",
+                    "config": {
+                        "disableContentFiltering": False,
+                        "disableFaceBlurring": False,
+                        "enableFace": False,
+                        "enableFormula": True,
+                        "enableLayout": True,
+                        "enableOcr": True,
+                        "estimateFieldSourceAndConfidence": True,
+                        "returnDetails": True,
+                    },
+                    "description": f"test analyzer: {analyzer_id}",
+                    "fieldSchema": {
+                        "fields": {
+                            "total_amount": {
+                                "description": "Total amount of this table",
+                                "method": "extract",
+                                "type": "number",
+                            }
+                        },
+                        "description": "schema description here",
+                        "name": "schema name here",
+                    },
+                    "mode": "standard",
+                    "processingLocation": "global",
+                    "tags": {"tag1_name": "tag1_value"},
+                }
+            )
+            created_analyzer = True
+
+        finally:
+            # Always clean up the created analyzer, even if the test fails
+            if created_analyzer:
+                print(f"Cleaning up analyzer {analyzer_id}")
+                try:
+                    client.content_analyzers.delete(analyzer_id=analyzer_id)
+                    # Verify deletion
+                    assert not analyzer_in_list_sync(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
+                    print(f"Analyzer {analyzer_id} is deleted successfully")
+                except Exception as e:
+                    print(f"Warning: Failed to delete analyzer {analyzer_id}: {e}")
+            else:
+                print(f"Analyzer {analyzer_id} was not created, no cleanup needed")
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
     def test_content_analyzers_update(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Create initial analyzer
+        - Get analyzer before update to verify initial state
+        - Update analyzer with new description and tags
+        - Get analyzer after update to verify changes persisted
+        - Clean up created analyzer
+        """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        response = client.content_analyzers.update(
-            analyzer_id="str",
-            resource={
-                "analyzerId": "str",
-                "createdAt": "2020-02-20 00:00:00",
-                "lastModifiedAt": "2020-02-20 00:00:00",
-                "status": "str",
-                "baseAnalyzerId": "str",
-                "config": {
-                    "disableContentFiltering": bool,
-                    "disableFaceBlurring": bool,
-                    "enableFace": bool,
-                    "enableFormula": bool,
-                    "enableLayout": bool,
-                    "enableOcr": bool,
-                    "estimateFieldSourceAndConfidence": bool,
-                    "locales": ["str"],
-                    "personDirectoryId": "str",
-                    "returnDetails": bool,
-                    "segmentationDefinition": "str",
-                    "segmentationMode": "str",
-                    "tableFormat": "str",
-                },
-                "description": "str",
-                "fieldSchema": {
-                    "fields": {
-                        "str": {
-                            "$ref": "str",
-                            "description": "str",
-                            "enum": ["str"],
-                            "enumDescriptions": {"str": "str"},
-                            "examples": ["str"],
-                            "items": ...,
-                            "method": "str",
-                            "properties": {"str": ...},
-                            "type": "str",
-                        }
-                    },
-                    "definitions": {
-                        "str": {
-                            "$ref": "str",
-                            "description": "str",
-                            "enum": ["str"],
-                            "enumDescriptions": {"str": "str"},
-                            "examples": ["str"],
-                            "items": ...,
-                            "method": "str",
-                            "properties": {"str": ...},
-                            "type": "str",
-                        }
-                    },
-                    "description": "str",
-                    "name": "str",
-                },
-                "knowledgeSources": ["knowledge_source"],
-                "mode": "str",
-                "processingLocation": "str",
-                "tags": {"str": "str"},
-                "trainingData": "data_source",
-                "warnings": [~azure.core.ODataV4Format],
-            },
+        analyzer_id = generate_analyzer_id()
+        created_analyzer = False
+
+        # Create initial analyzer
+        initial_analyzer = new_simple_content_analyzer_object(
+            analyzer_id=analyzer_id,
+            description=f"Initial analyzer for update test: {analyzer_id}",
+            tags={"initial_tag": "initial_value"}
         )
 
-        # please add some check logic here by yourself
-        # ...
+        try:
+            # Create the initial analyzer using the refactored function
+            poller, operation_id = create_analyzer_and_assert_sync(client, analyzer_id, initial_analyzer)
+            created_analyzer = True
+
+            # Get the analyzer before update to verify initial state
+            print(f"Getting analyzer {analyzer_id} before update")
+            analyzer_before_update = client.content_analyzers.get(analyzer_id=analyzer_id)
+            assert analyzer_before_update is not None
+            assert analyzer_before_update.analyzer_id == analyzer_id
+            assert analyzer_before_update.description == f"Initial analyzer for update test: {analyzer_id}"
+            assert analyzer_before_update.tags == {"initial_tag": "initial_value"}
+            print(f"Initial analyzer state verified - description: {analyzer_before_update.description}, tags: {analyzer_before_update.tags}")
+
+            # Create updated analyzer with only allowed properties (description and tags)
+            updated_analyzer = ContentAnalyzer(
+                description=f"Updated analyzer for update test: {analyzer_id}",
+                tags={"initial_tag": "initial_value", "tag1_field": "updated_value"},
+            )
+
+            print(f"Updating analyzer {analyzer_id} with new tag and description")
+            
+            # Update the analyzer
+            response = client.content_analyzers.update(
+                analyzer_id=analyzer_id,
+                resource=updated_analyzer,
+            )
+
+            # Verify the update response
+            assert response is not None
+            print(f"Update response: {response}")
+            
+            # Verify the updated analyzer has the new tag and updated description
+            assert response.analyzer_id == analyzer_id
+            assert "tag1_field" in response.tags
+            assert response.tags["tag1_field"] == "updated_value"
+            assert response.description == f"Updated analyzer for update test: {analyzer_id}"
+            
+            print(f"Successfully updated analyzer {analyzer_id} with new tag and description")
+
+            # Get the analyzer after update to verify the changes persisted
+            print(f"Getting analyzer {analyzer_id} after update")
+            analyzer_after_update = client.content_analyzers.get(analyzer_id=analyzer_id)
+            assert analyzer_after_update is not None
+            assert analyzer_after_update.analyzer_id == analyzer_id
+            assert analyzer_after_update.description == f"Updated analyzer for update test: {analyzer_id}"
+            assert analyzer_after_update.tags == {"initial_tag": "initial_value", "tag1_field": "updated_value"}
+            print(f"Updated analyzer state verified - description: {analyzer_after_update.description}, tags: {analyzer_after_update.tags}")
+
+            # Verify the updated analyzer is in the list
+            assert analyzer_in_list_sync(client, analyzer_id), f"Updated analyzer with ID '{analyzer_id}' was not found in the list"
+
+        finally:
+            # Always clean up the created analyzer, even if the test fails
+            if created_analyzer:
+                print(f"Cleaning up analyzer {analyzer_id}")
+                try:
+                    client.content_analyzers.delete(analyzer_id=analyzer_id)
+                    # Verify deletion
+                    assert not analyzer_in_list_sync(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
+                    print(f"Analyzer {analyzer_id} is deleted successfully")
+                except Exception as e:
+                    print(f"Warning: Failed to delete analyzer {analyzer_id}: {e}")
+            else:
+                print(f"Analyzer {analyzer_id} was not created, no cleanup needed")
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
     def test_content_analyzers_get(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Get existing prebuilt analyzer
+        - Verify analyzer properties and status
+        """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
         response = client.content_analyzers.get(
-            analyzer_id="str",
+            analyzer_id="prebuilt-documentAnalyzer",
         )
-
-        # please add some check logic here by yourself
-        # ...
+        assert response is not None
+        print(response)
+        assert response.analyzer_id == "prebuilt-documentAnalyzer"
+        assert len(response.description) > 0
+        assert response.status == "ready"
+        assert response.created_at is not None
+        assert response.config is not None
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
     def test_content_analyzers_delete(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Create analyzer for deletion test
+        - Verify analyzer exists in list before deletion
+        - Delete analyzer
+        - Verify analyzer no longer exists in list after deletion
+        - Clean up if deletion failed
+        """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        response = client.content_analyzers.delete(
-            analyzer_id="str",
+        analyzer_id = generate_analyzer_id()
+        created_analyzer = False
+
+        # Create a simple analyzer for deletion test
+        content_analyzer = new_simple_content_analyzer_object(
+            analyzer_id=analyzer_id,
+            description=f"test analyzer for deletion: {analyzer_id}",
+            tags={"test_type": "deletion"}
         )
 
-        # please add some check logic here by yourself
-        # ...
+        try:
+            # Create analyzer using the refactored function
+            poller, operation_id = create_analyzer_and_assert_sync(client, analyzer_id, content_analyzer)
+            created_analyzer = True
+
+            # Verify the analyzer is in the list before deletion
+            assert analyzer_in_list_sync(client, analyzer_id), f"Created analyzer with ID '{analyzer_id}' was not found in the list"
+            print(f"Verified analyzer {analyzer_id} is in the list before deletion")
+
+            # Delete the analyzer
+            print(f"Deleting analyzer {analyzer_id}")
+            response = client.content_analyzers.delete(analyzer_id=analyzer_id)
+            
+            # Verify the delete response
+            assert response is None
+            
+            # Verify the analyzer is no longer in the list after deletion
+            assert not analyzer_in_list_sync(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
+            print(f"Verified analyzer {analyzer_id} is no longer in the list after deletion")
+
+        finally:
+            # Clean up if the analyzer was created but deletion failed
+            if created_analyzer and analyzer_in_list_sync(client, analyzer_id):
+                print(f"Cleaning up analyzer {analyzer_id} that was not properly deleted")
+                try:
+                    client.content_analyzers.delete(analyzer_id=analyzer_id)
+                    assert not analyzer_in_list_sync(client, analyzer_id), f"Failed to delete analyzer {analyzer_id} during cleanup"
+                    print(f"Analyzer {analyzer_id} is deleted successfully during cleanup")
+                except Exception as e:
+                    print(f"Warning: Failed to delete analyzer {analyzer_id} during cleanup: {e}")
+            elif not created_analyzer:
+                print(f"Analyzer {analyzer_id} was not created, no cleanup needed")
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
     def test_content_analyzers_list(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - List all available analyzers
+        - Verify list response contains expected prebuilt analyzers
+        - Verify each analyzer has required properties
+        """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
         response = client.content_analyzers.list()
         result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
+        
+        # Verify we get at least one analyzer in the list
+        assert len(result) > 0, "Should have at least one analyzer in the list"
+        print(f"Found {len(result)} analyzers")
+        
+        # Verify that the prebuilt-documentAnalyzer is in the list
+        prebuilt_found = False
+        for analyzer in result:
+            assert hasattr(analyzer, 'analyzer_id'), "Each analyzer should have analyzer_id"
+            assert hasattr(analyzer, 'description'), "Each analyzer should have description"
+            assert hasattr(analyzer, 'status'), "Each analyzer should have status"
+            assert hasattr(analyzer, 'created_at'), "Each analyzer should have created_at"
+            
+            if analyzer.analyzer_id == "prebuilt-documentAnalyzer":
+                prebuilt_found = True
+                assert analyzer.status == "ready", "prebuilt-documentAnalyzer should be ready"
+                print(f"Found prebuilt-documentAnalyzer: {analyzer.description}")
+        
+        assert prebuilt_found, "prebuilt-documentAnalyzer should be in the list"
+        print("List analyzers test completed successfully")
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_content_analyzers_begin_analyze(self, contentunderstanding_endpoint):
+    def test_content_analyzers_begin_analyze_url(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Create simple analyzer for URL analysis
+        - Begin analysis operation with URL input
+        - Wait for analysis completion
+        - Save analysis result to output file
+        - Verify fields node exists in first result
+        - Verify total_amount field exists and equals 110
+        - Clean up created analyzer
+        """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        response = client.content_analyzers.begin_analyze(
-            analyzer_id="str",
-            body={
-                "data": bytes("bytes", encoding="utf-8"),
-                "inputs": [{"url": "str", "data": bytes("bytes", encoding="utf-8"), "name": "str"}],
-                "url": "str",
-            },
-        ).result()  # call '.result()' to poll until service return final result
+        analyzer_id = generate_analyzer_id()
+        created_analyzer = False
 
-        # please add some check logic here by yourself
-        # ...
+        # Create a simple analyzer for URL analysis
+        content_analyzer = new_simple_content_analyzer_object(
+            analyzer_id=analyzer_id,
+            description=f"test analyzer for URL analysis: {analyzer_id}",
+            tags={"test_type": "url_analysis"}
+        )
+
+        try:
+            # Create analyzer using the refactored function
+            poller, operation_id = create_analyzer_and_assert_sync(client, analyzer_id, content_analyzer)
+            created_analyzer = True
+
+            # Use the provided URL for the invoice PDF
+            invoice_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/invoice.pdf"
+
+            print(f"Starting URL analysis with analyzer {analyzer_id}")
+            
+            # Begin analysis operation with URL
+            analysis_poller = client.content_analyzers.begin_analyze(
+                analyzer_id=analyzer_id,
+                body={
+                    "url": invoice_url,
+                },
+            )
+            assert_poller_properties(analysis_poller, "Analysis poller")
+
+            # Wait for analysis completion
+            print(f"Waiting for analysis completion")
+            analysis_result = analysis_poller.result()
+            print(f"  Analysis completed")
+            
+            # Get test file directory for saving output
+            test_file_dir = os.path.dirname(os.path.abspath(__file__))
+            output_filename = save_analysis_result_to_file(analysis_result, "test_content_analyzers_begin_analyze_url", test_file_dir, analyzer_id)
+
+            # Now assert the field results
+            assert_simple_content_analyzer_result(analysis_result, "Analysis result")
+
+        finally:
+            # Always clean up the created analyzer, even if the test fails
+            if created_analyzer:
+                print(f"Cleaning up analyzer {analyzer_id}")
+                try:
+                    client.content_analyzers.delete(analyzer_id=analyzer_id)
+                    # Verify deletion
+                    assert not analyzer_in_list_sync(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
+                    print(f"Analyzer {analyzer_id} is deleted successfully")
+                except Exception as e:
+                    print(f"Warning: Failed to delete analyzer {analyzer_id}: {e}")
+            else:
+                print(f"Analyzer {analyzer_id} was not created, no cleanup needed")
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
     def test_content_analyzers_begin_analyze_binary(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Create simple analyzer for binary analysis
+        - Read sample invoice PDF file
+        - Begin binary analysis operation with analyzer
+        - Wait for analysis completion
+        - Save analysis result to output file
+        - Verify fields node exists in first result
+        - Verify total_amount field exists and equals 110
+        - Clean up created analyzer
+        """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        response = client.content_analyzers.begin_analyze_binary(
-            analyzer_id="str",
-            input=bytes("bytes", encoding="utf-8"),
-            content_type="str",
-        ).result()  # call '.result()' to poll until service return final result
+        analyzer_id = generate_analyzer_id()
+        created_analyzer = False
 
-        # please add some check logic here by yourself
-        # ...
+        # Create a simple analyzer for binary analysis
+        content_analyzer = new_simple_content_analyzer_object(
+            analyzer_id=analyzer_id,
+            description=f"test analyzer for binary analysis: {analyzer_id}",
+            tags={"test_type": "binary_analysis"}
+        )
+
+        try:
+            # Create analyzer using the refactored function
+            poller, operation_id = create_analyzer_and_assert_sync(client, analyzer_id, content_analyzer)
+            created_analyzer = True
+
+            # Read the sample invoice PDF file using absolute path based on this test file's location
+            test_file_dir = os.path.dirname(os.path.abspath(__file__))
+            pdf_path = os.path.join(test_file_dir, "test_data", "sample_invoice.pdf")
+            with open(pdf_path, "rb") as pdf_file:
+                pdf_content = pdf_file.read()
+
+            print(f"Starting binary analysis with analyzer {analyzer_id}")
+            
+            # Begin binary analysis operation
+            analysis_poller = client.content_analyzers.begin_analyze_binary(
+                analyzer_id=analyzer_id,
+                input=pdf_content,
+                content_type="application/pdf",
+            )
+            assert_poller_properties(analysis_poller, "Analysis poller")
+
+            # Wait for analysis completion
+            print(f"Waiting for analysis completion")
+            analysis_result = analysis_poller.result()
+            print(f"  Analysis completed")
+            
+            output_filename = save_analysis_result_to_file(analysis_result, "test_content_analyzers_begin_analyze_binary", test_file_dir, analyzer_id)
+
+            # Now assert the field results
+            assert_simple_content_analyzer_result(analysis_result, "Analysis result")
+
+        finally:
+            # Always clean up the created analyzer, even if the test fails
+            if created_analyzer:
+                print(f"Cleaning up analyzer {analyzer_id}")
+                try:
+                    client.content_analyzers.delete(analyzer_id=analyzer_id)
+                    # Verify deletion
+                    assert not analyzer_in_list_sync(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
+                    print(f"Analyzer {analyzer_id} is deleted successfully")
+                except Exception as e:
+                    print(f"Warning: Failed to delete analyzer {analyzer_id}: {e}")
+            else:
+                print(f"Analyzer {analyzer_id} was not created, no cleanup needed")
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
     def test_content_analyzers_get_result(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Create simple analyzer for binary analysis to get operation ID
+        - Read sample invoice PDF file
+        - Begin binary analysis operation with analyzer
+        - Wait for analysis completion
+        - Use get_result to retrieve the analysis result by operation ID
+        - Verify result contents and structure
+        - Assert simple content analyzer result fields
+        - Clean up created analyzer
+        """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        response = client.content_analyzers.get_result(
-            operation_id="str",
+        analyzer_id = generate_analyzer_id()
+        created_analyzer = False
+
+        # Create a simple analyzer for binary analysis
+        content_analyzer = new_simple_content_analyzer_object(
+            analyzer_id=analyzer_id,
+            description=f"test analyzer for get result test: {analyzer_id}",
+            tags={"test_type": "get_result"}
         )
 
-        # please add some check logic here by yourself
-        # ...
+        try:
+            # Create analyzer using the refactored function
+            poller, operation_id = create_analyzer_and_assert_sync(client, analyzer_id, content_analyzer)
+            created_analyzer = True
+
+            # Read the sample invoice PDF file using absolute path based on this test file's location
+            test_file_dir = os.path.dirname(os.path.abspath(__file__))
+            pdf_path = os.path.join(test_file_dir, "test_data", "sample_invoice.pdf")
+            with open(pdf_path, "rb") as pdf_file:
+                pdf_content = pdf_file.read()
+
+            print(f"Starting binary analysis to get operation ID")
+            
+            # Begin binary analysis operation
+            analysis_poller = client.content_analyzers.begin_analyze_binary(
+                analyzer_id=analyzer_id,
+                input=pdf_content,
+                content_type="application/pdf",
+            )
+
+            # Wait for analysis completion first
+            print(f"Waiting for analysis completion")
+            _ = analysis_poller.result()
+            print(f"  Analysis completed")
+
+            # Extract operation ID for get_result test - this should not fail
+            analysis_operation_id = extract_operation_id_from_poller(analysis_poller, PollerType.ANALYZE_CALL)
+            assert analysis_operation_id is not None, "Operation ID should not be None"
+            assert len(analysis_operation_id) > 0, "Operation ID should not be empty"
+            print(f"  Analysis operation ID: {analysis_operation_id}")
+
+            # Now use get_result to retrieve the result by operation ID
+            print(f"  Getting result by operation ID: {analysis_operation_id}")
+            operation_status = client.content_analyzers.get_result(
+                operation_id=analysis_operation_id,
+            )
+            
+            # Check operation_status is not None
+            assert operation_status is not None, "Operation status should not be None"
+            
+            # Check operation_status has the expected operation status properties
+            assert hasattr(operation_status, 'id'), "Operation status should have id property"
+            assert hasattr(operation_status, 'status'), "Operation status should have status property"
+            assert hasattr(operation_status, 'result'), "Operation status should have result property"
+            assert operation_status.id == analysis_operation_id, f"Operation status ID should match operation ID {analysis_operation_id}"
+            assert operation_status.status == "Succeeded", f"Operation status should be Succeeded, got {operation_status.status}"
+            
+            # The actual analysis result is in operation_status.result
+            analysis_result = operation_status.result
+            assert analysis_result is not None, "Analysis result should not be None"
+            
+            # Get test file directory for saving output
+            test_file_dir = os.path.dirname(os.path.abspath(__file__))
+            
+            # Save the analysis result to file (not the wrapper operation_status)
+            output_filename = save_analysis_result_to_file(analysis_result, "test_content_analyzers_get_result", test_file_dir, analysis_operation_id)
+            
+            print(f"  Successfully retrieved result for operation {analysis_operation_id}")
+            print(f"  Result contains {len(analysis_result.contents)} contents")
+
+            # Now assert the field results using the same validation as binary test
+            assert_simple_content_analyzer_result(analysis_result, "Get result response")
+
+        finally:
+            # Always clean up the created analyzer, even if the test fails
+            if created_analyzer:
+                print(f"Cleaning up analyzer {analyzer_id}")
+                try:
+                    client.content_analyzers.delete(analyzer_id=analyzer_id)
+                    # Verify deletion
+                    assert not analyzer_in_list_sync(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
+                    print(f"Analyzer {analyzer_id} is deleted successfully")
+                except Exception as e:
+                    print(f"Warning: Failed to delete analyzer {analyzer_id}: {e}")
+            else:
+                print(f"Analyzer {analyzer_id} was not created, no cleanup needed")
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
     def test_content_analyzers_get_result_file(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Create marketing video analyzer based on the marketing video template
+        - Read FlightSimulator.mp4 file
+        - Begin video analysis operation with analyzer
+        - Wait for analysis completion
+        - Use get_result_file to retrieve image files generated from video analysis
+        - Verify image file content is returned and save to test_output
+        - Clean up created analyzer
+        """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        response = client.content_analyzers.get_result_file(
-            operation_id="str",
-            path="str",
+        analyzer_id = generate_analyzer_id()
+        created_analyzer = False
+
+        # Create a marketing video analyzer based on the template
+        video_analyzer = new_marketing_video_analyzer_object(
+            analyzer_id=analyzer_id,
+            description=f"marketing video analyzer for get result file test: {analyzer_id}",
+            tags={"test_type": "get_result_file_video"}
         )
 
-        # please add some check logic here by yourself
-        # ...
+        try:
+            # Create analyzer using the refactored function
+            poller, operation_id = create_analyzer_and_assert_sync(client, analyzer_id, video_analyzer)
+            created_analyzer = True
+
+            # Read the FlightSimulator.mp4 video file using absolute path based on this test file's location
+            test_file_dir = os.path.dirname(os.path.abspath(__file__))
+            video_path = os.path.join(test_file_dir, "test_data", "FlightSimulator.mp4")
+            with open(video_path, "rb") as video_file:
+                video_content = video_file.read()
+
+            print(f"Starting video analysis to get operation ID")
+            
+            # Begin video analysis operation
+            analysis_poller = client.content_analyzers.begin_analyze_binary(
+                analyzer_id=analyzer_id,
+                input=video_content,
+                content_type="video/mp4",
+            )
+
+            # Wait for analysis completion first
+            print(f"Waiting for analysis completion")
+            analysis_result = analysis_poller.result()
+            print(f"Analysis completed")
+
+            # Save the analysis result to file
+            output_filename = save_analysis_result_to_file(analysis_result, "test_content_analyzers_get_result_file", test_file_dir, analyzer_id)            
+
+            # Extract operation ID for get_result_file test - this should not fail
+            analysis_operation_id = extract_operation_id_from_poller(analysis_poller, PollerType.ANALYZE_CALL)
+            assert analysis_operation_id is not None, "Operation ID should not be None"
+            assert len(analysis_operation_id) > 0, "Operation ID should not be empty"
+            print(f"Analysis operation ID: {analysis_operation_id}")
+
+            # Get the result first to see what files are available
+            operation_status = client.content_analyzers.get_result(
+                operation_id=analysis_operation_id,
+            )
+
+            # Check operation_status is not None and has result
+            assert operation_status is not None, "Operation status should not be None"
+            assert hasattr(operation_status, 'result'), "Operation status should have result property"
+            
+            # The actual analysis result is in operation_status.result
+            result = operation_status.result
+            assert result is not None, "Analysis result should not be None"
+            print(f"Analysis result contains {len(result.contents)} contents")
+
+            # Use the refactored function to download keyframes by calling client.content_analyzers.get_result_file
+            download_keyframes_and_assert_sync(client, analysis_operation_id, result, test_file_dir, analyzer_id)
+
+        finally:
+            # Always clean up the created analyzer, even if the test fails
+            if created_analyzer:
+                print(f"Cleaning up analyzer {analyzer_id}")
+                try:
+                    client.content_analyzers.delete(analyzer_id=analyzer_id)
+                    # Verify deletion
+                    assert not analyzer_in_list_sync(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
+                    print(f"Analyzer {analyzer_id} is deleted successfully")
+                except Exception as e:
+                    print(f"Warning: Failed to delete analyzer {analyzer_id}: {e}")
+            else:
+                print(f"Analyzer {analyzer_id} was not created, no cleanup needed") 

@@ -6,77 +6,28 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-import uuid
-from datetime import datetime
+import os
+import re
 from typing import Tuple, Union, Dict, Any, Optional
-from enum import Enum
 from devtools_testutils.aio import recorded_by_proxy_async
 from testpreparer import ContentUnderstandingPreparer
 from testpreparer_async import ContentUnderstandingClientTestBaseAsync
-from azure.ai.contentunderstanding.models import ContentAnalyzer, ContentAnalyzerConfig, FieldSchema, FieldDefinition
-from azure.ai.contentunderstanding.models import GenerationMethod, FieldType, AnalysisMode, ProcessingLocation
+from azure.ai.contentunderstanding.models import ContentAnalyzer
+from test_helpers import (
+    generate_analyzer_id,
+    extract_operation_id_from_poller,
+    new_simple_content_analyzer_object,
+    new_marketing_video_analyzer_object,
+    assert_poller_properties,
+    assert_simple_content_analyzer_result,
+    save_analysis_result_to_file,
+    save_keyframe_image_to_file,
+    PollerType
+)
 
 
-class PollerType(Enum):
-    """Enum to distinguish different types of pollers for operation ID extraction."""
-    ANALYZER_CREATION = "analyzer_creation"
-    ANALYZE_CALL = "analyze_call"
-
-
-def generate_analyzer_id() -> str:
-    """Generate a unique analyzer ID with current date, time, and GUID."""
-    now = datetime.now()
-    date_str = now.strftime("%Y%m%d")
-    time_str = now.strftime("%H%M%S")
-    guid = str(uuid.uuid4()).replace("-", "")[:8]
-    return f"python-sdk-test-analyzer-{date_str}-{time_str}-{guid}"
-
-
-def extract_operation_id_from_poller(poller, poller_type: PollerType) -> str:
-    """Extract operation ID from an AsyncLROPoller.
-    
-    The AsyncLROPoller stores the initial response in `_initial_response`, which contains
-    the Operation-Location header. The extraction pattern depends on the poller type:
-    - AnalyzerCreation: https://endpoint/contentunderstanding/operations/{operation_id}?api-version=...
-    - AnalyzeCall: https://endpoint/contentunderstanding/analyzerResults/{operation_id}?api-version=...
-    
-    Args:
-        poller: The AsyncLROPoller instance
-        poller_type: The type of poller (ANALYZER_CREATION or ANALYZE_CALL) - REQUIRED
-        
-    Returns:
-        str: The operation ID extracted from the poller
-        
-    Raises:
-        ValueError: If no operation ID can be extracted from the poller or if poller_type is not provided
-    """
-    if poller_type is None:
-        raise ValueError("poller_type is required and must be specified (ANALYZER_CREATION or ANALYZE_CALL)")
-    # Extract from Operation-Location header (standard approach)
-    initial_response = poller.polling_method()._initial_response
-    operation_location = initial_response.http_response.headers.get("Operation-Location")
-    print("---------------")
-    print(f"Operation-Location header: {operation_location}")
-    print(f"Poller type: {poller_type}")
-    print("---------------")
-    
-    if operation_location:
-        if poller_type == PollerType.ANALYZER_CREATION:
-            # Pattern: https://endpoint/.../operations/{operation_id}?api-version=...
-            if "/operations/" in operation_location:
-                operation_id = operation_location.split("/operations/")[1].split("?")[0]
-                return operation_id
-        elif poller_type == PollerType.ANALYZE_CALL:
-            # Pattern: https://endpoint/.../analyzerResults/{operation_id}?api-version=...
-            if "/analyzerResults/" in operation_location:
-                operation_id = operation_location.split("/analyzerResults/")[1].split("?")[0]
-                return operation_id
-    
-    raise ValueError(f"Could not extract operation ID from poller for type {poller_type}")
-
-
-async def analyzer_in_list(client, analyzer_id: str) -> bool:
-    """Check if an analyzer with the given ID exists in the list of analyzers.
+async def analyzer_in_list_async(client, analyzer_id: str) -> bool:
+    """Check if an analyzer with the given ID exists in the list of analyzers (async version).
     
     Args:
         client: The ContentUnderstandingClient instance
@@ -92,236 +43,12 @@ async def analyzer_in_list(client, analyzer_id: str) -> bool:
     return False
 
 
-def new_simple_content_analyzer_object(analyzer_id: str, description: Optional[str] = None, tags: Optional[Dict[str, str]] = None) -> ContentAnalyzer:
-    """Create a simple ContentAnalyzer object with default configuration.
-    
-    Args:
-        analyzer_id: The analyzer ID
-        description: Optional description for the analyzer
-        tags: Optional tags for the analyzer
-        
-    Returns:
-        ContentAnalyzer: A configured ContentAnalyzer object
-    """
-    if description is None:
-        description = f"test analyzer: {analyzer_id}"
-    if tags is None:
-        tags = {"test_type": "simple"}
-        
-    return ContentAnalyzer(
-        base_analyzer_id="prebuilt-documentAnalyzer",
-        config=ContentAnalyzerConfig(
-            enable_formula=True,
-            enable_layout=True,
-            enable_ocr=True,
-            estimate_field_source_and_confidence=True,
-            return_details=True,
-        ),
-        description=description,
-        field_schema=FieldSchema(
-            fields={
-                "total_amount": FieldDefinition(
-                    description="Total amount of this table",
-                    method=GenerationMethod.EXTRACT,
-                    type=FieldType.NUMBER,
-                )
-            },
-            description="schema description here",
-            name="schema name here",
-        ),
-        mode=AnalysisMode.STANDARD,
-        processing_location=ProcessingLocation.GLOBAL,
-        tags=tags,
-    )
-
-
-def new_marketing_video_analyzer_object(analyzer_id: str, description: Optional[str] = None, tags: Optional[Dict[str, str]] = None) -> ContentAnalyzer:
-    """Create a marketing video ContentAnalyzer object based on the marketing video template.
-    
-    Args:
-        analyzer_id: The analyzer ID
-        description: Optional description for the analyzer
-        tags: Optional tags for the analyzer
-        
-    Returns:
-        ContentAnalyzer: A configured ContentAnalyzer object for video analysis
-    """
-    if description is None:
-        description = f"marketing video analyzer: {analyzer_id}"
-    if tags is None:
-        tags = {"test_type": "marketing_video"}
-        
-    return ContentAnalyzer(
-        base_analyzer_id="prebuilt-videoAnalyzer",
-        config=ContentAnalyzerConfig(
-            return_details=True,
-        ),
-        description=description,
-        mode=AnalysisMode.STANDARD,
-        processing_location=ProcessingLocation.GLOBAL,
-        tags=tags,
-    )
-
-
-def assert_poller_properties(poller, poller_name: str = "Poller"):
-    """Assert common poller properties for any AsyncLROPoller.
-    
-    Args:
-        poller: The AsyncLROPoller instance to validate
-        poller_name: Optional name for the poller in log messages
-        
-    Raises:
-        AssertionError: If any poller property assertion fails
-    """
-    assert poller is not None, f"{poller_name} should not be None"
-    assert poller.status() is not None, f"{poller_name} status should not be None"
-    assert poller.status() is not "", f"{poller_name} status should not be empty"
-    assert poller.continuation_token() is not None, f"{poller_name} continuation_token should not be None"
-    print(f"{poller_name} properties verified successfully")
-
-
-def assert_simple_content_analyzer_result(analysis_result, result_name: str = "Analysis result"):
-    """Assert simple content analyzer result properties and field extraction.
-    
-    Args:
-        analysis_result: The analysis result object to validate
-        result_name: Optional name for the result in log messages
-        
-    Raises:
-        AssertionError: If any analysis result property assertion fails
-    """
-    print(f"Validating {result_name} properties")
-    assert analysis_result is not None, f"{result_name} should not be None"
-    assert analysis_result.__class__.__name__ == "AnalyzeResult", f"{result_name} should be AnalyzeResult, got {analysis_result.__class__.__name__}"
-    assert analysis_result.contents is not None, f"{result_name} should have contents"
-    assert len(analysis_result.contents) > 0, f"{result_name} should have at least one content"
-    
-    print(f"{result_name} properties verified successfully")
-
-    # Verify fields node exists in the first result of contents
-    
-    first_content = analysis_result.contents[0]
-    assert hasattr(first_content, 'fields'), "First content should have fields"
-    print(f"Verified fields node exists in first result")
-
-    # Verify total_amount field exists and equals 110
-    fields = first_content.fields
-    
-    # Fields is expected to be a dictionary
-    assert isinstance(fields, dict), f"Fields should be a dictionary, got {type(fields)}"
-    assert 'total_amount' in fields, f"Fields should contain total_amount. Available fields: {list(fields.keys())}"
-    
-    total_amount_field = fields['total_amount']
-    assert total_amount_field is not None, "total_amount field should not be None"
-    assert total_amount_field.__class__.__name__ == "NumberField", f"total_amount field should be of type NumberField, got {total_amount_field.__class__.__name__}"
-
-    total_amount_value = total_amount_field.value_number
-    
-    print(f"Total amount field value: {total_amount_value}")
-    assert total_amount_value == 110, f"Expected total_amount to be 110, but got {total_amount_value}"
-    print(f"Total amount field validation successful")
-
-
-def save_analysis_result_to_file(analysis_result, test_name: str, test_pyfile_dir: str, identifier: Optional[str] = None, output_dir: str = "test_output") -> str:
-    """Save analysis result to output file using pytest naming convention.
-    
-    Args:
-        analysis_result: The analysis result object to save
-        test_name: Name of the test case (e.g., function name)
-        test_pyfile_dir: Directory where pytest files are located
-        identifier: Optional unique identifier for the result (e.g., analyzer_id)
-        output_dir: Directory name to save the output file (default: "test_output")
-        
-    Returns:
-        str: Path to the saved output file
-        
-    Raises:
-        OSError: If there are issues creating directory or writing file
-    """
-    import json
-    import os
-    from datetime import datetime
-    
-    # Create output directory if it doesn't exist
-    output_dir_path = os.path.join(test_pyfile_dir, output_dir)
-    os.makedirs(output_dir_path, exist_ok=True)
-    
-    # Generate output filename with timestamp
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    
-    # Build filename with test name and optional identifier
-    if identifier:
-        output_filename = f"{test_name}_{identifier}_{timestamp}.json"
-    else:
-        output_filename = f"{test_name}_{timestamp}.json"
-    
-    saved_file_path = os.path.join(output_dir_path, output_filename)
-    
-    # Save the analysis result
-    with open(saved_file_path, "w") as output_file:
-        json.dump(analysis_result.as_dict(), output_file, indent=2)
-    
-    print(f"Analysis result saved to: {saved_file_path}")
-    return saved_file_path
-
-
-def save_keyframe_image_to_file(
-    image_content: bytes, 
-    keyframe_id: str, 
-    test_name: str, 
-    test_pyfile_dir: str, 
-    identifier: Optional[str] = None,
-    output_dir: str = "test_output"
-) -> str:
-    """Save keyframe image to output file using pytest naming convention.
-    
-    Args:
-        image_content: The binary image content to save
-        keyframe_id: The keyframe ID (e.g., "keyFrame.1")
-        test_name: Name of the test case (e.g., function name)
-        test_pyfile_dir: Directory where pytest files are located
-        identifier: Optional unique identifier to avoid conflicts (e.g., analyzer_id)
-        output_dir: Directory name to save the output file (default: "test_output")
-        
-    Returns:
-        str: Path to the saved image file
-        
-    Raises:
-        OSError: If there are issues creating directory or writing file
-    """
-    import os
-    from datetime import datetime
-    
-    # Generate timestamp and frame ID
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    frame_id = keyframe_id.replace('keyFrame.', '')
-    
-    # Create output directory if it doesn't exist
-    output_dir_path = os.path.join(test_pyfile_dir, output_dir)
-    os.makedirs(output_dir_path, exist_ok=True)
-    
-    # Generate output filename with optional identifier to avoid conflicts
-    if identifier:
-        output_filename = f"{test_name}_{identifier}_{timestamp}_{frame_id}.jpg"
-    else:
-        output_filename = f"{test_name}_{timestamp}_{frame_id}.jpg"
-    
-    saved_file_path = os.path.join(output_dir_path, output_filename)
-    
-    # Write the image content to file
-    with open(saved_file_path, "wb") as image_file:
-        image_file.write(image_content)
-    
-    print(f"Image file saved to: {saved_file_path}")
-    return saved_file_path
-
-
-async def create_analyzer_and_assert(
+async def create_analyzer_and_assert_async(
     client, 
     analyzer_id: str, 
     resource: Union[ContentAnalyzer, Dict[str, Any]]
 ) -> Tuple[Any, str]:
-    """Create an analyzer and perform basic assertions.
+    """Create an analyzer and perform basic assertions (async version).
     
     Args:
         client: The ContentUnderstandingClient instance
@@ -377,13 +104,14 @@ async def create_analyzer_and_assert(
     assert poller.continuation_token() is not None
     
     # Verify the analyzer is in the list
-    assert await analyzer_in_list(client, analyzer_id), f"Created analyzer with ID '{analyzer_id}' was not found in the list"
+    assert await analyzer_in_list_async(client, analyzer_id), f"Created analyzer with ID '{analyzer_id}' was not found in the list"
     print(f"  Verified analyzer {analyzer_id} is in the list")
     
     return poller, operation_id
 
-async def download_keyframes_and_assert(client, analysis_operation_id: str, result, test_pyfile_dir: str, identifier: Optional[str] = None) -> None:
-    """Download keyframes from video analysis result and assert their existence.
+
+async def download_keyframes_and_assert_async(client, analysis_operation_id: str, result, test_pyfile_dir: str, identifier: Optional[str] = None) -> None:
+    """Download keyframes from video analysis result and assert their existence (async version).
 
     Downloads up to 3 keyframes: first, middle, and last frame to avoid duplicates.
     
@@ -400,10 +128,6 @@ async def download_keyframes_and_assert(client, analysis_operation_id: str, resu
     Raises:
         AssertionError: If no keyframes are found in the analysis result
     """
-    import re
-    import os
-    from datetime import datetime
-    
     keyframe_ids = set()
     
     # Iterate over contents to find keyframes from markdown
@@ -503,7 +227,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
         try:
             # Create analyzer using the refactored function
-            poller, operation_id = await create_analyzer_and_assert(client, analyzer_id, content_analyzer)
+            poller, operation_id = await create_analyzer_and_assert_async(client, analyzer_id, content_analyzer)
             created_analyzer = True
 
             # Check final operation status after completion
@@ -522,7 +246,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
                 try:
                     await client.content_analyzers.delete(analyzer_id=analyzer_id)
                     # Verify deletion
-                    assert not await analyzer_in_list(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
+                    assert not await analyzer_in_list_async(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
                     print(f"Analyzer {analyzer_id} is deleted successfully")
                 except Exception as e:
                     print(f"Warning: Failed to delete analyzer {analyzer_id}: {e}")
@@ -550,7 +274,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
         try:
             # Create analyzer using the refactored function
-            poller, operation_id = await create_analyzer_and_assert(client, analyzer_id, content_analyzer)
+            poller, operation_id = await create_analyzer_and_assert_async(client, analyzer_id, content_analyzer)
             created_analyzer = True
 
         finally:
@@ -560,7 +284,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
                 try:
                     await client.content_analyzers.delete(analyzer_id=analyzer_id)
                     # Verify deletion
-                    assert not await analyzer_in_list(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
+                    assert not await analyzer_in_list_async(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
                     print(f"Analyzer {analyzer_id} is deleted successfully")
                 except Exception as e:
                     print(f"Warning: Failed to delete analyzer {analyzer_id}: {e}")
@@ -582,7 +306,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
         try:
             # Create analyzer using the refactored function with JSON resource
-            poller, operation_id = await create_analyzer_and_assert(
+            poller, operation_id = await create_analyzer_and_assert_async(
                 client, 
                 analyzer_id, 
                 {
@@ -624,7 +348,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
                 try:
                     await client.content_analyzers.delete(analyzer_id=analyzer_id)
                     # Verify deletion
-                    assert not await analyzer_in_list(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
+                    assert not await analyzer_in_list_async(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
                     print(f"Analyzer {analyzer_id} is deleted successfully")
                 except Exception as e:
                     print(f"Warning: Failed to delete analyzer {analyzer_id}: {e}")
@@ -655,7 +379,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
         try:
             # Create the initial analyzer using the refactored function
-            poller, operation_id = await create_analyzer_and_assert(client, analyzer_id, initial_analyzer)
+            poller, operation_id = await create_analyzer_and_assert_async(client, analyzer_id, initial_analyzer)
             created_analyzer = True
 
             # Get the analyzer before update to verify initial state
@@ -703,7 +427,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             print(f"Updated analyzer state verified - description: {analyzer_after_update.description}, tags: {analyzer_after_update.tags}")
 
             # Verify the updated analyzer is in the list
-            assert await analyzer_in_list(client, analyzer_id), f"Updated analyzer with ID '{analyzer_id}' was not found in the list"
+            assert await analyzer_in_list_async(client, analyzer_id), f"Updated analyzer with ID '{analyzer_id}' was not found in the list"
 
         finally:
             # Always clean up the created analyzer, even if the test fails
@@ -712,7 +436,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
                 try:
                     await client.content_analyzers.delete(analyzer_id=analyzer_id)
                     # Verify deletion
-                    assert not await analyzer_in_list(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
+                    assert not await analyzer_in_list_async(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
                     print(f"Analyzer {analyzer_id} is deleted successfully")
                 except Exception as e:
                     print(f"Warning: Failed to delete analyzer {analyzer_id}: {e}")
@@ -763,11 +487,11 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
         try:
             # Create analyzer using the refactored function
-            poller, operation_id = await create_analyzer_and_assert(client, analyzer_id, content_analyzer)
+            poller, operation_id = await create_analyzer_and_assert_async(client, analyzer_id, content_analyzer)
             created_analyzer = True
 
             # Verify the analyzer is in the list before deletion
-            assert await analyzer_in_list(client, analyzer_id), f"Created analyzer with ID '{analyzer_id}' was not found in the list"
+            assert await analyzer_in_list_async(client, analyzer_id), f"Created analyzer with ID '{analyzer_id}' was not found in the list"
             print(f"Verified analyzer {analyzer_id} is in the list before deletion")
 
             # Delete the analyzer
@@ -778,22 +502,21 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             assert response is None
             
             # Verify the analyzer is no longer in the list after deletion
-            assert not await analyzer_in_list(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
+            assert not await analyzer_in_list_async(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
             print(f"Verified analyzer {analyzer_id} is no longer in the list after deletion")
 
         finally:
             # Clean up if the analyzer was created but deletion failed
-            if created_analyzer and await analyzer_in_list(client, analyzer_id):
+            if created_analyzer and await analyzer_in_list_async(client, analyzer_id):
                 print(f"Cleaning up analyzer {analyzer_id} that was not properly deleted")
                 try:
                     await client.content_analyzers.delete(analyzer_id=analyzer_id)
-                    assert not await analyzer_in_list(client, analyzer_id), f"Failed to delete analyzer {analyzer_id} during cleanup"
+                    assert not await analyzer_in_list_async(client, analyzer_id), f"Failed to delete analyzer {analyzer_id} during cleanup"
                     print(f"Analyzer {analyzer_id} is deleted successfully during cleanup")
                 except Exception as e:
                     print(f"Warning: Failed to delete analyzer {analyzer_id} during cleanup: {e}")
             elif not created_analyzer:
                 print(f"Analyzer {analyzer_id} was not created, no cleanup needed")
-
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
@@ -854,7 +577,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
         try:
             # Create analyzer using the refactored function
-            poller, operation_id = await create_analyzer_and_assert(client, analyzer_id, content_analyzer)
+            poller, operation_id = await create_analyzer_and_assert_async(client, analyzer_id, content_analyzer)
             created_analyzer = True
 
             # Use the provided URL for the invoice PDF
@@ -877,7 +600,6 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             print(f"  Analysis completed")
             
             # Get test file directory for saving output
-            import os
             test_file_dir = os.path.dirname(os.path.abspath(__file__))
             output_filename = save_analysis_result_to_file(analysis_result, "test_content_analyzers_begin_analyze_url", test_file_dir, analyzer_id)
 
@@ -891,7 +613,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
                 try:
                     await client.content_analyzers.delete(analyzer_id=analyzer_id)
                     # Verify deletion
-                    assert not await analyzer_in_list(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
+                    assert not await analyzer_in_list_async(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
                     print(f"Analyzer {analyzer_id} is deleted successfully")
                 except Exception as e:
                     print(f"Warning: Failed to delete analyzer {analyzer_id}: {e}")
@@ -925,11 +647,10 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
         try:
             # Create analyzer using the refactored function
-            poller, operation_id = await create_analyzer_and_assert(client, analyzer_id, content_analyzer)
+            poller, operation_id = await create_analyzer_and_assert_async(client, analyzer_id, content_analyzer)
             created_analyzer = True
 
             # Read the sample invoice PDF file using absolute path based on this test file's location
-            import os
             test_file_dir = os.path.dirname(os.path.abspath(__file__))
             pdf_path = os.path.join(test_file_dir, "test_data", "sample_invoice.pdf")
             with open(pdf_path, "rb") as pdf_file:
@@ -962,7 +683,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
                 try:
                     await client.content_analyzers.delete(analyzer_id=analyzer_id)
                     # Verify deletion
-                    assert not await analyzer_in_list(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
+                    assert not await analyzer_in_list_async(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
                     print(f"Analyzer {analyzer_id} is deleted successfully")
                 except Exception as e:
                     print(f"Warning: Failed to delete analyzer {analyzer_id}: {e}")
@@ -996,11 +717,10 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
         try:
             # Create analyzer using the refactored function
-            poller, operation_id = await create_analyzer_and_assert(client, analyzer_id, content_analyzer)
+            poller, operation_id = await create_analyzer_and_assert_async(client, analyzer_id, content_analyzer)
             created_analyzer = True
 
             # Read the sample invoice PDF file using absolute path based on this test file's location
-            import os
             test_file_dir = os.path.dirname(os.path.abspath(__file__))
             pdf_path = os.path.join(test_file_dir, "test_data", "sample_invoice.pdf")
             with open(pdf_path, "rb") as pdf_file:
@@ -1047,7 +767,6 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             assert analysis_result is not None, "Analysis result should not be None"
             
             # Get test file directory for saving output
-            import os
             test_file_dir = os.path.dirname(os.path.abspath(__file__))
             
             # Save the analysis result to file (not the wrapper operation_status)
@@ -1066,7 +785,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
                 try:
                     await client.content_analyzers.delete(analyzer_id=analyzer_id)
                     # Verify deletion
-                    assert not await analyzer_in_list(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
+                    assert not await analyzer_in_list_async(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
                     print(f"Analyzer {analyzer_id} is deleted successfully")
                 except Exception as e:
                     print(f"Warning: Failed to delete analyzer {analyzer_id}: {e}")
@@ -1099,11 +818,10 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
         try:
             # Create analyzer using the refactored function
-            poller, operation_id = await create_analyzer_and_assert(client, analyzer_id, video_analyzer)
+            poller, operation_id = await create_analyzer_and_assert_async(client, analyzer_id, video_analyzer)
             created_analyzer = True
 
             # Read the FlightSimulator.mp4 video file using absolute path based on this test file's location
-            import os
             test_file_dir = os.path.dirname(os.path.abspath(__file__))
             video_path = os.path.join(test_file_dir, "test_data", "FlightSimulator.mp4")
             with open(video_path, "rb") as video_file:
@@ -1147,7 +865,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             print(f"Analysis result contains {len(result.contents)} contents")
 
             # Use the refactored function to download keyframes by calling client.content_analyzers.get_result_file
-            await download_keyframes_and_assert(client, analysis_operation_id, result, test_file_dir, analyzer_id)
+            await download_keyframes_and_assert_async(client, analysis_operation_id, result, test_file_dir, analyzer_id)
 
         finally:
             # Always clean up the created analyzer, even if the test fails
@@ -1156,7 +874,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
                 try:
                     await client.content_analyzers.delete(analyzer_id=analyzer_id)
                     # Verify deletion
-                    assert not await analyzer_in_list(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
+                    assert not await analyzer_in_list_async(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
                     print(f"Analyzer {analyzer_id} is deleted successfully")
                 except Exception as e:
                     print(f"Warning: Failed to delete analyzer {analyzer_id}: {e}")
