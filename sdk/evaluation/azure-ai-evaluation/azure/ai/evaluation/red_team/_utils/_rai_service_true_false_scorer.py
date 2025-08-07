@@ -81,6 +81,9 @@ class AzureRAIServiceTrueFalseScorer(Scorer):
         # Validate request_response
         self.validate(request_response, task=task)
 
+        if not self._scoring_target_red_llm.context:
+            self._scoring_target_red_llm.context = request_response.labels.get("context", "")
+
         unvalidated_score: UnvalidatedScore = await self._score_value_with_llm(
             prompt_target=self._scoring_target_red_llm,
             system_prompt="Please evaluate the following response.",  # TODO: What should this be?

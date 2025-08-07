@@ -587,6 +587,7 @@ class OrchestratorManager:
                     credential=self.credential,
                     risk_category=risk_category,
                     azure_ai_project=self.azure_ai_project,
+                    context=context
                 )
 
                 try:
