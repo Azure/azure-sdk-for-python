@@ -7,6 +7,9 @@
 # --------------------------------------------------------------------------
 
 from azure.ai.contentunderstanding import ContentUnderstandingClient
+from dotenv import load_dotenv
+
+load_dotenv()
 
 """
 # PREREQUISITES

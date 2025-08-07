@@ -29,6 +29,10 @@ from sample_helper import (
     save_keyframe_image_to_file
 )
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 """
 # PREREQUISITES
     pip install azure-ai-contentunderstanding

@@ -6,7 +6,18 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.ai.contentunderstanding import ContentUnderstandingClient
+import asyncio
+import os
+from datetime import datetime, timezone
+from typing import Optional, Dict
+from dotenv import load_dotenv
+
+from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
+from azure.ai.contentunderstanding.models import PersonDirectory
+
+from sample_helper import get_credential, save_response_to_file
+
+load_dotenv()
 
 """
 # PREREQUISITES
@@ -16,19 +27,70 @@ from azure.ai.contentunderstanding import ContentUnderstandingClient
 """
 
 
-def main():
-    client = ContentUnderstandingClient(
-        endpoint="ENDPOINT",
-        credential="CREDENTIAL",
-    )
+def generate_person_directory_id() -> str:
+    """Generate a unique person directory ID with current date, time, and GUID."""
+    import uuid
+    now = datetime.now()
+    date_str = now.strftime("%Y%m%d")
+    time_str = now.strftime("%H%M%S")
+    guid = str(uuid.uuid4()).replace("-", "")[:8]
+    return f"sdk-sample-directory-{date_str}-{time_str}-{guid}"
 
-    response = client.person_directories.create(
-        person_directory_id="myDirectory",
-        resource={"description": "My person directory", "tags": {"location": "Building A", "type": "Access Control"}},
-    )
-    print(response)
+
+async def main():
+    """
+    Create person directory using create API.
+    
+    High-level steps:
+    1. Create a person directory with description and tags
+    2. Verify the directory was created successfully
+    3. Save the directory definition to a file
+    4. Clean up the created directory
+    """
+    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT")
+    credential = get_credential()
+
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
+        person_directory_id = generate_person_directory_id()
+        
+        # Create person directory configuration
+        print(f"🔧 Creating person directory '{person_directory_id}'...")
+        
+        person_directory = PersonDirectory(
+            description=f"Sample person directory for access control: {person_directory_id}",
+            tags={
+                "location": "Building A",
+                "type": "Access Control",
+                "demo_type": "create"
+            }
+        )
+
+        # Create the person directory
+        print(f"📝 Creating person directory with description and tags...")
+        response = await client.person_directories.create(
+            person_directory_id=person_directory_id,
+            resource=person_directory,
+        )
+        
+        print(f"✅ Person directory created successfully!")
+        print(f"   ID: {getattr(response, 'person_directory_id', 'N/A')}")
+        print(f"   Description: {getattr(response, 'description', 'N/A')}")
+        print(f"   Created at: {getattr(response, 'created_at', 'N/A')}")
+        print(f"   Tags: {getattr(response, 'tags', 'N/A')}")
+
+        # Save the directory definition to a file
+        saved_file_path = save_response_to_file(
+            result=response,
+            filename_prefix="person_directories_create"
+        )
+        print(f"💾 Directory definition saved to: {saved_file_path}")
+
+        # Clean up the created directory (demo cleanup)
+        print(f"🗑️  Deleting person directory '{person_directory_id}' (demo cleanup)...")
+        await client.person_directories.delete(person_directory_id=person_directory_id)
+        print(f"✅ Person directory '{person_directory_id}' deleted successfully!")
 
 
 # x-ms-original-file: 2025-05-01-preview/PersonDirectories_Create.json
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

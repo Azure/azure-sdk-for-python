@@ -18,6 +18,10 @@ from sample_helper import (
     new_simple_classifier_schema
 )
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 """
 # PREREQUISITES
     pip install azure-ai-contentunderstanding

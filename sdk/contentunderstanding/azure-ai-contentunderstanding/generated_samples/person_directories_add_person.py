@@ -6,7 +6,18 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.ai.contentunderstanding import ContentUnderstandingClient
+import asyncio
+import os
+from datetime import datetime, timezone
+from typing import Optional, Dict
+from dotenv import load_dotenv
+
+from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
+from azure.ai.contentunderstanding.models import PersonDirectory
+
+from sample_helper import get_credential, save_response_to_file
+
+load_dotenv()
 
 """
 # PREREQUISITES
@@ -16,22 +27,92 @@ from azure.ai.contentunderstanding import ContentUnderstandingClient
 """
 
 
-def main():
-    client = ContentUnderstandingClient(
-        endpoint="ENDPOINT",
-        credential="CREDENTIAL",
-    )
+def generate_person_directory_id() -> str:
+    """Generate a unique person directory ID with current date, time, and GUID."""
+    import uuid
+    now = datetime.now()
+    date_str = now.strftime("%Y%m%d")
+    time_str = now.strftime("%H%M%S")
+    guid = str(uuid.uuid4()).replace("-", "")[:8]
+    return f"sdk-sample-directory-{date_str}-{time_str}-{guid}"
 
-    response = client.person_directories.add_person(
-        person_directory_id="myDirectory",
-        body={
-            "faceIds": ["7a87f162-8dd5-4aea-8810-373e36b96b38", "f28b3cda-4005-44b6-8518-6fcddef108cb"],
-            "tags": {"age": "1", "name": "Paul"},
-        },
-    )
-    print(response)
+
+async def main():
+    """
+    Add person to directory using add_person API.
+    
+    High-level steps:
+    1. Create a person directory
+    2. Add a person to the directory with tags
+    3. Verify the person was added successfully
+    4. Save the person details to a file
+    5. Clean up the created directory
+    """
+    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT")
+    credential = get_credential()
+
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
+        person_directory_id = generate_person_directory_id()
+        
+        # Create a person directory first
+        print(f"🔧 Creating person directory '{person_directory_id}'...")
+        
+        person_directory = PersonDirectory(
+            description=f"Sample person directory for add person demo: {person_directory_id}",
+            tags={"demo_type": "add_person"}
+        )
+
+        # Create the person directory
+        await client.person_directories.create(
+            person_directory_id=person_directory_id,
+            resource=person_directory,
+        )
+        print(f"✅ Person directory created successfully!")
+
+        # Add a person to the directory
+        print(f"👤 Adding person to directory '{person_directory_id}'...")
+        
+        response = await client.person_directories.add_person(
+            person_directory_id=person_directory_id,
+            body={
+                "tags": {
+                    "name": "John Doe",
+                    "role": "test_subject",
+                    "department": "engineering",
+                    "access_level": "standard"
+                }
+            }
+        )
+        
+        print(f"✅ Person added successfully!")
+        print(f"   Person ID: {getattr(response, 'person_id', 'N/A')}")
+        
+        # Verify the person exists in the directory
+        person_id = response.person_id
+        print(f"🔍 Verifying person '{person_id}' in directory...")
+        
+        person = await client.person_directories.get_person(
+            person_directory_id=person_directory_id,
+            person_id=person_id
+        )
+        
+        print(f"✅ Person verified successfully!")
+        print(f"   Person ID: {getattr(person, 'person_id', 'N/A')}")
+        print(f"   Tags: {getattr(person, 'tags', 'N/A')}")
+
+        # Save the person details to a file
+        saved_file_path = save_response_to_file(
+            result=response,
+            filename_prefix="person_directories_add_person"
+        )
+        print(f"💾 Person details saved to: {saved_file_path}")
+
+        # Clean up the created directory (demo cleanup)
+        print(f"🗑️  Deleting person directory '{person_directory_id}' (demo cleanup)...")
+        await client.person_directories.delete(person_directory_id=person_directory_id)
+        print(f"✅ Person directory '{person_directory_id}' deleted successfully!")
 
 
 # x-ms-original-file: 2025-05-01-preview/PersonDirectories_AddPerson.json
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

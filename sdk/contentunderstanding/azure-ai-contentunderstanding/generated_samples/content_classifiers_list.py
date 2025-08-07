@@ -13,6 +13,10 @@ from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 
 from sample_helper import get_credential
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 """
 # PREREQUISITES
     pip install azure-ai-contentunderstanding

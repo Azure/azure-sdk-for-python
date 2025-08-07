@@ -6,7 +6,18 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.ai.contentunderstanding import ContentUnderstandingClient
+import asyncio
+import os
+from datetime import datetime, timezone
+from typing import Optional, Dict
+from dotenv import load_dotenv
+
+from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
+from azure.ai.contentunderstanding.models import PersonDirectory
+
+from sample_helper import get_credential, save_response_to_file
+
+load_dotenv()
 
 """
 # PREREQUISITES
@@ -16,18 +27,107 @@ from azure.ai.contentunderstanding import ContentUnderstandingClient
 """
 
 
-def main():
-    client = ContentUnderstandingClient(
-        endpoint="ENDPOINT",
-        credential="CREDENTIAL",
-    )
+def generate_person_directory_id() -> str:
+    """Generate a unique person directory ID with current date, time, and GUID."""
+    import uuid
+    now = datetime.now()
+    date_str = now.strftime("%Y%m%d")
+    time_str = now.strftime("%H%M%S")
+    guid = str(uuid.uuid4()).replace("-", "")[:8]
+    return f"sdk-sample-directory-{date_str}-{time_str}-{guid}"
 
-    client.person_directories.delete_person(
-        person_directory_id="myDirectory",
-        person_id="4f66b612-e57d-4d17-9ef7-b951aea2cf0f",
-    )
+
+async def main():
+    """
+    Delete person from directory using delete_person API.
+    
+    High-level steps:
+    1. Create a person directory
+    2. Add a person to the directory
+    3. Verify the person exists
+    4. Delete the person from the directory
+    5. Verify the person was deleted
+    6. Clean up the created directory
+    """
+    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT")
+    credential = get_credential()
+
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
+        person_directory_id = generate_person_directory_id()
+        
+        # Create a person directory first
+        print(f"🔧 Creating person directory '{person_directory_id}'...")
+        
+        person_directory = PersonDirectory(
+            description=f"Sample person directory for delete person demo: {person_directory_id}",
+            tags={"demo_type": "delete_person"}
+        )
+
+        # Create the person directory
+        await client.person_directories.create(
+            person_directory_id=person_directory_id,
+            resource=person_directory,
+        )
+        print(f"✅ Person directory created successfully!")
+
+        # Add a person to the directory
+        print(f"👤 Adding person to directory '{person_directory_id}'...")
+        
+        add_response = await client.person_directories.add_person(
+            person_directory_id=person_directory_id,
+            body={
+                "tags": {
+                    "name": "Mark Wilson",
+                    "role": "test_subject",
+                    "department": "engineering",
+                    "access_level": "standard"
+                }
+            }
+        )
+        
+        person_id = add_response.person_id
+        print(f"✅ Person added successfully! (ID: {person_id})")
+
+        # Verify the person exists
+        print(f"🔍 Verifying person '{person_id}' exists in directory...")
+        
+        person = await client.person_directories.get_person(
+            person_directory_id=person_directory_id,
+            person_id=person_id
+        )
+        
+        print(f"✅ Person verified successfully!")
+        print(f"   Person ID: {getattr(person, 'person_id', 'N/A')}")
+        print(f"   Tags: {getattr(person, 'tags', 'N/A')}")
+
+        # Delete the person from the directory
+        print(f"🗑️  Deleting person '{person_id}' from directory...")
+        
+        await client.person_directories.delete_person(
+            person_directory_id=person_directory_id,
+            person_id=person_id
+        )
+        
+        print(f"✅ Person deleted successfully!")
+
+        # Verify the person was deleted
+        print(f"🔍 Verifying person '{person_id}' was deleted...")
+        
+        try:
+            await client.person_directories.get_person(
+                person_directory_id=person_directory_id,
+                person_id=person_id
+            )
+            print(f"❌ Person still exists - deletion may have failed")
+        except Exception as e:
+            print(f"✅ Person successfully deleted (not found: {type(e).__name__})")
+
+        # Clean up the created directory (demo cleanup)
+        print(f"🗑️  Deleting person directory '{person_directory_id}' (demo cleanup)...")
+        await client.person_directories.delete(person_directory_id=person_directory_id)
+        print(f"✅ Person directory '{person_directory_id}' deleted successfully!")
 
 
 # x-ms-original-file: 2025-05-01-preview/PersonDirectories_DeletePerson.json
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

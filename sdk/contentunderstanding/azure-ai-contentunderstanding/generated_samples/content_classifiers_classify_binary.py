@@ -18,6 +18,10 @@ from sample_helper import (
     save_response_to_file
 )
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 """
 # PREREQUISITES
     pip install azure-ai-contentunderstanding
