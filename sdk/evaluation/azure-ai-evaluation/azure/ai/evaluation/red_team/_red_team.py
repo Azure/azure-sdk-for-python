@@ -250,9 +250,7 @@ class RedTeam:
             if hasattr(key, "value"):
                 category_key = key.value
             else:
-                raise ValueError(
-                    f"attack_success_thresholds keys must be RiskCategory instance, got: {type(key)}"
-                )
+                raise ValueError(f"attack_success_thresholds keys must be RiskCategory instance, got: {type(key)}")
 
             configured_thresholds[category_key] = value
 
@@ -651,7 +649,7 @@ class RedTeam:
                     timeout=timeout,
                     red_team_info=self.red_team_info,
                     task_statuses=self.task_statuses,
-                    prompt_to_context=self.prompt_to_context
+                    prompt_to_context=self.prompt_to_context,
                 )
             except Exception as e:
                 self.logger.error(f"Error calling orchestrator for {strategy_name} strategy: {str(e)}")

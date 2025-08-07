@@ -37,7 +37,7 @@ class AzureRAIServiceTrueFalseScorer(Scorer):
         model: Optional[str] = None,
         prompt_template_key: Optional[str] = None,
         logger: Optional[logging.Logger] = None,
-        context: Optional[str] = None
+        context: Optional[str] = None,
     ) -> None:
         """Initialize the scorer.
 
@@ -61,7 +61,7 @@ class AzureRAIServiceTrueFalseScorer(Scorer):
             credential=credential,
             azure_ai_project=azure_ai_project,
             risk_category=risk_category,
-            context=context
+            context=context,
         )
 
     async def score_async(

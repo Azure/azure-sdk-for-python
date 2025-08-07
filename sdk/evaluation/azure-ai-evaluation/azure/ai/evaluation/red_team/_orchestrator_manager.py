@@ -391,7 +391,7 @@ class OrchestratorManager:
                     credential=self.credential,
                     risk_category=risk_category,
                     azure_ai_project=self.azure_ai_project,
-                    context=context
+                    context=context,
                 )
 
                 azure_rai_service_target = AzureRAIServiceTarget(
@@ -422,11 +422,7 @@ class OrchestratorManager:
                         return await asyncio.wait_for(
                             orchestrator.run_attack_async(
                                 objective=prompt,
-                                memory_labels={
-                                    "risk_strategy_path": output_path,
-                                    "batch": 1,
-                                    "context": context
-                                },
+                                memory_labels={"risk_strategy_path": output_path, "batch": 1, "context": context},
                             ),
                             timeout=calculated_timeout,
                         )
@@ -557,7 +553,7 @@ class OrchestratorManager:
                     credential=self.credential,
                     risk_category=risk_category,
                     azure_ai_project=self.azure_ai_project,
-                    context=context
+                    context=context,
                 )
 
                 azure_rai_service_target = AzureRAIServiceTarget(
@@ -587,7 +583,7 @@ class OrchestratorManager:
                     credential=self.credential,
                     risk_category=risk_category,
                     azure_ai_project=self.azure_ai_project,
-                    context=context
+                    context=context,
                 )
 
                 try:
@@ -602,7 +598,7 @@ class OrchestratorManager:
                                 memory_labels={
                                     "risk_strategy_path": output_path,
                                     "batch": prompt_idx + 1,
-                                    "context": context
+                                    "context": context,
                                 },
                             ),
                             timeout=calculated_timeout,

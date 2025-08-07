@@ -193,7 +193,10 @@ def write_pyrit_outputs_to_file(
     prompts_request_pieces = memory.get_prompt_request_pieces(labels=memory_label)
 
     conversations = [
-        [(item.to_chat_message(), prompt_to_context.get(item.original_value, "") or item.labels.get("context", "")) for item in group]
+        [
+            (item.to_chat_message(), prompt_to_context.get(item.original_value, "") or item.labels.get("context", ""))
+            for item in group
+        ]
         for conv_id, group in itertools.groupby(prompts_request_pieces, key=lambda x: x.conversation_id)
     ]
 
