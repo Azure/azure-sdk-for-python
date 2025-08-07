@@ -164,6 +164,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
             },
             "visual_studio_code": {
                 "exclude_param": "exclude_visual_studio_code_credential",
+                "env_name": "visualstudiocodecredential",
                 "default_exclude": False,
             },
             "cli": {

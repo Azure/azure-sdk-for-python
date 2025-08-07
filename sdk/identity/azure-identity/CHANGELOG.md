@@ -1,10 +1,6 @@
 # Release History
 
-## 1.24.0b2 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.24.0 (2025-08-07)
 
 ### Bugs Fixed
 
@@ -20,7 +16,7 @@
 ### Features Added
 
 - Expanded the set of acceptable values for environment variable `AZURE_TOKEN_CREDENTIALS` to allow for selection of a specific credential in the `DefaultAzureCredential` chain. At runtime, only the specified credential will be used when acquiring tokens with `DefaultAzureCredential`. For example, setting `AZURE_TOKEN_CREDENTIALS=WorkloadIdentityCredential` will make `DefaultAzureCredential` use only `WorkloadIdentityCredential`.
-  - Valid values are `EnvironmentCredential`, `WorkloadIdentityCredential`, `ManagedIdentityCredential`, `AzureCliCredential`, `AzurePowershellCredential`, `AzureDeveloperCliCredential`, and `InteractiveBrowserCredential`. ([#41709](https://github.com/Azure/azure-sdk-for-python/pull/41709))
+  - Valid values are `EnvironmentCredential`, `WorkloadIdentityCredential`, `ManagedIdentityCredential`, `VisualStudioCodeCredential`, `AzureCliCredential`, `AzurePowershellCredential`, `AzureDeveloperCliCredential`, and `InteractiveBrowserCredential`. ([#41709](https://github.com/Azure/azure-sdk-for-python/pull/41709))
 - Re-enabled `VisualStudioCodeCredential` - Previously deprecated `VisualStudioCodeCredential` has been re-implemented to work with the VS Code Azure Resources extension instead of the deprecated Azure Account extension. This requires the `azure-identity-broker` package to be installed for authentication. ([#41822](https://github.com/Azure/azure-sdk-for-python/pull/41822))
   - `VisualStudioCodeCredential` is now included in the `DefaultAzureCredential` token chain by default.
 - `DefaultAzureCredential` now supports authentication with the currently signed-in Windows account, provided the `azure-identity-broker` package is installed. This auth mechanism is added at the end of the `DefaultAzureCredential` credential chain.  ([#40335](https://github.com/Azure/azure-sdk-for-python/pull/40335))
