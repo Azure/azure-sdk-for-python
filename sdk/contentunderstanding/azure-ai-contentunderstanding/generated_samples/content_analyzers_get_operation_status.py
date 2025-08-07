@@ -6,7 +6,22 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.ai.contentunderstanding import ContentUnderstandingClient
+import asyncio
+import os
+
+from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
+from azure.ai.contentunderstanding.models import (
+    ContentAnalyzer,
+    ContentAnalyzerConfig,
+    FieldSchema,
+    FieldDefinition,
+    FieldType,
+    GenerationMethod,
+    AnalysisMode,
+    ProcessingLocation,
+)
+
+from sample_helper import get_credential, extract_operation_id_from_poller, PollerType
 
 """
 # PREREQUISITES
@@ -16,19 +31,92 @@ from azure.ai.contentunderstanding import ContentUnderstandingClient
 """
 
 
-def main():
-    client = ContentUnderstandingClient(
-        endpoint="ENDPOINT",
-        credential="CREDENTIAL",
-    )
+async def main():
+    """
+    Get operation status using get_operation_status API.
+    
+    High-level steps:
+    1. Create a custom analyzer to get an operation ID
+    2. Extract operation ID from the poller
+    3. Get operation status using the operation ID
+    4. Clean up the created analyzer
+    """
+    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT")
+    credential = get_credential()
 
-    response = client.content_analyzers.get_operation_status(
-        analyzer_id="myAnalyzer",
-        operation_id="3b31320d-8bab-4f88-b19c-2322a7f11034",
-    )
-    print(response)
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
+        analyzer_id = f"sdk-sample-analyzer-for-status-{int(asyncio.get_event_loop().time())}"
+        
+        # First, create an analyzer to get an operation ID (for demo purposes)
+        print(f"🔧 Creating analyzer '{analyzer_id}' to demonstrate operation status...")
+        
+        # Create a custom analyzer using object model
+        content_analyzer = ContentAnalyzer(
+            base_analyzer_id="prebuilt-documentAnalyzer",
+            config=ContentAnalyzerConfig(
+                enable_formula=True,
+                enable_layout=True,
+                enable_ocr=True,
+                estimate_field_source_and_confidence=True,
+                return_details=True,
+            ),
+            description="Custom analyzer for operation status demo",
+            field_schema=FieldSchema(
+                fields={
+                    "total_amount": FieldDefinition(
+                        description="Total amount of this table",
+                        method=GenerationMethod.EXTRACT,
+                        type=FieldType.NUMBER,
+                    )
+                },
+                description="Schema for operation status demo",
+                name="demo_schema",
+            ),
+            mode=AnalysisMode.STANDARD,
+            processing_location=ProcessingLocation.GLOBAL,
+            tags={"demo_type": "operation_status"},
+        )
+
+        # Start the analyzer creation operation
+        poller = await client.content_analyzers.begin_create_or_replace(
+            analyzer_id=analyzer_id,
+            resource=content_analyzer,
+        )
+
+        # Extract operation ID from the poller
+        operation_id = extract_operation_id_from_poller(poller, PollerType.ANALYZER_CREATION)
+        print(f"📋 Extracted operation ID: {operation_id}")
+
+        # Get operation status
+        print(f"🔍 Getting operation status for operation '{operation_id}'...")
+        response = await client.content_analyzers.get_operation_status(
+            analyzer_id=analyzer_id,
+            operation_id=operation_id,
+        )
+        
+        print(f"✅ Operation status retrieved successfully!")
+        print(f"   Operation ID: {response.id}")
+        print(f"   Status: {response.status}")
+        
+        # Wait for the operation to complete
+        print(f"⏳ Waiting for analyzer creation to complete...")
+        await poller.result()
+        print(f"✅ Analyzer '{analyzer_id}' created successfully!")
+        
+        # Get final operation status after completion
+        print(f"🔍 Getting final operation status...")
+        final_response = await client.content_analyzers.get_operation_status(
+            analyzer_id=analyzer_id,
+            operation_id=operation_id,
+        )
+        print(f"✅ Final operation status: {final_response.status}")
+        
+        # Clean up the created analyzer (demo cleanup)
+        print(f"🗑️  Deleting analyzer '{analyzer_id}' (demo cleanup)...")
+        await client.content_analyzers.delete(analyzer_id=analyzer_id)
+        print(f"✅ Analyzer '{analyzer_id}' deleted successfully!")
 
 
 # x-ms-original-file: 2025-05-01-preview/ContentAnalyzers_GetOperationStatus.json
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
