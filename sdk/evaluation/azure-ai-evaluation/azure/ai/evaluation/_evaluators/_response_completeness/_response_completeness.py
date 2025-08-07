@@ -64,7 +64,7 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _PROMPTY_FILE = "response_completeness.prompty"
     _RESULT_KEY = "response_completeness"
 
-    id = "completeness"
+    id = "azureai://built-in/evaluators/response_completeness"
 
     _MIN_COMPLETENESS_SCORE = 1
     _MAX_COMPLETENESS_SCORE = 5

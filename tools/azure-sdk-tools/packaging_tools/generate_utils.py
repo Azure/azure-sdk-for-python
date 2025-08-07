@@ -2,6 +2,14 @@ import json
 import logging
 import os
 import re
+
+try:
+    # py 311 adds this library natively
+    import tomllib as toml
+except:
+    # otherwise fall back to pypi package tomli
+    import tomli as toml
+import tomli_w as tomlw
 from functools import wraps
 from typing import Optional
 
@@ -16,7 +24,7 @@ import shutil
 from . import build_packaging
 from .swaggertosdk.autorest_tools import build_autorest_options, generate_code
 from .swaggertosdk.SwaggerToSdkCore import CONFIG_FILE_DPG, read_config
-from .conf import CONF_NAME
+from .conf import CONF_NAME, OLD_CONF_NAME
 from jinja2 import Environment, FileSystemLoader
 
 
@@ -114,11 +122,43 @@ def call_build_config(package_name: str, folder_name: str):
     # )
 
 
-def init_new_service(package_name, folder_name):
+def generate_packaging_files(package_name, folder_name):
+    # replace sdk_packaging.toml with pyproject.toml
+    output_path = Path(folder_name) / package_name
+    pyproject_toml = output_path / CONF_NAME
+    sdk_packaging_toml = output_path / OLD_CONF_NAME
+    if sdk_packaging_toml.exists():
+        if pyproject_toml.exists():
+            # update related items in pyproject.toml then delete sdk_packaging.toml
+            _LOGGER.info(f"update {pyproject_toml} with {sdk_packaging_toml}")
+
+            # Read the old sdk_packaging.toml content
+            with open(sdk_packaging_toml, "rb") as f:
+                sdk_packaging_content = toml.load(f)
+
+            # Read the existing pyproject.toml content
+            with open(pyproject_toml, "rb") as f:
+                pyproject_content = toml.load(f)
+
+            # Update pyproject.toml with sdk_packaging.toml content
+            pyproject_content.update(sdk_packaging_content)
+
+            # Write updated content back to pyproject.toml
+            with open(pyproject_toml, "wb") as f:
+                tomlw.dump(pyproject_content, f)
+
+            # Delete the old sdk_packaging.toml file
+            sdk_packaging_toml.unlink()
+            _LOGGER.info(f"deleted {sdk_packaging_toml}")
+
+        else:
+            # rename sdk_packaging.toml to pyproject.toml
+            _LOGGER.info(f"rename {sdk_packaging_toml} to {pyproject_toml}")
+            sdk_packaging_toml.rename(pyproject_toml)
+
     if "azure-mgmt-" in package_name:
         call_build_config(package_name, folder_name)
     else:
-        output_path = Path(folder_name) / package_name
         if not (output_path / CONF_NAME).exists():
             with open(output_path / CONF_NAME, "w") as file_out:
                 file_out.write("[packaging]\nauto_update = false")
@@ -423,11 +463,13 @@ def gen_typespec(
             tsp_dir = (Path(spec_folder) / typespec_relative_path).resolve()
             repo_url = rest_repo_url.replace("https://github.com/", "")
             tspconfig = tsp_dir / "tspconfig.yaml"
-            if api_version and tspconfig.exists():
+            if tspconfig.exists():
                 with open(tspconfig, "r") as file_in:
                     content = yaml.safe_load(file_in)
                     if content.get("options", {}).get("@azure-tools/typespec-python"):
-                        content["options"]["@azure-tools/typespec-python"]["api-version"] = api_version
+                        content["options"]["@azure-tools/typespec-python"]["keep-setup-py"] = True
+                        if api_version:
+                            content["options"]["@azure-tools/typespec-python"]["api-version"] = api_version
                 with open(tspconfig, "w") as file_out:
                     yaml.dump(content, file_out)
             cmd = f"tsp-client init --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {repo_url}"
