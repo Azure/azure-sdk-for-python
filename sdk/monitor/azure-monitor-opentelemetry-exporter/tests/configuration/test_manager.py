@@ -217,33 +217,6 @@ class TestConfigurationManager(unittest.TestCase):
         with manager._settings_lock:
             self.assertEqual(manager._settings_cache, {"key1": "value1"})
 
-    # @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
-    # def test_version_lock_thread_safety(self, mock_worker_class):
-    #     """Test thread safety of version cache."""
-    #     manager = _ConfigurationManager()
-        
-    #     # Test that version_lock protects version cache access
-    #     self.assertIsNotNone(manager._version_lock)
-        
-    #     # Test direct version cache access
-    #     with manager._version_lock:
-    #         initial_version = manager._version_cache
-    #         self.assertIsInstance(initial_version, int)
-
-    # @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
-    # def test_config_lock_thread_safety(self, mock_worker_class):
-    #     """Test thread safety of config state."""
-    #     manager = _ConfigurationManager()
-        
-    #     # Test that config_lock protects etag and refresh_interval access
-    #     self.assertIsNotNone(manager._config_lock)
-        
-    #     # Test direct access to protected attributes
-    #     with manager._config_lock:
-    #         etag = manager._etag
-    #         refresh_interval = manager._refresh_interval
-    #         # These should be accessible without error
-
     @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
     def test_shutdown(self, mock_worker_class):
         """Test shutdown method."""
