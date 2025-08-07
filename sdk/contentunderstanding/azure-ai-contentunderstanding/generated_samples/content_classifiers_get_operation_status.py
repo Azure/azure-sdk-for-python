@@ -6,7 +6,18 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.ai.contentunderstanding import ContentUnderstandingClient
+import asyncio
+import os
+
+from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
+
+from sample_helper import (
+    get_credential,
+    generate_classifier_id,
+    new_simple_classifier_schema,
+    extract_operation_id_from_poller,
+    PollerType
+)
 
 """
 # PREREQUISITES
@@ -16,19 +27,71 @@ from azure.ai.contentunderstanding import ContentUnderstandingClient
 """
 
 
-def main():
-    client = ContentUnderstandingClient(
-        endpoint="ENDPOINT",
-        credential="CREDENTIAL",
-    )
+async def main():
+    """
+    Get operation status using get_operation_status API.
+    
+    High-level steps:
+    1. Create a custom classifier to get an operation ID
+    2. Extract operation ID from the poller
+    3. Get operation status using the operation ID
+    4. Clean up the created classifier
+    """
+    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT")
+    credential = get_credential()
 
-    response = client.content_classifiers.get_operation_status(
-        classifier_id="myClassifier",
-        operation_id="3b31320d-8bab-4f88-b19c-2322a7f11034",
-    )
-    print(response)
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
+        classifier_id = generate_classifier_id()
+        
+        # First, create a classifier to get an operation ID (for demo purposes)
+        print(f"🔧 Creating classifier '{classifier_id}' to demonstrate operation status...")
+        
+        classifier_schema = new_simple_classifier_schema(
+            classifier_id=classifier_id,
+            description=f"Custom classifier for operation status demo: {classifier_id}",
+            tags={"demo_type": "operation_status"}
+        )
+
+        # Start the classifier creation operation
+        poller = await client.content_classifiers.begin_create_or_replace(
+            classifier_id=classifier_id,
+            resource=classifier_schema,
+        )
+
+        # Extract operation ID from the poller
+        operation_id = extract_operation_id_from_poller(poller, PollerType.CLASSIFIER_CREATION)
+        print(f"📋 Extracted creation operation ID: {operation_id}")
+
+        # Get operation status
+        print(f"🔍 Getting operation status for operation '{operation_id}'...")
+        response = await client.content_classifiers.get_operation_status(
+            classifier_id=classifier_id,
+            operation_id=operation_id,
+        )
+        
+        print(f"✅ Operation status retrieved successfully!")
+        print(f"   Operation ID: {getattr(response, 'id', 'N/A')}")
+        print(f"   Status: {getattr(response, 'status', 'N/A')}")
+        
+        # Wait for the operation to complete
+        print(f"⏳ Waiting for classifier creation to complete...")
+        await poller.result()
+        print(f"✅ Classifier '{classifier_id}' created successfully!")
+        
+        # Get final operation status after completion
+        print(f"🔍 Getting final operation status...")
+        final_response = await client.content_classifiers.get_operation_status(
+            classifier_id=classifier_id,
+            operation_id=operation_id,
+        )
+        print(f"✅ Final operation status: {getattr(final_response, 'status', 'N/A')}")
+        
+        # Clean up the created classifier (demo cleanup)
+        print(f"🗑️  Deleting classifier '{classifier_id}' (demo cleanup)...")
+        await client.content_classifiers.delete(classifier_id=classifier_id)
+        print(f"✅ Classifier '{classifier_id}' deleted successfully!")
 
 
 # x-ms-original-file: 2025-05-01-preview/ContentClassifiers_GetOperationStatus.json
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

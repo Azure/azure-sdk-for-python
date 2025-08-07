@@ -6,7 +6,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.ai.contentunderstanding import ContentUnderstandingClient
+import asyncio
+import os
+
+from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
+from azure.ai.contentunderstanding.models import ContentClassifier
+
+from sample_helper import (
+    get_credential,
+    generate_classifier_id,
+    new_simple_classifier_schema
+)
 
 """
 # PREREQUISITES
@@ -16,19 +26,93 @@ from azure.ai.contentunderstanding import ContentUnderstandingClient
 """
 
 
-def main():
-    client = ContentUnderstandingClient(
-        endpoint="ENDPOINT",
-        credential="CREDENTIAL",
-    )
+async def main():
+    """
+    Update classifier using update API.
+    
+    High-level steps:
+    1. Create an initial classifier
+    2. Get the classifier to verify initial state
+    3. Update the classifier with new description and tags
+    4. Get the classifier again to verify changes persisted
+    5. Clean up the created classifier
+    """
+    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT")
+    credential = get_credential()
 
-    response = client.content_classifiers.update(
-        classifier_id="myClassifier",
-        resource={"description": "Updated classifier description.", "tags": {"reviewedBy": "Paul"}},
-    )
-    print(response)
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
+        classifier_id = generate_classifier_id()
+        
+        # Create initial classifier using object model
+        print(f"🔧 Creating initial classifier '{classifier_id}'...")
+        
+        initial_classifier = new_simple_classifier_schema(
+            classifier_id=classifier_id,
+            description=f"Initial classifier for update demo: {classifier_id}",
+            tags={"initial_tag": "initial_value", "demo_type": "update"}
+        )
+
+        # Start the classifier creation operation
+        poller = await client.content_classifiers.begin_create_or_replace(
+            classifier_id=classifier_id,
+            resource=initial_classifier,
+        )
+
+        # Wait for the classifier to be created
+        print(f"⏳ Waiting for classifier creation to complete...")
+        await poller.result()
+        print(f"✅ Classifier '{classifier_id}' created successfully!")
+
+        # Get the classifier before update to verify initial state
+        print(f"📋 Getting classifier '{classifier_id}' before update...")
+        classifier_before_update = await client.content_classifiers.get(classifier_id=classifier_id)
+        
+        print(f"✅ Initial classifier state verified:")
+        print(f"   Description: {getattr(classifier_before_update, 'description', 'N/A')}")
+        print(f"   Tags: {getattr(classifier_before_update, 'tags', 'N/A')}")
+
+        # Create updated classifier with only allowed properties (description and tags)
+        print(f"🔄 Creating updated classifier configuration...")
+        updated_classifier = ContentClassifier(
+            description=f"Updated classifier for update demo: {classifier_id}",
+            tags={"initial_tag": "initial_value", "updated_tag": "updated_value", "demo_type": "update"},
+        )
+
+        # Update the classifier
+        print(f"📝 Updating classifier '{classifier_id}' with new description and tags...")
+        response = await client.content_classifiers.update(
+            classifier_id=classifier_id,
+            resource=updated_classifier,
+        )
+        
+        print(f"✅ Classifier updated successfully!")
+        print(f"   Updated description: {getattr(response, 'description', 'N/A')}")
+        print(f"   Updated tags: {getattr(response, 'tags', 'N/A')}")
+
+        # Get the classifier after update to verify the changes persisted
+        print(f"📋 Getting classifier '{classifier_id}' after update...")
+        classifier_after_update = await client.content_classifiers.get(classifier_id=classifier_id)
+        
+        print(f"✅ Updated classifier state verified:")
+        print(f"   Description: {getattr(classifier_after_update, 'description', 'N/A')}")
+        print(f"   Tags: {getattr(classifier_after_update, 'tags', 'N/A')}")
+        
+        # Verify the changes were applied correctly
+        expected_description = f"Updated classifier for update demo: {classifier_id}"
+        actual_description = getattr(classifier_after_update, 'description', '')
+        actual_tags = getattr(classifier_after_update, 'tags', {})
+        
+        if actual_description == expected_description and "updated_tag" in actual_tags:
+            print(f"✅ All changes verified successfully!")
+        else:
+            print(f"⚠️  Some changes may not have been applied as expected")
+
+        # Clean up the created classifier (demo cleanup)
+        print(f"🗑️  Deleting classifier '{classifier_id}' (demo cleanup)...")
+        await client.content_classifiers.delete(classifier_id=classifier_id)
+        print(f"✅ Classifier '{classifier_id}' deleted successfully!")
 
 
 # x-ms-original-file: 2025-05-01-preview/ContentClassifiers_Update.json
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

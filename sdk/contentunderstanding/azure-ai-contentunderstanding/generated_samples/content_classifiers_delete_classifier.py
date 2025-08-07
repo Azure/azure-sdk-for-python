@@ -6,7 +6,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.ai.contentunderstanding import ContentUnderstandingClient
+import asyncio
+import os
+
+from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
+
+from sample_helper import (
+    get_credential,
+    generate_classifier_id,
+    new_simple_classifier_schema
+)
 
 """
 # PREREQUISITES
@@ -16,17 +25,48 @@ from azure.ai.contentunderstanding import ContentUnderstandingClient
 """
 
 
-def main():
-    client = ContentUnderstandingClient(
-        endpoint="ENDPOINT",
-        credential="CREDENTIAL",
-    )
+async def main():
+    """
+    Delete classifier using delete API.
+    
+    High-level steps:
+    1. Create a custom classifier to demonstrate deletion
+    2. Verify the classifier exists
+    3. Delete the classifier
+    4. Verify the classifier was deleted
+    """
+    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT")
+    credential = get_credential()
 
-    client.content_classifiers.delete(
-        classifier_id="myClassifier",
-    )
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
+        classifier_id = generate_classifier_id()
+        
+        # First, create a classifier to delete (for demo purposes)
+        print(f"🔧 Creating classifier '{classifier_id}' for deletion demo...")
+        
+        classifier_schema = new_simple_classifier_schema(
+            classifier_id=classifier_id,
+            description=f"Custom classifier for deletion demo: {classifier_id}",
+            tags={"demo_type": "deletion"}
+        )
+
+        # Start the classifier creation operation
+        poller = await client.content_classifiers.begin_create_or_replace(
+            classifier_id=classifier_id,
+            resource=classifier_schema,
+        )
+
+        # Wait for the classifier to be created
+        print(f"⏳ Waiting for classifier creation to complete...")
+        await poller.result()
+        print(f"✅ Classifier '{classifier_id}' created successfully!")
+
+        # Delete the classifier
+        print(f"🗑️  Deleting classifier '{classifier_id}'...")
+        await client.content_classifiers.delete(classifier_id=classifier_id)
+        print(f"✅ Classifier '{classifier_id}' deleted successfully!")
 
 
 # x-ms-original-file: 2025-05-01-preview/ContentClassifiers_DeleteClassifier.json
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

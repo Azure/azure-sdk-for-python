@@ -6,7 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.ai.contentunderstanding import ContentUnderstandingClient
+import asyncio
+import os
+
+from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
+
+from sample_helper import get_credential
 
 """
 # PREREQUISITES
@@ -16,17 +21,61 @@ from azure.ai.contentunderstanding import ContentUnderstandingClient
 """
 
 
-def main():
-    client = ContentUnderstandingClient(
-        endpoint="ENDPOINT",
-        credential="CREDENTIAL",
-    )
+async def main():
+    """
+    List all available classifiers using list API.
+    
+    High-level steps:
+    1. Connect to Azure AI Content Understanding
+    2. List all available classifiers
+    3. Display detailed information about each classifier
+    4. Show summary statistics
+    """
+    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT")
+    credential = get_credential()
 
-    response = client.content_classifiers.list()
-    for item in response:
-        print(item)
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
+        print(f"📋 Listing all available classifiers...")
+        
+        # List all classifiers
+        response = client.content_classifiers.list()
+        classifiers = [classifier async for classifier in response]
+        
+        print(f"✅ Found {len(classifiers)} classifiers")
+        print()
+        
+        # Display detailed information about each classifier
+        for i, classifier in enumerate(classifiers, 1):
+            print(f"🔍 Classifier {i}:")
+            print(f"   ID: {getattr(classifier, 'classifier_id', 'N/A')}")
+            print(f"   Description: {getattr(classifier, 'description', 'N/A')}")
+            print(f"   Status: {getattr(classifier, 'status', 'N/A')}")
+            print(f"   Created at: {getattr(classifier, 'created_at', 'N/A')}")
+            
+            # All classifiers are custom classifiers
+            print(f"   Type: Custom classifier")
+            
+            # Show tags if available
+            tags = getattr(classifier, 'tags', None)
+            if tags:
+                print(f"   Tags: {tags}")
+            
+            # Show categories if available
+            categories = getattr(classifier, 'categories', None)
+            if categories:
+                print(f"   Categories: {len(categories)} categories")
+                for category_name, category in categories.items():
+                    description = getattr(category, 'description', 'No description')
+                    print(f"     - {category_name}: {description}")
+            
+            print()
+        
+        # Show summary statistics
+        print(f"📊 Summary:")
+        print(f"   Total classifiers: {len(classifiers)}")
+        print(f"   All classifiers are custom classifiers")
 
 
 # x-ms-original-file: 2025-05-01-preview/ContentClassifiers_List.json
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

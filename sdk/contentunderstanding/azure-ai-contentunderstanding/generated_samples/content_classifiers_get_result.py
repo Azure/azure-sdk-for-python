@@ -6,7 +6,19 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.ai.contentunderstanding import ContentUnderstandingClient
+import asyncio
+import os
+
+from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
+
+from sample_helper import (
+    get_credential,
+    generate_classifier_id,
+    new_simple_classifier_schema,
+    extract_operation_id_from_poller,
+    PollerType,
+    save_response_to_file
+)
 
 """
 # PREREQUISITES
@@ -16,18 +28,95 @@ from azure.ai.contentunderstanding import ContentUnderstandingClient
 """
 
 
-def main():
-    client = ContentUnderstandingClient(
-        endpoint="ENDPOINT",
-        credential="CREDENTIAL",
-    )
+async def main():
+    """
+    Get classification result using get_result API.
+    
+    High-level steps:
+    1. Create a custom classifier
+    2. Classify a document to get an operation ID
+    3. Extract operation ID from the classification poller
+    4. Get the classification result using the operation ID
+    5. Save the classification result to a file
+    6. Clean up the created classifier
+    """
+    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT")
+    credential = get_credential()
 
-    response = client.content_classifiers.get_result(
-        operation_id="3b31320d-8bab-4f88-b19c-2322a7f11034",
-    )
-    print(response)
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
+        classifier_id = generate_classifier_id()
+        
+        # Create a custom classifier using object model
+        print(f"🔧 Creating custom classifier '{classifier_id}'...")
+        
+        classifier_schema = new_simple_classifier_schema(
+            classifier_id=classifier_id,
+            description=f"Custom classifier for get result demo: {classifier_id}",
+            tags={"demo_type": "get_result"}
+        )
+
+        # Start the classifier creation operation
+        poller = await client.content_classifiers.begin_create_or_replace(
+            classifier_id=classifier_id,
+            resource=classifier_schema,
+        )
+
+        # Wait for the classifier to be created
+        print(f"⏳ Waiting for classifier creation to complete...")
+        await poller.result()
+        print(f"✅ Classifier '{classifier_id}' created successfully!")
+
+        # Read the mixed financial docs PDF file
+        pdf_path = "mixed_financial_docs.pdf"
+        print(f"📄 Reading document file: {pdf_path}")
+        with open(pdf_path, "rb") as pdf_file:
+            pdf_content = pdf_file.read()
+
+        # Begin binary classification operation
+        print(f"🔍 Starting binary classification with classifier '{classifier_id}'...")
+        classification_poller = await client.content_classifiers.begin_classify_binary(
+            classifier_id=classifier_id,
+            input=pdf_content,
+            content_type="application/pdf",
+        )
+
+        # Wait for classification completion
+        print(f"⏳ Waiting for classification to complete...")
+        classification_result = await classification_poller.result()
+        print(f"✅ Classification completed successfully!")
+
+        # Extract operation ID for get_result
+        classification_operation_id = extract_operation_id_from_poller(classification_poller, PollerType.CLASSIFY_CALL)
+        print(f"📋 Extracted classification operation ID: {classification_operation_id}")
+
+        # Get the classification result using the operation ID
+        print(f"🔍 Getting classification result using operation ID '{classification_operation_id}'...")
+        operation_status = await client.content_classifiers.get_result(
+            operation_id=classification_operation_id,
+        )
+        
+        print(f"✅ Classification result retrieved successfully!")
+        print(f"   Operation ID: {getattr(operation_status, 'id', 'N/A')}")
+        print(f"   Status: {getattr(operation_status, 'status', 'N/A')}")
+        
+        # The actual classification result is in operation_status.result
+        classification_result = getattr(operation_status, 'result', None)
+        if classification_result:
+            print(f"   Result contains {len(getattr(classification_result, 'contents', []))} contents")
+        
+        # Save the classification result to a file
+        saved_file_path = save_response_to_file(
+            result=operation_status,
+            filename_prefix="content_classifiers_get_result"
+        )
+        print(f"💾 Classification result saved to: {saved_file_path}")
+
+        # Clean up the created classifier (demo cleanup)
+        print(f"🗑️  Deleting classifier '{classifier_id}' (demo cleanup)...")
+        await client.content_classifiers.delete(classifier_id=classifier_id)
+        print(f"✅ Classifier '{classifier_id}' deleted successfully!")
 
 
 # x-ms-original-file: 2025-05-01-preview/ContentClassifiers_GetResult.json
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

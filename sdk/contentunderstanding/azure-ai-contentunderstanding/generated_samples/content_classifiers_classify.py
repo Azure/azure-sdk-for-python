@@ -6,7 +6,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.ai.contentunderstanding import ContentUnderstandingClient
+import asyncio
+import os
+
+from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
+
+from sample_helper import (
+    get_credential,
+    generate_classifier_id,
+    new_simple_classifier_schema,
+    save_response_to_file
+)
 
 """
 # PREREQUISITES
@@ -16,19 +26,83 @@ from azure.ai.contentunderstanding import ContentUnderstandingClient
 """
 
 
-def main():
-    client = ContentUnderstandingClient(
-        endpoint="ENDPOINT",
-        credential="CREDENTIAL",
-    )
+async def main():
+    """
+    Classify document from URL using begin_classify API.
+    
+    High-level steps:
+    1. Create a custom classifier
+    2. Classify a document from a remote URL
+    3. Save the classification result to a file
+    4. Clean up the created classifier
+    """
+    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT")
+    credential = get_credential()
 
-    response = client.content_classifiers.begin_classify(
-        classifier_id="myClassifier",
-        body={"url": "https://host.com/doc.pdf"},
-    ).result()
-    print(response)
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
+        classifier_id = generate_classifier_id()
+        
+        # Create a custom classifier using object model
+        print(f"🔧 Creating custom classifier '{classifier_id}'...")
+        
+        classifier_schema = new_simple_classifier_schema(
+            classifier_id=classifier_id,
+            description=f"Custom classifier for URL classification demo: {classifier_id}",
+            tags={"demo_type": "url_classification"}
+        )
+
+        # Start the classifier creation operation
+        poller = await client.content_classifiers.begin_create_or_replace(
+            classifier_id=classifier_id,
+            resource=classifier_schema,
+        )
+
+        # Wait for the classifier to be created
+        print(f"⏳ Waiting for classifier creation to complete...")
+        await poller.result()
+        print(f"✅ Classifier '{classifier_id}' created successfully!")
+
+        # Use the provided URL for the mixed financial docs PDF
+        mixed_docs_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/mixed_financial_docs.pdf"
+        print(f"🌐 Classifying document from URL: {mixed_docs_url}")
+
+        # Begin classification operation with URL
+        print(f"🔍 Starting URL classification with classifier '{classifier_id}'...")
+        classification_poller = await client.content_classifiers.begin_classify(
+            classifier_id=classifier_id,
+            body={
+                "url": mixed_docs_url,
+            },
+        )
+
+        # Wait for classification completion
+        print(f"⏳ Waiting for classification to complete...")
+        classification_result = await classification_poller.result()
+        print(f"✅ Classification completed successfully!")
+
+        # Display classification results
+        print(f"📊 Classification Results:")
+        for content in classification_result.contents:
+            if hasattr(content, 'classifications') and content.classifications:
+                for classification in content.classifications:
+                    print(f"   Category: {classification.category}")
+                    print(f"   Confidence: {classification.confidence}")
+                    print(f"   Score: {classification.score}")
+                    print()
+
+        # Save the classification result to a file
+        saved_file_path = save_response_to_file(
+            result=classification_result,
+            filename_prefix="content_classifiers_classify"
+        )
+        print(f"💾 Classification result saved to: {saved_file_path}")
+
+        # Clean up the created classifier (demo cleanup)
+        print(f"🗑️  Deleting classifier '{classifier_id}' (demo cleanup)...")
+        await client.content_classifiers.delete(classifier_id=classifier_id)
+        print(f"✅ Classifier '{classifier_id}' deleted successfully!")
 
 
 # x-ms-original-file: 2025-05-01-preview/ContentClassifiers_Classify.json
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

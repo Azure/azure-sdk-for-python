@@ -6,7 +6,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.ai.contentunderstanding import ContentUnderstandingClient
+import asyncio
+import os
+
+from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
+
+from sample_helper import (
+    get_credential,
+    generate_classifier_id,
+    new_simple_classifier_schema
+)
 
 """
 # PREREQUISITES
@@ -16,24 +25,70 @@ from azure.ai.contentunderstanding import ContentUnderstandingClient
 """
 
 
-def main():
-    client = ContentUnderstandingClient(
-        endpoint="ENDPOINT",
-        credential="CREDENTIAL",
-    )
+async def main():
+    """
+    Create custom classifier using begin_create_or_replace API.
+    
+    High-level steps:
+    1. Create a custom classifier with defined categories
+    2. Wait for classifier creation to complete
+    3. Verify the classifier was created successfully
+    4. Clean up the created classifier
+    """
+    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT")
+    credential = get_credential()
 
-    response = client.content_classifiers.begin_create_or_replace(
-        classifier_id="myClassifier",
-        resource={
-            "categories": {"invoice": {"analyzerId": "myInvoice"}, "receipt": {"description": "Sales receipts"}},
-            "description": "My classifier",
-            "splitMode": "auto",
-            "tags": {"createdBy": "John"},
-        },
-    ).result()
-    print(response)
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
+        classifier_id = generate_classifier_id()
+        
+        # Create a custom classifier using object model
+        print(f"🔧 Creating custom classifier '{classifier_id}'...")
+        
+        classifier_schema = new_simple_classifier_schema(
+            classifier_id=classifier_id,
+            description=f"Custom classifier for create demo: {classifier_id}",
+            tags={"demo_type": "create", "created_by": "SDK Sample"}
+        )
+
+        # Start the classifier creation operation
+        poller = await client.content_classifiers.begin_create_or_replace(
+            classifier_id=classifier_id,
+            resource=classifier_schema,
+        )
+
+        # Wait for the classifier to be created
+        print(f"⏳ Waiting for classifier creation to complete...")
+        result = await poller.result()
+        print(f"✅ Classifier '{classifier_id}' created successfully!")
+        
+        # Display classifier details
+        print(f"📋 Classifier Details:")
+        print(f"   ID: {getattr(result, 'classifier_id', 'N/A')}")
+        print(f"   Description: {getattr(result, 'description', 'N/A')}")
+        print(f"   Status: {getattr(result, 'status', 'N/A')}")
+        print(f"   Created at: {getattr(result, 'created_at', 'N/A')}")
+        
+        # Check if categories exist
+        categories = getattr(result, 'categories', None)
+        if categories:
+            print(f"   Categories: {len(categories)} categories")
+            for category_name, category in categories.items():
+                description = getattr(category, 'description', 'No description')
+                print(f"     - {category_name}: {description}")
+        else:
+            print(f"   Categories: Not available")
+
+        # Next steps:
+        # - To retrieve the classifier: see content_classifiers_get_classifier.py
+        # - To use the classifier for classification: see content_classifiers_classify_binary.py
+        # - To delete the classifier: see content_classifiers_delete_classifier.py
+
+        # Clean up the created classifier (demo cleanup)
+        print(f"🗑️  Deleting classifier '{classifier_id}' (demo cleanup)...")
+        await client.content_classifiers.delete(classifier_id=classifier_id)
+        print(f"✅ Classifier '{classifier_id}' deleted successfully!")
 
 
 # x-ms-original-file: 2025-05-01-preview/ContentClassifiers_CreateOrReplace.json
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
