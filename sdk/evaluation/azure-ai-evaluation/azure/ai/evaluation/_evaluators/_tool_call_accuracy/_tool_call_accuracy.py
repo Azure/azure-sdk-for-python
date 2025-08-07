@@ -33,7 +33,7 @@ def _get_built_in_definition(tool_name: str):
             "type": tool_name,
             "description": _BUILT_IN_DESCRIPTIONS[tool_name],
             "name": tool_name,
-            "parameters": _BUILT_IN_PARAMS.get(tool_name, {})
+            "parameters": _BUILT_IN_PARAMS.get(tool_name, {}),
         }
     return None
 
@@ -48,7 +48,7 @@ def _get_needed_built_in_definitions(tool_calls: List[Dict]) -> List[Dict]:
                 built_in_def = _get_built_in_definition(tool_type)
                 if built_in_def and built_in_def not in needed_definitions:
                     needed_definitions.append(built_in_def)
-    
+
     return needed_definitions
 
 
@@ -208,7 +208,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 return {"error_message": self._NO_TOOL_DEFINITIONS_MESSAGE}
             else:
                 return {"error_message": self._TOOL_DEFINITIONS_MISSING_MESSAGE}
-        
+
         if len(needed_tool_definitions) == 0:
             return {"error_message": self._NO_TOOL_DEFINITIONS_MESSAGE}
 
@@ -300,7 +300,6 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             "details": {},
         }
 
-
     def _extract_needed_tool_definitions(self, tool_calls, tool_definitions):
         """Extract the tool definitions that are needed for the provided tool calls.
         :param tool_calls: List of tool calls to evaluate.
@@ -323,12 +322,12 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         for tool_call in tool_calls:
             if isinstance(tool_call, dict):
                 tool_type = tool_call.get("type")
-                
+
                 # Check if this is a built-in tool (has "type" and is in built-in types)
                 if tool_type and _get_built_in_definition(tool_type):
                     # This is a built-in tool, already handled above
                     continue
-                
+
                 # Handle function tools and openapi tools that have function structure
                 tool_name = None
                 if tool_call.get("type") == "openapi" and "function" in tool_call:
@@ -340,7 +339,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 else:
                     # Regular function tools
                     tool_name = tool_call.get("name")
-                
+
                 if tool_name:
                     # Verify that the tool definition exists in user-provided definitions
                     tool_definition_exists = any(
@@ -370,7 +369,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                     category=ErrorCategory.INVALID_VALUE,
                     target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
                 )
-            
+
         return needed_tool_definitions
 
     @override

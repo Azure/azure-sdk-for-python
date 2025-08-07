@@ -67,7 +67,12 @@ _BUILT_IN_PARAMS = {
     },
     _BING_CUSTOM_SEARCH: {
         "type": "object",
-        "properties": {"requesturl": {"type": "string", "description": "Search queries, along with pre-configured site restrictions or domain filters."}},
+        "properties": {
+            "requesturl": {
+                "type": "string",
+                "description": "Search queries, along with pre-configured site restrictions or domain filters.",
+            }
+        },
     },
     _FILE_SEARCH: {
         "type": "object",
@@ -88,7 +93,9 @@ _BUILT_IN_PARAMS = {
     },
     _SHAREPOINT_GROUNDING: {
         "type": "object",
-        "properties": {"input": {"type": "string", "description": "A natural language query to search SharePoint content."}},
+        "properties": {
+            "input": {"type": "string", "description": "A natural language query to search SharePoint content."}
+        },
     },
     _FABRIC_DATAAGENT: {
         "type": "object",
