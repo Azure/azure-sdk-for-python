@@ -43,7 +43,7 @@ _SERIALIZER.client_side_validation = False
 class ConversationAnalysisClient(AnalysisClientGenerated):
 
     @overload
-    def analyze_conversations(
+    def begin_analyze_conversation_job(
         self, body: AnalyzeConversationOperationInput, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[AnalyzeConversationOperationState]:
         """Analyzes the input conversation utterance.
@@ -60,7 +60,7 @@ class ConversationAnalysisClient(AnalysisClientGenerated):
         """
 
     @overload
-    def analyze_conversations(
+    def begin_analyze_conversation_job(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[AnalyzeConversationOperationState]:
         """Analyzes the input conversation utterance.
@@ -77,7 +77,7 @@ class ConversationAnalysisClient(AnalysisClientGenerated):
         """
 
     @overload
-    def analyze_conversations(
+    def begin_analyze_conversation_job(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[AnalyzeConversationOperationState]:
         """Analyzes the input conversation utterance.
@@ -99,7 +99,7 @@ class ConversationAnalysisClient(AnalysisClientGenerated):
         params_added_on={"2023-04-01": ["api_version", "content_type", "accept"]},
         api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2024-11-15-preview", "2025-05-15-preview"],
     )
-    def analyze_conversations(
+    def begin_analyze_conversation_job(  # type: ignore[override]
         self, body: Union[AnalyzeConversationOperationInput, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[AnalyzeConversationOperationState]:
         """Analyzes the input conversation utterance.

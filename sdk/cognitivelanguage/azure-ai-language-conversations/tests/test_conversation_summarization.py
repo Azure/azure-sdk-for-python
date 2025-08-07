@@ -85,7 +85,7 @@ class TestConversationsCase(TestConversations):
         )
 
         # Call the API
-        response = conversation_client.analyze_conversations(body=operation_input).result()
+        response = conversation_client.begin_analyze_conversation_job(body=operation_input).result()
 
         # Validate response and print results
         print(f"Job ID: {response.job_id}")
