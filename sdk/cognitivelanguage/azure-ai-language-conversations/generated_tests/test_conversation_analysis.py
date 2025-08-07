@@ -46,22 +46,6 @@ class TestConversationAnalysis(ConversationAnalysisClientTestBase):
 
     @ConversationAnalysisPreparer()
     @recorded_by_proxy
-    def test_begin_analyze_conversation_job(self, conversationanalysis_endpoint):
-        client = self.create_client(endpoint=conversationanalysis_endpoint)
-        response = client.begin_analyze_conversation_job(
-            body={
-                "analysisInput": {"conversations": ["conversation_input"]},
-                "tasks": ["analyze_conversation_operation_action"],
-                "cancelAfter": 0.0,
-                "displayName": "str",
-            },
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @ConversationAnalysisPreparer()
-    @recorded_by_proxy
     def test_begin_cancel_job(self, conversationanalysis_endpoint):
         client = self.create_client(endpoint=conversationanalysis_endpoint)
         response = client.begin_cancel_job(

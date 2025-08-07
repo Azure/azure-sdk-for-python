@@ -47,24 +47,6 @@ class TestConversationAnalysisAsync(ConversationAnalysisClientTestBaseAsync):
 
     @ConversationAnalysisPreparer()
     @recorded_by_proxy_async
-    async def test_begin_analyze_conversation_job(self, conversationanalysis_endpoint):
-        client = self.create_async_client(endpoint=conversationanalysis_endpoint)
-        response = await (
-            await client.begin_analyze_conversation_job(
-                body={
-                    "analysisInput": {"conversations": ["conversation_input"]},
-                    "tasks": ["analyze_conversation_operation_action"],
-                    "cancelAfter": 0.0,
-                    "displayName": "str",
-                },
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @ConversationAnalysisPreparer()
-    @recorded_by_proxy_async
     async def test_begin_cancel_job(self, conversationanalysis_endpoint):
         client = self.create_async_client(endpoint=conversationanalysis_endpoint)
         response = await (

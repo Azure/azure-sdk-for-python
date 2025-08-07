@@ -8,10 +8,13 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import List
-
-__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
-
-
+from ._models import (
+    AnalyzeConversationOperationInput,
+    MultiLanguageConversationInput,
+    SummarizationOperationAction,
+    ConversationSummarizationActionContent,
+    AnalyzeConversationOperationAction,
+)
 def patch_sdk():
     """Do not remove from this file.
 
@@ -19,3 +22,4 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+__all__ = ["AnalyzeConversationOperationInput", "MultiLanguageConversationInput", "SummarizationOperationAction", "ConversationSummarizationActionContent", "AnalyzeConversationOperationAction"]

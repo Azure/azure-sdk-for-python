@@ -258,7 +258,7 @@ class _ConversationAnalysisClientOperationsMixin(
         api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2024-11-15-preview", "2025-05-15-preview"],
     )
     async def _analyze_conversation_job_initial(
-        self, body: Union[_models.AnalyzeConversationOperationInput, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models._models.AnalyzeConversationOperationInput, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -320,52 +320,21 @@ class _ConversationAnalysisClientOperationsMixin(
         return deserialized  # type: ignore
 
     @overload
-    async def begin_analyze_conversation_job(
-        self, body: _models.AnalyzeConversationOperationInput, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Analyzes the input conversation utterance.
-
-        :param body: The input for the analyze conversations operation. Required.
-        :type body: ~azure.ai.language.conversations.models.AnalyzeConversationOperationInput
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    async def _begin_analyze_conversation_job(
+        self,
+        body: _models._models.AnalyzeConversationOperationInput,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]: ...
     @overload
-    async def begin_analyze_conversation_job(
+    async def _begin_analyze_conversation_job(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Analyzes the input conversation utterance.
-
-        :param body: The input for the analyze conversations operation. Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> AsyncLROPoller[None]: ...
     @overload
-    async def begin_analyze_conversation_job(
+    async def _begin_analyze_conversation_job(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Analyzes the input conversation utterance.
-
-        :param body: The input for the analyze conversations operation. Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> AsyncLROPoller[None]: ...
 
     @distributed_trace_async
     @api_version_validation(
@@ -373,15 +342,15 @@ class _ConversationAnalysisClientOperationsMixin(
         params_added_on={"2023-04-01": ["api_version", "content_type", "accept"]},
         api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2024-11-15-preview", "2025-05-15-preview"],
     )
-    async def begin_analyze_conversation_job(
-        self, body: Union[_models.AnalyzeConversationOperationInput, JSON, IO[bytes]], **kwargs: Any
+    async def _begin_analyze_conversation_job(
+        self, body: Union[_models._models.AnalyzeConversationOperationInput, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Analyzes the input conversation utterance.
 
         :param body: The input for the analyze conversations operation. Is one of the following types:
          AnalyzeConversationOperationInput, JSON, IO[bytes] Required.
-        :type body: ~azure.ai.language.conversations.models.AnalyzeConversationOperationInput or JSON
-         or IO[bytes]
+        :type body: ~azure.ai.language.conversations.models._models.AnalyzeConversationOperationInput
+         or JSON or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:

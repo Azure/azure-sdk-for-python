@@ -321,10 +321,10 @@ class AnalyzeConversationOperationInput(_Model):
     :vartype display_name: str
     :ivar conversation_input: Analysis Input. Required.
     :vartype conversation_input:
-     ~azure.ai.language.conversations.models.MultiLanguageConversationInput
+     ~azure.ai.language.conversations.models._models.MultiLanguageConversationInput
     :ivar actions: Set of tasks to execute on the input conversation. Required.
     :vartype actions:
-     list[~azure.ai.language.conversations.models.AnalyzeConversationOperationAction]
+     list[~azure.ai.language.conversations.models._models.AnalyzeConversationOperationAction]
     :ivar cancel_after: Optional duration in seconds after which the job will be canceled if not
      completed.
     :vartype cancel_after: float
@@ -334,11 +334,11 @@ class AnalyzeConversationOperationInput(_Model):
         name="displayName", visibility=["read", "create", "update", "delete", "query"]
     )
     """Display name for the analysis job."""
-    conversation_input: "_models.MultiLanguageConversationInput" = rest_field(
+    conversation_input: "_models._models.MultiLanguageConversationInput" = rest_field(
         name="analysisInput", visibility=["read", "create", "query"]
     )
     """Analysis Input. Required."""
-    actions: List["_models.AnalyzeConversationOperationAction"] = rest_field(
+    actions: List["_models._models.AnalyzeConversationOperationAction"] = rest_field(
         name="tasks", visibility=["read", "create", "update", "delete", "query"]
     )
     """Set of tasks to execute on the input conversation. Required."""
@@ -351,8 +351,8 @@ class AnalyzeConversationOperationInput(_Model):
     def __init__(
         self,
         *,
-        conversation_input: "_models.MultiLanguageConversationInput",
-        actions: List["_models.AnalyzeConversationOperationAction"],
+        conversation_input: "_models._models.MultiLanguageConversationInput",
+        actions: List["_models._models.AnalyzeConversationOperationAction"],
         display_name: Optional[str] = None,
         cancel_after: Optional[float] = None,
     ) -> None: ...
@@ -797,7 +797,7 @@ class CharacterMaskPolicyType(BaseRedactionPolicy, discriminator="characterMask"
     policy_kind: Literal[RedactionPolicyKind.CHARACTER_MASK] = rest_discriminator(name="policyKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The entity RedactionPolicy object kind. Required. Mask detected entities with redaction
      character"""
-    redaction_character: Optional[Union[str, "_models.RedactionCharacter"]] = rest_field(
+    redaction_character: Optional[Union[str, "_models._enums.RedactionCharacter"]] = rest_field(
         name="redactionCharacter", visibility=["read", "create", "update", "delete", "query"]
     )
     """Optional parameter to use a Custom Character to be used for redaction in PII responses. Default
@@ -809,7 +809,7 @@ class CharacterMaskPolicyType(BaseRedactionPolicy, discriminator="characterMask"
     def __init__(
         self,
         *,
-        redaction_character: Optional[Union[str, "_models.RedactionCharacter"]] = None,
+        redaction_character: Optional[Union[str, "_models._enums.RedactionCharacter"]] = None,
     ) -> None: ...
 
     @overload
@@ -1839,7 +1839,7 @@ class ConversationPiiActionContent(_Model):
     :vartype exclude_pii_categories: list[str or
      ~azure.ai.language.conversations.models.ConversationPiiCategoryExclusions]
     :ivar redaction_policy: Optional parameter determine what type of redaction to use.
-    :vartype redaction_policy: ~azure.ai.language.conversations.models.BaseRedactionPolicy
+    :vartype redaction_policy: ~azure.ai.language.conversations.models._models.BaseRedactionPolicy
     """
 
     logging_opt_out: Optional[bool] = rest_field(
@@ -1850,7 +1850,7 @@ class ConversationPiiActionContent(_Model):
         name="modelVersion", visibility=["read", "create", "update", "delete", "query"]
     )
     """model version."""
-    pii_categories: Optional[List[Union[str, "_models.ConversationPiiCategories"]]] = rest_field(
+    pii_categories: Optional[List[Union[str, "_models._enums.ConversationPiiCategories"]]] = rest_field(
         name="piiCategories", visibility=["read", "create", "update", "delete", "query"]
     )
     """Array of ConversationPIICategories."""
@@ -1859,25 +1859,25 @@ class ConversationPiiActionContent(_Model):
     )
     """Flag to indicate if response should include audio stream offset and duration for any detected
      entities to be redacted. By default, audio timing of redacted entities are not included."""
-    redaction_source: Optional[Union[str, "_models.TranscriptContentType"]] = rest_field(
+    redaction_source: Optional[Union[str, "_models._enums.TranscriptContentType"]] = rest_field(
         name="redactionSource", visibility=["read", "create", "update", "delete", "query"]
     )
     """For transcript conversations, this parameter provides information regarding which content type
      (ITN, Text, Lexical, Masked ITN) should be used for entity detection. The details of the
      entities detected - like the offset, length and the text itself - will correspond to the text
      type selected here. Known values are: \"lexical\", \"itn\", \"maskedItn\", and \"text\"."""
-    redaction_character: Optional[Union[str, "_models.RedactionCharacter"]] = rest_field(
+    redaction_character: Optional[Union[str, "_models._enums.RedactionCharacter"]] = rest_field(
         name="redactionCharacter", visibility=["read", "create", "update", "delete", "query"]
     )
     """Optional parameter to use a Custom Character to be used for redaction in PII responses. Default
      character will be * as before. We allow specific ascii characters for redaction. Known values
      are: \"!\", \"#\", \"$\", \"%\", \"&\", \"*\", \"+\", \"-\", \"=\", \"?\", \"@\", \"^\", \"_\",
      and \"~\"."""
-    exclude_pii_categories: Optional[List[Union[str, "_models.ConversationPiiCategoryExclusions"]]] = rest_field(
+    exclude_pii_categories: Optional[List[Union[str, "_models._enums.ConversationPiiCategoryExclusions"]]] = rest_field(
         name="excludePiiCategories", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of categories that need to be excluded instead of included."""
-    redaction_policy: Optional["_models.BaseRedactionPolicy"] = rest_field(
+    redaction_policy: Optional["_models._models.BaseRedactionPolicy"] = rest_field(
         name="redactionPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
     """Optional parameter determine what type of redaction to use."""
@@ -1888,12 +1888,12 @@ class ConversationPiiActionContent(_Model):
         *,
         logging_opt_out: Optional[bool] = None,
         model_version: Optional[str] = None,
-        pii_categories: Optional[List[Union[str, "_models.ConversationPiiCategories"]]] = None,
+        pii_categories: Optional[List[Union[str, "_models._enums.ConversationPiiCategories"]]] = None,
         redact_audio_timing: Optional[bool] = None,
-        redaction_source: Optional[Union[str, "_models.TranscriptContentType"]] = None,
-        redaction_character: Optional[Union[str, "_models.RedactionCharacter"]] = None,
-        exclude_pii_categories: Optional[List[Union[str, "_models.ConversationPiiCategoryExclusions"]]] = None,
-        redaction_policy: Optional["_models.BaseRedactionPolicy"] = None,
+        redaction_source: Optional[Union[str, "_models._enums.TranscriptContentType"]] = None,
+        redaction_character: Optional[Union[str, "_models._enums.RedactionCharacter"]] = None,
+        exclude_pii_categories: Optional[List[Union[str, "_models._enums.ConversationPiiCategoryExclusions"]]] = None,
+        redaction_policy: Optional["_models._models.BaseRedactionPolicy"] = None,
     ) -> None: ...
 
     @overload
@@ -2625,12 +2625,12 @@ class CustomSummarizationOperationAction(
      ~azure.ai.language.conversations.models.CUSTOM_CONVERSATIONAL_SUMMARIZATION_TASK
     :ivar action_content: parameters.
     :vartype action_content:
-     ~azure.ai.language.conversations.models.CustomConversationSummarizationActionContent
+     ~azure.ai.language.conversations.models._models.CustomConversationSummarizationActionContent
     """
 
     kind: Literal[AnalyzeConversationOperationActionKind.CUSTOM_CONVERSATIONAL_SUMMARIZATION_TASK] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """discriminator kind. Required. Custom Conversational Summarization Task"""
-    action_content: Optional["_models.CustomConversationSummarizationActionContent"] = rest_field(
+    action_content: Optional["_models._models.CustomConversationSummarizationActionContent"] = rest_field(
         name="parameters", visibility=["read", "create", "update", "delete", "query"]
     )
     """parameters."""
@@ -2640,7 +2640,7 @@ class CustomSummarizationOperationAction(
         self,
         *,
         name: Optional[str] = None,
-        action_content: Optional["_models.CustomConversationSummarizationActionContent"] = None,
+        action_content: Optional["_models._models.CustomConversationSummarizationActionContent"] = None,
     ) -> None: ...
 
     @overload
@@ -4026,12 +4026,13 @@ class PiiOperationAction(AnalyzeConversationOperationAction, discriminator="Conv
     :ivar kind: discriminator kind. Required. Conversational PII Task
     :vartype kind: str or ~azure.ai.language.conversations.models.CONVERSATIONAL_PII_TASK
     :ivar action_content: parameters.
-    :vartype action_content: ~azure.ai.language.conversations.models.ConversationPiiActionContent
+    :vartype action_content:
+     ~azure.ai.language.conversations.models._models.ConversationPiiActionContent
     """
 
     kind: Literal[AnalyzeConversationOperationActionKind.CONVERSATIONAL_PII_TASK] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """discriminator kind. Required. Conversational PII Task"""
-    action_content: Optional["_models.ConversationPiiActionContent"] = rest_field(
+    action_content: Optional["_models._models.ConversationPiiActionContent"] = rest_field(
         name="parameters", visibility=["read", "create", "update", "delete", "query"]
     )
     """parameters."""
@@ -4041,7 +4042,7 @@ class PiiOperationAction(AnalyzeConversationOperationAction, discriminator="Conv
         self,
         *,
         name: Optional[str] = None,
-        action_content: Optional["_models.ConversationPiiActionContent"] = None,
+        action_content: Optional["_models._models.ConversationPiiActionContent"] = None,
     ) -> None: ...
 
     @overload
@@ -4517,12 +4518,12 @@ class SummarizationOperationAction(AnalyzeConversationOperationAction, discrimin
     :vartype kind: str or ~azure.ai.language.conversations.models.CONVERSATIONAL_SUMMARIZATION_TASK
     :ivar action_content: parameters.
     :vartype action_content:
-     ~azure.ai.language.conversations.models.ConversationSummarizationActionContent
+     ~azure.ai.language.conversations.models._models.ConversationSummarizationActionContent
     """
 
     kind: Literal[AnalyzeConversationOperationActionKind.CONVERSATIONAL_SUMMARIZATION_TASK] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """discriminator kind. Required. Conversational Summarization Task"""
-    action_content: Optional["_models.ConversationSummarizationActionContent"] = rest_field(
+    action_content: Optional["_models._models.ConversationSummarizationActionContent"] = rest_field(
         name="parameters", visibility=["read", "create", "update", "delete", "query"]
     )
     """parameters."""
@@ -4532,7 +4533,7 @@ class SummarizationOperationAction(AnalyzeConversationOperationAction, discrimin
         self,
         *,
         name: Optional[str] = None,
-        action_content: Optional["_models.ConversationSummarizationActionContent"] = None,
+        action_content: Optional["_models._models.ConversationSummarizationActionContent"] = None,
     ) -> None: ...
 
     @overload
@@ -4918,12 +4919,12 @@ class TranscriptConversation(ConversationInput, discriminator="transcript"):
     :ivar conversation_items: Ordered list of transcript conversation items in the conversation.
      Required.
     :vartype conversation_items:
-     list[~azure.ai.language.conversations.models.TranscriptConversationItem]
+     list[~azure.ai.language.conversations.models._models.TranscriptConversationItem]
     """
 
     modality: Literal[InputModality.TRANSCRIPT] = rest_discriminator(name="modality", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """modality discriminator. Required. Transcript input modality"""
-    conversation_items: List["_models.TranscriptConversationItem"] = rest_field(
+    conversation_items: List["_models._models.TranscriptConversationItem"] = rest_field(
         name="conversationItems", visibility=["read", "create", "update", "delete", "query"]
     )
     """Ordered list of transcript conversation items in the conversation. Required."""
@@ -4934,7 +4935,7 @@ class TranscriptConversation(ConversationInput, discriminator="transcript"):
         *,
         id: str,  # pylint: disable=redefined-builtin
         language: str,
-        conversation_items: List["_models.TranscriptConversationItem"],
+        conversation_items: List["_models._models.TranscriptConversationItem"],
         domain: Optional[Union[str, "_models.ConversationDomain"]] = None,
     ) -> None: ...
 
@@ -4977,11 +4978,12 @@ class TranscriptConversationItem(_Model):
      words recognized. Required.
     :vartype lexical: str
     :ivar word_level_timings: List of word-level audio timing information.
-    :vartype word_level_timings: list[~azure.ai.language.conversations.models.WordLevelTiming]
+    :vartype word_level_timings:
+     list[~azure.ai.language.conversations.models._models.WordLevelTiming]
     :ivar conversation_item_level_timing: Audio timing at the conversation item level. This still
      can help with AI quality if word-level audio timings are not available.
     :vartype conversation_item_level_timing:
-     ~azure.ai.language.conversations.models.ConversationItemLevelTiming
+     ~azure.ai.language.conversations.models._models.ConversationItemLevelTiming
     """
 
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -5013,11 +5015,11 @@ class TranscriptConversationItem(_Model):
     lexical: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Lexical form of the recognized text from the speech-to-text API, with the actual words
      recognized. Required."""
-    word_level_timings: Optional[List["_models.WordLevelTiming"]] = rest_field(
+    word_level_timings: Optional[List["_models._models.WordLevelTiming"]] = rest_field(
         name="wordLevelTimings", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of word-level audio timing information."""
-    conversation_item_level_timing: Optional["_models.ConversationItemLevelTiming"] = rest_field(
+    conversation_item_level_timing: Optional["_models._models.ConversationItemLevelTiming"] = rest_field(
         name="conversationItemLevelTiming", visibility=["read", "create", "update", "delete", "query"]
     )
     """Audio timing at the conversation item level. This still can help with AI quality if word-level
@@ -5036,8 +5038,8 @@ class TranscriptConversationItem(_Model):
         language: Optional[str] = None,
         modality: Optional[Union[str, "_models.InputModality"]] = None,
         role: Optional[Union[str, "_models.ParticipantRole"]] = None,
-        word_level_timings: Optional[List["_models.WordLevelTiming"]] = None,
-        conversation_item_level_timing: Optional["_models.ConversationItemLevelTiming"] = None,
+        word_level_timings: Optional[List["_models._models.WordLevelTiming"]] = None,
+        conversation_item_level_timing: Optional["_models._models.ConversationItemLevelTiming"] = None,
     ) -> None: ...
 
     @overload
