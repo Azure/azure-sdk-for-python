@@ -25,18 +25,6 @@ class TestPlanetaryComputerIngestionsOperations(PlanetaryComputerClientTestBase)
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_ingestions_get(self, planetarycomputer_endpoint):
-        client = self.create_client(endpoint=planetarycomputer_endpoint)
-        response = client.ingestions.get(
-            collection_id="str",
-            ingestion_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @PlanetaryComputerPreparer()
-    @recorded_by_proxy
     def test_ingestions_create(self, planetarycomputer_endpoint):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
         response = client.ingestions.create(
@@ -51,6 +39,18 @@ class TestPlanetaryComputerIngestionsOperations(PlanetaryComputerClientTestBase)
                 "skipExistingItems": bool,
                 "sourceCatalogUrl": "str",
             },
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy
+    def test_ingestions_get(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.ingestions.get(
+            collection_id="str",
+            ingestion_id="str",
         )
 
         # please add some check logic here by yourself
@@ -104,12 +104,11 @@ class TestPlanetaryComputerIngestionsOperations(PlanetaryComputerClientTestBase)
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_ingestions_ingestion_runs_get(self, planetarycomputer_endpoint):
+    def test_ingestions_ingestion_runs_create(self, planetarycomputer_endpoint):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        response = client.ingestions.ingestion_runs.get(
+        response = client.ingestions.ingestion_runs.create(
             collection_id="str",
             ingestion_id="str",
-            run_id="str",
         )
 
         # please add some check logic here by yourself
@@ -117,11 +116,12 @@ class TestPlanetaryComputerIngestionsOperations(PlanetaryComputerClientTestBase)
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_ingestions_ingestion_runs_create(self, planetarycomputer_endpoint):
+    def test_ingestions_ingestion_runs_get(self, planetarycomputer_endpoint):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        response = client.ingestions.ingestion_runs.create(
+        response = client.ingestions.ingestion_runs.get(
             collection_id="str",
             ingestion_id="str",
+            run_id="str",
         )
 
         # please add some check logic here by yourself

@@ -491,7 +491,7 @@ class FilterLang(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class GeometryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of GeometryType."""
+    """Represents the type of a GeoJSON geometry."""
 
     POINT = "Point"
     """Represents a Point geometry."""

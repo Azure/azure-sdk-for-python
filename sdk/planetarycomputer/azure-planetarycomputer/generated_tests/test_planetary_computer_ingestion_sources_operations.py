@@ -23,17 +23,6 @@ class TestPlanetaryComputerIngestionSourcesOperations(PlanetaryComputerClientTes
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_ingestion_sources_get(self, planetarycomputer_endpoint):
-        client = self.create_client(endpoint=planetarycomputer_endpoint)
-        response = client.ingestion_sources.get(
-            id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @PlanetaryComputerPreparer()
-    @recorded_by_proxy
     def test_ingestion_sources_create(self, planetarycomputer_endpoint):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
         response = client.ingestion_sources.create(
@@ -43,6 +32,17 @@ class TestPlanetaryComputerIngestionSourcesOperations(PlanetaryComputerClientTes
                 "id": "str",
                 "kind": "BlobManagedIdentity",
             },
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy
+    def test_ingestion_sources_get(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.ingestion_sources.get(
+            id="str",
         )
 
         # please add some check logic here by yourself

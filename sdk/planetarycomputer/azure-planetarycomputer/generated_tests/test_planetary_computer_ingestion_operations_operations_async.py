@@ -35,20 +35,20 @@ class TestPlanetaryComputerIngestionOperationsOperationsAsync(PlanetaryComputerC
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_ingestion_operations_delete(self, planetarycomputer_endpoint):
+    async def test_ingestion_operations_delete_all(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.ingestion_operations.delete(
-            operation_id="str",
-        )
+        response = await client.ingestion_operations.delete_all()
 
         # please add some check logic here by yourself
         # ...
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_ingestion_operations_delete_all(self, planetarycomputer_endpoint):
+    async def test_ingestion_operations_delete(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.ingestion_operations.delete_all()
+        response = await client.ingestion_operations.delete(
+            operation_id="str",
+        )
 
         # please add some check logic here by yourself
         # ...

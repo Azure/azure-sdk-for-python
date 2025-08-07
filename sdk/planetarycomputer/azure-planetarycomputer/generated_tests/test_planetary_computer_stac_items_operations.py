@@ -25,18 +25,6 @@ class TestPlanetaryComputerStacItemsOperations(PlanetaryComputerClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_stac_items_get(self, planetarycomputer_endpoint):
-        client = self.create_client(endpoint=planetarycomputer_endpoint)
-        response = client.stac_items.get(
-            collection_id="str",
-            item_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @PlanetaryComputerPreparer()
-    @recorded_by_proxy
     def test_stac_items_begin_create(self, planetarycomputer_endpoint):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
         response = client.stac_items.begin_create(
@@ -102,6 +90,18 @@ class TestPlanetaryComputerStacItemsOperations(PlanetaryComputerClientTestBase):
                 "stac_version": "str",
             },
         ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy
+    def test_stac_items_get(self, planetarycomputer_endpoint):
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+        response = client.stac_items.get(
+            collection_id="str",
+            item_id="str",
+        )
 
         # please add some check logic here by yourself
         # ...

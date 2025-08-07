@@ -24,17 +24,6 @@ class TestPlanetaryComputerIngestionSourcesOperationsAsync(PlanetaryComputerClie
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_ingestion_sources_get(self, planetarycomputer_endpoint):
-        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.ingestion_sources.get(
-            id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @PlanetaryComputerPreparer()
-    @recorded_by_proxy_async
     async def test_ingestion_sources_create(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
         response = await client.ingestion_sources.create(
@@ -44,6 +33,17 @@ class TestPlanetaryComputerIngestionSourcesOperationsAsync(PlanetaryComputerClie
                 "id": "str",
                 "kind": "BlobManagedIdentity",
             },
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_ingestion_sources_get(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.ingestion_sources.get(
+            id="str",
         )
 
         # please add some check logic here by yourself

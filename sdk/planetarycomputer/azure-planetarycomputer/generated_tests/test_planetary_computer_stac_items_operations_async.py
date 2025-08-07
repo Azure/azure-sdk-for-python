@@ -26,18 +26,6 @@ class TestPlanetaryComputerStacItemsOperationsAsync(PlanetaryComputerClientTestB
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_stac_items_get(self, planetarycomputer_endpoint):
-        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.stac_items.get(
-            collection_id="str",
-            item_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @PlanetaryComputerPreparer()
-    @recorded_by_proxy_async
     async def test_stac_items_begin_create(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
         response = await (
@@ -105,6 +93,18 @@ class TestPlanetaryComputerStacItemsOperationsAsync(PlanetaryComputerClientTestB
                 },
             )
         ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_stac_items_get(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.stac_items.get(
+            collection_id="str",
+            item_id="str",
+        )
 
         # please add some check logic here by yourself
         # ...

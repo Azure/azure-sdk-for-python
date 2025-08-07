@@ -16,17 +16,21 @@ from ._operations import IngestionsOperations  # type: ignore
 from ._operations import StacItemsOperations  # type: ignore
 from ._operations import IngestionSourcesOperations  # type: ignore
 from ._operations import IngestionOperationsOperations  # type: ignore
+from ._operations import StacLandingPagesOperations  # type: ignore
+from ._operations import StacCollectionOperationsOperations  # type: ignore
+from ._operations import StacQueryablesOperations  # type: ignore
+from ._operations import StacConformanceClassOperations  # type: ignore
+from ._operations import StacSearchOperationsOperations  # type: ignore
 from ._operations import StacCollectionAssetsOperations  # type: ignore
-from ._operations import StacCollectionThumbnailsOperations  # type: ignore
 from ._operations import StacCollectionConfigOperations  # type: ignore
 from ._operations import StacCollectionMosaicsOperations  # type: ignore
+from ._operations import StacCollectionPartitionTypesOperations  # type: ignore
 from ._operations import StacCollectionRenderOptionsOperations  # type: ignore
 from ._operations import StacCollectionTileSettingsOperations  # type: ignore
-from ._operations import StacCollectionPartitionTypesOperations  # type: ignore
-from ._operations import StacQueryablesOperations  # type: ignore
-from ._operations import GeoCatalogAzmapsTokenOperations  # type: ignore
-from ._operations import GeoCatalogAzmapsClientOperations  # type: ignore
+from ._operations import StacCollectionThumbnailsOperations  # type: ignore
 from ._operations import GeoCatalogAuthConfigOperationsOperations  # type: ignore
+from ._operations import GeoCatalogAzmapsClientOperations  # type: ignore
+from ._operations import GeoCatalogAzmapsTokenOperations  # type: ignore
 from ._operations import TilerStaticImagesOperations  # type: ignore
 from ._operations import TilerBoundOperations  # type: ignore
 from ._operations import TilerInfoOperationsOperations  # type: ignore
@@ -45,9 +49,9 @@ from ._operations import TilerPointsOperations  # type: ignore
 from ._operations import TilerPreviewsOperations  # type: ignore
 from ._operations import TilerPartsOperations  # type: ignore
 from ._operations import TilerGeoJsonsOperations  # type: ignore
-from ._operations import MapsIntervalLegendsOperations  # type: ignore
 from ._operations import MapsClassmapLegendsOperations  # type: ignore
 from ._operations import MapsLegendsOperations  # type: ignore
+from ._operations import MapsIntervalLegendsOperations  # type: ignore
 from ._operations import MosaicsTilesOperations  # type: ignore
 from ._operations import MosaicsTileMatrixSetsOperations  # type: ignore
 from ._operations import MosaicsTileJsonOperationsOperations  # type: ignore
@@ -62,10 +66,6 @@ from ._operations import MosaicsAssetsForPointsOperations  # type: ignore
 from ._operations import TileMatrixListOperations  # type: ignore
 from ._operations import TileMatrixDefinitionsOperations  # type: ignore
 from ._operations import SasOperations  # type: ignore
-from ._operations import StacCollectionOperationsOperations  # type: ignore
-from ._operations import StacSearchOperationsOperations  # type: ignore
-from ._operations import StacLandingPagesOperations  # type: ignore
-from ._operations import StacConformanceClassOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -76,17 +76,21 @@ __all__ = [
     "StacItemsOperations",
     "IngestionSourcesOperations",
     "IngestionOperationsOperations",
+    "StacLandingPagesOperations",
+    "StacCollectionOperationsOperations",
+    "StacQueryablesOperations",
+    "StacConformanceClassOperations",
+    "StacSearchOperationsOperations",
     "StacCollectionAssetsOperations",
-    "StacCollectionThumbnailsOperations",
     "StacCollectionConfigOperations",
     "StacCollectionMosaicsOperations",
+    "StacCollectionPartitionTypesOperations",
     "StacCollectionRenderOptionsOperations",
     "StacCollectionTileSettingsOperations",
-    "StacCollectionPartitionTypesOperations",
-    "StacQueryablesOperations",
-    "GeoCatalogAzmapsTokenOperations",
-    "GeoCatalogAzmapsClientOperations",
+    "StacCollectionThumbnailsOperations",
     "GeoCatalogAuthConfigOperationsOperations",
+    "GeoCatalogAzmapsClientOperations",
+    "GeoCatalogAzmapsTokenOperations",
     "TilerStaticImagesOperations",
     "TilerBoundOperations",
     "TilerInfoOperationsOperations",
@@ -105,9 +109,9 @@ __all__ = [
     "TilerPreviewsOperations",
     "TilerPartsOperations",
     "TilerGeoJsonsOperations",
-    "MapsIntervalLegendsOperations",
     "MapsClassmapLegendsOperations",
     "MapsLegendsOperations",
+    "MapsIntervalLegendsOperations",
     "MosaicsTilesOperations",
     "MosaicsTileMatrixSetsOperations",
     "MosaicsTileJsonOperationsOperations",
@@ -122,10 +126,6 @@ __all__ = [
     "TileMatrixListOperations",
     "TileMatrixDefinitionsOperations",
     "SasOperations",
-    "StacCollectionOperationsOperations",
-    "StacSearchOperationsOperations",
-    "StacLandingPagesOperations",
-    "StacConformanceClassOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

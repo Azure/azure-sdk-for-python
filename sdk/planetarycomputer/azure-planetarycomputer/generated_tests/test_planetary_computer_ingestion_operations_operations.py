@@ -34,20 +34,20 @@ class TestPlanetaryComputerIngestionOperationsOperations(PlanetaryComputerClient
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_ingestion_operations_delete(self, planetarycomputer_endpoint):
+    def test_ingestion_operations_delete_all(self, planetarycomputer_endpoint):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        response = client.ingestion_operations.delete(
-            operation_id="str",
-        )
+        response = client.ingestion_operations.delete_all()
 
         # please add some check logic here by yourself
         # ...
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_ingestion_operations_delete_all(self, planetarycomputer_endpoint):
+    def test_ingestion_operations_delete(self, planetarycomputer_endpoint):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        response = client.ingestion_operations.delete_all()
+        response = client.ingestion_operations.delete(
+            operation_id="str",
+        )
 
         # please add some check logic here by yourself
         # ...

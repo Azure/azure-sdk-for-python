@@ -883,17 +883,17 @@ class Geometry(_Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     LineString, MultiLineString, MultiPoint, MultiPolygon, Point, Polygon
 
-    :ivar type: The type of the geometry. Required. Known values are: "Point", "LineString",
-     "Polygon", "MultiPoint", "MultiLineString", and "MultiPolygon".
+    :ivar type: Discriminator property for Geometry. Required. Known values are: "Point",
+     "LineString", "Polygon", "MultiPoint", "MultiLineString", and "MultiPolygon".
     :vartype type: str or ~azure.planetarycomputer.models.GeometryType
     :ivar bbox: Optional bounding box of the geometry.
     :vartype bbox: list[float]
     """
 
     __mapping__: Dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """The type of the geometry. Required. Known values are: \"Point\", \"LineString\", \"Polygon\",
-     \"MultiPoint\", \"MultiLineString\", and \"MultiPolygon\"."""
+    type: str = rest_discriminator(name="type")
+    """Discriminator property for Geometry. Required. Known values are: \"Point\", \"LineString\",
+     \"Polygon\", \"MultiPoint\", \"MultiLineString\", and \"MultiPolygon\"."""
     bbox: Optional[List[float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional bounding box of the geometry."""
 
@@ -1432,8 +1432,8 @@ class StacItemOrItemCollection(_Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     StacItem, ItemCollection
 
-    :ivar type: The type discriminator for STAC resources. Required. Known values are: "Feature"
-     and "FeatureCollection".
+    :ivar type: Discriminator property for StacItemOrItemCollection. Required. Known values are:
+     "Feature" and "FeatureCollection".
     :vartype type: str or ~azure.planetarycomputer.models.StacModelType
     :ivar stac_version: Stac Version.
     :vartype stac_version: str
@@ -1450,9 +1450,9 @@ class StacItemOrItemCollection(_Model):
     """
 
     __mapping__: Dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """The type discriminator for STAC resources. Required. Known values are: \"Feature\" and
-     \"FeatureCollection\"."""
+    type: str = rest_discriminator(name="type")
+    """Discriminator property for StacItemOrItemCollection. Required. Known values are: \"Feature\"
+     and \"FeatureCollection\"."""
     stac_version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Stac Version."""
     links: Optional[List["_models.Link"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1756,12 +1756,12 @@ class LandingPage(_Model):
 class LineString(Geometry, discriminator="LineString"):
     """Represents a LineString.
 
+    :ivar bbox: Optional bounding box of the geometry.
+    :vartype bbox: list[float]
     :ivar type: The type of the linestring. Required. Represents a LineString geometry.
     :vartype type: str or ~azure.planetarycomputer.models.LINE_STRING
     :ivar coordinates: The coordinates of the linestring. Required.
     :vartype coordinates: list[float]
-    :ivar bbox: The bounding box of the linestring.
-    :vartype bbox: list[float]
     """
 
     type: Literal[GeometryType.LINE_STRING] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -2185,12 +2185,12 @@ class MosaicInfo(_Model):
 class MultiLineString(Geometry, discriminator="MultiLineString"):
     """Represents a MultiLineString.
 
+    :ivar bbox: Optional bounding box of the geometry.
+    :vartype bbox: list[float]
     :ivar type: The type of the multilinestring. Required. Represents a MultiLineString geometry.
     :vartype type: str or ~azure.planetarycomputer.models.MULTI_LINE_STRING
     :ivar coordinates: The coordinates of the multilinestring. Required.
     :vartype coordinates: list[list[float]]
-    :ivar bbox: The bounding box of the multilinestring.
-    :vartype bbox: list[float]
     """
 
     type: Literal[GeometryType.MULTI_LINE_STRING] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -2220,12 +2220,12 @@ class MultiLineString(Geometry, discriminator="MultiLineString"):
 class MultiPoint(Geometry, discriminator="MultiPoint"):
     """Represents a MultiPoint.
 
+    :ivar bbox: Optional bounding box of the geometry.
+    :vartype bbox: list[float]
     :ivar type: The type of the multipoint. Required. Represents a MultiPoint geometry.
     :vartype type: str or ~azure.planetarycomputer.models.MULTI_POINT
     :ivar coordinates: The coordinates of the multipoint. Required.
     :vartype coordinates: list[float]
-    :ivar bbox: The bounding box of the multipoint.
-    :vartype bbox: list[float]
     """
 
     type: Literal[GeometryType.MULTI_POINT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -2255,12 +2255,12 @@ class MultiPoint(Geometry, discriminator="MultiPoint"):
 class MultiPolygon(Geometry, discriminator="MultiPolygon"):
     """Represents a MultiPolygon.
 
+    :ivar bbox: Optional bounding box of the geometry.
+    :vartype bbox: list[float]
     :ivar coordinates: The coordinates of the multipolygon. Required.
     :vartype coordinates: list[list[list[float]]]
     :ivar type: The type of the multipolygon. Required. Represents a MultiPolygon geometry.
     :vartype type: str or ~azure.planetarycomputer.models.MULTI_POLYGON
-    :ivar bbox: The bounding box of the multipolygon.
-    :vartype bbox: list[float]
     """
 
     coordinates: List[List[List[float]]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -2561,13 +2561,13 @@ class PgStacSearch(_Model):
 class Point(Geometry, discriminator="Point"):
     """Represents a GeoJSON Point geometry.
 
+    :ivar bbox: Optional bounding box of the geometry.
+    :vartype bbox: list[float]
     :ivar type: The geometry type, always "Point" for Point geometries. Required. Represents a
      Point geometry.
     :vartype type: str or ~azure.planetarycomputer.models.POINT
     :ivar coordinates: The coordinates of the point as [longitude, latitude]. Required.
     :vartype coordinates: str
-    :ivar bbox: Optional bounding box of the geometry.
-    :vartype bbox: list[float]
     """
 
     type: Literal[GeometryType.POINT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -2598,12 +2598,12 @@ class Point(Geometry, discriminator="Point"):
 class Polygon(Geometry, discriminator="Polygon"):
     """Represents a Polygon.
 
+    :ivar bbox: Optional bounding box of the geometry.
+    :vartype bbox: list[float]
     :ivar coordinates: The coordinates of the polygon. Required.
     :vartype coordinates: list[list[list[float]]]
     :ivar type: The type of the polygon. Required. Represents a Polygon geometry.
     :vartype type: str or ~azure.planetarycomputer.models.POLYGON
-    :ivar bbox: The bounding box of the polygon.
-    :vartype bbox: list[float]
     """
 
     coordinates: List[List[List[float]]] = rest_field(visibility=["read", "create", "update", "delete", "query"])

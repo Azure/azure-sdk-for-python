@@ -26,18 +26,6 @@ class TestPlanetaryComputerIngestionsOperationsAsync(PlanetaryComputerClientTest
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_ingestions_get(self, planetarycomputer_endpoint):
-        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.ingestions.get(
-            collection_id="str",
-            ingestion_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @PlanetaryComputerPreparer()
-    @recorded_by_proxy_async
     async def test_ingestions_create(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
         response = await client.ingestions.create(
@@ -52,6 +40,18 @@ class TestPlanetaryComputerIngestionsOperationsAsync(PlanetaryComputerClientTest
                 "skipExistingItems": bool,
                 "sourceCatalogUrl": "str",
             },
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy_async
+    async def test_ingestions_get(self, planetarycomputer_endpoint):
+        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
+        response = await client.ingestions.get(
+            collection_id="str",
+            ingestion_id="str",
         )
 
         # please add some check logic here by yourself
@@ -107,12 +107,11 @@ class TestPlanetaryComputerIngestionsOperationsAsync(PlanetaryComputerClientTest
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_ingestions_ingestion_runs_get(self, planetarycomputer_endpoint):
+    async def test_ingestions_ingestion_runs_create(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.ingestions.ingestion_runs.get(
+        response = await client.ingestions.ingestion_runs.create(
             collection_id="str",
             ingestion_id="str",
-            run_id="str",
         )
 
         # please add some check logic here by yourself
@@ -120,11 +119,12 @@ class TestPlanetaryComputerIngestionsOperationsAsync(PlanetaryComputerClientTest
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_ingestions_ingestion_runs_create(self, planetarycomputer_endpoint):
+    async def test_ingestions_ingestion_runs_get(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.ingestions.ingestion_runs.create(
+        response = await client.ingestions.ingestion_runs.get(
             collection_id="str",
             ingestion_id="str",
+            run_id="str",
         )
 
         # please add some check logic here by yourself

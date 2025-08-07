@@ -236,69 +236,6 @@ class IngestionsOperations:
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def get(self, collection_id: str, ingestion_id: str, **kwargs: Any) -> _models.IngestionDefinition:
-        """Get the definition of an ingestion.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param ingestion_id: Ingestion id. Required.
-        :type ingestion_id: str
-        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.IngestionDefinition] = kwargs.pop("cls", None)
-
-        _request = build_ingestions_get_request(
-            collection_id=collection_id,
-            ingestion_id=ingestion_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.IngestionDefinition, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
     @overload
     async def create(
         self,
@@ -433,6 +370,69 @@ class IngestionsOperations:
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get(self, collection_id: str, ingestion_id: str, **kwargs: Any) -> _models.IngestionDefinition:
+        """Get the definition of an ingestion.
+
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :param ingestion_id: Ingestion id. Required.
+        :type ingestion_id: str
+        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.IngestionDefinition] = kwargs.pop("cls", None)
+
+        _request = build_ingestions_get_request(
+            collection_id=collection_id,
+            ingestion_id=ingestion_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.IngestionDefinition, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
@@ -859,69 +859,6 @@ class StacItemsOperations:
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def get(self, collection_id: str, item_id: str, **kwargs: Any) -> _models.StacItem:
-        """Fetch a single STAC Item.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param item_id: STAC Item id. Required.
-        :type item_id: str
-        :return: StacItem. The StacItem is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.StacItem
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.StacItem] = kwargs.pop("cls", None)
-
-        _request = build_stac_items_get_request(
-            collection_id=collection_id,
-            item_id=item_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.StacItem, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
     async def _create_initial(
         self, collection_id: str, body: Union[_models.StacItemOrItemCollection, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -1152,6 +1089,69 @@ class StacItemsOperations:
                 deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace_async
+    async def get(self, collection_id: str, item_id: str, **kwargs: Any) -> _models.StacItem:
+        """Fetch a single STAC Item.
+
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :param item_id: STAC Item id. Required.
+        :type item_id: str
+        :return: StacItem. The StacItem is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacItem
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.StacItem] = kwargs.pop("cls", None)
+
+        _request = build_stac_items_get_request(
+            collection_id=collection_id,
+            item_id=item_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.StacItem, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     async def _create_or_replace_initial(
         self, collection_id: str, item_id: str, body: Union[_models.StacItem, JSON, IO[bytes]], **kwargs: Any
@@ -1752,66 +1752,6 @@ class IngestionSourcesOperations:
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def get(self, id: str, **kwargs: Any) -> _models.IngestionSource:
-        """Get an ingestion source in a geo-catalog.
-
-        :param id: Ingestion source id. Required.
-        :type id: str
-        :return: IngestionSource. The IngestionSource is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.IngestionSource
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.IngestionSource] = kwargs.pop("cls", None)
-
-        _request = build_ingestion_sources_get_request(
-            id=id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.IngestionSource, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
     @overload
     async def create(
         self, ingestion_source: _models.IngestionSource, *, content_type: str = "application/json", **kwargs: Any
@@ -1932,6 +1872,66 @@ class IngestionSourcesOperations:
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get(self, id: str, **kwargs: Any) -> _models.IngestionSource:
+        """Get an ingestion source in a geo-catalog.
+
+        :param id: Ingestion source id. Required.
+        :type id: str
+        :return: IngestionSource. The IngestionSource is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.IngestionSource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.IngestionSource] = kwargs.pop("cls", None)
+
+        _request = build_ingestion_sources_get_request(
+            id=id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.IngestionSource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
@@ -2335,6 +2335,51 @@ class IngestionOperationsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    async def delete_all(self, **kwargs: Any) -> None:
+        """Cancel all running operations of a geo-catalog collection.
+
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_ingestion_operations_delete_all_request(
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace_async
     async def delete(self, operation_id: str, **kwargs: Any) -> None:
         """Cancel a running operation of a geo-catalog collection.
 
@@ -2382,10 +2427,796 @@ class IngestionOperationsOperations:
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-    @distributed_trace_async
-    async def delete_all(self, **kwargs: Any) -> None:
-        """Cancel all running operations of a geo-catalog collection.
 
+class StacLandingPagesOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
+        :attr:`stac_landing_pages` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    async def get(self, **kwargs: Any) -> _models.LandingPage:
+        """Landing Page.
+
+        Endpoint.
+
+        :return: LandingPage. The LandingPage is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.LandingPage
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.LandingPage] = kwargs.pop("cls", None)
+
+        _request = build_stac_landing_pages_get_request(
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.LandingPage, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class StacCollectionOperationsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
+        :attr:`stac_collection_operations` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    async def get_all(
+        self, *, sign: Optional[Union[str, _models.SignType]] = None, duration: Optional[int] = None, **kwargs: Any
+    ) -> _models.FeatureCollections:
+        """Get Collections.
+
+        Endpoint.
+
+        :keyword sign: Whether to sign asset URLs in the response. Known values are: "true" and
+         "false". Default value is None.
+        :paramtype sign: str or ~azure.planetarycomputer.models.SignType
+        :keyword duration: URL signature duration in seconds. Default value is None.
+        :paramtype duration: int
+        :return: FeatureCollections. The FeatureCollections is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.FeatureCollections
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.FeatureCollections] = kwargs.pop("cls", None)
+
+        _request = build_stac_collection_operations_get_all_request(
+            sign=sign,
+            duration=duration,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.FeatureCollections, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    async def _create_initial(
+        self, body: Union[_models.StacCollection, JSON, IO[bytes]], **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_stac_collection_operations_create_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["location"] = self._deserialize("str", response.headers.get("location"))
+        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create(
+        self, body: _models.StacCollection, *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Create Collection.
+
+        Create a new collection in the GeoCatalog instance.
+
+        :param body: Request collection body. Required.
+        :type body: ~azure.planetarycomputer.models.StacCollection
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Create Collection.
+
+        Create a new collection in the GeoCatalog instance.
+
+        :param body: Request collection body. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Create Collection.
+
+        Create a new collection in the GeoCatalog instance.
+
+        :param body: Request collection body. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_create(
+        self, body: Union[_models.StacCollection, JSON, IO[bytes]], **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Create Collection.
+
+        Create a new collection in the GeoCatalog instance.
+
+        :param body: Request collection body. Is one of the following types: StacCollection, JSON,
+         IO[bytes] Required.
+        :type body: ~azure.planetarycomputer.models.StacCollection or JSON or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_initial(
+                body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace_async
+    async def get(
+        self,
+        collection_id: str,
+        *,
+        sign: Optional[Union[str, _models.SignType]] = None,
+        duration: Optional[int] = None,
+        **kwargs: Any
+    ) -> _models.StacCollection:
+        """Get Collection.
+
+        Get a collection in the GeoCatalog instance.
+
+        :param collection_id: Unique identifier for the collection. Required.
+        :type collection_id: str
+        :keyword sign: Whether to sign asset URLs in the response. Known values are: "true" and
+         "false". Default value is None.
+        :paramtype sign: str or ~azure.planetarycomputer.models.SignType
+        :keyword duration: URL signature duration in seconds. Default value is None.
+        :paramtype duration: int
+        :return: StacCollection. The StacCollection is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacCollection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.StacCollection] = kwargs.pop("cls", None)
+
+        _request = build_stac_collection_operations_get_request(
+            collection_id=collection_id,
+            sign=sign,
+            duration=duration,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.StacCollection, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    async def _create_or_replace_initial(
+        self, collection_id: str, body: Union[_models.StacCollection, JSON, IO[bytes]], **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_stac_collection_operations_create_or_replace_request(
+            collection_id=collection_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["location"] = self._deserialize("str", response.headers.get("location"))
+        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_replace(
+        self, collection_id: str, body: _models.StacCollection, *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Create or update Collection.
+
+        Create or replace a collection in the GeoCatalog instance.
+
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :param body: Request collection body. Required.
+        :type body: ~azure.planetarycomputer.models.StacCollection
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_replace(
+        self, collection_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Create or update Collection.
+
+        Create or replace a collection in the GeoCatalog instance.
+
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :param body: Request collection body. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_replace(
+        self, collection_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Create or update Collection.
+
+        Create or replace a collection in the GeoCatalog instance.
+
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :param body: Request collection body. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_create_or_replace(
+        self, collection_id: str, body: Union[_models.StacCollection, JSON, IO[bytes]], **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Create or update Collection.
+
+        Create or replace a collection in the GeoCatalog instance.
+
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :param body: Request collection body. Is one of the following types: StacCollection, JSON,
+         IO[bytes] Required.
+        :type body: ~azure.planetarycomputer.models.StacCollection or JSON or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_replace_initial(
+                collection_id=collection_id,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    async def _delete_initial(self, collection_id: str, **kwargs: Any) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_stac_collection_operations_delete_request(
+            collection_id=collection_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["location"] = self._deserialize("str", response.headers.get("location"))
+        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def begin_delete(self, collection_id: str, **kwargs: Any) -> AsyncLROPoller[None]:
+        """Delete Collection.
+
+        Delete a collection in the GeoCatalog instance.
+
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                collection_id=collection_id, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+
+class StacQueryablesOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
+        :attr:`stac_queryables` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    async def get_all(self, **kwargs: Any) -> Optional[_models.JsonSchema]:
+        """Queryables.
+
+        Endpoint.
+
+        :return: JsonSchema or None. The JsonSchema is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.JsonSchema or None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Optional[_models.JsonSchema]] = kwargs.pop("cls", None)
+
+        _request = build_stac_queryables_get_all_request(
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        deserialized = None
+        if response.status_code == 200:
+            if _stream:
+                deserialized = response.iter_bytes()
+            else:
+                deserialized = _deserialize(_models.JsonSchema, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def delete(self, collection_id: str, queryable_name: str, **kwargs: Any) -> None:
+        """Delete Queryables.
+
+        Delete queryables by name for specified collection.
+
+        :param collection_id: Unique identifier for the STAC collection. Required.
+        :type collection_id: str
+        :param queryable_name: Name of the queryable property to operate on. Required.
+        :type queryable_name: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2403,7 +3234,9 @@ class IngestionOperationsOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_operations_delete_all_request(
+        _request = build_stac_queryables_delete_request(
+            collection_id=collection_id,
+            queryable_name=queryable_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2420,12 +3253,720 @@ class IngestionOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace_async
+    async def get_all_by_collection(self, collection_id: str, **kwargs: Any) -> Optional[_models.JsonSchema]:
+        """Collection Queryables.
+
+        Endpoint.
+
+        :param collection_id: Collection ID. Required.
+        :type collection_id: str
+        :return: JsonSchema or None. The JsonSchema is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.JsonSchema or None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Optional[_models.JsonSchema]] = kwargs.pop("cls", None)
+
+        _request = build_stac_queryables_get_all_by_collection_request(
+            collection_id=collection_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        deserialized = None
+        if response.status_code == 200:
+            if _stream:
+                deserialized = response.iter_bytes()
+            else:
+                deserialized = _deserialize(_models.JsonSchema, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create(
+        self,
+        collection_id: str,
+        body: List[_models.QueryableDefinition],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> Optional[List[_models.QueryableDefinition]]:
+        """Set Collection Queryables.
+
+        Set queryables for a collection given a list of queryable definitions.
+
+        :param collection_id: Unique identifier for the STAC collection. Required.
+        :type collection_id: str
+        :param body: Request queryable definition body. Required.
+        :type body: list[~azure.planetarycomputer.models.QueryableDefinition]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: list of QueryableDefinition or None
+        :rtype: list[~azure.planetarycomputer.models.QueryableDefinition] or None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create(
+        self, collection_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> Optional[List[_models.QueryableDefinition]]:
+        """Set Collection Queryables.
+
+        Set queryables for a collection given a list of queryable definitions.
+
+        :param collection_id: Unique identifier for the STAC collection. Required.
+        :type collection_id: str
+        :param body: Request queryable definition body. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: list of QueryableDefinition or None
+        :rtype: list[~azure.planetarycomputer.models.QueryableDefinition] or None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create(
+        self, collection_id: str, body: Union[List[_models.QueryableDefinition], IO[bytes]], **kwargs: Any
+    ) -> Optional[List[_models.QueryableDefinition]]:
+        """Set Collection Queryables.
+
+        Set queryables for a collection given a list of queryable definitions.
+
+        :param collection_id: Unique identifier for the STAC collection. Required.
+        :type collection_id: str
+        :param body: Request queryable definition body. Is either a [QueryableDefinition] type or a
+         IO[bytes] type. Required.
+        :type body: list[~azure.planetarycomputer.models.QueryableDefinition] or IO[bytes]
+        :return: list of QueryableDefinition or None
+        :rtype: list[~azure.planetarycomputer.models.QueryableDefinition] or None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[List[_models.QueryableDefinition]]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_stac_queryables_create_request(
+            collection_id=collection_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201, 204]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        deserialized = None
+        if response.status_code == 201:
+            if _stream:
+                deserialized = response.iter_bytes()
+            else:
+                deserialized = _deserialize(List[_models.QueryableDefinition], response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_or_replace(
+        self,
+        collection_id: str,
+        queryable_name: str,
+        body: _models.QueryableDefinition,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.QueryableDefinition:
+        """Update Collection Queryables.
+
+        Updates a queryable given a queryable definition and
+        corresponding collection id.
+
+        :param collection_id: Unique identifier for the STAC collection. Required.
+        :type collection_id: str
+        :param queryable_name: Name of the queryable property to operate on. Required.
+        :type queryable_name: str
+        :param body: Request queryable definition body. Required.
+        :type body: ~azure.planetarycomputer.models.QueryableDefinition
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: QueryableDefinition. The QueryableDefinition is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.QueryableDefinition
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_replace(
+        self,
+        collection_id: str,
+        queryable_name: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.QueryableDefinition:
+        """Update Collection Queryables.
+
+        Updates a queryable given a queryable definition and
+        corresponding collection id.
+
+        :param collection_id: Unique identifier for the STAC collection. Required.
+        :type collection_id: str
+        :param queryable_name: Name of the queryable property to operate on. Required.
+        :type queryable_name: str
+        :param body: Request queryable definition body. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: QueryableDefinition. The QueryableDefinition is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.QueryableDefinition
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_replace(
+        self,
+        collection_id: str,
+        queryable_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.QueryableDefinition:
+        """Update Collection Queryables.
+
+        Updates a queryable given a queryable definition and
+        corresponding collection id.
+
+        :param collection_id: Unique identifier for the STAC collection. Required.
+        :type collection_id: str
+        :param queryable_name: Name of the queryable property to operate on. Required.
+        :type queryable_name: str
+        :param body: Request queryable definition body. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: QueryableDefinition. The QueryableDefinition is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.QueryableDefinition
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_or_replace(
+        self,
+        collection_id: str,
+        queryable_name: str,
+        body: Union[_models.QueryableDefinition, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.QueryableDefinition:
+        """Update Collection Queryables.
+
+        Updates a queryable given a queryable definition and
+        corresponding collection id.
+
+        :param collection_id: Unique identifier for the STAC collection. Required.
+        :type collection_id: str
+        :param queryable_name: Name of the queryable property to operate on. Required.
+        :type queryable_name: str
+        :param body: Request queryable definition body. Is one of the following types:
+         QueryableDefinition, JSON, IO[bytes] Required.
+        :type body: ~azure.planetarycomputer.models.QueryableDefinition or JSON or IO[bytes]
+        :return: QueryableDefinition. The QueryableDefinition is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.QueryableDefinition
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.QueryableDefinition] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_stac_queryables_create_or_replace_request(
+            collection_id=collection_id,
+            queryable_name=queryable_name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.QueryableDefinition, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class StacConformanceClassOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
+        :attr:`stac_conformance_class` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    async def get(self, **kwargs: Any) -> _models.ConformanceClasses:
+        """Conformance Classes.
+
+        Endpoint.
+
+        :return: ConformanceClasses. The ConformanceClasses is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.ConformanceClasses
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ConformanceClasses] = kwargs.pop("cls", None)
+
+        _request = build_stac_conformance_class_get_request(
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ConformanceClasses, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class StacSearchOperationsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
+        :attr:`stac_search_operations` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    async def get(
+        self,
+        *,
+        collections: Optional[List[str]] = None,
+        ids: Optional[List[str]] = None,
+        bbox: Optional[List[float]] = None,
+        intersects: Optional[str] = None,
+        datetime: Optional[str] = None,
+        limit: Optional[int] = None,
+        sign: Optional[Union[str, _models.SignType]] = None,
+        duration: Optional[int] = None,
+        query: Optional[str] = None,
+        sort_by: Optional[str] = None,
+        fields: Optional[str] = None,
+        filter: Optional[str] = None,
+        token: Optional[str] = None,
+        **kwargs: Any
+    ) -> Optional[_models.ItemCollection]:
+        """Search.
+
+        Endpoint.
+
+        :keyword collections: List of Collection IDs to include in the search. Only items in these
+         collections will be searched. Default value is None.
+        :paramtype collections: list[str]
+        :keyword ids: Array of Item IDs to return specific items. Default value is None.
+        :paramtype ids: list[str]
+        :keyword bbox: Bounding box for spatial filtering in format [west, south, east, north]. Default
+         value is None.
+        :paramtype bbox: list[float]
+        :keyword intersects: GeoJSON geometry for spatial filtering. Default value is None.
+        :paramtype intersects: str
+        :keyword datetime: Temporal filter in RFC 3339 format, can be a single time or range. Default
+         value is None.
+        :paramtype datetime: str
+        :keyword limit: Maximum number of results to return. Default value is None.
+        :paramtype limit: int
+        :keyword sign: Whether to sign asset URLs in the response. Known values are: "true" and
+         "false". Default value is None.
+        :paramtype sign: str or ~azure.planetarycomputer.models.SignType
+        :keyword duration: URL signature duration in seconds. Default value is None.
+        :paramtype duration: int
+        :keyword query: Property-based filtering expressed as a JSON object. Default value is None.
+        :paramtype query: str
+        :keyword sort_by: Sort order for items. Format is property name prefixed with "+" for ascending
+         or "-" for descending. Default value is None.
+        :paramtype sort_by: str
+        :keyword fields: Determines which fields to include in the response. Format is comma-separated
+         field names with "-" prefix to exclude fields. Default value is None.
+        :paramtype fields: str
+        :keyword filter: CQL filter expression for advanced filtering of items. Default value is None.
+        :paramtype filter: str
+        :keyword token: Pagination token for fetching the next set of results. Default value is None.
+        :paramtype token: str
+        :return: ItemCollection or None. The ItemCollection is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.ItemCollection or None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Optional[_models.ItemCollection]] = kwargs.pop("cls", None)
+
+        _request = build_stac_search_operations_get_request(
+            collections=collections,
+            ids=ids,
+            bbox=bbox,
+            intersects=intersects,
+            datetime=datetime,
+            limit=limit,
+            sign=sign,
+            duration=duration,
+            query=query,
+            sort_by=sort_by,
+            fields=fields,
+            filter=filter,
+            token=token,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        deserialized = None
+        if response.status_code == 200:
+            if _stream:
+                deserialized = response.iter_bytes()
+            else:
+                deserialized = _deserialize(_models.ItemCollection, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create(
+        self, body: _models.SearchPostRequest, *, content_type: str = "application/json", **kwargs: Any
+    ) -> Optional[_models.ItemCollection]:
+        """Search.
+
+        Endpoint.
+
+        :param body: Request body. Required.
+        :type body: ~azure.planetarycomputer.models.SearchPostRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ItemCollection or None. The ItemCollection is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.ItemCollection or None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> Optional[_models.ItemCollection]:
+        """Search.
+
+        Endpoint.
+
+        :param body: Request body. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ItemCollection or None. The ItemCollection is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.ItemCollection or None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> Optional[_models.ItemCollection]:
+        """Search.
+
+        Endpoint.
+
+        :param body: Request body. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ItemCollection or None. The ItemCollection is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.ItemCollection or None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create(
+        self, body: Union[_models.SearchPostRequest, JSON, IO[bytes]], **kwargs: Any
+    ) -> Optional[_models.ItemCollection]:
+        """Search.
+
+        Endpoint.
+
+        :param body: Request body. Is one of the following types: SearchPostRequest, JSON, IO[bytes]
+         Required.
+        :type body: ~azure.planetarycomputer.models.SearchPostRequest or JSON or IO[bytes]
+        :return: ItemCollection or None. The ItemCollection is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.ItemCollection or None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[_models.ItemCollection]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_stac_search_operations_create_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        deserialized = None
+        if response.status_code == 200:
+            if _stream:
+                deserialized = response.iter_bytes()
+            else:
+                deserialized = _deserialize(_models.ItemCollection, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
 
 class StacCollectionAssetsOperations:
@@ -2788,101 +4329,6 @@ class StacCollectionAssetsOperations:
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
-
-
-class StacCollectionThumbnailsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`stac_collection_thumbnails` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get(self, collection_id: str, **kwargs: Any) -> Optional[AsyncIterator[bytes]]:
-        """Get Collection Thumbnail.
-
-        Get thumbnail for given collection.
-
-        Args:
-        request: The incoming request.
-        collection_id: The ID of the collection to retrieve assets for.
-
-        Returns:
-        thumbnail image.
-
-        :param collection_id: STAC Collection ID. Required.
-        :type collection_id: str
-        :return: AsyncIterator[bytes] or None
-        :rtype: AsyncIterator[bytes] or None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Optional[AsyncIterator[bytes]]] = kwargs.pop("cls", None)
-
-        _request = build_stac_collection_thumbnails_get_request(
-            collection_id=collection_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", True)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = None
-        response_headers = {}
-        if response.status_code == 200:
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-
-            deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
 
 
 class StacCollectionConfigOperations:
@@ -3458,6 +4904,286 @@ class StacCollectionMosaicsOperations:
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
+
+
+class StacCollectionPartitionTypesOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
+        :attr:`stac_collection_partition_types` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    async def get(self, collection_id: str, **kwargs: Any) -> _models.PartitionType:
+        """Get Partitiontype.
+
+        Get the partitiontype for a GeoCatalog Collection.
+
+        Args:
+        collection_id: the collection id to get the partitiontype for.
+
+        Returns:
+        The partitiontype for the collection.
+
+        :param collection_id: Unique identifier for the STAC collection. Required.
+        :type collection_id: str
+        :return: PartitionType. The PartitionType is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.PartitionType
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.PartitionType] = kwargs.pop("cls", None)
+
+        _request = build_stac_collection_partition_types_get_request(
+            collection_id=collection_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.PartitionType, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def replace(
+        self, collection_id: str, body: _models.PartitionType, *, content_type: str = "application/json", **kwargs: Any
+    ) -> Optional[_models.PartitionType]:
+        """Create Partitiontype.
+
+        Updates partition type for a GeoCatalog Collection. This will
+        determine the partitioning scheme for items within the database,
+        and can only be set before any items are loaded.
+
+        Ideal partitioning schemes result in partitions of roughly 100k items each.
+
+        The default partitioning scheme is "none" which does not partition items.
+
+        Args:
+        collection_id: the collection id to add the partitiontype to.
+        partitiontype: the partitiontype to add.
+
+        Returns:
+        None.
+
+        :param collection_id: Unique identifier for the STAC collection. Required.
+        :type collection_id: str
+        :param body: Partition type configuration determining how items are partitioned in storage.
+         Required.
+        :type body: ~azure.planetarycomputer.models.PartitionType
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PartitionType or None. The PartitionType is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.PartitionType or None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def replace(
+        self, collection_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> Optional[_models.PartitionType]:
+        """Create Partitiontype.
+
+        Updates partition type for a GeoCatalog Collection. This will
+        determine the partitioning scheme for items within the database,
+        and can only be set before any items are loaded.
+
+        Ideal partitioning schemes result in partitions of roughly 100k items each.
+
+        The default partitioning scheme is "none" which does not partition items.
+
+        Args:
+        collection_id: the collection id to add the partitiontype to.
+        partitiontype: the partitiontype to add.
+
+        Returns:
+        None.
+
+        :param collection_id: Unique identifier for the STAC collection. Required.
+        :type collection_id: str
+        :param body: Partition type configuration determining how items are partitioned in storage.
+         Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PartitionType or None. The PartitionType is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.PartitionType or None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def replace(
+        self, collection_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> Optional[_models.PartitionType]:
+        """Create Partitiontype.
+
+        Updates partition type for a GeoCatalog Collection. This will
+        determine the partitioning scheme for items within the database,
+        and can only be set before any items are loaded.
+
+        Ideal partitioning schemes result in partitions of roughly 100k items each.
+
+        The default partitioning scheme is "none" which does not partition items.
+
+        Args:
+        collection_id: the collection id to add the partitiontype to.
+        partitiontype: the partitiontype to add.
+
+        Returns:
+        None.
+
+        :param collection_id: Unique identifier for the STAC collection. Required.
+        :type collection_id: str
+        :param body: Partition type configuration determining how items are partitioned in storage.
+         Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PartitionType or None. The PartitionType is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.PartitionType or None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def replace(
+        self, collection_id: str, body: Union[_models.PartitionType, JSON, IO[bytes]], **kwargs: Any
+    ) -> Optional[_models.PartitionType]:
+        """Create Partitiontype.
+
+        Updates partition type for a GeoCatalog Collection. This will
+        determine the partitioning scheme for items within the database,
+        and can only be set before any items are loaded.
+
+        Ideal partitioning schemes result in partitions of roughly 100k items each.
+
+        The default partitioning scheme is "none" which does not partition items.
+
+        Args:
+        collection_id: the collection id to add the partitiontype to.
+        partitiontype: the partitiontype to add.
+
+        Returns:
+        None.
+
+        :param collection_id: Unique identifier for the STAC collection. Required.
+        :type collection_id: str
+        :param body: Partition type configuration determining how items are partitioned in storage. Is
+         one of the following types: PartitionType, JSON, IO[bytes] Required.
+        :type body: ~azure.planetarycomputer.models.PartitionType or JSON or IO[bytes]
+        :return: PartitionType or None. The PartitionType is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.PartitionType or None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[_models.PartitionType]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_stac_collection_partition_types_replace_request(
+            collection_id=collection_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        deserialized = None
+        if response.status_code == 200:
+            if _stream:
+                deserialized = response.iter_bytes()
+            else:
+                deserialized = _deserialize(_models.PartitionType, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
 
 class StacCollectionRenderOptionsOperations:
@@ -4182,14 +5908,14 @@ class StacCollectionTileSettingsOperations:
         return deserialized  # type: ignore
 
 
-class StacCollectionPartitionTypesOperations:
+class StacCollectionThumbnailsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`stac_collection_partition_types` attribute.
+        :attr:`stac_collection_thumbnails` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -4200,21 +5926,22 @@ class StacCollectionPartitionTypesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def get(self, collection_id: str, **kwargs: Any) -> _models.PartitionType:
-        """Get Partitiontype.
+    async def get(self, collection_id: str, **kwargs: Any) -> Optional[AsyncIterator[bytes]]:
+        """Get Collection Thumbnail.
 
-        Get the partitiontype for a GeoCatalog Collection.
+        Get thumbnail for given collection.
 
         Args:
-        collection_id: the collection id to get the partitiontype for.
+        request: The incoming request.
+        collection_id: The ID of the collection to retrieve assets for.
 
         Returns:
-        The partitiontype for the collection.
+        thumbnail image.
 
-        :param collection_id: Unique identifier for the STAC collection. Required.
+        :param collection_id: STAC Collection ID. Required.
         :type collection_id: str
-        :return: PartitionType. The PartitionType is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.PartitionType
+        :return: AsyncIterator[bytes] or None
+        :rtype: AsyncIterator[bytes] or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4228,10 +5955,96 @@ class StacCollectionPartitionTypesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.PartitionType] = kwargs.pop("cls", None)
+        cls: ClsType[Optional[AsyncIterator[bytes]]] = kwargs.pop("cls", None)
 
-        _request = build_stac_collection_partition_types_get_request(
+        _request = build_stac_collection_thumbnails_get_request(
             collection_id=collection_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", True)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        deserialized = None
+        response_headers = {}
+        if response.status_code == 200:
+            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+
+            deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class GeoCatalogAuthConfigOperationsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
+        :attr:`geo_catalog_auth_config_operations` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    async def get(self, **kwargs: Any) -> _models.AuthConfig:
+        """Get Auth Config.
+
+        Get the app id and tenant id information to make a MSAL request for this
+        GeoCatalog instance.
+
+        :return: AuthConfig. The AuthConfig is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.AuthConfig
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AuthConfig] = kwargs.pop("cls", None)
+
+        _request = build_geo_catalog_auth_config_operations_get_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4260,772 +6073,7 @@ class StacCollectionPartitionTypesOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.PartitionType, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def replace(
-        self, collection_id: str, body: _models.PartitionType, *, content_type: str = "application/json", **kwargs: Any
-    ) -> Optional[_models.PartitionType]:
-        """Create Partitiontype.
-
-        Updates partition type for a GeoCatalog Collection. This will
-        determine the partitioning scheme for items within the database,
-        and can only be set before any items are loaded.
-
-        Ideal partitioning schemes result in partitions of roughly 100k items each.
-
-        The default partitioning scheme is "none" which does not partition items.
-
-        Args:
-        collection_id: the collection id to add the partitiontype to.
-        partitiontype: the partitiontype to add.
-
-        Returns:
-        None.
-
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
-        :param body: Partition type configuration determining how items are partitioned in storage.
-         Required.
-        :type body: ~azure.planetarycomputer.models.PartitionType
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PartitionType or None. The PartitionType is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.PartitionType or None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def replace(
-        self, collection_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> Optional[_models.PartitionType]:
-        """Create Partitiontype.
-
-        Updates partition type for a GeoCatalog Collection. This will
-        determine the partitioning scheme for items within the database,
-        and can only be set before any items are loaded.
-
-        Ideal partitioning schemes result in partitions of roughly 100k items each.
-
-        The default partitioning scheme is "none" which does not partition items.
-
-        Args:
-        collection_id: the collection id to add the partitiontype to.
-        partitiontype: the partitiontype to add.
-
-        Returns:
-        None.
-
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
-        :param body: Partition type configuration determining how items are partitioned in storage.
-         Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PartitionType or None. The PartitionType is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.PartitionType or None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def replace(
-        self, collection_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> Optional[_models.PartitionType]:
-        """Create Partitiontype.
-
-        Updates partition type for a GeoCatalog Collection. This will
-        determine the partitioning scheme for items within the database,
-        and can only be set before any items are loaded.
-
-        Ideal partitioning schemes result in partitions of roughly 100k items each.
-
-        The default partitioning scheme is "none" which does not partition items.
-
-        Args:
-        collection_id: the collection id to add the partitiontype to.
-        partitiontype: the partitiontype to add.
-
-        Returns:
-        None.
-
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
-        :param body: Partition type configuration determining how items are partitioned in storage.
-         Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PartitionType or None. The PartitionType is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.PartitionType or None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def replace(
-        self, collection_id: str, body: Union[_models.PartitionType, JSON, IO[bytes]], **kwargs: Any
-    ) -> Optional[_models.PartitionType]:
-        """Create Partitiontype.
-
-        Updates partition type for a GeoCatalog Collection. This will
-        determine the partitioning scheme for items within the database,
-        and can only be set before any items are loaded.
-
-        Ideal partitioning schemes result in partitions of roughly 100k items each.
-
-        The default partitioning scheme is "none" which does not partition items.
-
-        Args:
-        collection_id: the collection id to add the partitiontype to.
-        partitiontype: the partitiontype to add.
-
-        Returns:
-        None.
-
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
-        :param body: Partition type configuration determining how items are partitioned in storage. Is
-         one of the following types: PartitionType, JSON, IO[bytes] Required.
-        :type body: ~azure.planetarycomputer.models.PartitionType or JSON or IO[bytes]
-        :return: PartitionType or None. The PartitionType is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.PartitionType or None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Optional[_models.PartitionType]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_stac_collection_partition_types_replace_request(
-            collection_id=collection_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = None
-        if response.status_code == 200:
-            if _stream:
-                deserialized = response.iter_bytes()
-            else:
-                deserialized = _deserialize(_models.PartitionType, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class StacQueryablesOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`stac_queryables` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get_all(self, **kwargs: Any) -> Optional[_models.JsonSchema]:
-        """Queryables.
-
-        Endpoint.
-
-        :return: JsonSchema or None. The JsonSchema is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.JsonSchema or None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Optional[_models.JsonSchema]] = kwargs.pop("cls", None)
-
-        _request = build_stac_queryables_get_all_request(
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = None
-        if response.status_code == 200:
-            if _stream:
-                deserialized = response.iter_bytes()
-            else:
-                deserialized = _deserialize(_models.JsonSchema, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def delete(self, collection_id: str, queryable_name: str, **kwargs: Any) -> None:
-        """Delete Queryables.
-
-        Delete queryables by name for specified collection.
-
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
-        :param queryable_name: Name of the queryable property to operate on. Required.
-        :type queryable_name: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_stac_queryables_delete_request(
-            collection_id=collection_id,
-            queryable_name=queryable_name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace_async
-    async def get_all_by_collection(self, collection_id: str, **kwargs: Any) -> Optional[_models.JsonSchema]:
-        """Collection Queryables.
-
-        Endpoint.
-
-        :param collection_id: Collection ID. Required.
-        :type collection_id: str
-        :return: JsonSchema or None. The JsonSchema is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.JsonSchema or None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Optional[_models.JsonSchema]] = kwargs.pop("cls", None)
-
-        _request = build_stac_queryables_get_all_by_collection_request(
-            collection_id=collection_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = None
-        if response.status_code == 200:
-            if _stream:
-                deserialized = response.iter_bytes()
-            else:
-                deserialized = _deserialize(_models.JsonSchema, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def create(
-        self,
-        collection_id: str,
-        body: List[_models.QueryableDefinition],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> Optional[List[_models.QueryableDefinition]]:
-        """Set Collection Queryables.
-
-        Set queryables for a collection given a list of queryable definitions.
-
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
-        :param body: Request queryable definition body. Required.
-        :type body: list[~azure.planetarycomputer.models.QueryableDefinition]
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: list of QueryableDefinition or None
-        :rtype: list[~azure.planetarycomputer.models.QueryableDefinition] or None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create(
-        self, collection_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> Optional[List[_models.QueryableDefinition]]:
-        """Set Collection Queryables.
-
-        Set queryables for a collection given a list of queryable definitions.
-
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
-        :param body: Request queryable definition body. Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: list of QueryableDefinition or None
-        :rtype: list[~azure.planetarycomputer.models.QueryableDefinition] or None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create(
-        self, collection_id: str, body: Union[List[_models.QueryableDefinition], IO[bytes]], **kwargs: Any
-    ) -> Optional[List[_models.QueryableDefinition]]:
-        """Set Collection Queryables.
-
-        Set queryables for a collection given a list of queryable definitions.
-
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
-        :param body: Request queryable definition body. Is either a [QueryableDefinition] type or a
-         IO[bytes] type. Required.
-        :type body: list[~azure.planetarycomputer.models.QueryableDefinition] or IO[bytes]
-        :return: list of QueryableDefinition or None
-        :rtype: list[~azure.planetarycomputer.models.QueryableDefinition] or None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Optional[List[_models.QueryableDefinition]]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_stac_queryables_create_request(
-            collection_id=collection_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201, 204]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = None
-        if response.status_code == 201:
-            if _stream:
-                deserialized = response.iter_bytes()
-            else:
-                deserialized = _deserialize(List[_models.QueryableDefinition], response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def create_or_replace(
-        self,
-        collection_id: str,
-        queryable_name: str,
-        body: _models.QueryableDefinition,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.QueryableDefinition:
-        """Update Collection Queryables.
-
-        Updates a queryable given a queryable definition and
-        corresponding collection id.
-
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
-        :param queryable_name: Name of the queryable property to operate on. Required.
-        :type queryable_name: str
-        :param body: Request queryable definition body. Required.
-        :type body: ~azure.planetarycomputer.models.QueryableDefinition
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: QueryableDefinition. The QueryableDefinition is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.QueryableDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_or_replace(
-        self,
-        collection_id: str,
-        queryable_name: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.QueryableDefinition:
-        """Update Collection Queryables.
-
-        Updates a queryable given a queryable definition and
-        corresponding collection id.
-
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
-        :param queryable_name: Name of the queryable property to operate on. Required.
-        :type queryable_name: str
-        :param body: Request queryable definition body. Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: QueryableDefinition. The QueryableDefinition is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.QueryableDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_or_replace(
-        self,
-        collection_id: str,
-        queryable_name: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.QueryableDefinition:
-        """Update Collection Queryables.
-
-        Updates a queryable given a queryable definition and
-        corresponding collection id.
-
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
-        :param queryable_name: Name of the queryable property to operate on. Required.
-        :type queryable_name: str
-        :param body: Request queryable definition body. Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: QueryableDefinition. The QueryableDefinition is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.QueryableDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create_or_replace(
-        self,
-        collection_id: str,
-        queryable_name: str,
-        body: Union[_models.QueryableDefinition, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.QueryableDefinition:
-        """Update Collection Queryables.
-
-        Updates a queryable given a queryable definition and
-        corresponding collection id.
-
-        :param collection_id: Unique identifier for the STAC collection. Required.
-        :type collection_id: str
-        :param queryable_name: Name of the queryable property to operate on. Required.
-        :type queryable_name: str
-        :param body: Request queryable definition body. Is one of the following types:
-         QueryableDefinition, JSON, IO[bytes] Required.
-        :type body: ~azure.planetarycomputer.models.QueryableDefinition or JSON or IO[bytes]
-        :return: QueryableDefinition. The QueryableDefinition is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.QueryableDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.QueryableDefinition] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_stac_queryables_create_or_replace_request(
-            collection_id=collection_id,
-            queryable_name=queryable_name,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.QueryableDefinition, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class GeoCatalogAzmapsTokenOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`geo_catalog_azmaps_token` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get(self, **kwargs: Any) -> _models.AzMapsToken:
-        """Get Azmaps Token.
-
-        Fetch a token for the Azure Maps API service based on the current
-        service identity. This token is used for the Explorer to authenticate
-        with the Azure Maps API service.
-
-        :return: AzMapsToken. The AzMapsToken is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.AzMapsToken
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.AzMapsToken] = kwargs.pop("cls", None)
-
-        _request = build_geo_catalog_azmaps_token_get_request(
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.AzMapsToken, response.json())
+            deserialized = _deserialize(_models.AuthConfig, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5112,14 +6160,14 @@ class GeoCatalogAzmapsClientOperations:
         return deserialized  # type: ignore
 
 
-class GeoCatalogAuthConfigOperationsOperations:
+class GeoCatalogAzmapsTokenOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`geo_catalog_auth_config_operations` attribute.
+        :attr:`geo_catalog_azmaps_token` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -5130,14 +6178,15 @@ class GeoCatalogAuthConfigOperationsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def get(self, **kwargs: Any) -> _models.AuthConfig:
-        """Get Auth Config.
+    async def get(self, **kwargs: Any) -> _models.AzMapsToken:
+        """Get Azmaps Token.
 
-        Get the app id and tenant id information to make a MSAL request for this
-        GeoCatalog instance.
+        Fetch a token for the Azure Maps API service based on the current
+        service identity. This token is used for the Explorer to authenticate
+        with the Azure Maps API service.
 
-        :return: AuthConfig. The AuthConfig is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.AuthConfig
+        :return: AzMapsToken. The AzMapsToken is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.AzMapsToken
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -5151,9 +6200,9 @@ class GeoCatalogAuthConfigOperationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AuthConfig] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AzMapsToken] = kwargs.pop("cls", None)
 
-        _request = build_geo_catalog_auth_config_operations_get_request(
+        _request = build_geo_catalog_azmaps_token_get_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5182,7 +6231,7 @@ class GeoCatalogAuthConfigOperationsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AuthConfig, response.json())
+            deserialized = _deserialize(_models.AzMapsToken, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9991,104 +11040,6 @@ class TilerGeoJsonsOperations:
         return deserialized  # type: ignore
 
 
-class MapsIntervalLegendsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`maps_interval_legends` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get_by_classmap_name(
-        self, classmap_name: str, *, trim_start: Optional[int] = None, trim_end: Optional[int] = None, **kwargs: Any
-    ) -> Optional[List[List["_types.IntervalLegendsElement"]]]:
-        """Get Interval Legend.
-
-        Generate values and color swatches mapping for a given interval classmap.
-
-        Args:
-        trim_start (int, optional): Number of items to trim from
-        the start of the cmap
-        trim_end (int, optional): Number of items to trim from the end of the cmap.
-
-        :param classmap_name: classmap name. Required.
-        :type classmap_name: str
-        :keyword trim_start: Number of items to trim from the start of the cmap. Default value is None.
-        :paramtype trim_start: int
-        :keyword trim_end: Number of items to trim from the end of the cmap. Default value is None.
-        :paramtype trim_end: int
-        :return: list of list of list of int or dict mapping str to str or None
-        :rtype: list[list[list[int] or dict[str, str]]] or None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Optional[List[List["_types.IntervalLegendsElement"]]]] = kwargs.pop("cls", None)
-
-        _request = build_maps_interval_legends_get_by_classmap_name_request(
-            classmap_name=classmap_name,
-            trim_start=trim_start,
-            trim_end=trim_end,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = None
-        response_headers = {}
-        if response.status_code == 200:
-            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-
-            if _stream:
-                deserialized = response.iter_bytes()
-            else:
-                deserialized = _deserialize(List[List["_types.IntervalLegendsElement"]], response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-
 class MapsClassmapLegendsOperations:
     """
     .. warning::
@@ -10297,6 +11248,104 @@ class MapsLegendsOperations:
             response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
 
             deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class MapsIntervalLegendsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
+        :attr:`maps_interval_legends` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    async def get_by_classmap_name(
+        self, classmap_name: str, *, trim_start: Optional[int] = None, trim_end: Optional[int] = None, **kwargs: Any
+    ) -> Optional[List[List["_types.IntervalLegendsElement"]]]:
+        """Get Interval Legend.
+
+        Generate values and color swatches mapping for a given interval classmap.
+
+        Args:
+        trim_start (int, optional): Number of items to trim from
+        the start of the cmap
+        trim_end (int, optional): Number of items to trim from the end of the cmap.
+
+        :param classmap_name: classmap name. Required.
+        :type classmap_name: str
+        :keyword trim_start: Number of items to trim from the start of the cmap. Default value is None.
+        :paramtype trim_start: int
+        :keyword trim_end: Number of items to trim from the end of the cmap. Default value is None.
+        :paramtype trim_end: int
+        :return: list of list of list of int or dict mapping str to str or None
+        :rtype: list[list[list[int] or dict[str, str]]] or None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Optional[List[List["_types.IntervalLegendsElement"]]]] = kwargs.pop("cls", None)
+
+        _request = build_maps_interval_legends_get_by_classmap_name_request(
+            classmap_name=classmap_name,
+            trim_start=trim_start,
+            trim_end=trim_end,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        deserialized = None
+        response_headers = {}
+        if response.status_code == 200:
+            response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+
+            if _stream:
+                deserialized = response.iter_bytes()
+            else:
+                deserialized = _deserialize(List[List["_types.IntervalLegendsElement"]], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -11325,11 +12374,26 @@ class MosaicsWmtsMosaicsOperations:
         self,
         search_id: str,
         *,
+        assets: Optional[List[str]] = None,
+        expression: Optional[str] = None,
+        asset_bidx: Optional[List[str]] = None,
+        asset_as_band: Optional[bool] = None,
+        nodata: Optional[float] = None,
+        unscale: Optional[bool] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
+        algorithm_params: Optional[str] = None,
         tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
         tile_format: Optional[Union[str, _models.ImageType]] = None,
         tile_scale: Optional[int] = None,
         minzoom: Optional[int] = None,
         maxzoom: Optional[int] = None,
+        buffer: Optional[str] = None,
+        color_formula: Optional[str] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        rescale: Optional[List[str]] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        colormap: Optional[str] = None,
+        return_mask: Optional[bool] = None,
         **kwargs: Any
     ) -> Optional[str]:
         """Wmts.
@@ -11338,6 +12402,23 @@ class MosaicsWmtsMosaicsOperations:
 
         :param search_id: Search Id (pgSTAC Search Hash). Required.
         :type search_id: str
+        :keyword assets: Asset's names. Default value is None.
+        :paramtype assets: list[str]
+        :keyword expression: Band math expression between assets. Default value is None.
+        :paramtype expression: str
+        :keyword asset_bidx: Per asset band indexes (coma separated indexes). Default value is None.
+        :paramtype asset_bidx: list[str]
+        :keyword asset_as_band: Asset as Band. Default value is None.
+        :paramtype asset_as_band: bool
+        :keyword nodata: Overwrite internal Nodata value. Default value is None.
+        :paramtype nodata: float
+        :keyword unscale: Apply internal Scale or Offset. Default value is None.
+        :paramtype unscale: bool
+        :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
+         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
+        :paramtype algorithm: str or ~azure.planetarycomputer.models.Algorithm
+        :keyword algorithm_params: Algorithm parameter. Default value is None.
+        :paramtype algorithm_params: str
         :keyword tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported
          (default:
          'WebMercatorQuad'). Known values are: "CanadianNAD83_LCC", "EuropeanETRS89_LAEAQuad",
@@ -11355,6 +12436,56 @@ class MosaicsWmtsMosaicsOperations:
         :paramtype minzoom: int
         :keyword maxzoom: Overwrite default maxzoom. Default value is None.
         :paramtype maxzoom: int
+        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
+         Output
+         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
+         1.0 = 258x258). Default value is None.
+        :paramtype buffer: str
+        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
+         <https://github.com/mapbox/rio-color>`_). Default value is None.
+        :paramtype color_formula: str
+        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
+         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
+        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
+        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
+         bands. Default value is None.
+        :paramtype rescale: list[str]
+        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
+         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
+         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
+         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
+         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
+         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
+         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
+         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
+         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
+         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
+         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
+         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
+         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
+         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
+         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
+         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
+         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
+         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
+         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
+         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
+         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
+         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
+         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
+         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
+         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
+         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
+         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
+         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
+         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
+         is None.
+        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword colormap: JSON encoded custom Colormap. Default value is None.
+        :paramtype colormap: str
+        :keyword return_mask: Add mask to the output data. Default value is None.
+        :paramtype return_mask: bool
         :return: str or None
         :rtype: str or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11374,11 +12505,26 @@ class MosaicsWmtsMosaicsOperations:
 
         _request = build_mosaics_wmts_mosaics_get_capabilities_xml_request(
             search_id=search_id,
+            assets=assets,
+            expression=expression,
+            asset_bidx=asset_bidx,
+            asset_as_band=asset_as_band,
+            nodata=nodata,
+            unscale=unscale,
+            algorithm=algorithm,
+            algorithm_params=algorithm_params,
             tile_matrix_set_id=tile_matrix_set_id,
             tile_format=tile_format,
             tile_scale=tile_scale,
             minzoom=minzoom,
             maxzoom=maxzoom,
+            buffer=buffer,
+            color_formula=color_formula,
+            resampling=resampling,
+            rescale=rescale,
+            colormap_name=colormap_name,
+            colormap=colormap,
+            return_mask=return_mask,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -11443,10 +12589,25 @@ class MosaicsWmtsMosaicsTileMatrixSetsOperations:  # pylint: disable=name-too-lo
         search_id: str,
         tile_matrix_set_id: str,
         *,
+        assets: Optional[List[str]] = None,
+        expression: Optional[str] = None,
+        asset_bidx: Optional[List[str]] = None,
+        asset_as_band: Optional[bool] = None,
+        nodata: Optional[float] = None,
+        unscale: Optional[bool] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
+        algorithm_params: Optional[str] = None,
         tile_format: Optional[Union[str, _models.ImageType]] = None,
         tile_scale: Optional[int] = None,
         minzoom: Optional[int] = None,
         maxzoom: Optional[int] = None,
+        buffer: Optional[str] = None,
+        color_formula: Optional[str] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        rescale: Optional[List[str]] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        colormap: Optional[str] = None,
+        return_mask: Optional[bool] = None,
         **kwargs: Any
     ) -> Optional[str]:
         """Wmts Tilematrixsetid As Path.
@@ -11457,6 +12618,23 @@ class MosaicsWmtsMosaicsTileMatrixSetsOperations:  # pylint: disable=name-too-lo
         :type search_id: str
         :param tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported. Required.
         :type tile_matrix_set_id: str
+        :keyword assets: Asset's names. Default value is None.
+        :paramtype assets: list[str]
+        :keyword expression: Band math expression between assets. Default value is None.
+        :paramtype expression: str
+        :keyword asset_bidx: Per asset band indexes (coma separated indexes). Default value is None.
+        :paramtype asset_bidx: list[str]
+        :keyword asset_as_band: Asset as Band. Default value is None.
+        :paramtype asset_as_band: bool
+        :keyword nodata: Overwrite internal Nodata value. Default value is None.
+        :paramtype nodata: float
+        :keyword unscale: Apply internal Scale or Offset. Default value is None.
+        :paramtype unscale: bool
+        :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
+         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
+        :paramtype algorithm: str or ~azure.planetarycomputer.models.Algorithm
+        :keyword algorithm_params: Algorithm parameter. Default value is None.
+        :paramtype algorithm_params: str
         :keyword tile_format: Output image type. Default is png. Known values are: "png", "npy", "tif",
          "jpeg", "jpg", "jp2", "webp", and "pngraw". Default value is None.
         :paramtype tile_format: str or ~azure.planetarycomputer.models.ImageType
@@ -11467,6 +12645,56 @@ class MosaicsWmtsMosaicsTileMatrixSetsOperations:  # pylint: disable=name-too-lo
         :paramtype minzoom: int
         :keyword maxzoom: Overwrite default maxzoom. Default value is None.
         :paramtype maxzoom: int
+        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
+         Output
+         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
+         1.0 = 258x258). Default value is None.
+        :paramtype buffer: str
+        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
+         <https://github.com/mapbox/rio-color>`_). Default value is None.
+        :paramtype color_formula: str
+        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
+         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
+        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
+        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
+         bands. Default value is None.
+        :paramtype rescale: list[str]
+        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
+         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
+         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
+         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
+         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
+         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
+         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
+         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
+         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
+         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
+         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
+         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
+         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
+         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
+         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
+         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
+         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
+         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
+         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
+         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
+         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
+         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
+         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
+         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
+         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
+         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
+         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
+         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
+         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
+         is None.
+        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword colormap: JSON encoded custom Colormap. Default value is None.
+        :paramtype colormap: str
+        :keyword return_mask: Add mask to the output data. Default value is None.
+        :paramtype return_mask: bool
         :return: str or None
         :rtype: str or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11487,10 +12715,25 @@ class MosaicsWmtsMosaicsTileMatrixSetsOperations:  # pylint: disable=name-too-lo
         _request = build_mosaics_wmts_mosaics_tile_matrix_sets_get_capabilities_xml_request(
             search_id=search_id,
             tile_matrix_set_id=tile_matrix_set_id,
+            assets=assets,
+            expression=expression,
+            asset_bidx=asset_bidx,
+            asset_as_band=asset_as_band,
+            nodata=nodata,
+            unscale=unscale,
+            algorithm=algorithm,
+            algorithm_params=algorithm_params,
             tile_format=tile_format,
             tile_scale=tile_scale,
             minzoom=minzoom,
             maxzoom=maxzoom,
+            buffer=buffer,
+            color_formula=color_formula,
+            resampling=resampling,
+            rescale=rescale,
+            colormap_name=colormap_name,
+            colormap=colormap,
+            return_mask=return_mask,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -12602,1055 +13845,6 @@ class SasOperations:
         return deserialized  # type: ignore
 
 
-class StacCollectionOperationsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`stac_collection_operations` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get_all(
-        self, *, sign: Optional[Union[str, _models.SignType]] = None, duration: Optional[int] = None, **kwargs: Any
-    ) -> _models.FeatureCollections:
-        """Get Collections.
-
-        Endpoint.
-
-        :keyword sign: Whether to sign asset URLs in the response. Known values are: "true" and
-         "false". Default value is None.
-        :paramtype sign: str or ~azure.planetarycomputer.models.SignType
-        :keyword duration: URL signature duration in seconds. Default value is None.
-        :paramtype duration: int
-        :return: FeatureCollections. The FeatureCollections is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.FeatureCollections
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.FeatureCollections] = kwargs.pop("cls", None)
-
-        _request = build_stac_collection_operations_get_all_request(
-            sign=sign,
-            duration=duration,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.FeatureCollections, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    async def _create_initial(
-        self, body: Union[_models.StacCollection, JSON, IO[bytes]], **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_stac_collection_operations_create_request(
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["location"] = self._deserialize("str", response.headers.get("location"))
-        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def begin_create(
-        self, body: _models.StacCollection, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Create Collection.
-
-        Create a new collection in the GeoCatalog instance.
-
-        :param body: Request collection body. Required.
-        :type body: ~azure.planetarycomputer.models.StacCollection
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_create(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Create Collection.
-
-        Create a new collection in the GeoCatalog instance.
-
-        :param body: Request collection body. Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_create(
-        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Create Collection.
-
-        Create a new collection in the GeoCatalog instance.
-
-        :param body: Request collection body. Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def begin_create(
-        self, body: Union[_models.StacCollection, JSON, IO[bytes]], **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Create Collection.
-
-        Create a new collection in the GeoCatalog instance.
-
-        :param body: Request collection body. Is one of the following types: StacCollection, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.planetarycomputer.models.StacCollection or JSON or IO[bytes]
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._create_initial(
-                body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod,
-                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    @distributed_trace_async
-    async def get(
-        self,
-        collection_id: str,
-        *,
-        sign: Optional[Union[str, _models.SignType]] = None,
-        duration: Optional[int] = None,
-        **kwargs: Any
-    ) -> _models.StacCollection:
-        """Get Collection.
-
-        Get a collection in the GeoCatalog instance.
-
-        :param collection_id: Unique identifier for the collection. Required.
-        :type collection_id: str
-        :keyword sign: Whether to sign asset URLs in the response. Known values are: "true" and
-         "false". Default value is None.
-        :paramtype sign: str or ~azure.planetarycomputer.models.SignType
-        :keyword duration: URL signature duration in seconds. Default value is None.
-        :paramtype duration: int
-        :return: StacCollection. The StacCollection is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.StacCollection
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.StacCollection] = kwargs.pop("cls", None)
-
-        _request = build_stac_collection_operations_get_request(
-            collection_id=collection_id,
-            sign=sign,
-            duration=duration,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.StacCollection, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    async def _create_or_replace_initial(
-        self, collection_id: str, body: Union[_models.StacCollection, JSON, IO[bytes]], **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_stac_collection_operations_create_or_replace_request(
-            collection_id=collection_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["location"] = self._deserialize("str", response.headers.get("location"))
-        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def begin_create_or_replace(
-        self, collection_id: str, body: _models.StacCollection, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Create or update Collection.
-
-        Create or replace a collection in the GeoCatalog instance.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param body: Request collection body. Required.
-        :type body: ~azure.planetarycomputer.models.StacCollection
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_create_or_replace(
-        self, collection_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Create or update Collection.
-
-        Create or replace a collection in the GeoCatalog instance.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param body: Request collection body. Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_create_or_replace(
-        self, collection_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Create or update Collection.
-
-        Create or replace a collection in the GeoCatalog instance.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param body: Request collection body. Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def begin_create_or_replace(
-        self, collection_id: str, body: Union[_models.StacCollection, JSON, IO[bytes]], **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Create or update Collection.
-
-        Create or replace a collection in the GeoCatalog instance.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param body: Request collection body. Is one of the following types: StacCollection, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.planetarycomputer.models.StacCollection or JSON or IO[bytes]
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._create_or_replace_initial(
-                collection_id=collection_id,
-                body=body,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod,
-                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    async def _delete_initial(self, collection_id: str, **kwargs: Any) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_stac_collection_operations_delete_request(
-            collection_id=collection_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["location"] = self._deserialize("str", response.headers.get("location"))
-        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def begin_delete(self, collection_id: str, **kwargs: Any) -> AsyncLROPoller[None]:
-        """Delete Collection.
-
-        Delete a collection in the GeoCatalog instance.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._delete_initial(
-                collection_id=collection_id, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod,
-                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-
-class StacSearchOperationsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`stac_search_operations` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get(
-        self,
-        *,
-        collections: Optional[List[str]] = None,
-        ids: Optional[List[str]] = None,
-        bbox: Optional[List[float]] = None,
-        intersects: Optional[str] = None,
-        datetime: Optional[str] = None,
-        limit: Optional[int] = None,
-        sign: Optional[Union[str, _models.SignType]] = None,
-        duration: Optional[int] = None,
-        query: Optional[str] = None,
-        sort_by: Optional[str] = None,
-        fields: Optional[str] = None,
-        filter: Optional[str] = None,
-        token: Optional[str] = None,
-        **kwargs: Any
-    ) -> Optional[_models.ItemCollection]:
-        """Search.
-
-        Endpoint.
-
-        :keyword collections: List of Collection IDs to include in the search. Only items in these
-         collections will be searched. Default value is None.
-        :paramtype collections: list[str]
-        :keyword ids: Array of Item IDs to return specific items. Default value is None.
-        :paramtype ids: list[str]
-        :keyword bbox: Bounding box for spatial filtering in format [west, south, east, north]. Default
-         value is None.
-        :paramtype bbox: list[float]
-        :keyword intersects: GeoJSON geometry for spatial filtering. Default value is None.
-        :paramtype intersects: str
-        :keyword datetime: Temporal filter in RFC 3339 format, can be a single time or range. Default
-         value is None.
-        :paramtype datetime: str
-        :keyword limit: Maximum number of results to return. Default value is None.
-        :paramtype limit: int
-        :keyword sign: Whether to sign asset URLs in the response. Known values are: "true" and
-         "false". Default value is None.
-        :paramtype sign: str or ~azure.planetarycomputer.models.SignType
-        :keyword duration: URL signature duration in seconds. Default value is None.
-        :paramtype duration: int
-        :keyword query: Property-based filtering expressed as a JSON object. Default value is None.
-        :paramtype query: str
-        :keyword sort_by: Sort order for items. Format is property name prefixed with "+" for ascending
-         or "-" for descending. Default value is None.
-        :paramtype sort_by: str
-        :keyword fields: Determines which fields to include in the response. Format is comma-separated
-         field names with "-" prefix to exclude fields. Default value is None.
-        :paramtype fields: str
-        :keyword filter: CQL filter expression for advanced filtering of items. Default value is None.
-        :paramtype filter: str
-        :keyword token: Pagination token for fetching the next set of results. Default value is None.
-        :paramtype token: str
-        :return: ItemCollection or None. The ItemCollection is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.ItemCollection or None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Optional[_models.ItemCollection]] = kwargs.pop("cls", None)
-
-        _request = build_stac_search_operations_get_request(
-            collections=collections,
-            ids=ids,
-            bbox=bbox,
-            intersects=intersects,
-            datetime=datetime,
-            limit=limit,
-            sign=sign,
-            duration=duration,
-            query=query,
-            sort_by=sort_by,
-            fields=fields,
-            filter=filter,
-            token=token,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = None
-        if response.status_code == 200:
-            if _stream:
-                deserialized = response.iter_bytes()
-            else:
-                deserialized = _deserialize(_models.ItemCollection, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def create(
-        self, body: _models.SearchPostRequest, *, content_type: str = "application/json", **kwargs: Any
-    ) -> Optional[_models.ItemCollection]:
-        """Search.
-
-        Endpoint.
-
-        :param body: Request body. Required.
-        :type body: ~azure.planetarycomputer.models.SearchPostRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ItemCollection or None. The ItemCollection is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.ItemCollection or None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> Optional[_models.ItemCollection]:
-        """Search.
-
-        Endpoint.
-
-        :param body: Request body. Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ItemCollection or None. The ItemCollection is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.ItemCollection or None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create(
-        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> Optional[_models.ItemCollection]:
-        """Search.
-
-        Endpoint.
-
-        :param body: Request body. Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ItemCollection or None. The ItemCollection is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.ItemCollection or None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create(
-        self, body: Union[_models.SearchPostRequest, JSON, IO[bytes]], **kwargs: Any
-    ) -> Optional[_models.ItemCollection]:
-        """Search.
-
-        Endpoint.
-
-        :param body: Request body. Is one of the following types: SearchPostRequest, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.planetarycomputer.models.SearchPostRequest or JSON or IO[bytes]
-        :return: ItemCollection or None. The ItemCollection is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.ItemCollection or None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Optional[_models.ItemCollection]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_stac_search_operations_create_request(
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        deserialized = None
-        if response.status_code == 200:
-            if _stream:
-                deserialized = response.iter_bytes()
-            else:
-                deserialized = _deserialize(_models.ItemCollection, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class StacLandingPagesOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`stac_landing_pages` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get(self, **kwargs: Any) -> _models.LandingPage:
-        """Landing Page.
-
-        Endpoint.
-
-        :return: LandingPage. The LandingPage is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.LandingPage
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.LandingPage] = kwargs.pop("cls", None)
-
-        _request = build_stac_landing_pages_get_request(
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.LandingPage, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class StacConformanceClassOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`stac_conformance_class` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlanetaryComputerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get(self, **kwargs: Any) -> _models.ConformanceClasses:
-        """Conformance Classes.
-
-        Endpoint.
-
-        :return: ConformanceClasses. The ConformanceClasses is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.ConformanceClasses
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.ConformanceClasses] = kwargs.pop("cls", None)
-
-        _request = build_stac_conformance_class_get_request(
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.ConformanceClasses, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
 class IngestionsIngestionRunsOperations:
     """
     .. warning::
@@ -13747,72 +13941,6 @@ class IngestionsIngestionRunsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get(self, collection_id: str, ingestion_id: str, run_id: str, **kwargs: Any) -> _models.IngestionRun:
-        """Get a run of an ingestion.
-
-        :param collection_id: Catalog collection id. Required.
-        :type collection_id: str
-        :param ingestion_id: Ingestion id. Required.
-        :type ingestion_id: str
-        :param run_id: Run id. Required.
-        :type run_id: str
-        :return: IngestionRun. The IngestionRun is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.IngestionRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.IngestionRun] = kwargs.pop("cls", None)
-
-        _request = build_ingestions_ingestion_runs_get_request(
-            collection_id=collection_id,
-            ingestion_id=ingestion_id,
-            run_id=run_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.IngestionRun, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
     async def create(self, collection_id: str, ingestion_id: str, **kwargs: Any) -> _models.IngestionRun:
         """Create a new run of an ingestion.
 
@@ -13875,5 +14003,71 @@ class IngestionsIngestionRunsOperations:
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get(self, collection_id: str, ingestion_id: str, run_id: str, **kwargs: Any) -> _models.IngestionRun:
+        """Get a run of an ingestion.
+
+        :param collection_id: Catalog collection id. Required.
+        :type collection_id: str
+        :param ingestion_id: Ingestion id. Required.
+        :type ingestion_id: str
+        :param run_id: Run id. Required.
+        :type run_id: str
+        :return: IngestionRun. The IngestionRun is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.IngestionRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.IngestionRun] = kwargs.pop("cls", None)
+
+        _request = build_ingestions_ingestion_runs_get_request(
+            collection_id=collection_id,
+            ingestion_id=ingestion_id,
+            run_id=run_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.IngestionRun, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore

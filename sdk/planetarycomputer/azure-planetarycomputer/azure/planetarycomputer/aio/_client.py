@@ -90,38 +90,49 @@ class PlanetaryComputerClient:  # pylint: disable=too-many-instance-attributes
     :ivar ingestion_operations: IngestionOperationsOperations operations
     :vartype ingestion_operations:
      azure.planetarycomputer.aio.operations.IngestionOperationsOperations
+    :ivar stac_landing_pages: StacLandingPagesOperations operations
+    :vartype stac_landing_pages: azure.planetarycomputer.aio.operations.StacLandingPagesOperations
+    :ivar stac_collection_operations: StacCollectionOperationsOperations operations
+    :vartype stac_collection_operations:
+     azure.planetarycomputer.aio.operations.StacCollectionOperationsOperations
+    :ivar stac_queryables: StacQueryablesOperations operations
+    :vartype stac_queryables: azure.planetarycomputer.aio.operations.StacQueryablesOperations
+    :ivar stac_conformance_class: StacConformanceClassOperations operations
+    :vartype stac_conformance_class:
+     azure.planetarycomputer.aio.operations.StacConformanceClassOperations
+    :ivar stac_search_operations: StacSearchOperationsOperations operations
+    :vartype stac_search_operations:
+     azure.planetarycomputer.aio.operations.StacSearchOperationsOperations
     :ivar stac_collection_assets: StacCollectionAssetsOperations operations
     :vartype stac_collection_assets:
      azure.planetarycomputer.aio.operations.StacCollectionAssetsOperations
-    :ivar stac_collection_thumbnails: StacCollectionThumbnailsOperations operations
-    :vartype stac_collection_thumbnails:
-     azure.planetarycomputer.aio.operations.StacCollectionThumbnailsOperations
     :ivar stac_collection_config: StacCollectionConfigOperations operations
     :vartype stac_collection_config:
      azure.planetarycomputer.aio.operations.StacCollectionConfigOperations
     :ivar stac_collection_mosaics: StacCollectionMosaicsOperations operations
     :vartype stac_collection_mosaics:
      azure.planetarycomputer.aio.operations.StacCollectionMosaicsOperations
+    :ivar stac_collection_partition_types: StacCollectionPartitionTypesOperations operations
+    :vartype stac_collection_partition_types:
+     azure.planetarycomputer.aio.operations.StacCollectionPartitionTypesOperations
     :ivar stac_collection_render_options: StacCollectionRenderOptionsOperations operations
     :vartype stac_collection_render_options:
      azure.planetarycomputer.aio.operations.StacCollectionRenderOptionsOperations
     :ivar stac_collection_tile_settings: StacCollectionTileSettingsOperations operations
     :vartype stac_collection_tile_settings:
      azure.planetarycomputer.aio.operations.StacCollectionTileSettingsOperations
-    :ivar stac_collection_partition_types: StacCollectionPartitionTypesOperations operations
-    :vartype stac_collection_partition_types:
-     azure.planetarycomputer.aio.operations.StacCollectionPartitionTypesOperations
-    :ivar stac_queryables: StacQueryablesOperations operations
-    :vartype stac_queryables: azure.planetarycomputer.aio.operations.StacQueryablesOperations
-    :ivar geo_catalog_azmaps_token: GeoCatalogAzmapsTokenOperations operations
-    :vartype geo_catalog_azmaps_token:
-     azure.planetarycomputer.aio.operations.GeoCatalogAzmapsTokenOperations
-    :ivar geo_catalog_azmaps_client: GeoCatalogAzmapsClientOperations operations
-    :vartype geo_catalog_azmaps_client:
-     azure.planetarycomputer.aio.operations.GeoCatalogAzmapsClientOperations
+    :ivar stac_collection_thumbnails: StacCollectionThumbnailsOperations operations
+    :vartype stac_collection_thumbnails:
+     azure.planetarycomputer.aio.operations.StacCollectionThumbnailsOperations
     :ivar geo_catalog_auth_config_operations: GeoCatalogAuthConfigOperationsOperations operations
     :vartype geo_catalog_auth_config_operations:
      azure.planetarycomputer.aio.operations.GeoCatalogAuthConfigOperationsOperations
+    :ivar geo_catalog_azmaps_client: GeoCatalogAzmapsClientOperations operations
+    :vartype geo_catalog_azmaps_client:
+     azure.planetarycomputer.aio.operations.GeoCatalogAzmapsClientOperations
+    :ivar geo_catalog_azmaps_token: GeoCatalogAzmapsTokenOperations operations
+    :vartype geo_catalog_azmaps_token:
+     azure.planetarycomputer.aio.operations.GeoCatalogAzmapsTokenOperations
     :ivar tiler_static_images: TilerStaticImagesOperations operations
     :vartype tiler_static_images:
      azure.planetarycomputer.aio.operations.TilerStaticImagesOperations
@@ -168,14 +179,14 @@ class PlanetaryComputerClient:  # pylint: disable=too-many-instance-attributes
     :vartype tiler_parts: azure.planetarycomputer.aio.operations.TilerPartsOperations
     :ivar tiler_geo_jsons: TilerGeoJsonsOperations operations
     :vartype tiler_geo_jsons: azure.planetarycomputer.aio.operations.TilerGeoJsonsOperations
-    :ivar maps_interval_legends: MapsIntervalLegendsOperations operations
-    :vartype maps_interval_legends:
-     azure.planetarycomputer.aio.operations.MapsIntervalLegendsOperations
     :ivar maps_classmap_legends: MapsClassmapLegendsOperations operations
     :vartype maps_classmap_legends:
      azure.planetarycomputer.aio.operations.MapsClassmapLegendsOperations
     :ivar maps_legends: MapsLegendsOperations operations
     :vartype maps_legends: azure.planetarycomputer.aio.operations.MapsLegendsOperations
+    :ivar maps_interval_legends: MapsIntervalLegendsOperations operations
+    :vartype maps_interval_legends:
+     azure.planetarycomputer.aio.operations.MapsIntervalLegendsOperations
     :ivar mosaics_tiles: MosaicsTilesOperations operations
     :vartype mosaics_tiles: azure.planetarycomputer.aio.operations.MosaicsTilesOperations
     :ivar mosaics_tile_matrix_sets: MosaicsTileMatrixSetsOperations operations
@@ -216,17 +227,6 @@ class PlanetaryComputerClient:  # pylint: disable=too-many-instance-attributes
      azure.planetarycomputer.aio.operations.TileMatrixDefinitionsOperations
     :ivar sas: SasOperations operations
     :vartype sas: azure.planetarycomputer.aio.operations.SasOperations
-    :ivar stac_collection_operations: StacCollectionOperationsOperations operations
-    :vartype stac_collection_operations:
-     azure.planetarycomputer.aio.operations.StacCollectionOperationsOperations
-    :ivar stac_search_operations: StacSearchOperationsOperations operations
-    :vartype stac_search_operations:
-     azure.planetarycomputer.aio.operations.StacSearchOperationsOperations
-    :ivar stac_landing_pages: StacLandingPagesOperations operations
-    :vartype stac_landing_pages: azure.planetarycomputer.aio.operations.StacLandingPagesOperations
-    :ivar stac_conformance_class: StacConformanceClassOperations operations
-    :vartype stac_conformance_class:
-     azure.planetarycomputer.aio.operations.StacConformanceClassOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword endpoint: Service host. Default value is
@@ -280,10 +280,20 @@ class PlanetaryComputerClient:  # pylint: disable=too-many-instance-attributes
         self.ingestion_operations = IngestionOperationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.stac_collection_assets = StacCollectionAssetsOperations(
+        self.stac_landing_pages = StacLandingPagesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.stac_collection_thumbnails = StacCollectionThumbnailsOperations(
+        self.stac_collection_operations = StacCollectionOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.stac_queryables = StacQueryablesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.stac_conformance_class = StacConformanceClassOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.stac_search_operations = StacSearchOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.stac_collection_assets = StacCollectionAssetsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.stac_collection_config = StacCollectionConfigOperations(
@@ -292,23 +302,25 @@ class PlanetaryComputerClient:  # pylint: disable=too-many-instance-attributes
         self.stac_collection_mosaics = StacCollectionMosaicsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.stac_collection_partition_types = StacCollectionPartitionTypesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.stac_collection_render_options = StacCollectionRenderOptionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.stac_collection_tile_settings = StacCollectionTileSettingsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.stac_collection_partition_types = StacCollectionPartitionTypesOperations(
+        self.stac_collection_thumbnails = StacCollectionThumbnailsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.stac_queryables = StacQueryablesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.geo_catalog_azmaps_token = GeoCatalogAzmapsTokenOperations(
+        self.geo_catalog_auth_config_operations = GeoCatalogAuthConfigOperationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.geo_catalog_azmaps_client = GeoCatalogAzmapsClientOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.geo_catalog_auth_config_operations = GeoCatalogAuthConfigOperationsOperations(
+        self.geo_catalog_azmaps_token = GeoCatalogAzmapsTokenOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.tiler_static_images = TilerStaticImagesOperations(
@@ -351,13 +363,13 @@ class PlanetaryComputerClient:  # pylint: disable=too-many-instance-attributes
         self.tiler_previews = TilerPreviewsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.tiler_parts = TilerPartsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.tiler_geo_jsons = TilerGeoJsonsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.maps_interval_legends = MapsIntervalLegendsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.maps_classmap_legends = MapsClassmapLegendsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.maps_legends = MapsLegendsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.maps_interval_legends = MapsIntervalLegendsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.mosaics_tiles = MosaicsTilesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.mosaics_tile_matrix_sets = MosaicsTileMatrixSetsOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -394,18 +406,6 @@ class PlanetaryComputerClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.sas = SasOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.stac_collection_operations = StacCollectionOperationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.stac_search_operations = StacSearchOperationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.stac_landing_pages = StacLandingPagesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.stac_conformance_class = StacConformanceClassOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
