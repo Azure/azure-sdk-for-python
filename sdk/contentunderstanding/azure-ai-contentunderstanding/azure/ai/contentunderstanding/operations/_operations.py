@@ -1713,10 +1713,17 @@ class ContentAnalyzersOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ContentAnalyzer], deserialized.get("value", []))
+            # Handle both dict with "value" key and direct list responses
+            if isinstance(deserialized, dict):
+                list_of_elem = _deserialize(List[_models.ContentAnalyzer], deserialized.get("value", []))
+                next_link = deserialized.get("nextLink")
+            else:
+                # API returns list directly
+                list_of_elem = _deserialize(List[_models.ContentAnalyzer], deserialized)
+                next_link = None
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
+            return next_link, iter(list_of_elem)
 
         def get_next(next_link=None):
             _request = prepare_request(next_link)
@@ -2788,10 +2795,17 @@ class PersonDirectoriesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.PersonDirectory], deserialized.get("value", []))
+            # Handle both dict with "value" key and direct list responses
+            if isinstance(deserialized, dict):
+                list_of_elem = _deserialize(List[_models.PersonDirectory], deserialized.get("value", []))
+                next_link = deserialized.get("nextLink")
+            else:
+                # API returns list directly
+                list_of_elem = _deserialize(List[_models.PersonDirectory], deserialized)
+                next_link = None
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
+            return next_link, iter(list_of_elem)
 
         def get_next(next_link=None):
             _request = prepare_request(next_link)
@@ -3321,10 +3335,17 @@ class PersonDirectoriesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.PersonDirectoryPerson], deserialized.get("value", []))
+            # Handle both dict with "value" key and direct list responses
+            if isinstance(deserialized, dict):
+                list_of_elem = _deserialize(List[_models.PersonDirectoryPerson], deserialized.get("value", []))
+                next_link = deserialized.get("nextLink")
+            else:
+                # API returns list directly
+                list_of_elem = _deserialize(List[_models.PersonDirectoryPerson], deserialized)
+                next_link = None
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
+            return next_link, iter(list_of_elem)
 
         def get_next(next_link=None):
             _request = prepare_request(next_link)
@@ -3864,10 +3885,17 @@ class PersonDirectoriesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.PersonDirectoryFace], deserialized.get("value", []))
+            # Handle both dict with "value" key and direct list responses
+            if isinstance(deserialized, dict):
+                list_of_elem = _deserialize(List[_models.PersonDirectoryFace], deserialized.get("value", []))
+                next_link = deserialized.get("nextLink")
+            else:
+                # API returns list directly
+                list_of_elem = _deserialize(List[_models.PersonDirectoryFace], deserialized)
+                next_link = None
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
+            return next_link, iter(list_of_elem)
 
         def get_next(next_link=None):
             _request = prepare_request(next_link)
@@ -5295,10 +5323,17 @@ class ContentClassifiersOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ContentClassifier], deserialized.get("value", []))
+            # Handle both dict with "value" key and direct list responses
+            if isinstance(deserialized, dict):
+                list_of_elem = _deserialize(List[_models.ContentClassifier], deserialized.get("value", []))
+                next_link = deserialized.get("nextLink")
+            else:
+                # API returns list directly
+                list_of_elem = _deserialize(List[_models.ContentClassifier], deserialized)
+                next_link = None
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
+            return next_link, iter(list_of_elem)
 
         def get_next(next_link=None):
             _request = prepare_request(next_link)
