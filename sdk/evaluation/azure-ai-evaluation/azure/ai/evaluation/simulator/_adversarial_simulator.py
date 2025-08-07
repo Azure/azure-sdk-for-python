@@ -74,6 +74,7 @@ class AdversarialSimulator:
             + " While existing functionality remains available in preview, it is no longer recommended for production workloads or future integration. "
             + "We recommend users migrate to the AI Red Teaming Agent for future use as it supports full parity of functionality.",
             DeprecationWarning,
+            stacklevel=2,
         )
 
         if is_onedp_project(azure_ai_project):
