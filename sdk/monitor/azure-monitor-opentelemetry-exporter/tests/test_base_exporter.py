@@ -1620,8 +1620,8 @@ class TestBaseExporter(unittest.TestCase):
 
     def test_base_exporter_storage_readonly_filesystem(self):
         """Test BaseExporter handles readonly filesystem during storage initialization"""
-        # Mock os.makedirs to raise OSError with EROFS (readonly filesystem)
-        with mock.patch("os.makedirs", side_effect=OSError(errno.EROFS, "Read-only file system")):
+        # Mock os.makedirs to raise OSError with readonly filesystem
+        with mock.patch("os.makedirs", side_effect=OSError(errno.EROFS, "Read-only file system")): # cspell:disable-line
             exporter = BaseExporter(
                 connection_string="InstrumentationKey=12345678-1234-1234-1234-123456789012",
                 disable_offline_storage=False
