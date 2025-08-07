@@ -38,6 +38,7 @@ from ._utils._rai_service_true_false_scorer import AzureRAIServiceTrueFalseScore
 from ._utils._rai_service_eval_chat_target import RAIServiceEvalChatTarget
 from ._utils.constants import DATA_EXT, TASK_STATUS
 from ._utils.logging_utils import log_strategy_start, log_error
+from ._utils.formatting_utils import write_pyrit_outputs_to_file
 
 
 def network_retry_decorator(retry_config, logger, strategy_name, risk_category_name, prompt_idx=None):
@@ -169,6 +170,7 @@ class OrchestratorManager:
         timeout: int = 120,
         red_team_info: Dict = None,
         task_statuses: Dict = None,
+        prompt_to_context: Dict[str, str] = None,
     ) -> Orchestrator:
         """Send prompts via the PromptSendingOrchestrator.
 
@@ -223,9 +225,6 @@ class OrchestratorManager:
                 if task_statuses:
                     task_statuses[task_key] = TASK_STATUS["COMPLETED"]
                 return orchestrator
-
-            # Debug log the first few characters of each prompt
-            self.logger.debug(f"First prompt (truncated): {all_prompts[0][:50]}...")
 
             # Initialize output path for memory labelling
             base_path = str(uuid.uuid4())
@@ -313,6 +312,7 @@ class OrchestratorManager:
         timeout: int = 120,
         red_team_info: Dict = None,
         task_statuses: Dict = None,
+        prompt_to_context: Dict[str, str] = None,
     ) -> Orchestrator:
         """Send prompts via the RedTeamingOrchestrator (multi-turn orchestrator).
 
@@ -381,6 +381,7 @@ class OrchestratorManager:
         for prompt_idx, prompt in enumerate(all_prompts):
             prompt_start_time = datetime.now()
             self.logger.debug(f"Processing prompt {prompt_idx+1}/{len(all_prompts)}")
+            context = prompt_to_context.get(prompt, None) if prompt_to_context else None
             try:
                 azure_rai_service_scorer = AzureRAIServiceTrueFalseScorer(
                     client=self.generated_rai_client,
@@ -390,6 +391,7 @@ class OrchestratorManager:
                     credential=self.credential,
                     risk_category=risk_category,
                     azure_ai_project=self.azure_ai_project,
+                    context=context,
                 )
 
                 azure_rai_service_target = AzureRAIServiceTarget(
@@ -411,9 +413,6 @@ class OrchestratorManager:
                     use_score_as_feedback=False,
                 )
 
-                # Debug log the first few characters of the current prompt
-                self.logger.debug(f"Current prompt (truncated): {prompt[:50]}...")
-
                 try:
                     # Create retry-enabled function using the reusable decorator
                     @network_retry_decorator(
@@ -423,10 +422,7 @@ class OrchestratorManager:
                         return await asyncio.wait_for(
                             orchestrator.run_attack_async(
                                 objective=prompt,
-                                memory_labels={
-                                    "risk_strategy_path": output_path,
-                                    "batch": 1,
-                                },
+                                memory_labels={"risk_strategy_path": output_path, "batch": 1, "context": context},
                             ),
                             timeout=calculated_timeout,
                         )
@@ -436,6 +432,13 @@ class OrchestratorManager:
                     prompt_duration = (datetime.now() - prompt_start_time).total_seconds()
                     self.logger.debug(
                         f"Successfully processed prompt {prompt_idx+1} for {strategy_name}/{risk_category_name} in {prompt_duration:.2f} seconds"
+                    )
+
+                    # Write outputs to file after each prompt is processed
+                    write_pyrit_outputs_to_file(
+                        output_path=output_path,
+                        logger=self.logger,
+                        prompt_to_context=prompt_to_context,
                     )
 
                     # Print progress to console
@@ -492,6 +495,7 @@ class OrchestratorManager:
         timeout: int = 120,
         red_team_info: Dict = None,
         task_statuses: Dict = None,
+        prompt_to_context: Dict[str, str] = None,
     ) -> Orchestrator:
         """Send prompts via the CrescendoOrchestrator with optimized performance.
 
@@ -542,12 +546,14 @@ class OrchestratorManager:
         for prompt_idx, prompt in enumerate(all_prompts):
             prompt_start_time = datetime.now()
             self.logger.debug(f"Processing prompt {prompt_idx+1}/{len(all_prompts)}")
+            context = prompt_to_context.get(prompt, None) if prompt_to_context else None
             try:
                 red_llm_scoring_target = RAIServiceEvalChatTarget(
                     logger=self.logger,
                     credential=self.credential,
                     risk_category=risk_category,
                     azure_ai_project=self.azure_ai_project,
+                    context=context,
                 )
 
                 azure_rai_service_target = AzureRAIServiceTarget(
@@ -577,10 +583,8 @@ class OrchestratorManager:
                     credential=self.credential,
                     risk_category=risk_category,
                     azure_ai_project=self.azure_ai_project,
+                    context=context,
                 )
-
-                # Debug log the first few characters of the current prompt
-                self.logger.debug(f"Current prompt (truncated): {prompt[:50]}...")
 
                 try:
                     # Create retry-enabled function using the reusable decorator
@@ -594,6 +598,7 @@ class OrchestratorManager:
                                 memory_labels={
                                     "risk_strategy_path": output_path,
                                     "batch": prompt_idx + 1,
+                                    "context": context,
                                 },
                             ),
                             timeout=calculated_timeout,
@@ -604,6 +609,13 @@ class OrchestratorManager:
                     prompt_duration = (datetime.now() - prompt_start_time).total_seconds()
                     self.logger.debug(
                         f"Successfully processed prompt {prompt_idx+1} for {strategy_name}/{risk_category_name} in {prompt_duration:.2f} seconds"
+                    )
+
+                    # Write outputs to file after each prompt is processed
+                    write_pyrit_outputs_to_file(
+                        output_path=output_path,
+                        logger=self.logger,
+                        prompt_to_context=prompt_to_context,
                     )
 
                     # Print progress to console
