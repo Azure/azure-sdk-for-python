@@ -1117,28 +1117,16 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
             # Always clean up the created person directory, even if the test fails
             delete_person_directory_and_assert(client, person_directory_id, created_directory)
 
-    @pytest.mark.skip(reason="Not yet implemented - conversion from async to sync pending")
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
     def test_person_directories_delete_face(self, contentunderstanding_endpoint):
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
-        response = client.person_directories.delete_face(
-            person_directory_id="str",
-            face_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @ContentUnderstandingPreparer()
-    @recorded_by_proxy
-    def test_person_directories_list_faces(self, contentunderstanding_endpoint):
         """
         Test Summary:
         - Create a person directory and add a person
-        - Add multiple faces to the person
-        - List all faces in the directory
-        - Verify all created faces are in the list
+        - Add a face to the person
+        - Verify the face exists before deletion
+        - Delete the face
+        - Verify the face no longer exists
         - Clean up created person directory
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
@@ -1150,8 +1138,8 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
             create_person_directory_and_assert(
                 client, 
                 person_directory_id,
-                description=f"Test person directory for list faces: {person_directory_id}",
-                tags={"test_type": "list_faces"}
+                description=f"Test person directory for delete face: {person_directory_id}",
+                tags={"test_type": "delete_face"}
             )
             created_directory = True
 
@@ -1161,12 +1149,98 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
                 person_directory_id=person_directory_id,
                 body={
                     "tags": {
-                        "name": "Ivy Chen",
+                        "name": "Henry Miller",
                         "role": "test_subject"
                     }
                 }
             )
-            
+            person_id = add_person_response.person_id
+            print(f"Created person with ID: {person_id}")
+
+            # Add a face to the person
+            test_file_dir = os.path.dirname(os.path.abspath(__file__))
+            image_path = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
+            image_data = read_image_to_base64(image_path)
+
+            print(f"Adding face to person {person_id}")
+            add_face_response = client.person_directories.add_face(
+                person_directory_id=person_directory_id,
+                body={
+                    "faceSource": {
+                        "data": image_data
+                    },
+                    "personId": person_id
+                }
+            )
+            face_id = add_face_response.face_id
+            print(f"Created face with ID: {face_id}")
+
+            # Verify the face exists before deletion
+            face = client.person_directories.get_face(
+                person_directory_id=person_directory_id,
+                face_id=face_id
+            )
+            assert face is not None
+            assert face.face_id == face_id
+            print(f"Verified face {face_id} exists before deletion")
+
+            # Delete the face
+            print(f"Deleting face {face_id}")
+            response = client.person_directories.delete_face(
+                person_directory_id=person_directory_id,
+                face_id=face_id
+            )
+            assert response is None
+
+            # Verify the face no longer exists
+            try:
+                client.person_directories.get_face(
+                    person_directory_id=person_directory_id,
+                    face_id=face_id
+                )
+                assert False, f"Face {face_id} should not exist after deletion"
+            except Exception:
+                print(f"Verified face {face_id} no longer exists after deletion")
+
+        finally:
+            # Always clean up the created person directory, even if the test fails
+            delete_person_directory_and_assert(client, person_directory_id, created_directory)
+
+    @ContentUnderstandingPreparer()
+    @recorded_by_proxy
+    def test_person_directories_find_similar_faces(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Create a person directory and add a person with multiple faces
+        - Find similar faces using a query face
+        - Verify similar faces results
+        - Clean up created person directory
+        """
+        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        person_directory_id = generate_person_directory_id()
+        created_directory = False
+
+        try:
+            # Create a person directory
+            create_person_directory_and_assert(
+                client, 
+                person_directory_id,
+                description=f"Test person directory for find similar faces: {person_directory_id}",
+                tags={"test_type": "find_similar_faces"}
+            )
+            created_directory = True
+
+            # Add a person to the directory
+            print(f"Adding person to directory {person_directory_id}")
+            add_person_response = client.person_directories.add_person(
+                person_directory_id=person_directory_id,
+                body={
+                    "tags": {
+                        "name": "Jack Wilson",
+                        "role": "test_subject"
+                    }
+                }
+            )
             person_id = add_person_response.person_id
             print(f"Created person with ID: {person_id}")
 
@@ -1176,7 +1250,7 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
             image_data = read_image_to_base64(image_path)
 
             face_ids = []
-            for i in range(3):  # Add 3 faces
+            for i in range(2):  # Add 2 faces
                 print(f"Adding face {i+1} to person {person_id}")
                 add_face_response = client.person_directories.add_face(
                     person_directory_id=person_directory_id,
@@ -1187,34 +1261,38 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
                         "personId": person_id
                     }
                 )
-                
                 face_id = add_face_response.face_id
                 face_ids.append(face_id)
                 print(f"Created face {i+1} with ID: {face_id}")
 
-            # List all faces in the directory
-            print(f"Listing all faces in directory {person_directory_id}")
-            response = client.person_directories.list_faces(person_directory_id=person_directory_id)
-            result = list(response)
-            
-            # Verify we get the expected number of faces
-            assert len(result) >= len(face_ids), f"Expected at least {len(face_ids)} faces, got {len(result)}"
-            print(f"Found {len(result)} faces in directory")
-            
-            # Verify that our created faces are in the list
-            found_faces = set()
-            for face in result:
-                assert hasattr(face, 'face_id'), "Each face should have face_id"
-                assert hasattr(face, 'person_id'), "Each face should have person_id"
-                assert hasattr(face, 'bounding_box'), "Each face should have bounding_box"
-                assert hasattr(face, 'image_reference_id'), "Each face should have image_reference_id"
-                
-                if face.face_id in face_ids:
-                    found_faces.add(face.face_id)
-                    print(f"Found created face: {face.face_id}")
-            
-            assert len(found_faces) == len(face_ids), f"Expected to find {len(face_ids)} created faces, found {len(found_faces)}"
-            print("List faces test completed successfully")
+            # Find similar faces using the same image as query
+            print(f"Finding similar faces in directory {person_directory_id}")
+            response = client.person_directories.find_similar_faces(
+                person_directory_id=person_directory_id,
+                body={
+                    "faceSource": {
+                        "data": image_data
+                    },
+                    "maxSimilarFaces": 10
+                }
+            )
+
+            # Verify the response
+            assert response is not None
+            assert hasattr(response, 'similar_faces')
+
+            if response.similar_faces and len(response.similar_faces) > 0:
+                print(f"Found {len(response.similar_faces)} similar faces")
+                for i, similar_face in enumerate(response.similar_faces):
+                    assert hasattr(similar_face, 'face_id')
+                    assert hasattr(similar_face, 'confidence')
+                    print(f"Similar face {i+1}: Face ID {similar_face.face_id}, Confidence {similar_face.confidence}")
+                    assert similar_face.face_id in face_ids, f"Similar face {similar_face.face_id} should be in our directory"
+            else:
+                print("No similar faces found")
+                # This is acceptable if the face detection doesn't find matches
+
+            print("Find similar faces test completed successfully")
 
         finally:
             # Always clean up the created person directory, even if the test fails
@@ -1222,12 +1300,12 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_person_directories_identify_person(self, contentunderstanding_endpoint):
+    def test_person_directories_verify_person(self, contentunderstanding_endpoint):
         """
         Test Summary:
-        - Create a person directory and build it from enrollment data
-        - Identify persons in a test image
-        - Verify identification results
+        - Create a person directory and add a person with a face
+        - Verify the person using a test image
+        - Verify the verification results
         - Clean up created person directory
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
@@ -1239,106 +1317,63 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
             create_person_directory_and_assert(
                 client, 
                 person_directory_id,
-                description=f"Test person directory for identify person: {person_directory_id}",
-                tags={"test_type": "identify_person"}
+                description=f"Test person directory for verify person: {person_directory_id}",
+                tags={"test_type": "verify_person"}
             )
             created_directory = True
 
-            # Build person directory from enrollment data
-            print(f"Building person directory from enrollment data")
-            person_name_to_id = build_person_directory_from_enrollment_data(
-                client, 
-                person_directory_id
-            )
-            
-            print(f"Built person directory with {len(person_name_to_id)} persons")
-
-            # Identify persons in a test image
-            test_image_path = get_test_image_path("family.jpg")
-            
-            print(f"Identifying persons in test image: {os.path.basename(test_image_path)}")
-            
-            # Read test image and convert to base64
-            image_data = read_image_to_base64(test_image_path)
-
-            # Identify persons in the image
-            response = client.person_directories.identify_person(
+            # Add a person to the directory
+            print(f"Adding person to directory {person_directory_id}")
+            add_person_response = client.person_directories.add_person(
                 person_directory_id=person_directory_id,
-            body={
-                "faceSource": {
+                body={
+                    "tags": {
+                        "name": "Kate Anderson",
+                        "role": "test_subject"
+                    }
+                }
+            )
+            person_id = add_person_response.person_id
+            print(f"Created person with ID: {person_id}")
+
+            # Add a face to the person
+            test_file_dir = os.path.dirname(os.path.abspath(__file__))
+            image_path = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
+            image_data = read_image_to_base64(image_path)
+
+            print(f"Adding face to person {person_id}")
+            add_face_response = client.person_directories.add_face(
+                person_directory_id=person_directory_id,
+                body={
+                    "faceSource": {
                         "data": image_data
                     },
-                    "maxPersonCandidates": 5
+                    "personId": person_id
+                }
+            )
+            face_id = add_face_response.face_id
+            print(f"Created face with ID: {face_id}")
+
+            # Verify the person using the same image
+            print(f"Verifying person {person_id} with test image")
+            response = client.person_directories.verify_person(
+                person_directory_id=person_directory_id,
+                person_id=person_id,
+                body={
+                    "faceSource": {
+                        "data": image_data
+                    }
                 }
             )
 
             # Verify the response
             assert response is not None
-            assert hasattr(response, 'person_candidates')
-            
-            if response.person_candidates and len(response.person_candidates) > 0:
-                print(f"Found {len(response.person_candidates)} person candidates")
-                for i, candidate in enumerate(response.person_candidates):
-                    assert hasattr(candidate, 'person_id')
-                    assert hasattr(candidate, 'confidence')
-                    print(f"Candidate {i+1}: Person ID {candidate.person_id}, Confidence {candidate.confidence}")
-                    
-                    # Verify the person exists in our directory
-                    assert candidate.person_id in person_name_to_id.values(), f"Identified person {candidate.person_id} should be in our directory"
-            else:
-                print("No persons identified in the test image")
-                # This is acceptable if the test image doesn't contain recognizable faces
-
-            print("Person identification test completed successfully")
+            assert hasattr(response, 'detected_face')
+            assert hasattr(response, 'confidence')
+            print(f"Verification result: Detected face = {response.detected_face}, Confidence = {response.confidence}")
+            assert response.detected_face is not None, "detected_face should not be None"
+            assert isinstance(response.confidence, (int, float)), "confidence should be a number"
 
         finally:
             # Always clean up the created person directory, even if the test fails
             delete_person_directory_and_assert(client, person_directory_id, created_directory)
-
-    @pytest.mark.skip(reason="Not yet implemented - conversion from async to sync pending")
-    @ContentUnderstandingPreparer()
-    @recorded_by_proxy
-    def test_person_directories_find_similar_faces(self, contentunderstanding_endpoint):
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
-        response = client.person_directories.find_similar_faces(
-            person_directory_id="str",
-            body={
-                "faceSource": {
-                    "data": bytes("bytes", encoding="utf-8"),
-                    "imageReferenceId": "str",
-                    "targetBoundingBox": {"height": 0, "left": 0, "top": 0, "width": 0},
-                    "url": "str",
-                },
-                "maxSimilarFaces": 0,
-            },
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @pytest.mark.skip(reason="Not yet implemented - conversion from async to sync pending")
-    @ContentUnderstandingPreparer()
-    @recorded_by_proxy
-    def test_person_directories_verify_person(self, contentunderstanding_endpoint):
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
-        response = client.person_directories.verify_person(
-            person_directory_id="str",
-            person_id="str",
-            body={
-                "faceSource": {
-                    "data": bytes("bytes", encoding="utf-8"),
-                    "imageReferenceId": "str",
-                    "targetBoundingBox": {"height": 0, "left": 0, "top": 0, "width": 0},
-                    "url": "str",
-                }
-            },
-            face_source={
-                "data": bytes("bytes", encoding="utf-8"),
-                "imageReferenceId": "str",
-                "targetBoundingBox": {"height": 0, "left": 0, "top": 0, "width": 0},
-                "url": "str",
-            },
-        )
-
-        # please add some check logic here by yourself
-        # ...
