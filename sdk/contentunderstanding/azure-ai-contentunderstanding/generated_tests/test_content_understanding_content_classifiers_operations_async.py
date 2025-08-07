@@ -6,140 +6,691 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
+import os
+from typing import Tuple, Union, Dict, Any, Optional
 from devtools_testutils.aio import recorded_by_proxy_async
 from testpreparer import ContentUnderstandingPreparer
 from testpreparer_async import ContentUnderstandingClientTestBaseAsync
+from test_helpers import (
+    generate_classifier_id,
+    generate_analyzer_id,
+    extract_operation_id_from_poller,
+    new_simple_classifier_schema,
+    new_enhanced_classifier_schema,
+    new_simple_content_analyzer_object,
+    assert_poller_properties,
+    assert_classifier_result,
+    save_classifier_result_to_file,
+    PollerType
+)
 
 
-@pytest.mark.skip("you may need to update the auto-generated test case before run it")
+async def classifier_in_list_async(client, classifier_id: str) -> bool:
+    """Check if a classifier with the given ID exists in the list of classifiers (async version).
+    
+    Args:
+        client: The ContentUnderstandingClient instance
+        classifier_id: The classifier ID to search for
+        
+    Returns:
+        bool: True if the classifier is found, False otherwise
+    """
+    response = client.content_classifiers.list()
+    async for r in response:
+        if hasattr(r, 'classifier_id') and r.classifier_id == classifier_id:
+            return True
+    return False
+
+
+async def create_classifier_and_assert_async(
+    client, 
+    classifier_id: str, 
+    resource: Dict[str, Any]
+) -> Tuple[Any, str]:
+    """Create a classifier and perform basic assertions (async version).
+    
+    Args:
+        client: The ContentUnderstandingClient instance
+        classifier_id: The classifier ID to create
+        resource: The classifier resource dictionary
+        
+    Returns:
+        Tuple[Any, str]: A tuple containing (poller, operation_id)
+        
+    Raises:
+        AssertionError: If the creation fails or assertions fail
+    """
+    print(f"\nCreating classifier {classifier_id}")
+    
+    # Start the classifier creation operation
+    poller = await client.content_classifiers.begin_create_or_replace(
+        classifier_id=classifier_id,
+        resource=resource,
+    )
+
+    # Extract operation_id from the poller using the helper function
+    operation_id = extract_operation_id_from_poller(poller, PollerType.CLASSIFIER_CREATION)
+    print(f"  Extracted operation_id: {operation_id}")
+
+    # Check operation status while it's running
+    print(f"  Checking operation status for operation_id: {operation_id}")
+    status_response = await client.content_classifiers.get_operation_status(
+        classifier_id=classifier_id,
+        operation_id=operation_id,
+    )
+
+    # Verify the operation status response
+    assert status_response is not None
+    print(f"  Operation status: {status_response}")
+    
+    # Check that the operation status has expected fields
+    assert hasattr(status_response, 'status') or hasattr(status_response, 'operation_status')
+    assert hasattr(status_response, 'id')
+    assert status_response.id == operation_id
+    
+    # Wait for the operation to complete
+    print(f"  Waiting for classifier {classifier_id} to be created")
+    response = await poller.result()
+    assert response is not None
+    assert poller.status() == "Succeeded"
+    assert poller.done()
+    print(f"  Classifier {classifier_id} is created successfully")
+    
+    # Additional poller assertions
+    assert poller is not None
+    assert poller.status() is not None
+    assert poller.status() is not ""
+    assert poller.continuation_token() is not None
+    
+    # Verify the classifier is in the list
+    assert await classifier_in_list_async(client, classifier_id), f"Created classifier with ID '{classifier_id}' was not found in the list"
+    print(f"  Verified classifier {classifier_id} is in the list")
+    
+    return poller, operation_id
+
+
 class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstandingClientTestBaseAsync):
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_classifiers_get_operation_status(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Create classifier and extract operation ID
+        - Check operation status during creation
+        - Wait for operation completion
+        - Check final operation status after completion
+        - Clean up created classifier
+        """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        response = await client.content_classifiers.get_operation_status(
-            classifier_id="str",
-            operation_id="str",
+        classifier_id = generate_classifier_id()
+        created_classifier = False
+
+        classifier_schema = new_simple_classifier_schema(
+            classifier_id=classifier_id,
+            description=f"test classifier for operation status: {classifier_id}",
+            tags={"test_type": "operation_status"}
         )
 
-        # please add some check logic here by yourself
-        # ...
+        try:
+            # Create classifier using the refactored function
+            poller, operation_id = await create_classifier_and_assert_async(client, classifier_id, classifier_schema)
+            created_classifier = True
+
+            # Check final operation status after completion
+            final_status_response = await client.content_classifiers.get_operation_status(
+                classifier_id=classifier_id,
+                operation_id=operation_id,
+            )
+            
+            assert final_status_response is not None
+            print(f"Final operation status: {final_status_response}")
+
+        finally:
+            # Always clean up the created classifier, even if the test fails
+            if created_classifier:
+                print(f"Cleaning up classifier {classifier_id}")
+                try:
+                    await client.content_classifiers.delete(classifier_id=classifier_id)
+                    # Verify deletion
+                    assert not await classifier_in_list_async(client, classifier_id), f"Deleted classifier with ID '{classifier_id}' was found in the list"
+                    print(f"Classifier {classifier_id} is deleted successfully")
+                except Exception as e:
+                    print(f"Warning: Failed to delete classifier {classifier_id}: {e}")
+            else:
+                print(f"Classifier {classifier_id} was not created, no cleanup needed")
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_classifiers_begin_create_or_replace(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Create classifier using schema dictionary
+        - Verify classifier creation and poller properties
+        - Clean up created classifier
+        """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        response = await (
-            await client.content_classifiers.begin_create_or_replace(
-                classifier_id="str",
-                resource={
-                    "categories": {"str": {"analyzerId": "str", "description": "str"}},
-                    "classifierId": "str",
-                    "createdAt": "2020-02-20 00:00:00",
-                    "lastModifiedAt": "2020-02-20 00:00:00",
-                    "status": "str",
-                    "description": "str",
-                    "processingLocation": "str",
-                    "splitMode": "str",
-                    "tags": {"str": "str"},
-                    "warnings": [~azure.core.ODataV4Format],
-                },
-            )
-        ).result()  # call '.result()' to poll until service return final result
+        classifier_id = generate_classifier_id()
+        created_classifier = False
 
-        # please add some check logic here by yourself
-        # ...
+        classifier_schema = new_simple_classifier_schema(
+            classifier_id=classifier_id,
+            description=f"test classifier: {classifier_id}",
+            tags={"tag1_name": "tag1_value"}
+        )
+
+        try:
+            # Create classifier using the refactored function
+            poller, operation_id = await create_classifier_and_assert_async(client, classifier_id, classifier_schema)
+            created_classifier = True
+
+        finally:
+            # Always clean up the created classifier, even if the test fails
+            if created_classifier:
+                print(f"Cleaning up classifier {classifier_id}")
+                try:
+                    await client.content_classifiers.delete(classifier_id=classifier_id)
+                    # Verify deletion
+                    assert not await classifier_in_list_async(client, classifier_id), f"Deleted classifier with ID '{classifier_id}' was found in the list"
+                    print(f"Classifier {classifier_id} is deleted successfully")
+                except Exception as e:
+                    print(f"Warning: Failed to delete classifier {classifier_id}: {e}")
+            else:
+                print(f"Classifier {classifier_id} was not created, no cleanup needed")
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_classifiers_update(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Create initial classifier
+        - Get classifier before update to verify initial state
+        - Update classifier with new description and tags
+        - Get classifier after update to verify changes persisted
+        - Clean up created classifier
+        """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        response = await client.content_classifiers.update(
-            classifier_id="str",
-            resource={
-                "categories": {"str": {"analyzerId": "str", "description": "str"}},
-                "classifierId": "str",
-                "createdAt": "2020-02-20 00:00:00",
-                "lastModifiedAt": "2020-02-20 00:00:00",
-                "status": "str",
-                "description": "str",
-                "processingLocation": "str",
-                "splitMode": "str",
-                "tags": {"str": "str"},
-                "warnings": [~azure.core.ODataV4Format],
-            },
+        classifier_id = generate_classifier_id()
+        created_classifier = False
+
+        # Create initial classifier
+        initial_classifier_schema = new_simple_classifier_schema(
+            classifier_id=classifier_id,
+            description=f"Initial classifier for update test: {classifier_id}",
+            tags={"initial_tag": "initial_value"}
         )
 
-        # please add some check logic here by yourself
-        # ...
+        try:
+            # Create the initial classifier using the refactored function
+            poller, operation_id = await create_classifier_and_assert_async(client, classifier_id, initial_classifier_schema)
+            created_classifier = True
+
+            # Get the classifier before update to verify initial state
+            print(f"Getting classifier {classifier_id} before update")
+            classifier_before_update = await client.content_classifiers.get(classifier_id=classifier_id)
+            assert classifier_before_update is not None
+            assert classifier_before_update.classifier_id == classifier_id
+            assert classifier_before_update.description == f"Initial classifier for update test: {classifier_id}"
+            assert classifier_before_update.tags == {"initial_tag": "initial_value"}
+            print(f"Initial classifier state verified - description: {classifier_before_update.description}, tags: {classifier_before_update.tags}")
+
+            # Create updated classifier with only allowed properties (description and tags)
+            updated_classifier_schema = {
+                "description": f"Updated classifier for update test: {classifier_id}",
+                "tags": {"initial_tag": "initial_value", "tag1_field": "updated_value"},
+            }
+
+            print(f"Updating classifier {classifier_id} with new tag and description")
+            
+            # Update the classifier
+            response = await client.content_classifiers.update(
+                classifier_id=classifier_id,
+                resource=updated_classifier_schema,
+            )
+
+            # Verify the update response
+            assert response is not None
+            print(f"Update response: {response}")
+            
+            # Verify the updated classifier has the new tag and updated description
+            assert response.classifier_id == classifier_id
+            assert "tag1_field" in response.tags
+            assert response.tags["tag1_field"] == "updated_value"
+            assert response.description == f"Updated classifier for update test: {classifier_id}"
+            
+            print(f"Successfully updated classifier {classifier_id} with new tag and description")
+
+            # Get the classifier after update to verify the changes persisted
+            print(f"Getting classifier {classifier_id} after update")
+            classifier_after_update = await client.content_classifiers.get(classifier_id=classifier_id)
+            assert classifier_after_update is not None
+            assert classifier_after_update.classifier_id == classifier_id
+            assert classifier_after_update.description == f"Updated classifier for update test: {classifier_id}"
+            assert classifier_after_update.tags == {"initial_tag": "initial_value", "tag1_field": "updated_value"}
+            print(f"Updated classifier state verified - description: {classifier_after_update.description}, tags: {classifier_after_update.tags}")
+
+            # Verify the updated classifier is in the list
+            assert await classifier_in_list_async(client, classifier_id), f"Updated classifier with ID '{classifier_id}' was not found in the list"
+
+        finally:
+            # Always clean up the created classifier, even if the test fails
+            if created_classifier:
+                print(f"Cleaning up classifier {classifier_id}")
+                try:
+                    await client.content_classifiers.delete(classifier_id=classifier_id)
+                    # Verify deletion
+                    assert not await classifier_in_list_async(client, classifier_id), f"Deleted classifier with ID '{classifier_id}' was found in the list"
+                    print(f"Classifier {classifier_id} is deleted successfully")
+                except Exception as e:
+                    print(f"Warning: Failed to delete classifier {classifier_id}: {e}")
+            else:
+                print(f"Classifier {classifier_id} was not created, no cleanup needed")
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_classifiers_get(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Get existing prebuilt classifier (if available)
+        - Verify classifier properties and status
+        """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        response = await client.content_classifiers.get(
-            classifier_id="str",
+        
+        # First, create a classifier to get
+        classifier_id = generate_classifier_id()
+        created_classifier = False
+
+        classifier_schema = new_simple_classifier_schema(
+            classifier_id=classifier_id,
+            description=f"test classifier for get: {classifier_id}",
+            tags={"test_type": "get"}
         )
 
-        # please add some check logic here by yourself
-        # ...
+        try:
+            # Create classifier using the refactored function
+            poller, operation_id = await create_classifier_and_assert_async(client, classifier_id, classifier_schema)
+            created_classifier = True
+
+            # Get the classifier
+            response = await client.content_classifiers.get(classifier_id=classifier_id)
+            assert response is not None
+            print(response)
+            assert response.classifier_id == classifier_id
+            assert len(response.description) > 0
+            assert response.description == f"test classifier for get: {classifier_id}"
+            assert response.status == "ready"
+            assert response.created_at is not None
+            assert response.categories is not None
+
+        finally:
+            # Always clean up the created classifier, even if the test fails
+            if created_classifier:
+                print(f"Cleaning up classifier {classifier_id}")
+                try:
+                    await client.content_classifiers.delete(classifier_id=classifier_id)
+                    # Verify deletion
+                    assert not await classifier_in_list_async(client, classifier_id), f"Deleted classifier with ID '{classifier_id}' was found in the list"
+                    print(f"Classifier {classifier_id} is deleted successfully")
+                except Exception as e:
+                    print(f"Warning: Failed to delete classifier {classifier_id}: {e}")
+            else:
+                print(f"Classifier {classifier_id} was not created, no cleanup needed")
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_classifiers_delete(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Create classifier for deletion test
+        - Verify classifier exists in list before deletion
+        - Delete classifier
+        - Verify classifier no longer exists in list after deletion
+        - Clean up if deletion failed
+        """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        response = await client.content_classifiers.delete(
-            classifier_id="str",
+        classifier_id = generate_classifier_id()
+        created_classifier = False
+
+        # Create a simple classifier for deletion test
+        classifier_schema = new_simple_classifier_schema(
+            classifier_id=classifier_id,
+            description=f"test classifier for deletion: {classifier_id}",
+            tags={"test_type": "deletion"}
         )
 
-        # please add some check logic here by yourself
-        # ...
+        try:
+            # Create classifier using the refactored function
+            poller, operation_id = await create_classifier_and_assert_async(client, classifier_id, classifier_schema)
+            created_classifier = True
+
+            # Verify the classifier is in the list before deletion
+            assert await classifier_in_list_async(client, classifier_id), f"Created classifier with ID '{classifier_id}' was not found in the list"
+            print(f"Verified classifier {classifier_id} is in the list before deletion")
+
+            # Delete the classifier
+            print(f"Deleting classifier {classifier_id}")
+            response = await client.content_classifiers.delete(classifier_id=classifier_id)
+            
+            # Verify the delete response
+            assert response is None
+            
+            # Verify the classifier is no longer in the list after deletion
+            assert not await classifier_in_list_async(client, classifier_id), f"Deleted classifier with ID '{classifier_id}' was found in the list"
+            print(f"Verified classifier {classifier_id} is no longer in the list after deletion")
+
+        finally:
+            # Clean up if the classifier was created but deletion failed
+            if created_classifier and await classifier_in_list_async(client, classifier_id):
+                print(f"Cleaning up classifier {classifier_id} that was not properly deleted")
+                try:
+                    await client.content_classifiers.delete(classifier_id=classifier_id)
+                    assert not await classifier_in_list_async(client, classifier_id), f"Failed to delete classifier {classifier_id} during cleanup"
+                    print(f"Classifier {classifier_id} is deleted successfully during cleanup")
+                except Exception as e:
+                    print(f"Warning: Failed to delete classifier {classifier_id} during cleanup: {e}")
+            elif not created_classifier:
+                print(f"Classifier {classifier_id} was not created, no cleanup needed")
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_classifiers_list(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - List all available classifiers
+        - Verify list response contains expected classifiers
+        - Verify each classifier has required properties
+        """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
         response = client.content_classifiers.list()
         result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
+        
+        # Verify we get at least one classifier in the list (after creating one)
+        classifier_id = generate_classifier_id()
+        created_classifier = False
+
+        classifier_schema = new_simple_classifier_schema(
+            classifier_id=classifier_id,
+            description=f"test classifier for list: {classifier_id}",
+            tags={"test_type": "list"}
+        )
+
+        try:
+            # Create a classifier to ensure we have at least one in the list
+            poller, operation_id = await create_classifier_and_assert_async(client, classifier_id, classifier_schema)
+            created_classifier = True
+
+            # Now list all classifiers
+            response = client.content_classifiers.list()
+            result = [r async for r in response]
+            
+            # Verify we get at least one classifier in the list
+            assert len(result) > 0, "Should have at least one classifier in the list"
+            print(f"Found {len(result)} classifiers")
+            
+            # Verify that our created classifier is in the list
+            created_found = False
+            for classifier in result:
+                assert hasattr(classifier, 'classifier_id'), "Each classifier should have classifier_id"
+                assert hasattr(classifier, 'description'), "Each classifier should have description"
+                assert hasattr(classifier, 'status'), "Each classifier should have status"
+                assert hasattr(classifier, 'created_at'), "Each classifier should have created_at"
+                
+                if classifier.classifier_id == classifier_id:
+                    created_found = True
+                    assert classifier.status == "ready", f"Classifier {classifier_id} should be ready"
+                    print(f"Found created classifier: {classifier.description}")
+            
+            assert created_found, f"Created classifier {classifier_id} should be in the list"
+            print("List classifiers test completed successfully")
+
+        finally:
+            # Always clean up the created classifier
+            if created_classifier:
+                print(f"Cleaning up classifier {classifier_id}")
+                try:
+                    await client.content_classifiers.delete(classifier_id=classifier_id)
+                    # Verify deletion
+                    assert not await classifier_in_list_async(client, classifier_id), f"Deleted classifier with ID '{classifier_id}' was found in the list"
+                    print(f"Classifier {classifier_id} is deleted successfully")
+                except Exception as e:
+                    print(f"Warning: Failed to delete classifier {classifier_id}: {e}")
+            else:
+                print(f"Classifier {classifier_id} was not created, no cleanup needed")
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_classifiers_begin_classify(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Create simple classifier for URL classification
+        - Begin classification operation with URL input
+        - Wait for classification completion
+        - Save classification result to output file
+        - Verify classification results
+        - Clean up created classifier
+        """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        response = await (
-            await client.content_classifiers.begin_classify(
-                classifier_id="str",
-                body={"url": "str"},
-            )
-        ).result()  # call '.result()' to poll until service return final result
+        classifier_id = generate_classifier_id()
+        created_classifier = False
 
-        # please add some check logic here by yourself
-        # ...
+        # Create a simple classifier for URL classification
+        classifier_schema = new_simple_classifier_schema(
+            classifier_id=classifier_id,
+            description=f"test classifier for URL classification: {classifier_id}",
+            tags={"test_type": "url_classification"}
+        )
+
+        try:
+            # Create classifier using the refactored function
+            poller, operation_id = await create_classifier_and_assert_async(client, classifier_id, classifier_schema)
+            created_classifier = True
+
+            # Use the provided URL for the mixed financial docs PDF
+            mixed_docs_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/mixed_financial_docs.pdf"
+
+            print(f"Starting URL classification with classifier {classifier_id}")
+            
+            # Begin classification operation with URL
+            classification_poller = await client.content_classifiers.begin_classify(
+                classifier_id=classifier_id,
+                body={
+                    "url": mixed_docs_url,
+                },
+            )
+            assert_poller_properties(classification_poller, "Classification poller")
+
+            # Wait for classification completion
+            print(f"Waiting for classification completion")
+            classification_result = await classification_poller.result()
+            print(f"  Classification completed")
+            
+            # Get test file directory for saving output
+            test_file_dir = os.path.dirname(os.path.abspath(__file__))
+            output_filename = save_classifier_result_to_file(classification_result, "test_content_classifiers_begin_classify", test_file_dir, classifier_id)
+
+            # Now assert the classification results
+            assert_classifier_result(classification_result, "Classification result")
+
+        finally:
+            # Always clean up the created classifier, even if the test fails
+            if created_classifier:
+                print(f"Cleaning up classifier {classifier_id}")
+                try:
+                    await client.content_classifiers.delete(classifier_id=classifier_id)
+                    # Verify deletion
+                    assert not await classifier_in_list_async(client, classifier_id), f"Deleted classifier with ID '{classifier_id}' was found in the list"
+                    print(f"Classifier {classifier_id} is deleted successfully")
+                except Exception as e:
+                    print(f"Warning: Failed to delete classifier {classifier_id}: {e}")
+            else:
+                print(f"Classifier {classifier_id} was not created, no cleanup needed")
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_classifiers_begin_classify_binary(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Create simple classifier for binary classification
+        - Read mixed_financial_docs.pdf file
+        - Begin binary classification operation with classifier
+        - Wait for classification completion
+        - Save classification result to output file
+        - Verify classification results
+        - Clean up created classifier
+        """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        response = await (
-            await client.content_classifiers.begin_classify_binary(
-                classifier_id="str",
-                input=bytes("bytes", encoding="utf-8"),
-                content_type="str",
-            )
-        ).result()  # call '.result()' to poll until service return final result
+        classifier_id = generate_classifier_id()
+        created_classifier = False
 
-        # please add some check logic here by yourself
-        # ...
+        # Create a simple classifier for binary classification
+        classifier_schema = new_simple_classifier_schema(
+            classifier_id=classifier_id,
+            description=f"test classifier for binary classification: {classifier_id}",
+            tags={"test_type": "binary_classification"}
+        )
+
+        try:
+            # Create classifier using the refactored function
+            poller, operation_id = await create_classifier_and_assert_async(client, classifier_id, classifier_schema)
+            created_classifier = True
+
+            # Read the mixed_financial_docs.pdf file using absolute path based on this test file's location
+            test_file_dir = os.path.dirname(os.path.abspath(__file__))
+            pdf_path = os.path.join(test_file_dir, "test_data", "mixed_financial_docs.pdf")
+            with open(pdf_path, "rb") as pdf_file:
+                pdf_content = pdf_file.read()
+
+            print(f"Starting binary classification with classifier {classifier_id}")
+            
+            # Begin binary classification operation
+            classification_poller = await client.content_classifiers.begin_classify_binary(
+                classifier_id=classifier_id,
+                input=pdf_content,
+                content_type="application/pdf",
+            )
+            assert_poller_properties(classification_poller, "Classification poller")
+
+            # Wait for classification completion
+            print(f"Waiting for classification completion")
+            classification_result = await classification_poller.result()
+            print(f"  Classification completed")
+            
+            output_filename = save_classifier_result_to_file(classification_result, "test_content_classifiers_begin_classify_binary", test_file_dir, classifier_id)
+
+            # Now assert the classification results
+            assert_classifier_result(classification_result, "Classification result")
+
+        finally:
+            # Always clean up the created classifier, even if the test fails
+            if created_classifier:
+                print(f"Cleaning up classifier {classifier_id}")
+                try:
+                    await client.content_classifiers.delete(classifier_id=classifier_id)
+                    # Verify deletion
+                    assert not await classifier_in_list_async(client, classifier_id), f"Deleted classifier with ID '{classifier_id}' was found in the list"
+                    print(f"Classifier {classifier_id} is deleted successfully")
+                except Exception as e:
+                    print(f"Warning: Failed to delete classifier {classifier_id}: {e}")
+            else:
+                print(f"Classifier {classifier_id} was not created, no cleanup needed")
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_classifiers_get_result(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Create simple classifier for binary classification to get operation ID
+        - Read mixed_financial_docs.pdf file
+        - Begin binary classification operation with classifier
+        - Wait for classification completion
+        - Use get_result to retrieve the classification result by operation ID
+        - Verify result contents and structure
+        - Assert classifier result properties
+        - Clean up created classifier
+        """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        response = await client.content_classifiers.get_result(
-            operation_id="str",
+        classifier_id = generate_classifier_id()
+        created_classifier = False
+
+        # Create a simple classifier for binary classification
+        classifier_schema = new_simple_classifier_schema(
+            classifier_id=classifier_id,
+            description=f"test classifier for get result test: {classifier_id}",
+            tags={"test_type": "get_result"}
         )
 
-        # please add some check logic here by yourself
-        # ...
+        try:
+            # Create classifier using the refactored function
+            poller, operation_id = await create_classifier_and_assert_async(client, classifier_id, classifier_schema)
+            created_classifier = True
+
+            # Read the mixed_financial_docs.pdf file using absolute path based on this test file's location
+            test_file_dir = os.path.dirname(os.path.abspath(__file__))
+            pdf_path = os.path.join(test_file_dir, "test_data", "mixed_financial_docs.pdf")
+            with open(pdf_path, "rb") as pdf_file:
+                pdf_content = pdf_file.read()
+
+            print(f"Starting binary classification to get operation ID")
+            
+            # Begin binary classification operation
+            classification_poller = await client.content_classifiers.begin_classify_binary(
+                classifier_id=classifier_id,
+                input=pdf_content,
+                content_type="application/pdf",
+            )
+
+            # Wait for classification completion first
+            print(f"Waiting for classification completion")
+            _ = await classification_poller.result()
+            print(f"  Classification completed")
+
+            # Extract operation ID for get_result test - this should not fail
+            classification_operation_id = extract_operation_id_from_poller(classification_poller, PollerType.CLASSIFY_CALL)
+            assert classification_operation_id is not None, "Operation ID should not be None"
+            assert len(classification_operation_id) > 0, "Operation ID should not be empty"
+            print(f"  Classification operation ID: {classification_operation_id}")
+
+            # Now use get_result to retrieve the result by operation ID
+            print(f"  Getting result by operation ID: {classification_operation_id}")
+            operation_status = await client.content_classifiers.get_result(
+                operation_id=classification_operation_id,
+            )
+            
+            # Check operation_status is not None
+            assert operation_status is not None, "Operation status should not be None"
+            
+            # Check operation_status has the expected operation status properties
+            assert hasattr(operation_status, 'id'), "Operation status should have id property"
+            assert hasattr(operation_status, 'status'), "Operation status should have status property"
+            assert hasattr(operation_status, 'result'), "Operation status should have result property"
+            assert operation_status.id == classification_operation_id, f"Operation status ID should match operation ID {classification_operation_id}"
+            assert operation_status.status == "Succeeded", f"Operation status should be Succeeded, got {operation_status.status}"
+            
+            # The actual classification result is in operation_status.result
+            classification_result = operation_status.result
+            assert classification_result is not None, "Classification result should not be None"
+            
+            # Get test file directory for saving output
+            test_file_dir = os.path.dirname(os.path.abspath(__file__))
+            
+            # Save the classification result to file (not the wrapper operation_status)
+            output_filename = save_classifier_result_to_file(classification_result, "test_content_classifiers_get_result", test_file_dir, classification_operation_id)
+            
+            print(f"  Successfully retrieved result for operation {classification_operation_id}")
+            print(f"  Result contains {len(classification_result.contents)} contents")
+
+            # Now assert the classification results using the same validation as binary test
+            assert_classifier_result(classification_result, "Get result response")
+
+        finally:
+            # Always clean up the created classifier, even if the test fails
+            if created_classifier:
+                print(f"Cleaning up classifier {classifier_id}")
+                try:
+                    await client.content_classifiers.delete(classifier_id=classifier_id)
+                    # Verify deletion
+                    assert not await classifier_in_list_async(client, classifier_id), f"Deleted classifier with ID '{classifier_id}' was found in the list"
+                    print(f"Classifier {classifier_id} is deleted successfully")
+                except Exception as e:
+                    print(f"Warning: Failed to delete classifier {classifier_id}: {e}")
+            else:
+                print(f"Classifier {classifier_id} was not created, no cleanup needed")

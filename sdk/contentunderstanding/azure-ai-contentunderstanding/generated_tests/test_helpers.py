@@ -20,6 +20,8 @@ class PollerType(Enum):
     """Enum to distinguish different types of pollers for operation ID extraction."""
     ANALYZER_CREATION = "analyzer_creation"
     ANALYZE_CALL = "analyze_call"
+    CLASSIFIER_CREATION = "classifier_creation"
+    CLASSIFY_CALL = "classify_call"
 
 
 def generate_analyzer_id() -> str:
@@ -31,6 +33,15 @@ def generate_analyzer_id() -> str:
     return f"python-sdk-test-analyzer-{date_str}-{time_str}-{guid}"
 
 
+def generate_classifier_id() -> str:
+    """Generate a unique classifier ID with current date, time, and GUID."""
+    now = datetime.now()
+    date_str = now.strftime("%Y%m%d")
+    time_str = now.strftime("%H%M%S")
+    guid = str(uuid.uuid4()).replace("-", "")[:8]
+    return f"python-sdk-test-classifier-{date_str}-{time_str}-{guid}"
+
+
 def extract_operation_id_from_poller(poller, poller_type: PollerType) -> str:
     """Extract operation ID from an LROPoller or AsyncLROPoller.
     
@@ -38,10 +49,12 @@ def extract_operation_id_from_poller(poller, poller_type: PollerType) -> str:
     the Operation-Location header. The extraction pattern depends on the poller type:
     - AnalyzerCreation: https://endpoint/contentunderstanding/operations/{operation_id}?api-version=...
     - AnalyzeCall: https://endpoint/contentunderstanding/analyzerResults/{operation_id}?api-version=...
+    - ClassifierCreation: https://endpoint/contentunderstanding/operations/{operation_id}?api-version=...
+    - ClassifyCall: https://endpoint/contentunderstanding/classifierResults/{operation_id}?api-version=...
     
     Args:
         poller: The LROPoller or AsyncLROPoller instance
-        poller_type: The type of poller (ANALYZER_CREATION or ANALYZE_CALL) - REQUIRED
+        poller_type: The type of poller (ANALYZER_CREATION, ANALYZE_CALL, CLASSIFIER_CREATION, or CLASSIFY_CALL) - REQUIRED
         
     Returns:
         str: The operation ID extracted from the poller
@@ -50,7 +63,7 @@ def extract_operation_id_from_poller(poller, poller_type: PollerType) -> str:
         ValueError: If no operation ID can be extracted from the poller or if poller_type is not provided
     """
     if poller_type is None:
-        raise ValueError("poller_type is required and must be specified (ANALYZER_CREATION or ANALYZE_CALL)")
+        raise ValueError("poller_type is required and must be specified")
     # Extract from Operation-Location header (standard approach)
     initial_response = poller.polling_method()._initial_response
     operation_location = initial_response.http_response.headers.get("Operation-Location")
@@ -60,7 +73,7 @@ def extract_operation_id_from_poller(poller, poller_type: PollerType) -> str:
     print("---------------")
     
     if operation_location:
-        if poller_type == PollerType.ANALYZER_CREATION:
+        if poller_type == PollerType.ANALYZER_CREATION or poller_type == PollerType.CLASSIFIER_CREATION:
             # Pattern: https://endpoint/.../operations/{operation_id}?api-version=...
             if "/operations/" in operation_location:
                 operation_id = operation_location.split("/operations/")[1].split("?")[0]
@@ -69,6 +82,11 @@ def extract_operation_id_from_poller(poller, poller_type: PollerType) -> str:
             # Pattern: https://endpoint/.../analyzerResults/{operation_id}?api-version=...
             if "/analyzerResults/" in operation_location:
                 operation_id = operation_location.split("/analyzerResults/")[1].split("?")[0]
+                return operation_id
+        elif poller_type == PollerType.CLASSIFY_CALL:
+            # Pattern: https://endpoint/.../classifierResults/{operation_id}?api-version=...
+            if "/classifierResults/" in operation_location:
+                operation_id = operation_location.split("/classifierResults/")[1].split("?")[0]
                 return operation_id
     
     raise ValueError(f"Could not extract operation ID from poller for type {poller_type}")
@@ -145,6 +163,78 @@ def new_marketing_video_analyzer_object(analyzer_id: str, description: Optional[
     )
 
 
+def new_simple_classifier_schema(classifier_id: str, description: Optional[str] = None, tags: Optional[Dict[str, str]] = None) -> Dict[str, any]:
+    """Create a simple classifier schema based on the classifier notebook patterns.
+    
+    Args:
+        classifier_id: The classifier ID
+        description: Optional description for the classifier
+        tags: Optional tags for the classifier
+        
+    Returns:
+        Dict[str, any]: A configured classifier schema dictionary
+    """
+    if description is None:
+        description = f"test classifier: {classifier_id}"
+    if tags is None:
+        tags = {"test_type": "simple"}
+        
+    return {
+        "categories": {
+            "Loan application": {
+                "description": "Documents submitted by individuals or businesses to request funding, typically including personal or business details, financial history, loan amount, purpose, and supporting documentation."
+            },
+            "Invoice": {
+                "description": "Billing documents issued by sellers or service providers to request payment for goods or services, detailing items, prices, taxes, totals, and payment terms."
+            },
+            "Bank_Statement": {
+                "description": "Official statements issued by banks that summarize account activity over a period, including deposits, withdrawals, fees, and balances."
+            },
+        },
+        "splitMode": "auto",
+        "description": description,
+        "tags": tags,
+    }
+
+
+def new_enhanced_classifier_schema(classifier_id: str, analyzer_id: str, description: Optional[str] = None, tags: Optional[Dict[str, str]] = None) -> Dict[str, any]:
+    """Create an enhanced classifier schema that uses custom analyzers for specific categories.
+    
+    Args:
+        classifier_id: The classifier ID
+        analyzer_id: The analyzer ID to use for loan applications
+        description: Optional description for the classifier
+        tags: Optional tags for the classifier
+        
+    Returns:
+        Dict[str, any]: A configured enhanced classifier schema dictionary
+    """
+    if description is None:
+        description = f"enhanced classifier: {classifier_id}"
+    if tags is None:
+        tags = {"test_type": "enhanced"}
+        
+    return {
+        "categories": {
+            "Loan application": {
+                "description": "Documents submitted by individuals or businesses to request funding, typically including personal or business details, financial history, loan amount, purpose, and supporting documentation.",
+                "analyzerId": analyzer_id  # Use custom analyzer for loan applications
+            },
+            "Invoice": {
+                "description": "Billing documents issued by sellers or service providers to request payment for goods or services, detailing items, prices, taxes, totals, and payment terms.",
+                "analyzerId": "prebuilt-invoice"  # Use prebuilt invoice analyzer
+            },
+            "Bank_Statement": {
+                "description": "Official statements issued by banks that summarize account activity over a period, including deposits, withdrawals, fees, and balances."
+                # No analyzer specified - uses default processing
+            },
+        },
+        "splitMode": "auto",
+        "description": description,
+        "tags": tags,
+    }
+
+
 def assert_poller_properties(poller, poller_name: str = "Poller"):
     """Assert common poller properties for any LROPoller or AsyncLROPoller.
     
@@ -204,6 +294,47 @@ def assert_simple_content_analyzer_result(analysis_result, result_name: str = "A
     print(f"Total amount field validation successful")
 
 
+def assert_classifier_result(classifier_result, result_name: str = "Classifier result"):
+    """Assert classifier result properties and classification.
+    
+    Args:
+        classifier_result: The classifier result object to validate
+        result_name: Optional name for the result in log messages
+        
+    Raises:
+        AssertionError: If any classifier result property assertion fails
+    """
+    print(f"Validating {result_name} properties")
+    assert classifier_result is not None, f"{result_name} should not be None"
+    assert classifier_result.__class__.__name__ == "ClassifyResult", f"{result_name} should be ClassifyResult, got {classifier_result.__class__.__name__}"
+    assert classifier_result.contents is not None, f"{result_name} should have contents"
+    assert len(classifier_result.contents) > 0, f"{result_name} should have at least one content"
+    
+    print(f"{result_name} properties verified successfully")
+
+    # Verify each content has category and expected page ranges
+    expected_categories_and_pages = [
+        ("Invoice", 1, 1),
+        ("Bank_Statement", 2, 3),
+        ("Loan application", 4, 4)
+    ]
+    
+    assert len(classifier_result.contents) == len(expected_categories_and_pages), f"Expected {len(expected_categories_and_pages)} contents, got {len(classifier_result.contents)}"
+    
+    for i, (expected_category, expected_start_page, expected_end_page) in enumerate(expected_categories_and_pages):
+        content = classifier_result.contents[i]
+        assert hasattr(content, 'category'), f"Content {i} should have category"
+        assert content.category is not None, f"Content {i} category should not be None"
+        assert content.category == expected_category, f"Content {i} expected category '{expected_category}', got '{content.category}'"
+        
+        assert hasattr(content, 'start_page_number'), f"Content {i} should have start_page_number"
+        assert hasattr(content, 'end_page_number'), f"Content {i} should have end_page_number"
+        assert content.start_page_number == expected_start_page, f"Content {i} expected start page {expected_start_page}, got {content.start_page_number}"
+        assert content.end_page_number == expected_end_page, f"Content {i} expected end page {expected_end_page}, got {content.end_page_number}"
+        
+        print(f"Content {i} category: {content.category}, pages: {content.start_page_number}-{content.end_page_number}")
+
+
 def save_analysis_result_to_file(analysis_result, test_name: str, test_pyfile_dir: str, identifier: Optional[str] = None, output_dir: str = "test_output") -> str:
     """Save analysis result to output file using pytest naming convention.
     
@@ -240,6 +371,45 @@ def save_analysis_result_to_file(analysis_result, test_name: str, test_pyfile_di
         json.dump(analysis_result.as_dict(), output_file, indent=2)
     
     print(f"Analysis result saved to: {saved_file_path}")
+    return saved_file_path
+
+
+def save_classifier_result_to_file(classifier_result, test_name: str, test_pyfile_dir: str, identifier: Optional[str] = None, output_dir: str = "test_output") -> str:
+    """Save classifier result to output file using pytest naming convention.
+    
+    Args:
+        classifier_result: The classifier result object to save
+        test_name: Name of the test case (e.g., function name)
+        test_pyfile_dir: Directory where pytest files are located
+        identifier: Optional unique identifier for the result (e.g., classifier_id)
+        output_dir: Directory name to save the output file (default: "test_output")
+        
+    Returns:
+        str: Path to the saved output file
+        
+    Raises:
+        OSError: If there are issues creating directory or writing file
+    """
+    # Create output directory if it doesn't exist
+    output_dir_path = os.path.join(test_pyfile_dir, output_dir)
+    os.makedirs(output_dir_path, exist_ok=True)
+    
+    # Generate output filename with timestamp
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    
+    # Build filename with test name and optional identifier
+    if identifier:
+        output_filename = f"{test_name}_{identifier}_{timestamp}.json"
+    else:
+        output_filename = f"{test_name}_{timestamp}.json"
+    
+    saved_file_path = os.path.join(output_dir_path, output_filename)
+    
+    # Save the classifier result
+    with open(saved_file_path, "w") as output_file:
+        json.dump(classifier_result.as_dict(), output_file, indent=2)
+    
+    print(f"Classifier result saved to: {saved_file_path}")
     return saved_file_path
 
 
