@@ -33,33 +33,33 @@ RISK_CATEGORY_ANNOTATION_TASK_MAP = {
 }
 
 
-def get_metric_from_risk_category(risk_category: Union[RiskCategory, _InternalRiskCategory]) -> str:
+def get_metric_from_risk_category(risk_category: Union[RiskCategory]) -> str:
     """Get the appropriate evaluation metric for a given risk category.
 
     :param risk_category: The risk category to map to an evaluation metric
-    :type risk_category: Union[RiskCategory, _InternalRiskCategory]
+    :type risk_category: Union[RiskCategory]
     :return: The corresponding evaluation metric
     :rtype: str
     """
     return RISK_CATEGORY_METRIC_MAP.get(risk_category, EvaluationMetrics.HATE_FAIRNESS)
 
 
-def get_annotation_task_from_risk_category(risk_category: Union[RiskCategory, _InternalRiskCategory]) -> str:
+def get_annotation_task_from_risk_category(risk_category: Union[RiskCategory]) -> str:
     """
     Get the appropriate annotation task for a given risk category.
     :param risk_category: The risk category to map to an annotation task
-    :type risk_category: Union[RiskCategory, _InternalRiskCategory]
+    :type risk_category: Union[RiskCategory]
     :return: The corresponding annotation task
     :rtype: str
     """
     return RISK_CATEGORY_ANNOTATION_TASK_MAP.get(risk_category, Tasks.CONTENT_HARM)
 
 
-def get_attack_objective_from_risk_category(risk_category: Union[RiskCategory, _InternalRiskCategory]) -> str:
+def get_attack_objective_from_risk_category(risk_category: Union[RiskCategory]) -> str:
     """Get the attack objective string for a given risk category.
 
     :param risk_category: The risk category to map to an attack objective
-    :type risk_category: Union[RiskCategory, _InternalRiskCategory]
+    :type risk_category: Union[RiskCategory]
     :return: The corresponding attack objective string
     :rtype: str
     """

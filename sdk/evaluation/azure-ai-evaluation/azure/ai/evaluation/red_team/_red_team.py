@@ -202,9 +202,6 @@ class RedTeam:
         # keep track of prompt content to context mapping for evaluation
         self.prompt_to_context = {}
 
-        # keep track of prompt content to context mapping for evaluation
-        self.prompt_to_context = {}
-
         # Initialize PyRIT
         initialize_pyrit(memory_db_type=DUCK_DB)
 
@@ -655,6 +652,7 @@ class RedTeam:
                     timeout=timeout,
                     red_team_info=self.red_team_info,
                     task_statuses=self.task_statuses,
+                    prompt_to_context=self.prompt_to_context
                 )
             except Exception as e:
                 self.logger.error(f"Error calling orchestrator for {strategy_name} strategy: {str(e)}")
@@ -666,9 +664,6 @@ class RedTeam:
 
             # Write PyRIT outputs to file
             data_path = write_pyrit_outputs_to_file(
-                orchestrator=orchestrator,
-                strategy_name=strategy_name,
-                risk_category=risk_category.value,
                 output_path=self.red_team_info[strategy_name][risk_category.value]["data_file"],
                 logger=self.logger,
                 prompt_to_context=self.prompt_to_context,
@@ -801,10 +796,6 @@ class RedTeam:
             self.mlflow_integration.logger = self.logger
             self.result_processor.logger = self.logger
 
-            # Validate and prepare inputs
-            chat_target = get_chat_target(target)
-            self.chat_target = chat_target
-
             # Validate attack objective generator
             if not self.attack_objective_generator:
                 raise EvaluationException(
@@ -857,6 +848,9 @@ class RedTeam:
 
             # Fetch attack objectives
             all_objectives = await self._fetch_all_objectives(flattened_attack_strategies, application_scenario)
+
+            chat_target = get_chat_target(target, self.prompt_to_context)
+            self.chat_target = chat_target
 
             # Execute attacks
             await self._execute_attacks(

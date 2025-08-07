@@ -56,6 +56,11 @@ class _CallbackChatTarget(PromptChatTarget):
         context_data = self._prompt_to_context.get(current_prompt_content, "")
         context_dict = {"context": context_data} if context_data else {}
 
+        # If context is not available via prompt_to_context, it can be fetched from the memory
+        if not context_dict:
+            memory_label_context = request.labels.get("context", None)
+            context_dict = {"context": memory_label_context} if memory_label_context else {}
+
         # response_context contains "messages", "stream", "session_state, "context"
         response_context = await self._callback(messages=messages, stream=self._stream, session_state=None, context=context_dict)  # type: ignore
 
