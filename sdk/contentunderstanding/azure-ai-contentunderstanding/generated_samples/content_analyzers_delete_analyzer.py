@@ -52,7 +52,7 @@ async def main() -> None:
     credential = get_credential()
 
     async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
-        analyzer_id = "my-analyzer-to-delete"
+        analyzer_id = f"sdk-sample-analyzer-to-delete-{int(asyncio.get_event_loop().time())}"
         
         # First, create an analyzer to delete (for demo purposes)
         print(f"🔧 Creating analyzer '{analyzer_id}' for deletion demo...")

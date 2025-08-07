@@ -52,7 +52,7 @@ async def main() -> None:
     credential = get_credential()
 
     async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
-        analyzer_id = "my-custom-analyzer"
+        analyzer_id = f"sdk-sample-custom-analyzer-{int(asyncio.get_event_loop().time())}"
         
         # Create a custom analyzer using object model
         custom_analyzer = ContentAnalyzer(
