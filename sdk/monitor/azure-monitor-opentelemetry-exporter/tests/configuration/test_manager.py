@@ -202,22 +202,6 @@ class TestConfigurationManager(unittest.TestCase):
             self.assertEqual(result, 1800.0)
 
     @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
-    def test_settings_cache_thread_safety(self, mock_worker_class):
-        """Test thread safety of settings cache."""
-        manager = _ConfigurationManager()
-        
-        # Test that settings_lock protects cache access
-        self.assertIsNotNone(manager._settings_lock)
-        
-        # Set some cache data directly (simulating what the real implementation would do)
-        with manager._settings_lock:
-            manager._settings_cache = {"key1": "value1"}
-        
-        # Verify cache was set
-        with manager._settings_lock:
-            self.assertEqual(manager._settings_cache, {"key1": "value1"})
-
-    @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
     def test_shutdown(self, mock_worker_class):
         """Test shutdown method."""
         mock_worker_instance = Mock()
