@@ -45,7 +45,6 @@ from ._red_team_result import RedTeamResult
 from ._attack_strategy import AttackStrategy
 from ._attack_objective_generator import (
     RiskCategory,
-    _InternalRiskCategory,
     _AttackObjectiveGenerator,
 )
 
@@ -102,7 +101,7 @@ class RedTeam:
         Should be a dictionary mapping risk categories (RiskCategory enum values) to threshold values,
         or None to use default binary evaluation (evaluation results determine success).
         When using thresholds, scores >= threshold are considered successful attacks.
-    :type attack_success_thresholds: Optional[Dict[Union[RiskCategory, _InternalRiskCategory], int]]
+    :type attack_success_thresholds: Optional[Dict[RiskCategory, int]]
     """
 
     def __init__(
@@ -110,7 +109,7 @@ class RedTeam:
         azure_ai_project: Union[dict, str],
         credential,
         *,
-        risk_categories: Optional[List[Union[RiskCategory, _InternalRiskCategory]]] = None,
+        risk_categories: Optional[List[RiskCategory]] = None,
         num_objectives: int = 10,
         application_scenario: Optional[str] = None,
         custom_attack_seed_prompts: Optional[str] = None,
@@ -226,7 +225,7 @@ class RedTeam:
         self.logger.debug("RedTeam initialized successfully")
 
     def _configure_attack_success_thresholds(
-        self, attack_success_thresholds: Optional[Dict[Union[RiskCategory, _InternalRiskCategory], int]]
+        self, attack_success_thresholds: Optional[Dict[RiskCategory, int]]
     ) -> Dict[str, int]:
         """Configure attack success thresholds for different risk categories."""
         if attack_success_thresholds is None:
@@ -252,7 +251,7 @@ class RedTeam:
                 category_key = key.value
             else:
                 raise ValueError(
-                    f"attack_success_thresholds keys must be RiskCategory or _InternalRiskCategory instances, got: {type(key)}"
+                    f"attack_success_thresholds keys must be RiskCategory instance, got: {type(key)}"
                 )
 
             configured_thresholds[category_key] = value
@@ -318,7 +317,7 @@ class RedTeam:
         across different strategies for the same risk category.
 
         :param risk_category: The specific risk category to get objectives for
-        :type risk_category: Optional[Union[RiskCategory, _InternalRiskCategory]]
+        :type risk_category: Optional[RiskCategory]
         :param application_scenario: Optional description of the application scenario for context
         :type application_scenario: Optional[str]
         :param strategy: Optional attack strategy to get specific objectives for
@@ -588,7 +587,7 @@ class RedTeam:
     async def _process_attack(
         self,
         strategy: Union[AttackStrategy, List[AttackStrategy]],
-        risk_category: Union[RiskCategory, _InternalRiskCategory],
+        risk_category: RiskCategory,
         all_prompts: List[str],
         progress_bar: tqdm,
         progress_bar_lock: asyncio.Lock,
@@ -608,7 +607,7 @@ class RedTeam:
         :param strategy: The attack strategy to use
         :type strategy: Union[AttackStrategy, List[AttackStrategy]]
         :param risk_category: The risk category to evaluate
-        :type risk_category: Union[RiskCategory, _InternalRiskCategory]
+        :type risk_category: RiskCategory
         :param all_prompts: List of prompts to use for the scan
         :type all_prompts: List[str]
         :param progress_bar: Progress bar to update
