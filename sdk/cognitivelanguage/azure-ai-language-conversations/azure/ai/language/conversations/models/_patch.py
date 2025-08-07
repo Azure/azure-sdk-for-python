@@ -15,6 +15,8 @@ from ._models import (
     ConversationSummarizationActionContent,
     AnalyzeConversationOperationAction,
 )
+
+
 def patch_sdk():
     """Do not remove from this file.
 
@@ -22,4 +24,12 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
-__all__ = ["AnalyzeConversationOperationInput", "MultiLanguageConversationInput", "SummarizationOperationAction", "ConversationSummarizationActionContent", "AnalyzeConversationOperationAction"]
+
+
+__all__ = [
+    "AnalyzeConversationOperationInput",
+    "MultiLanguageConversationInput",
+    "SummarizationOperationAction",
+    "ConversationSummarizationActionContent",
+    "AnalyzeConversationOperationAction",
+]

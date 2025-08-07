@@ -114,52 +114,6 @@ class AgeResolution(ResolutionBase, discriminator="AgeResolution"):
         super().__init__(*args, resolution_kind=ResolutionKind.AGE_RESOLUTION, **kwargs)
 
 
-class AIConversationLanguageUnderstandingActionContent(_Model):  # pylint: disable=name-too-long
-    """Input parameters base for a Conversation task.
-
-    :ivar project_name: The name of the project to use. Required.
-    :vartype project_name: str
-    :ivar deployment_name: The name of the deployment to use. Required.
-    :vartype deployment_name: str
-    :ivar string_index_type: Specifies the method used to interpret string offsets.  Defaults to
-     Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
-     `https://aka.ms/text-analytics-offsets <https://aka.ms/text-analytics-offsets>`_. Known values
-     are: "TextElements_v8", "UnicodeCodePoint", and "Utf16CodeUnit".
-    :vartype string_index_type: str or ~azure.ai.language.conversations.models.StringIndexType
-    """
-
-    project_name: str = rest_field(name="projectName", visibility=["read", "create", "update", "delete", "query"])
-    """The name of the project to use. Required."""
-    deployment_name: str = rest_field(name="deploymentName", visibility=["read", "create", "update", "delete", "query"])
-    """The name of the deployment to use. Required."""
-    string_index_type: Optional[Union[str, "_models.StringIndexType"]] = rest_field(
-        name="stringIndexType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Specifies the method used to interpret string offsets.  Defaults to Text Elements (Graphemes)
-     according to Unicode v8.0.0. For additional information see
-     `https://aka.ms/text-analytics-offsets <https://aka.ms/text-analytics-offsets>`_. Known values
-     are: \"TextElements_v8\", \"UnicodeCodePoint\", and \"Utf16CodeUnit\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        project_name: str,
-        deployment_name: str,
-        string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class AnalysisConfig(_Model):
     """This is the parameter set of either the Orchestration project itself or one of the target
     services.
@@ -1107,6 +1061,52 @@ class ConversationalAIIntent(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ConversationalAILanguageUnderstandingActionContent(_Model):  # pylint: disable=name-too-long
+    """Input parameters base for a Conversation task.
+
+    :ivar project_name: The name of the project to use. Required.
+    :vartype project_name: str
+    :ivar deployment_name: The name of the deployment to use. Required.
+    :vartype deployment_name: str
+    :ivar string_index_type: Specifies the method used to interpret string offsets.  Defaults to
+     Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
+     `https://aka.ms/text-analytics-offsets <https://aka.ms/text-analytics-offsets>`_. Known values
+     are: "TextElements_v8", "UnicodeCodePoint", and "Utf16CodeUnit".
+    :vartype string_index_type: str or ~azure.ai.language.conversations.models.StringIndexType
+    """
+
+    project_name: str = rest_field(name="projectName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the project to use. Required."""
+    deployment_name: str = rest_field(name="deploymentName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the deployment to use. Required."""
+    string_index_type: Optional[Union[str, "_models.StringIndexType"]] = rest_field(
+        name="stringIndexType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the method used to interpret string offsets.  Defaults to Text Elements (Graphemes)
+     according to Unicode v8.0.0. For additional information see
+     `https://aka.ms/text-analytics-offsets <https://aka.ms/text-analytics-offsets>`_. Known values
+     are: \"TextElements_v8\", \"UnicodeCodePoint\", and \"Utf16CodeUnit\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        project_name: str,
+        deployment_name: str,
+        string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ConversationalAIResult(_Model):
     """Represents the conversational analysis response.
 
@@ -1152,7 +1152,7 @@ class ConversationalAITask(AnalyzeConversationInput, discriminator="Conversation
     :ivar parameters: Input parameters necessary for a Conversation language understanding task.
      Required.
     :vartype parameters:
-     ~azure.ai.language.conversations.models.AIConversationLanguageUnderstandingActionContent
+     ~azure.ai.language.conversations.models.ConversationalAILanguageUnderstandingActionContent
     """
 
     kind: Literal[AnalyzeConversationInputKind.CONVERSATIONAL_AI] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -1161,7 +1161,7 @@ class ConversationalAITask(AnalyzeConversationInput, discriminator="Conversation
         name="analysisInput", visibility=["read", "create", "update", "delete", "query"]
     )
     """The input ConversationItem and its optional parameters. Required."""
-    parameters: "_models.AIConversationLanguageUnderstandingActionContent" = rest_field(
+    parameters: "_models.ConversationalAILanguageUnderstandingActionContent" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Input parameters necessary for a Conversation language understanding task. Required."""
@@ -1171,7 +1171,7 @@ class ConversationalAITask(AnalyzeConversationInput, discriminator="Conversation
         self,
         *,
         analysis_input: "_models.ConversationalAIAnalysisInput",
-        parameters: "_models.AIConversationLanguageUnderstandingActionContent",
+        parameters: "_models.ConversationalAILanguageUnderstandingActionContent",
     ) -> None: ...
 
     @overload

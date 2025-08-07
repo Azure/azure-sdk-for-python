@@ -14,7 +14,6 @@ if TYPE_CHECKING:
 
 
 from ._models import (  # type: ignore
-    AIConversationLanguageUnderstandingActionContent,
     AgeResolution,
     AnalysisConfig,
     AnalyzeConversationActionResult,
@@ -52,6 +51,7 @@ from ._models import (  # type: ignore
     ConversationalAIAnalysisInput,
     ConversationalAIEntity,
     ConversationalAIIntent,
+    ConversationalAILanguageUnderstandingActionContent,
     ConversationalAIResult,
     ConversationalAITask,
     ConversationalAITaskResult,
@@ -148,7 +148,6 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "AIConversationLanguageUnderstandingActionContent",
     "AgeResolution",
     "AnalysisConfig",
     "AnalyzeConversationActionResult",
@@ -186,6 +185,7 @@ __all__ = [
     "ConversationalAIAnalysisInput",
     "ConversationalAIEntity",
     "ConversationalAIIntent",
+    "ConversationalAILanguageUnderstandingActionContent",
     "ConversationalAIResult",
     "ConversationalAITask",
     "ConversationalAITaskResult",

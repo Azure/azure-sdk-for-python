@@ -3,7 +3,6 @@
     "CrossLanguageDefinitionId": {
         "azure.ai.language.conversations.models.ResolutionBase": "Language.Conversations.BaseResolution",
         "azure.ai.language.conversations.models.AgeResolution": "Language.Conversations.AgeResolution",
-        "azure.ai.language.conversations.models.AIConversationLanguageUnderstandingActionContent": "Language.Conversations.ConversationalAIInputParameters",
         "azure.ai.language.conversations.models.AnalysisConfig": "Language.Conversations.AnalysisParameters",
         "azure.ai.language.conversations.models.AnalyzeConversationActionResult": "Language.Conversations.AnalyzeConversationTaskResult",
         "azure.ai.language.conversations.models.AnalyzeConversationInput": "Language.Conversations.AnalyzeConversationTask",
@@ -21,6 +20,7 @@
         "azure.ai.language.conversations.models.ConversationalAIAnalysisInput": "Language.Conversations.ConversationalAIAnalysisInput",
         "azure.ai.language.conversations.models.ConversationalAIEntity": "Language.Conversations.ConversationalAIEntity",
         "azure.ai.language.conversations.models.ConversationalAIIntent": "Language.Conversations.ConversationalAIIntent",
+        "azure.ai.language.conversations.models.ConversationalAILanguageUnderstandingActionContent": "Language.Conversations.ConversationalAIInputParameters",
         "azure.ai.language.conversations.models.ConversationalAIResult": "Language.Conversations.ConversationalAIResult",
         "azure.ai.language.conversations.models.ConversationalAITask": "Language.Conversations.ConversationalAITask",
         "azure.ai.language.conversations.models.ConversationalAITaskResult": "Language.Conversations.ConversationalAITaskResult",
