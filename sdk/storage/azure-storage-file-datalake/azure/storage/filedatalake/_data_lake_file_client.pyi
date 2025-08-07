@@ -7,7 +7,15 @@
 
 from datetime import datetime
 from typing import (
-    Any, AnyStr, Callable, Dict, IO, Iterable, Literal, Optional, Union,
+    Any,
+    AnyStr,
+    Callable,
+    Dict,
+    IO,
+    Iterable,
+    Literal,
+    Optional,
+    Union,
 )
 from types import TracebackType
 from typing_extensions import Self
@@ -25,11 +33,10 @@ from ._models import (
     DelimitedJsonDialect,
     DelimitedTextDialect,
     FileProperties,
-    QuickQueryDialect
+    QuickQueryDialect,
 )
 from ._path_client import PathClient
 from ._quick_query_helper import DataLakeFileQueryReader
-
 
 class DataLakeFileClient(PathClient):
     url: str
@@ -160,9 +167,7 @@ class DataLakeFileClient(PathClient):
         *,
         flush: Optional[bool] = None,
         validate_content: Optional[bool] = None,
-        lease_action: Optional[
-            Literal["acquire", "auto-renew", "release", "acquire-release"]
-        ] = None,
+        lease_action: Optional[Literal["acquire", "auto-renew", "release", "acquire-release"]] = None,
         lease_duration: int = -1,
         lease: Optional[Union[DataLakeLeaseClient, str]] = None,
         cpk: Optional[CustomerProvidedEncryptionKey] = None,
@@ -181,9 +186,7 @@ class DataLakeFileClient(PathClient):
         if_unmodified_since: Optional[datetime] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
-        lease_action: Optional[
-            Literal["acquire", "auto-renew", "release", "acquire-release"]
-        ] = None,
+        lease_action: Optional[Literal["acquire", "auto-renew", "release", "acquire-release"]] = None,
         lease_duration: int = -1,
         lease: Optional[Union[DataLakeLeaseClient, str]] = None,
         cpk: Optional[CustomerProvidedEncryptionKey] = None,

@@ -7,7 +7,16 @@
 
 from datetime import datetime
 from typing import (
-    Any, AnyStr, AsyncIterable, Awaitable, Callable, Dict, IO, Literal, Optional, Union,
+    Any,
+    AnyStr,
+    AsyncIterable,
+    Awaitable,
+    Callable,
+    Dict,
+    IO,
+    Literal,
+    Optional,
+    Union,
 )
 from types import TracebackType
 from typing_extensions import Self
@@ -24,7 +33,6 @@ from .._models import (
 from ._data_lake_lease_async import DataLakeLeaseClient
 from ._download_async import StorageStreamDownloader
 from ._path_client_async import PathClient
-
 
 class DataLakeFileClient(PathClient):
     url: str
@@ -157,9 +165,7 @@ class DataLakeFileClient(PathClient):
         *,
         flush: Optional[bool] = None,
         validate_content: Optional[bool] = None,
-        lease_action: Optional[
-            Literal["acquire", "auto-renew", "release", "acquire-release"]
-        ] = None,
+        lease_action: Optional[Literal["acquire", "auto-renew", "release", "acquire-release"]] = None,
         lease_duration: int = -1,
         lease: Optional[Union[DataLakeLeaseClient, str]] = None,
         cpk: Optional[CustomerProvidedEncryptionKey] = None,
@@ -178,9 +184,7 @@ class DataLakeFileClient(PathClient):
         if_unmodified_since: Optional[datetime] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
-        lease_action: Optional[
-            Literal["acquire", "auto-renew", "release", "acquire-release"]
-        ] = None,
+        lease_action: Optional[Literal["acquire", "auto-renew", "release", "acquire-release"]] = None,
         lease_duration: int = -1,
         lease: Optional[Union[DataLakeLeaseClient, str]] = None,
         cpk: Optional[CustomerProvidedEncryptionKey] = None,
