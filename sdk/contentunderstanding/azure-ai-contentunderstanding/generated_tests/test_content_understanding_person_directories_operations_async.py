@@ -140,14 +140,14 @@ async def create_person_directory_and_assert_async(
 async def build_person_directory_from_enrollment_data_async(
     client, 
     person_directory_id: str,
-    enrollment_data_path: str = "./generated_tests/test_data/face/enrollment_data"
+    enrollment_data_path: Optional[str] = None
 ) -> Dict[str, str]:
     """Build person directory from enrollment data (async version).
     
     Args:
         client: The ContentUnderstandingClient instance
         person_directory_id: The person directory ID
-        enrollment_data_path: Path to the enrollment data directory
+        enrollment_data_path: Path to the enrollment data directory (optional)
         
     Returns:
         Dict[str, str]: Dictionary mapping person names to person IDs
@@ -156,6 +156,11 @@ async def build_person_directory_from_enrollment_data_async(
         AssertionError: If the enrollment data directory doesn't exist or processing fails
     """
     print(f"\nBuilding Person Directory from enrollment data...")
+    
+    # Construct the enrollment data path if not provided
+    if enrollment_data_path is None:
+        test_file_dir = os.path.dirname(os.path.abspath(__file__))
+        enrollment_data_path = os.path.join(test_file_dir, "test_data", "face", "enrollment_data")
     
     if not os.path.exists(enrollment_data_path):
         raise Exception(f"Enrollment data directory not found: {enrollment_data_path}")
