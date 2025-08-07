@@ -10,10 +10,11 @@ import re
 import json
 import os
 from datetime import datetime
-from typing import Optional, Dict
+from typing import Optional, Dict, Any
 from enum import Enum
 from azure.ai.contentunderstanding.models import ContentAnalyzer, ContentAnalyzerConfig, FieldSchema, FieldDefinition
 from azure.ai.contentunderstanding.models import GenerationMethod, FieldType, AnalysisMode, ProcessingLocation
+from azure.ai.contentunderstanding.models import ContentClassifier, ClassifierCategory
 
 
 class PollerType(Enum):
@@ -42,7 +43,7 @@ def generate_classifier_id() -> str:
     return f"python-sdk-test-classifier-{date_str}-{time_str}-{guid}"
 
 
-def extract_operation_id_from_poller(poller, poller_type: PollerType) -> str:
+def extract_operation_id_from_poller(poller: Any, poller_type: PollerType) -> str:
     """Extract operation ID from an LROPoller or AsyncLROPoller.
     
     The poller stores the initial response in `_initial_response`, which contains
@@ -163,8 +164,8 @@ def new_marketing_video_analyzer_object(analyzer_id: str, description: Optional[
     )
 
 
-def new_simple_classifier_schema(classifier_id: str, description: Optional[str] = None, tags: Optional[Dict[str, str]] = None) -> Dict[str, any]:
-    """Create a simple classifier schema based on the classifier notebook patterns.
+def new_simple_classifier_schema(classifier_id: str, description: Optional[str] = None, tags: Optional[Dict[str, str]] = None) -> ContentClassifier:
+    """Create a simple ContentClassifier object with default configuration.
     
     Args:
         classifier_id: The classifier ID
@@ -172,33 +173,33 @@ def new_simple_classifier_schema(classifier_id: str, description: Optional[str] 
         tags: Optional tags for the classifier
         
     Returns:
-        Dict[str, any]: A configured classifier schema dictionary
+        ContentClassifier: A configured ContentClassifier object
     """
     if description is None:
         description = f"test classifier: {classifier_id}"
     if tags is None:
         tags = {"test_type": "simple"}
         
-    return {
-        "categories": {
-            "Loan application": {
-                "description": "Documents submitted by individuals or businesses to request funding, typically including personal or business details, financial history, loan amount, purpose, and supporting documentation."
-            },
-            "Invoice": {
-                "description": "Billing documents issued by sellers or service providers to request payment for goods or services, detailing items, prices, taxes, totals, and payment terms."
-            },
-            "Bank_Statement": {
-                "description": "Official statements issued by banks that summarize account activity over a period, including deposits, withdrawals, fees, and balances."
-            },
+    return ContentClassifier(
+        categories={
+            "Loan application": ClassifierCategory(
+                description="Documents submitted by individuals or businesses to request funding, typically including personal or business details, financial history, loan amount, purpose, and supporting documentation."
+            ),
+            "Invoice": ClassifierCategory(
+                description="Billing documents issued by sellers or service providers to request payment for goods or services, detailing items, prices, taxes, totals, and payment terms."
+            ),
+            "Bank_Statement": ClassifierCategory(
+                description="Official statements issued by banks that summarize account activity over a period, including deposits, withdrawals, fees, and balances."
+            ),
         },
-        "splitMode": "auto",
-        "description": description,
-        "tags": tags,
-    }
+        split_mode="auto",
+        description=description,
+        tags=tags,
+    )
 
 
-def new_enhanced_classifier_schema(classifier_id: str, analyzer_id: str, description: Optional[str] = None, tags: Optional[Dict[str, str]] = None) -> Dict[str, any]:
-    """Create an enhanced classifier schema that uses custom analyzers for specific categories.
+def new_enhanced_classifier_schema(classifier_id: str, analyzer_id: str, description: Optional[str] = None, tags: Optional[Dict[str, str]] = None) -> ContentClassifier:
+    """Create an enhanced ContentClassifier object that uses custom analyzers for specific categories.
     
     Args:
         classifier_id: The classifier ID
@@ -207,35 +208,35 @@ def new_enhanced_classifier_schema(classifier_id: str, analyzer_id: str, descrip
         tags: Optional tags for the classifier
         
     Returns:
-        Dict[str, any]: A configured enhanced classifier schema dictionary
+        ContentClassifier: A configured enhanced ContentClassifier object
     """
     if description is None:
         description = f"enhanced classifier: {classifier_id}"
     if tags is None:
         tags = {"test_type": "enhanced"}
         
-    return {
-        "categories": {
-            "Loan application": {
-                "description": "Documents submitted by individuals or businesses to request funding, typically including personal or business details, financial history, loan amount, purpose, and supporting documentation.",
-                "analyzerId": analyzer_id  # Use custom analyzer for loan applications
-            },
-            "Invoice": {
-                "description": "Billing documents issued by sellers or service providers to request payment for goods or services, detailing items, prices, taxes, totals, and payment terms.",
-                "analyzerId": "prebuilt-invoice"  # Use prebuilt invoice analyzer
-            },
-            "Bank_Statement": {
-                "description": "Official statements issued by banks that summarize account activity over a period, including deposits, withdrawals, fees, and balances."
+    return ContentClassifier(
+        categories={
+            "Loan application": ClassifierCategory(
+                description="Documents submitted by individuals or businesses to request funding, typically including personal or business details, financial history, loan amount, purpose, and supporting documentation.",
+                analyzer_id=analyzer_id  # Use custom analyzer for loan applications
+            ),
+            "Invoice": ClassifierCategory(
+                description="Billing documents issued by sellers or service providers to request payment for goods or services, detailing items, prices, taxes, totals, and payment terms.",
+                analyzer_id="prebuilt-invoice"  # Use prebuilt invoice analyzer
+            ),
+            "Bank_Statement": ClassifierCategory(
+                description="Official statements issued by banks that summarize account activity over a period, including deposits, withdrawals, fees, and balances."
                 # No analyzer specified - uses default processing
-            },
+            ),
         },
-        "splitMode": "auto",
-        "description": description,
-        "tags": tags,
-    }
+        split_mode="auto",
+        description=description,
+        tags=tags,
+    )
 
 
-def assert_poller_properties(poller, poller_name: str = "Poller"):
+def assert_poller_properties(poller: Any, poller_name: str = "Poller") -> None:
     """Assert common poller properties for any LROPoller or AsyncLROPoller.
     
     Args:
@@ -252,7 +253,7 @@ def assert_poller_properties(poller, poller_name: str = "Poller"):
     print(f"{poller_name} properties verified successfully")
 
 
-def assert_simple_content_analyzer_result(analysis_result, result_name: str = "Analysis result"):
+def assert_simple_content_analyzer_result(analysis_result: Any, result_name: str = "Analysis result") -> None:
     """Assert simple content analyzer result properties and field extraction.
     
     Args:
@@ -294,7 +295,7 @@ def assert_simple_content_analyzer_result(analysis_result, result_name: str = "A
     print(f"Total amount field validation successful")
 
 
-def assert_classifier_result(classifier_result, result_name: str = "Classifier result"):
+def assert_classifier_result(classifier_result: Any, result_name: str = "Classifier result") -> None:
     """Assert classifier result properties and classification.
     
     Args:
@@ -335,7 +336,7 @@ def assert_classifier_result(classifier_result, result_name: str = "Classifier r
         print(f"Content {i} category: {content.category}, pages: {content.start_page_number}-{content.end_page_number}")
 
 
-def save_analysis_result_to_file(analysis_result, test_name: str, test_pyfile_dir: str, identifier: Optional[str] = None, output_dir: str = "test_output") -> str:
+def save_analysis_result_to_file(analysis_result: Any, test_name: str, test_pyfile_dir: str, identifier: Optional[str] = None, output_dir: str = "test_output") -> str:
     """Save analysis result to output file using pytest naming convention.
     
     Args:
@@ -374,7 +375,7 @@ def save_analysis_result_to_file(analysis_result, test_name: str, test_pyfile_di
     return saved_file_path
 
 
-def save_classifier_result_to_file(classifier_result, test_name: str, test_pyfile_dir: str, identifier: Optional[str] = None, output_dir: str = "test_output") -> str:
+def save_classifier_result_to_file(classifier_result: Any, test_name: str, test_pyfile_dir: str, identifier: Optional[str] = None, output_dir: str = "test_output") -> str:
     """Save classifier result to output file using pytest naming convention.
     
     Args:

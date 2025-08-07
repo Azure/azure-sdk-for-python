@@ -665,6 +665,9 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
             assert operation_status.id == classification_operation_id, f"Operation status ID should match operation ID {classification_operation_id}"
             assert operation_status.status == "Succeeded", f"Operation status should be Succeeded, got {operation_status.status}"
             
+            # Check the class name of the operation status
+            assert operation_status.__class__.__name__ == "OperationStatusClassifyResultError", f"Expected ResourceOperationStatusContentClassifierContentClassifierError, got {operation_status.__class__.__name__}"
+            
             # The actual classification result is in operation_status.result
             classification_result = operation_status.result
             assert classification_result is not None, "Classification result should not be None"
