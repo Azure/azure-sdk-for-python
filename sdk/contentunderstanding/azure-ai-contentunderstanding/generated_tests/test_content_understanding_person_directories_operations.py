@@ -1130,17 +1130,95 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
         # please add some check logic here by yourself
         # ...
 
-    @pytest.mark.skip(reason="Not yet implemented - conversion from async to sync pending")
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
     def test_person_directories_list_faces(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Create a person directory and add a person
+        - Add multiple faces to the person
+        - List all faces in the directory
+        - Verify all created faces are in the list
+        - Clean up created person directory
+        """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        response = client.person_directories.list_faces(
-            person_directory_id="str",
-        )
-        result = list(response)
-        # please add some check logic here by yourself
-        # ...
+        person_directory_id = generate_person_directory_id()
+        created_directory = False
+
+        try:
+            # Create a person directory
+            create_person_directory_and_assert(
+                client, 
+                person_directory_id,
+                description=f"Test person directory for list faces: {person_directory_id}",
+                tags={"test_type": "list_faces"}
+            )
+            created_directory = True
+
+            # Add a person to the directory
+            print(f"Adding person to directory {person_directory_id}")
+            add_person_response = client.person_directories.add_person(
+                person_directory_id=person_directory_id,
+                body={
+                    "tags": {
+                        "name": "Ivy Chen",
+                        "role": "test_subject"
+                    }
+                }
+            )
+            
+            person_id = add_person_response.person_id
+            print(f"Created person with ID: {person_id}")
+
+            # Add multiple faces to the person
+            test_file_dir = os.path.dirname(os.path.abspath(__file__))
+            image_path = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
+            image_data = read_image_to_base64(image_path)
+
+            face_ids = []
+            for i in range(3):  # Add 3 faces
+                print(f"Adding face {i+1} to person {person_id}")
+                add_face_response = client.person_directories.add_face(
+                    person_directory_id=person_directory_id,
+                    body={
+                        "faceSource": {
+                            "data": image_data
+                        },
+                        "personId": person_id
+                    }
+                )
+                
+                face_id = add_face_response.face_id
+                face_ids.append(face_id)
+                print(f"Created face {i+1} with ID: {face_id}")
+
+            # List all faces in the directory
+            print(f"Listing all faces in directory {person_directory_id}")
+            response = client.person_directories.list_faces(person_directory_id=person_directory_id)
+            result = list(response)
+            
+            # Verify we get the expected number of faces
+            assert len(result) >= len(face_ids), f"Expected at least {len(face_ids)} faces, got {len(result)}"
+            print(f"Found {len(result)} faces in directory")
+            
+            # Verify that our created faces are in the list
+            found_faces = set()
+            for face in result:
+                assert hasattr(face, 'face_id'), "Each face should have face_id"
+                assert hasattr(face, 'person_id'), "Each face should have person_id"
+                assert hasattr(face, 'bounding_box'), "Each face should have bounding_box"
+                assert hasattr(face, 'image_reference_id'), "Each face should have image_reference_id"
+                
+                if face.face_id in face_ids:
+                    found_faces.add(face.face_id)
+                    print(f"Found created face: {face.face_id}")
+            
+            assert len(found_faces) == len(face_ids), f"Expected to find {len(face_ids)} created faces, found {len(found_faces)}"
+            print("List faces test completed successfully")
+
+        finally:
+            # Always clean up the created person directory, even if the test fails
+            delete_person_directory_and_assert(client, person_directory_id, created_directory)
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
