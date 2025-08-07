@@ -64,7 +64,7 @@ async def main():
         print(f"✅ Classifier '{classifier_id}' created successfully!")
 
         # Read the mixed financial docs PDF file
-        pdf_path = "mixed_financial_docs.pdf"
+        pdf_path = "sample_files/mixed_financial_docs.pdf"
         print(f"📄 Reading document file: {pdf_path}")
         with open(pdf_path, "rb") as pdf_file:
             pdf_content = pdf_file.read()

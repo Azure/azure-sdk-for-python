@@ -85,7 +85,7 @@ async def main():
         print(f"✅ Analyzer '{analyzer_id}' created successfully!")
 
         # Read the FlightSimulator.mp4 video file
-        video_path = "FlightSimulator.mp4"
+        video_path = "sample_files/FlightSimulator.mp4"
         print(f"📹 Reading video file: {video_path}")
         with open(video_path, "rb") as video_file:
             video_content = video_file.read()

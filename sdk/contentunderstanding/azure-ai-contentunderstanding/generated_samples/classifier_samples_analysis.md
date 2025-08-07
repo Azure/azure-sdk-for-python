@@ -8,7 +8,7 @@ This document provides a comprehensive analysis of all classifier samples in the
 
 - **Endpoint**: `https://ai-foundry-sample-west-us.services.ai.azure.com/`
 - **Authentication**: DefaultAzureCredential (recommended approach)
-- **Required Files**: `mixed_financial_docs.pdf` (✅ Present)
+- **Required Files**: `sample_files/mixed_financial_docs.pdf` (✅ Present)
 - **Package**: `azure-ai-contentunderstanding` (✅ Installed)
 
 ## Classifier Samples Tested
@@ -67,7 +67,7 @@ This document provides a comprehensive analysis of all classifier samples in the
 
 ### 4. File Dependency Validation
 
-**Issue**: Samples that use `mixed_financial_docs.pdf` don't validate file existence
+**Issue**: Samples that use `sample_files/mixed_financial_docs.pdf` don't validate file existence
 **Impact**: Runtime errors if file is missing
 **Recommendation**: Add file existence checks
 
