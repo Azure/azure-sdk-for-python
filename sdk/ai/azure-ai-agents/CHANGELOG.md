@@ -7,6 +7,10 @@
 
 - Add support for Browser Automation tool.
 
+### Bugs Fixed
+
+- Added `RunStepConnectedAgentToolCall` and `RunStepDeltaConnectedAgentToolCall` for deserializing Connected Agent tool updates in non-streaming and streaming scenarios.
+
 ### Sample updates
 
 - Add new samples `sample_agents_browser_automation.py` and `sample_agents_browser_automation_async.py`.
@@ -24,6 +28,7 @@
 
 ### Bugs Fixed
 - Fixed issues where the `runs.create_and_process` API call did not correctly handle the `AzureAISearchTool`, `FileSearchTool`, and `CodeInterpreterTool` when specified in the toolset parameter.
+- Added classes for deserialization of `RunStepDeltaAzureAISearchToolCall`, `RunStepDeltaOpenAPIToolCall` and `RunStepDeltaDeepResearchToolCall`, required to get the real time updates when Azure AI Search, OpenAPI or Deep Research tools are being used during streaming scenarios.
 
 ### Sample updates
 - Updated `sample_agents_deep_research.py` and `sample_agents_deep_research_async.py` for citations.
