@@ -45,9 +45,13 @@ connection_id = os.environ["AZURE_PLAYWRIGHT_CONNECTION_ID"]
 # Initialize Browser Automation tool and add the connection id
 browser_automation = BrowserAutomationTool(connection_id=connection_id)
 
-# Create an Agent with the Browser Automation tool and process an Agent run
 with project_client:
+
     agents_client = project_client.agents
+
+    # Create a new Agent that has the Browser Automation tool attached.
+    # Note: To add Browser Automation tool to an existing Agent with an `agent_id`, do the following:
+    # agent = agents_client.update_agent(agent_id, tools=browser_automation.definitions)
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
@@ -58,6 +62,7 @@ with project_client:
             """,
         tools=browser_automation.definitions,
     )
+
     # [END create_agent_with_browser_automation]
 
     print(f"Created agent, ID: {agent.id}")
@@ -117,7 +122,8 @@ with project_client:
 
         print()  # add an extra newline between run steps
 
-    # Delete the agent when done
+    # Optional: Delete the agent once the run is finished.
+    # Comment out this line if you plan to reuse the agent later.
     agents_client.delete_agent(agent.id)
     print("Deleted agent")
 
