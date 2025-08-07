@@ -932,24 +932,111 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
             # Always clean up the created person directory, even if the test fails
             delete_person_directory_and_assert(client, person_directory_id, created_directory)
 
-    @pytest.mark.skip(reason="Not yet implemented - conversion from async to sync pending")
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
     def test_person_directories_update_face(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Create a person directory and add a person
+        - Add a face to the person
+        - Update the face association to a different person
+        - Verify the face association was updated
+        - Clean up created person directory
+        """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        response = client.person_directories.update_face(
-            person_directory_id="str",
-            face_id="str",
-            resource={
-                "faceId": "str",
-                "boundingBox": {"height": 0, "left": 0, "top": 0, "width": 0},
-                "imageReferenceId": "str",
-                "personId": "str",
-            },
-        )
+        person_directory_id = generate_person_directory_id()
+        created_directory = False
 
-        # please add some check logic here by yourself
-        # ...
+        try:
+            # Create a person directory
+            create_person_directory_and_assert(
+                client, 
+                person_directory_id,
+                description=f"Test person directory for update face: {person_directory_id}",
+                tags={"test_type": "update_face"}
+            )
+            created_directory = True
+
+            # Add two persons to the directory
+            print(f"Adding persons to directory {person_directory_id}")
+            person1_response = client.person_directories.add_person(
+                person_directory_id=person_directory_id,
+                body={
+                    "tags": {
+                        "name": "Emma Wilson",
+                        "role": "test_subject_1"
+                    }
+                }
+            )
+            
+            person2_response = client.person_directories.add_person(
+                person_directory_id=person_directory_id,
+                body={
+                    "tags": {
+                        "name": "Frank Davis",
+                        "role": "test_subject_2"
+                    }
+                }
+            )
+            
+            person1_id = person1_response.person_id
+            person2_id = person2_response.person_id
+            print(f"Created person 1 with ID: {person1_id}")
+            print(f"Created person 2 with ID: {person2_id}")
+
+            # Add a face to person 1
+            test_file_dir = os.path.dirname(os.path.abspath(__file__))
+            image_path = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
+            image_data = read_image_to_base64(image_path)
+
+            print(f"Adding face to person {person1_id}")
+            add_face_response = client.person_directories.add_face(
+                person_directory_id=person_directory_id,
+                body={
+                    "faceSource": {
+                        "data": image_data
+                    },
+                    "personId": person1_id
+                }
+            )
+            
+            face_id = add_face_response.face_id
+            print(f"Created face with ID: {face_id}")
+
+            # Verify the face is initially associated with person 1
+            face = client.person_directories.get_face(
+                person_directory_id=person_directory_id,
+                face_id=face_id
+            )
+            assert face.person_id == person1_id
+            print(f"Verified face {face_id} is initially associated with person {person1_id}")
+
+            # Update the face association to person 2
+            print(f"Updating face {face_id} association to person {person2_id}")
+            response = client.person_directories.update_face(
+                person_directory_id=person_directory_id,
+                face_id=face_id,
+            resource={
+                    "personId": person2_id
+                },
+                content_type="application/json"
+            )
+
+            # Verify the response
+            assert response is not None
+            print(f"Successfully updated face {face_id} association")
+
+            # Verify the face is now associated with person 2
+            updated_face = client.person_directories.get_face(
+                person_directory_id=person_directory_id,
+                face_id=face_id
+            )
+            assert updated_face.person_id == person2_id
+            print(f"Verified face {face_id} is now associated with person {person2_id}")
+
+        finally:
+            # Always clean up the created person directory, even if the test fails
+            delete_person_directory_and_assert(client, person_directory_id, created_directory)
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
