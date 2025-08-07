@@ -7,7 +7,12 @@
 
 from datetime import datetime
 from typing import (
-    Any, Awaitable, Callable, Dict, Optional, Union,
+    Any,
+    Awaitable,
+    Callable,
+    Dict,
+    Optional,
+    Union,
 )
 from types import TracebackType
 from typing_extensions import Self
@@ -28,10 +33,10 @@ from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from ._data_lake_lease_async import DataLakeLeaseClient
 
-
 class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # type: ignore [misc]
     def __init__(
-        self, account_url: str,
+        self,
+        account_url: str,
         file_system_name: str,
         path_name: str,
         credential: Optional[
@@ -168,7 +173,7 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]: ...
-    async def  _get_path_properties(
+    async def _get_path_properties(
         self,
         *,
         lease: Optional[Union[DataLakeLeaseClient, str]] = None,

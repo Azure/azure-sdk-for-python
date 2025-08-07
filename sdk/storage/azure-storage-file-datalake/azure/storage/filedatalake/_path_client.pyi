@@ -7,7 +7,11 @@
 
 from datetime import datetime
 from typing import (
-    Any, Callable, Dict, Optional, Union,
+    Any,
+    Callable,
+    Dict,
+    Optional,
+    Union,
 )
 from types import TracebackType
 from typing_extensions import Self
@@ -26,10 +30,10 @@ from ._models import (
 )
 from ._shared.base_client import StorageAccountHostsMixin
 
-
 class PathClient(StorageAccountHostsMixin):
     def __init__(
-        self, account_url: str,
+        self,
+        account_url: str,
         file_system_name: str,
         path_name: str,
         credential: Optional[
