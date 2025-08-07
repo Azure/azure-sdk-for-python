@@ -233,6 +233,7 @@ class CheckFile:
 
         # add `title` and update `is_stable` in pyproject.toml
         pyproject_toml = Path(self.whole_package_name) / "pyproject.toml"
+        is_stable = self.tag_is_stable and self.next_version != "1.0.0b1"
         if pyproject_toml.exists():
             with open(pyproject_toml, "rb") as fd:
                 toml_data = toml.load(fd)
@@ -240,7 +241,7 @@ class CheckFile:
                 toml_data["packaging"] = {}
             if title and not toml_data["packaging"].get("title"):
                 toml_data["packaging"]["title"] = title
-            toml_data["packaging"]["is_stable"] = self.tag_is_stable and self.next_version != "1.0.0b1"
+            toml_data["packaging"]["is_stable"] = is_stable
             with open(pyproject_toml, "wb") as fd:
                 tomlw.dump(toml_data, fd)
             _LOGGER.info(f"Update {pyproject_toml} successfully")
@@ -255,27 +256,23 @@ class CheckFile:
         )
         _LOGGER.info("packaging_tools --build-conf successfully")
 
-        stable_classifier = "Development Status :: 5 - Production/Stable"
-        beta_classifier = "Development Status :: 4 - Beta"
-        for item in ["setup.py", "pyproject.toml"]:
-            file_path = Path(self.whole_package_name) / item
-            if not file_path.exists():
-                _LOGGER.info(f"{file_path} does not exist, skip check")
-                continue
+        if pyproject_toml.exists():
+            stable_classifier = "Development Status :: 5 - Production/Stable"
+            beta_classifier = "Development Status :: 4 - Beta"
 
             def edit_file(content: List[str]):
                 for i in range(0, len(content)):
                     if "Development Status" in content[i]:
                         if is_stable and beta_classifier in content[i]:
                             content[i] = content[i].replace(beta_classifier, stable_classifier)
-                            _LOGGER.info(f"Replace '{beta_classifier}' with '{stable_classifier}' in {file_path}")
+                            _LOGGER.info(f"Replace '{beta_classifier}' with '{stable_classifier}' in {pyproject_toml}")
                         if (not is_stable) and stable_classifier in content[i]:
                             content[i] = content[i].replace(stable_classifier, beta_classifier)
-                            _LOGGER.info(f"Replace '{stable_classifier}' with '{beta_classifier}' in {file_path}")
+                            _LOGGER.info(f"Replace '{stable_classifier}' with '{beta_classifier}' in {pyproject_toml}")
                         break
 
-            modify_file(str(file_path), edit_file)
-            _LOGGER.info(f"Check {file_path} for classifiers successfully")
+            modify_file(str(pyproject_toml), edit_file)
+            _LOGGER.info(f"Check {pyproject_toml} for classifiers successfully")
 
     def sdk_code_path(self) -> str:
         return str(Path(f"sdk/{self.sdk_folder}/{self.whole_package_name}"))
