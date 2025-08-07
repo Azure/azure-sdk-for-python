@@ -6,7 +6,22 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.ai.contentunderstanding import ContentUnderstandingClient
+import asyncio
+import os
+
+from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
+from azure.ai.contentunderstanding.models import (
+    ContentAnalyzer,
+    ContentAnalyzerConfig,
+    FieldSchema,
+    FieldDefinition,
+    FieldType,
+    GenerationMethod,
+    AnalysisMode,
+    ProcessingLocation,
+)
+
+from sample_helper import get_credential
 
 """
 # PREREQUISITES
@@ -16,19 +31,114 @@ from azure.ai.contentunderstanding import ContentUnderstandingClient
 """
 
 
-def main():
-    client = ContentUnderstandingClient(
-        endpoint="ENDPOINT",
-        credential="CREDENTIAL",
-    )
+async def main():
+    """
+    Update analyzer using update API.
+    
+    High-level steps:
+    1. Create an initial analyzer
+    2. Get the analyzer to verify initial state
+    3. Update the analyzer with new description and tags
+    4. Get the analyzer again to verify changes persisted
+    5. Clean up the created analyzer
+    """
+    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT")
+    credential = get_credential()
 
-    response = client.content_analyzers.update(
-        analyzer_id="myAnalyzer",
-        resource={"description": "Updated analyzer description.", "tags": {"reviewedBy": "Paul"}},
-    )
-    print(response)
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
+        analyzer_id = f"sdk-sample-analyzer-for-update-{int(asyncio.get_event_loop().time())}"
+        
+        # Create initial analyzer using object model
+        print(f"🔧 Creating initial analyzer '{analyzer_id}'...")
+        
+        initial_analyzer = ContentAnalyzer(
+            base_analyzer_id="prebuilt-documentAnalyzer",
+            config=ContentAnalyzerConfig(
+                enable_formula=True,
+                enable_layout=True,
+                enable_ocr=True,
+                estimate_field_source_and_confidence=True,
+                return_details=True,
+            ),
+            description=f"Initial analyzer for update demo: {analyzer_id}",
+            field_schema=FieldSchema(
+                fields={
+                    "total_amount": FieldDefinition(
+                        description="Total amount of this document",
+                        method=GenerationMethod.EXTRACT,
+                        type=FieldType.NUMBER,
+                    ),
+                    "company_name": FieldDefinition(
+                        description="Name of the company",
+                        method=GenerationMethod.EXTRACT,
+                        type=FieldType.STRING,
+                    )
+                },
+                description="Schema for update demo",
+                name="update_demo_schema",
+            ),
+            mode=AnalysisMode.STANDARD,
+            processing_location=ProcessingLocation.GLOBAL,
+            tags={"initial_tag": "initial_value", "demo_type": "update"},
+        )
+
+        # Start the analyzer creation operation
+        poller = await client.content_analyzers.begin_create_or_replace(
+            analyzer_id=analyzer_id,
+            resource=initial_analyzer,
+        )
+
+        # Wait for the analyzer to be created
+        print(f"⏳ Waiting for analyzer creation to complete...")
+        await poller.result()
+        print(f"✅ Analyzer '{analyzer_id}' created successfully!")
+
+        # Get the analyzer before update to verify initial state
+        print(f"📋 Getting analyzer '{analyzer_id}' before update...")
+        analyzer_before_update = await client.content_analyzers.get(analyzer_id=analyzer_id)
+        
+        print(f"✅ Initial analyzer state verified:")
+        print(f"   Description: {analyzer_before_update.description}")
+        print(f"   Tags: {analyzer_before_update.tags}")
+
+        # Create updated analyzer with only allowed properties (description and tags)
+        print(f"🔄 Creating updated analyzer configuration...")
+        updated_analyzer = ContentAnalyzer(
+            description=f"Updated analyzer for update demo: {analyzer_id}",
+            tags={"initial_tag": "initial_value", "updated_tag": "updated_value", "demo_type": "update"},
+        )
+
+        # Update the analyzer
+        print(f"📝 Updating analyzer '{analyzer_id}' with new description and tags...")
+        response = await client.content_analyzers.update(
+            analyzer_id=analyzer_id,
+            resource=updated_analyzer,
+        )
+        
+        print(f"✅ Analyzer updated successfully!")
+        print(f"   Updated description: {response.description}")
+        print(f"   Updated tags: {response.tags}")
+
+        # Get the analyzer after update to verify the changes persisted
+        print(f"📋 Getting analyzer '{analyzer_id}' after update...")
+        analyzer_after_update = await client.content_analyzers.get(analyzer_id=analyzer_id)
+        
+        print(f"✅ Updated analyzer state verified:")
+        print(f"   Description: {analyzer_after_update.description}")
+        print(f"   Tags: {analyzer_after_update.tags}")
+        
+        # Verify the changes were applied correctly
+        assert analyzer_after_update.description == f"Updated analyzer for update demo: {analyzer_id}"
+        assert "updated_tag" in analyzer_after_update.tags
+        assert analyzer_after_update.tags["updated_tag"] == "updated_value"
+        print(f"✅ All changes verified successfully!")
+
+        # Clean up the created analyzer (demo cleanup)
+        print(f"🗑️  Deleting analyzer '{analyzer_id}' (demo cleanup)...")
+        await client.content_analyzers.delete(analyzer_id=analyzer_id)
+        print(f"✅ Analyzer '{analyzer_id}' deleted successfully!")
 
 
 # x-ms-original-file: 2025-05-01-preview/ContentAnalyzers_Update.json
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
