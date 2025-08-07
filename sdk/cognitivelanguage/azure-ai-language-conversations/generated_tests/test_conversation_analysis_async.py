@@ -47,17 +47,6 @@ class TestConversationAnalysisAsync(ConversationAnalysisClientTestBaseAsync):
 
     @ConversationAnalysisPreparer()
     @recorded_by_proxy_async
-    async def test_get_job_status(self, conversationanalysis_endpoint):
-        client = self.create_async_client(endpoint=conversationanalysis_endpoint)
-        response = await client.get_job_status(
-            job_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @ConversationAnalysisPreparer()
-    @recorded_by_proxy_async
     async def test_begin_analyze_conversation_job(self, conversationanalysis_endpoint):
         client = self.create_async_client(endpoint=conversationanalysis_endpoint)
         response = await (

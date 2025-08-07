@@ -281,7 +281,7 @@ class _ConversationAnalysisClientOperationsMixin(
         params_added_on={"2023-04-01": ["api_version", "job_id", "show_stats", "accept"]},
         api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2024-11-15-preview", "2025-05-15-preview"],
     )
-    def get_job_status(
+    def _get_job_status(
         self, job_id: str, *, show_stats: Optional[bool] = None, **kwargs: Any
     ) -> _models.AnalyzeConversationOperationState:
         """Get analysis status and results.
