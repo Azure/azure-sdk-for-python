@@ -6,7 +6,27 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.ai.contentunderstanding import ContentUnderstandingClient
+import asyncio
+import os
+
+from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
+from azure.ai.contentunderstanding.models import (
+    ContentAnalyzer,
+    ContentAnalyzerConfig,
+    FieldSchema,
+    FieldDefinition,
+    FieldType,
+    GenerationMethod,
+    AnalysisMode,
+    ProcessingLocation,
+)
+
+from sample_helper import (
+    get_credential, 
+    extract_operation_id_from_poller, 
+    PollerType,
+    save_response_to_file
+)
 
 """
 # PREREQUISITES
@@ -16,18 +36,123 @@ from azure.ai.contentunderstanding import ContentUnderstandingClient
 """
 
 
-def main():
-    client = ContentUnderstandingClient(
-        endpoint="ENDPOINT",
-        credential="CREDENTIAL",
-    )
+async def main():
+    """
+    Get analysis result using get_result API.
+    
+    High-level steps:
+    1. Create a custom analyzer
+    2. Analyze a document to get an operation ID
+    3. Extract operation ID from the analysis poller
+    4. Get the analysis result using the operation ID
+    5. Save the analysis result to a file
+    6. Clean up the created analyzer
+    """
+    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT")
+    credential = get_credential()
 
-    response = client.content_analyzers.get_result(
-        operation_id="3b31320d-8bab-4f88-b19c-2322a7f11034",
-    )
-    print(response)
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
+        analyzer_id = f"sdk-sample-analyzer-for-result-{int(asyncio.get_event_loop().time())}"
+        
+        # Create a custom analyzer using object model
+        print(f"🔧 Creating custom analyzer '{analyzer_id}'...")
+        
+        content_analyzer = ContentAnalyzer(
+            base_analyzer_id="prebuilt-documentAnalyzer",
+            config=ContentAnalyzerConfig(
+                enable_formula=True,
+                enable_layout=True,
+                enable_ocr=True,
+                estimate_field_source_and_confidence=True,
+                return_details=True,
+            ),
+            description="Custom analyzer for get result demo",
+            field_schema=FieldSchema(
+                fields={
+                    "total_amount": FieldDefinition(
+                        description="Total amount of this document",
+                        method=GenerationMethod.EXTRACT,
+                        type=FieldType.NUMBER,
+                    ),
+                    "company_name": FieldDefinition(
+                        description="Name of the company",
+                        method=GenerationMethod.EXTRACT,
+                        type=FieldType.STRING,
+                    )
+                },
+                description="Schema for get result demo",
+                name="demo_schema",
+            ),
+            mode=AnalysisMode.STANDARD,
+            processing_location=ProcessingLocation.GLOBAL,
+            tags={"demo_type": "get_result"},
+        )
+
+        # Start the analyzer creation operation
+        poller = await client.content_analyzers.begin_create_or_replace(
+            analyzer_id=analyzer_id,
+            resource=content_analyzer,
+        )
+
+        # Extract operation ID from the poller
+        operation_id = extract_operation_id_from_poller(poller, PollerType.ANALYZER_CREATION)
+        print(f"📋 Extracted creation operation ID: {operation_id}")
+
+        # Wait for the analyzer to be created
+        print(f"⏳ Waiting for analyzer creation to complete...")
+        await poller.result()
+        print(f"✅ Analyzer '{analyzer_id}' created successfully!")
+
+        # Read the sample invoice PDF file
+        pdf_path = "sample_files/sample_invoice.pdf"
+        print(f"📄 Reading document file: {pdf_path}")
+        with open(pdf_path, "rb") as pdf_file:
+            pdf_content = pdf_file.read()
+
+        # Begin document analysis operation
+        print(f"🔍 Starting document analysis with analyzer '{analyzer_id}'...")
+        analysis_poller = await client.content_analyzers.begin_analyze_binary(
+            analyzer_id=analyzer_id,
+            input=pdf_content,
+            content_type="application/pdf",
+        )
+
+        # Wait for analysis completion
+        print(f"⏳ Waiting for document analysis to complete...")
+        analysis_result = await analysis_poller.result()
+        print(f"✅ Document analysis completed successfully!")
+
+        # Extract operation ID for get_result
+        analysis_operation_id = extract_operation_id_from_poller(analysis_poller, PollerType.ANALYZE_CALL)
+        print(f"📋 Extracted analysis operation ID: {analysis_operation_id}")
+
+        # Get the analysis result using the operation ID
+        print(f"🔍 Getting analysis result using operation ID '{analysis_operation_id}'...")
+        operation_status = await client.content_analyzers.get_result(
+            operation_id=analysis_operation_id,
+        )
+        
+        print(f"✅ Analysis result retrieved successfully!")
+        print(f"   Operation ID: {operation_status.id}")
+        print(f"   Status: {operation_status.status}")
+        
+        # The actual analysis result is in operation_status.result
+        analysis_result = operation_status.result
+        print(f"   Result contains {len(analysis_result.contents)} contents")
+        
+        # Save the analysis result to a file
+        saved_file_path = save_response_to_file(
+            result=analysis_result,
+            filename_prefix="content_analyzers_get_result"
+        )
+        print(f"💾 Analysis result saved to: {saved_file_path}")
+        
+        # Clean up the created analyzer (demo cleanup)
+        print(f"🗑️  Deleting analyzer '{analyzer_id}' (demo cleanup)...")
+        await client.content_analyzers.delete(analyzer_id=analyzer_id)
+        print(f"✅ Analyzer '{analyzer_id}' deleted successfully!")
 
 
 # x-ms-original-file: 2025-05-01-preview/ContentAnalyzers_GetResult.json
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

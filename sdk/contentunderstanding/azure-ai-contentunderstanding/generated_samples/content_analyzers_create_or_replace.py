@@ -91,6 +91,11 @@ async def main() -> None:
         result = await poller.result()
         print(f"✅ Analyzer '{analyzer_id}' created successfully!")
         
+        # Clean up the created analyzer (demo cleanup)
+        print(f"🗑️  Deleting analyzer '{analyzer_id}' (demo cleanup)...")
+        await client.content_analyzers.delete(analyzer_id=analyzer_id)
+        print(f"✅ Analyzer '{analyzer_id}' deleted successfully!")
+        
         # Next steps:
         # - To retrieve the analyzer: see content_analyzers_get_analyzer.py
         # - To use the analyzer for analysis: see content_analyzers_analyze_binary.py
