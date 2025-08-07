@@ -89,12 +89,13 @@ class _GlobalPartitionEndpointManagerForCircuitBreaker(_GlobalEndpointManager):
 
         return PartitionKeyRangeWrapper(partition_range, container_rid)
 
-    def record_failure(
+    def record_ppcb_failure(
             self,
-            request: RequestObject
-    ) -> None:
+            request: RequestObject,
+            pk_range_wrapper: Optional[PartitionKeyRangeWrapper] = None)-> None:
         if self.is_circuit_breaker_applicable(request):
-            pk_range_wrapper = self.create_pk_range_wrapper(request)
+            if pk_range_wrapper is None:
+                pk_range_wrapper = self.create_pk_range_wrapper(request)
             if pk_range_wrapper:
                 self.global_partition_endpoint_manager_core.record_failure(request, pk_range_wrapper)
 
@@ -109,11 +110,12 @@ class _GlobalPartitionEndpointManagerForCircuitBreaker(_GlobalEndpointManager):
                                                                                                     pk_range_wrapper)
         return self._resolve_service_endpoint(request)
 
-    def record_success(
+    def record_ppcb_success(
             self,
-            request: RequestObject
-    ) -> None:
-        if self.global_partition_endpoint_manager_core.is_circuit_breaker_applicable(request):
-            pk_range_wrapper = self.create_pk_range_wrapper(request)
+            request: RequestObject,
+            pk_range_wrapper: Optional[PartitionKeyRangeWrapper] = None) -> None:
+        if self.is_circuit_breaker_applicable(request):
+            if pk_range_wrapper is None:
+                pk_range_wrapper = self.create_pk_range_wrapper(request)
             if pk_range_wrapper:
                 self.global_partition_endpoint_manager_core.record_success(request, pk_range_wrapper)

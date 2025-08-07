@@ -115,7 +115,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
         try:
             if args:
                 result = ExecuteFunction(function, global_endpoint_manager, *args, **kwargs)
-                global_endpoint_manager.record_success(args[0])
+                global_endpoint_manager.record_success(args[0], pk_range_wrapper)
             else:
                 result = ExecuteFunction(function, *args, **kwargs)
             if not client.last_response_headers:
@@ -195,8 +195,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
             elif e.status_code == StatusCodes.REQUEST_TIMEOUT or e.status_code >= StatusCodes.INTERNAL_SERVER_ERROR:
                 if args:
                     # record the failure for circuit breaker tracking
-                    # TODO: change this to track errors for ppaf
-                    global_endpoint_manager.record_failure(args[0])
+                    global_endpoint_manager.record_failure(args[0], pk_range_wrapper)
                 retry_policy = timeout_failover_retry_policy
             else:
                 retry_policy = defaultRetry_policy
@@ -230,7 +229,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                     raise e
             else:
                 if args:
-                    global_endpoint_manager.record_failure(args[0])
+                    global_endpoint_manager.record_failure(args[0], pk_range_wrapper)
                 _handle_service_request_retries(client, service_request_retry_policy, e, *args)
 
         except ServiceResponseError as e:
@@ -239,7 +238,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                     raise e
             else:
                 if args:
-                    global_endpoint_manager.record_failure(args[0])
+                    global_endpoint_manager.record_failure(args[0], pk_range_wrapper)
                 _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
 
 def ExecuteFunction(function, *args, **kwargs):

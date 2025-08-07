@@ -16,7 +16,7 @@ from test_per_partition_circuit_breaker_mm import (REGION_1, REGION_2, PK_VALUE,
 
 def create_errors():
     errors = []
-    error_codes = [403, 503]
+    error_codes = [403, 408, 500, 502, 503, 504]
     for error_code in error_codes:
         if error_code == 403:
             errors.append(CosmosHttpResponseError(
@@ -91,6 +91,7 @@ class TestPerPartitionAutomaticFailover:
         initial_endpoint = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper].current_regional_endpoint
 
         # Based on our configuration, we should have had one error followed by a success - marking only the previous endpoint as unavailable
+        # TODO: add logic here to deal with consecutive failures case
         perform_write_operation(
             write_operation,
             container,

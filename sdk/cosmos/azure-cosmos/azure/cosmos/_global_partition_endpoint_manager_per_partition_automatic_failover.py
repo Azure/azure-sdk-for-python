@@ -12,6 +12,7 @@ from typing import Dict, Set, TYPE_CHECKING, Optional
 from azure.cosmos.http_constants import ResourceType
 from azure.cosmos._global_partition_endpoint_manager_circuit_breaker import \
     _GlobalPartitionEndpointManagerForCircuitBreaker
+from azure.cosmos._partition_health_tracker import _PPAFPartitionThresholdsTracker
 from azure.cosmos.documents import _OperationType
 
 from azure.cosmos._request_object import RequestObject
@@ -64,6 +65,7 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover(_GlobalPar
     def __init__(self, client: "CosmosClientConnection"):
         super(_GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover, self).__init__(client)
         self.partition_range_to_failover_info: Dict[PartitionKeyRangeWrapper, PartitionLevelFailoverInfo] = {}
+        self.ppaf_thresholds_tracker = _PPAFPartitionThresholdsTracker()
 
     def is_per_partition_automatic_failover_applicable(self, request: RequestObject) -> bool:
         if not request:
@@ -142,3 +144,27 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover(_GlobalPar
             for region in available_regions
         }
         return available_regional_endpoints
+
+    def record_failure(self,
+                       request: RequestObject,
+                       pk_range_wrapper: Optional[PartitionKeyRangeWrapper] = None) -> None:
+        """Records a failure for the given partition key range and request."""
+        if self.is_per_partition_automatic_failover_applicable(request):
+            if pk_range_wrapper is None:
+                pk_range_wrapper = self.create_pk_range_wrapper(request)
+            if pk_range_wrapper:
+                self.ppaf_thresholds_tracker.add_failure(pk_range_wrapper)
+        else:
+            self.record_ppcb_failure(request, pk_range_wrapper)
+
+    def record_success(self,
+                       request: RequestObject,
+                       pk_range_wrapper: Optional[PartitionKeyRangeWrapper] = None) -> None:
+        """Records a failure for the given partition key range and request."""
+        if self.is_per_partition_automatic_failover_applicable(request):
+            if pk_range_wrapper is None:
+                pk_range_wrapper = self.create_pk_range_wrapper(request)
+            if pk_range_wrapper:
+                self.ppaf_thresholds_tracker.clear_pk_failures(pk_range_wrapper)
+        else:
+            self.record_ppcb_success(request, pk_range_wrapper)

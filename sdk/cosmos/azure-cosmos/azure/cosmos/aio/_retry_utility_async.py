@@ -114,7 +114,7 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
         try:
             if args:
                 result = await ExecuteFunctionAsync(function, global_endpoint_manager, *args, **kwargs)
-                await global_endpoint_manager.record_success(args[0])
+                await global_endpoint_manager.record_success(args[0], pk_range_wrapper)
             else:
                 result = await ExecuteFunctionAsync(function, *args, **kwargs)
             if not client.last_response_headers:
@@ -193,7 +193,7 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
             elif e.status_code == StatusCodes.REQUEST_TIMEOUT or e.status_code >= StatusCodes.INTERNAL_SERVER_ERROR:
                 # record the failure for circuit breaker tracking
                 if args:
-                    await global_endpoint_manager.record_failure(args[0])
+                    await global_endpoint_manager.record_failure(args[0], pk_range_wrapper)
                 # TODO: change this to track errors for ppaf
                 retry_policy = timeout_failover_retry_policy
             else:
@@ -242,12 +242,12 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                         _handle_service_request_retries(client, service_request_retry_policy, e, *args)
                     else:
                         if args:
-                            await global_endpoint_manager.record_failure(args[0])
+                            await global_endpoint_manager.record_failure(args[0], pk_range_wrapper)
                         _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
                 # in case customer is not using aiohttp
                 except ImportError:
                     if args:
-                        await global_endpoint_manager.record_failure(args[0])
+                        await global_endpoint_manager.record_failure(args[0], pk_range_wrapper)
                     _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
 
 
