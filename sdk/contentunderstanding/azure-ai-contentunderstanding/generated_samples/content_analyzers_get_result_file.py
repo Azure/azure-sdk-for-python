@@ -6,7 +6,28 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.ai.contentunderstanding import ContentUnderstandingClient
+import asyncio
+import os
+import re
+
+from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
+from azure.ai.contentunderstanding.models import (
+    ContentAnalyzer,
+    ContentAnalyzerConfig,
+    FieldSchema,
+    FieldDefinition,
+    FieldType,
+    GenerationMethod,
+    AnalysisMode,
+    ProcessingLocation,
+)
+
+from sample_helper import (
+    get_credential, 
+    extract_operation_id_from_poller, 
+    PollerType,
+    save_keyframe_image_to_file
+)
 
 """
 # PREREQUISITES
@@ -16,19 +37,147 @@ from azure.ai.contentunderstanding import ContentUnderstandingClient
 """
 
 
-def main():
-    client = ContentUnderstandingClient(
-        endpoint="ENDPOINT",
-        credential="CREDENTIAL",
-    )
+async def main():
+    """
+    Get result files using get_result_file API.
+    
+    High-level steps:
+    1. Create a marketing video analyzer
+    2. Analyze a video file to generate keyframes
+    3. Extract operation ID from the analysis
+    4. Get result files (keyframe images) using the operation ID
+    5. Save the keyframe images to local files
+    6. Clean up the created analyzer
+    """
+    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT")
+    credential = get_credential()
 
-    response = client.content_analyzers.get_result_file(
-        operation_id="3b31320d-8bab-4f88-b19c-2322a7f11034",
-        path="figure-1.1",
-    )
-    print(response)
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
+        analyzer_id = f"sdk-sample-video-analyzer-{int(asyncio.get_event_loop().time())}"
+        
+        # Create a marketing video analyzer using object model
+        print(f"🔧 Creating marketing video analyzer '{analyzer_id}'...")
+        
+        video_analyzer = ContentAnalyzer(
+            base_analyzer_id="prebuilt-videoAnalyzer",
+            config=ContentAnalyzerConfig(
+                return_details=True,
+            ),
+            description="Marketing video analyzer for result file demo",
+            mode=AnalysisMode.STANDARD,
+            processing_location=ProcessingLocation.GLOBAL,
+            tags={"demo_type": "video_analysis"},
+        )
+
+        # Start the analyzer creation operation
+        poller = await client.content_analyzers.begin_create_or_replace(
+            analyzer_id=analyzer_id,
+            resource=video_analyzer,
+        )
+
+        # Extract operation ID from the poller
+        operation_id = extract_operation_id_from_poller(poller, PollerType.ANALYZER_CREATION)
+        print(f"📋 Extracted creation operation ID: {operation_id}")
+
+        # Wait for the analyzer to be created
+        print(f"⏳ Waiting for analyzer creation to complete...")
+        await poller.result()
+        print(f"✅ Analyzer '{analyzer_id}' created successfully!")
+
+        # Read the FlightSimulator.mp4 video file
+        video_path = "FlightSimulator.mp4"
+        print(f"📹 Reading video file: {video_path}")
+        with open(video_path, "rb") as video_file:
+            video_content = video_file.read()
+
+        # Begin video analysis operation
+        print(f"🎬 Starting video analysis with analyzer '{analyzer_id}'...")
+        analysis_poller = await client.content_analyzers.begin_analyze_binary(
+            analyzer_id=analyzer_id,
+            input=video_content,
+            content_type="video/mp4",
+        )
+
+        # Wait for analysis completion
+        print(f"⏳ Waiting for video analysis to complete...")
+        analysis_result = await analysis_poller.result()
+        print(f"✅ Video analysis completed successfully!")
+
+        # Extract operation ID for get_result_file
+        analysis_operation_id = extract_operation_id_from_poller(analysis_poller, PollerType.ANALYZE_CALL)
+        print(f"📋 Extracted analysis operation ID: {analysis_operation_id}")
+
+        # Get the result to see what files are available
+        print(f"🔍 Getting analysis result to find available files...")
+        operation_status = await client.content_analyzers.get_result(
+            operation_id=analysis_operation_id,
+        )
+        
+        # The actual analysis result is in operation_status.result
+        analysis_result = operation_status.result
+        print(f"✅ Analysis result contains {len(analysis_result.contents)} contents")
+
+        # Look for keyframe files in the analysis result markdown
+        keyframe_files = set()
+        for content in analysis_result.contents:
+            # Extract keyframe IDs from "markdown" if it exists and is a string
+            markdown_content = getattr(content, 'markdown', '')
+            if isinstance(markdown_content, str):
+                # Use regex pattern to find keyframe references: (keyFrame\.d+)\.jpg
+                keyframe_files.update(re.findall(r"(keyFrame\.\d+)\.jpg", markdown_content))
+
+        if not keyframe_files:
+            print("⚠️  No keyframe files found in the analysis result markdown")
+            return
+
+        print(f"🖼️  Found {len(keyframe_files)} keyframe files in markdown")
+
+        # Download and save a few keyframe images (first, middle, last)
+        sorted_keyframes = sorted(keyframe_files, key=lambda x: int(x.replace('keyFrame.', '')))
+        if len(sorted_keyframes) >= 3:
+            frames_to_download = {sorted_keyframes[0], sorted_keyframes[-1], sorted_keyframes[len(sorted_keyframes) // 2]}
+        else:
+            frames_to_download = set(sorted_keyframes)
+        
+        files_to_download = list(frames_to_download)
+        print(f"📥 Downloading {len(files_to_download)} keyframe images: {files_to_download}")
+
+        for keyframe_id in files_to_download:
+            print(f"📥 Getting result file: {keyframe_id}")
+            
+            # Get the result file (keyframe image)
+            response = await client.content_analyzers.get_result_file(
+                operation_id=analysis_operation_id,
+                path=keyframe_id,
+            )
+            
+            # Handle the response - it's an async iterator that needs to be collected
+            if hasattr(response, '__aiter__'):
+                chunks = []
+                async for chunk in response:
+                    chunks.append(chunk)
+                image_content = b''.join(chunks)
+            else:
+                image_content = response
+
+            print(f"✅ Retrieved image file for {keyframe_id} ({len(image_content)} bytes)")
+            
+            # Save the image file
+            saved_file_path = save_keyframe_image_to_file(
+                image_content=image_content,
+                keyframe_id=keyframe_id,
+                test_name="content_analyzers_get_result_file",
+                test_pyfile_dir=os.path.dirname(os.path.abspath(__file__)),
+                identifier=analyzer_id
+            )
+            print(f"💾 Keyframe image saved to: {saved_file_path}")
+
+        # Clean up the created analyzer (demo cleanup)
+        print(f"🗑️  Deleting analyzer '{analyzer_id}' (demo cleanup)...")
+        await client.content_analyzers.delete(analyzer_id=analyzer_id)
+        print(f"✅ Analyzer '{analyzer_id}' deleted successfully!")
 
 
 # x-ms-original-file: 2025-05-01-preview/ContentAnalyzers_GetResultFile.json
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

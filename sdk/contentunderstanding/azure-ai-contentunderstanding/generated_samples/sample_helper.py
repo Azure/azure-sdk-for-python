@@ -10,7 +10,7 @@ Helper functions for Azure AI Content Understanding samples.
 import json
 import os
 from datetime import datetime, timezone
-from typing import Any
+from typing import Any, Optional
 from enum import Enum
 
 from azure.core.credentials import AzureKeyCredential
@@ -86,3 +86,51 @@ def extract_operation_id_from_poller(poller: Any, poller_type: PollerType) -> st
                 return operation_id
     
     raise ValueError(f"Could not extract operation ID from poller for type {poller_type}")
+
+
+def save_keyframe_image_to_file(
+    image_content: bytes, 
+    keyframe_id: str, 
+    test_name: str, 
+    test_pyfile_dir: str, 
+    identifier: Optional[str] = None,
+    output_dir: str = "test_output"
+) -> str:
+    """Save keyframe image to output file using pytest naming convention.
+    
+    Args:
+        image_content: The binary image content to save
+        keyframe_id: The keyframe ID (e.g., "keyFrame.1")
+        test_name: Name of the test case (e.g., function name)
+        test_pyfile_dir: Directory where pytest files are located
+        identifier: Optional unique identifier to avoid conflicts (e.g., analyzer_id)
+        output_dir: Directory name to save the output file (default: "test_output")
+        
+    Returns:
+        str: Path to the saved image file
+        
+    Raises:
+        OSError: If there are issues creating directory or writing file
+    """
+    # Generate timestamp and frame ID
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    frame_id = keyframe_id.replace('keyFrame.', '')
+    
+    # Create output directory if it doesn't exist
+    output_dir_path = os.path.join(test_pyfile_dir, output_dir)
+    os.makedirs(output_dir_path, exist_ok=True)
+    
+    # Generate output filename with optional identifier to avoid conflicts
+    if identifier:
+        output_filename = f"{test_name}_{identifier}_{timestamp}_{frame_id}.jpg"
+    else:
+        output_filename = f"{test_name}_{timestamp}_{frame_id}.jpg"
+    
+    saved_file_path = os.path.join(output_dir_path, output_filename)
+    
+    # Write the image content to file
+    with open(saved_file_path, "wb") as image_file:
+        image_file.write(image_content)
+    
+    print(f"🖼️  Image file saved to: {saved_file_path}")
+    return saved_file_path
