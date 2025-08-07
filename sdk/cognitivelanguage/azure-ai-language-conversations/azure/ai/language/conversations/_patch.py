@@ -41,10 +41,78 @@ _SERIALIZER.client_side_validation = False
 
 
 class ConversationAnalysisClient(AnalysisClientGenerated):
-    def analyze_conversations(
-        self, body: Union[AnalyzeConversationOperationInput, dict, IO[bytes]], **kwargs: Any
-    ) -> LROPoller[AnalyzeConversationOperationState]:
 
+    @overload
+    def analyze_conversations(
+        self, body: AnalyzeConversationOperationInput, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[AnalyzeConversationOperationState]:
+        """Analyzes the input conversation utterance.
+
+        :param body: The input for the analyze conversations operation. Required.
+        :type body: ~azure.ai.language.conversations.models.AnalyzeConversationOperationInput
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns AnalyzeConversationOperationState. The AnalyzeConversationOperationState is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[AnalyzeConversationOperationState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def analyze_conversations(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[AnalyzeConversationOperationState]:
+        """Analyzes the input conversation utterance.
+
+        :param body: The input for the analyze conversations operation. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns AnalyzeConversationOperationState. The AnalyzeConversationOperationState is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[AnalyzeConversationOperationState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def analyze_conversations(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[AnalyzeConversationOperationState]:
+        """Analyzes the input conversation utterance.
+
+        :param body: The input for the analyze conversations operation. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns AnalyzeConversationOperationState. The AnalyzeConversationOperationState is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[AnalyzeConversationOperationState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2023-04-01",
+        params_added_on={"2023-04-01": ["api_version", "content_type", "accept"]},
+        api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2024-11-15-preview", "2025-05-15-preview"],
+    )
+    def analyze_conversations(
+        self, body: Union[AnalyzeConversationOperationInput, JSON, IO[bytes]], **kwargs: Any
+    ) -> LROPoller[AnalyzeConversationOperationState]:
+        """Analyzes the input conversation utterance.
+
+        :param body: The input for the analyze conversations operation. Is one of the following types:
+         AnalyzeConversationOperationInput, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.language.conversations.models.AnalyzeConversationOperationInput or JSON
+         or IO[bytes]
+        :return: An instance of LROPoller that returns AnalyzeConversationOperationState. The AnalyzeConversationOperationState is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[AnalyzeConversationOperationState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
