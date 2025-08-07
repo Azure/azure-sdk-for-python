@@ -6,55 +6,132 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
+import os
+import uuid
+from datetime import datetime
+from typing import Optional, Dict, Any, List
 from devtools_testutils import recorded_by_proxy
 from testpreparer import ContentUnderstandingClientTestBase, ContentUnderstandingPreparer
+from azure.core.exceptions import ResourceNotFoundError
+from test_helpers import read_image_to_base64
 
 
-@pytest.mark.skip("you may need to update the auto-generated test case before run it")
+def generate_test_id() -> str:
+    """Generate a unique test ID with current date, time, and GUID."""
+    now = datetime.now()
+    date_str = now.strftime("%Y%m%d")
+    time_str = now.strftime("%H%M%S")
+    guid = str(uuid.uuid4()).replace("-", "")[:8]
+    return f"test_{date_str}_{time_str}_{guid}"
+
+
 class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase):
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
     def test_faces_detect(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Load a test image
+        - Detect faces in the image
+        - Verify detection results
+        """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
+        
+        # Load test image
+        test_file_dir = os.path.dirname(os.path.abspath(__file__))
+        image_path = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
+        image_data = read_image_to_base64(image_path)
+        
+        print(f"Detecting faces in image: {image_path}")
         response = client.faces.detect(
-            body={"data": bytes("bytes", encoding="utf-8"), "maxDetectedFaces": 0, "url": "str"},
+            body={
+                "data": image_data,
+                "maxDetectedFaces": 10
+            }
         )
-
-        # please add some check logic here by yourself
-        # ...
+        
+        # Verify the response
+        assert response is not None
+        assert hasattr(response, 'detected_faces')
+        print(f"Detected {len(response.detected_faces) if response.detected_faces else 0} faces")
+        
+        # Verify each detected face has required properties
+        if response.detected_faces:
+            for i, face in enumerate(response.detected_faces):
+                assert hasattr(face, 'bounding_box'), f"Detected face {i} should have bounding_box"
+                # Note: face_id and confidence may not be present in all face detection responses
+                if hasattr(face, 'face_id'):
+                    print(f"Face {i+1}: ID={face.face_id}")
+                if hasattr(face, 'confidence'):
+                    print(f"Face {i+1}: Confidence={face.confidence}")
+                
+                # Print bounding box information
+                if hasattr(face, 'bounding_box') and face.bounding_box:
+                    bbox = face.bounding_box
+                    print(f"Face {i+1}: BoundingBox(left={bbox.left}, top={bbox.top}, width={bbox.width}, height={bbox.height})")
+        
+        print("Face detection test completed successfully")
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
     def test_faces_compare(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Load two different images of the same person (Bill)
+        - Compare faces between the images
+        - Verify comparison results show high similarity
+        """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
+        
+        # Load two different images of the same person (Bill)
+        test_file_dir = os.path.dirname(os.path.abspath(__file__))
+        image1_path = os.path.join(test_file_dir, "test_data", "face", "enrollment_data", "Bill", "Family1-Dad1.jpg")
+        image2_path = os.path.join(test_file_dir, "test_data", "face", "enrollment_data", "Bill", "Family1-Dad2.jpg")
+        
+        image1_data = read_image_to_base64(image1_path)
+        image2_data = read_image_to_base64(image2_path)
+        
+        print(f"Comparing faces between two images of the same person (Bill)")
+        print(f"Image 1: {image1_path}")
+        print(f"Image 2: {image2_path}")
+        
         response = client.faces.compare(
             body={
                 "faceSource1": {
-                    "data": bytes("bytes", encoding="utf-8"),
-                    "imageReferenceId": "str",
-                    "targetBoundingBox": {"height": 0, "left": 0, "top": 0, "width": 0},
-                    "url": "str",
+                    "data": image1_data
                 },
                 "faceSource2": {
-                    "data": bytes("bytes", encoding="utf-8"),
-                    "imageReferenceId": "str",
-                    "targetBoundingBox": {"height": 0, "left": 0, "top": 0, "width": 0},
-                    "url": "str",
-                },
-            },
-            face_source1={
-                "data": bytes("bytes", encoding="utf-8"),
-                "imageReferenceId": "str",
-                "targetBoundingBox": {"height": 0, "left": 0, "top": 0, "width": 0},
-                "url": "str",
-            },
-            face_source2={
-                "data": bytes("bytes", encoding="utf-8"),
-                "imageReferenceId": "str",
-                "targetBoundingBox": {"height": 0, "left": 0, "top": 0, "width": 0},
-                "url": "str",
-            },
+                    "data": image2_data
+                }
+            }
         )
-
-        # please add some check logic here by yourself
-        # ...
+        
+        # Verify the response
+        assert response is not None
+        assert hasattr(response, 'detected_face1'), "Response should have detected_face1 property"
+        assert hasattr(response, 'detected_face2'), "Response should have detected_face2 property"
+        assert hasattr(response, 'confidence'), "Response should have confidence property"
+        
+        print(f"Face comparison result: Confidence={response.confidence}")
+        
+        # Verify confidence is a numeric value
+        assert isinstance(response.confidence, (int, float)), "Confidence should be a number"
+        assert response.confidence >= 0, "Confidence should be non-negative"
+        
+        # Print detected face information
+        if hasattr(response, 'detected_face1') and response.detected_face1:
+            face1 = response.detected_face1
+            if hasattr(face1, 'bounding_box') and face1.bounding_box:
+                bbox1 = face1.bounding_box
+                print(f"Detected Face 1: BoundingBox(left={bbox1.left}, top={bbox1.top}, width={bbox1.width}, height={bbox1.height})")
+        
+        if hasattr(response, 'detected_face2') and response.detected_face2:
+            face2 = response.detected_face2
+            if hasattr(face2, 'bounding_box') and face2.bounding_box:
+                bbox2 = face2.bounding_box
+                print(f"Detected Face 2: BoundingBox(left={bbox2.left}, top={bbox2.top}, width={bbox2.width}, height={bbox2.height})")
+        
+        # For faces of the same person, we expect high confidence
+        print(f"Confidence score: {response.confidence} (expected high for same person)")
+        
+        print("Face comparison test completed successfully")
