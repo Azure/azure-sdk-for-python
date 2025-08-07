@@ -6,7 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.ai.contentunderstanding import ContentUnderstandingClient
+import asyncio
+import os
+
+from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
+
+from sample_helper import get_credential
 
 """
 # PREREQUISITES
@@ -16,17 +21,66 @@ from azure.ai.contentunderstanding import ContentUnderstandingClient
 """
 
 
-def main():
-    client = ContentUnderstandingClient(
-        endpoint="ENDPOINT",
-        credential="CREDENTIAL",
-    )
+async def main():
+    """
+    List all available analyzers using list API.
+    
+    High-level steps:
+    1. Connect to Azure AI Content Understanding
+    2. List all available analyzers
+    3. Display detailed information about each analyzer
+    4. Show summary statistics
+    """
+    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT")
+    credential = get_credential()
 
-    response = client.content_analyzers.list()
-    for item in response:
-        print(item)
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
+        print(f"📋 Listing all available analyzers...")
+        
+        # List all analyzers
+        response = client.content_analyzers.list()
+        analyzers = [analyzer async for analyzer in response]
+        
+        print(f"✅ Found {len(analyzers)} analyzers")
+        print()
+        
+        # Display detailed information about each analyzer
+        for i, analyzer in enumerate(analyzers, 1):
+            print(f"🔍 Analyzer {i}:")
+            print(f"   ID: {analyzer.analyzer_id}")
+            print(f"   Description: {analyzer.description}")
+            print(f"   Status: {analyzer.status}")
+            print(f"   Created at: {analyzer.created_at}")
+            
+            # Check if it's a prebuilt analyzer
+            if analyzer.analyzer_id.startswith("prebuilt-"):
+                print(f"   Type: Prebuilt analyzer")
+            else:
+                print(f"   Type: Custom analyzer")
+            
+            # Show tags if available
+            if hasattr(analyzer, 'tags') and analyzer.tags:
+                print(f"   Tags: {analyzer.tags}")
+            
+            print()
+        
+        # Show summary statistics
+        prebuilt_count = sum(1 for analyzer in analyzers if analyzer.analyzer_id.startswith("prebuilt-"))
+        custom_count = len(analyzers) - prebuilt_count
+        
+        print(f"📊 Summary:")
+        print(f"   Total analyzers: {len(analyzers)}")
+        print(f"   Prebuilt analyzers: {prebuilt_count}")
+        print(f"   Custom analyzers: {custom_count}")
+        
+        # Check for specific prebuilt analyzers
+        prebuilt_ids = [analyzer.analyzer_id for analyzer in analyzers if analyzer.analyzer_id.startswith("prebuilt-")]
+        if "prebuilt-documentAnalyzer" in prebuilt_ids:
+            print(f"   ✅ prebuilt-documentAnalyzer is available")
+        if "prebuilt-videoAnalyzer" in prebuilt_ids:
+            print(f"   ✅ prebuilt-videoAnalyzer is available")
 
 
 # x-ms-original-file: 2025-05-01-preview/ContentAnalyzers_List.json
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
