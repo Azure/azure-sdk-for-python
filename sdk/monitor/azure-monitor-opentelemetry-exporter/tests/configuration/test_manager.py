@@ -189,33 +189,33 @@ class TestConfigurationManager(unittest.TestCase):
         # Version cache should not be updated
         self.assertEqual(manager._version_cache, 10)
 
-    # def test_get_python_configuration_call(self):
-    #     """Test _update_configuration_and_get_refresh_interval function calls manager correctly."""
-    #     with patch.object(_ConfigurationManager, 'get_configuration_and_refresh_interval') as mock_get_config:
-    #         mock_get_config.return_value = 1800.0
+    def test_get_python_configuration_call(self):
+        """Test _update_configuration_and_get_refresh_interval function calls manager correctly."""
+        with patch.object(_ConfigurationManager, 'get_configuration_and_refresh_interval') as mock_get_config:
+            mock_get_config.return_value = 1800.0
             
-    #         # Call the global function
-    #         result = _update_configuration_and_get_refresh_interval()
+            # Call the global function
+            result = _update_configuration_and_get_refresh_interval()
             
-    #         # Verify it called the manager with correct parameters
-    #         mock_get_config.assert_called_once_with({"namespaces": _ONE_SETTINGS_PYTHON_KEY})
-    #         self.assertEqual(result, 1800.0)
+            # Verify it called the manager with correct parameters
+            mock_get_config.assert_called_once_with({"namespaces": _ONE_SETTINGS_PYTHON_KEY})
+            self.assertEqual(result, 1800.0)
 
-    # @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
-    # def test_settings_cache_thread_safety(self, mock_worker_class):
-    #     """Test thread safety of settings cache."""
-    #     manager = _ConfigurationManager()
+    @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
+    def test_settings_cache_thread_safety(self, mock_worker_class):
+        """Test thread safety of settings cache."""
+        manager = _ConfigurationManager()
         
-    #     # Test that settings_lock protects cache access
-    #     self.assertIsNotNone(manager._settings_lock)
+        # Test that settings_lock protects cache access
+        self.assertIsNotNone(manager._settings_lock)
         
-    #     # Set some cache data directly (simulating what the real implementation would do)
-    #     with manager._settings_lock:
-    #         manager._settings_cache = {"key1": "value1"}
+        # Set some cache data directly (simulating what the real implementation would do)
+        with manager._settings_lock:
+            manager._settings_cache = {"key1": "value1"}
         
-    #     # Verify cache was set
-    #     with manager._settings_lock:
-    #         self.assertEqual(manager._settings_cache, {"key1": "value1"})
+        # Verify cache was set
+        with manager._settings_lock:
+            self.assertEqual(manager._settings_cache, {"key1": "value1"})
 
     # @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
     # def test_version_lock_thread_safety(self, mock_worker_class):
