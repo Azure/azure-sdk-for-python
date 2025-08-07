@@ -126,20 +126,48 @@ class TestSessionTokenUnitTest(unittest.TestCase):
         del os.environ["AZURE_COSMOS_SESSION_TOKEN_FALSE_PROGRESS_MERGE"]
 
     def test_session_token_false_progress_merge(self):
+        for false_progress_enabled in [True, False]:
+            self.validate_different_session_token_false_progress_merge_scenarios(false_progress_enabled)
+
+    def validate_different_session_token_false_progress_merge_scenarios(self, false_progress_enabled: bool):
         # Test that false progress merge is enabled by default and that global lsn is used from higher version token
         # when enabled
+        os.environ["AZURE_COSMOS_SESSION_TOKEN_FALSE_PROGRESS_MERGE"] = str(false_progress_enabled)
         session_token1 = VectorSessionToken.create("1#200#1=20#2=5#3=30")
         session_token2 = VectorSessionToken.create("2#100#1=10#2=8#3=30")
         self.assertIsNotNone(session_token1)
         self.assertIsNotNone(session_token2)
+        if false_progress_enabled:
+            expected_session_token = "2#100#1=20#2=8#3=30"
+        else:
+            expected_session_token = "2#200#1=20#2=8#3=30"
         self.assertTrue(session_token1.merge(session_token2).equals(
-            VectorSessionToken.create("2#100#1=20#2=8#3=30")))
+            VectorSessionToken.create(expected_session_token)))
 
-        # test that reverting to old behavior works
-        os.environ["AZURE_COSMOS_SESSION_TOKEN_FALSE_PROGRESS_MERGE"] = "false"
+        # vector clock version increase with removed region progress should merge
+        session_token1 = VectorSessionToken.create("1#200#1=20#2=5#3=30")
+        session_token2 = VectorSessionToken.create("2#100#1=10#2=5")
+        self.assertIsNotNone(session_token1)
+        self.assertIsNotNone(session_token2)
 
+        if false_progress_enabled:
+            expected_session_token = "2#100#1=20#2=5"
+        else:
+            expected_session_token = "2#200#1=20#2=5"
         self.assertTrue(session_token1.merge(session_token2).equals(
-            VectorSessionToken.create("2#200#1=20#2=8#3=30")))
+            VectorSessionToken.create(expected_session_token)))
+
+        # vector clock version increase with new region progress should merge
+        session_token1 = VectorSessionToken.create("1#200#1=20#2=5")
+        session_token2 = VectorSessionToken.create("2#100#1=10#2=5#3=30")
+        self.assertIsNotNone(session_token1)
+        self.assertIsNotNone(session_token2)
+        if false_progress_enabled:
+            expected_session_token = "2#100#1=20#2=5#3=30"
+        else:
+            expected_session_token = "2#200#1=20#2=5#3=30"
+        self.assertTrue(session_token1.merge(session_token2).equals(
+            VectorSessionToken.create(expected_session_token)))
 
 if __name__ == '__main__':
     unittest.main()
