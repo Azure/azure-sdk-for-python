@@ -26,7 +26,136 @@ python -m pip install azure-ai-contentunderstanding
 - You need an [Azure subscription][azure_sub] to use this package.
 - An existing Azure AI Content Understanding instance.
 
-## Development and Testing
+## Quick Start
+
+### Authentication
+
+The SDK supports multiple authentication methods. For development, we recommend using Azure CLI:
+
+```bash
+# Install Azure CLI and login
+az login
+
+# Set your endpoint
+export AZURE_CONTENT_UNDERSTANDING_ENDPOINT="https://your-resource-name.services.ai.azure.com/"
+```
+
+For production applications, use [DefaultAzureCredential][default_azure_credential] which supports managed identity, service principal, and other authentication methods.
+
+### Document Analysis Example (Use prebuilt document analyzer)
+
+The following async snippet shows how to extract content from a PDF using the out-of-the-box **prebuilt-documentAnalyzer**:
+
+```python
+import asyncio
+from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
+from azure.identity.aio import DefaultAzureCredential
+import os
+
+async def main():
+    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT")
+    credential = DefaultAzureCredential()
+    client = ContentUnderstandingClient(endpoint=endpoint, credential=credential)
+
+    async with client, credential:
+        # Read your document
+        with open("sample_invoice.pdf", "rb") as f:
+            file_bytes = f.read()
+
+        poller = await client.content_analyzers.begin_analyze_binary(
+            analyzer_id="prebuilt-documentAnalyzer",
+            input=file_bytes,
+            content_type="application/pdf",
+        )
+        result = await poller.result()
+
+        for content in result.contents:
+            print("----- Content Preview -----")
+            print(content.markdown[:300] if content.markdown else "(no markdown)")
+
+asyncio.run(main())
+```
+
+### Using a Custom Analyzer (Field Extraction)
+
+In many real-world scenarios you will create your own analyzer so you can define exactly which fields to extract.
+The snippet below shows how to build a very small analyzer (it extracts only the `total_amount` from an invoice), upload it to your resource, run it, and read the structured result — all with the **object model**.
+
+```python
+import asyncio
+from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
+from azure.ai.contentunderstanding.models import (
+    ContentAnalyzer,
+    ContentAnalyzerConfig,
+    FieldSchema,
+    FieldDefinition,
+    FieldType,
+    GenerationMethod,
+)
+from azure.identity.aio import DefaultAzureCredential
+import os
+
+async def main():
+    # 1) Create the client
+    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT")
+    credential = DefaultAzureCredential()
+    client = ContentUnderstandingClient(endpoint=endpoint, credential=credential)
+
+    async with client, credential:
+        # 2) Define a simple analyzer in-memory
+        analyzer_id = "my-invoice-analyzer"  # must be unique within your resource
+        my_analyzer = ContentAnalyzer(
+            base_analyzer_id="prebuilt-documentAnalyzer",  # start from the general-purpose doc analyzer
+            description="Extract total amount from invoices",
+            config=ContentAnalyzerConfig(return_details=True),
+            field_schema=FieldSchema(
+                name="invoice_schema",
+                description="Fields we care about in an invoice",
+                fields={
+                    "total_amount": FieldDefinition(
+                        type=FieldType.NUMBER,
+                        method=GenerationMethod.EXTRACT,
+                        description="The grand total on the invoice",
+                    )
+                },
+            ),
+        )
+
+        # 3) Upload (create or replace) the analyzer
+        await client.content_analyzers.begin_create_or_replace(
+            analyzer_id=analyzer_id,
+            resource=my_analyzer,
+        ).result()
+        print(f"✓ Analyzer '{analyzer_id}' is ready")
+
+        # 4) Run the analyzer on a PDF
+        with open("sample_invoice.pdf", "rb") as f:
+            pdf_bytes = f.read()
+
+        poller = await client.content_analyzers.begin_analyze_binary(
+            analyzer_id=analyzer_id,
+            input=pdf_bytes,
+            content_type="application/pdf",
+        )
+        analysis_result = await poller.result()
+        print("✓ Analysis finished")
+
+        # 5) Inspect the structured result
+        content = analysis_result.contents[0]
+        total_amount_field = content.fields.get("total_amount") if content.fields else None
+        if total_amount_field:
+            print(
+                f"Total amount ➜ {total_amount_field.value_number} (confidence: {total_amount_field.confidence:.2f})"
+            )
+        else:
+            print("total_amount field was not detected")
+
+asyncio.run(main())
+```
+
+## SDK Development and Testing
+
+> **Note**: This section is for SDK developers who want to contribute to or test the SDK itself. If you're using the SDK in your application, refer to the Quick Start section above.
 
 ### Setting up the Development Environment
 
