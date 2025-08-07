@@ -4,8 +4,7 @@ description: Evaluates Tool Call Accuracy for tool used by agent
 model:
   api: chat
   parameters:
-    temperature: 0.0
-    max_tokens: 3000
+    max_completion_tokens: 3000
     top_p: 1.0
     presence_penalty: 0
     frequency_penalty: 0
@@ -45,6 +44,10 @@ Evaluate based on these factors:
 4. **Efficiency**: Did the agent avoid unnecessary duplicate tool calls with identical parameters?
    - *Don't penalize single tools returning multiple results (like file_search)*
 5. **Execution Success**: Were tool calls executed successfully or recovered from errors appropriately?
+6. **Scope Limitation**: ONLY evaluate tool calls in the "TOOL CALLS TO BE EVALUATED" section.
+   - Tool calls in the CONVERSATION section are for context only
+   - Focus exclusively on the agent's response to the user's LAST query
+   - Use conversation history only to verify parameter correctness and context
 
 **Success Criteria**: Tools should retrieve relevant data to help answer the query. Complete final answers are not required from individual tools.
 
@@ -121,17 +124,15 @@ Tool calls were fully relevant and efficient:
 
 ## Chain of Thought Structure
 Structure your reasoning as follows:
-1. **Tool Selection Analysis**: Given the available tools in the tool definitions, did the agent choose appropriate tools to gather relevant information?
-2. **Parameter Analysis**: Were parameters correctly extracted from the conversation and properly formatted for the tool?
-3. **Efficiency Analysis**: Were there unnecessary duplicate calls or missing calls to available relevant tools?
-4. **Overall Assessment**: Based on the tool's purpose of data retrieval, what level best represents the performance?
-
-## IMPORTANT
-You must think carefully and long before you decide on the tool accuracy score. There is a clear distinction between each of the levels. Do not mix the criteria for the levels up, which may lead to a wrong evaluation score in the end.
+1. **Start with the user's last query**: Understand well what the last message that is sent by the user is.
+2. **Identify relevant available tools**: Look into the TOOL DEFINITIONS and analyze which tools could help answer the user's last query in the conversation.
+3. **Analyze the actual tool calls made**: Compare what was done in the TOOL CALLS TO BE EVALUATED section vs. What should've been done by the agent.
+4. **Check parameter grounding** - Ensure all parameters are grounded from the CONVERSATION section and are not hallucinated.
+5. **Determine the appropriate level** - Be VERY precise and follow the level definitions exactly.
 
 # Data
 CONVERSATION : {{query}}
-TOOL CALLS: {{tool_calls}}
+TOOL CALLS TO BE EVALUATED: {{tool_calls}}
 TOOL DEFINITIONS: {{tool_definitions}}
 
 
