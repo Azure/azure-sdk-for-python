@@ -511,9 +511,10 @@ class ToolDefinition(_Model):
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureAISearchToolDefinition, AzureFunctionToolDefinition, BingCustomSearchToolDefinition,
-    BingGroundingToolDefinition, CodeInterpreterToolDefinition, ConnectedAgentToolDefinition,
-    DeepResearchToolDefinition, MicrosoftFabricToolDefinition, FileSearchToolDefinition,
-    FunctionToolDefinition, MCPToolDefinition, OpenApiToolDefinition, SharepointToolDefinition
+    BingGroundingToolDefinition, BrowserAutomationToolDefinition, CodeInterpreterToolDefinition,
+    ConnectedAgentToolDefinition, DeepResearchToolDefinition, MicrosoftFabricToolDefinition,
+    FileSearchToolDefinition, FunctionToolDefinition, MCPToolDefinition, OpenApiToolDefinition,
+    SharepointToolDefinition
 
     :ivar type: The object type. Required. Default value is None.
     :vartype type: str
@@ -1003,6 +1004,179 @@ class BingGroundingToolDefinition(ToolDefinition, discriminator="bing_grounding"
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, type="bing_grounding", **kwargs)
+
+
+class BrowserAutomationToolCallDetails(_Model):
+    """Details of a Browser Automation tool call.
+
+    :ivar input: The input provided to the Browser Automation tool. Required.
+    :vartype input: str
+    :ivar output: The output returned by the Browser Automation tool. Required.
+    :vartype output: str
+    :ivar steps: The steps the Browser Automation tool executed. Required.
+    :vartype steps: list[~azure.ai.agents.models.BrowserAutomationToolCallStep]
+    """
+
+    input: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The input provided to the Browser Automation tool. Required."""
+    output: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The output returned by the Browser Automation tool. Required."""
+    steps: List["_models.BrowserAutomationToolCallStep"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The steps the Browser Automation tool executed. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        input: str,
+        output: str,
+        steps: List["_models.BrowserAutomationToolCallStep"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BrowserAutomationToolCallStep(_Model):
+    """Describes a single step of a Browser Automation tool execution.
+
+    :ivar last_step_result: The result of the last step executed with the Browser. Required.
+    :vartype last_step_result: str
+    :ivar current_state: The current state of execution with the Browser. Required.
+    :vartype current_state: str
+    :ivar next_step: The next step to execute with the Browser. Required.
+    :vartype next_step: str
+    """
+
+    last_step_result: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The result of the last step executed with the Browser. Required."""
+    current_state: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The current state of execution with the Browser. Required."""
+    next_step: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The next step to execute with the Browser. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        last_step_result: str,
+        current_state: str,
+        next_step: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BrowserAutomationToolConnectionParameters(_Model):  # pylint: disable=name-too-long
+    """Definition of input parameters for the connection used by the Browser Automation Tool.
+
+    :ivar id: The ID of the connection to your Azure Playwright resource. Required.
+    :vartype id: str
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the connection to your Azure Playwright resource. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BrowserAutomationToolDefinition(ToolDefinition, discriminator="browser_automation"):
+    """The input definition information for a Browser Automation Tool, as used to configure an Agent.
+
+    :ivar type: The object type, which is always 'browser_automation'. Required. Default value is
+     "browser_automation".
+    :vartype type: str
+    :ivar browser_automation: The Browser Automation Tool parameters. Required.
+    :vartype browser_automation: ~azure.ai.agents.models.BrowserAutomationToolParameters
+    """
+
+    type: Literal["browser_automation"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'browser_automation'. Required. Default value is
+     \"browser_automation\"."""
+    browser_automation: "_models.BrowserAutomationToolParameters" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Browser Automation Tool parameters. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        browser_automation: "_models.BrowserAutomationToolParameters",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="browser_automation", **kwargs)
+
+
+class BrowserAutomationToolParameters(_Model):
+    """Definition of input parameters for the Browser Automation Tool.
+
+    :ivar connection: The connection parameters associated with the Browser Automation Tool.
+     Required.
+    :vartype connection: ~azure.ai.agents.models.BrowserAutomationToolConnectionParameters
+    """
+
+    connection: "_models.BrowserAutomationToolConnectionParameters" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The connection parameters associated with the Browser Automation Tool. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection: "_models.BrowserAutomationToolConnectionParameters",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class CodeInterpreterToolDefinition(ToolDefinition, discriminator="code_interpreter"):
@@ -3975,9 +4149,9 @@ class RunStepToolCall(_Model):
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     RunStepAzureAISearchToolCall, RunStepBingCustomSearchToolCall, RunStepBingGroundingToolCall,
-    RunStepCodeInterpreterToolCall, RunStepDeepResearchToolCall, RunStepMicrosoftFabricToolCall,
-    RunStepFileSearchToolCall, RunStepFunctionToolCall, RunStepMcpToolCall, RunStepOpenAPIToolCall,
-    RunStepSharepointToolCall
+    RunStepBrowserAutomationToolCall, RunStepCodeInterpreterToolCall, RunStepDeepResearchToolCall,
+    RunStepMicrosoftFabricToolCall, RunStepFileSearchToolCall, RunStepFunctionToolCall,
+    RunStepMcpToolCall, RunStepOpenAPIToolCall, RunStepSharepointToolCall
 
     :ivar type: The object type. Required. Default value is None.
     :vartype type: str
@@ -4129,6 +4303,46 @@ class RunStepBingGroundingToolCall(RunStepToolCall, discriminator="bing_groundin
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, type="bing_grounding", **kwargs)
+
+
+class RunStepBrowserAutomationToolCall(RunStepToolCall, discriminator="browser_automation"):
+    """A record of a call to a Browser Automation tool issued by the Agent.
+
+    :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
+     Required.
+    :vartype id: str
+    :ivar type: The object type, which is always 'browser_automation'. Required. Default value is
+     "browser_automation".
+    :vartype type: str
+    :ivar browser_automation: Details of the browser automation tool call. Required.
+    :vartype browser_automation: ~azure.ai.agents.models.BrowserAutomationToolCallDetails
+    """
+
+    type: Literal["browser_automation"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'browser_automation'. Required. Default value is
+     \"browser_automation\"."""
+    browser_automation: "_models.BrowserAutomationToolCallDetails" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details of the browser automation tool call. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        browser_automation: "_models.BrowserAutomationToolCallDetails",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="browser_automation", **kwargs)
 
 
 class RunStepCodeInterpreterToolCallOutput(_Model):

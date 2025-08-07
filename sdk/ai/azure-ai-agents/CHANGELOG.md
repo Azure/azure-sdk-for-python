@@ -1,6 +1,15 @@
 
-
 # Release History
+
+## 1.2.0b2 (Unreleased)
+
+### Features Added
+
+- Add support for Browser Automation tool.
+
+### Sample updates
+
+- Add new samples `sample_agents_browser_automation.py` and `sample_agents_browser_automation_async.py`.
 
 ## 1.2.0b1 (2025-08-05)
 
