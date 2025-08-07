@@ -47,6 +47,7 @@ def mock_request():
     request_piece.converted_value = "test prompt"
     request_piece.converted_value_data_type = "text"
     request_piece.to_chat_message.return_value = MagicMock(role="user", content="test prompt")
+    request_piece.labels.get.return_value = None
 
     request = MagicMock()
     request.request_pieces = [request_piece]
@@ -147,6 +148,7 @@ class TestCallbackChatTargetPrompts:
         request_piece.converted_value = "unknown prompt"  # Not in context mapping
         request_piece.converted_value_data_type = "text"
         request_piece.to_chat_message.return_value = MagicMock(role="user", content="unknown prompt")
+        request_piece.labels.get.return_value = None
 
         mock_request = MagicMock()
         mock_request.request_pieces = [request_piece]

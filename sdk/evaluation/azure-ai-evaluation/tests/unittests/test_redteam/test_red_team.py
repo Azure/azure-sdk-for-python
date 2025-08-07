@@ -1019,11 +1019,7 @@ class TestRedTeamProcessing:
 
             # Call the utility function directly
             output_path = write_pyrit_outputs_to_file(
-                orchestrator=mock_orchestrator,
-                strategy_name="test_strategy",
-                risk_category="test_risk",
-                output_path="/test/output",
-                logger=red_team.logger,
+                output_path="/test/output", logger=red_team.logger, prompt_to_context={}
             )
 
             # Verify the result
