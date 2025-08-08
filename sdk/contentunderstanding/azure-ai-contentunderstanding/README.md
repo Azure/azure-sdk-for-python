@@ -1,6 +1,9 @@
 # Azure AI Content Understanding client library for Python
 <!-- write necessary description of service -->
 
+## Key concepts
+Content Understanding is a solution that analyzes and comprehends various media content—such as documents, images, audio, and video—transforming it into structured, organized, and searchable data.
+
 ## Getting started
 
 ### Install the package
@@ -15,11 +18,11 @@ python -m pip install azure-ai-contentunderstanding
 - You need an [Azure subscription][azure_sub] to use this package.
 - An existing Azure AI Content Understanding instance.
 
-## API Usage Examples
+## Examples
 
 ### 📁 Comprehensive API Samples
 
-This SDK includes **35+ comprehensive samples** that demonstrate API-level usage of all Azure AI Content Understanding capabilities. These samples show you exactly how to call each API endpoint with proper authentication, error handling, and resource management.
+This SDK includes comprehensive samples that demonstrate API-level usage of all Azure AI Content Understanding capabilities. These samples show you exactly how to call each API endpoint with proper authentication, error handling, and resource management.
 
 **👉 [View All API Samples](./generated_samples/README.md)**
 
@@ -99,7 +102,24 @@ All samples demonstrate consistent API usage patterns:
 - **Real test data** and expected outcomes
 - **Detailed logging** with progress indicators
 
-**[→ Explore all API samples](generated_samples/README.md)** to see complete API usage patterns for your specific use case.
+**[→ Explore all API samples](./generated_samples/README.md)** to see complete API usage patterns for your specific use case.
+
+## Troubleshooting
+
+### Azure AI Foundry Resource and Regional Support
+
+Azure AI Content Understanding requires an **Azure AI Foundry resource** (not a regular Azure AI Services resource) and is only available in certain supported regions. Make sure to:
+
+- Create an Azure AI Foundry resource in the Azure portal under **AI Foundry** > **AI Foundry**
+- Select a supported region when creating the resource
+
+For detailed setup instructions and current supported regions, see: **[Azure AI Content Understanding Quickstart Guide](https://learn.microsoft.com/azure/ai-services/content-understanding/quickstart/use-rest-api)**
+
+## Next steps
+For more information about Azure AI Content Understanding, see the following additional resources:
+- **[Azure AI Content Understanding Documentation](https://learn.microsoft.com/azure/ai-services/content-understanding/)**
+- **[REST API Reference](https://learn.microsoft.com/rest/api/content-understanding/)**
+- **[Quickstart Guide](https://learn.microsoft.com/azure/ai-services/content-understanding/quickstart/use-rest-api)**
 
 ## Contributing
 
