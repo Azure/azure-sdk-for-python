@@ -7,14 +7,14 @@ from azure.ai.language.conversations import ConversationAnalysisClient
 from azure.core.credentials import AzureKeyCredential
 from devtools_testutils import AzureRecordedTestCase
 
+
 class TestOrchestrationAppQnaResponse(AzureRecordedTestCase):
 
     def test_orchestration_app_qna_response(self, recorded_test, conversation_creds):
 
         # analyze query
         client = ConversationAnalysisClient(
-            conversation_creds["endpoint"],
-            AzureKeyCredential(conversation_creds["key"])
+            conversation_creds["endpoint"], AzureKeyCredential(conversation_creds["key"])
         )
         with client:
             query = "How are you?"
@@ -27,20 +27,20 @@ class TestOrchestrationAppQnaResponse(AzureRecordedTestCase):
                             "id": "1",
                             "modality": "text",
                             "language": "en",
-                            "text": query
+                            "text": query,
                         },
-                        "isLoggingEnabled": False
+                        "isLoggingEnabled": False,
                     },
                     "parameters": {
                         "projectName": conversation_creds["orch_project_name"],
                         "deploymentName": conversation_creds["orch_deployment_name"],
-                        "verbose": True
-                    }
+                        "verbose": True,
+                    },
                 }
             )
 
             # assert - main object
-            top_project = 'ChitChat-QnA'
+            top_project = "ChitChat-QnA"
             assert not result is None
             assert result["kind"] == "ConversationResult"
             assert result["result"]["query"] == query

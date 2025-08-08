@@ -1,90 +1,174 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
-#
 # Copyright (c) Microsoft Corporation. All rights reserved.
-#
-# The MIT License (MIT)
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the ""Software""), to
-# deal in the Software without restriction, including without limitation the
-# rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-# sell copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-# IN THE SOFTWARE.
-#
+# Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
+"""Customize generated code here.
 
-# This file is used for handwritten extensions to the generated code. Example:
-# https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_code/how-to-patch-sdk-code.md
+Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
+"""
+import json
+from typing import Any, Callable, Dict, IO, Iterator, Optional, TypeVar, Union, cast, overload
+from ._client import ConversationAnalysisClient as AnalysisClientGenerated
+from collections.abc import MutableMapping
+from .models import (
+    AnalyzeConversationOperationInput,
+    AnalyzeConversationOperationState,
+)
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+)
+from azure.core.pipeline import PipelineResponse
+from azure.core.polling import LROPoller, NoPolling, PollingMethod
+from azure.core.polling.base_polling import LROBasePolling
+from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.utils import case_insensitive_dict
 
-from typing import List, Union, Any
-from azure.core.credentials import AzureKeyCredential, TokenCredential
-from azure.core.pipeline.policies import AzureKeyCredentialPolicy
-from ._client import ConversationAnalysisClient as GeneratedConversationAnalysisClient
+from ._configuration import ConversationAnalysisClientConfiguration
+from ._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
+from ._utils.serialization import Serializer
+from ._utils.utils import ClientMixinABC
+from ._validation import api_version_validation
 
-POLLING_INTERVAL_DEFAULT = 5
+JSON = MutableMapping[str, Any]
+T = TypeVar("T")
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 
 
-def _authentication_policy(credential):
-    authentication_policy = None
-    if credential is None:
-        raise ValueError("Parameter 'credential' must not be None.")
-    if isinstance(credential, AzureKeyCredential):
-        authentication_policy = AzureKeyCredentialPolicy(name="Ocp-Apim-Subscription-Key", credential=credential)
-    elif credential is not None and not hasattr(credential, "get_token"):
-        raise TypeError(
-            f"Unsupported credential: {type(credential)}. Use an instance of AzureKeyCredential "
-            "or a token credential from azure.identity"
+class ConversationAnalysisClient(AnalysisClientGenerated):
+
+    @overload
+    def begin_analyze_conversation_job(
+        self, body: AnalyzeConversationOperationInput, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[AnalyzeConversationOperationState]:
+        """Analyzes the input conversation utterance.
+
+        :param body: The input for the analyze conversations operation. Required.
+        :type body: ~azure.ai.language.conversations.models.AnalyzeConversationOperationInput
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns AnalyzeConversationOperationState. The AnalyzeConversationOperationState is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[AnalyzeConversationOperationState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_analyze_conversation_job(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[AnalyzeConversationOperationState]:
+        """Analyzes the input conversation utterance.
+
+        :param body: The input for the analyze conversations operation. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns AnalyzeConversationOperationState. The AnalyzeConversationOperationState is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[AnalyzeConversationOperationState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_analyze_conversation_job(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[AnalyzeConversationOperationState]:
+        """Analyzes the input conversation utterance.
+
+        :param body: The input for the analyze conversations operation. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns AnalyzeConversationOperationState. The AnalyzeConversationOperationState is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[AnalyzeConversationOperationState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2023-04-01",
+        params_added_on={"2023-04-01": ["api_version", "content_type", "accept"]},
+        api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2024-11-15-preview", "2025-05-15-preview"],
+    )
+    def begin_analyze_conversation_job(  # type: ignore[override]
+        self, body: Union[AnalyzeConversationOperationInput, JSON, IO[bytes]], **kwargs: Any
+    ) -> LROPoller[AnalyzeConversationOperationState]:
+        """Analyzes the input conversation utterance.
+
+        :param body: The input for the analyze conversations operation. Is one of the following types:
+         AnalyzeConversationOperationInput, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.language.conversations.models.AnalyzeConversationOperationInput or JSON
+         or IO[bytes]
+        :return: An instance of LROPoller that returns AnalyzeConversationOperationState. The AnalyzeConversationOperationState is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[AnalyzeConversationOperationState]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        polling: Union[bool, Any] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        cls = kwargs.pop("cls", None)  # optional custom deserializer
+        kwargs.pop("error_map", None)
+
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+        }
+
+        def get_long_running_output(pipeline_response):
+            final_response = pipeline_response.http_response
+            if final_response.status_code == 200:
+                data = json.loads(final_response.text())
+                return AnalyzeConversationOperationState(data)
+            raise HttpResponseError(response=final_response)
+
+        if polling is True:
+            polling_method = LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+        elif polling is False:
+            from azure.core.polling import NoPolling
+
+            polling_method = NoPolling()
+        else:
+            polling_method = polling
+
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+
+        # Submit the job
+        raw_result = self._analyze_conversation_job_initial(
+            body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
         )
-    return authentication_policy
 
-
-class ConversationAnalysisClient(GeneratedConversationAnalysisClient):
-    """The language service conversations API is a suite of natural language processing (NLP) skills
-    that can be used to analyze structured conversations (textual or spoken). Further documentation
-    can be found in https://learn.microsoft.com/azure/cognitive-services/language-service/overview.
-
-    :param endpoint: Supported Cognitive Services endpoint (e.g.,
-     https://:code:`<resource-name>`.cognitiveservices.azure.com). Required.
-    :type endpoint: str
-    :param credential: Credential needed for the client to connect to Azure.
-        This can be the an instance of AzureKeyCredential if using a Language API key
-        or a token credential from :mod:`azure.identity`.
-    :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
-    :keyword api_version: Api Version. Available values are "2023-04-01" and "2022-05-01". Default value is
-        "2023-04-01". Note that overriding this default value may result in unsupported behavior.
-    :paramtype api_version: str
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-        Retry-After header is present.
-    """
-
-    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
-        try:
-            endpoint = endpoint.rstrip("/")
-        except AttributeError as exc:
-            raise ValueError("Parameter 'endpoint' must be a string.") from exc
-        super().__init__(
-            endpoint=endpoint,
-            credential=credential,  # type: ignore
-            authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
-            polling_interval=kwargs.pop("polling_interval", POLLING_INTERVAL_DEFAULT),
-            **kwargs,
+        return LROPoller[AnalyzeConversationOperationState](
+            self._client, raw_result, get_long_running_output, polling_method
         )
-
-
-__all__: List[str] = ["ConversationAnalysisClient"]
 
 
 def patch_sdk():
-    pass
+    """Do not remove from this file.
+
+    `patch_sdk` is a last resort escape hatch that allows you to do customizations
+    you can't accomplish using the techniques described in
+    https://aka.ms/azsdk/python/dpcodegen/python/customize
+    """
+
+
+__all__ = ["ConversationAnalysisClient"]

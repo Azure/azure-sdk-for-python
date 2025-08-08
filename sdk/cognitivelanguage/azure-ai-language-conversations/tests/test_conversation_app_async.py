@@ -17,8 +17,7 @@ class TestConversationAppAsync(AzureRecordedTestCase):
 
         # analyze query
         client = ConversationAnalysisClient(
-            conversation_creds["endpoint"],
-            AzureKeyCredential(conversation_creds["key"])
+            conversation_creds["endpoint"], AzureKeyCredential(conversation_creds["key"])
         )
         async with client:
             query = "Send an email to Carol about the tomorrow's demo"
@@ -31,15 +30,15 @@ class TestConversationAppAsync(AzureRecordedTestCase):
                             "id": "1",
                             "modality": "text",
                             "language": "en",
-                            "text": query
+                            "text": query,
                         },
-                        "isLoggingEnabled": False
+                        "isLoggingEnabled": False,
                     },
                     "parameters": {
                         "projectName": conversation_creds["conv_project_name"],
                         "deploymentName": conversation_creds["conv_deployment_name"],
-                        "verbose": True
-                    }
+                        "verbose": True,
+                    },
                 }
             )
 
@@ -49,18 +48,18 @@ class TestConversationAppAsync(AzureRecordedTestCase):
 
             # assert - prediction type
             assert result["result"]["query"] == query
-            assert result["result"]["prediction"]["projectKind"] == 'Conversation'
+            assert result["result"]["prediction"]["projectKind"] == "Conversation"
 
             # assert - top intent
-            assert result["result"]["prediction"]["topIntent"] == 'Send'
+            assert result["result"]["prediction"]["topIntent"] == "Send"
             assert len(result["result"]["prediction"]["intents"]) > 0
-            assert result["result"]["prediction"]["intents"][0]["category"] == 'Send'
+            assert result["result"]["prediction"]["intents"][0]["category"] == "Send"
             assert result["result"]["prediction"]["intents"][0]["confidenceScore"] > 0
 
             # assert - entities
             assert len(result["result"]["prediction"]["entities"]) > 0
-            assert result["result"]["prediction"]["entities"][0]["category"] == 'Contact'
-            assert result["result"]["prediction"]["entities"][0]["text"] == 'Carol'
+            assert result["result"]["prediction"]["entities"][0]["category"] == "Contact"
+            assert result["result"]["prediction"]["entities"][0]["text"] == "Carol"
             assert result["result"]["prediction"]["entities"][0]["confidenceScore"] > 0
 
     @pytest.mark.skip("no runtime AAD yet for 2023-04-01")
@@ -79,15 +78,15 @@ class TestConversationAppAsync(AzureRecordedTestCase):
                             "id": "1",
                             "modality": "text",
                             "language": "en",
-                            "text": query
+                            "text": query,
                         },
-                        "isLoggingEnabled": False
+                        "isLoggingEnabled": False,
                     },
                     "parameters": {
                         "projectName": conversation_creds["conv_project_name"],
                         "deploymentName": conversation_creds["conv_deployment_name"],
-                        "verbose": True
-                    }
+                        "verbose": True,
+                    },
                 }
             )
 
@@ -97,16 +96,16 @@ class TestConversationAppAsync(AzureRecordedTestCase):
 
             # assert - prediction type
             assert result["result"]["query"] == query
-            assert result["result"]["prediction"]["projectKind"] == 'Conversation'
+            assert result["result"]["prediction"]["projectKind"] == "Conversation"
 
             # assert - top intent
-            assert result["result"]["prediction"]["topIntent"] == 'Send'
+            assert result["result"]["prediction"]["topIntent"] == "Send"
             assert len(result["result"]["prediction"]["intents"]) > 0
-            assert result["result"]["prediction"]["intents"][0]["category"] == 'Send'
+            assert result["result"]["prediction"]["intents"][0]["category"] == "Send"
             assert result["result"]["prediction"]["intents"][0]["confidenceScore"] > 0
 
             # assert - entities
             assert len(result["result"]["prediction"]["entities"]) > 0
-            assert result["result"]["prediction"]["entities"][0]["category"] == 'Contact'
-            assert result["result"]["prediction"]["entities"][0]["text"] == 'Carol'
+            assert result["result"]["prediction"]["entities"][0]["category"] == "Contact"
+            assert result["result"]["prediction"]["entities"][0]["text"] == "Carol"
             assert result["result"]["prediction"]["entities"][0]["confidenceScore"] > 0

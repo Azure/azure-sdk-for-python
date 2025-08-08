@@ -25,6 +25,7 @@ USAGE:
 
 import asyncio
 
+
 async def sample_analyze_orchestration_app_conv_response_async():
     # [START analyze_orchestration_app_conv_response]
     # import libraries
@@ -51,15 +52,11 @@ async def sample_analyze_orchestration_app_conv_response_async():
                         "id": "1",
                         "modality": "text",
                         "language": "en",
-                        "text": query
+                        "text": query,
                     },
-                    "isLoggingEnabled": False
+                    "isLoggingEnabled": False,
                 },
-                "parameters": {
-                    "projectName": project_name,
-                    "deploymentName": deployment_name,
-                    "verbose": True
-                }
+                "parameters": {"projectName": project_name, "deploymentName": deployment_name, "verbose": True},
             }
         )
 
@@ -68,14 +65,14 @@ async def sample_analyze_orchestration_app_conv_response_async():
     print(f"project kind: {result['result']['prediction']['projectKind']}\n")
 
     # top intent
-    top_intent = result['result']['prediction']['topIntent']
+    top_intent = result["result"]["prediction"]["topIntent"]
     print(f"top intent: {top_intent}")
-    top_intent_object = result['result']['prediction']['intents'][top_intent]
+    top_intent_object = result["result"]["prediction"]["intents"][top_intent]
     print(f"confidence score: {top_intent_object['confidenceScore']}")
     print(f"project kind: {top_intent_object['targetProjectKind']}")
 
     # conversation result
-    if top_intent_object['targetProjectKind'] == "Conversation":
+    if top_intent_object["targetProjectKind"] == "Conversation":
         print("\nview conversation result:")
 
         print(f"\ntop intent: {top_intent_object['result']['prediction']['topIntent']}")
@@ -83,28 +80,30 @@ async def sample_analyze_orchestration_app_conv_response_async():
         print(f"confidence score: {top_intent_object['result']['prediction']['intents'][0]['confidenceScore']}\n")
 
         print("\nview entities:")
-        for entity in top_intent_object['result']['prediction']['entities']:
+        for entity in top_intent_object["result"]["prediction"]["entities"]:
             print(f"\ncategory: {entity['category']}")
             print(f"text: {entity['text']}")
             print(f"confidence score: {entity['confidenceScore']}")
             if "resolutions" in entity:
                 print("resolutions")
-                for resolution in entity['resolutions']:
+                for resolution in entity["resolutions"]:
                     print(f"kind: {resolution['resolutionKind']}")
                     print(f"value: {resolution['value']}")
             if "extraInformation" in entity:
                 print("extra info")
-                for data in entity['extraInformation']:
+                for data in entity["extraInformation"]:
                     print(f"kind: {data['extraInformationKind']}")
-                    if data['extraInformationKind'] == "ListKey":
+                    if data["extraInformationKind"] == "ListKey":
                         print(f"key: {data['key']}")
-                    if data['extraInformationKind'] == "EntitySubtype":
+                    if data["extraInformationKind"] == "EntitySubtype":
                         print(f"value: {data['value']}")
 
     # [END analyze_orchestration_app_conv_response]
 
+
 async def main():
     await sample_analyze_orchestration_app_conv_response_async()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())

@@ -17,8 +17,7 @@ class TestOrchestrationAppLuisResponse(AzureRecordedTestCase):
 
         # analyze query
         client = ConversationAnalysisClient(
-            conversation_creds["endpoint"],
-            AzureKeyCredential(conversation_creds["key"])
+            conversation_creds["endpoint"], AzureKeyCredential(conversation_creds["key"])
         )
         with client:
             query = "Reserve a table for 2 at the Italian restaurant"
@@ -31,15 +30,15 @@ class TestOrchestrationAppLuisResponse(AzureRecordedTestCase):
                             "id": "1",
                             "modality": "text",
                             "language": "en",
-                            "text": query
+                            "text": query,
                         },
-                        "isLoggingEnabled": False
+                        "isLoggingEnabled": False,
                     },
                     "parameters": {
                         "projectName": conversation_creds["orch_project_name"],
                         "deploymentName": conversation_creds["orch_deployment_name"],
-                        "verbose": True
-                    }
+                        "verbose": True,
+                    },
                 }
             )
 
