@@ -205,14 +205,24 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
             operation_id = response_data["location"].split("/")[-1]
 
             request_count = 0
+            max_retries = 7  # Match the retry_total used elsewhere in the codebase
             flag = True
+            last_exception = None
+            
             while flag:
                 try:
                     response = session.evaluations.operation_results(operation_id, headers=headers)
+                    last_exception = None  # Reset on successful call
                 except Exception as e:
                     from types import SimpleNamespace  # pylint: disable=forgotten-debug-statement
-
+                    
+                    last_exception = e
+                    self.logger.warning(
+                        "Error getting operation results for operation_id %s (attempt %d/%d): %s",
+                        operation_id, request_count + 1, max_retries + 1, str(e)
+                    )
                     response = SimpleNamespace(status_code=202, text=str(e), json=lambda: {"error": str(e)})
+                    
                 if isinstance(response, dict):
                     response_data = response
                     flag = False
@@ -222,7 +232,18 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
                     flag = False
                 else:
                     request_count += 1
+                    if request_count > max_retries:
+                        error_msg = f"Maximum retry limit ({max_retries}) exceeded for operation_id {operation_id}"
+                        if last_exception:
+                            error_msg += f". Last error: {str(last_exception)}"
+                        self.logger.error(error_msg)
+                        raise ServiceResponseError(error_msg) from last_exception
+                    
                     sleep_time = RAIService.SLEEP_TIME**request_count
+                    self.logger.debug(
+                        "Operation %s not ready (status: %s), retrying in %d seconds (attempt %d/%d)",
+                        operation_id, getattr(response, 'status_code', 'unknown'), sleep_time, request_count, max_retries + 1
+                    )
                     await asyncio.sleep(sleep_time)
         else:
             # Retry policy for POST request to RAI service
