@@ -99,6 +99,9 @@ stages:
     displayName: Compliance Tools
     dependsOn: []
 
+    variables:
+      Codeql.SkipTaskAutoInjection: false
+
     jobs:
       - job: ComplianceTools
         timeoutInMinutes: 120
