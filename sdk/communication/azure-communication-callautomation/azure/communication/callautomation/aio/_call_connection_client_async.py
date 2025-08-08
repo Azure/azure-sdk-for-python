@@ -668,12 +668,11 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         dtmf_inter_tone_timeout: Optional[int] = None,
         dtmf_max_tones_to_collect: Optional[int] = None,
         dtmf_stop_tones: Optional[List[Union[str, 'DtmfTone']]] = None,
-        speech_language: Optional[str] = None,
+        speech_language: Optional[Union[str, List[str]]] = None,
         choices: Optional[List["RecognitionChoice"]] = None,
         end_silence_timeout: Optional[int] = None,
         speech_recognition_model_endpoint_id: Optional[str] = None,
         operation_callback_url: Optional[str] = None,
-        speech_languages: Optional[List[str]] = None,
         enable_sentiment_analysis: Optional[bool] = None,
         **kwargs,
     ) -> None:
@@ -708,8 +707,9 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :keyword dtmf_stop_tones: List of tones that will stop recognizing. Will be ignored
          unless input_type is 'dtmf' or 'speechOrDtmf'.
         :paramtype dtmf_stop_tones: list[str or ~azure.communication.callautomation.DtmfTone]
-        :keyword speech_language: Speech language to be recognized, If not set default is en-US.
-        :paramtype speech_language: str
+        :keyword speech_language: Speech language to be recognized, If not set default is en-US 
+         or list of languages for language identification.
+        :paramtype speech_language: str or list[str]
         :keyword choices: Defines Ivr choices for recognize. Will be ignored unless input_type is 'choices'.
         :paramtype choices: list[~azure.communication.callautomation.RecognitionChoice]
         :keyword end_silence_timeout: The length of end silence when user stops speaking and cogservice
@@ -722,8 +722,6 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
          This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
         :paramtype operation_callback_url: str or None
-        :keyword speech_languages: Gets or sets a list of languages for Language Identification.
-        :paramtype speech_languages: list[str]
         :keyword enable_sentiment_analysis: Gets or sets a value indicating if sentiment analysis should
          be used.
         :paramtype enable_sentiment_analysis: bool
@@ -735,7 +733,6 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             interrupt_prompt=interrupt_prompt,
             initial_silence_timeout_in_seconds=initial_silence_timeout,
             target_participant=serialize_identifier(target_participant),
-            speech_language=speech_language,
             speech_recognition_model_endpoint_id=speech_recognition_model_endpoint_id,
             enable_sentiment_analysis=enable_sentiment_analysis,
         )
@@ -775,12 +772,12 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             options.choices = [choice._to_generated() for choice in choices]  # pylint:disable=protected-access
         else:
             raise ValueError(f"Input type '{input_type}' is not supported.")
-        if speech_languages:
-            options.speech_languages = speech_languages
         recognize_request = RecognizeRequest(
             recognize_input_type=input_type,
             play_prompt=play_prompt_single._to_generated() if play_prompt_single else None,  # pylint:disable=protected-access
             play_prompts=[prompt._to_generated() for prompt in play_prompts] if play_prompts else None, # pylint:disable=protected-access
+            speech_language=speech_language if not isinstance(speech_language, list) else None,
+            speech_languages=speech_language if isinstance(speech_language, list) else None,
             interrupt_call_media_operation=interrupt_call_media_operation,
             operation_context=operation_context,
             recognize_options=options,
@@ -961,20 +958,20 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     async def start_transcription(
         self,
         *,
-        locale: Optional[str] = None,
+        locale: Optional[Union[str, list[str]]] = None,
         operation_context: Optional[str] = None,
         speech_recognition_model_endpoint_id: Optional[str] = None,
         operation_callback_url: Optional[str] = None,
-        pii_redaction_options: Optional["PiiRedactionOptions"] = None,
+        pii_redaction: Optional["PiiRedactionOptions"] = None,
         enable_sentiment_analysis: Optional[bool] = None,
-        locales: Optional[List[str]] = None,
-        summarization_options: Optional["SummarizationOptions"] = None,
+        summarization: Optional["SummarizationOptions"] = None,
         **kwargs
     ) -> None:
         """Starts transcription in the call.
 
-        :keyword locale: Defines Locale for the transcription e,g en-US.
-        :paramtype locale: str
+        :keyword locale: Defines Locale for the transcription e,g en-US. 
+         or List of languages for Language Identification.
+        :paramtype locale: str or  list[str]
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
         :keyword speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
@@ -984,29 +981,28 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
          This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
         :paramtype operation_callback_url: str or None
-        :keyword pii_redaction_options: PII redaction configuration options.
-        :paramtype pii_redaction_options:
+        :keyword pii_redaction: PII redaction configuration options.
+        :paramtype pii_redaction:
          ~azure.communication.callautomation.models.PiiRedactionOptions
         :keyword enable_sentiment_analysis: Indicating if sentiment analysis should be used.
         :paramtype enable_sentiment_analysis: bool
-        :keyword locales: List of languages for Language Identification.
-        :paramtype locales: list[str]
-        :keyword summarization_options: Summarization configuration options.
-        :paramtype summarization_options:
+        :keyword summarization: Summarization configuration options.
+        :paramtype summarization:
          ~azure.communication.callautomation.models.SummarizationOptions
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+
         start_transcription_request = StartTranscriptionRequest(
-            locale=locale,
+            locale=locale if not isinstance(locale, list) else None,
             operation_context=operation_context,
             speech_recognition_model_endpoint_id=speech_recognition_model_endpoint_id,
             operation_callback_uri=operation_callback_url,
-            pii_redaction_options=pii_redaction_options._to_generated() if pii_redaction_options else None,  # pylint:disable=protected-access
+            pii_redaction_options=pii_redaction._to_generated() if pii_redaction else None,  # pylint:disable=protected-access
             enable_sentiment_analysis=enable_sentiment_analysis,
-            locales=locales,
-            summarization_options=summarization_options._to_generated() if summarization_options else None,  # pylint:disable=protected-access
+            locales=locale if isinstance(locale, list) else None,
+            summarization_options=summarization._to_generated() if summarization else None,  # pylint:disable=protected-access
             **kwargs
         )
         await self._call_media_client.start_transcription(self._call_connection_id, start_transcription_request)
@@ -1046,9 +1042,9 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         operation_context: Optional[str] = None,
         speech_recognition_model_endpoint_id: Optional[str] = None,
         operation_callback_url: Optional[str] = None,
-        pii_redaction_options: Optional["PiiRedactionOptions"] = None,
+        pii_redaction: Optional["PiiRedactionOptions"] = None,
         enable_sentiment_analysis: Optional[bool] = None,
-        summarization_options: Optional["SummarizationOptions"] = None,
+        summarization: Optional["SummarizationOptions"] = None,
         **kwargs) -> None:
         """API to change transcription language.
 
@@ -1063,12 +1059,12 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
          This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
         :paramtype operation_callback_url: str or None
-        :keyword pii_redaction_options: PII redaction configuration options.
-        :paramtype pii_redaction_options: ~azure.communication.callautomation.models.PiiRedactionOptions
+        :keyword pii_redaction: PII redaction configuration options.
+        :paramtype pii_redaction: ~azure.communication.callautomation.models.PiiRedactionOptions
         :keyword enable_sentiment_analysis: Indicating if sentiment analysis should be used.
         :paramtype enable_sentiment_analysis: bool
-        :keyword summarization_options: Summarization configuration options.
-        :paramtype summarization_options: ~azure.communication.callautomation.models.SummarizationOptions
+        :keyword summarization: Summarization configuration options.
+        :paramtype summarization: ~azure.communication.callautomation.models.SummarizationOptions
         :type locale: str
         :return: None
         :rtype: None
@@ -1079,9 +1075,9 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             operation_context=operation_context,
             speech_recognition_model_endpoint_id=speech_recognition_model_endpoint_id,
             operation_callback_uri=operation_callback_url,
-            pii_redaction_options=pii_redaction_options._to_generated() if pii_redaction_options else None,  # pylint:disable=protected-access
+            pii_redaction_options=pii_redaction._to_generated() if pii_redaction else None,  # pylint:disable=protected-access
             enable_sentiment_analysis=enable_sentiment_analysis,
-            summarization_options=summarization_options._to_generated() if summarization_options else None,  # pylint:disable=protected-access
+            summarization_options=summarization._to_generated() if summarization else None,  # pylint:disable=protected-access
             **kwargs)
         await self._call_media_client.update_transcription(self._call_connection_id, update_transcription_request)
 

@@ -764,12 +764,11 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         transcription_options=TranscriptionOptions(
             transport_url=self.transport_url,
             transport_type=StreamingTransportType.WEBSOCKET,
-            locale="en-US",
+            locale=locale_list,
             start_transcription=True,
-            pii_redaction_options=pii_redaction_options,
+            pii_redaction=pii_redaction_options,
             enable_sentiment_analysis=True,
-            locales=locale_list,
-            summarization_options=summarization_options
+            summarization=summarization_options
             )
 
         unique_id, call_connection, _ = self.establish_callconnection_voip_with_streaming_options(caller, target, transcription_options, True)

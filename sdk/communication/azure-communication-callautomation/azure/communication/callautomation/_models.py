@@ -462,28 +462,28 @@ class TranscriptionOptions:
     """Endpoint where the custom model was deployed."""
     enable_intermediate_results: Optional[bool] = None
     """Enables intermediate results for the transcribed speech."""
-    pii_redaction_options: Optional["PiiRedactionOptions"] = None
+    pii_redaction: Optional["PiiRedactionOptions"] = None
     """PII redaction configuration options."""
     enable_sentiment_analysis: Optional[bool] = None
     """Indicating if sentiment analysis should be used."""
     locales: Optional[List[str]] = None
     """List of languages for Language Identification."""
-    summarization_options: Optional["SummarizationOptions"] = None
+    summarization: Optional["SummarizationOptions"] = None
     """Summarization configuration options."""
 
     def __init__(
         self,
         *,
         transport_url: str,
-        transport_type: Union[str, "StreamingTransportType"],       
+        transport_type: Union[str, "StreamingTransportType"],
         start_transcription: bool,
         locale: Optional[str] = None,
         speech_recognition_model_endpoint_id: Optional[str] = None,
         enable_intermediate_results: Optional[bool] = None,
-        pii_redaction_options: Optional["PiiRedactionOptions"] = None,
+        pii_redaction: Optional["PiiRedactionOptions"] = None,
         enable_sentiment_analysis: Optional[bool] = None,
         locales: Optional[List[str]] = None,
-        summarization_options: Optional["SummarizationOptions"] = None,
+        summarization: Optional["SummarizationOptions"] = None,
     ):
         self.transport_url = transport_url
         self.transport_type = transport_type
@@ -491,10 +491,10 @@ class TranscriptionOptions:
         self.start_transcription = start_transcription
         self.speech_recognition_model_endpoint_id = speech_recognition_model_endpoint_id
         self.enable_intermediate_results = enable_intermediate_results
-        self.pii_redaction_options=pii_redaction_options
+        self.pii_redaction_options=pii_redaction
         self.enable_sentiment_analysis=enable_sentiment_analysis
         self.locales=locales
-        self.summarization_options=summarization_options
+        self.summarization_options=summarization
 
     def _to_generated(self):
         return WebSocketTranscriptionOptionsRest(
@@ -504,10 +504,10 @@ class TranscriptionOptions:
             start_transcription=self.start_transcription,
             speech_recognition_model_endpoint_id=self.speech_recognition_model_endpoint_id,
             enable_intermediate_results=self.enable_intermediate_results,
-            pii_redaction_options=self.pii_redaction_options._to_generated() if self.pii_redaction_options else None, # pylint:disable=protected-access
+            pii_redaction_options=self.pii_redaction._to_generated() if self.pii_redaction else None, # pylint:disable=protected-access
             enable_sentiment_analysis=self.enable_sentiment_analysis,
             locales=self.locales,
-            summarization_options=self.summarization_options._to_generated() if self.summarization_options else None # pylint:disable=protected-access
+            summarization_options=self.summarization._to_generated() if self.summarization else None # pylint:disable=protected-access
         )
 
 class MediaStreamingSubscription:
