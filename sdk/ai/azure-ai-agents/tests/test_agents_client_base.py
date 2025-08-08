@@ -3,12 +3,11 @@ import logging
 import functools
 import json
 import datetime
-
 from devtools_testutils import (
     AzureRecordedTestCase,
     EnvironmentVariableLoader,
 )
-
+from devtools_testutils.azure_testcase import is_live
 from azure.ai.agents.models import RunStepBrowserAutomationToolCall
 
 agentClientPreparer = functools.partial(
@@ -47,7 +46,12 @@ class TestAgentClientBase(AzureRecordedTestCase):
     """Base class for Agents Client tests. Please put all code common to sync and async tests here."""
 
     @classmethod
-    def fetch_current_datetime_live(cls):
+    def _sleep_time(cls, sleep: int = 1) -> int:
+        """Return sleep or zero if we are running the recording."""
+        return sleep if is_live() else 0
+
+    @classmethod
+    def _fetch_current_datetime_live(cls):
         """
         Get the current time as a JSON string.
 
@@ -59,7 +63,7 @@ class TestAgentClientBase(AzureRecordedTestCase):
         return time_json
 
     @classmethod
-    def fetch_current_datetime_recordings(cls):
+    def _fetch_current_datetime_recordings(cls):
         """
         Get the current time as a JSON string.
 

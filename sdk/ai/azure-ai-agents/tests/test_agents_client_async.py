@@ -57,7 +57,6 @@ from azure.ai.agents.models import (
     VectorStoreDataSource,
     VectorStoreDataSourceAssetType,
 )
-from devtools_testutils.azure_testcase import is_live
 from test_agents_client_base import TestAgentClientBase, agentClientPreparer
 
 # TODO clean this up / get rid of anything not in use
@@ -71,8 +70,9 @@ issues I've noticed with the code:
 """
 
 # Statically defined user functions for fast reference
-user_functions_recording = {TestAgentClientBase.fetch_current_datetime_recordings}
-user_functions_live = {TestAgentClientBase.fetch_current_datetime_live}
+# TODO: Does this really do anything?
+user_functions_recording = {TestAgentClientBase._fetch_current_datetime_recordings}
+user_functions_live = {TestAgentClientBase._fetch_current_datetime_live}
 
 
 # The test class name needs to start with "Test" to get collected by pytest
@@ -3186,10 +3186,6 @@ class TestAgentClientAsync(TestAgentClientBase):
         finally:
             await client.delete_agent(agent.id)
             await client.threads.delete(thread.id)
-
-    def _sleep_time(self, sleep: int = 1) -> int:
-        """Return sleep or zero if we are running the recording."""
-        return sleep if is_live() else 0
 
     async def _get_file_id_maybe(self, ai_client: AgentsClient, **kwargs) -> str:
         """Return file id if kwargs has file path."""

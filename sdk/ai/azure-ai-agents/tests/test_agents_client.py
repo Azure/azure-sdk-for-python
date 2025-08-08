@@ -66,13 +66,13 @@ from azure.ai.agents.models import (
     VectorStoreDataSource,
     VectorStoreDataSourceAssetType,
 )
-from devtools_testutils.azure_testcase import is_live
 from azure.ai.agents.models._models import RunStepDeltaConnectedAgentToolCall
 from test_agents_client_base import TestAgentClientBase, agentClientPreparer
 
 # Statically defined user functions for fast reference
-user_functions_recording = {TestAgentClientBase.fetch_current_datetime_recordings}
-user_functions_live = {TestAgentClientBase.fetch_current_datetime_live}
+# TODO: Does this really do anything?
+user_functions_recording = {TestAgentClientBase._fetch_current_datetime_recordings}
+user_functions_live = {TestAgentClientBase._fetch_current_datetime_live}
 
 
 # The test class name needs to start with "Test" to get collected by pytest
@@ -3420,7 +3420,4 @@ class TestAgentClient(TestAgentClientBase):
             client.delete_agent(agent.id)
             client.threads.delete(thread.id)
 
-    def _sleep_time(self, sleep: int = 1) -> int:
-        """Return sleep or zero if we are running the recording."""
-        return sleep if is_live() else 0
 
