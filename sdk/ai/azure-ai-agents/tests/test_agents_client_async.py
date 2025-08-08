@@ -25,6 +25,7 @@ from azure.ai.agents.models import (
     AzureFunctionStorageQueue,
     AgentStreamEvent,
     AgentThread,
+    BrowserAutomationTool,
     CodeInterpreterTool,
     CodeInterpreterToolResource,
     ConnectedAgentTool,
@@ -40,6 +41,7 @@ from azure.ai.agents.models import (
     ResponseFormatJsonSchema,
     ResponseFormatJsonSchemaType,
     RunAdditionalFieldList,
+    RunStepBrowserAutomationToolCall,
     RunStepConnectedAgentToolCall,
     RunStepDeepResearchToolCall,
     DeepResearchTool,
@@ -100,6 +102,7 @@ agentClientPreparer = functools.partial(
     azure_ai_agents_tests_search_index_name="sample_index",
     azure_ai_agents_tests_search_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/someindex",
     azure_ai_agents_tests_bing_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.CognitiveServices/accounts/00000/projects/00000/connections/00000",
+    azure_ai_agents_tests_playwright_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.CognitiveServices/accounts/00000/projects/00000/connections/00000",
     azure_ai_agents_tests_deep_research_model="gpt-4o-deep-research",
     azure_ai_agents_tests_is_test_run="True",
 )
@@ -2977,6 +2980,38 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
     @agentClientPreparer()
     @recorded_by_proxy_async
+    async def test_browser_automation_tool(self, **kwargs):
+        connection_id = kwargs["azure_ai_agents_tests_playwright_connection_id"]
+        async with self.create_client(by_endpoint=True, **kwargs) as client:
+            browser_automation_tool = BrowserAutomationTool(connection_id=connection_id)
+            await self._do_test_tool(
+                client=client,
+                model_name="gpt-4o",
+                tool_to_test=browser_automation_tool,
+                instructions="""
+                    You are an Agent helping with browser automation tasks.
+                    You can answer questions, provide information, and assist with various tasks
+                    related to web browsing using the Browser Automation tool available to you.
+                    """,
+                prompt="""
+                    Your goal is to report the percent of Microsoft year-to-date stock price change.
+                    To do that, go to the website finance.yahoo.com.
+                    At the top of the page, you will find a search bar.
+                    Enter the value 'MSFT', to get information about the Microsoft stock price.
+                    At the top of the resulting page you will see a default chart of Microsoft stock price.
+                    Click on 'YTD' at the top of that chart, and read the value that shows up right underneath it.
+                    Report your result using exactly the following sentence, followed by the value you found:
+                    `The year-to-date (YTD) stock price change for Microsoft (MSFT) is`
+                    """,
+                # The tool is very slow to run, since the Microsoft Playwright Workspace service needs to
+                # load a VM and open a browser. Use a large polling interval to avoid tons of REST API calls in test recordings.
+                polling_interval=60,
+                expected_class=RunStepBrowserAutomationToolCall,
+                specific_message_text="the year-to-date (ytd) stock price change for microsoft (msft) is",
+            )
+
+    @agentClientPreparer()
+    @recorded_by_proxy_async
     async def test_deep_research_tool(self, **kwargs):
         """Test using the DeepResearchTool with an agent."""
         # create client
@@ -3068,10 +3103,12 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         :param tool_to_test: The pre created tool to be used.
         :param instructions: The instructions, given to an agent.
         :param prompt: The prompt, given in the first user message.
+        :param expected_class: If a tool call is expected, the name of the class derived from RunStepToolCall
+               corresponding to the expected tool call (e.g. RunStepBrowserAutomationToolCall).
         :param headers: The headers used to call the agents.
                For example: {"x-ms-enable-preview": "true"}
         :param polling_interval: The polling interval (useful, when we need to wait longer times).
-        :param specific_message_text: The specific text to search in the messages.
+        :param specific_message_text: The specific text to search in the messages.  Must be all lower-case.
         """
         if headers is None:
             headers = {}
@@ -3129,6 +3166,8 @@ class TestAgentClientAsync(AzureRecordedTestCase):
                                 found_step = True
                                 if "connected_agent_name" in kwargs:
                                     assert tool_call.connected_agent.name == kwargs["connected_agent_name"]
+                                if isinstance(tool_call, RunStepBrowserAutomationToolCall):
+                                    self._validate_run_step_browser_automation_tool_call(tool_call)
                 assert found_step, f"The {expected_class} was not found."
         finally:
             await client.delete_agent(agent.id)
@@ -3227,6 +3266,15 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         """Remove file if we have file ID."""
         if file_id:
             await ai_client.files.delete(file_id)
+
+    @classmethod
+    def _validate_run_step_browser_automation_tool_call(cls, tool_call: RunStepBrowserAutomationToolCall):
+        assert tool_call.browser_automation.input
+        assert tool_call.browser_automation.output
+        assert len(tool_call.browser_automation.steps)>1
+        assert tool_call.browser_automation.steps[0].last_step_result
+        assert tool_call.browser_automation.steps[0].current_state
+        assert tool_call.browser_automation.steps[0].next_step
 
     # # **********************************************************************************
     # #
