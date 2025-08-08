@@ -37,3 +37,5 @@ class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     F0 = "F0"
     S1 = "S1"
     C0 = "C0"
+    PES = "PES"
+    C1 = "C1"
