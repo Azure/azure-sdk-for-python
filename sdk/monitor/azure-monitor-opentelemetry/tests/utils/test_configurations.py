@@ -415,7 +415,7 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
         self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector")
         resource_create_mock.assert_called_once_with()
-        self.assertEqual(configurations["sampling_traces_per_second"], 0.5)
+        self.assertEqual(configurations["traces_per_second"], 0.5)
     
     @patch.dict(
         "os.environ",

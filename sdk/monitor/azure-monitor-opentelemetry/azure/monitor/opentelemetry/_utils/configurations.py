@@ -143,12 +143,6 @@ def _default_sampling_ratio(configurations):
     sampler_type = environ.get(OTEL_TRACES_SAMPLER)
     sampler_arg = environ.get(OTEL_TRACES_SAMPLER_ARG)
 
-    # Early exit if no sampler argument is provided - always set default sampling_ratio
-    if sampler_arg is None:
-        _logger.error("OTEL_TRACES_SAMPLER_ARG is not set.")
-        configurations[SAMPLING_RATIO_ARG] = default_value
-        return
-
     # Handle rate-limited sampler
     if sampler_type == RATE_LIMITED_SAMPLER:
         try:

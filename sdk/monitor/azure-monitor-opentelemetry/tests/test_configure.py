@@ -349,7 +349,7 @@ class TestConfigure(unittest.TestCase):
         configurations = {
             "connection_string": "test_cs",
             "instrumentation_options": {"azure_sdk": {"enabled": True}},
-            "sampling_traces_per_second": 2.0,
+            "traces_per_second": 2.0,
             "span_processors": [custom_sp],
             "resource": TEST_RESOURCE,
         }

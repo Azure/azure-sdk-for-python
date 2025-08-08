@@ -26,7 +26,7 @@ SPAN_PROCESSORS_ARG = "span_processors"
 VIEWS_ARG = "views"
 RATE_LIMITED_SAMPLER = "microsoft.rate_limited"
 FIXED_PERCENTAGE_SAMPLER = "microsoft.fixed.percentage"
-SAMPLING_TRACES_PER_SECOND_ARG = "sampling_traces_per_second"
+SAMPLING_TRACES_PER_SECOND_ARG = "traces_per_second"
 
 # --------------------Autoinstrumentation Configuration------------------------------------------
 
