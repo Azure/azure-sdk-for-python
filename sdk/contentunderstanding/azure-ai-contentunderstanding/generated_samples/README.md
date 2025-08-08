@@ -27,9 +27,9 @@ The Azure AI Content Understanding service provides powerful AI capabilities for
 ### Prerequisites
 
 1. **Azure Content Understanding Resource**
-   - Create an Azure Content Understanding resource in the [Azure Portal](https://portal.azure.com)
-   - Note your endpoint URL and access key
-   - See [Prerequisites Guide](https://learn.microsoft.com/en-us/azure/ai-services/content-understanding/quickstart/use-rest-api?tabs=document#prerequisites)
+- To get started, you need **an active Azure subscription**. If you don't have an Azure account, [create one for free](https://azure.microsoft.com/free/).
+- Once you have your Azure subscription, create an [Azure AI Foundry resource](https://portal.azure.com/#create/Microsoft.CognitiveServicesAIFoundry) in the Azure portal. Be sure to create it in a [supported region](https://learn.microsoft.com/azure/ai-services/content-understanding/language-region-support).
+- For more information, see: https://learn.microsoft.com/azure/ai-services/content-understanding/quickstart/use-rest-api?tabs=document
 
 2. **Python Environment**
    ```bash
@@ -144,10 +144,9 @@ python person_directories_find_similar_faces.py
 
 ## 📚 Additional Resources
 
-- **[Azure AI Content Understanding Documentation](https://learn.microsoft.com/en-us/azure/ai-services/content-understanding/)**
-- **[Python SDK Reference](https://learn.microsoft.com/en-us/python/api/overview/azure/ai-contentunderstanding-readme)**
-- **[REST API Reference](https://learn.microsoft.com/en-us/rest/api/contentunderstanding/)**
-- **[Quickstart Guide](https://learn.microsoft.com/en-us/azure/ai-services/content-understanding/quickstart/use-rest-api)**
+- **[Azure AI Content Understanding Documentation](https://learn.microsoft.com/azure/ai-services/content-understanding/)**
+- **[REST API Reference](https://learn.microsoft.com/rest/api/content-understanding/)**
+- **[Quickstart Guide](https://learn.microsoft.com/azure/ai-services/content-understanding/quickstart/use-rest-api)**
 
 ## 🐛 Troubleshooting
 

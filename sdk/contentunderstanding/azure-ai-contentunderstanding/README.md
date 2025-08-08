@@ -21,7 +21,7 @@ python -m pip install azure-ai-contentunderstanding
 
 This SDK includes **35+ comprehensive samples** that demonstrate API-level usage of all Azure AI Content Understanding capabilities. These samples show you exactly how to call each API endpoint with proper authentication, error handling, and resource management.
 
-**👉 [View All API Samples](generated_samples/README.md)**
+**👉 [View All API Samples](./generated_samples/README.md)**
 
 The samples cover three main API categories:
 
