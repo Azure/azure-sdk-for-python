@@ -103,10 +103,6 @@ stages:
       - job: ComplianceTools
         timeoutInMinutes: 120
         steps:
-          - template: /eng/common/pipelines/templates/steps/credscan.yml
-            parameters:
-              BaselineFilePath: $(Build.SourcesDirectory)\eng\python.gdnbaselines
-
           - template: /eng/common/pipelines/templates/steps/policheck.yml
             parameters:
               PublishAnalysisLogs: false
