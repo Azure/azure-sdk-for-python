@@ -57,7 +57,6 @@ extends:
       componentgovernance:
         enabled: false
         justificationForDisabling: "To reduce redundant CG runs across all our pipeline jobs we are disabling and only running in our main build job."
-      eslint:
       credscan:
         suppressionsFile: '$(Build.SourcesDirectory)/eng/CredScanSuppression.json'
       psscriptanalyzer:
