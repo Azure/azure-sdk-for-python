@@ -9,7 +9,7 @@ authors = [
 ]
 description = "Microsoft Azure Service Bus Client Library for Python"
 keywords = ["azure", "azure sdk"]
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 license = "MIT"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -30,7 +30,7 @@ dependencies = [
 dynamic = ["version", "readme"]
 
 [project.urls]
-repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk"
+Repository = "https://github.com/Azure/azure-sdk-for-python.git"
 
 [tool.setuptools.dynamic]
 version = {attr = "azure.servicebus._version.VERSION"}
