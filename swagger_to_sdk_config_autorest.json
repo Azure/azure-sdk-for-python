@@ -9,6 +9,7 @@
       "include-x-ms-examples-original-file": true,
       "generate-sample": true,
       "generate-test": true,
+      "package-mode": "azure-mgmt",
       "keep-setup-py": true
     },
     "advanced_options": {
