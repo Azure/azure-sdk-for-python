@@ -30,19 +30,10 @@ from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import PersonDirectory
 
-from sample_helper import get_credential
+from sample_helper import get_credential, generate_person_directory_id
 
 # Load environment variables from .env file, if present
 load_dotenv()
-
-
-def _generate_person_directory_id() -> str:
-    """Return a unique person directory ID."""
-    import uuid
-
-    now = datetime.now(timezone.utc)
-    return f"sdk-sample-directory-{now:%Y%m%d-%H%M%S}-{uuid.uuid4().hex[:8]}"
-
 
 async def main() -> None:  # noqa: D401 – simple function signature is fine for sample
     """Run the delete person directory sample."""
@@ -51,7 +42,7 @@ async def main() -> None:  # noqa: D401 – simple function signature is fine fo
 
     # Create a temporary directory first so we have something to delete
     async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
-        directory_id = _generate_person_directory_id()
+        directory_id = generate_person_directory_id()
         print(f"🔧 Creating temporary directory '{directory_id}'...")
         await client.person_directories.create(
             person_directory_id=directory_id,
@@ -63,7 +54,6 @@ async def main() -> None:  # noqa: D401 – simple function signature is fine fo
         print(f"🗑️  Deleting directory '{directory_id}'...")
         await client.person_directories.delete(person_directory_id=directory_id)
         print("✅ Directory deleted successfully")
-
 
 if __name__ == "__main__":
     asyncio.run(main())

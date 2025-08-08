@@ -147,6 +147,20 @@ def generate_classifier_id() -> str:
     return f"sdk-sample-classifier-{date_str}-{time_str}-{guid}"
 
 
+def generate_person_directory_id() -> str:
+    """Generate a unique person directory ID with current date, time, and GUID."""
+    now = datetime.now(timezone.utc)
+    return f"sdk-sample-directory-{now:%Y%m%d-%H%M%S}-{uuid.uuid4().hex[:8]}"
+
+
+def read_image_to_base64(image_path: str) -> str:
+    """Read image file and convert to base64 string."""
+    import base64
+    with open(image_path, "rb") as image_file:
+        image_bytes = image_file.read()
+        return base64.b64encode(image_bytes).decode('utf-8')
+
+
 def new_simple_classifier_schema(classifier_id: str, description: Optional[str] = None, tags: Optional[Dict[str, str]] = None) -> ContentClassifier:
     """Create a simple ContentClassifier object with default configuration.
     

@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import PersonDirectory
 
-from sample_helper import get_credential, save_response_to_file
+from sample_helper import get_credential, generate_person_directory_id, read_image_to_base64
 
 load_dotenv()
 
@@ -22,22 +22,6 @@ load_dotenv()
 # USAGE
     python person_directories_update_face.py
 """
-
-
-def read_image_to_base64(image_path: str) -> str:
-    """Read image file and convert to base64 string."""
-    import base64
-    with open(image_path, "rb") as image_file:
-        image_bytes = image_file.read()
-        return base64.b64encode(image_bytes).decode('utf-8')
-
-
-def _generate_person_directory_id() -> str:
-    """Generate a unique person directory ID with current date, time, and GUID."""
-    import uuid
-    now = datetime.now(timezone.utc)
-    return f"sdk-sample-directory-{now:%Y%m%d-%H%M%S}-{uuid.uuid4().hex[:8]}"
-
 
 async def main():
     """
@@ -55,7 +39,7 @@ async def main():
     credential = get_credential()
 
     async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
-        directory_id = _generate_person_directory_id()
+        directory_id = generate_person_directory_id()
         
         # Create person directory
         print(f"🔧 Creating directory '{directory_id}'...")
@@ -118,7 +102,6 @@ async def main():
         print(f"🗑️  Deleting directory '{directory_id}' (demo cleanup)...")
         await client.person_directories.delete(person_directory_id=directory_id)
         print("✅ Directory deleted – sample complete")
-
 
 # x-ms-original-file: 2025-05-01-preview/PersonDirectories_UpdateFace.json
 if __name__ == "__main__":

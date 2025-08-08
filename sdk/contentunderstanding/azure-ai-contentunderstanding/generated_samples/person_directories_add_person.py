@@ -15,7 +15,7 @@ from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import PersonDirectory
 
-from sample_helper import get_credential, save_response_to_file
+from sample_helper import get_credential, generate_person_directory_id
 
 load_dotenv()
 
@@ -25,17 +25,6 @@ load_dotenv()
 # USAGE
     python person_directories_add_person.py
 """
-
-
-def generate_person_directory_id() -> str:
-    """Generate a unique person directory ID with current date, time, and GUID."""
-    import uuid
-    now = datetime.now()
-    date_str = now.strftime("%Y%m%d")
-    time_str = now.strftime("%H%M%S")
-    guid = str(uuid.uuid4()).replace("-", "")[:8]
-    return f"sdk-sample-directory-{date_str}-{time_str}-{guid}"
-
 
 async def main():
     """
@@ -100,18 +89,10 @@ async def main():
         print(f"   Person ID: {getattr(person, 'person_id', 'N/A')}")
         print(f"   Tags: {getattr(person, 'tags', 'N/A')}")
 
-        # Save the person details to a file
-        saved_file_path = save_response_to_file(
-            result=response,
-            filename_prefix="person_directories_add_person"
-        )
-        print(f"💾 Person details saved to: {saved_file_path}")
-
         # Clean up the created directory (demo cleanup)
         print(f"🗑️  Deleting person directory '{person_directory_id}' (demo cleanup)...")
         await client.person_directories.delete(person_directory_id=person_directory_id)
         print(f"✅ Person directory '{person_directory_id}' deleted successfully!")
-
 
 # x-ms-original-file: 2025-05-01-preview/PersonDirectories_AddPerson.json
 if __name__ == "__main__":
