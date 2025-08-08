@@ -2406,7 +2406,7 @@ class TargetIntentResult(_Model):
     """This is the base class of an intent prediction.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ConversationTargetIntentResult, LuisTargetIntentResult, NoneLinkedTargetIntentResult,
+    ConversationTargetIntentResult, LuisTargetIntentResult, NonLinkedTargetIntentResult,
     QuestionAnsweringTargetIntentResult
 
     :ivar target_project_kind: This is the base class of an intent prediction. Required. Known
@@ -3794,7 +3794,7 @@ class NoMaskPolicyType(BaseRedactionPolicy, discriminator="noMask"):
         super().__init__(*args, policy_kind=RedactionPolicyKind.NO_MASK, **kwargs)
 
 
-class NoneLinkedTargetIntentResult(TargetIntentResult, discriminator="NonLinked"):
+class NonLinkedTargetIntentResult(TargetIntentResult, discriminator="NonLinked"):
     """A wrap up of non-linked intent response.
 
     :ivar api_version: The API version used to call a target service.

@@ -72,7 +72,7 @@
         "azure.ai.language.conversations.models.MetadataFilter": "Language.Conversations.MetadataFilter",
         "azure.ai.language.conversations.models.MetadataRecord": "Language.Conversations.MetadataRecord",
         "azure.ai.language.conversations.models.NamedEntity": "Language.Conversations.Entity",
-        "azure.ai.language.conversations.models.NoneLinkedTargetIntentResult": "Language.Conversations.NoneLinkedTargetIntentResult",
+        "azure.ai.language.conversations.models.NonLinkedTargetIntentResult": "Language.Conversations.NoneLinkedTargetIntentResult",
         "azure.ai.language.conversations.models.NumberResolution": "Language.Conversations.NumberResolution",
         "azure.ai.language.conversations.models.NumericRangeResolution": "Language.Conversations.NumericRangeResolution",
         "azure.ai.language.conversations.models.OrchestrationPrediction": "Language.Conversations.OrchestrationPrediction",
