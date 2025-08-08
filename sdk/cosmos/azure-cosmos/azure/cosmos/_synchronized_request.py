@@ -27,10 +27,13 @@ import time
 
 from urllib.parse import urlparse
 from azure.core.exceptions import DecodeError  # type: ignore
+from azure.core import PipelineClient
+from typing import Any
 
-from . import exceptions
-from . import http_constants
-from . import _retry_utility
+from . import exceptions, http_constants, _retry_utility
+from .documents import ConnectionPolicy
+from ._request_object import RequestObject
+from ._global_partition_endpoint_manager_per_partition_automatic_failover import _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover
 
 
 def _is_readable_stream(obj):
@@ -65,7 +68,13 @@ def _request_body_from_data(data):
     return None
 
 
-def _Request(global_endpoint_manager, request_params, connection_policy, pipeline_client, request, **kwargs): # pylint: disable=too-many-statements
+def _Request(
+        global_endpoint_manager: _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover,
+        request_params: RequestObject,
+        connection_policy: ConnectionPolicy,
+        pipeline_client: PipelineClient,
+        request: Any,
+        **kwargs): # pylint: disable=too-many-statements
     """Makes one http request using the requests module.
 
     :param _GlobalEndpointManager global_endpoint_manager:
@@ -107,8 +116,9 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
         base_url = request_params.endpoint_override
     else:
         pk_range_wrapper = None
-        if global_endpoint_manager.is_circuit_breaker_applicable(request_params):
-            # Circuit breaker is applicable, so we need to use the endpoint from the request
+        if (global_endpoint_manager.is_circuit_breaker_applicable(request_params) or
+                global_endpoint_manager.is_per_partition_automatic_failover_applicable(request_params)):
+            # Circuit breaker or per-partition failover are applicable, so we need to use the endpoint from the request
             pk_range_wrapper = global_endpoint_manager.create_pk_range_wrapper(request_params)
         base_url = global_endpoint_manager.resolve_service_endpoint_for_partition(request_params, pk_range_wrapper)
     if not request.url.startswith(base_url):

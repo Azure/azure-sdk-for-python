@@ -50,9 +50,9 @@ def read_operations_and_errors():
 
     return params
 
-def write_operations_and_errors():
+def write_operations_and_errors(error_list=None):
     write_operations = [CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH]
-    errors = create_errors()
+    errors = error_list or create_errors()
     params = []
     for write_operation in write_operations:
         for error in errors:
@@ -69,7 +69,7 @@ def operations():
 
     return operations
 
-def create_errors():
+def create_errors(errors=None):
     errors = []
     error_codes = [408, 500, 502, 503]
     for error_code in error_codes:
@@ -97,7 +97,8 @@ def validate_unhealthy_partitions(global_endpoint_manager,
 def validate_response_uri(response, expected_uri):
     request = response.get_response_headers()["_request"]
     assert request.url.startswith(expected_uri)
-def perform_write_operation(operation, container, fault_injection_container, doc_id, pk, expected_uri):
+
+def perform_write_operation(operation, container, fault_injection_container, doc_id, pk, expected_uri=None):
     doc = {'id': doc_id,
            'pk': pk,
            'name': 'sample document',
@@ -135,7 +136,7 @@ def perform_write_operation(operation, container, fault_injection_container, doc
     elif operation == DELETE_ALL_ITEMS_BY_PARTITION_KEY:
         container.create_item(body=doc)
         resp = fault_injection_container.delete_all_items_by_partition_key(pk)
-    if resp:
+    if resp and expected_uri:
         validate_response_uri(resp, expected_uri)
 
 def perform_read_operation(operation, container, doc_id, pk, expected_uri):
