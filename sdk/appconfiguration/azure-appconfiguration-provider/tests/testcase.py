@@ -5,7 +5,12 @@
 # license information.
 # --------------------------------------------------------------------------
 from devtools_testutils import AzureRecordedTestCase
-from azure.appconfiguration import AzureAppConfigurationClient, ConfigurationSetting, FeatureFlagConfigurationSetting
+from azure.appconfiguration import (
+    AzureAppConfigurationClient,
+    ConfigurationSetting,
+    FeatureFlagConfigurationSetting,
+    SecretReferenceConfigurationSetting,
+)
 from azure.appconfiguration.provider import SettingSelector, load, AzureAppConfigurationKeyVaultOptions
 from azure.appconfiguration.provider._constants import NULL_CHAR
 from test_constants import FEATURE_MANAGEMENT_KEY, FEATURE_FLAG_KEY
@@ -18,6 +23,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
         trim_prefixes=[],
         selects={SettingSelector(key_filter="*", label_filter=NULL_CHAR)},
         keyvault_secret_url=None,
+        keyvault_secret_url2=None,
         refresh_on=None,
         refresh_interval=30,
         secret_resolver=None,
@@ -26,44 +32,51 @@ class AppConfigTestCase(AzureRecordedTestCase):
         feature_flag_enabled=False,
         feature_flag_selectors=[SettingSelector(key_filter="*", label_filter=NULL_CHAR)],
         feature_flag_refresh_enabled=False,
+        secret_refresh_interval=None,
     ):
         cred = self.get_credential(AzureAppConfigurationClient)
         client = AzureAppConfigurationClient(appconfiguration_endpoint_string, cred)
-        setup_configs(client, keyvault_secret_url)
+        setup_configs(client, keyvault_secret_url, keyvault_secret_url2)
 
         if not secret_resolver and keyvault_secret_url and not key_vault_options:
             keyvault_cred = cred
-            return load(
-                credential=cred,
-                endpoint=appconfiguration_endpoint_string,
-                trim_prefixes=trim_prefixes,
-                selects=selects,
-                refresh_on=refresh_on,
-                refresh_interval=refresh_interval,
-                user_agent="SDK/Integration",
-                keyvault_credential=keyvault_cred,
-                on_refresh_success=on_refresh_success,
-                feature_flag_enabled=feature_flag_enabled,
-                feature_flag_selectors=feature_flag_selectors,
-                feature_flag_refresh_enabled=feature_flag_refresh_enabled,
-            )
+            kwargs = {
+                "credential": cred,
+                "endpoint": appconfiguration_endpoint_string,
+                "trim_prefixes": trim_prefixes,
+                "selects": selects,
+                "refresh_on": refresh_on,
+                "refresh_interval": refresh_interval,
+                "user_agent": "SDK/Integration",
+                "keyvault_credential": keyvault_cred,
+                "on_refresh_success": on_refresh_success,
+                "feature_flag_enabled": feature_flag_enabled,
+                "feature_flag_selectors": feature_flag_selectors,
+                "feature_flag_refresh_enabled": feature_flag_refresh_enabled,
+            }
+            if secret_refresh_interval is not None:
+                kwargs["secret_refresh_interval"] = secret_refresh_interval
+            return load(**kwargs)
         if key_vault_options:
             if not key_vault_options.secret_resolver:
                 key_vault_options = AzureAppConfigurationKeyVaultOptions(credential=cred)
-            return load(
-                credential=cred,
-                endpoint=appconfiguration_endpoint_string,
-                trim_prefixes=trim_prefixes,
-                selects=selects,
-                refresh_on=refresh_on,
-                refresh_interval=refresh_interval,
-                user_agent="SDK/Integration",
-                key_vault_options=key_vault_options,
-                on_refresh_success=on_refresh_success,
-                feature_flag_enabled=feature_flag_enabled,
-                feature_flag_selectors=feature_flag_selectors,
-                feature_flag_refresh_enabled=feature_flag_refresh_enabled,
-            )
+            kwargs = {
+                "credential": cred,
+                "endpoint": appconfiguration_endpoint_string,
+                "trim_prefixes": trim_prefixes,
+                "selects": selects,
+                "refresh_on": refresh_on,
+                "refresh_interval": refresh_interval,
+                "user_agent": "SDK/Integration",
+                "key_vault_options": key_vault_options,
+                "on_refresh_success": on_refresh_success,
+                "feature_flag_enabled": feature_flag_enabled,
+                "feature_flag_selectors": feature_flag_selectors,
+                "feature_flag_refresh_enabled": feature_flag_refresh_enabled,
+            }
+            if secret_refresh_interval is not None:
+                kwargs["secret_refresh_interval"] = secret_refresh_interval
+            return load(**kwargs)
         return load(
             credential=cred,
             endpoint=appconfiguration_endpoint_string,
@@ -85,6 +98,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
         trim_prefixes=[],
         selects={SettingSelector(key_filter="*", label_filter=NULL_CHAR)},
         keyvault_secret_url=None,
+        keyvault_secret_url2=None,
         refresh_on=None,
         refresh_interval=30,
         secret_resolver=None,
@@ -95,7 +109,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
         feature_flag_refresh_enabled=False,
     ):
         client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
-        setup_configs(client, keyvault_secret_url)
+        setup_configs(client, keyvault_secret_url, keyvault_secret_url2)
 
         if not secret_resolver and keyvault_secret_url and not key_vault_options:
             return load(
@@ -154,12 +168,12 @@ class AppConfigTestCase(AzureRecordedTestCase):
         return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred, user_agent="SDK/Integration")
 
 
-def setup_configs(client, keyvault_secret_url):
-    for config in get_configs(keyvault_secret_url):
+def setup_configs(client, keyvault_secret_url, keyvault_secret_url2):
+    for config in get_configs(keyvault_secret_url, keyvault_secret_url2):
         client.set_configuration_setting(config)
 
 
-def get_configs(keyvault_secret_url):
+def get_configs(keyvault_secret_url, keyvault_secret_url2):
     configs = []
     configs.append(create_config_setting("message", NULL_CHAR, "hi"))
     configs.append(create_config_setting("message", "dev", "test"))
@@ -206,11 +220,18 @@ def get_configs(keyvault_secret_url):
     configs.append(create_config_setting("null_tag", NULL_CHAR, "null tag", tags={"tag": None}))
     if keyvault_secret_url:
         configs.append(
-            create_config_setting(
+            create_secret_config_setting(
                 "secret",
                 "prod",
-                '{"uri":"' + keyvault_secret_url + '"}',
-                "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8",
+                keyvault_secret_url,
+            )
+        )
+    if keyvault_secret_url2:
+        configs.append(
+            create_secret_config_setting(
+                "secret2",
+                "prod",
+                keyvault_secret_url2,
             )
         )
     return configs
@@ -218,6 +239,14 @@ def get_configs(keyvault_secret_url):
 
 def create_config_setting(key, label, value, content_type="text/plain", tags=None):
     return ConfigurationSetting(key=key, label=label, value=value, content_type=content_type, tags=tags)
+
+
+def create_secret_config_setting(key, label, value):
+    return SecretReferenceConfigurationSetting(
+        key=key,
+        label=label,
+        secret_id=value,
+    )
 
 
 def create_feature_flag_config_setting(key, label, enabled, tags=None):
