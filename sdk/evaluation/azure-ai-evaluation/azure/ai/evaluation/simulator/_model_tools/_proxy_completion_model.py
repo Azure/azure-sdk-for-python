@@ -15,12 +15,6 @@ from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
 from azure.ai.evaluation._common.onedp._client import AIProjectClient
 from azure.ai.evaluation._common.onedp.models import SimulationDTO
 from azure.ai.evaluation._common.constants import RAIService
-from azure.ai.evaluation._exceptions import (
-    ErrorBlame,
-    ErrorCategory,
-    ErrorTarget,
-    EvaluationException,
-)
 
 from .._model_tools._template_handler import TemplateParameters
 from .models import OpenAIChatCompletionsModel
@@ -210,93 +204,26 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
             response_data = session.red_teams.submit_simulation(sim_request_dto, headers=headers, params=params)
             operation_id = response_data["location"].split("/")[-1]
 
-            # Use direct HTTP calls instead of session.evaluations.operation_results
-            # to avoid deserialization issues
             request_count = 0
             flag = True
-            result_url = response_data["location"]
-            
             while flag:
-                # Use direct HTTP call with get_async_http_client
-                token = await self.token_manager.get_token_async()
-                polling_headers = {
-                    "Authorization": f"Bearer {token}",
-                    "Content-Type": "application/json",
-                    "User-Agent": UserAgentSingleton().value,
-                }
-                
                 try:
-                    async with get_async_http_client() as client:
-                        response = await client.get(
-                            url=result_url, 
-                            headers=polling_headers
-                        )
-                        
-                    if response.status_code == 200:
-                        try:
-                            response_data = response.json()
-                            # Validate that we got a proper response structure
-                            if isinstance(response_data, (list, dict)):
-                                flag = False
-                                self.logger.info("Successfully retrieved operation results")
-                                break
-                            else:
-                                self.logger.warning(
-                                    f"Unexpected response format: {type(response_data)}"
-                                )
-                                raise ValueError("Invalid response format")
-                        except Exception as json_e:
-                            self.logger.warning(
-                                f"Failed to deserialize JSON response: {str(json_e)}"
-                            )
-                            # Log response for debugging
-                            try:
-                                self.logger.warning(f"Raw response: {response.text()}")
-                            except Exception:
-                                self.logger.warning("Could not get raw response text")
-                            raise
-                    elif response.status_code == 202:
-                        # Operation still in progress
-                        request_count += 1
-                        sleep_time = RAIService.SLEEP_TIME**request_count
-                        self.logger.info(
-                            f"Operation not complete (status: {response.status_code}), "
-                            f"sleeping for {sleep_time} seconds..."
-                        )
-                        await asyncio.sleep(sleep_time)
-                    else:
-                        # Unexpected status code
-                        raise HttpResponseError(
-                            message=(
-                                f"Unexpected HTTP status from operation polling: "
-                                f"{response.status_code}"
-                            ),
-                            response=response,
-                        )
-                        
+                    response = session.evaluations.operation_results(operation_id, headers=headers)
                 except Exception as e:
-                    if request_count >= 10:  # Max retry limit
-                        self.logger.error(
-                            f"Max retries reached. Last error: {str(e)}"
-                        )
-                        raise EvaluationException(
-                            message=(
-                                f"Failed to poll operation results after "
-                                f"{request_count} attempts: {str(e)}"
-                            ),
-                            internal_message=f"Polling error: {str(e)}",
-                            error_category=ErrorCategory.FAILED_EXECUTION,
-                            error_blame=ErrorBlame.SYSTEM_ERROR,
-                            error_target=ErrorTarget.MODELS,
-                        )
-                    else:
-                        request_count += 1
-                        sleep_time = RAIService.SLEEP_TIME**request_count
-                        self.logger.warning(
-                            f"Error during polling (attempt {request_count}): {str(e)}. "
-                            f"Retrying in {sleep_time} seconds..."
-                        )
-                        await asyncio.sleep(sleep_time)
+                    from types import SimpleNamespace  # pylint: disable=forgotten-debug-statement
+
+                    response = SimpleNamespace(status_code=202, text=str(e), json=lambda: {"error": str(e)})
+                if isinstance(response, dict):
+                    response_data = response
+                    flag = False
+                    break
+                if response.status_code == 200:
+                    response_data = cast(List[Dict], response.json())
+                    flag = False
+                else:
+                    request_count += 1
+                    sleep_time = RAIService.SLEEP_TIME**request_count
+                    await asyncio.sleep(sleep_time)
         else:
             # Retry policy for POST request to RAI service
             service_call_retry_policy = AsyncRetryPolicy(
