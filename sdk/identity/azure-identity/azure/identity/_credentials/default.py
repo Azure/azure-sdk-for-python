@@ -332,8 +332,10 @@ class DefaultAzureCredential(ChainedTokenCredential):
             )
             return token
         within_dac.set(True)
-        token = super().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
-        within_dac.set(False)
+        try:
+            token = super().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+        finally:
+            within_dac.set(False)
         return token
 
     def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
@@ -361,6 +363,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
             return token_info
 
         within_dac.set(True)
-        token_info = cast(SupportsTokenInfo, super()).get_token_info(*scopes, options=options)
-        within_dac.set(False)
+        try:
+            token_info = cast(SupportsTokenInfo, super()).get_token_info(*scopes, options=options)
+        finally:
+            within_dac.set(False)
         return token_info
