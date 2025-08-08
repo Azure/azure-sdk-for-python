@@ -102,6 +102,8 @@ class RecoveryServicesDataReplicationMgmtClient:  # pylint: disable=too-many-ins
     :type subscription_id: str
     :param base_url: Service host. Default value is None.
     :type base_url: str
+    :keyword cloud_setting: The cloud environment to use for this operation. If not specified, the default cloud setting will be used.
+    :paramtype cloud_setting: str or ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Default value is "2024-09-01".
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
@@ -110,10 +112,16 @@ class RecoveryServicesDataReplicationMgmtClient:  # pylint: disable=too-many-ins
     """
 
     def __init__(
-        self, credential: "TokenCredential", subscription_id: str, base_url: Optional[str] = None, **kwargs: Any
+        self,
+        credential: "TokenCredential",
+        subscription_id: str,
+        base_url: Optional[str] = None,
+        *,
+        cloud_setting=None,
+        **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}"
-        _cloud = kwargs.pop("cloud_setting", None) or settings.current.azure_cloud  # type: ignore
+        _cloud = cloud_setting or settings.current.azure_cloud  # type: ignore
         _endpoints = get_arm_endpoints(_cloud)
         if not base_url:
             base_url = _endpoints["resource_manager"]
