@@ -65,7 +65,7 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     _DEFAULT_TASK_ADHERENCE_SCORE = 3
 
-    id = None
+    id = "azureai://built-in/evaluators/task_adherence"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
