@@ -416,7 +416,11 @@ def main(generate_input, generate_output):
                         cwd=package_path,
                         timeout=600,
                     )
-                    check_call(["apistubgen", "--pkg-path", "."], cwd=package_path, timeout=600)
+                    cmds = ["apistubgen", "--pkg-path", "."]
+                    cross_language_mapping_path = Path(package_path, "apiview-properties.json")
+                    if cross_language_mapping_path.exists():
+                        cmds.extend(["--mapping-path", str(cross_language_mapping_path)])
+                    check_call(cmds, cwd=package_path, timeout=600)
                     for file in os.listdir(package_path):
                         if "_python.json" in file and package_name in file:
                             result[package_name]["apiViewArtifact"] = str(Path(package_path, file))
