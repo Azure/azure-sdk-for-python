@@ -4,6 +4,12 @@
 
 ### Features added
 
+* File `setup.py` was updated to indicate the dependency `azure-ai-agents>=1.2.0b1`
+instead of `azure-ai-agents>=1.0.0`. This means that in a clean environment installing
+this version of `azure-ai-projects` will install latest beta version of `azure-ai-agents`
+(which has lots of features in preview) instead of latest stable version (which does
+not include preview features).
+
 ### Breaking changes
 
 ### Bugs Fixed
@@ -22,7 +28,7 @@ First beta version following the 1.0.0 stable release. It brings back the Evalua
 
 ### Features added
 
-* Added methods `cancel` and `delete` to Evaluations.
+* Evaluation and Red-Team operations (in preview) were restored.
 
 ## 1.0.0 (2025-07-31)
 
