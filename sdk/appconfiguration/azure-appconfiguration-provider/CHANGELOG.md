@@ -5,6 +5,7 @@
 ### Features Added
 
 - Added `tag_filters` in `SettingSelector` to filter settings by tags.
+- Added support for JSON comments in the `load` method, when a configuration setting has the json content type.
 
 ### Breaking Changes
 
