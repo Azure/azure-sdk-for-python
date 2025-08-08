@@ -33,6 +33,7 @@ from azure.core.pipeline.transport._requests_basic import RequestsTransport, Req
 from requests import Session
 
 from azure.cosmos import documents
+from azure.cosmos._constants import _Constants as Constants
 
 import test_config
 from azure.cosmos.exceptions import CosmosHttpResponseError
@@ -295,8 +296,7 @@ class FaultInjectionTransport(RequestsTransport):
         if response.status_code == 200 and data:
             data = data.decode("utf-8")
             result = json.loads(data)
-            # TODO: need to verify below behavior against actual Cosmos DB service response
-            result["enablePerPartitionFailoverBehavior"] = True
+            result[Constants.EnablePerPartitionFailoverBehavior] = True
             FaultInjectionTransport.logger.info("Transformed Account Topology: {}".format(result))
             request: HttpRequest = response.request
             return FaultInjectionTransport.MockHttpResponse(request, 200, result)
