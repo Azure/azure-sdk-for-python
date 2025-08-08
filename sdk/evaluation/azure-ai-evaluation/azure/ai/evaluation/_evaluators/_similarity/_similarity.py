@@ -14,22 +14,28 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
     """
     Evaluates similarity score for a given query, response, and ground truth.
 
-    The similarity measure evaluates the likeness between a ground truth sentence (or document) and the
-    AI model's generated prediction. This calculation involves creating sentence-level embeddings for both
-    the ground truth and the model's prediction, which are high-dimensional vector representations capturing
-    the semantic meaning and context of the sentences.
+    The similarity measure evaluates the likeness between a ground truth
+    sentence (or document) and the AI model's generated prediction. This
+    involves creating sentence-level embeddings for both the ground truth and
+    the model's prediction. These are high-dimensional vectors capturing the
+    semantic meaning and context of the sentences.
 
-    Use it when you want an objective evaluation of an AI model's performance, particularly in text generation
-    tasks where you have access to ground truth responses. Similarity enables you to assess the generated
-    text's semantic alignment with the desired content, helping to gauge the model's quality and accuracy.
+    Use it when you need an objective evaluation of an AI model's performance,
+    especially for text generation with ground truth responses. Similarity
+    assesses semantic alignment with the desired content and helps gauge model
+    quality and accuracy.
 
-    Similarity scores range from 1 to 5, with 1 being the least similar and 5 being the most similar.
+    Similarity scores range from 1 to 5 (1 = least similar, 5 = most similar).
 
     :param model_config: Configuration for the Azure OpenAI model.
-    :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
+    :type model_config:
+        Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
     :param threshold: The threshold for the similarity evaluator. Default is 3.
     :type threshold: int
+    :keyword is_reasoning_model: (Preview) Adjusts prompty config
+        for reasoning models when True.
+    :paramtype is_reasoning_model: bool
 
     .. admonition:: Example:
 
@@ -38,7 +44,8 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
             :end-before: [END similarity_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call a SimilarityEvaluator with a four-gram rouge type.
+            :caption: Initialize and call a SimilarityEvaluator with a
+                four-gram rouge type.
 
     .. admonition:: Example using Azure AI Project URL:
 
@@ -47,7 +54,8 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
             :end-before: [END similarity_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call SimilarityEvaluator using Azure AI Project URL in the following format
+            :caption: Initialize and call SimilarityEvaluator using Azure AI
+                Project URL in the following format
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
 
     .. admonition:: Example:
@@ -57,13 +65,16 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
             :end-before: [END threshold_similarity_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize with a threshold and call a SimilarityEvaluator.
+            :caption: Initialize with a threshold and call a
+                SimilarityEvaluator.
 
     .. note::
 
-        To align with our support of a diverse set of models, an output key without the `gpt_` prefix has been added.
-        To maintain backwards compatibility, the old key with the `gpt_` prefix is still be present in the output;
-        however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
+    To align with our support of diverse models, an output key without the
+    `gpt_` prefix has been added. To maintain backwards compatibility, the
+    old key with the `gpt_` prefix is still present in the output; however,
+    it is recommended to use the new key moving forward as the old key will
+    be deprecated in the future.
     """
 
     # Constants must be defined within eval's directory to be save/loadable
@@ -72,7 +83,7 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
     _RESULT_KEY = "similarity"
 
     id = "azureai://built-in/evaluators/similarity"
-    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
+    """Evaluator identifier for cloud evaluation."""
 
     @override
     def __init__(self, model_config, *, threshold=3, **kwargs):
@@ -90,12 +101,14 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
         )
 
     # Ignoring a mypy error about having only 1 overload function.
-    # We want to use the overload style for all evals, even single-inputs. This is both to make
-    # refactoring to multi-input styles easier, stylistic consistency consistency across evals,
-    # and due to the fact that non-overloaded syntax now causes various parsing issues that
-    # we don't want to deal with.
+    # We want to use the overload style for all evals, even single-inputs.
+    # This makes refactoring to multi-input styles easier, keeps stylistic
+    # consistency across evals, and avoids parsing issues with non-overloaded
+    # syntax.
     @overload  # type: ignore
-    def __call__(self, *, query: str, response: str, ground_truth: str) -> Dict[str, float]:
+    def __call__(
+        self, *, query: str, response: str, ground_truth: str
+    ) -> Dict[str, float]:
         """
         Evaluate similarity.
 

@@ -153,18 +153,30 @@ class RougeScoreEvaluator(EvaluatorBase):
 
         if self._higher_is_better:
             if precision_valid:
-                results["rouge_precision_result"] = rouge_precision >= self._threshold["precision"]
+                results["rouge_precision_result"] = (
+                    rouge_precision >= self._threshold["precision"]
+                )
             if recall_valid:
-                results["rouge_recall_result"] = rouge_recall >= self._threshold["recall"]
+                results["rouge_recall_result"] = (
+                    rouge_recall >= self._threshold["recall"]
+                )
             if f1_valid:
-                results["rouge_f1_score_result"] = rouge_f1_score >= self._threshold["f1_score"]
+                results["rouge_f1_score_result"] = (
+                    rouge_f1_score >= self._threshold["f1_score"]
+                )
         else:
             if precision_valid:
-                results["rouge_precision_result"] = rouge_precision <= self._threshold["precision"]
+                results["rouge_precision_result"] = (
+                    rouge_precision <= self._threshold["precision"]
+                )
             if recall_valid:
-                results["rouge_recall_result"] = rouge_recall <= self._threshold["recall"]
+                results["rouge_recall_result"] = (
+                    rouge_recall <= self._threshold["recall"]
+                )
             if f1_valid:
-                results["rouge_f1_score_result"] = rouge_f1_score <= self._threshold["f1_score"]
+                results["rouge_f1_score_result"] = (
+                    rouge_f1_score <= self._threshold["f1_score"]
+                )
 
         return results
 
@@ -187,9 +199,15 @@ class RougeScoreEvaluator(EvaluatorBase):
             "rouge_f1_score_result": False,
         }
         # Convert metrics to floats, using nan for None or non-convertible values
-        rouge_precision = float(metrics.precision) if metrics.precision is not None else float("nan")
-        rouge_recall = float(metrics.recall) if metrics.recall is not None else float("nan")
-        rouge_f1_score = float(metrics.fmeasure) if metrics.fmeasure is not None else float("nan")
+        rouge_precision = (
+            float(metrics.precision) if metrics.precision is not None else float("nan")
+        )
+        rouge_recall = (
+            float(metrics.recall) if metrics.recall is not None else float("nan")
+        )
+        rouge_f1_score = (
+            float(metrics.fmeasure) if metrics.fmeasure is not None else float("nan")
+        )
         binary_results = self._get_binary_result(
             rouge_precision=rouge_precision,
             rouge_recall=rouge_recall,
@@ -199,9 +217,15 @@ class RougeScoreEvaluator(EvaluatorBase):
             "rouge_precision": rouge_precision,
             "rouge_recall": rouge_recall,
             "rouge_f1_score": rouge_f1_score,
-            "rouge_precision_result": EVALUATION_PASS_FAIL_MAPPING[binary_results["rouge_precision_result"]],
-            "rouge_recall_result": EVALUATION_PASS_FAIL_MAPPING[binary_results["rouge_recall_result"]],
-            "rouge_f1_score_result": EVALUATION_PASS_FAIL_MAPPING[binary_results["rouge_f1_score_result"]],
+            "rouge_precision_result": EVALUATION_PASS_FAIL_MAPPING[
+                binary_results["rouge_precision_result"]
+            ],
+            "rouge_recall_result": EVALUATION_PASS_FAIL_MAPPING[
+                binary_results["rouge_recall_result"]
+            ],
+            "rouge_f1_score_result": EVALUATION_PASS_FAIL_MAPPING[
+                binary_results["rouge_f1_score_result"]
+            ],
             "rouge_precision_threshold": self._threshold["precision"],
             "rouge_recall_threshold": self._threshold["recall"],
             "rouge_f1_score_threshold": self._threshold["f1_score"],

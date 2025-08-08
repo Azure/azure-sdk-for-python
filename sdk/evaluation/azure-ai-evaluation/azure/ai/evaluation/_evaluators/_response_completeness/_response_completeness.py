@@ -8,7 +8,12 @@ from typing import Dict, List, Union, Optional
 
 from typing_extensions import overload, override
 
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from azure.ai.evaluation._exceptions import (
+    EvaluationException,
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+)
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._common.utils import parse_quality_evaluator_reason_score
 from azure.ai.evaluation._model_configurations import Conversation, Message
@@ -37,6 +42,9 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
+    :keyword is_reasoning_model: (Preview) Adjusts prompty config
+        for reasoning models when True.
+    :paramtype is_reasoning_model: bool
 
     .. admonition:: Example:
 
@@ -73,11 +81,22 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *, threshold: Optional[float] = _DEFAULT_COMPLETENESS_THRESHOLD, **kwargs):
+    def __init__(
+        self,
+        model_config,
+        *,
+        threshold: Optional[float] = _DEFAULT_COMPLETENESS_THRESHOLD,
+        **kwargs,
+    ):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold
-        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY, **kwargs)
+        super().__init__(
+            model_config=model_config,
+            prompty_file=prompty_path,
+            result_key=self._RESULT_KEY,
+            **kwargs,
+        )
 
     @overload
     def __call__(
@@ -156,7 +175,9 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         score = math.nan
         if llm_output:
-            score, reason = parse_quality_evaluator_reason_score(llm_output, valid_score_range="[1-5]")
+            score, reason = parse_quality_evaluator_reason_score(
+                llm_output, valid_score_range="[1-5]"
+            )
 
             score_result = "pass" if score >= self.threshold else "fail"
 

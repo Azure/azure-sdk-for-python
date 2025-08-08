@@ -15,8 +15,17 @@ from typing_extensions import override
 
 from azure.ai.evaluation._common.constants import PROMPT_BASED_REASON_EVALUATORS
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
-from ..._common.utils import construct_prompty_model_config, validate_model_config, parse_quality_evaluator_reason_score
+from azure.ai.evaluation._exceptions import (
+    EvaluationException,
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+)
+from ..._common.utils import (
+    construct_prompty_model_config,
+    validate_model_config,
+    parse_quality_evaluator_reason_score,
+)
 from . import EvaluatorBase
 
 try:
@@ -71,10 +80,16 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         self._prompty_file = prompty_file
         self._threshold = threshold
         self._higher_is_better = _higher_is_better
-        super().__init__(eval_last_turn=eval_last_turn, threshold=threshold, _higher_is_better=_higher_is_better)
+        super().__init__(
+            eval_last_turn=eval_last_turn,
+            threshold=threshold,
+            _higher_is_better=_higher_is_better,
+        )
 
         subclass_name = self.__class__.__name__
-        user_agent = f"{UserAgentSingleton().value} (type=evaluator subtype={subclass_name})"
+        user_agent = (
+            f"{UserAgentSingleton().value} (type=evaluator subtype={subclass_name})"
+        )
         prompty_model_config = construct_prompty_model_config(
             validate_model_config(model_config),
             self._DEFAULT_OPEN_API_VERSION,
@@ -82,7 +97,9 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         )
 
         self._flow = AsyncPrompty.load(
-            source=self._prompty_file, model=prompty_model_config, is_reasoning_model=self._is_reasoning_model
+            source=self._prompty_file,
+            model=prompty_model_config,
+            is_reasoning_model=self._is_reasoning_model,
         )
 
     # __call__ not overridden here because child classes have such varied signatures that there's no point

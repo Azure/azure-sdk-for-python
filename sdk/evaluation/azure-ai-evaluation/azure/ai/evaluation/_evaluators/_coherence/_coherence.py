@@ -12,17 +12,22 @@ from azure.ai.evaluation._model_configurations import Conversation
 
 class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
-    Evaluates coherence score for a given query and response or a multi-turn conversation, including reasoning.
+    Evaluates coherence for a given query and response or a multi-turn
+    conversation, including reasoning.
 
-    The coherence measure assesses the ability of the language model to generate text that reads naturally,
-    flows smoothly, and resembles human-like language in its responses. Use it when assessing the readability
-    and user-friendliness of a model's generated responses in real-world applications.
+    The coherence measure assesses the model's ability to generate text that
+    reads naturally, flows smoothly, and resembles human-like language. Use it
+    when assessing the readability and user-friendliness of responses.
 
     :param model_config: Configuration for the Azure OpenAI model.
-    :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
+    :type model_config:
+        Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
     :param threshold: The threshold for the coherence evaluator. Default is 3.
     :type threshold: int
+    :keyword is_reasoning_model: (Preview) Adjusts prompty config
+        for reasoning models when True.
+    :paramtype is_reasoning_model: bool
 
     .. admonition:: Example:
 
@@ -31,7 +36,8 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             :end-before: [END coherence_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call CoherenceEvaluator using azure.ai.evaluation.AzureAIProject
+            :caption: Initialize and call CoherenceEvaluator using
+                azure.ai.evaluation.AzureAIProject
 
     .. admonition:: Example using Azure AI Project URL:
 
@@ -40,7 +46,8 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             :end-before: [END coherence_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call CoherenceEvaluator using Azure AI Project URL in following format
+            :caption: Initialize and call CoherenceEvaluator using Azure AI
+                Project URL in following format
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
 
     .. admonition:: Example with Threshold:
@@ -50,20 +57,21 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             :end-before: [END threshold_coherence_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize with threshold and call a CoherenceEvaluator with a query and response.
+            :caption: Initialize with threshold and call a CoherenceEvaluator
+                with a query and response.
 
     .. note::
 
-        To align with our support of a diverse set of models, an output key without the `gpt_` prefix has been added.
-        To maintain backwards compatibility, the old key with the `gpt_` prefix is still be present in the output;
-        however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
+    To align with support of diverse models, an output key without the
+    `gpt_` prefix has been added. The old key with the `gpt_` prefix is
+    still present for compatibility; however, it will be deprecated.
     """
 
     _PROMPTY_FILE = "coherence.prompty"
     _RESULT_KEY = "coherence"
 
     id = "azureai://built-in/evaluators/coherence"
-    """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
+    """Evaluator identifier for cloud evaluation."""
 
     @override
     def __init__(self, model_config, *, threshold=3, **kwargs):
@@ -105,9 +113,11 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     ) -> Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]:
         """Evaluate coherence for a conversation
 
-        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
-            key "messages", and potentially a global context under the key "context". Conversation turns are expected
-            to be dictionaries with keys "content", "role", and possibly "context".
+        :keyword conversation: The conversation to evaluate. Expected to
+            contain a list of conversation turns under the key "messages",
+            and optionally a global context under the key "context". Turns are
+            dictionaries with keys "content", "role", and possibly
+            "context".
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         :return: The coherence score.
         :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
@@ -119,19 +129,22 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         *args,
         **kwargs,
     ):
-        """Evaluate coherence. Accepts either a query and response for a single evaluation,
-        or a conversation for a potentially multi-turn evaluation. If the conversation has more than one pair of
-        turns, the evaluator will aggregate the results of each turn.
+        """Evaluate coherence.
+
+        Accepts a query/response for a single evaluation, or a conversation
+        for a multi-turn evaluation. If the conversation has more than one
+        pair of turns, results are aggregated.
 
         :keyword query: The query to be evaluated.
         :paramtype query: str
         :keyword response: The response to be evaluated.
         :paramtype response: Optional[str]
-        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
-            key "messages". Conversation turns are expected
-            to be dictionaries with keys "content" and "role".
+        :keyword conversation: The conversation to evaluate. Expected to
+            contain conversation turns under the key "messages" as
+            dictionaries with keys "content" and "role".
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         :return: The relevance score.
-        :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
+        :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str,
+            List[float]]]]]
         """
         return super().__call__(*args, **kwargs)

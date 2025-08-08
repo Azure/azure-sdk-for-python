@@ -49,6 +49,9 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         ~azure.ai.evaluation.OpenAIModelConfiguration]
     :param threshold: The threshold for the groundedness evaluator. Default is 3.
     :type threshold: int
+    :keyword is_reasoning_model: (Preview) Adjusts prompty config
+        for reasoning models when True.
+    :paramtype is_reasoning_model: bool
 
     .. admonition:: Example:
 
@@ -96,7 +99,9 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     @override
     def __init__(self, model_config, *, threshold=3, **kwargs):
         current_dir = os.path.dirname(__file__)
-        prompty_path = os.path.join(current_dir, self._PROMPTY_FILE_NO_QUERY)  # Default to no query
+        prompty_path = os.path.join(
+            current_dir, self._PROMPTY_FILE_NO_QUERY
+        )  # Default to no query
 
         self._higher_is_better = True
         super().__init__(
@@ -203,16 +208,17 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 self._DEFAULT_OPEN_API_VERSION,
                 UserAgentSingleton().value,
             )
-            try:
+            # Prefer feature detection over broad exception handling
+            from inspect import signature
+
+            sig = signature(AsyncPrompty.load)
+            if "is_reasoning_model" in sig.parameters:
                 self._flow = AsyncPrompty.load(
                     source=self._prompty_file,
                     model=prompty_model_config,
-                    is_reasoning_model=getattr(
-                        self, "_is_reasoning_model", False
-                    ),
+                    is_reasoning_model=self._is_reasoning_model,
                 )
-            except TypeError:
-                # Fallback when AsyncPrompty.load doesn't accept is_reasoning_model
+            else:
                 self._flow = AsyncPrompty.load(
                     source=self._prompty_file,
                     model=prompty_model_config,
@@ -268,7 +274,9 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
             )
 
-        return super()._convert_kwargs_to_eval_input(response=response[-1], context=context, query=query)
+        return super()._convert_kwargs_to_eval_input(
+            response=response[-1], context=context, query=query
+        )
 
     def _get_context_from_agent_response(self, response, tool_definitions):
         context = ""
@@ -278,10 +286,16 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             logger.debug(f"Tool Calls parsed successfully : {tool_calls}")
             if tool_calls:
                 for tool_call in tool_calls:
-                    if isinstance(tool_call, dict) and tool_call.get("type") == "tool_call":
+                    if (
+                        isinstance(tool_call, dict)
+                        and tool_call.get("type") == "tool_call"
+                    ):
                         tool_name = tool_call.get("name")
                         for tool in tool_definitions:
-                            if tool.get("name") == tool_name and tool.get("type") in self._SUPPORTED_TOOLS:
+                            if (
+                                tool.get("name") == tool_name
+                                and tool.get("type") in self._SUPPORTED_TOOLS
+                            ):
                                 if tool_name == "file_search":
                                     tool_result = tool_call.get("tool_result")
                                     if tool_result:
@@ -291,7 +305,9 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                                                 for content in content_list:
                                                     text = content.get("text")
                                                     if text:
-                                                        context = context + "\n" + str(text)
+                                                        context = (
+                                                            context + "\n" + str(text)
+                                                        )
         except Exception as ex:
             logger.debug(f"Error extracting context from agent response : {str(ex)}")
             context = ""

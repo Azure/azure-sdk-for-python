@@ -8,10 +8,19 @@ from typing import Dict, Union, List, Optional
 
 from typing_extensions import overload, override
 
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from azure.ai.evaluation._exceptions import (
+    EvaluationException,
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+)
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._model_configurations import Conversation, Message
-from ..._common.utils import check_score_is_valid, reformat_conversation_history, reformat_agent_response
+from ..._common.utils import (
+    check_score_is_valid,
+    reformat_conversation_history,
+    reformat_agent_response,
+)
 from azure.ai.evaluation._common._experimental import experimental
 
 logger = logging.getLogger(__name__)
@@ -27,6 +36,9 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
+    :keyword is_reasoning_model: (Preview) Adjusts prompty config
+        for reasoning models when True.
+    :paramtype is_reasoning_model: bool
 
     .. admonition:: Example:
 
@@ -61,11 +73,18 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *, threshold=_DEFAULT_INTENT_RESOLUTION_THRESHOLD, **kwargs):
+    def __init__(
+        self, model_config, *, threshold=_DEFAULT_INTENT_RESOLUTION_THRESHOLD, **kwargs
+    ):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold
-        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY, **kwargs)
+        super().__init__(
+            model_config=model_config,
+            prompty_file=prompty_path,
+            result_key=self._RESULT_KEY,
+            **kwargs,
+        )
 
     @overload
     def __call__(
@@ -167,5 +186,7 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             return response_dict
         # If llm_output is not a dictionary, return NaN for the score. This should never happen
         if logger:
-            logger.warning("LLM output is not a dictionary, returning NaN for the score.")
+            logger.warning(
+                "LLM output is not a dictionary, returning NaN for the score."
+            )
         return {self._result_key: math.nan}

@@ -8,7 +8,12 @@ from typing import Dict, Union, List
 
 from typing_extensions import overload, override
 
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from azure.ai.evaluation._exceptions import (
+    EvaluationException,
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+)
 from ..._common.utils import reformat_conversation_history, reformat_agent_response
 
 from azure.ai.evaluation._model_configurations import Conversation
@@ -35,6 +40,9 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         ~azure.ai.evaluation.OpenAIModelConfiguration]
     :param threshold: The threshold for the relevance evaluator. Default is 3.
     :type threshold: int
+    :keyword is_reasoning_model: (Preview) Adjusts prompty config
+        for reasoning models when True.
+    :paramtype is_reasoning_model: bool
 
     .. admonition:: Example:
 
@@ -168,9 +176,13 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
                 target=ErrorTarget.CONVERSATION,
             )
         if not isinstance(eval_input["query"], str):
-            eval_input["query"] = reformat_conversation_history(eval_input["query"], logger)
+            eval_input["query"] = reformat_conversation_history(
+                eval_input["query"], logger
+            )
         if not isinstance(eval_input["response"], str):
-            eval_input["response"] = reformat_agent_response(eval_input["response"], logger)
+            eval_input["response"] = reformat_agent_response(
+                eval_input["response"], logger
+            )
         llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
         score = math.nan
 

@@ -69,7 +69,14 @@ class MeteorScoreEvaluator(EvaluatorBase):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, alpha: float = 0.9, beta: float = 3.0, gamma: float = 0.5, *, threshold: float = 0.5):
+    def __init__(
+        self,
+        alpha: float = 0.9,
+        beta: float = 3.0,
+        gamma: float = 0.5,
+        *,
+        threshold: float = 0.5,
+    ):
         self._alpha = alpha
         self._beta = beta
         self._gamma = gamma
