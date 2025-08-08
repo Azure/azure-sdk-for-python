@@ -105,6 +105,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             result_key=self._RESULT_KEY,
             threshold=threshold,
             _higher_is_better=self._higher_is_better,
+            **kwargs,
         )
         self._model_config = model_config
         self.threshold = threshold
@@ -202,7 +203,20 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 self._DEFAULT_OPEN_API_VERSION,
                 UserAgentSingleton().value,
             )
-            self._flow = AsyncPrompty.load(source=self._prompty_file, model=prompty_model_config)
+            try:
+                self._flow = AsyncPrompty.load(
+                    source=self._prompty_file,
+                    model=prompty_model_config,
+                    is_reasoning_model=getattr(
+                        self, "_is_reasoning_model", False
+                    ),
+                )
+            except TypeError:
+                # Fallback when AsyncPrompty.load doesn't accept is_reasoning_model
+                self._flow = AsyncPrompty.load(
+                    source=self._prompty_file,
+                    model=prompty_model_config,
+                )
 
         return super().__call__(*args, **kwargs)
 

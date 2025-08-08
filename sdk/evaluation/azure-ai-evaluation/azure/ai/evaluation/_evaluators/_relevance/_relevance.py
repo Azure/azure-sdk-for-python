@@ -79,7 +79,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *, threshold=3):
+    def __init__(self, model_config, *, threshold=3, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self._threshold = threshold
@@ -90,6 +90,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
             result_key=self._RESULT_KEY,
             threshold=threshold,
             _higher_is_better=self._higher_is_better,
+            **kwargs,
         )
 
     @overload

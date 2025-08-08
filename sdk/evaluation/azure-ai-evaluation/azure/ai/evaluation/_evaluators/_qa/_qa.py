@@ -102,11 +102,31 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
                 raise TypeError(f"{name} must be an int or float, got {type(value)}")
 
         evaluators = [
-            GroundednessEvaluator(model_config, threshold=groundedness_threshold),
-            RelevanceEvaluator(model_config, threshold=relevance_threshold),
-            CoherenceEvaluator(model_config, threshold=coherence_threshold),
-            FluencyEvaluator(model_config, threshold=fluency_threshold),
-            SimilarityEvaluator(model_config, threshold=similarity_threshold),
+            GroundednessEvaluator(
+                model_config,
+                threshold=groundedness_threshold,
+                **kwargs,
+            ),
+            RelevanceEvaluator(
+                model_config,
+                threshold=relevance_threshold,
+                **kwargs,
+            ),
+            CoherenceEvaluator(
+                model_config,
+                threshold=coherence_threshold,
+                **kwargs,
+            ),
+            FluencyEvaluator(
+                model_config,
+                threshold=fluency_threshold,
+                **kwargs,
+            ),
+            SimilarityEvaluator(
+                model_config,
+                threshold=similarity_threshold,
+                **kwargs,
+            ),
             F1ScoreEvaluator(threshold=f1_score_threshold),
         ]
         super().__init__(evaluators=evaluators, **kwargs)
