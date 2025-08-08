@@ -69,6 +69,75 @@ or [Azure CLI](https://learn.microsoft.com/cli/azure/storage/account?view=azure-
 az storage account show -n my-storage-account-name -g my-resource-group --query "primaryEndpoints.blob"
 ```
 
+## Quickstart: Upload a Blob and List Files
+
+The following is a minimal, fully working example for new users to verify their Azure Blob Storage setup.
+
+This script demonstrates how to:
+
+- Connect to Azure Blob Storage using a connection string
+- Create a container if it does not exist
+- Upload a text file to the container
+- Retrieve and list all blobs (files) in the container
+
+This is useful for validating installation, credentials, and access before building more advanced integrations.
+
+> Prerequisites:
+>
+> - Python 3.8 or higher
+> - An Azure Storage Account
+> - A connection string from the Azure Portal  
+>   (Navigate to your storage account → Access Keys → Copy "Connection string")
+>
+> Install the Azure Blob Storage SDK for Python:
+>
+> ```bash
+> pip install azure-storage-blob
+> ```
+
+```python
+from azure.storage.blob import BlobServiceClient
+
+# Replace this with your connection string
+connection_string = "your_connection_string_here"
+container_name = "mycontainer"
+blob_name = "example.txt"
+
+# Connect to the Blob service
+blob_service_client = BlobServiceClient.from_connection_string(connection_string)
+
+# Create the container (if it doesn't exist)
+try:
+    container_client = blob_service_client.get_container_client(container_name)
+    container_client.create_container()
+except Exception:
+    print(f"Container '{container_name}' may already exist.")
+
+# Create a file locally to upload
+with open("example.txt", "w") as f:
+    f.write("Hello from Azure Blob Storage!")
+
+# Upload the file
+blob_client = blob_service_client.get_blob_client(container=container_name, blob=blob_name)
+with open("example.txt", "rb") as data:
+    blob_client.upload_blob(data, overwrite=True)
+
+print("✅ Upload successful.")
+
+# List blobs in the container
+print("📦 Files in the container:")
+for blob in container_client.list_blobs():
+    print("-", blob.name)
+```
+
+This basic example is ideal for:
+
+- Students and early-stage developers exploring Azure for the first time
+- Data practitioners validating authentication and storage access
+- Teams automating data workflows and needing a fast local-to-cloud file transfer
+
+To learn more about using other credential types, SAS tokens, or asynchronous APIs, continue to the next section.
+
 #### Types of credentials
 The `credential` parameter may be provided in a number of different forms, depending on the type of
 [authorization](https://learn.microsoft.com/azure/storage/common/storage-auth) you wish to use:
