@@ -52,7 +52,7 @@ class TestSearchIndexClient:
         assert search_client._api_version == ApiVersion.V2020_06_30
 
     @mock.patch(
-        "azure.search.documents.indexes._generated.operations._search_service_client_operations.SearchServiceClientOperationsMixin.get_service_statistics"
+        "azure.search.documents.indexes._generated.operations._search_service_client_operations._SearchServiceClientOperationsMixin.get_service_statistics"
     )
     def test_get_service_statistics(self, mock_get_stats):
         client = SearchIndexClient("endpoint", CREDENTIAL)
@@ -62,7 +62,7 @@ class TestSearchIndexClient:
         assert mock_get_stats.call_args[1] == {"headers": client._headers}
 
     @mock.patch(
-        "azure.search.documents.indexes._generated.operations._search_service_client_operations.SearchServiceClientOperationsMixin.get_service_statistics"
+        "azure.search.documents.indexes._generated.operations._search_service_client_operations._SearchServiceClientOperationsMixin.get_service_statistics"
     )
     def test_get_service_statistics_v2020_06_30(self, mock_get_stats):
         client = SearchIndexClient("endpoint", CREDENTIAL, api_version=ApiVersion.V2020_06_30)
