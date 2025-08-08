@@ -1,17 +1,11 @@
 # Release History
 
-## 2.1.1 (Unreleased)
+## 2.2.0 (2025-08-08)
 
 ### Features Added
 
 - Added `tag_filters` in `SettingSelector` to filter settings by tags.
 - Added support for JSON comments in the `load` method, when a configuration setting has the json content type.
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 2.1.0 (2025-04-28)
 
