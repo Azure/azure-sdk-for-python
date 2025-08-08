@@ -6,34 +6,97 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.ai.contentunderstanding import ContentUnderstandingClient
+import asyncio
+import os
+from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
+from azure.core.credentials import AzureKeyCredential
 from dotenv import load_dotenv
+
+from sample_helper import get_credential, read_image_to_base64
 
 load_dotenv()
 
 """
 # PREREQUISITES
-    pip install azure-ai-contentunderstanding
+    pip install azure-ai-contentunderstanding python-dotenv
 # USAGE
     python faces_detect.py
 """
 
 
-def main():
-    client = ContentUnderstandingClient(
-        endpoint="ENDPOINT",
-        credential="CREDENTIAL",
-    )
+async def main():
+    """
+    Detect faces in an image using the faces detect API.
+    
+    High-level steps:
+    1. Load a test image from local file
+    2. Convert image to base64 format
+    3. Call the faces detect API
+    4. Display detection results with face details
+    """
+    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT")
+    credential = get_credential()
 
-    response = client.faces.detect(
+    # Handle credential context manager conditionally
+    if isinstance(credential, AzureKeyCredential):
+        async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
+            await detect_faces_in_image(client)
+    else:
+        async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
+            await detect_faces_in_image(client)
+
+
+async def detect_faces_in_image(client: ContentUnderstandingClient):
+    """Detect faces in a test image and display results."""
+    
+    # Load test image from sample files
+    sample_file_dir = os.path.dirname(os.path.abspath(__file__))
+    image_path = os.path.join(sample_file_dir, "sample_files", "face", "family.jpg")
+    
+    print(f"🔍 Detecting faces in image: {image_path}")
+    
+    # Convert image to base64
+    image_data = read_image_to_base64(image_path)
+    
+    # Detect faces in the image
+    response = await client.faces.detect(
         body={
-            "maxDetectedFaces": 50,
-            "url": "https://mystorageaccount.blob.core.windows.net/images/container/file.jpg",
-        },
+            "data": image_data,
+            "maxDetectedFaces": 10
+        }
     )
-    print(response)
+    
+    # Display detection results
+    print(f"✅ Face detection completed!")
+    
+    if hasattr(response, 'detected_faces') and response.detected_faces:
+        face_count = len(response.detected_faces)
+        print(f"👤 Detected {face_count} face{'s' if face_count != 1 else ''}")
+        
+        # Display details for each detected face
+        for i, face in enumerate(response.detected_faces, 1):
+            print(f"\n   Face {i}:")
+            
+            # Display face ID if available
+            if hasattr(face, 'face_id') and face.face_id:
+                print(f"      ID: {face.face_id}")
+            
+            # Display confidence if available
+            if hasattr(face, 'confidence') and face.confidence is not None:
+                print(f"      Confidence: {face.confidence:.4f}")
+            
+            # Display bounding box information
+            if hasattr(face, 'bounding_box') and face.bounding_box:
+                bbox = face.bounding_box
+                print(f"      Bounding Box:")
+                print(f"         Left: {bbox.left}, Top: {bbox.top}")
+                print(f"         Width: {bbox.width}, Height: {bbox.height}")
+    else:
+        print("👤 No faces detected in the image")
+    
+    print("\n🎉 Face detection sample completed successfully!")
 
 
 # x-ms-original-file: 2025-05-01-preview/Faces_Detect.json
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
