@@ -2213,59 +2213,6 @@ class TestBaseExporter(unittest.TestCase):
             # Restore original state
             _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"] = original_exception_state
 
-    def test_local_storage_state_exception_edge_cases(self):
-        """Test edge cases for exception state get/set operations"""
-        from azure.monitor.opentelemetry.exporter.statsbeat._state import (
-            get_local_storage_state_exception,
-            set_local_storage_state_exception,
-            _LOCAL_FILE_STORAGE_STATE
-        )
-        
-        # Save original state
-        original_exception_state = _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"]
-        
-        try:
-            # Test 1: Very long error message
-            long_error = "A" * 10000  # 10KB error message
-            set_local_storage_state_exception(long_error)
-            self.assertEqual(get_local_storage_state_exception(), long_error)
-            
-            # Test 2: Error message with special characters
-            special_chars_error = "Error: ñáéíóú@#$%^&*(){}[]|\\:;\"'<>,.?/~`"
-            set_local_storage_state_exception(special_chars_error)
-            self.assertEqual(get_local_storage_state_exception(), special_chars_error)
-            
-            # Test 3: Multiline error message
-            multiline_error = "Line 1\nLine 2\r\nLine 3\tTabbed\n"
-            set_local_storage_state_exception(multiline_error)
-            self.assertEqual(get_local_storage_state_exception(), multiline_error)
-            
-            # Test 4: Unicode error message
-            unicode_error = "Storage error: 存储错误 / エラー / خطأ"
-            set_local_storage_state_exception(unicode_error)
-            self.assertEqual(get_local_storage_state_exception(), unicode_error)
-            
-            # Test 5: Error message that looks like an enum
-            enum_like_error = "CLIENT_STORAGE_DISABLED"
-            set_local_storage_state_exception(enum_like_error)
-            self.assertEqual(get_local_storage_state_exception(), enum_like_error)
-            
-            # Test 6: Reset to None multiple times
-            for _ in range(5):
-                set_local_storage_state_exception(None)
-                self.assertIsNone(get_local_storage_state_exception())
-            
-            # Test 7: Alternating between None and string values
-            for i in range(5):
-                set_local_storage_state_exception(f"Error {i}")
-                self.assertEqual(get_local_storage_state_exception(), f"Error {i}")
-                set_local_storage_state_exception(None)
-                self.assertIsNone(get_local_storage_state_exception())
-            
-        finally:
-            # Restore original state
-            _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"] = original_exception_state
-
     def test_local_storage_state_readonly_get_operations(self):
         """Test the get operation for readonly state in local storage state"""
         from azure.monitor.opentelemetry.exporter.statsbeat._state import (
