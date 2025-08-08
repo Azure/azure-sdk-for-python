@@ -212,8 +212,8 @@ class SmbMultichannel(GeneratedSmbMultichannel):
     enabled: Optional[bool]
     """If SMB Multichannel is enabled."""
 
-    def __init__(self, **kwargs: Any) -> None:
-        self.enabled = kwargs.get('enabled')
+    def __init__(self, *, enabled: Optional[bool] = None, **kwargs: Any) -> None:
+        self.enabled = enabled
         if self.enabled is None:
             raise ValueError("The value 'enabled' must be specified.")
 
@@ -227,8 +227,8 @@ class SmbEncryptionInTransit(GeneratedSmbEncryptionInTransit):
     required: Optional[bool]
     """If encryption in transit is enabled."""
 
-    def __init__(self, **kwargs: Any) -> None:
-        self.required = kwargs.get('required')
+    def __init__(self, *, required: Optional[bool] = None, **kwargs: Any) -> None:
+        self.required = required
         if self.required is None:
             raise ValueError("The value 'required' must be specified.")
 
@@ -245,9 +245,15 @@ class ShareSmbSettings(GeneratedShareSmbSettings):
     encryption_in_transit: Optional[SmbEncryptionInTransit]
     """Sets the encryption in transit settings."""
 
-    def __init__(self, **kwargs: Any) -> None:
-        self.multichannel = kwargs.get('multichannel')
-        self.encryption_in_transit = kwargs.get('encryption_in_transit')
+    def __init__(
+        self,
+        *,
+        multichannel: Optional[SmbMultichannel] = None,
+        encryption_in_transit: Optional[SmbEncryptionInTransit] = None,
+        **kwargs: Any
+    ) -> None:
+        self.multichannel = multichannel
+        self.encryption_in_transit = encryption_in_transit
         if self.multichannel is None and self.encryption_in_transit is None:
             raise ValueError("The value 'multichannel' or 'encryption_in_transit' must be specified.")
 
@@ -261,8 +267,8 @@ class NfsEncryptionInTransit(GeneratedNfsEncryptionInTransit):
     required: Optional[bool]
     """If encryption in transit is enabled."""
 
-    def __init__(self, **kwargs: Any) -> None:
-        self.required = kwargs.get('required')
+    def __init__(self, *, required: Optional[bool] = None, **kwargs: Any) -> None:
+        self.required = required
         if self.required is None:
             raise ValueError("The value 'required' must be specified.")
 
@@ -276,8 +282,8 @@ class ShareNfsSettings(GeneratedShareNfsSettings):
     encryption_in_transit: Optional[NfsEncryptionInTransit]
     """Sets the encryption in transit settings."""
 
-    def __init__(self, **kwargs: Any) -> None:
-        self.encryption_in_transit = kwargs.get('encryption_in_transit')
+    def __init__(self, *, encryption_in_transit: Optional[NfsEncryptionInTransit] = None, **kwargs: Any) -> None:
+        self.encryption_in_transit = encryption_in_transit
         if self.encryption_in_transit is None:
             raise ValueError("The value 'encryption_in_transit' must be specified.")
 
@@ -296,16 +302,21 @@ class ShareProtocolSettings(GeneratedShareProtocolSettings):
     nfs: Optional[ShareNfsSettings]
     """Sets the NFS settings."""
 
-    def __init__(self, **kwargs: Any) -> None:
-        self.smb = kwargs.get('smb')
-        self.nfs = kwargs.get('nfs')
+    def __init__(
+        self,
+        *,
+        smb: Optional[ShareSmbSettings] = None,
+        nfs: Optional[ShareNfsSettings] = None,
+        **kwargs: Any
+    ) -> None:
+        self.smb = smb
+        self.nfs = nfs
         if self.smb is None and self.nfs is None:
             raise ValueError("The value 'smb' or 'nfs' must be specified.")
 
     @classmethod
     def _from_generated(cls, generated):
-        return cls(
-            smb=generated.smb)
+        return cls(smb=generated.smb, nfs=generated.nfs)
 
 
 class ShareSasPermissions(object):
