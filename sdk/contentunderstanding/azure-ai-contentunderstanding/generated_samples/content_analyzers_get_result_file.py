@@ -171,7 +171,7 @@ async def main():
                 image_content=image_content,
                 keyframe_id=keyframe_id,
                 test_name="content_analyzers_get_result_file",
-                test_pyfile_dir=os.path.dirname(os.path.abspath(__file__)),
+                test_py_file_dir=os.path.dirname(os.path.abspath(__file__)),
                 identifier=analyzer_id
             )
             print(f"💾 Keyframe image saved to: {saved_file_path}")

@@ -134,7 +134,7 @@ def delete_analyzer_and_assert_sync(client, analyzer_id: str, created_analyzer: 
         print(f"Analyzer {analyzer_id} was not created, no cleanup needed")
 
 
-def download_keyframes_and_assert_sync(client, analysis_operation_id: str, result, test_pyfile_dir: str, identifier: Optional[str] = None) -> None:
+def download_keyframes_and_assert_sync(client, analysis_operation_id: str, result, test_py_file_dir: str, identifier: Optional[str] = None) -> None:
     """Download keyframes from video analysis result and assert their existence (sync version).
 
     Downloads up to 3 keyframes: first, middle, and last frame to avoid duplicates.
@@ -143,7 +143,7 @@ def download_keyframes_and_assert_sync(client, analysis_operation_id: str, resul
         client: The ContentUnderstandingClient instance
         analysis_operation_id: The operation ID from the analysis
         result: The analysis result containing markdown with keyframes
-        test_pyfile_dir: The directory where pytest files are located
+        test_py_file_dir: The directory where pytest files are located
         identifier: Optional unique identifier to avoid conflicts (e.g., analyzer_id)
         
     Returns:
@@ -211,7 +211,7 @@ def download_keyframes_and_assert_sync(client, analysis_operation_id: str, resul
             image_content=response,
             keyframe_id=keyframe_id,
             test_name="test_content_analyzers_get_result_file",
-            test_pyfile_dir=test_pyfile_dir,
+            test_py_file_dir=test_py_file_dir,
             identifier=identifier
         )
         

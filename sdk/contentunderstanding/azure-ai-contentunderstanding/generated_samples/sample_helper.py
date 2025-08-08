@@ -94,7 +94,7 @@ def save_keyframe_image_to_file(
     image_content: bytes, 
     keyframe_id: str, 
     test_name: str, 
-    test_pyfile_dir: str, 
+    test_py_file_dir: str, 
     identifier: Optional[str] = None,
     output_dir: str = "test_output"
 ) -> str:
@@ -104,7 +104,7 @@ def save_keyframe_image_to_file(
         image_content: The binary image content to save
         keyframe_id: The keyframe ID (e.g., "keyFrame.1")
         test_name: Name of the test case (e.g., function name)
-        test_pyfile_dir: Directory where pytest files are located
+        test_py_file_dir: Directory where pytest files are located
         identifier: Optional unique identifier to avoid conflicts (e.g., analyzer_id)
         output_dir: Directory name to save the output file (default: "test_output")
         
@@ -119,7 +119,7 @@ def save_keyframe_image_to_file(
     frame_id = keyframe_id.replace('keyFrame.', '')
     
     # Create output directory if it doesn't exist
-    output_dir_path = os.path.join(test_pyfile_dir, output_dir)
+    output_dir_path = os.path.join(test_py_file_dir, output_dir)
     os.makedirs(output_dir_path, exist_ok=True)
     
     # Generate output filename with optional identifier to avoid conflicts

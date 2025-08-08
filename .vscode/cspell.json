@@ -57,6 +57,8 @@
     "sdk/communication/azure-communication-phonenumbers/**",
     "sdk/communication/azure-communication-sms/**",
     "sdk/communication/azure-communication-callautomation/tests/**",
+    "sdk/contentunderstanding/azure-ai-contentunderstanding/generated_samples/sample_files/**/*.mp4",
+    "sdk/contentunderstanding/azure-ai-contentunderstanding/generated_tests/test_data/**/*.mp4",
     "sdk/core/azure/**",
     "sdk/core/azure-common/**",
     "sdk/core/azure-core-tracing-opencensus/**",
@@ -549,6 +551,13 @@
         "mltable",
         "wsid",
         "runid"
+      ]
+    },
+    {
+      "filename": "sdk/contentunderstanding/azure-ai-contentunderstanding/azure/ai/contentunderstanding/models/_*.py",
+      "words": [
+        "UPCA",
+        "UPCE"
       ]
     },
     {

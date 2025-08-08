@@ -336,13 +336,13 @@ def assert_classifier_result(classifier_result: Any, result_name: str = "Classif
         print(f"Content {i} category: {content.category}, pages: {content.start_page_number}-{content.end_page_number}")
 
 
-def save_analysis_result_to_file(analysis_result: Any, test_name: str, test_pyfile_dir: str, identifier: Optional[str] = None, output_dir: str = "test_output") -> str:
+def save_analysis_result_to_file(analysis_result: Any, test_name: str, test_py_file_dir: str, identifier: Optional[str] = None, output_dir: str = "test_output") -> str:
     """Save analysis result to output file using pytest naming convention.
     
     Args:
         analysis_result: The analysis result object to save
         test_name: Name of the test case (e.g., function name)
-        test_pyfile_dir: Directory where pytest files are located
+        test_py_file_dir: Directory where pytest files are located
         identifier: Optional unique identifier for the result (e.g., analyzer_id)
         output_dir: Directory name to save the output file (default: "test_output")
         
@@ -353,7 +353,7 @@ def save_analysis_result_to_file(analysis_result: Any, test_name: str, test_pyfi
         OSError: If there are issues creating directory or writing file
     """
     # Create output directory if it doesn't exist
-    output_dir_path = os.path.join(test_pyfile_dir, output_dir)
+    output_dir_path = os.path.join(test_py_file_dir, output_dir)
     os.makedirs(output_dir_path, exist_ok=True)
     
     # Generate output filename with timestamp
@@ -375,13 +375,13 @@ def save_analysis_result_to_file(analysis_result: Any, test_name: str, test_pyfi
     return saved_file_path
 
 
-def save_classifier_result_to_file(classifier_result: Any, test_name: str, test_pyfile_dir: str, identifier: Optional[str] = None, output_dir: str = "test_output") -> str:
+def save_classifier_result_to_file(classifier_result: Any, test_name: str, test_py_file_dir: str, identifier: Optional[str] = None, output_dir: str = "test_output") -> str:
     """Save classifier result to output file using pytest naming convention.
     
     Args:
         classifier_result: The classifier result object to save
         test_name: Name of the test case (e.g., function name)
-        test_pyfile_dir: Directory where pytest files are located
+        test_py_file_dir: Directory where pytest files are located
         identifier: Optional unique identifier for the result (e.g., classifier_id)
         output_dir: Directory name to save the output file (default: "test_output")
         
@@ -392,7 +392,7 @@ def save_classifier_result_to_file(classifier_result: Any, test_name: str, test_
         OSError: If there are issues creating directory or writing file
     """
     # Create output directory if it doesn't exist
-    output_dir_path = os.path.join(test_pyfile_dir, output_dir)
+    output_dir_path = os.path.join(test_py_file_dir, output_dir)
     os.makedirs(output_dir_path, exist_ok=True)
     
     # Generate output filename with timestamp
@@ -418,7 +418,7 @@ def save_keyframe_image_to_file(
     image_content: bytes, 
     keyframe_id: str, 
     test_name: str, 
-    test_pyfile_dir: str, 
+    test_py_file_dir: str, 
     identifier: Optional[str] = None,
     output_dir: str = "test_output"
 ) -> str:
@@ -428,7 +428,7 @@ def save_keyframe_image_to_file(
         image_content: The binary image content to save
         keyframe_id: The keyframe ID (e.g., "keyFrame.1")
         test_name: Name of the test case (e.g., function name)
-        test_pyfile_dir: Directory where pytest files are located
+        test_py_file_dir: Directory where pytest files are located
         identifier: Optional unique identifier to avoid conflicts (e.g., analyzer_id)
         output_dir: Directory name to save the output file (default: "test_output")
         
@@ -443,7 +443,7 @@ def save_keyframe_image_to_file(
     frame_id = keyframe_id.replace('keyFrame.', '')
     
     # Create output directory if it doesn't exist
-    output_dir_path = os.path.join(test_pyfile_dir, output_dir)
+    output_dir_path = os.path.join(test_py_file_dir, output_dir)
     os.makedirs(output_dir_path, exist_ok=True)
     
     # Generate output filename with optional identifier to avoid conflicts
