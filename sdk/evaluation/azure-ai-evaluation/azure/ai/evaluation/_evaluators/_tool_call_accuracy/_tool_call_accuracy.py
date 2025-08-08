@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import copy
 import math
 import os
 import logging
@@ -20,6 +21,7 @@ from ..._converters._models import (
     _BUILT_IN_DESCRIPTIONS,
     _BUILT_IN_PARAMS,
 )
+from itertools import chain
 
 logger = logging.getLogger(__name__)
 
@@ -342,9 +344,14 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
                 if tool_name:
                     # Verify that the tool definition exists in user-provided definitions
+                    tool_definitions_expanded = list(chain.from_iterable(
+                        tool.get("functions", []) if tool.get("type") == "openapi" else [tool] 
+                        for tool in needed_tool_definitions
+                    ))   
+
                     tool_definition_exists = any(
                         tool.get("name") == tool_name and tool.get("type", "function") == "function"
-                        for tool in tool_definitions
+                        for tool in tool_definitions_expanded
                     )
                     if not tool_definition_exists:
                         raise EvaluationException(
