@@ -983,6 +983,34 @@ class ImageRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ImageResponse(_Model):
+    """Response model for image exports.
+
+    :ivar url: URL of the exported image. Required.
+    :vartype url: str
+    """
+
+    url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """URL of the exported image. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        url: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class InfoOperationResponse(_Model):
     """Return dataset's basic info or the list of available assets.
 

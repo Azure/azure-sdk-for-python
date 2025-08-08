@@ -1567,7 +1567,7 @@ def build_tiler_static_images_create_request(collection_id: str, **kwargs: Any) 
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
-    accept = _headers.pop("Accept", None)
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/data/collections/{collectionId}/image/static"
@@ -1583,8 +1583,7 @@ def build_tiler_static_images_create_request(collection_id: str, **kwargs: Any) 
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    if accept is not None:
-        _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -10298,7 +10297,7 @@ class TilerStaticImagesOperations:
     @overload
     def create(
         self, collection_id: str, body: _models.ImageRequest, *, content_type: str = "application/json", **kwargs: Any
-    ) -> Iterator[bytes]:
+    ) -> _models.ImageResponse:
         """Create Static Image.
 
         Create a new image export.
@@ -10310,15 +10309,15 @@ class TilerStaticImagesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Iterator[bytes]
-        :rtype: Iterator[bytes]
+        :return: ImageResponse. The ImageResponse is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.ImageResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def create(
         self, collection_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> Iterator[bytes]:
+    ) -> _models.ImageResponse:
         """Create Static Image.
 
         Create a new image export.
@@ -10330,15 +10329,15 @@ class TilerStaticImagesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Iterator[bytes]
-        :rtype: Iterator[bytes]
+        :return: ImageResponse. The ImageResponse is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.ImageResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def create(
         self, collection_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> Iterator[bytes]:
+    ) -> _models.ImageResponse:
         """Create Static Image.
 
         Create a new image export.
@@ -10350,15 +10349,15 @@ class TilerStaticImagesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Iterator[bytes]
-        :rtype: Iterator[bytes]
+        :return: ImageResponse. The ImageResponse is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.ImageResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
     def create(
         self, collection_id: str, body: Union[_models.ImageRequest, JSON, IO[bytes]], **kwargs: Any
-    ) -> Iterator[bytes]:
+    ) -> _models.ImageResponse:
         """Create Static Image.
 
         Create a new image export.
@@ -10368,8 +10367,8 @@ class TilerStaticImagesOperations:
         :param body: Image request body. Is one of the following types: ImageRequest, JSON, IO[bytes]
          Required.
         :type body: ~azure.planetarycomputer.models.ImageRequest or JSON or IO[bytes]
-        :return: Iterator[bytes]
-        :rtype: Iterator[bytes]
+        :return: ImageResponse. The ImageResponse is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.ImageResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -10384,7 +10383,7 @@ class TilerStaticImagesOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ImageResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -10406,7 +10405,7 @@ class TilerStaticImagesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", True)
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -10422,19 +10421,13 @@ class TilerStaticImagesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        response_headers = {}
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-
-        deserialized = response.iter_bytes()
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ImageResponse, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
