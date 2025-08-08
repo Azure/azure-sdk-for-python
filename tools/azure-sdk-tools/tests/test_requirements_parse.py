@@ -1,7 +1,7 @@
 import os, shutil
 
 from typing import List
-from ci_tools.scenario.generation import replace_dev_reqs
+from ci_tools.scenario.generation import replace_dev_reqs, is_relative_install_path
 from ci_tools.parsing import ParsedSetup
 
 integration_folder = os.path.join(os.path.dirname(__file__), "integration")
@@ -69,8 +69,10 @@ def test_replace_dev_reqs_relative(tmp_directory_create):
     mgmt_core_version = ParsedSetup.from_path(os.path.join(repo_root, "sdk", "core", "azure-mgmt-core")).version
     sdk_tools_version = ParsedSetup.from_path(os.path.join(repo_root, "tools", "azure-sdk-tools")).version
     core_version = ParsedSetup.from_path(os.path.join(repo_root, "sdk", "core", "azure-core")).version
+    keyvault_version = ParsedSetup.from_path(os.path.join(repo_root, "sdk", "keyvault", "azure-keyvault-keys")).version
 
     expected_results = [
+        os.path.join(expected_output_folder, f"azure_keyvault_keys-{keyvault_version}-py3-none-any.whl"),
         os.path.join(expected_output_folder, f"coretestserver-{coretestserver_version}-py3-none-any.whl"),
         os.path.join(expected_output_folder, f"coretestserver-{coretestserver_version}-py3-none-any.whl"),
         os.path.join(expected_output_folder, f"azure_identity-{identity_version}-py3-none-any.whl"),

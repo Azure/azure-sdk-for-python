@@ -9,9 +9,10 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
+from azure.core import AsyncPipelineClient
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -32,7 +33,6 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ..._model_base import SdkJSONEncoder, _deserialize
 from ..._operations._operations import (
     build_deidentification_cancel_job_request,
     build_deidentification_deidentify_documents_request,
@@ -42,14 +42,18 @@ from ..._operations._operations import (
     build_deidentification_list_job_documents_internal_request,
     build_deidentification_list_jobs_internal_request,
 )
-from .._vendor import DeidentificationClientMixinABC
+from ..._utils.model_base import SdkJSONEncoder, _deserialize
+from ..._utils.utils import ClientMixinABC
+from .._configuration import DeidentificationClientConfiguration
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
+class _DeidentificationClientOperationsMixin(
+    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], DeidentificationClientConfiguration]
+):
 
     @distributed_trace_async
     async def get_job(self, job_name: str, **kwargs: Any) -> _models.DeidentificationJob:
@@ -336,7 +340,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
     @distributed_trace
     def _list_jobs_internal(
         self, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.DeidentificationJob"]:
+    ) -> AsyncItemPaged["_models.DeidentificationJob"]:
         """List de-identification jobs.
 
         Resource list operation template.
@@ -429,7 +433,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
     @distributed_trace
     def _list_job_documents_internal(
         self, job_name: str, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.DeidentificationDocumentDetails"]:
+    ) -> AsyncItemPaged["_models.DeidentificationDocumentDetails"]:
         """List processed documents within a job.
 
         Resource list operation template.
