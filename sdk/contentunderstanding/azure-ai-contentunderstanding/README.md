@@ -24,7 +24,7 @@ python -m pip install azure-ai-contentunderstanding
 
 This SDK includes comprehensive samples that demonstrate API-level usage of all Azure AI Content Understanding capabilities. These samples show you exactly how to call each API endpoint with proper authentication, error handling, and resource management.
 
-**👉 [View All API Samples](./generated_samples/README.md)**
+**👉 View All API Samples in README.md of generated_samples directory**
 
 The samples cover three main API categories:
 
@@ -47,31 +47,19 @@ The samples cover three main API categories:
 
 ### 🌟 **Featured: Enhanced Face Similarity Demo**
 
-Try `generated_samples/person_directories_find_similar_faces.py` for a comprehensive API demonstration:
-
-```bash
-cd generated_samples
-python person_directories_find_similar_faces.py
-```
-
-This sample demonstrates:
-- **Real-world API usage patterns** with proper error handling
-- **Positive test case**: Finding matches between related faces (Dad1, Dad2, Dad3)
-- **Negative test case**: No matches when searching different people (Mom vs Dad)
-- **Complete API workflow**: Create → Enroll → Search → Verify → Cleanup
-
 ### 🚀 **Quick Start with Samples**
 
 1. **Set up authentication**:
    ```bash
    # Copy sample environment file
-   cp generated_samples/env.sample .env
+   cd generated_samples
+   cp env.sample .env
    
    # Edit .env with your endpoint (required)
    AZURE_CONTENT_UNDERSTANDING_ENDPOINT=https://your-resource-name.services.ai.azure.com/
    
-   # Leave AZURE_CONTENT_UNDERSTANDING_KEY empty by default
-   AZURE_CONTENT_UNDERSTANDING_KEY=
+     # Leave AZURE_CONTENT_UNDERSTANDING_KEY empty unless using key-based authentication (not recommended for production)
+  AZURE_CONTENT_UNDERSTANDING_KEY=
    
    # Use Azure CLI for authentication (recommended - secure)
    az login
@@ -87,22 +75,9 @@ This sample demonstrates:
 3. **Run any sample**:
    ```bash
    cd generated_samples
-   python person_directories_create.py              # Simple directory creation
-   python person_directories_find_similar_faces.py  # Comprehensive face demo
-   python content_analyzers_list.py                 # List available analyzers
+   python content_analyzers_analyze_binary.py       # Analyze binary files (PDFs, images, documents)
+   python content_analyzers_create_or_replace.py    # Create custom analyzer using begin_create_or_replace API
    ```
-
-### 📚 **API Pattern Examples**
-
-All samples demonstrate consistent API usage patterns:
-
-- **Async-first design** with proper resource management
-- **Smart authentication** (Azure CLI → Key → DefaultAzureCredential)
-- **Comprehensive error handling** and cleanup
-- **Real test data** and expected outcomes
-- **Detailed logging** with progress indicators
-
-**[→ Explore all API samples](./generated_samples/README.md)** to see complete API usage patterns for your specific use case.
 
 ## Troubleshooting
 
