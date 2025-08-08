@@ -25,7 +25,7 @@ class TestEventHubManagementSchemaRegistryOperationsAsync(AzureMgmtRecordedTestC
         response = self.client.schema_registry.list_by_namespace(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -58,7 +58,7 @@ class TestEventHubManagementSchemaRegistryOperationsAsync(AzureMgmtRecordedTestC
                 "type": "str",
                 "updatedAtUtc": "2020-02-20 00:00:00",
             },
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -71,7 +71,7 @@ class TestEventHubManagementSchemaRegistryOperationsAsync(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             namespace_name="str",
             schema_group_name="str",
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -84,7 +84,7 @@ class TestEventHubManagementSchemaRegistryOperationsAsync(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             namespace_name="str",
             schema_group_name="str",
-            api_version="2024-01-01",
+            api_version="2022-01-01-preview",
         )
 
         # please add some check logic here by yourself

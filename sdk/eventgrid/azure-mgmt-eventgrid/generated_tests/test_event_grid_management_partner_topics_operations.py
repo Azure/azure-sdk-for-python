@@ -24,7 +24,7 @@ class TestEventGridManagementPartnerTopicsOperations(AzureMgmtRecordedTestCase):
         response = self.client.partner_topics.get(
             resource_group_name=resource_group.name,
             partner_topic_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -75,7 +75,7 @@ class TestEventGridManagementPartnerTopicsOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -87,7 +87,7 @@ class TestEventGridManagementPartnerTopicsOperations(AzureMgmtRecordedTestCase):
         response = self.client.partner_topics.begin_delete(
             resource_group_name=resource_group.name,
             partner_topic_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -108,7 +108,7 @@ class TestEventGridManagementPartnerTopicsOperations(AzureMgmtRecordedTestCase):
                 },
                 "tags": {"str": "str"},
             },
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -118,7 +118,7 @@ class TestEventGridManagementPartnerTopicsOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_partner_topics_list_by_subscription(self, resource_group):
         response = self.client.partner_topics.list_by_subscription(
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -129,7 +129,7 @@ class TestEventGridManagementPartnerTopicsOperations(AzureMgmtRecordedTestCase):
     def test_partner_topics_list_by_resource_group(self, resource_group):
         response = self.client.partner_topics.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -141,7 +141,7 @@ class TestEventGridManagementPartnerTopicsOperations(AzureMgmtRecordedTestCase):
         response = self.client.partner_topics.activate(
             resource_group_name=resource_group.name,
             partner_topic_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -153,7 +153,7 @@ class TestEventGridManagementPartnerTopicsOperations(AzureMgmtRecordedTestCase):
         response = self.client.partner_topics.deactivate(
             resource_group_name=resource_group.name,
             partner_topic_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself

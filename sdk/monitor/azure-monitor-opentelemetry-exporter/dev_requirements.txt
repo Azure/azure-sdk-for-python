@@ -1,4 +1,5 @@
 -e ../../../tools/azure-sdk-tools
 ../../core/azure-core
+../../core/azure-core-tracing-opentelemetry
 -e ../../identity/azure-identity
 aiohttp>=3.0; python_version >= '3.7'

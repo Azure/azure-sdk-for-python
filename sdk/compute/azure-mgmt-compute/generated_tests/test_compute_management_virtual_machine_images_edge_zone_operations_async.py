@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.compute.aio import ComputeManagementClient
+from azure.mgmt.compute.v2024_11_01.aio import ComputeManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -21,14 +21,37 @@ class TestComputeManagementVirtualMachineImagesEdgeZoneOperationsAsync(AzureMgmt
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_virtual_machine_images_edge_zone_get(self, resource_group):
-        response = await self.client.virtual_machine_images_edge_zone.get(
+    async def test_virtual_machine_images_edge_zone_list_publishers(self, resource_group):
+        response = await self.client.virtual_machine_images_edge_zone.list_publishers(
+            location="str",
+            edge_zone="str",
+            api_version="2024-11-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machine_images_edge_zone_list_offers(self, resource_group):
+        response = await self.client.virtual_machine_images_edge_zone.list_offers(
+            location="str",
+            edge_zone="str",
+            publisher_name="str",
+            api_version="2024-11-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_virtual_machine_images_edge_zone_list_skus(self, resource_group):
+        response = await self.client.virtual_machine_images_edge_zone.list_skus(
             location="str",
             edge_zone="str",
             publisher_name="str",
             offer="str",
-            skus="str",
-            version="str",
             api_version="2024-11-01",
         )
 
@@ -52,37 +75,14 @@ class TestComputeManagementVirtualMachineImagesEdgeZoneOperationsAsync(AzureMgmt
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_virtual_machine_images_edge_zone_list_offers(self, resource_group):
-        response = await self.client.virtual_machine_images_edge_zone.list_offers(
-            location="str",
-            edge_zone="str",
-            publisher_name="str",
-            api_version="2024-11-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machine_images_edge_zone_list_publishers(self, resource_group):
-        response = await self.client.virtual_machine_images_edge_zone.list_publishers(
-            location="str",
-            edge_zone="str",
-            api_version="2024-11-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machine_images_edge_zone_list_skus(self, resource_group):
-        response = await self.client.virtual_machine_images_edge_zone.list_skus(
+    async def test_virtual_machine_images_edge_zone_get(self, resource_group):
+        response = await self.client.virtual_machine_images_edge_zone.get(
             location="str",
             edge_zone="str",
             publisher_name="str",
             offer="str",
+            skus="str",
+            version="str",
             api_version="2024-11-01",
         )
 

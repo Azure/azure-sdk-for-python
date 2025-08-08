@@ -48,6 +48,7 @@ from azure.ai.agents.telemetry import AIAgentsInstrumentor
 
 # Define the custom span processor that is used for adding the custom
 # attributes to spans when they are started.
+# [START custom_attribute_span_processor]
 class CustomAttributeSpanProcessor(SpanProcessor):
     def __init__(self):
         pass
@@ -65,6 +66,8 @@ class CustomAttributeSpanProcessor(SpanProcessor):
         pass
 
 
+# [END custom_attribute_span_processor]
+
 # Setup tracing to console
 # Requires opentelemetry-sdk
 span_exporter = ConsoleSpanExporter()
@@ -81,8 +84,10 @@ project_client = AIProjectClient(
 )
 
 # Add the custom span processor to the global tracer provider
+# [START add_custom_span_processor_to_tracer_provider]
 provider = cast(TracerProvider, trace.get_tracer_provider())
 provider.add_span_processor(CustomAttributeSpanProcessor())
+# [END add_custom_span_processor_to_tracer_provider]
 
 scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)

@@ -24,7 +24,7 @@ class TestSqlManagementServerSecurityAlertPoliciesOperations(AzureMgmtRecordedTe
         response = self.client.server_security_alert_policies.list_by_server(
             resource_group_name=resource_group.name,
             server_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestSqlManagementServerSecurityAlertPoliciesOperations(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             server_name="str",
             security_alert_policy_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -71,7 +71,7 @@ class TestSqlManagementServerSecurityAlertPoliciesOperations(AzureMgmtRecordedTe
                 },
                 "type": "str",
             },
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

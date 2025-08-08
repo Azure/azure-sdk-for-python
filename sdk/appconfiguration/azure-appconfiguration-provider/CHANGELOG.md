@@ -1,12 +1,11 @@
 # Release History
 
-## 2.1.1 (Unreleased)
+## 2.2.1 (Unreleased)
 
 ### Features Added
 
 * Added support for forced refresh of configurations when using Key Vault references. Adds `secret_refresh_interval` to the `AzureAppConfigurationProvider.load` method. This allows the provider to refresh Key Vault secrets at a specified interval. Is set to 60 seconds by default, and can only be set if using Key Vault references.
 * Added support for async `on_refresh_success`.
-- Added `tag_filters` in `SettingSelector` to filter settings by tags.
 
 ### Breaking Changes
 
@@ -15,6 +14,13 @@
 * Fixed a bug where feature flags were using the configuration refresh timer instead of the feature flag refresh timer.
 
 ### Other Changes
+
+## 2.2.0 (2025-08-08)
+
+### Features Added
+
+- Added `tag_filters` in `SettingSelector` to filter settings by tags.
+- Added support for JSON comments in the `load` method, when a configuration setting has the json content type.
 
 ## 2.1.0 (2025-04-28)
 

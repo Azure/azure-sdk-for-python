@@ -17,7 +17,6 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import AgentsClientConfiguration
 from .operations import (
-    AgentsClientOperationsMixin,
     FilesOperations,
     MessagesOperations,
     RunStepsOperations,
@@ -26,13 +25,14 @@ from .operations import (
     VectorStoreFileBatchesOperations,
     VectorStoreFilesOperations,
     VectorStoresOperations,
+    _AgentsClientOperationsMixin,
 )
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AgentsClient(AgentsClientOperationsMixin):  # pylint: disable=too-many-instance-attributes
+class AgentsClient(_AgentsClientOperationsMixin):  # pylint: disable=too-many-instance-attributes
     """AgentsClient.
 
     :ivar threads: ThreadsOperations operations
