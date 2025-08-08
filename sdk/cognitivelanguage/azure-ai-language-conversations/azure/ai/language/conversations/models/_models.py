@@ -821,8 +821,8 @@ class ConversationActions(_Model):
     :vartype in_progress: int
     :ivar total: Total count of tasks submitted as part of the job. Required.
     :vartype total: int
-    :ivar items_property: List of results from tasks (if available).
-    :vartype items_property:
+    :ivar task_results: List of results from tasks (if available).
+    :vartype task_results:
      list[~azure.ai.language.conversations.models.AnalyzeConversationOperationResult]
     """
 
@@ -834,7 +834,7 @@ class ConversationActions(_Model):
     """Count of tasks that are currently in progress. Required."""
     total: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Total count of tasks submitted as part of the job. Required."""
-    items_property: Optional[List["_models.AnalyzeConversationOperationResult"]] = rest_field(
+    task_results: Optional[List["_models.AnalyzeConversationOperationResult"]] = rest_field(
         name="items", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of results from tasks (if available)."""
@@ -847,7 +847,7 @@ class ConversationActions(_Model):
         failed: int,
         in_progress: int,
         total: int,
-        items_property: Optional[List["_models.AnalyzeConversationOperationResult"]] = None,
+        task_results: Optional[List["_models.AnalyzeConversationOperationResult"]] = None,
     ) -> None: ...
 
     @overload
