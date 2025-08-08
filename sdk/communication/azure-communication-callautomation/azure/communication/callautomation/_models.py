@@ -3,8 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import List, Optional, Union, TYPE_CHECKING
+from typing import Dict, List, Optional, Union, TYPE_CHECKING
 from typing_extensions import Literal
+
 from ._generated.models import (
     CallLocator,
     WebSocketMediaStreamingOptions as WebSocketMediaStreamingOptionsRest,
@@ -16,14 +17,19 @@ from ._generated.models import (
     Choice as ChoiceInternal,
     ChannelAffinity as ChannelAffinityInternal,
     MediaStreamingSubscription as MediaStreamingSubscriptionInternal,
-    TranscriptionSubscription as TranscriptionSubscriptionInternal
+    TranscriptionSubscription as TranscriptionSubscriptionInternal,
+    PiiRedactionOptions as PiiRedactionOptionsInternal,
+    TeamsPhoneCallDetails as TeamsPhoneCallDetailsInternal,
+    SummarizationOptions as SummarizationOptionsInternal,
+    TeamsPhoneCallerDetails as TeamsPhoneCallerDetailsInternal,
+    TeamsPhoneSourceDetails as TeamsPhoneSourceDetailsInternal
 )
 from ._shared.models import (
     CommunicationIdentifier,
     CommunicationUserIdentifier,
     PhoneNumberIdentifier,
 )
-from ._generated.models._enums import PlaySourceType
+from ._generated.models._enums import PlaySourceType, RedactionType
 from ._generated.models._enums import RecordingStorageKind
 from ._utils import (
     deserialize_phone_identifier,
@@ -57,6 +63,7 @@ if TYPE_CHECKING:
         MuteParticipantsResult as MuteParticipantsResultRest,
         SendDtmfTonesResult as SendDtmfTonesResultRest,
         CancelAddParticipantResponse as CancelAddParticipantResultRest,
+        MoveParticipantsResponse as MoveParticipantsResponseRest,
     )
 
 
@@ -432,7 +439,7 @@ class TranscriptionOptions:
     :param transport_type: The type of transport to be used for live transcription, eg. Websocket.
      Required. "websocket"
     :type transport_type: str or ~azure.communication.callautomation.StreamingTransportType
-    :param locale: Defines the locale for the data e.g en-CA, en-AU. Required.
+    :param locale: Defines the locale for the data e.g en-CA, en-AU.
     :type locale: str
     :param start_transcription: Determines if the transcription should be started immediately after
      call is answered or not. Required.
@@ -447,7 +454,7 @@ class TranscriptionOptions:
     """Transport URL for live transcription."""
     transport_type: Union[str, "StreamingTransportType"]
     """The type of transport to be used for live transcription."""
-    locale: str
+    locale: Optional[str] = None
     """Defines the locale for the data."""
     start_transcription: bool
     """Determines if the transcription should be started immediately after call is answered or not."""
@@ -455,16 +462,28 @@ class TranscriptionOptions:
     """Endpoint where the custom model was deployed."""
     enable_intermediate_results: Optional[bool] = None
     """Enables intermediate results for the transcribed speech."""
+    pii_redaction: Optional["PiiRedactionOptions"] = None
+    """PII redaction configuration options."""
+    enable_sentiment_analysis: Optional[bool] = None
+    """Indicating if sentiment analysis should be used."""
+    locales: Optional[List[str]] = None
+    """List of languages for Language Identification."""
+    summarization: Optional["SummarizationOptions"] = None
+    """Summarization configuration options."""
 
     def __init__(
         self,
         *,
         transport_url: str,
         transport_type: Union[str, "StreamingTransportType"],
-        locale: str,
         start_transcription: bool,
+        locale: Optional[str] = None,
         speech_recognition_model_endpoint_id: Optional[str] = None,
         enable_intermediate_results: Optional[bool] = None,
+        pii_redaction: Optional["PiiRedactionOptions"] = None,
+        enable_sentiment_analysis: Optional[bool] = None,
+        locales: Optional[List[str]] = None,
+        summarization: Optional["SummarizationOptions"] = None,
     ):
         self.transport_url = transport_url
         self.transport_type = transport_type
@@ -472,6 +491,10 @@ class TranscriptionOptions:
         self.start_transcription = start_transcription
         self.speech_recognition_model_endpoint_id = speech_recognition_model_endpoint_id
         self.enable_intermediate_results = enable_intermediate_results
+        self.pii_redaction_options=pii_redaction
+        self.enable_sentiment_analysis=enable_sentiment_analysis
+        self.locales=locales
+        self.summarization_options=summarization
 
     def _to_generated(self):
         return WebSocketTranscriptionOptionsRest(
@@ -480,7 +503,11 @@ class TranscriptionOptions:
             locale=self.locale,
             start_transcription=self.start_transcription,
             speech_recognition_model_endpoint_id=self.speech_recognition_model_endpoint_id,
-            enable_intermediate_results=self.enable_intermediate_results
+            enable_intermediate_results=self.enable_intermediate_results,
+            pii_redaction_options=self.pii_redaction._to_generated() if self.pii_redaction else None, # pylint:disable=protected-access
+            enable_sentiment_analysis=self.enable_sentiment_analysis,
+            locales=self.locales,
+            summarization_options=self.summarization._to_generated() if self.summarization else None # pylint:disable=protected-access
         )
 
 class MediaStreamingSubscription:
@@ -746,7 +773,6 @@ class RecordingProperties:
             recording_kind=recording_state_result.recording_kind,
         )
 
-
 class CallParticipant:
     """Details of an Azure Communication Service call participant.
 
@@ -840,6 +866,48 @@ class RemoveParticipantResult:
     def _from_generated(cls, remove_participant_result_generated: "RemoveParticipantResultRest"):
         return cls(operation_context=remove_participant_result_generated.operation_context)
 
+
+class MoveParticipantsResult:
+    """The response payload for moving participants to the call.
+    :keyword participants: List of current participants in the call.
+    :paramtype participants: list[~azure.communication.callautomation.CallParticipant]
+    :keyword operation_context: The operation context provided by client.
+    :paramtype operation_context: str
+    :keyword from_call: The CallConnectionId for the call you want to move the participant from.
+    :paramtype from_call: str
+    """
+
+    participants: Optional[List[CallParticipant]]
+    """List of current participants in the call."""
+    operation_context: Optional[str]
+    """The operation context provided by client."""
+    from_call: Optional[str]
+    """The CallConnectionId for the call you want to move the participant from."""
+
+    def __init__(
+        self,
+        *,
+        participants: Optional[List[CallParticipant]] = None,
+        operation_context: Optional[str] = None,
+        from_call: Optional[str] = None,
+    ) -> None:
+        self.participants = participants
+        self.operation_context = operation_context
+        self.from_call = from_call
+
+    @classmethod
+    def _from_generated(cls, move_participants_result_generated: "MoveParticipantsResponseRest"):
+        participants = None
+        if move_participants_result_generated.participants:
+            participants = [
+                CallParticipant._from_generated(participant)  # pylint:disable=protected-access
+                for participant in move_participants_result_generated.participants
+            ]
+        return cls(
+            participants=participants,
+            operation_context=move_participants_result_generated.operation_context,
+            from_call=move_participants_result_generated.from_call,
+        )
 
 class TransferCallResult:
     """The response payload for transferring the call.
@@ -947,3 +1015,229 @@ class CancelAddParticipantOperationResult:
             invitation_id=cancel_add_participant_operation_result_generated.invitation_id,
             operation_context=cancel_add_participant_operation_result_generated.operation_context,
         )
+
+class PiiRedactionOptions:
+    """PII redaction configuration options.
+
+    :keyword enable: Gets or sets a value indicating whether PII redaction is enabled.
+    :paramtype enable: bool
+    :keyword redaction_type: Gets or sets the type of PII redaction to be used. "maskWithCharacter"
+    :paramtype redaction_type: str or ~azure.communication.callautomation.models.RedactionType
+    """
+
+    enable: Optional[bool]
+    """Gets or sets a value indicating whether PII redaction is enabled."""
+    redaction_type: Optional[Union[str, "RedactionType"]]
+    """Gets or sets the type of PII redaction to be used."""
+
+    def __init__(self, *, enable: bool = None, redaction_type: Optional[Union[str, "RedactionType"]] = None):
+        self.enable = enable
+        self.redaction_type = redaction_type
+
+    def _to_generated(self):
+        return PiiRedactionOptionsInternal(enable=self.enable, redaction_type=self.redaction_type)
+
+class TeamsPhoneCallDetails:
+    """The call details which will be sent to the target.
+
+    :keyword teams_phone_caller_details: Container for details relating to the original caller of the
+     call.
+    :paramtype teams_phone_caller_details:
+     ~azure.communication.callautomation.models.TeamsPhoneCallerDetails
+    :keyword teams_phone_source_details: Container for details relating to the entity responsible for
+     the creation of these call details.
+    :paramtype teams_phone_source_details:
+     ~azure.communication.callautomation.models.TeamsPhoneSourceDetails
+    :keyword session_id: Id to exclusively identify this call session. IVR will use this for their
+     telemetry/reporting.
+    :paramtype session_id: str
+    :keyword intent: The intent of the call.
+    :paramtype intent: str
+    :keyword call_topic: A very short description (max 48 chars) of the reason for the call. To be
+     displayed in Teams CallNotification.
+    :paramtype call_topic: str
+    :keyword call_context: A summary of the call thus far. It will be displayed on a side panel in the
+     Teams UI.
+    :paramtype call_context: str
+    :keyword transcript_url: Url for fetching the transcript of the call.
+    :paramtype transcript_url: str
+    :keyword call_sentiment: Sentiment of the call thus far.
+    :paramtype call_sentiment: str
+    :keyword suggested_actions: Recommendations for resolving the issue based on the customer's intent
+     and interaction history.
+    :paramtype suggested_actions: str
+    """
+
+    teams_phone_caller_details: Optional["TeamsPhoneCallerDetails"]
+    """Gets or sets the caller details."""
+    teams_phone_source_details: Optional["TeamsPhoneSourceDetails"]
+    """Gets or sets the source details."""
+    session_id: Optional[str]
+    """Gets or sets the session id."""
+    intent: Optional[str]
+    """Gets or sets the intent."""
+    call_topic: Optional[str]
+    """Gets or sets the call topic."""
+    call_context: Optional[str]
+    """Gets or sets the call context."""
+    transcript_url: Optional[str]
+    """Gets or sets the transcript url."""
+    call_sentiment: Optional[str]
+    """Gets or sets the call sentiment."""
+    suggested_actions: Optional[str]
+    """Gets or sets the suggested actions."""
+
+    def __init__(self, *,
+                 teams_phone_caller_details: Optional["TeamsPhoneCallerDetails"] = None,
+                 teams_phone_source_details: Optional["TeamsPhoneSourceDetails"] = None,
+                 session_id: Optional[str] = None,
+                 intent: Optional[str] = None,
+                 call_topic: Optional[str] = None,
+                 call_context: Optional[str] = None,
+                 transcript_url: Optional[str] = None,
+                 call_sentiment: Optional[str] = None,
+                 suggested_actions: Optional[str] = None):
+        self.teams_phone_caller_details = teams_phone_caller_details
+        self.teams_phone_source_details = teams_phone_source_details
+        self.session_id = session_id
+        self.intent = intent
+        self.call_topic = call_topic
+        self.call_context = call_context
+        self.transcript_url = transcript_url
+        self.call_sentiment = call_sentiment
+        self.suggested_actions = suggested_actions
+
+    def _to_generated(self):
+        return TeamsPhoneCallDetailsInternal(
+            teams_phone_caller_details=self.teams_phone_caller_details,
+            teams_phone_source_details=self.teams_phone_source_details,
+            session_id=self.session_id,
+            intent=self.intent,
+            call_topic=self.call_topic,
+            call_context=self.call_context,
+            transcript_url=self.transcript_url,
+            call_sentiment=self.call_sentiment,
+            suggested_actions=self.suggested_actions
+        )
+
+class TeamsPhoneCallerDetails:
+    """Container for details relating to the original caller of the call.
+
+    All required parameters must be populated in order to send to server.
+
+    :keyword caller: Caller's ID. Required.
+    :paramtype caller: ~azure.communication.callautomation.models.CommunicationIdentifierModel
+    :keyword name: Caller's name. Required.
+    :paramtype name: str
+    :keyword phone_number: Caller's phone number. Required.
+    :paramtype phone_number: str
+    :keyword record_id: Caller's record ID (ex in CRM).
+    :paramtype record_id: str
+    :keyword screen_pop_url: Caller's screen pop URL.
+    :paramtype screen_pop_url: str
+    :keyword is_authenticated: Flag indicating whether the caller was authenticated.
+    :paramtype is_authenticated: bool
+    :keyword additional_caller_information: A set of key value pairs (max 10, any additional entries
+     would be ignored) which a bot author wants to pass to the Teams Client for display to the
+     agent.
+    :paramtype additional_caller_information: dict[str, str]
+    """
+
+    caller: CommunicationIdentifier
+    name: str
+    phone_number: str
+    record_id: Optional[str] = None
+    screen_pop_url: Optional[str] = None
+    is_authenticated: Optional[bool] = None
+    additional_caller_information: Optional[Dict[str, str]] = None
+
+    def __init__(
+        self,
+        *,
+        caller: CommunicationIdentifier,
+        name: str,
+        phone_number: str,
+        record_id: Optional[str] = None,
+        screen_pop_url: Optional[str] = None,
+        is_authenticated: Optional[bool] = None,
+        additional_caller_information: Optional[Dict[str, str]] = None
+    ) -> None:
+        self.caller = caller
+        self.name = name
+        self.phone_number = phone_number
+        self.record_id = record_id
+        self.screen_pop_url = screen_pop_url
+        self.is_authenticated = is_authenticated
+        self.additional_caller_information = additional_caller_information
+
+    def _to_generated(self):
+        return TeamsPhoneCallerDetailsInternal(
+            caller=self.caller,
+            name=self.name,
+            phone_number=self.phone_number,
+            record_id=self.record_id,
+            screen_pop_url=self.screen_pop_url,
+            is_authenticated=self.is_authenticated,
+            additional_caller_information=self.additional_caller_information
+        )
+
+class TeamsPhoneSourceDetails:
+    """Container for details relating to the entity responsible for the creation of these call
+    details.
+
+    All required parameters must be populated in order to send to server.
+
+    :keyword source: ID of the source entity passing along the call details (ex. Application Instance
+     ID of - CQ/AA). Required.
+    :paramtype source: ~azure.communication.callautomation.CommunicationIdentifier
+    :keyword language: Language of the source entity passing along the call details, passed in the
+     ISO-639 standard. Required.
+    :paramtype language: str
+    :keyword status: Status of the source entity passing along the call details. Required.
+    :paramtype status: str
+    :keyword intended_targets: Intended targets of the source entity passing along the call details.
+    :paramtype intended_targets: dict[str,
+     ~azure.communication.callautomation.CommunicationIdentifier]
+    """
+
+    def __init__(
+        self,
+        *,
+        source: CommunicationIdentifier,
+        language: str,
+        status: str,
+        intended_targets: Optional[Dict[str, CommunicationIdentifier]] = None
+    ) -> None:
+        self.source = source
+        self.language = language
+        self.status = status
+        self.intended_targets = intended_targets
+
+    def _to_generated(self):
+        return TeamsPhoneSourceDetailsInternal(
+            source=serialize_identifier(self.source),
+            language=self.language,
+            status=self.status,
+            intended_targets=[serialize_identifier(p) for p in self.intended_targets.values()]
+        )
+
+class SummarizationOptions:
+    """Configuration options for call summarization.
+
+    :keyword enable_end_call_summary: Indicating whether end call summary should be enabled.
+    :paramtype enable_end_call_summary: bool
+    :keyword locale: Locale for summarization (e.g., en-US).
+    :paramtype locale: str
+    """
+
+    enable_end_call_summary: Optional[bool]
+    """Indicating whether end call summary should be enabled."""
+    locale: Optional[str]
+    """Gets or sets the locale for summarization (e.g., en-US)."""
+
+    def __init__(self, *, enable_end_call_summary: bool = None, locale: Optional[str] = None):
+        self.enable_end_call_summary = enable_end_call_summary
+        self.locale = locale
+
+    def _to_generated(self):
+        return SummarizationOptionsInternal(enable_end_call_summary=self.enable_end_call_summary, locale=self.locale)
