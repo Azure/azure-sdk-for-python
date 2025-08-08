@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0 (2025-05-12)
+## 1.0.0 (2025-06-03)
 
 ### Features Added
 
@@ -47,6 +47,7 @@
   - Model `VMwareToAzStackHCIProtectedItemModelCustomProperties` added property `target_fabric_agent_name`
   - Model `VaultModel` added property `identity`
   - Model `VaultModelUpdate` added property `identity`
+  - Added model `AffectedObjectDetails`
   - Added model `ConnectionDetails`
   - Added enum `CreatedByType`
   - Added model `DiskControllerInputs`
@@ -58,7 +59,6 @@
   - Added model `HyperVToAzStackHCIProtectedItemModelCustomPropertiesUpdate`
   - Added model `JobModel`
   - Added model `JobModelCustomProperties`
-  - Added model `JobModelCustomPropertiesAffectedObjectDetails`
   - Added model `JobModelProperties`
   - Added enum `JobObjectType`
   - Added enum `JobState`
