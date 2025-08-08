@@ -97,6 +97,8 @@ IF commands fail:
 
 ### STEP 3: STATIC VALIDATION (SEQUENTIAL)
 ```
+ASK the user to confirm they want to run static validation, generally this should be run if the user has made changes to the code.
+IF user confirms:
 FOR EACH validation step:
     RUN validation (tox mcp tool)
     IF errors/warnings found:
