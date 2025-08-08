@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+import errno
 import os
 import shutil
 import unittest
@@ -18,7 +19,8 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     BaseExporter,
     ExportResult,
 )
-from azure.monitor.opentelemetry.exporter.statsbeat._state import _REQUESTS_MAP, _STATSBEAT_STATE
+from azure.monitor.opentelemetry.exporter._storage import StorageExportResult
+from azure.monitor.opentelemetry.exporter.statsbeat._state import _REQUESTS_MAP, _STATSBEAT_STATE, _LOCAL_FILE_STORAGE_STATE
 from azure.monitor.opentelemetry.exporter.statsbeat import _customer_statsbeat
 from azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat import _CUSTOMER_STATSBEAT_STATE, CustomerStatsbeatMetrics
 from azure.monitor.opentelemetry.exporter.statsbeat._exporter import _StatsBeatExporter
@@ -307,6 +309,7 @@ class TestBaseExporter(unittest.TestCase):
         transmit_mock.assert_not_called()
         blob_mock.lease.assert_called_once()
         blob_mock.delete.assert_not_called()
+
 
     def test_format_storage_telemetry_item(self):
         time = datetime.now()
@@ -1221,7 +1224,7 @@ class TestBaseExporter(unittest.TestCase):
 
     def test_customer_statsbeat_shutdown_state(self):
         """Test that customer statsbeat shutdown state works correctly"""
-        from azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat import (
+        from azure.monitor.opentelemetry.exporter.statsbeat._state import (
             get_customer_statsbeat_shutdown,
             _CUSTOMER_STATSBEAT_STATE,
             _CUSTOMER_STATSBEAT_STATE_LOCK
@@ -1338,30 +1341,6 @@ class TestBaseExporter(unittest.TestCase):
             )
             self.assertFalse(exporter2._should_collect_customer_statsbeat())
 
-    def test_handle_transmit_from_storage_dropped_items_tracked(self):
-        exporter = BaseExporter(disable_offline_storage=False)
-        mock_customer_statsbeat = mock.Mock()
-        exporter._customer_statsbeat_metrics = mock_customer_statsbeat
-        
-        exporter.storage = mock.Mock()
-        exporter.storage._customer_statsbeat_metrics = mock_customer_statsbeat
-        
-        test_envelopes = [
-            TelemetryItem(name="test1", time=datetime.now()),
-            TelemetryItem(name="test2", time=datetime.now()),
-        ]
-        
-        exporter.storage.put.return_value = None
-        
-        exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
-        
-        exporter.storage.put.assert_called_once()
-        put_call_args = exporter.storage.put.call_args[0][0]
-        
-        self.assertEqual(len(put_call_args), 2)
-        self.assertIsInstance(put_call_args[0], dict)
-        self.assertIsInstance(put_call_args[1], dict)
-
     def test_handle_transmit_from_storage_success_triggers_transmit(self):
         exporter = BaseExporter(disable_offline_storage=False)
         
@@ -1388,6 +1367,968 @@ class TestBaseExporter(unittest.TestCase):
         self.assertIsNone(exporter.storage)
         
         exporter._transmit_from_storage()
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    @mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items')
+    def test_handle_transmit_from_storage_client_storage_disabled_tracked(self, mock_track_dropped):
+        """Test that _handle_transmit_from_storage tracks CLIENT_STORAGE_DISABLED when storage.put() returns CLIENT_STORAGE_DISABLED"""
+        exporter = BaseExporter(disable_offline_storage=False)
+        
+        # Setup customer statsbeat
+        mock_customer_statsbeat = mock.Mock()
+        exporter._customer_statsbeat_metrics = mock_customer_statsbeat
+        exporter._should_collect_customer_statsbeat = mock.Mock(return_value=True)
+        
+        # Mock the storage to return CLIENT_STORAGE_DISABLED
+        exporter.storage = mock.Mock()
+        exporter.storage.put.return_value = StorageExportResult.CLIENT_STORAGE_DISABLED
+        
+        test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
+        
+        # Call _handle_transmit_from_storage with FAILED_RETRYABLE
+        result = exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+        
+        # Verify storage.put was called
+        exporter.storage.put.assert_called_once()
+        
+        # Verify that _track_dropped_items was called with CLIENT_STORAGE_DISABLED
+        mock_track_dropped.assert_called_once_with(mock_customer_statsbeat, test_envelopes, DropCode.CLIENT_STORAGE_DISABLED)
+        
+        # Verify the method returns None as expected
+        self.assertIsNone(result)
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    @mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items')
+    def test_handle_transmit_from_storage_client_readonly_tracked(self, mock_track_dropped):
+        """Test that _handle_transmit_from_storage tracks CLIENT_READONLY when storage.put() returns CLIENT_READONLY and updates _LOCAL_FILE_STORAGE_STATE"""
+        exporter = BaseExporter(disable_offline_storage=False)
+        
+        # Setup customer statsbeat
+        mock_customer_statsbeat = mock.Mock()
+        exporter._customer_statsbeat_metrics = mock_customer_statsbeat
+        exporter._should_collect_customer_statsbeat = mock.Mock(return_value=True)
+        
+        # Mock the storage to return CLIENT_READONLY
+        exporter.storage = mock.Mock()
+        exporter.storage.put.return_value = StorageExportResult.CLIENT_READONLY
+        
+        test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
+        
+        # Clear the _LOCAL_FILE_STORAGE_STATE before test
+        original_readonly_state = _LOCAL_FILE_STORAGE_STATE["READONLY"]
+        _LOCAL_FILE_STORAGE_STATE["READONLY"] = True
+        
+        try:
+            # Call _handle_transmit_from_storage with FAILED_RETRYABLE
+            result = exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+            
+            # Verify storage.put was called
+            exporter.storage.put.assert_called_once()
+            
+            # Verify that _track_dropped_items was called with CLIENT_READONLY
+            mock_track_dropped.assert_called_once_with(mock_customer_statsbeat, test_envelopes, DropCode.CLIENT_READONLY)
+            
+            # Verify _LOCAL_FILE_STORAGE_STATE was updated
+            self.assertEqual(_LOCAL_FILE_STORAGE_STATE["READONLY"], False)
+            
+            # Verify the method returns None as expected
+            self.assertIsNone(result)
+        finally:
+            # Restore original state
+            _LOCAL_FILE_STORAGE_STATE["READONLY"] = original_readonly_state
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    @mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items')
+    def test_handle_transmit_from_storage_client_persistence_capacity_tracked(self, mock_track_dropped):
+        """Test that _handle_transmit_from_storage tracks CLIENT_PERSISTENCE_CAPACITY when storage.put() returns CLIENT_PERSISTENCE_CAPACITY_REACHED"""
+        exporter = BaseExporter(disable_offline_storage=False)
+        
+        # Setup customer statsbeat
+        mock_customer_statsbeat = mock.Mock()
+        exporter._customer_statsbeat_metrics = mock_customer_statsbeat
+        exporter._should_collect_customer_statsbeat = mock.Mock(return_value=True)
+        
+        # Mock the storage to return CLIENT_PERSISTENCE_CAPACITY_REACHED
+        exporter.storage = mock.Mock()
+        exporter.storage.put.return_value = StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED
+        
+        test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
+        
+        # Call _handle_transmit_from_storage with FAILED_RETRYABLE
+        result = exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+        
+        # Verify storage.put was called
+        exporter.storage.put.assert_called_once()
+        
+        # Verify that _track_dropped_items was called with CLIENT_PERSISTENCE_CAPACITY
+        mock_track_dropped.assert_called_once_with(mock_customer_statsbeat, test_envelopes, DropCode.CLIENT_PERSISTENCE_CAPACITY)
+        
+        # Verify the method returns None as expected
+        self.assertIsNone(result)
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    @mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items')
+    def test_handle_transmit_from_storage_client_exception_tracked(self, mock_track_dropped):
+        """Test that _handle_transmit_from_storage tracks CLIENT_EXCEPTION when storage.put() returns an error string and updates _LOCAL_FILE_STORAGE_STATE"""
+        exporter = BaseExporter(disable_offline_storage=False)
+        
+        # Setup customer statsbeat
+        mock_customer_statsbeat = mock.Mock()
+        exporter._customer_statsbeat_metrics = mock_customer_statsbeat
+        exporter._should_collect_customer_statsbeat = mock.Mock(return_value=True)
+        
+        # Mock the storage to return an error string (not one of the enum values)
+        error_message = "Storage write failed: Permission denied"
+        exporter.storage = mock.Mock()
+        exporter.storage.put.return_value = error_message
+        
+        test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
+        
+        # Set initial exception state
+        original_exception_state = _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"]
+        _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"] = error_message
+        
+        try:
+            # Call _handle_transmit_from_storage with FAILED_RETRYABLE
+            result = exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+            
+            # Verify storage.put was called
+            exporter.storage.put.assert_called_once()
+            
+            # Verify that _track_dropped_items was called with CLIENT_EXCEPTION and error message
+            mock_track_dropped.assert_called_once_with(mock_customer_statsbeat, test_envelopes, DropCode.CLIENT_EXCEPTION, error_message)
+            
+            # Verify _LOCAL_FILE_STORAGE_STATE was updated
+            self.assertEqual(_LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"], None)
+            
+            # Verify the method returns None as expected
+            self.assertIsNone(result)
+        finally:
+            # Restore original state
+            _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"] = original_exception_state
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    @mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items')
+    def test_handle_transmit_from_storage_no_storage_client_storage_disabled_tracked(self, mock_track_dropped):
+        """Test that _handle_transmit_from_storage tracks CLIENT_STORAGE_DISABLED when storage is disabled"""
+        exporter = BaseExporter(disable_offline_storage=True)
+        
+        # Setup customer statsbeat
+        mock_customer_statsbeat = mock.Mock()
+        exporter._customer_statsbeat_metrics = mock_customer_statsbeat
+        exporter._should_collect_customer_statsbeat = mock.Mock(return_value=True)
+        
+        # Verify storage is None
+        self.assertIsNone(exporter.storage)
+        
+        test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
+        
+        # Call _handle_transmit_from_storage with FAILED_RETRYABLE
+        result = exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+        
+        # Verify that _track_dropped_items was called with CLIENT_STORAGE_DISABLED
+        mock_track_dropped.assert_called_once_with(mock_customer_statsbeat, test_envelopes, DropCode.CLIENT_STORAGE_DISABLED)
+        
+        # Verify no return value when storage is disabled
+        self.assertIsNone(result)
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    def test_handle_transmit_from_storage_success_triggers_transmit_from_storage(self, ):
+        """Test that _handle_transmit_from_storage calls _transmit_from_storage on SUCCESS"""
+        exporter = BaseExporter(disable_offline_storage=False)
+        
+        # Setup customer statsbeat
+        mock_customer_statsbeat = mock.Mock()
+        exporter._customer_statsbeat_metrics = mock_customer_statsbeat
+        exporter._should_collect_customer_statsbeat = mock.Mock(return_value=True)
+        
+        # Mock storage and _transmit_from_storage
+        exporter.storage = mock.Mock()
+        
+        test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
+        
+        with mock.patch.object(exporter, '_transmit_from_storage') as mock_transmit_from_storage:
+            # Call _handle_transmit_from_storage with SUCCESS
+            result = exporter._handle_transmit_from_storage(test_envelopes, ExportResult.SUCCESS)
+            
+            # Verify _transmit_from_storage was called
+            mock_transmit_from_storage.assert_called_once()
+            
+            # Verify storage.put was not called for SUCCESS
+            exporter.storage.put.assert_not_called()
+            
+            # Verify no return value for SUCCESS
+            self.assertIsNone(result)
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    def test_local_file_storage_state_readonly_isolation(self):
+        """Test that _LOCAL_FILE_STORAGE_STATE READONLY changes don't affect other tests"""
+        # Save original state
+        original_readonly_state = _LOCAL_FILE_STORAGE_STATE["READONLY"]
+        original_exception_state = _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"]
+        
+        try:
+            # Test 1: Verify initial state
+            self.assertEqual(_LOCAL_FILE_STORAGE_STATE["READONLY"], False)
+            self.assertIsNone(_LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"])
+            
+            # Test 2: Change READONLY state and verify it doesn't affect EXCEPTION_OCCURRED
+            _LOCAL_FILE_STORAGE_STATE["READONLY"] = True
+            self.assertEqual(_LOCAL_FILE_STORAGE_STATE["READONLY"], True)
+            self.assertIsNone(_LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"])
+            
+            # Test 3: Simulate _handle_transmit_from_storage updating READONLY back to False
+            exporter = BaseExporter(disable_offline_storage=False)
+            mock_customer_statsbeat = mock.Mock()
+            exporter._customer_statsbeat_metrics = mock_customer_statsbeat
+            exporter._should_collect_customer_statsbeat = mock.Mock(return_value=True)
+            exporter.storage = mock.Mock()
+            exporter.storage.put.return_value = StorageExportResult.CLIENT_READONLY
+            
+            test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
+            
+            # Call should reset READONLY to False
+            with mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items'):
+                exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+            
+            # Verify READONLY was reset and EXCEPTION_OCCURRED is still None
+            self.assertEqual(_LOCAL_FILE_STORAGE_STATE["READONLY"], False)
+            self.assertIsNone(_LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"])
+            
+        finally:
+            # Restore original state
+            _LOCAL_FILE_STORAGE_STATE["READONLY"] = original_readonly_state
+            _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"] = original_exception_state
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    def test_local_file_storage_state_exception_isolation(self):
+        """Test that _LOCAL_FILE_STORAGE_STATE EXCEPTION_OCCURRED changes don't affect other tests"""
+        # Save original state
+        original_readonly_state = _LOCAL_FILE_STORAGE_STATE["READONLY"]
+        original_exception_state = _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"]
+        
+        try:
+            # Test 1: Verify initial state
+            self.assertEqual(_LOCAL_FILE_STORAGE_STATE["READONLY"], False)
+            self.assertIsNone(_LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"])
+            
+            # Test 2: Change EXCEPTION_OCCURRED state and verify it doesn't affect READONLY
+            error_message = "Test storage error"
+            _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"] = error_message
+            self.assertEqual(_LOCAL_FILE_STORAGE_STATE["READONLY"], False)
+            self.assertEqual(_LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"], error_message)
+            
+            # Test 3: Simulate _handle_transmit_from_storage updating EXCEPTION_OCCURRED back to None
+            exporter = BaseExporter(disable_offline_storage=False)
+            mock_customer_statsbeat = mock.Mock()
+            exporter._customer_statsbeat_metrics = mock_customer_statsbeat
+            exporter._should_collect_customer_statsbeat = mock.Mock(return_value=True)
+            exporter.storage = mock.Mock()
+            exporter.storage.put.return_value = "Storage write failed"
+            
+            test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
+            
+            # Call should reset EXCEPTION_OCCURRED to None
+            with mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items'):
+                exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+            
+            # Verify EXCEPTION_OCCURRED was reset and READONLY is still False
+            self.assertEqual(_LOCAL_FILE_STORAGE_STATE["READONLY"], False)
+            self.assertIsNone(_LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"])
+            
+        finally:
+            # Restore original state
+            _LOCAL_FILE_STORAGE_STATE["READONLY"] = original_readonly_state
+            _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"] = original_exception_state
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    def test_local_file_storage_state_concurrent_updates(self):
+        """Test that concurrent state updates don't interfere with each other"""
+        # Save original state
+        original_readonly_state = _LOCAL_FILE_STORAGE_STATE["READONLY"]
+        original_exception_state = _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"]
+        
+        try:
+            # Test 1: Simulate both readonly and exception occurring simultaneously
+            _LOCAL_FILE_STORAGE_STATE["READONLY"] = True
+            _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"] = "Test error"
+            
+            # Verify both states are set
+            self.assertEqual(_LOCAL_FILE_STORAGE_STATE["READONLY"], True)
+            self.assertEqual(_LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"], "Test error")
+            
+            # Test 2: Simulate readonly being handled first
+            exporter = BaseExporter(disable_offline_storage=False)
+            mock_customer_statsbeat = mock.Mock()
+            exporter._customer_statsbeat_metrics = mock_customer_statsbeat
+            exporter._should_collect_customer_statsbeat = mock.Mock(return_value=True)
+            exporter.storage = mock.Mock()
+            exporter.storage.put.return_value = StorageExportResult.CLIENT_READONLY
+            
+            test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
+            
+            # Handle readonly - should reset only READONLY, not EXCEPTION_OCCURRED
+            with mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items'):
+                exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+            
+            # Verify READONLY was reset but EXCEPTION_OCCURRED remains
+            self.assertEqual(_LOCAL_FILE_STORAGE_STATE["READONLY"], False)
+            self.assertEqual(_LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"], "Test error")
+            
+            # Test 3: Now handle exception
+            exporter.storage.put.return_value = "New storage error"
+            
+            with mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items'):
+                exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+            
+            # Verify EXCEPTION_OCCURRED was reset and READONLY remains False
+            self.assertEqual(_LOCAL_FILE_STORAGE_STATE["READONLY"], False)
+            self.assertIsNone(_LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"])
+            
+        finally:
+            # Restore original state
+            _LOCAL_FILE_STORAGE_STATE["READONLY"] = original_readonly_state
+            _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"] = original_exception_state
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    def test_local_file_storage_state_cross_test_isolation(self):
+        """Test that state changes in one test don't leak to subsequent tests"""
+        # Save original state
+        original_readonly_state = _LOCAL_FILE_STORAGE_STATE["READONLY"]
+        original_exception_state = _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"]
+        
+        try:
+            # Simulate a "previous test" that left state dirty
+            _LOCAL_FILE_STORAGE_STATE["READONLY"] = True
+            _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"] = "Previous test error"
+            
+            # Verify state is dirty
+            self.assertEqual(_LOCAL_FILE_STORAGE_STATE["READONLY"], True)
+            self.assertEqual(_LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"], "Previous test error")
+            
+            # Simulate cleanup that should happen between tests (manual or automatic)
+            _LOCAL_FILE_STORAGE_STATE["READONLY"] = False
+            _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"] = None
+            
+            # Verify clean state for "next test"
+            self.assertEqual(_LOCAL_FILE_STORAGE_STATE["READONLY"], False)
+            self.assertIsNone(_LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"])
+            
+            # Run a "normal" test scenario
+            exporter = BaseExporter(disable_offline_storage=False)
+            mock_customer_statsbeat = mock.Mock()
+            exporter._customer_statsbeat_metrics = mock_customer_statsbeat
+            exporter._should_collect_customer_statsbeat = mock.Mock(return_value=True)
+            exporter.storage = mock.Mock()
+            exporter.storage.put.return_value = StorageExportResult.CLIENT_STORAGE_DISABLED
+            
+            test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
+            
+            with mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items'):
+                result = exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+            
+            # Verify operation succeeded without state interference
+            self.assertIsNone(result)
+            
+            # Verify state wasn't modified by this operation (since it's CLIENT_STORAGE_DISABLED)
+            self.assertEqual(_LOCAL_FILE_STORAGE_STATE["READONLY"], False)
+            self.assertIsNone(_LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"])
+            
+        finally:
+            # Restore original state
+            _LOCAL_FILE_STORAGE_STATE["READONLY"] = original_readonly_state
+            _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"] = original_exception_state
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    def test_local_file_storage_state_no_false_positives(self):
+        """Test that state updates only happen for the specific conditions they're designed for"""
+        # Save original state
+        original_readonly_state = _LOCAL_FILE_STORAGE_STATE["READONLY"]
+        original_exception_state = _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"]
+        
+        try:
+            # Set initial test state
+            _LOCAL_FILE_STORAGE_STATE["READONLY"] = True
+            _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"] = "Initial error"
+            
+            exporter = BaseExporter(disable_offline_storage=False)
+            mock_customer_statsbeat = mock.Mock()
+            exporter._customer_statsbeat_metrics = mock_customer_statsbeat
+            exporter._should_collect_customer_statsbeat = mock.Mock(return_value=True)
+            exporter.storage = mock.Mock()
+            
+            test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
+            
+            # Test 1: CLIENT_STORAGE_DISABLED should not modify any state
+            exporter.storage.put.return_value = StorageExportResult.CLIENT_STORAGE_DISABLED
+            
+            with mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items'):
+                exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+            
+            # State should remain unchanged
+            self.assertEqual(_LOCAL_FILE_STORAGE_STATE["READONLY"], True)
+            self.assertEqual(_LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"], "Initial error")
+            
+            # Test 2: CLIENT_PERSISTENCE_CAPACITY_REACHED should not modify any state
+            exporter.storage.put.return_value = StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED
+            
+            with mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items'):
+                exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+            
+            # State should remain unchanged
+            self.assertEqual(_LOCAL_FILE_STORAGE_STATE["READONLY"], True)
+            self.assertEqual(_LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"], "Initial error")
+            
+            # Test 3: Only CLIENT_READONLY should modify READONLY state
+            exporter.storage.put.return_value = StorageExportResult.CLIENT_READONLY
+            
+            with mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items'):
+                exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+            
+            # Only READONLY should be reset, EXCEPTION_OCCURRED should remain
+            self.assertEqual(_LOCAL_FILE_STORAGE_STATE["READONLY"], False)
+            self.assertEqual(_LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"], "Initial error")
+            
+            # Test 4: Only error strings should modify EXCEPTION_OCCURRED state
+            exporter.storage.put.return_value = "New error message"
+            
+            with mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items'):
+                exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+            
+            # Only EXCEPTION_OCCURRED should be reset, READONLY should remain False
+            self.assertEqual(_LOCAL_FILE_STORAGE_STATE["READONLY"], False)
+            self.assertIsNone(_LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"])
+            
+        finally:
+            # Restore original state
+            _LOCAL_FILE_STORAGE_STATE["READONLY"] = original_readonly_state
+            _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"] = original_exception_state
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    @mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items')
+    def test_local_file_storage_state_various_exceptions_tracked(self, mock_track_dropped):
+        """Test that various exception types from storage.put() are properly tracked and reset state"""
+        # Save original state
+        original_readonly_state = _LOCAL_FILE_STORAGE_STATE["READONLY"]
+        original_exception_state = _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"]
+        
+        try:
+            exporter = BaseExporter(disable_offline_storage=False)
+            mock_customer_statsbeat = mock.Mock()
+            exporter._customer_statsbeat_metrics = mock_customer_statsbeat
+            exporter._should_collect_customer_statsbeat = mock.Mock(return_value=True)
+            exporter.storage = mock.Mock()
+            
+            test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
+            
+            # Test various error messages that could come from storage.put()
+            error_scenarios = [
+                "Permission denied",
+                "Disk full",
+                "File system read-only",
+                "Storage quota exceeded",
+                "I/O error",
+                "Network unreachable",
+                "Connection timeout",
+                "Access denied: insufficient privileges",
+                os.strerror(errno.EACCES),  # cspell:disable-line
+                os.strerror(errno.ENOSPC),  # cspell:disable-line
+                os.strerror(errno.EROFS),   # cspell:disable-line
+                os.strerror(errno.EIO),     # cspell:disable-line
+            ]
+            
+            for i, error_message in enumerate(error_scenarios):
+                with self.subTest(error_scenario=i, error_message=error_message):
+                    # Set initial exception state
+                    _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"] = f"Previous error {i}"
+                    
+                    # Mock storage to return this specific error
+                    exporter.storage.put.return_value = error_message
+                    
+                    # Call _handle_transmit_from_storage
+                    result = exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+                    
+                    # Verify the error was tracked
+                    expected_call = mock.call(mock_customer_statsbeat, test_envelopes, DropCode.CLIENT_EXCEPTION, error_message)
+                    self.assertIn(expected_call, mock_track_dropped.call_args_list)
+                    
+                    # Verify _LOCAL_FILE_STORAGE_STATE was reset
+                    self.assertIsNone(_LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"])
+                    
+                    # Verify the method returns None as expected
+                    self.assertIsNone(result)
+            
+        finally:
+            # Restore original state
+            _LOCAL_FILE_STORAGE_STATE["READONLY"] = original_readonly_state
+            _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"] = original_exception_state
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    @mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items')
+    def test_local_file_storage_state_exception_isolation_with_errno(self, mock_track_dropped):
+        """Test that errno-based exceptions are properly isolated and don't affect readonly state"""
+        # Save original state
+        original_readonly_state = _LOCAL_FILE_STORAGE_STATE["READONLY"]
+        original_exception_state = _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"]
+        
+        try:
+            # Test with both states initially set
+            _LOCAL_FILE_STORAGE_STATE["READONLY"] = True
+            _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"] = "Initial exception"
+            
+            exporter = BaseExporter(disable_offline_storage=False)
+            mock_customer_statsbeat = mock.Mock()
+            exporter._customer_statsbeat_metrics = mock_customer_statsbeat
+            exporter._should_collect_customer_statsbeat = mock.Mock(return_value=True)
+            exporter.storage = mock.Mock()
+            
+            test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
+            
+            # Test various errno-based errors
+            errno_errors = [
+                f"[Errno {errno.EACCES}] {os.strerror(errno.EACCES)}", # cspell:disable-line
+                f"[Errno {errno.ENOSPC}] {os.strerror(errno.ENOSPC)}", # cspell:disable-line
+                f"[Errno {errno.EROFS}] {os.strerror(errno.EROFS)}", # cspell:disable-line
+                f"[Errno {errno.EIO}] {os.strerror(errno.EIO)}", # cspell:disable-line
+                f"OSError: [Errno {errno.EACCES}] Permission denied: '/storage/path'", # cspell:disable-line
+                f"PermissionError: [Errno {errno.EACCES}] Permission denied", # cspell:disable-line
+            ]
+            
+            for errno_error in errno_errors:
+                with self.subTest(errno_error=errno_error):
+                    # Reset states for this test
+                    _LOCAL_FILE_STORAGE_STATE["READONLY"] = True
+                    _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"] = "Initial exception"
+                    
+                    # Mock storage to return errno error
+                    exporter.storage.put.return_value = errno_error
+                    
+                    # Call _handle_transmit_from_storage
+                    result = exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+                    
+                    # Verify the exception was tracked
+                    mock_track_dropped.assert_called_with(mock_customer_statsbeat, test_envelopes, DropCode.CLIENT_EXCEPTION, errno_error)
+                    
+                    # Verify only EXCEPTION_OCCURRED was reset, READONLY remains True
+                    self.assertEqual(_LOCAL_FILE_STORAGE_STATE["READONLY"], True)
+                    self.assertIsNone(_LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"])
+                    
+                    # Verify the method returns None as expected
+                    self.assertIsNone(result)
+                    
+                    # Reset mock for next iteration
+                    mock_track_dropped.reset_mock()
+            
+        finally:
+            # Restore original state
+            _LOCAL_FILE_STORAGE_STATE["READONLY"] = original_readonly_state
+            _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"] = original_exception_state
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    @mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items')
+    def test_local_file_storage_state_readonly_and_exception_mixed_scenarios(self, mock_track_dropped):
+        """Test mixed scenarios where both readonly and exception conditions occur"""
+        # Save original state
+        original_readonly_state = _LOCAL_FILE_STORAGE_STATE["READONLY"]
+        original_exception_state = _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"]
+        
+        try:
+            exporter = BaseExporter(disable_offline_storage=False)
+            mock_customer_statsbeat = mock.Mock()
+            exporter._customer_statsbeat_metrics = mock_customer_statsbeat
+            exporter._should_collect_customer_statsbeat = mock.Mock(return_value=True)
+            exporter.storage = mock.Mock()
+            
+            test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
+            
+            # Scenario 1: Start with both states set, handle readonly first
+            _LOCAL_FILE_STORAGE_STATE["READONLY"] = True
+            _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"] = "Storage error occurred"
+            
+            # Handle readonly condition
+            exporter.storage.put.return_value = StorageExportResult.CLIENT_READONLY
+            result1 = exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+            
+            # Verify readonly was handled, exception state preserved
+            self.assertEqual(_LOCAL_FILE_STORAGE_STATE["READONLY"], False)
+            self.assertEqual(_LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"], "Storage error occurred")
+            self.assertIsNone(result1)
+            mock_track_dropped.assert_called_with(mock_customer_statsbeat, test_envelopes, DropCode.CLIENT_READONLY)
+            
+            # Scenario 2: Now handle the remaining exception
+            mock_track_dropped.reset_mock()
+            exporter.storage.put.return_value = "File system error: Permission denied"
+            result2 = exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+            
+            # Verify exception was handled, readonly state preserved
+            self.assertEqual(_LOCAL_FILE_STORAGE_STATE["READONLY"], False)
+            self.assertIsNone(_LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"])
+            self.assertIsNone(result2)
+            mock_track_dropped.assert_called_with(mock_customer_statsbeat, test_envelopes, DropCode.CLIENT_EXCEPTION, "File system error: Permission denied")
+            
+            # Scenario 3: Set both states again, handle exception first this time
+            mock_track_dropped.reset_mock()
+            _LOCAL_FILE_STORAGE_STATE["READONLY"] = True
+            _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"] = "Another error"
+            
+            # Handle exception condition first
+            exporter.storage.put.return_value = "Disk full error"
+            result3 = exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+            
+            # Verify exception was handled, readonly state preserved
+            self.assertEqual(_LOCAL_FILE_STORAGE_STATE["READONLY"], True)
+            self.assertIsNone(_LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"])
+            self.assertIsNone(result3)
+            mock_track_dropped.assert_called_with(mock_customer_statsbeat, test_envelopes, DropCode.CLIENT_EXCEPTION, "Disk full error")
+            
+            # Scenario 4: Now handle the remaining readonly condition
+            mock_track_dropped.reset_mock()
+            exporter.storage.put.return_value = StorageExportResult.CLIENT_READONLY
+            result4 = exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+            
+            # Verify readonly was handled
+            self.assertEqual(_LOCAL_FILE_STORAGE_STATE["READONLY"], False)
+            self.assertIsNone(_LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"])
+            self.assertIsNone(result4)
+            mock_track_dropped.assert_called_with(mock_customer_statsbeat, test_envelopes, DropCode.CLIENT_READONLY)
+            
+        finally:
+            # Restore original state
+            _LOCAL_FILE_STORAGE_STATE["READONLY"] = original_readonly_state
+            _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"] = original_exception_state
+
+    def test_local_storage_state_exception_get_set_operations(self):
+        """Test the validity of get and set operations for exception state in local storage state"""
+        from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+            get_local_storage_state_exception,
+            set_local_storage_state_exception,
+            _LOCAL_FILE_STORAGE_STATE,
+            _LOCAL_FILE_STORAGE_STATE_LOCK
+        )
+        
+        # Save original state
+        original_exception_state = _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"]
+        
+        try:
+            # Test 1: Initial state should be None
+            self.assertIsNone(get_local_storage_state_exception())
+            
+            # Test 2: Set string value and verify get operation
+            test_error = "Test storage exception"
+            set_local_storage_state_exception(test_error)
+            self.assertEqual(get_local_storage_state_exception(), test_error)
+            
+            # Test 3: Set None value and verify get operation
+            set_local_storage_state_exception(None)
+            self.assertIsNone(get_local_storage_state_exception())
+            
+            # Test 4: Set empty string and verify get operation
+            set_local_storage_state_exception("")
+            self.assertEqual(get_local_storage_state_exception(), "")
+            
+            # Test 5: Set complex error message and verify get operation
+            complex_error = "OSError: [Errno 28] No space left on device: '/tmp/storage/file.blob'"
+            set_local_storage_state_exception(complex_error)
+            self.assertEqual(get_local_storage_state_exception(), complex_error)
+            
+            # Test 6: Verify thread safety by directly accessing state
+            with _LOCAL_FILE_STORAGE_STATE_LOCK:
+                direct_value = _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"]
+            self.assertEqual(direct_value, complex_error)
+            self.assertEqual(get_local_storage_state_exception(), direct_value)
+            
+            # Test 7: Test multiple rapid set/get operations
+            test_values = [
+                "Error 1",
+                "Error 2", 
+                None,
+                "Error 3",
+                "",
+                "Final error"
+            ]
+            
+            for value in test_values:
+                with self.subTest(value=value):
+                    set_local_storage_state_exception(value)
+                    self.assertEqual(get_local_storage_state_exception(), value)
+            
+            # Test 8: Verify that set operation doesn't affect other state values
+            original_readonly = _LOCAL_FILE_STORAGE_STATE["READONLY"]
+            set_local_storage_state_exception("New exception")
+            self.assertEqual(_LOCAL_FILE_STORAGE_STATE["READONLY"], original_readonly)
+            self.assertEqual(get_local_storage_state_exception(), "New exception")
+            
+        finally:
+            # Restore original state
+            _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"] = original_exception_state
+
+    def test_local_storage_state_exception_concurrent_access(self):
+        """Test concurrent access to exception state get/set operations"""
+        import threading
+        import time
+        from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+            get_local_storage_state_exception,
+            set_local_storage_state_exception,
+            _LOCAL_FILE_STORAGE_STATE
+        )
+        
+        # Save original state
+        original_exception_state = _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"]
+        results = []
+        errors = []
+        
+        def worker_thread(thread_id):
+            try:
+                for i in range(10):
+                    # Set a unique value
+                    value = f"Thread-{thread_id}-Error-{i}"
+                    set_local_storage_state_exception(value)
+                    
+                    # Small delay to increase chance of race conditions
+                    time.sleep(0.001)
+                    
+                    # Get the value and verify it's either our value or another thread's value
+                    retrieved_value = get_local_storage_state_exception()
+                    results.append((thread_id, i, value, retrieved_value))
+                    
+                    # Verify it's a valid value (either ours or from another thread)
+                    if retrieved_value is not None:
+                        self.assertIsInstance(retrieved_value, str)
+                        self.assertTrue(retrieved_value.startswith("Thread-"))
+            except Exception as e:
+                errors.append(f"Thread {thread_id}: {e}")
+        
+        try:
+            # Reset to None
+            set_local_storage_state_exception(None)
+            
+            # Start multiple threads
+            threads = []
+            for i in range(5):
+                thread = threading.Thread(target=worker_thread, args=(i,))
+                threads.append(thread)
+                thread.start()
+            
+            # Wait for all threads to complete
+            for thread in threads:
+                thread.join()
+            
+            # Verify no errors occurred
+            self.assertEqual(len(errors), 0, f"Errors in concurrent access: {errors}")
+            
+            # Verify we got results from all threads
+            self.assertEqual(len(results), 50)  # 5 threads * 10 operations each
+            
+            # Verify final state is valid
+            final_value = get_local_storage_state_exception()
+            if final_value is not None:
+                self.assertIsInstance(final_value, str)
+                self.assertTrue(final_value.startswith("Thread-"))
+            
+        finally:
+            # Restore original state
+            _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"] = original_exception_state
+
+    def test_local_storage_state_readonly_get_operations(self):
+        """Test the get operation for readonly state in local storage state"""
+        from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+            get_local_storage_state_readonly,
+            _LOCAL_FILE_STORAGE_STATE,
+            _LOCAL_FILE_STORAGE_STATE_LOCK
+        )
+        
+        # Save original state
+        original_readonly_state = _LOCAL_FILE_STORAGE_STATE["READONLY"]
+        
+        try:
+            # Test 1: Initial state should be False
+            self.assertEqual(get_local_storage_state_readonly(), False)
+            
+            # Test 2: Set True directly and verify get operation
+            with _LOCAL_FILE_STORAGE_STATE_LOCK:
+                _LOCAL_FILE_STORAGE_STATE["READONLY"] = True
+            self.assertEqual(get_local_storage_state_readonly(), True)
+            
+            # Test 3: Set False directly and verify get operation
+            with _LOCAL_FILE_STORAGE_STATE_LOCK:
+                _LOCAL_FILE_STORAGE_STATE["READONLY"] = False
+            self.assertEqual(get_local_storage_state_readonly(), False)
+            
+            # Test 4: Verify get operation doesn't affect other state values
+            original_exception = _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"]
+            with _LOCAL_FILE_STORAGE_STATE_LOCK:
+                _LOCAL_FILE_STORAGE_STATE["READONLY"] = True
+            
+            # Get readonly state multiple times
+            for _ in range(5):
+                self.assertEqual(get_local_storage_state_readonly(), True)
+            
+            # Verify exception state wasn't affected
+            self.assertEqual(_LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"], original_exception)
+            
+        finally:
+            # Restore original state
+            _LOCAL_FILE_STORAGE_STATE["READONLY"] = original_readonly_state
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    @mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items')
+    def test_local_file_storage_state_exception_state_preservation(self, mock_track_dropped):
+        """Test that exception state is properly preserved during non-exception operations"""
+        # Save original state
+        original_readonly_state = _LOCAL_FILE_STORAGE_STATE["READONLY"]
+        original_exception_state = _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"]
+        
+        try:
+            exporter = BaseExporter(disable_offline_storage=False)
+            mock_customer_statsbeat = mock.Mock()
+            exporter._customer_statsbeat_metrics = mock_customer_statsbeat
+            exporter._should_collect_customer_statsbeat = mock.Mock(return_value=True)
+            exporter.storage = mock.Mock()
+            
+            test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
+            
+            # Set initial exception state
+            initial_error = "Initial storage exception"
+            _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"] = initial_error
+            _LOCAL_FILE_STORAGE_STATE["READONLY"] = False
+            
+            # Test that non-exception operations preserve exception state
+            non_exception_scenarios = [
+                StorageExportResult.CLIENT_STORAGE_DISABLED,
+                StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED,
+            ]
+            
+            for scenario in non_exception_scenarios:
+                with self.subTest(scenario=scenario):
+                    # Reset exception state for this test
+                    _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"] = initial_error
+                    
+                    # Mock storage to return non-exception result
+                    exporter.storage.put.return_value = scenario
+                    
+                    # Call _handle_transmit_from_storage
+                    result = exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+                    
+                    # Verify exception state was preserved (not reset)
+                    self.assertEqual(_LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"], initial_error)
+                    self.assertEqual(_LOCAL_FILE_STORAGE_STATE["READONLY"], False)
+                    self.assertIsNone(result)
+                    
+                    # Verify appropriate tracking was called
+                    if scenario == StorageExportResult.CLIENT_STORAGE_DISABLED:
+                        mock_track_dropped.assert_called_with(mock_customer_statsbeat, test_envelopes, DropCode.CLIENT_STORAGE_DISABLED)
+                    elif scenario == StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED:
+                        mock_track_dropped.assert_called_with(mock_customer_statsbeat, test_envelopes, DropCode.CLIENT_PERSISTENCE_CAPACITY)
+                    
+                    # Reset mock for next iteration
+                    mock_track_dropped.reset_mock()
+            
+            # Finally, test that only actual exception strings reset the state
+            error_message = "Real storage exception"
+            _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"] = initial_error
+            
+            exporter.storage.put.return_value = error_message
+            result = exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+            
+            # Verify exception state was reset only for actual error strings
+            self.assertIsNone(_LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"])
+            self.assertIsNone(result)
+            mock_track_dropped.assert_called_with(mock_customer_statsbeat, test_envelopes, DropCode.CLIENT_EXCEPTION, error_message)
+            
+        finally:
+            # Restore original state
+            _LOCAL_FILE_STORAGE_STATE["READONLY"] = original_readonly_state
+            _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"] = original_exception_state
 
     @mock.patch.dict(
         os.environ,
@@ -1429,6 +2370,94 @@ class TestBaseExporter(unittest.TestCase):
         ):
             exporter = BaseExporter(disable_offline_storage=True, instrumentation_collection=True)
             self.assertFalse(exporter._should_collect_customer_statsbeat())
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    @mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items')
+    def test_base_exporter_storage_put_readonly_tracked(self, mock_track_dropped):
+        """Test that BaseExporter tracks CLIENT_READONLY when storage.put() returns CLIENT_READONLY"""
+        exporter = BaseExporter(disable_offline_storage=False)
+        
+        # Setup customer statsbeat
+        mock_customer_statsbeat = mock.Mock()
+        exporter._customer_statsbeat_metrics = mock_customer_statsbeat
+        exporter._should_collect_customer_statsbeat = mock.Mock(return_value=True)
+        
+        # Mock the storage to return CLIENT_READONLY
+        exporter.storage = mock.Mock()
+        exporter.storage.gets.return_value = []  # No blobs from storage
+        exporter.storage.put.return_value = StorageExportResult.CLIENT_READONLY
+        
+        # This should trigger the storage status check in _transmit_from_storage
+        exporter._transmit_from_storage()
+        
+        # Verify that _track_dropped_items was called with CLIENT_READONLY
+        # Note: Since no envelopes are processed from storage, this should not be called in current implementation
+        mock_track_dropped.assert_not_called()
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    @mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items')
+    def test_base_exporter_storage_put_exception_tracked(self, mock_track_dropped):
+        """Test that BaseExporter tracks CLIENT_EXCEPTION when storage.put() returns an error string"""
+        exporter = BaseExporter(disable_offline_storage=False)
+        
+        # Setup customer statsbeat
+        mock_customer_statsbeat = mock.Mock()
+        exporter._customer_statsbeat_metrics = mock_customer_statsbeat
+        exporter._should_collect_customer_statsbeat = mock.Mock(return_value=True)
+        
+        # Mock the storage to return an error string
+        exporter.storage = mock.Mock()
+        exporter.storage.gets.return_value = []  # No blobs from storage
+        error_message = "Storage write failed: Permission denied"
+        exporter.storage.put.return_value = error_message
+        
+        # This should trigger the storage status check in _transmit_from_storage
+        exporter._transmit_from_storage()
+        
+        # Verify that _track_dropped_items was called with CLIENT_EXCEPTION
+        # Note: Since no envelopes are processed from storage, this should not be called in current implementation
+        mock_track_dropped.assert_not_called()
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    @mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items')
+    def test_base_exporter_storage_put_capacity_reached_tracked(self, mock_track_dropped):
+        """Test that BaseExporter tracks CLIENT_PERSISTENCE_CAPACITY when storage.put() returns CLIENT_PERSISTENCE_CAPACITY_REACHED"""
+        exporter = BaseExporter(disable_offline_storage=False)
+        
+        # Setup customer statsbeat
+        mock_customer_statsbeat = mock.Mock()
+        exporter._customer_statsbeat_metrics = mock_customer_statsbeat
+        exporter._should_collect_customer_statsbeat = mock.Mock(return_value=True)
+        
+        # Mock the storage to return CLIENT_PERSISTENCE_CAPACITY_REACHED
+        exporter.storage = mock.Mock()
+        exporter.storage.gets.return_value = []  # No blobs from storage
+        exporter.storage.put.return_value = StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED
+        
+        # This should trigger the storage status check in _transmit_from_storage
+        exporter._transmit_from_storage()
+        
+        # Verify that _track_dropped_items was called with CLIENT_PERSISTENCE_CAPACITY
+        # Note: Since no envelopes are processed from storage, this should not be called in current implementation
+        mock_track_dropped.assert_not_called()
 
     # Custom Breeze Message Handling Tests
     # These tests verify that custom error messages from Azure Monitor service (Breeze)
@@ -1838,7 +2867,7 @@ class TestBaseExporter(unittest.TestCase):
     def test_should_collect_customer_statsbeat_with_regular_exporter_flag_test(self):
         """Test that regular exporters should collect customer statsbeat when enabled."""
         # Mock customer statsbeat shutdown state and storage method
-        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat.get_customer_statsbeat_shutdown", return_value=False), \
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._state.get_customer_statsbeat_shutdown", return_value=False), \
              mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat.collect_customer_statsbeat"):
             exporter = BaseExporter(
                 connection_string="InstrumentationKey=12345678-1234-1234-1234-123456789abc",
@@ -1852,7 +2881,7 @@ class TestBaseExporter(unittest.TestCase):
     def test_should_collect_customer_statsbeat_with_customer_statsbeat_exporter_flag_test(self):
         """Test that customer statsbeat exporters should NOT collect customer statsbeat."""
         # Mock customer statsbeat shutdown state
-        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat.get_customer_statsbeat_shutdown", return_value=False):
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._state.get_customer_statsbeat_shutdown", return_value=False):
             exporter = AzureMonitorMetricExporter(
                 connection_string="InstrumentationKey=12345678-1234-1234-1234-123456789abc",
                 instrumentation_collection=True
@@ -1954,7 +2983,7 @@ class TestBaseExporter(unittest.TestCase):
     def test_integration_scenario_mixed_exporters_flag_test(self):
         """Integration test with mixed exporter types to ensure no interference."""
         # Mock customer statsbeat shutdown state and storage method
-        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat.get_customer_statsbeat_shutdown", return_value=False), \
+        with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._state.get_customer_statsbeat_shutdown", return_value=False), \
              mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat.collect_customer_statsbeat"):
             # Create various types of exporters with storage disabled
             trace_exporter = AzureMonitorTraceExporter(

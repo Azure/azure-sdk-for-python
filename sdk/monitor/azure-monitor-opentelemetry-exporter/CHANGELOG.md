@@ -3,6 +3,8 @@
 ## 1.0.0b42 (Unreleased)
 
 ### Features Added
+- Customer Facing Statsbeat: Added remaining drop codes to base
+  ([#42382](https://github.com/Azure/azure-sdk-for-python/pull/42382))
 
 ### Breaking Changes
 

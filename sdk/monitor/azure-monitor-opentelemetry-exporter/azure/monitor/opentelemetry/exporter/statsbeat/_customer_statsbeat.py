@@ -37,6 +37,11 @@ from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
 )
 from azure.monitor.opentelemetry.exporter import VERSION
 
+from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+    _CUSTOMER_STATSBEAT_STATE,
+    _CUSTOMER_STATSBEAT_STATE_LOCK,
+)
+
 _CUSTOMER_STATSBEAT_MAP_LOCK = threading.Lock()
 
 class _CustomerStatsbeatTelemetryCounters:
@@ -256,10 +261,6 @@ def collect_customer_statsbeat(exporter):
     if hasattr(exporter, 'storage') and exporter.storage:
         exporter.storage._customer_statsbeat_metrics = _CUSTOMER_STATSBEAT_METRICS
 
-_CUSTOMER_STATSBEAT_STATE = {
-    "SHUTDOWN": False,
-}
-_CUSTOMER_STATSBEAT_STATE_LOCK = threading.Lock()
 
 def shutdown_customer_statsbeat_metrics() -> None:
     global _CUSTOMER_STATSBEAT_METRICS
@@ -276,6 +277,3 @@ def shutdown_customer_statsbeat_metrics() -> None:
         if shutdown_success:
             with _CUSTOMER_STATSBEAT_STATE_LOCK:
                 _CUSTOMER_STATSBEAT_STATE["SHUTDOWN"] = True
-
-def get_customer_statsbeat_shutdown():
-    return _CUSTOMER_STATSBEAT_STATE["SHUTDOWN"]
