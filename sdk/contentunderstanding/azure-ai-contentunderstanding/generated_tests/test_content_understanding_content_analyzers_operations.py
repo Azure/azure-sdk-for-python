@@ -100,7 +100,7 @@ def create_analyzer_and_assert_sync(
     # Additional poller assertions
     assert poller is not None
     assert poller.status() is not None
-    assert poller.status() is not ""
+    assert poller.status() != ""
     assert poller.continuation_token() is not None
     
     # Verify the analyzer is in the list
@@ -108,6 +108,30 @@ def create_analyzer_and_assert_sync(
     print(f"  Verified analyzer {analyzer_id} is in the list")
     
     return poller, operation_id
+
+
+def delete_analyzer_and_assert_sync(client, analyzer_id: str, created_analyzer: bool) -> None:
+    """Delete an analyzer and assert it was deleted successfully (sync version).
+    
+    Args:
+        client: The ContentUnderstandingClient instance
+        analyzer_id: The analyzer ID to delete
+        created_analyzer: Whether the analyzer was created (to determine if cleanup is needed)
+        
+    Raises:
+        AssertionError: If the analyzer still exists after deletion
+    """
+    if created_analyzer:
+        print(f"Cleaning up analyzer {analyzer_id}")
+        try:
+            client.content_analyzers.delete(analyzer_id=analyzer_id)
+            # Verify deletion
+            assert not analyzer_in_list_sync(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
+            print(f"Analyzer {analyzer_id} is deleted successfully")
+        except Exception as e:
+            print(f"Warning: Failed to delete analyzer {analyzer_id}: {e}")
+    else:
+        print(f"Analyzer {analyzer_id} was not created, no cleanup needed")
 
 
 def download_keyframes_and_assert_sync(client, analysis_operation_id: str, result, test_pyfile_dir: str, identifier: Optional[str] = None) -> None:
@@ -241,17 +265,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
 
         finally:
             # Always clean up the created analyzer, even if the test fails
-            if created_analyzer:
-                print(f"Cleaning up analyzer {analyzer_id}")
-                try:
-                    client.content_analyzers.delete(analyzer_id=analyzer_id)
-                    # Verify deletion
-                    assert not analyzer_in_list_sync(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
-                    print(f"Analyzer {analyzer_id} is deleted successfully")
-                except Exception as e:
-                    print(f"Warning: Failed to delete analyzer {analyzer_id}: {e}")
-            else:
-                print(f"Analyzer {analyzer_id} was not created, no cleanup needed")
+            delete_analyzer_and_assert_sync(client, analyzer_id, created_analyzer)
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
@@ -279,17 +293,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
 
         finally:
             # Always clean up the created analyzer, even if the test fails
-            if created_analyzer:
-                print(f"Cleaning up analyzer {analyzer_id}")
-                try:
-                    client.content_analyzers.delete(analyzer_id=analyzer_id)
-                    # Verify deletion
-                    assert not analyzer_in_list_sync(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
-                    print(f"Analyzer {analyzer_id} is deleted successfully")
-                except Exception as e:
-                    print(f"Warning: Failed to delete analyzer {analyzer_id}: {e}")
-            else:
-                print(f"Analyzer {analyzer_id} was not created, no cleanup needed")
+            delete_analyzer_and_assert_sync(client, analyzer_id, created_analyzer)
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
@@ -343,17 +347,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
 
         finally:
             # Always clean up the created analyzer, even if the test fails
-            if created_analyzer:
-                print(f"Cleaning up analyzer {analyzer_id}")
-                try:
-                    client.content_analyzers.delete(analyzer_id=analyzer_id)
-                    # Verify deletion
-                    assert not analyzer_in_list_sync(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
-                    print(f"Analyzer {analyzer_id} is deleted successfully")
-                except Exception as e:
-                    print(f"Warning: Failed to delete analyzer {analyzer_id}: {e}")
-            else:
-                print(f"Analyzer {analyzer_id} was not created, no cleanup needed")
+            delete_analyzer_and_assert_sync(client, analyzer_id, created_analyzer)
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
@@ -431,17 +425,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
 
         finally:
             # Always clean up the created analyzer, even if the test fails
-            if created_analyzer:
-                print(f"Cleaning up analyzer {analyzer_id}")
-                try:
-                    client.content_analyzers.delete(analyzer_id=analyzer_id)
-                    # Verify deletion
-                    assert not analyzer_in_list_sync(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
-                    print(f"Analyzer {analyzer_id} is deleted successfully")
-                except Exception as e:
-                    print(f"Warning: Failed to delete analyzer {analyzer_id}: {e}")
-            else:
-                print(f"Analyzer {analyzer_id} was not created, no cleanup needed")
+            delete_analyzer_and_assert_sync(client, analyzer_id, created_analyzer)
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
@@ -608,17 +592,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
 
         finally:
             # Always clean up the created analyzer, even if the test fails
-            if created_analyzer:
-                print(f"Cleaning up analyzer {analyzer_id}")
-                try:
-                    client.content_analyzers.delete(analyzer_id=analyzer_id)
-                    # Verify deletion
-                    assert not analyzer_in_list_sync(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
-                    print(f"Analyzer {analyzer_id} is deleted successfully")
-                except Exception as e:
-                    print(f"Warning: Failed to delete analyzer {analyzer_id}: {e}")
-            else:
-                print(f"Analyzer {analyzer_id} was not created, no cleanup needed")
+            delete_analyzer_and_assert_sync(client, analyzer_id, created_analyzer)
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
@@ -678,17 +652,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
 
         finally:
             # Always clean up the created analyzer, even if the test fails
-            if created_analyzer:
-                print(f"Cleaning up analyzer {analyzer_id}")
-                try:
-                    client.content_analyzers.delete(analyzer_id=analyzer_id)
-                    # Verify deletion
-                    assert not analyzer_in_list_sync(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
-                    print(f"Analyzer {analyzer_id} is deleted successfully")
-                except Exception as e:
-                    print(f"Warning: Failed to delete analyzer {analyzer_id}: {e}")
-            else:
-                print(f"Analyzer {analyzer_id} was not created, no cleanup needed")
+            delete_analyzer_and_assert_sync(client, analyzer_id, created_analyzer)
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
@@ -780,17 +744,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
 
         finally:
             # Always clean up the created analyzer, even if the test fails
-            if created_analyzer:
-                print(f"Cleaning up analyzer {analyzer_id}")
-                try:
-                    client.content_analyzers.delete(analyzer_id=analyzer_id)
-                    # Verify deletion
-                    assert not analyzer_in_list_sync(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
-                    print(f"Analyzer {analyzer_id} is deleted successfully")
-                except Exception as e:
-                    print(f"Warning: Failed to delete analyzer {analyzer_id}: {e}")
-            else:
-                print(f"Analyzer {analyzer_id} was not created, no cleanup needed")
+            delete_analyzer_and_assert_sync(client, analyzer_id, created_analyzer)
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
@@ -869,14 +823,4 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
 
         finally:
             # Always clean up the created analyzer, even if the test fails
-            if created_analyzer:
-                print(f"Cleaning up analyzer {analyzer_id}")
-                try:
-                    client.content_analyzers.delete(analyzer_id=analyzer_id)
-                    # Verify deletion
-                    assert not analyzer_in_list_sync(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
-                    print(f"Analyzer {analyzer_id} is deleted successfully")
-                except Exception as e:
-                    print(f"Warning: Failed to delete analyzer {analyzer_id}: {e}")
-            else:
-                print(f"Analyzer {analyzer_id} was not created, no cleanup needed") 
+            delete_analyzer_and_assert_sync(client, analyzer_id, created_analyzer) 

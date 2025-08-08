@@ -10,6 +10,7 @@ import os
 from typing import Tuple, Union, Dict, Any, Optional
 from devtools_testutils import recorded_by_proxy
 from testpreparer import ContentUnderstandingClientTestBase, ContentUnderstandingPreparer
+from azure.ai.contentunderstanding.models import ContentClassifier
 from test_helpers import (
     generate_classifier_id,
     generate_analyzer_id,
@@ -44,7 +45,7 @@ def classifier_in_list_sync(client, classifier_id: str) -> bool:
 def create_classifier_and_assert_sync(
     client, 
     classifier_id: str, 
-    resource: Dict[str, Any]
+    resource: Union[ContentClassifier, Dict[str, Any]]
 ) -> Tuple[Any, str]:
     """Create a classifier and perform basic assertions (sync version).
     
@@ -98,7 +99,7 @@ def create_classifier_and_assert_sync(
     # Additional poller assertions
     assert poller is not None
     assert poller.status() is not None
-    assert poller.status() is not ""
+    assert poller.status() != ""
     assert poller.continuation_token() is not None
     
     # Verify the classifier is in the list
@@ -106,6 +107,30 @@ def create_classifier_and_assert_sync(
     print(f"  Verified classifier {classifier_id} is in the list")
     
     return poller, operation_id
+
+
+def delete_classifier_and_assert_sync(client, classifier_id: str, created_classifier: bool) -> None:
+    """Delete a classifier and assert it was deleted successfully (sync version).
+    
+    Args:
+        client: The ContentUnderstandingClient instance
+        classifier_id: The classifier ID to delete
+        created_classifier: Whether the classifier was created (to determine if cleanup is needed)
+        
+    Raises:
+        AssertionError: If the classifier still exists after deletion
+    """
+    if created_classifier:
+        print(f"Cleaning up classifier {classifier_id}")
+        try:
+            client.content_classifiers.delete(classifier_id=classifier_id)
+            # Verify deletion
+            assert not classifier_in_list_sync(client, classifier_id), f"Deleted classifier with ID '{classifier_id}' was found in the list"
+            print(f"Classifier {classifier_id} is deleted successfully")
+        except Exception as e:
+            print(f"Warning: Failed to delete classifier {classifier_id}: {e}")
+    else:
+        print(f"Classifier {classifier_id} was not created, no cleanup needed")
 
 
 class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingClientTestBase):
@@ -159,17 +184,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
 
         finally:
             # Always clean up the created classifier, even if the test fails
-            if created_classifier:
-                print(f"Cleaning up classifier {classifier_id}")
-                try:
-                    client.content_classifiers.delete(classifier_id=classifier_id)
-                    # Verify deletion
-                    assert not classifier_in_list_sync(client, classifier_id), f"Deleted classifier with ID '{classifier_id}' was found in the list"
-                    print(f"Classifier {classifier_id} is deleted successfully")
-                except Exception as e:
-                    print(f"Warning: Failed to delete classifier {classifier_id}: {e}")
-            else:
-                print(f"Classifier {classifier_id} was not created, no cleanup needed")
+            delete_classifier_and_assert_sync(client, classifier_id, created_classifier)
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
@@ -203,17 +218,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
 
         finally:
             # Always clean up the created classifier, even if the test fails
-            if created_classifier:
-                print(f"Cleaning up classifier {classifier_id}")
-                try:
-                    client.content_classifiers.delete(classifier_id=classifier_id)
-                    # Verify deletion
-                    assert not classifier_in_list_sync(client, classifier_id), f"Deleted classifier with ID '{classifier_id}' was found in the list"
-                    print(f"Classifier {classifier_id} is deleted successfully")
-                except Exception as e:
-                    print(f"Warning: Failed to delete classifier {classifier_id}: {e}")
-            else:
-                print(f"Classifier {classifier_id} was not created, no cleanup needed")
+            delete_classifier_and_assert_sync(client, classifier_id, created_classifier)
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
@@ -290,17 +295,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
 
         finally:
             # Always clean up the created classifier, even if the test fails
-            if created_classifier:
-                print(f"Cleaning up classifier {classifier_id}")
-                try:
-                    client.content_classifiers.delete(classifier_id=classifier_id)
-                    # Verify deletion
-                    assert not classifier_in_list_sync(client, classifier_id), f"Deleted classifier with ID '{classifier_id}' was found in the list"
-                    print(f"Classifier {classifier_id} is deleted successfully")
-                except Exception as e:
-                    print(f"Warning: Failed to delete classifier {classifier_id}: {e}")
-            else:
-                print(f"Classifier {classifier_id} was not created, no cleanup needed")
+            delete_classifier_and_assert_sync(client, classifier_id, created_classifier)
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
@@ -341,17 +336,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
 
         finally:
             # Always clean up the created classifier, even if the test fails
-            if created_classifier:
-                print(f"Cleaning up classifier {classifier_id}")
-                try:
-                    client.content_classifiers.delete(classifier_id=classifier_id)
-                    # Verify deletion
-                    assert not classifier_in_list_sync(client, classifier_id), f"Deleted classifier with ID '{classifier_id}' was found in the list"
-                    print(f"Classifier {classifier_id} is deleted successfully")
-                except Exception as e:
-                    print(f"Warning: Failed to delete classifier {classifier_id}: {e}")
-            else:
-                print(f"Classifier {classifier_id} was not created, no cleanup needed")
+            delete_classifier_and_assert_sync(client, classifier_id, created_classifier)
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
@@ -461,17 +446,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
 
         finally:
             # Always clean up the created classifier, even if the test fails
-            if created_classifier:
-                print(f"Cleaning up classifier {classifier_id}")
-                try:
-                    client.content_classifiers.delete(classifier_id=classifier_id)
-                    # Verify deletion
-                    assert not classifier_in_list_sync(client, classifier_id), f"Deleted classifier with ID '{classifier_id}' was found in the list"
-                    print(f"Classifier {classifier_id} is deleted successfully")
-                except Exception as e:
-                    print(f"Warning: Failed to delete classifier {classifier_id}: {e}")
-            else:
-                print(f"Classifier {classifier_id} was not created, no cleanup needed")
+            delete_classifier_and_assert_sync(client, classifier_id, created_classifier)
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
@@ -538,17 +513,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
 
         finally:
             # Always clean up the created classifier, even if the test fails
-            if created_classifier:
-                print(f"Cleaning up classifier {classifier_id}")
-                try:
-                    client.content_classifiers.delete(classifier_id=classifier_id)
-                    # Verify deletion
-                    assert not classifier_in_list_sync(client, classifier_id), f"Deleted classifier with ID '{classifier_id}' was found in the list"
-                    print(f"Classifier {classifier_id} is deleted successfully")
-                except Exception as e:
-                    print(f"Warning: Failed to delete classifier {classifier_id}: {e}")
-            else:
-                print(f"Classifier {classifier_id} was not created, no cleanup needed")
+            delete_classifier_and_assert_sync(client, classifier_id, created_classifier)
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
@@ -617,17 +582,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
 
         finally:
             # Always clean up the created classifier, even if the test fails
-            if created_classifier:
-                print(f"Cleaning up classifier {classifier_id}")
-                try:
-                    client.content_classifiers.delete(classifier_id=classifier_id)
-                    # Verify deletion
-                    assert not classifier_in_list_sync(client, classifier_id), f"Deleted classifier with ID '{classifier_id}' was found in the list"
-                    print(f"Classifier {classifier_id} is deleted successfully")
-                except Exception as e:
-                    print(f"Warning: Failed to delete classifier {classifier_id}: {e}")
-            else:
-                print(f"Classifier {classifier_id} was not created, no cleanup needed")
+            delete_classifier_and_assert_sync(client, classifier_id, created_classifier)
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
@@ -721,14 +676,4 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
 
         finally:
             # Always clean up the created classifier, even if the test fails
-            if created_classifier:
-                print(f"Cleaning up classifier {classifier_id}")
-                try:
-                    client.content_classifiers.delete(classifier_id=classifier_id)
-                    # Verify deletion
-                    assert not classifier_in_list_sync(client, classifier_id), f"Deleted classifier with ID '{classifier_id}' was found in the list"
-                    print(f"Classifier {classifier_id} is deleted successfully")
-                except Exception as e:
-                    print(f"Warning: Failed to delete classifier {classifier_id}: {e}")
-            else:
-                print(f"Classifier {classifier_id} was not created, no cleanup needed")
+            delete_classifier_and_assert_sync(client, classifier_id, created_classifier)
