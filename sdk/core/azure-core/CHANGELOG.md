@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed an issue where the `retry_backoff_max` parameter in `RetryPolicy` and `AsyncRetryPolicy` constructors was being ignored, causing retry operations to use default maximum backoff values instead of the user-specified limits. #42444
+
 ### Other Changes
 
 ## 1.35.0 (2025-07-02)
