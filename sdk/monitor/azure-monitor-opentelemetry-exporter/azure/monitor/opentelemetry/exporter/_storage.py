@@ -12,6 +12,14 @@ from enum import Enum
 
 from azure.monitor.opentelemetry.exporter._utils import PeriodicTask
 
+from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+    _LOCAL_FILE_STORAGE_STATE,
+    get_local_storage_state_exception,
+    get_local_storage_state_readonly,
+    _LOCAL_FILE_STORAGE_STATE_LOCK,
+    set_local_storage_state_exception,
+)
+
 logger = logging.getLogger(__name__)
 
 ICACLS_PATH = os.path.join(
@@ -102,8 +110,6 @@ class LocalFileStorage:
         self._max_size = max_size
         self._retention_period = retention_period
         self._write_timeout = write_timeout
-        self.filesystem_is_readonly = False
-        self.exception_occurred = None
         self._enabled = self._check_and_set_folder_permissions()
         if self._enabled:
             self._maintenance_routine()
@@ -191,10 +197,10 @@ class LocalFileStorage:
     def put(self, data, lease_period=None):
         try:
             if not self._enabled:
-                if self.filesystem_is_readonly:
+                if get_local_storage_state_readonly():
                     return StorageExportResult.CLIENT_READONLY
-                if self.exception_occurred is not None:
-                    return self.exception_occurred
+                if get_local_storage_state_exception() is not None:
+                    return get_local_storage_state_exception()
                 return StorageExportResult.CLIENT_STORAGE_DISABLED
             if not self._check_storage_size():
                 return StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED
@@ -211,7 +217,8 @@ class LocalFileStorage:
                 lease_period = self._lease_period
             return blob.put(data, lease_period=lease_period)
         except Exception as ex:
-            return str(ex)
+            set_local_storage_state_exception(str(ex))
+            return get_local_storage_state_exception()
 
 
     def _check_and_set_folder_permissions(self):
@@ -252,11 +259,13 @@ class LocalFileStorage:
                 return True
         except OSError as error:
             if getattr(error, 'errno', None) == errno.EROFS:  # cspell:disable-line
-                self.filesystem_is_readonly = True
+                #self.filesystem_is_readonly = True
+                with _LOCAL_FILE_STORAGE_STATE_LOCK:
+                    _LOCAL_FILE_STORAGE_STATE["READONLY"] = True
             else:
-                self.exception_occurred = str(error)
+                set_local_storage_state_exception(str(error))
         except Exception as ex:
-            self.exception_occurred = str(ex)
+            set_local_storage_state_exception(str(ex))
         return False
 
     def _check_storage_size(self):

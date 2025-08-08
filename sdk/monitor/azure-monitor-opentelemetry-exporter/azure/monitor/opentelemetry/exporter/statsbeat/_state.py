@@ -24,6 +24,13 @@ _CUSTOMER_STATSBEAT_STATE = {
 }
 _CUSTOMER_STATSBEAT_STATE_LOCK = threading.Lock()
 
+_LOCAL_FILE_STORAGE_STATE = {
+    "READONLY": False,
+    "EXCEPTION_OCCURRED": None
+}
+
+_LOCAL_FILE_STORAGE_STATE_LOCK = threading.Lock()
+
 def is_statsbeat_enabled():
     disabled = os.environ.get(_APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL)
     return disabled is None or disabled.lower() != "true"
@@ -75,3 +82,13 @@ def set_statsbeat_live_metrics_feature_set():
 
 def get_customer_statsbeat_shutdown():
     return _CUSTOMER_STATSBEAT_STATE["SHUTDOWN"]
+
+def get_local_storage_state_readonly():
+    return _LOCAL_FILE_STORAGE_STATE["READONLY"]
+
+def get_local_storage_state_exception():
+    return _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"]
+
+def set_local_storage_state_exception(value):
+    with _LOCAL_FILE_STORAGE_STATE_LOCK:
+        _LOCAL_FILE_STORAGE_STATE["EXCEPTION_OCCURRED"] = value
