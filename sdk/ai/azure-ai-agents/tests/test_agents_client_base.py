@@ -42,6 +42,29 @@ if LOGGING_ENABLED:
     logger.addHandler(handler)
 
 
+def fetch_current_datetime_live():
+    """
+    Get the current time as a JSON string.
+
+    :return: Static time string so that test recordings work.
+    :rtype: str
+    """
+    current_datetime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    time_json = json.dumps({"current_time": current_datetime})
+    return time_json
+
+
+def fetch_current_datetime_recordings():
+    """
+    Get the current time as a JSON string.
+
+    :return: Static time string so that test recordings work.
+    :rtype: str
+    """
+    time_json = json.dumps({"current_time": "2024-10-10 12:30:19"})
+    return time_json
+
+
 class TestAgentClientBase(AzureRecordedTestCase):
     """Base class for Agents Client tests. Please put all code common to sync and async tests here."""
 
@@ -51,33 +74,10 @@ class TestAgentClientBase(AzureRecordedTestCase):
         return sleep if is_live() else 0
 
     @classmethod
-    def _fetch_current_datetime_live(cls):
-        """
-        Get the current time as a JSON string.
-
-        :return: Static time string so that test recordings work.
-        :rtype: str
-        """
-        current_datetime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        time_json = json.dumps({"current_time": current_datetime})
-        return time_json
-
-    @classmethod
-    def _fetch_current_datetime_recordings(cls):
-        """
-        Get the current time as a JSON string.
-
-        :return: Static time string so that test recordings work.
-        :rtype: str
-        """
-        time_json = json.dumps({"current_time": "2024-10-10 12:30:19"})
-        return time_json
-
-    @classmethod
     def _validate_run_step_browser_automation_tool_call(cls, tool_call: RunStepBrowserAutomationToolCall):
         assert tool_call.browser_automation.input
         assert tool_call.browser_automation.output
-        assert len(tool_call.browser_automation.steps)>1
+        assert len(tool_call.browser_automation.steps) > 1
         assert tool_call.browser_automation.steps[0].last_step_result
         assert tool_call.browser_automation.steps[0].current_state
         assert tool_call.browser_automation.steps[0].next_step

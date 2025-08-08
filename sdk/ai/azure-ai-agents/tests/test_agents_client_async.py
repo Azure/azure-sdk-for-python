@@ -57,7 +57,7 @@ from azure.ai.agents.models import (
     VectorStoreDataSource,
     VectorStoreDataSourceAssetType,
 )
-from test_agents_client_base import TestAgentClientBase, agentClientPreparer
+from test_agents_client_base import TestAgentClientBase, agentClientPreparer, fetch_current_datetime_recordings, fetch_current_datetime_live
 
 # TODO clean this up / get rid of anything not in use
 
@@ -70,9 +70,8 @@ issues I've noticed with the code:
 """
 
 # Statically defined user functions for fast reference
-# TODO: Does this really do anything?
-user_functions_recording = {TestAgentClientBase._fetch_current_datetime_recordings}
-user_functions_live = {TestAgentClientBase._fetch_current_datetime_live}
+user_functions_recording = {fetch_current_datetime_recordings}
+user_functions_live = {fetch_current_datetime_live}
 
 
 # The test class name needs to start with "Test" to get collected by pytest
