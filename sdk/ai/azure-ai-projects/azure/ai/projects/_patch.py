@@ -33,12 +33,18 @@ _console_logging_enabled: bool = os.environ.get("ENABLE_AZURE_AI_PROJECTS_CONSOL
 )
 if _console_logging_enabled:
     import sys
-
+    # Enable detailed console logs across Azure libraries
     azure_logger = logging.getLogger("azure")
     azure_logger.setLevel(logging.DEBUG)
     azure_logger.addHandler(logging.StreamHandler(stream=sys.stdout))
+    # Exclude detailed logs for network calls associated with getting Entra ID token.
     identity_logger = logging.getLogger("azure.identity")
     identity_logger.setLevel(logging.ERROR)
+    # Make sure regular (redacted) detailed azure.core logs are not shown, as we are about to 
+    # turn on non-redacted logs by passing 'logging_enable=True' to the client constructor 
+    # (which are implemented as a separate logging policy)
+    logger = logging.getLogger("azure.core.pipeline.policies.http_logging_policy")
+    logger.setLevel(logging.ERROR)
 
 
 def _patch_user_agent(user_agent: Optional[str]) -> str:
