@@ -188,20 +188,35 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
     def test_content_recording_enabled_with_old_and_new_environment_variables(
         self, env1: Optional[bool], env2: Optional[bool], expected: bool
     ):
-
+        """
+        Test content recording enablement with both old and new environment variables.
+        This test verifies the behavior of content recording when both the current
+        and legacy environment variables are set to different combinations of values.
+        The method tests all possible combinations of None, True, and False for both
+        environment variables to ensure backward compatibility and proper precedence.
+        Args:
+            env1: Value for the current content tracing environment variable.
+                  Can be None (unset), True, or False.
+            env2: Value for the old/legacy content tracing environment variable.
+                  Can be None (unset), True, or False.
+            expected: The expected result of is_content_recording_enabled() given
+                      the environment variable combination.
+        The test ensures that only if one or both of the environment variables are
+        defined and set to "true" content recording is enabled.
+        """
         if env1 == None:
             os.environ.pop(CONTENT_TRACING_ENV_VARIABLE, None)
         elif env1:
-            os.environ[CONTENT_TRACING_ENV_VARIABLE] = "True"
+            os.environ[CONTENT_TRACING_ENV_VARIABLE] = "true"
         else:
-            os.environ[CONTENT_TRACING_ENV_VARIABLE] = "False"
+            os.environ[CONTENT_TRACING_ENV_VARIABLE] = "false"
 
         if env2 == None:
             os.environ.pop(OLD_CONTENT_TRACING_ENV_VARIABLE, None)
         elif env2:
-            os.environ[OLD_CONTENT_TRACING_ENV_VARIABLE] = "True"
+            os.environ[OLD_CONTENT_TRACING_ENV_VARIABLE] = "true"
         else:
-            os.environ[OLD_CONTENT_TRACING_ENV_VARIABLE] = "False"
+            os.environ[OLD_CONTENT_TRACING_ENV_VARIABLE] = "false"
 
         self.setup_telemetry()
         try:
