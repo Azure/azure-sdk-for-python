@@ -9,7 +9,7 @@ import os
 import json
 import time
 import functools
-from typing import Set, Callable, Any
+from typing import Set, Callable, Any, Optional
 from azure.ai.agents.models import (
     AgentsResponseFormatMode,
     AgentsResponseFormat,
@@ -49,6 +49,8 @@ agentClientPreparer = functools.partial(
 )
 
 CONTENT_TRACING_ENV_VARIABLE = "OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT"
+OLD_CONTENT_TRACING_ENV_VARIABLE = "AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED"  # Deprecated, undocumented.
+
 settings.tracing_implementation = "OpenTelemetry"
 _utils._span_impl_type = settings.tracing_implementation()
 
@@ -168,6 +170,45 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
             exception_caught = True
             print(e)
         assert exception_caught == False
+
+    @pytest.mark.parametrize(
+        "env1, env2, expected",
+        [
+            (None, None, False),
+            (None, False, False),
+            (None, True, True),
+            (False, None, False),
+            (False, False, False),
+            (False, True, False),
+            (True, None, True),
+            (True, False, False),
+            (True, True, True),
+        ],
+    )
+    def test_content_recording_enabled_with_old_and_new_environment_variables(
+        self, env1: Optional[bool], env2: Optional[bool], expected: bool
+    ):
+
+        if env1 == None:
+            os.environ.pop(CONTENT_TRACING_ENV_VARIABLE, None)
+        elif env1:
+            os.environ[CONTENT_TRACING_ENV_VARIABLE] = "True"
+        else:
+            os.environ[CONTENT_TRACING_ENV_VARIABLE] = "False"
+
+        if env2 == None:
+            os.environ.pop(OLD_CONTENT_TRACING_ENV_VARIABLE, None)
+        elif env2:
+            os.environ[OLD_CONTENT_TRACING_ENV_VARIABLE] = "True"
+        else:
+            os.environ[OLD_CONTENT_TRACING_ENV_VARIABLE] = "False"
+
+        self.setup_telemetry()
+        try:
+            assert AIAgentsInstrumentor().is_content_recording_enabled() == expected
+        finally:
+            self.cleanup()  # This also undefines CONTENT_TRACING_ENV_VARIABLE
+            os.environ.pop(OLD_CONTENT_TRACING_ENV_VARIABLE, None)
 
     @pytest.mark.usefixtures("instrument_with_content")
     @agentClientPreparer()
