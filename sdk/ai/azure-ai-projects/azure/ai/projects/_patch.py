@@ -40,8 +40,8 @@ if _console_logging_enabled:
     # Exclude detailed logs for network calls associated with getting Entra ID token.
     identity_logger = logging.getLogger("azure.identity")
     identity_logger.setLevel(logging.ERROR)
-    # Make sure regular (redacted) detailed azure.core logs are not shown, as we are about to 
-    # turn on non-redacted logs by passing 'logging_enable=True' to the client constructor 
+    # Make sure regular (redacted) detailed azure.core logs are not shown, as we are about to
+    # turn on non-redacted logs by passing 'logging_enable=True' to the client constructor
     # (which are implemented as a separate logging policy)
     logger = logging.getLogger("azure.core.pipeline.policies.http_logging_policy")
     logger.setLevel(logging.ERROR)
