@@ -198,20 +198,19 @@ class _AIAgentsInstrumentorPreview:
         """
         if enable_content_recording is None:
 
-            # AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED was introduced before the standard 
+            # AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED was introduced before the standard
             # OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT was defined by OTEL. Support both
             # of them moving forward, but only document the standard one.
             var_value_new = os.environ.get("OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT")
-            var_value_old = os.environ.get("AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED") # Deprecated, undocumented.
-            var_value : str|None = None
+            var_value_old = os.environ.get("AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED")  # Deprecated, undocumented.
+            var_value : Optional[str] = None
 
             if (var_value_new and var_value_old and var_value_new != var_value_old):
-                logger.error("""
-                    Environment variables OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT
-                    and AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED are both set, and
-                    their values differ. Message content recording in this run will be disabled
-                    as a result. Please set OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT only.
-                    """
+                logger.error(
+                    "Environment variables OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT "
+                    "and AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED are both set, and "
+                    "their values differ. Message content recording in this run will be disabled "
+                    "as a result. Please set OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT only."
                 )
                 var_value = None
             elif var_value_new:
