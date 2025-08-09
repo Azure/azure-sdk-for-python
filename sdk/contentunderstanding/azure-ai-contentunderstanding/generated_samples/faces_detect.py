@@ -77,14 +77,6 @@ async def detect_faces_in_image(client: ContentUnderstandingClient):
         for i, face in enumerate(response.detected_faces, 1):
             print(f"\n   Face {i}:")
             
-            # Display face ID if available
-            if hasattr(face, 'face_id') and face.face_id:
-                print(f"      ID: {face.face_id}")
-            
-            # Display confidence if available
-            if hasattr(face, 'confidence') and face.confidence is not None:
-                print(f"      Confidence: {face.confidence:.4f}")
-            
             # Display bounding box information
             if hasattr(face, 'bounding_box') and face.bounding_box:
                 bbox = face.bounding_box
