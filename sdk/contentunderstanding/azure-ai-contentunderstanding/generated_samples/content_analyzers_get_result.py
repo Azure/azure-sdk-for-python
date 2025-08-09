@@ -52,7 +52,7 @@ async def main():
     5. Save the analysis result to a file
     6. Clean up the created analyzer
     """
-    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT")
+    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
     credential = get_credential()
 
     async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
@@ -141,12 +141,15 @@ async def main():
         print(f"   Status: {operation_status.status}")
         
         # The actual analysis result is in operation_status.result
-        analysis_result = operation_status.result
-        print(f"   Result contains {len(analysis_result.contents)} contents")
+        operation_result = operation_status.result
+        if operation_result is None:
+            print("⚠️  No analysis result available")
+            return
+        print(f"   Result contains {len(operation_result.contents)} contents")
         
         # Save the analysis result to a file
         saved_file_path = save_response_to_file(
-            result=analysis_result,
+            result=operation_result,
             filename_prefix="content_analyzers_get_result"
         )
         print(f"💾 Analysis result saved to: {saved_file_path}")

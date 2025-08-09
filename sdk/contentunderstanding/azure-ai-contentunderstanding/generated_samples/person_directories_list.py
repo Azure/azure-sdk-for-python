@@ -33,7 +33,7 @@ async def main():
     3. Display directory details
     4. Clean up the created directories
     """
-    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT")
+    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
     credential = get_credential()
 
     async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:

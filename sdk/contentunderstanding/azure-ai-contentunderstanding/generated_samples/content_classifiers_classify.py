@@ -40,7 +40,7 @@ async def main():
     3. Save the classification result to a file
     4. Clean up the created classifier
     """
-    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT")
+    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
     credential = get_credential()
 
     async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:

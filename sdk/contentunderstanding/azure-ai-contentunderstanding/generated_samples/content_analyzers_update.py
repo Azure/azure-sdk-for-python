@@ -46,7 +46,7 @@ async def main():
     4. Get the analyzer again to verify changes persisted
     5. Clean up the created analyzer
     """
-    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT")
+    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
     credential = get_credential()
 
     async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
@@ -133,8 +133,9 @@ async def main():
         
         # Verify the changes were applied correctly
         assert analyzer_after_update.description == f"Updated analyzer for update demo: {analyzer_id}"
-        assert "updated_tag" in analyzer_after_update.tags
-        assert analyzer_after_update.tags["updated_tag"] == "updated_value"
+        tags = analyzer_after_update.tags or {}
+        assert "updated_tag" in tags
+        assert tags.get("updated_tag") == "updated_value"
         print(f"✅ All changes verified successfully!")
 
         # Clean up the created analyzer (demo cleanup)

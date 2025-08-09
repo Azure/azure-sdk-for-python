@@ -9,6 +9,7 @@
 import asyncio
 import os
 import re
+from typing import Any
 
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import (
@@ -53,7 +54,7 @@ async def main():
     5. Save the keyframe images to local files
     6. Clean up the created analyzer
     """
-    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT")
+    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
     credential = get_credential()
 
     async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
@@ -119,6 +120,9 @@ async def main():
         
         # The actual analysis result is in operation_status.result
         analysis_result = operation_status.result
+        if analysis_result is None:
+            print("⚠️  No analysis result available")
+            return
         print(f"✅ Analysis result contains {len(analysis_result.contents)} contents")
 
         # Look for keyframe files in the analysis result markdown
@@ -150,19 +154,19 @@ async def main():
             print(f"📥 Getting result file: {keyframe_id}")
             
             # Get the result file (keyframe image)
-            response = await client.content_analyzers.get_result_file(
+            response: Any = await client.content_analyzers.get_result_file(
                 operation_id=analysis_operation_id,
                 path=keyframe_id,
             )
             
-            # Handle the response - it's an async iterator that needs to be collected
-            if hasattr(response, '__aiter__'):
-                chunks = []
+            # Handle the response which may be bytes or an async iterator of bytes
+            if isinstance(response, (bytes, bytearray)):
+                image_content = bytes(response)
+            else:
+                chunks: list[bytes] = []
                 async for chunk in response:
                     chunks.append(chunk)
-                image_content = b''.join(chunks)
-            else:
-                image_content = response
+                image_content = b"".join(chunks)
 
             print(f"✅ Retrieved image file for {keyframe_id} ({len(image_content)} bytes)")
             

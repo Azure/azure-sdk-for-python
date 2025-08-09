@@ -39,7 +39,7 @@ async def main():
     - Positive: Searching for the same person should return high-confidence matches
     - Negative: Searching for a different person should return no matches
     """
-    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT")
+    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
     credential = get_credential()
 
     async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:

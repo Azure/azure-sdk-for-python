@@ -34,7 +34,7 @@ async def main():
     3. Call the faces detect API
     4. Display detection results with face details
     """
-    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT")
+    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
     credential = get_credential()
 
     # Handle credential context manager conditionally

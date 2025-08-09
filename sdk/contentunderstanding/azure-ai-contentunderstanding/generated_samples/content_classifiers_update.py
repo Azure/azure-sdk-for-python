@@ -41,7 +41,7 @@ async def main():
     4. Get the classifier again to verify changes persisted
     5. Clean up the created classifier
     """
-    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT")
+    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
     credential = get_credential()
 
     async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
@@ -77,10 +77,11 @@ async def main():
 
         # Create updated classifier with only allowed properties (description and tags)
         print(f"🔄 Creating updated classifier configuration...")
-        updated_classifier = ContentClassifier(
-            description=f"Updated classifier for update demo: {classifier_id}",
-            tags={"initial_tag": "initial_value", "updated_tag": "updated_value", "demo_type": "update"},
-        )
+        # Use a partial resource dict for update to avoid requiring categories
+        updated_classifier = {
+            "description": f"Updated classifier for update demo: {classifier_id}",
+            "tags": {"initial_tag": "initial_value", "updated_tag": "updated_value", "demo_type": "update"},
+        }
 
         # Update the classifier
         print(f"📝 Updating classifier '{classifier_id}' with new description and tags...")

@@ -44,7 +44,7 @@ async def main():
     5. Save the classification result to a file
     6. Clean up the created classifier
     """
-    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT")
+    endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
     credential = get_credential()
 
     async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client, credential:
@@ -104,9 +104,9 @@ async def main():
         print(f"   Status: {getattr(operation_status, 'status', 'N/A')}")
         
         # The actual classification result is in operation_status.result
-        classification_result = getattr(operation_status, 'result', None)
-        if classification_result:
-            print(f"   Result contains {len(getattr(classification_result, 'contents', []))} contents")
+        operation_result = getattr(operation_status, 'result', None)
+        if operation_result is not None:
+            print(f"   Result contains {len(getattr(operation_result, 'contents', []))} contents")
         
         # Save the classification result to a file
         saved_file_path = save_response_to_file(
