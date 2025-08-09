@@ -49,8 +49,6 @@ agentClientPreparer = functools.partial(
 )
 
 CONTENT_TRACING_ENV_VARIABLE = "OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT"
-OLD_CONTENT_TRACING_ENV_VARIABLE = "AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED"  # Deprecated, undocumented.
-
 settings.tracing_implementation = "OpenTelemetry"
 _utils._span_impl_type = settings.tracing_implementation()
 
@@ -204,19 +202,17 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         The test ensures that only if one or both of the environment variables are
         defined and set to "true" content recording is enabled.
         """
-        if env1 == None:
-            os.environ.pop(CONTENT_TRACING_ENV_VARIABLE, None)
-        elif env1:
-            os.environ[CONTENT_TRACING_ENV_VARIABLE] = "true"
-        else:
-            os.environ[CONTENT_TRACING_ENV_VARIABLE] = "false"
 
-        if env2 == None:
-            os.environ.pop(OLD_CONTENT_TRACING_ENV_VARIABLE, None)
-        elif env2:
-            os.environ[OLD_CONTENT_TRACING_ENV_VARIABLE] = "true"
-        else:
-            os.environ[OLD_CONTENT_TRACING_ENV_VARIABLE] = "false"
+        OLD_CONTENT_TRACING_ENV_VARIABLE = "AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED"  # Deprecated, undocumented.
+
+        def set_env_var(var_name, value):
+            if value is None:
+                os.environ.pop(var_name, None)
+            else:
+                os.environ[var_name] = "true" if value else "false"
+
+        set_env_var(CONTENT_TRACING_ENV_VARIABLE, env1)
+        set_env_var(OLD_CONTENT_TRACING_ENV_VARIABLE, env2)
 
         self.setup_telemetry()
         try:
