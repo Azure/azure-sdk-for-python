@@ -57,11 +57,16 @@ def question_evaluator(query):
     return {"length": len(query)}
 
 
-def _get_run_from_run_history(flow_run_id, azure_ml_client: LiteMLClient, project_scope):
+def _get_run_from_run_history(
+    flow_run_id, azure_ml_client: LiteMLClient, project_scope
+):
     """Get run info from run history"""
     from azure.identity import DefaultAzureCredential
 
-    token = "Bearer " + DefaultAzureCredential().get_token(TokenScope.DEFAULT_AZURE_MANAGEMENT).token
+    token = (
+        "Bearer "
+        + DefaultAzureCredential().get_token(TokenScope.DEFAULT_AZURE_MANAGEMENT).token
+    )
     headers = {
         "Authorization": token,
         "Content-Type": "application/json",
@@ -91,7 +96,9 @@ def _get_run_from_run_history(flow_run_id, azure_ml_client: LiteMLClient, projec
     elif response.status_code == 404:
         raise Exception(f"Run {flow_run_id!r} not found.")
     else:
-        raise Exception(f"Failed to get run from service. Code: {response.status_code}, text: {response.text}")
+        raise Exception(
+            f"Failed to get run from service. Code: {response.status_code}, text: {response.text}"
+        )
 
 
 @pytest.mark.usefixtures("recording_injection", "recorded_test")
@@ -115,12 +122,16 @@ class TestEvaluate:
             )
             row_result_df = pd.DataFrame(result["rows"])
             assert "outputs.f1.f1_score" in row_result_df.columns
-            assert not any(math.isnan(f1) for f1 in row_result_df["outputs.f1.f1_score"])
+            assert not any(
+                math.isnan(f1) for f1 in row_result_df["outputs.f1.f1_score"]
+            )
         finally:
             os.chdir(original_working_dir)
 
     # @pytest.mark.performance_test
-    @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
+    @pytest.mark.skip(
+        reason="Temporary skip to merge 37201, will re-enable in subsequent pr"
+    )
     def test_evaluate_with_async_enabled_evaluator(self, model_config, data_file):
         os.environ["AI_EVALS_BATCH_USE_ASYNC"] = "true"
         fluency_eval = FluencyEvaluator(model_config)
@@ -162,7 +173,11 @@ class TestEvaluate:
         input_data = pd.read_json(data_file, lines=True)
 
         # run the evaluation
-        result = evaluate(data=data_file, evaluators={"answer": function}, _use_pf_client=use_pf_client)
+        result = evaluate(
+            data=data_file,
+            evaluators={"answer": function},
+            _use_pf_client=use_pf_client,
+        )
 
         row_result_df = pd.DataFrame(result["rows"])
         metrics = result["metrics"]
@@ -211,13 +226,30 @@ class TestEvaluate:
             {"default": {}, "question_ev": {}},
             {"default": {"column_mapping": {"query": "${data.__outputs.query}"}}},
             {"default": {"column_mapping": {"query": "${data.query}"}}},
-            {"default": {}, "question_ev": {"column_mapping": {"query": "${data.query}"}}},
-            {"default": {}, "question_ev": {"column_mapping": {"query": "${data.__outputs.query}"}}},
-            {"default": {}, "question_ev": {"column_mapping": {"another_question": "${data.__outputs.query}"}}},
-            {"default": {"column_mapping": {"another_question": "${data.__outputs.query}"}}},
+            {
+                "default": {},
+                "question_ev": {"column_mapping": {"query": "${data.query}"}},
+            },
+            {
+                "default": {},
+                "question_ev": {"column_mapping": {"query": "${data.__outputs.query}"}},
+            },
+            {
+                "default": {},
+                "question_ev": {
+                    "column_mapping": {"another_question": "${data.__outputs.query}"}
+                },
+            },
+            {
+                "default": {
+                    "column_mapping": {"another_question": "${data.__outputs.query}"}
+                }
+            },
         ],
     )
-    def test_evaluate_another_questions(self, questions_file, evaluation_config, run_from_temp_dir):
+    def test_evaluate_another_questions(
+        self, questions_file, evaluation_config, run_from_temp_dir
+    ):
         """Test evaluation with target function."""
         from .target_fn import target_fn3
 
@@ -239,9 +271,13 @@ class TestEvaluate:
 
         mapping = None
         if evaluation_config:
-            config = evaluation_config.get("question_ev", evaluation_config.get("default", None))
+            config = evaluation_config.get(
+                "question_ev", evaluation_config.get("default", None)
+            )
             mapping = config.get("column_mapping", config)
-        if mapping and ("another_question" in mapping or mapping.get("query") == "${data.query}"):
+        if mapping and (
+            "another_question" in mapping or mapping.get("query") == "${data.query}"
+        ):
             query = "inputs.query"
         expected = list(row_result_df[query].str.len())
         assert expected == list(row_result_df["outputs.question_ev.length"])
@@ -276,7 +312,9 @@ class TestEvaluate:
             ),
         ],
     )
-    def test_evaluate_with_evaluator_config(self, questions_file, evaluate_config, run_from_temp_dir):
+    def test_evaluate_with_evaluator_config(
+        self, questions_file, evaluate_config, run_from_temp_dir
+    ):
         input_data = pd.read_json(questions_file, lines=True)
         from .target_fn import target_fn2
 
@@ -302,7 +340,10 @@ class TestEvaluate:
         assert "answer.length" in metrics.keys()
         assert "f1_score.f1_score" in metrics.keys()
 
-    @pytest.mark.skipif(in_ci(), reason="This test fails in CI and needs to be investigate. Bug: 3458432")
+    @pytest.mark.skipif(
+        in_ci(),
+        reason="This test fails in CI and needs to be investigate. Bug: 3458432",
+    )
     @pytest.mark.azuretest
     def test_evaluate_track_in_cloud(
         self,
@@ -344,10 +385,16 @@ class TestEvaluate:
 
         assert remote_run is not None
         assert remote_run["runMetadata"]["properties"]["runType"] == "eval_run"
-        assert remote_run["runMetadata"]["properties"]["_azureml.evaluation_run"] == "promptflow.BatchRun"
+        assert (
+            remote_run["runMetadata"]["properties"]["_azureml.evaluation_run"]
+            == "promptflow.BatchRun"
+        )
         assert remote_run["runMetadata"]["displayName"] == evaluation_name
 
-    @pytest.mark.skipif(in_ci(), reason="This test fails in CI and needs to be investigate. Bug: 3458432")
+    @pytest.mark.skipif(
+        in_ci(),
+        reason="This test fails in CI and needs to be investigate. Bug: 3458432",
+    )
     @pytest.mark.azuretest
     def test_evaluate_track_in_cloud_no_target(
         self,
@@ -379,7 +426,9 @@ class TestEvaluate:
         assert row_result_df.shape[0] == len(input_data)
         assert "outputs.f1_score.f1_score" in row_result_df.columns.to_list()
         assert "f1_score.f1_score" in metrics.keys()
-        assert metrics.get("f1_score.f1_score") == list_mean_nan_safe(row_result_df["outputs.f1_score.f1_score"])
+        assert metrics.get("f1_score.f1_score") == list_mean_nan_safe(
+            row_result_df["outputs.f1_score.f1_score"]
+        )
         assert row_result_df["outputs.f1_score.f1_score"][2] == 1
         assert result["studio_url"] is not None
 
@@ -389,7 +438,10 @@ class TestEvaluate:
 
         assert remote_run is not None
         assert remote_run["runMetadata"]["properties"]["runType"] == "eval_run"
-        assert remote_run["runMetadata"]["properties"]["_azureml.evaluation_run"] == "promptflow.BatchRun"
+        assert (
+            remote_run["runMetadata"]["properties"]["_azureml.evaluation_run"]
+            == "promptflow.BatchRun"
+        )
         assert remote_run["runMetadata"]["displayName"] == evaluation_name
 
     @pytest.mark.parametrize(
@@ -401,13 +453,17 @@ class TestEvaluate:
             (False, False),
         ],
     )
-    def test_evaluate_aggregation_with_threadpool(self, data_file, return_json, aggregate_return_json):
+    def test_evaluate_aggregation_with_threadpool(
+        self, data_file, return_json, aggregate_return_json
+    ):
         from .custom_evaluators.answer_length_with_aggregation import AnswerLength
 
         result = evaluate(
             data=data_file,
             evaluators={
-                "answer_length": AnswerLength(return_json=return_json, aggregate_return_json=aggregate_return_json),
+                "answer_length": AnswerLength(
+                    return_json=return_json, aggregate_return_json=aggregate_return_json
+                ),
                 "f1_score": F1ScoreEvaluator(),
             },
         )
@@ -431,7 +487,9 @@ class TestEvaluate:
         result = evaluate(
             data=data_file,
             evaluators={
-                "answer_length": AnswerLength(return_json=return_json, aggregate_return_json=aggregate_return_json),
+                "answer_length": AnswerLength(
+                    return_json=return_json, aggregate_return_json=aggregate_return_json
+                ),
                 "f1_score": F1ScoreEvaluator(),
             },
         )
@@ -477,14 +535,26 @@ class TestEvaluate:
 
         # validate the results
         assert jsonl_result["metrics"] == csv_result["metrics"]
-        assert jsonl_result["rows"][0]["inputs.context"] == csv_result["rows"][0]["inputs.context"]
-        assert jsonl_result["rows"][0]["inputs.query"] == csv_result["rows"][0]["inputs.query"]
-        assert jsonl_result["rows"][0]["inputs.ground_truth"] == csv_result["rows"][0]["inputs.ground_truth"]
-        assert remove_whitespace(jsonl_result["rows"][0]["inputs.response"]) == remove_whitespace(
-            csv_result["rows"][0]["inputs.response"]
+        assert (
+            jsonl_result["rows"][0]["inputs.context"]
+            == csv_result["rows"][0]["inputs.context"]
         )
         assert (
-            jsonl_row_result_df.shape[0] == len(jsonl_input_data) == csv_row_result_df.shape[0] == len(csv_input_data)
+            jsonl_result["rows"][0]["inputs.query"]
+            == csv_result["rows"][0]["inputs.query"]
+        )
+        assert (
+            jsonl_result["rows"][0]["inputs.ground_truth"]
+            == csv_result["rows"][0]["inputs.ground_truth"]
+        )
+        assert remove_whitespace(
+            jsonl_result["rows"][0]["inputs.response"]
+        ) == remove_whitespace(csv_result["rows"][0]["inputs.response"])
+        assert (
+            jsonl_row_result_df.shape[0]
+            == len(jsonl_input_data)
+            == csv_row_result_df.shape[0]
+            == len(csv_input_data)
         )
 
         assert "outputs.f1_score.f1_score" in jsonl_row_result_df.columns.to_list()
@@ -513,9 +583,14 @@ class TestUserAgent:
     """Test suite to validate that the User-Agent header is overridable."""
 
     @pytest.fixture(scope="session")
-    def user_agent_model_config(self, model_config: AzureOpenAIModelConfiguration) -> AzureOpenAIModelConfiguration:
+    def user_agent_model_config(
+        self, model_config: AzureOpenAIModelConfiguration
+    ) -> AzureOpenAIModelConfiguration:
 
-        if model_config["azure_endpoint"] != "https://Sanitized.api.cognitive.microsoft.com":
+        if (
+            model_config["azure_endpoint"]
+            != "https://Sanitized.api.cognitive.microsoft.com"
+        ):
             return model_config
 
         return AzureOpenAIModelConfiguration(
@@ -533,10 +608,15 @@ class TestUserAgent:
         """
         # https://stackoverflow.com/a/70886946
         return patch.object(
-            cls_to_mock, attribute_name, side_effect=getattr(cls_to_mock, attribute_name), autospec=True
+            cls_to_mock,
+            attribute_name,
+            side_effect=getattr(cls_to_mock, attribute_name),
+            autospec=True,
         )
 
-    def test_evaluate_user_agent(self, user_agent_model_config: AzureOpenAIModelConfiguration, data_file: str) -> None:
+    def test_evaluate_user_agent(
+        self, user_agent_model_config: AzureOpenAIModelConfiguration, data_file: str
+    ) -> None:
         """Validate that user agent can be overriden with evaluate param."""
         base_user_agent = f"azure-ai-evaluation/{VERSION}"
         added_useragent = "test/1.0.0"

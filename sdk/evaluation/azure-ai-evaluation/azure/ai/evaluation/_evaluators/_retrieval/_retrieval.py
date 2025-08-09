@@ -7,7 +7,9 @@ import os
 from typing import Dict, List, Union
 from typing_extensions import overload, override
 
-from azure.ai.evaluation._evaluators._common._base_prompty_eval import PromptyEvaluatorBase
+from azure.ai.evaluation._evaluators._common._base_prompty_eval import (
+    PromptyEvaluatorBase,
+)
 from azure.ai.evaluation._model_configurations import Conversation
 
 logger = logging.getLogger(__name__)
@@ -33,6 +35,9 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         ~azure.ai.evaluation.OpenAIModelConfiguration]
     :param threshold: The threshold for the evaluation. Default is 3.
     :type threshold: float
+    :keyword is_reasoning_model: (Preview) Adjusts prompty config
+        for reasoning models when True.
+    :paramtype is_reasoning_model: bool
     :return: A function that evaluates and generates metrics for "chat" scenario.
     :rtype: Callable
 
@@ -78,7 +83,8 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *, threshold: float = 3):  # pylint: disable=super-init-not-called
+    # pylint: disable=super-init-not-called
+    def __init__(self, model_config, *, threshold: float = 3, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self._threshold = threshold
@@ -89,6 +95,7 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             result_key=self._RESULT_KEY,
             threshold=threshold,
             _higher_is_better=self._higher_is_better,
+            **kwargs,
         )
 
     @overload

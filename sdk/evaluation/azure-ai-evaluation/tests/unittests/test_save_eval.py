@@ -16,10 +16,16 @@ def data_file():
     return os.path.join(data_path, "evaluate_test_data.jsonl")
 
 
-def get_evaluators_from_module(namespace: Any, exceptions: Optional[List[str]] = None) -> List[Type]:
+def get_evaluators_from_module(
+    namespace: Any, exceptions: Optional[List[str]] = None
+) -> List[Type]:
     evaluators = []
     for name, obj in inspect.getmembers(namespace):
-        if inspect.isclass(obj) and not issubclass(obj, Enum) and not issubclass(obj, dict):
+        if (
+            inspect.isclass(obj)
+            and not issubclass(obj, Enum)
+            and not issubclass(obj, dict)
+        ):
             if exceptions and name in exceptions:
                 continue
             evaluators.append(obj)

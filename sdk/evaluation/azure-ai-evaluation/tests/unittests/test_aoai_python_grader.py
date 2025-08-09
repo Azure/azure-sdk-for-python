@@ -44,7 +44,9 @@ def grade(sample: dict, item: dict) -> float:
 
         source_code = "def grade(sample: dict, item: dict) -> float:\n    return 1.0"
 
-        with pytest.raises(ValueError, match="pass_threshold must be between 0.0 and 1.0"):
+        with pytest.raises(
+            ValueError, match="pass_threshold must be between 0.0 and 1.0"
+        ):
             AzureOpenAIPythonGrader(
                 model_config=model_config,
                 name="python_test",

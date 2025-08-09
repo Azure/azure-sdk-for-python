@@ -31,10 +31,15 @@ from pyrit.prompt_converter import (
 from .._default_converter import _DefaultConverter
 from pyrit.prompt_target import OpenAIChatTarget, PromptChatTarget
 from .._callback_chat_target import _CallbackChatTarget
-from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
+from azure.ai.evaluation._model_configurations import (
+    AzureOpenAIModelConfiguration,
+    OpenAIModelConfiguration,
+)
 
 
-def strategy_converter_map() -> Dict[Any, Union[PromptConverter, List[PromptConverter], None]]:
+def strategy_converter_map() -> (
+    Dict[Any, Union[PromptConverter, List[PromptConverter], None]]
+):
     """
     Returns a mapping of attack strategies to their corresponding converters.
     """
@@ -88,7 +93,12 @@ def get_converter_for_strategy(
 
 
 def get_chat_target(
-    target: Union[PromptChatTarget, Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
+    target: Union[
+        PromptChatTarget,
+        Callable,
+        AzureOpenAIModelConfiguration,
+        OpenAIModelConfiguration,
+    ],
     prompt_to_context: Optional[Dict[str, str]] = None,
 ) -> PromptChatTarget:
     """Convert various target types to a PromptChatTarget.
@@ -154,7 +164,9 @@ def get_chat_target(
             has_callback_signature = False
 
         if has_callback_signature:
-            chat_target = _CallbackChatTarget(callback=target, prompt_to_context=prompt_to_context)
+            chat_target = _CallbackChatTarget(
+                callback=target, prompt_to_context=prompt_to_context
+            )
         else:
 
             async def callback_target(
@@ -188,7 +200,12 @@ def get_chat_target(
                     "context": {},
                 }
                 messages_list.append(formatted_response)  # type: ignore
-                return {"messages": messages_list, "stream": stream, "session_state": session_state, "context": {}}
+                return {
+                    "messages": messages_list,
+                    "stream": stream,
+                    "session_state": session_state,
+                    "context": {},
+                }
 
             chat_target = _CallbackChatTarget(callback=callback_target, prompt_to_context=prompt_to_context)  # type: ignore
 

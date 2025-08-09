@@ -94,4 +94,6 @@ def is_async_callable(obj: Any) -> bool:
     :return: True if the object is an async callable.
     :rtype: bool
     """
-    return inspect.iscoroutinefunction(obj) or inspect.iscoroutinefunction(getattr(obj, "__call__", None))
+    return inspect.iscoroutinefunction(obj) or inspect.iscoroutinefunction(
+        getattr(obj, "__call__", None)
+    )

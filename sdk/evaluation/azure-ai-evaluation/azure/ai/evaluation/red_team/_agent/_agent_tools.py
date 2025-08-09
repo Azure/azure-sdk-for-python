@@ -17,7 +17,9 @@ from azure.ai.evaluation._constants import TokenScope
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation.red_team._attack_objective_generator import RiskCategory
 from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenManager
-from azure.ai.evaluation.simulator._model_tools._generated_rai_client import GeneratedRAIClient
+from azure.ai.evaluation.simulator._model_tools._generated_rai_client import (
+    GeneratedRAIClient,
+)
 from ._agent_utils import AgentUtils
 
 # Setup logging
@@ -59,7 +61,8 @@ class RedTeamToolProvider:
 
         # Create the generated RAI client for fetching attack objectives
         self.generated_rai_client = GeneratedRAIClient(
-            azure_ai_project=self.azure_ai_project_endpoint, token_manager=self.token_manager.get_aad_credential()
+            azure_ai_project=self.azure_ai_project_endpoint,
+            token_manager=self.token_manager.get_aad_credential(),
         )
 
         # Cache for attack objectives to avoid repeated API calls
@@ -88,7 +91,9 @@ class RedTeamToolProvider:
         :rtype: str
         :raises ValueError: If the strategy is not supported
         """
-        return await self.converter_utils.convert_text(converter_name=strategy, text=prompt)
+        return await self.converter_utils.convert_text(
+            converter_name=strategy, text=prompt
+        )
 
     @staticmethod
     def _parse_risk_category(category_text: str) -> Optional[RiskCategory]:
@@ -142,7 +147,9 @@ class RedTeamToolProvider:
 
         return None
 
-    async def _get_attack_objectives(self, risk_category: RiskCategory, strategy: str = "baseline") -> List[str]:
+    async def _get_attack_objectives(
+        self, risk_category: RiskCategory, strategy: str = "baseline"
+    ) -> List[str]:
         """Fetch attack objectives directly from the RAI service.
 
         :param risk_category: The risk category to get objectives for
@@ -152,7 +159,9 @@ class RedTeamToolProvider:
         :return: A list of attack objective prompts
         :rtype: List[str]
         """
-        logger.debug(f"Fetching attack objectives for {risk_category.value}, strategy: {strategy}")
+        logger.debug(
+            f"Fetching attack objectives for {risk_category.value}, strategy: {strategy}"
+        )
 
         risk_cat_value = risk_category.value.lower()
 
@@ -164,23 +173,35 @@ class RedTeamToolProvider:
 
             # Get strategy-specific dataset for tense strategy
             if "tense" in strategy:
-                objectives_response = await self.generated_rai_client.get_attack_objectives(
-                    risk_category=risk_cat_value, application_scenario=self.application_scenario or "", strategy="tense"
+                objectives_response = (
+                    await self.generated_rai_client.get_attack_objectives(
+                        risk_category=risk_cat_value,
+                        application_scenario=self.application_scenario or "",
+                        strategy="tense",
+                    )
                 )
             else:
-                objectives_response = await self.generated_rai_client.get_attack_objectives(
-                    risk_category=risk_cat_value, application_scenario=self.application_scenario or "", strategy=None
+                objectives_response = (
+                    await self.generated_rai_client.get_attack_objectives(
+                        risk_category=risk_cat_value,
+                        application_scenario=self.application_scenario or "",
+                        strategy=None,
+                    )
                 )
 
             # Handle jailbreak strategy - apply jailbreak prefixes to messages
             if strategy == "jailbreak":
                 logger.debug("Applying jailbreak prefixes to objectives")
-                jailbreak_prefixes = await self.generated_rai_client.get_jailbreak_prefixes()
+                jailbreak_prefixes = (
+                    await self.generated_rai_client.get_jailbreak_prefixes()
+                )
                 for objective in objectives_response:
                     if "messages" in objective and len(objective["messages"]) > 0:
                         message = objective["messages"][0]
                         if isinstance(message, dict) and "content" in message:
-                            message["content"] = f"{random.choice(jailbreak_prefixes)} {message['content']}"
+                            message["content"] = (
+                                f"{random.choice(jailbreak_prefixes)} {message['content']}"
+                            )
 
             # Extract content from objectives
             selected_prompts = []
@@ -199,7 +220,10 @@ class RedTeamToolProvider:
             return []
 
     async def fetch_harmful_prompt(
-        self, risk_category_text: str, strategy: str = "baseline", convert_with_strategy: Optional[str] = None
+        self,
+        risk_category_text: str,
+        strategy: str = "baseline",
+        convert_with_strategy: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Fetch a harmful prompt for a specific risk category.
 
@@ -231,7 +255,9 @@ class RedTeamToolProvider:
             # Check if we already have cached objectives for this category and strategy
             if cache_key not in self._attack_objectives_cache:
                 # Fetch the attack objectives directly
-                objectives = await self._get_attack_objectives(risk_category=risk_category, strategy=strategy)
+                objectives = await self._get_attack_objectives(
+                    risk_category=risk_category, strategy=strategy
+                )
 
                 self._attack_objectives_cache[cache_key] = objectives
 
@@ -263,7 +289,9 @@ class RedTeamToolProvider:
                         }
 
                     # Convert the prompt using the specified strategy
-                    converted_prompt = await self.apply_strategy_to_prompt(selected_objective, convert_with_strategy)
+                    converted_prompt = await self.apply_strategy_to_prompt(
+                        selected_objective, convert_with_strategy
+                    )
 
                     return {
                         "status": "success",
@@ -276,7 +304,10 @@ class RedTeamToolProvider:
                         "note": "This prompt was generated and converted for responsible AI testing purposes only.",
                     }
                 except Exception as e:
-                    return {"status": "error", "message": f"Error converting prompt: {str(e)}"}
+                    return {
+                        "status": "error",
+                        "message": f"Error converting prompt: {str(e)}",
+                    }
 
             # Return with information about available strategies
             return {
@@ -314,7 +345,9 @@ class RedTeamToolProvider:
                 }
 
             # Convert the prompt
-            conversion_result = await self.apply_strategy_to_prompt(prompt_text, strategy)
+            conversion_result = await self.apply_strategy_to_prompt(
+                prompt_text, strategy
+            )
 
             # Handle both string results and ConverterResult objects
             converted_prompt = conversion_result
@@ -333,7 +366,9 @@ class RedTeamToolProvider:
             logger.error(f"Error converting prompt: {str(e)}")
             return {"status": "error", "message": f"An error occurred: {str(e)}"}
 
-    async def red_team(self, category: str, strategy: Optional[str] = None) -> Dict[str, Any]:
+    async def red_team(
+        self, category: str, strategy: Optional[str] = None
+    ) -> Dict[str, Any]:
         """Get a harmful prompt for a specific risk category with an optional conversion strategy.
 
         This unified tool combines fetch_harmful_prompt and convert_prompt into a single call.
@@ -359,7 +394,9 @@ class RedTeamToolProvider:
                 }
 
             # First, fetch a harmful prompt (always using baseline attack strategy)
-            result = await self.fetch_harmful_prompt(risk_category_text=category, strategy="baseline")
+            result = await self.fetch_harmful_prompt(
+                risk_category_text=category, strategy="baseline"
+            )
 
             if result["status"] != "success":
                 return result
@@ -384,7 +421,9 @@ class RedTeamToolProvider:
 
             # Convert the prompt using the specified strategy
             try:
-                converted_prompt = await self.apply_strategy_to_prompt(result["prompt"], strategy)
+                converted_prompt = await self.apply_strategy_to_prompt(
+                    result["prompt"], strategy
+                )
                 return {
                     "status": "success",
                     "risk_category": result["risk_category"],
@@ -394,7 +433,10 @@ class RedTeamToolProvider:
                     "note": f"This prompt was generated for responsible AI testing purposes only and converted using the {strategy} strategy.",
                 }
             except Exception as e:
-                return {"status": "error", "message": f"Error converting prompt with strategy {strategy}: {str(e)}"}
+                return {
+                    "status": "error",
+                    "message": f"Error converting prompt with strategy {strategy}: {str(e)}",
+                }
 
         except Exception as e:
             logger.error(f"Error in red_team: {str(e)}")

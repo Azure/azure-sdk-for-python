@@ -7,7 +7,9 @@ from typing_extensions import TypeAlias
 
 
 try:
-    from promptflow.tracing import ThreadPoolExecutorWithContext as _ThreadPoolExecutorWithContext
+    from promptflow.tracing import (
+        ThreadPoolExecutorWithContext as _ThreadPoolExecutorWithContext,
+    )
     from promptflow.tracing._integrations._openai_injector import (
         inject_openai_api as _inject,
         recover_openai_api as _recover,
@@ -19,7 +21,9 @@ except ImportError:
         inject_openai_api as _inject,
         recover_openai_api as _recover,
     )
-    from azure.ai.evaluation._legacy._batch_engine._trace import start_trace as _start_trace
+    from azure.ai.evaluation._legacy._batch_engine._trace import (
+        start_trace as _start_trace,
+    )
 
 
 ThreadPoolExecutorWithContext: TypeAlias = _ThreadPoolExecutorWithContext

@@ -66,7 +66,9 @@ class TestProxyHttpxClientBase:
         :return: None
         :rtype: None
         """
-        assert self.is_recording(), f"{self._reroute_to_proxy.__qualname__} should only be called while recording"
+        assert (
+            self.is_recording()
+        ), f"{self._reroute_to_proxy.__qualname__} should only be called while recording"
         config = self.recording_config
         original_url = request.url
 
@@ -76,7 +78,8 @@ class TestProxyHttpxClientBase:
         original_headers = request.headers
         request.headers = request.headers.copy()
         request.headers.setdefault(
-            "x-recording-upstream-base-uri", str(httpx.URL(scheme=original_url.scheme, netloc=original_url.netloc))
+            "x-recording-upstream-base-uri",
+            str(httpx.URL(scheme=original_url.scheme, netloc=original_url.netloc)),
         )
         request.headers["x-recording-id"] = config.recording_id
         request.headers["x-recording-mode"] = config.recording_mode
@@ -87,7 +90,9 @@ class TestProxyHttpxClientBase:
         request.headers = original_headers
 
 
-class TestProxyHttpxClient(TestProxyHttpxClientBase, openai._base_client.SyncHttpxClientWrapper):
+class TestProxyHttpxClient(
+    TestProxyHttpxClientBase, openai._base_client.SyncHttpxClientWrapper
+):
     @override
     def send(self, request: httpx.Request, **kwargs) -> httpx.Response:
         if self.is_recording():
@@ -100,7 +105,9 @@ class TestProxyHttpxClient(TestProxyHttpxClientBase, openai._base_client.SyncHtt
             return super().send(request, **kwargs)
 
 
-class TestProxyAsyncHttpxClient(TestProxyHttpxClientBase, openai._base_client.AsyncHttpxClientWrapper):
+class TestProxyAsyncHttpxClient(
+    TestProxyHttpxClientBase, openai._base_client.AsyncHttpxClientWrapper
+):
     @override
     async def send(self, request: httpx.Request, **kwargs) -> httpx.Response:
         if self.is_recording():

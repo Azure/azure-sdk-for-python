@@ -59,7 +59,11 @@ class RAIServiceEvalChatTarget(PromptChatTarget):
 
         thing_to_eval = prompt_request.request_pieces[0].to_dict()["original_value"]
 
-        thing_to_eval_qr = {"query": "query", "response": thing_to_eval, "context": self.context}
+        thing_to_eval_qr = {
+            "query": "query",
+            "response": thing_to_eval,
+            "context": self.context,
+        }
 
         metric_name = get_metric_from_risk_category(self.risk_category)
         annotation_task = get_annotation_task_from_risk_category(self.risk_category)

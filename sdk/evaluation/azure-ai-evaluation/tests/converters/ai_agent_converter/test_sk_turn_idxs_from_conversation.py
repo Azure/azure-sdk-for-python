@@ -35,7 +35,9 @@ async def test_skagent_extract_turns():
     chat_history.add_assistant_message("The capital of France is Paris.")
 
     # Add new user query with function calls
-    chat_history.add_user_message("What are the allergies of laimonisdumins and emavargova?")
+    chat_history.add_user_message(
+        "What are the allergies of laimonisdumins and emavargova?"
+    )
     chat_history.add_message(
         ChatMessageContent(
             role=AuthorRole.ASSISTANT,
@@ -89,7 +91,9 @@ async def test_skagent_extract_turns():
     # Act
     await SKAgentConverter._get_thread_turn_indices(thread)
     messages = await SKAgentConverter._get_messages_from_thread(thread)
-    turns = SKAgentConverter._extract_turns_from_messages(messages, turn_index_to_stop=2)
+    turns = SKAgentConverter._extract_turns_from_messages(
+        messages, turn_index_to_stop=2
+    )
 
     # Assert number of turns
     assert len(turns) == 3
@@ -104,8 +108,12 @@ async def test_skagent_extract_turns():
     assert len(turn1_response) == 1
 
     turn2_query, turn2_response = turns[2]
-    assert len(turn2_query) == 6  # Includes system, 3 user queries, 2 assistant responses
-    assert len(turn2_response) == 5  # 2 tool calls, 2 tool results, 1 assistant follow-up
+    assert (
+        len(turn2_query) == 6
+    )  # Includes system, 3 user queries, 2 assistant responses
+    assert (
+        len(turn2_response) == 5
+    )  # 2 tool calls, 2 tool results, 1 assistant follow-up
 
     # Print for debug
     print("Turn 2 Query Messages:", [msg.role for msg in turn2_query])

@@ -60,7 +60,9 @@ def load_yaml(source: Optional[Union[str, PathLike, IO]]) -> Dict:
     if must_open_file:  # If supplied a file path, open it.
         try:
             input = open(  # pylint: disable=consider-using-with
-                cast(Union[PathLike, str], source), "r", encoding=DefaultOpenEncoding.READ
+                cast(Union[PathLike, str], source),
+                "r",
+                encoding=DefaultOpenEncoding.READ,
             )
         except OSError:  # FileNotFoundError introduced in Python 3
             e = FileNotFoundError(f"No such file or directory: {source}")

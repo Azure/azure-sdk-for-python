@@ -4,7 +4,12 @@
 
 from typing import Optional
 from openai import OpenAIError
-from azure.ai.evaluation._exceptions import ErrorCategory, ErrorBlame, ErrorTarget, EvaluationException
+from azure.ai.evaluation._exceptions import (
+    ErrorCategory,
+    ErrorBlame,
+    ErrorTarget,
+    EvaluationException,
+)
 
 
 class PromptyException(EvaluationException):
@@ -64,7 +69,13 @@ class NotSupportedError(PromptyException):
 class WrappedOpenAIError(PromptyException):
     """Exception raised when an OpenAI error is encountered."""
 
-    def __init__(self, *, message: Optional[str] = None, error: Optional[OpenAIError] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        message: Optional[str] = None,
+        error: Optional[OpenAIError] = None,
+        **kwargs,
+    ):
         kwargs.setdefault("category", ErrorCategory.FAILED_EXECUTION)
         kwargs.setdefault("target", ErrorTarget.EVAL_RUN)
         kwargs.setdefault("blame", ErrorBlame.USER_ERROR)
@@ -85,7 +96,10 @@ class WrappedOpenAIError(PromptyException):
         error_message = str(e)
         # https://learn.microsoft.com/en-gb/azure/ai-services/openai/reference
         if error_message == "<empty message>":
-            msg = "The api key is invalid or revoked. " "You can correct or regenerate the api key of your connection."
+            msg = (
+                "The api key is invalid or revoked. "
+                "You can correct or regenerate the api key of your connection."
+            )
             return f"OpenAI API hits {ex_type}: {msg}"
         # for models that do not support the `functions` parameter.
         elif "Unrecognized request argument supplied: functions" in error_message:
@@ -98,7 +112,10 @@ class WrappedOpenAIError(PromptyException):
                 "https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/function-calling."
             )
             return f"OpenAI API hits {ex_type}: {msg}"
-        elif "Invalid content type. image_url is only supported by certain models" in error_message:
+        elif (
+            "Invalid content type. image_url is only supported by certain models"
+            in error_message
+        ):
             msg = (
                 "Current model does not support the image input. If you are using openai connection, then please use "
                 "gpt-4-vision-preview. You can refer to https://platform.openai.com/docs/guides/vision."
@@ -109,7 +126,8 @@ class WrappedOpenAIError(PromptyException):
             )
             return f"OpenAI API hits {ex_type}: {msg}"
         elif (
-            "'response_format' of type" in error_message and "is not supported with this model." in error_message
+            "'response_format' of type" in error_message
+            and "is not supported with this model." in error_message
         ) or (
             "Additional properties are not allowed" in error_message
             and "unexpected) - 'response_format'" in error_message

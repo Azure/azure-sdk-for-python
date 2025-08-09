@@ -17,7 +17,9 @@ from azure.ai.evaluation._evaluators._f1_score._f1_score import F1ScoreEvaluator
 class TestBasicThresholdBehavior:
     """Tests for basic threshold behavior in evaluators."""
 
-    @pytest.mark.parametrize("threshold,score,should_pass", [(0.5, 0.8, True), (0.7, 0.5, False)])
+    @pytest.mark.parametrize(
+        "threshold,score,should_pass", [(0.5, 0.8, True), (0.7, 0.5, False)]
+    )
     @patch("azure.ai.evaluation._evaluators._bleu._bleu.BleuScoreEvaluator.__call__")
     def test_bleu_threshold(self, mock_call, threshold, score, should_pass):
         """Test threshold behavior in BleuScoreEvaluator."""
@@ -43,7 +45,9 @@ class TestBasicThresholdBehavior:
         # Verify pass/fail based on threshold comparison
         assert mock_result["bleu_result"] == EVALUATION_PASS_FAIL_MAPPING[should_pass]
 
-    @pytest.mark.parametrize("threshold,score,should_pass", [(0.5, 0.7, True), (0.7, 0.6, False)])
+    @pytest.mark.parametrize(
+        "threshold,score,should_pass", [(0.5, 0.7, True), (0.7, 0.6, False)]
+    )
     @patch("azure.ai.evaluation._evaluators._gleu._gleu.GleuScoreEvaluator.__call__")
     def test_gleu_threshold(self, mock_call, threshold, score, should_pass):
         """Test threshold behavior in GleuScoreEvaluator."""
@@ -69,8 +73,12 @@ class TestBasicThresholdBehavior:
         # Verify pass/fail based on threshold comparison
         assert mock_result["gleu_result"] == EVALUATION_PASS_FAIL_MAPPING[should_pass]
 
-    @pytest.mark.parametrize("threshold,score,should_pass", [(0.5, 0.6, True), (0.7, 0.3, False)])
-    @patch("azure.ai.evaluation._evaluators._meteor._meteor.MeteorScoreEvaluator.__call__")
+    @pytest.mark.parametrize(
+        "threshold,score,should_pass", [(0.5, 0.6, True), (0.7, 0.3, False)]
+    )
+    @patch(
+        "azure.ai.evaluation._evaluators._meteor._meteor.MeteorScoreEvaluator.__call__"
+    )
     def test_meteor_threshold(self, mock_call, threshold, score, should_pass):
         """Test threshold behavior in MeteorScoreEvaluator."""
         # Create the evaluator
@@ -95,8 +103,12 @@ class TestBasicThresholdBehavior:
         # Verify pass/fail based on threshold comparison
         assert mock_result["meteor_result"] == EVALUATION_PASS_FAIL_MAPPING[should_pass]
 
-    @pytest.mark.parametrize("threshold,score,should_pass", [(0.5, 0.75, True), (0.8, 0.7, False)])
-    @patch("azure.ai.evaluation._evaluators._f1_score._f1_score.F1ScoreEvaluator.__call__")
+    @pytest.mark.parametrize(
+        "threshold,score,should_pass", [(0.5, 0.75, True), (0.8, 0.7, False)]
+    )
+    @patch(
+        "azure.ai.evaluation._evaluators._f1_score._f1_score.F1ScoreEvaluator.__call__"
+    )
     def test_f1_score_threshold(self, mock_call, threshold, score, should_pass):
         """Test threshold behavior in F1ScoreEvaluator."""
         # Create the evaluator
@@ -119,7 +131,9 @@ class TestBasicThresholdBehavior:
         assert mock_result["f1_score_threshold"] == threshold
 
         # Verify pass/fail based on threshold comparison
-        assert mock_result["f1_score_result"] == EVALUATION_PASS_FAIL_MAPPING[should_pass]
+        assert (
+            mock_result["f1_score_result"] == EVALUATION_PASS_FAIL_MAPPING[should_pass]
+        )
 
 
 @pytest.mark.unittest
@@ -138,7 +152,10 @@ class TestRougeThresholdBehavior:
     def test_rouge_custom_threshold(self):
         """Test that custom thresholds work correctly in Rouge evaluator."""
         evaluator = RougeScoreEvaluator(
-            rouge_type=RougeType.ROUGE_L, precision_threshold=0.9, recall_threshold=0.1, f1_score_threshold=0.75
+            rouge_type=RougeType.ROUGE_L,
+            precision_threshold=0.9,
+            recall_threshold=0.1,
+            f1_score_threshold=0.75,
         )
 
         # Custom thresholds should be set
@@ -150,7 +167,10 @@ class TestRougeThresholdBehavior:
     def test_rouge_threshold_behavior(self, mock_call):
         """Test threshold behavior with mocked Rouge scores."""
         evaluator = RougeScoreEvaluator(
-            rouge_type=RougeType.ROUGE_L, precision_threshold=0.9, recall_threshold=0.1, f1_score_threshold=0.75
+            rouge_type=RougeType.ROUGE_L,
+            precision_threshold=0.9,
+            recall_threshold=0.1,
+            f1_score_threshold=0.75,
         )
 
         # Mock results with precision passing, recall failing, and f1_score passing
@@ -170,16 +190,26 @@ class TestRougeThresholdBehavior:
         mock_result = mock_call(ground_truth="reference", response="candidate")
 
         # Check threshold-based results
-        assert mock_result["rouge_precision_result"] == EVALUATION_PASS_FAIL_MAPPING[True]
+        assert (
+            mock_result["rouge_precision_result"] == EVALUATION_PASS_FAIL_MAPPING[True]
+        )
         assert mock_result["rouge_recall_result"] == EVALUATION_PASS_FAIL_MAPPING[False]
-        assert mock_result["rouge_f1_score_result"] == EVALUATION_PASS_FAIL_MAPPING[True]
+        assert (
+            mock_result["rouge_f1_score_result"] == EVALUATION_PASS_FAIL_MAPPING[True]
+        )
 
-    @pytest.mark.parametrize("rouge_type", [RougeType.ROUGE_1, RougeType.ROUGE_2, RougeType.ROUGE_4, RougeType.ROUGE_L])
+    @pytest.mark.parametrize(
+        "rouge_type",
+        [RougeType.ROUGE_1, RougeType.ROUGE_2, RougeType.ROUGE_4, RougeType.ROUGE_L],
+    )
     @patch("azure.ai.evaluation._evaluators._rouge._rouge.RougeScoreEvaluator.__call__")
     def test_rouge_different_types(self, mock_call, rouge_type):
         """Test that different Rouge types work correctly with thresholds."""
         evaluator = RougeScoreEvaluator(
-            rouge_type=rouge_type, precision_threshold=0.5, recall_threshold=0.5, f1_score_threshold=0.5
+            rouge_type=rouge_type,
+            precision_threshold=0.5,
+            recall_threshold=0.5,
+            f1_score_threshold=0.5,
         )
 
         # Mock scores that all pass the threshold
@@ -199,9 +229,13 @@ class TestRougeThresholdBehavior:
         mock_result = mock_call(ground_truth="reference", response="candidate")
 
         # All results should pass since all scores are above threshold
-        assert mock_result["rouge_precision_result"] == EVALUATION_PASS_FAIL_MAPPING[True]
+        assert (
+            mock_result["rouge_precision_result"] == EVALUATION_PASS_FAIL_MAPPING[True]
+        )
         assert mock_result["rouge_recall_result"] == EVALUATION_PASS_FAIL_MAPPING[True]
-        assert mock_result["rouge_f1_score_result"] == EVALUATION_PASS_FAIL_MAPPING[True]
+        assert (
+            mock_result["rouge_f1_score_result"] == EVALUATION_PASS_FAIL_MAPPING[True]
+        )
 
 
 @pytest.mark.unittest

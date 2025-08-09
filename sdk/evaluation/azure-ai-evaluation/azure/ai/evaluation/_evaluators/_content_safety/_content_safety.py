@@ -99,11 +99,29 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
             evaluate_query_kwargs["evaluate_query"] = kwargs["evaluate_query"]
 
         evaluators = [
-            ViolenceEvaluator(credential, azure_ai_project, threshold=violence_threshold, **evaluate_query_kwargs),
-            SexualEvaluator(credential, azure_ai_project, threshold=sexual_threshold, **evaluate_query_kwargs),
-            SelfHarmEvaluator(credential, azure_ai_project, threshold=self_harm_threshold, **evaluate_query_kwargs),
+            ViolenceEvaluator(
+                credential,
+                azure_ai_project,
+                threshold=violence_threshold,
+                **evaluate_query_kwargs,
+            ),
+            SexualEvaluator(
+                credential,
+                azure_ai_project,
+                threshold=sexual_threshold,
+                **evaluate_query_kwargs,
+            ),
+            SelfHarmEvaluator(
+                credential,
+                azure_ai_project,
+                threshold=self_harm_threshold,
+                **evaluate_query_kwargs,
+            ),
             HateUnfairnessEvaluator(
-                credential, azure_ai_project, threshold=hate_unfairness_threshold, **evaluate_query_kwargs
+                credential,
+                azure_ai_project,
+                threshold=hate_unfairness_threshold,
+                **evaluate_query_kwargs,
             ),
         ]
         super().__init__(evaluators=evaluators, **kwargs)

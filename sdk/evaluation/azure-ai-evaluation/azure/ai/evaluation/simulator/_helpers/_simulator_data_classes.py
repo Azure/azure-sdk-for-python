@@ -28,7 +28,11 @@ class Turn:
         :rtype: Dict[str, Optional[str]]
         """
         return {
-            "role": self.role.value if isinstance(self.role, ConversationRole) else self.role,
+            "role": (
+                self.role.value
+                if isinstance(self.role, ConversationRole)
+                else self.role
+            ),
             "content": self.content,
             "context": str(self.context),
         }
@@ -41,7 +45,11 @@ class Turn:
         :rtype: Dict[str, Optional[str]]
         """
         return {
-            "role": self.role.value if isinstance(self.role, ConversationRole) else self.role,
+            "role": (
+                self.role.value
+                if isinstance(self.role, ConversationRole)
+                else self.role
+            ),
             "content": self.content,
         }
 

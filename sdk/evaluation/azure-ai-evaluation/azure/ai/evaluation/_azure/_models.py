@@ -23,8 +23,14 @@ class WorkspaceHubConfig(Model):
     """WorkspaceHub's configuration object."""
 
     _attribute_map = {
-        "additional_workspace_storage_accounts": {"key": "additionalWorkspaceStorageAccounts", "type": "[str]"},
-        "default_workspace_resource_group": {"key": "defaultWorkspaceResourceGroup", "type": "str"},
+        "additional_workspace_storage_accounts": {
+            "key": "additionalWorkspaceStorageAccounts",
+            "type": "[str]",
+        },
+        "default_workspace_resource_group": {
+            "key": "defaultWorkspaceResourceGroup",
+            "type": "str",
+        },
     }
 
     def __init__(
@@ -35,14 +41,17 @@ class WorkspaceHubConfig(Model):
         **kwargs
     ):
         super(WorkspaceHubConfig, self).__init__(**kwargs)
-        self.additional_workspace_storage_accounts = additional_workspace_storage_accounts
+        self.additional_workspace_storage_accounts = (
+            additional_workspace_storage_accounts
+        )
         self.default_workspace_resource_group = default_workspace_resource_group
 
 
 class Workspace(Model):
     """An object that represents a machine learning workspace.
 
-    Variables are only populated by the server, and will be ignored when sending a request."""
+    Variables are only populated by the server, and will be ignored when sending a request.
+    """
 
     _validation = {
         "id": {"readonly": True},
@@ -72,20 +81,50 @@ class Workspace(Model):
         #'sku': {'key': 'sku', 'type': 'Sku'},
         "tags": {"key": "tags", "type": "{str}"},
         "agents_endpoint_uri": {"key": "properties.agentsEndpointUri", "type": "str"},
-        "allow_public_access_when_behind_vnet": {"key": "properties.allowPublicAccessWhenBehindVnet", "type": "bool"},
-        "allow_role_assignment_on_rg": {"key": "properties.allowRoleAssignmentOnRG", "type": "bool"},
-        "application_insights": {"key": "properties.applicationInsights", "type": "str"},
-        "associated_workspaces": {"key": "properties.associatedWorkspaces", "type": "[str]"},
-        "container_registries": {"key": "properties.containerRegistries", "type": "[str]"},
+        "allow_public_access_when_behind_vnet": {
+            "key": "properties.allowPublicAccessWhenBehindVnet",
+            "type": "bool",
+        },
+        "allow_role_assignment_on_rg": {
+            "key": "properties.allowRoleAssignmentOnRG",
+            "type": "bool",
+        },
+        "application_insights": {
+            "key": "properties.applicationInsights",
+            "type": "str",
+        },
+        "associated_workspaces": {
+            "key": "properties.associatedWorkspaces",
+            "type": "[str]",
+        },
+        "container_registries": {
+            "key": "properties.containerRegistries",
+            "type": "[str]",
+        },
         "container_registry": {"key": "properties.containerRegistry", "type": "str"},
         "description": {"key": "properties.description", "type": "str"},
         "discovery_url": {"key": "properties.discoveryUrl", "type": "str"},
-        "enable_data_isolation": {"key": "properties.enableDataIsolation", "type": "bool"},
-        "enable_service_side_cmk_encryption": {"key": "properties.enableServiceSideCMKEncryption", "type": "bool"},
-        "enable_simplified_cmk": {"key": "properties.enableSimplifiedCmk", "type": "bool"},
-        "enable_software_bill_of_materials": {"key": "properties.enableSoftwareBillOfMaterials", "type": "bool"},
+        "enable_data_isolation": {
+            "key": "properties.enableDataIsolation",
+            "type": "bool",
+        },
+        "enable_service_side_cmk_encryption": {
+            "key": "properties.enableServiceSideCMKEncryption",
+            "type": "bool",
+        },
+        "enable_simplified_cmk": {
+            "key": "properties.enableSimplifiedCmk",
+            "type": "bool",
+        },
+        "enable_software_bill_of_materials": {
+            "key": "properties.enableSoftwareBillOfMaterials",
+            "type": "bool",
+        },
         #'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperty'},
-        "existing_workspaces": {"key": "properties.existingWorkspaces", "type": "[str]"},
+        "existing_workspaces": {
+            "key": "properties.existingWorkspaces",
+            "type": "[str]",
+        },
         #'feature_store_settings': {'key': 'properties.featureStoreSettings', 'type': 'FeatureStoreSettings'},
         "friendly_name": {"key": "properties.friendlyName", "type": "str"},
         "hbi_workspace": {"key": "properties.hbiWorkspace", "type": "bool"},
@@ -98,27 +137,42 @@ class Workspace(Model):
         "ml_flow_tracking_uri": {"key": "properties.mlFlowTrackingUri", "type": "str"},
         #'network_acls': {'key': 'properties.networkAcls', 'type': 'NetworkAcls'},
         #'notebook_info': {'key': 'properties.notebookInfo', 'type': 'NotebookResourceInfo'},
-        "primary_user_assigned_identity": {"key": "properties.primaryUserAssignedIdentity", "type": "str"},
+        "primary_user_assigned_identity": {
+            "key": "properties.primaryUserAssignedIdentity",
+            "type": "str",
+        },
         # "private_endpoint_connections": {
         #    "key": "properties.privateEndpointConnections",
         #    "type": "[PrivateEndpointConnection]",
         # },
         "private_link_count": {"key": "properties.privateLinkCount", "type": "int"},
-        "provision_network_now": {"key": "properties.provisionNetworkNow", "type": "bool"},
+        "provision_network_now": {
+            "key": "properties.provisionNetworkNow",
+            "type": "bool",
+        },
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         #'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         #'serverless_compute_settings': {'key': 'properties.serverlessComputeSettings', 'type': 'ServerlessComputeSettings'},
         #'service_managed_resources_settings': {'key': 'properties.serviceManagedResourcesSettings', 'type': 'ServiceManagedResourcesSettings'},
-        "service_provisioned_resource_group": {"key": "properties.serviceProvisionedResourceGroup", "type": "str"},
+        "service_provisioned_resource_group": {
+            "key": "properties.serviceProvisionedResourceGroup",
+            "type": "str",
+        },
         #'shared_private_link_resources': {'key': 'properties.sharedPrivateLinkResources', 'type': '[SharedPrivateLinkResource]'},
-        "soft_delete_retention_in_days": {"key": "properties.softDeleteRetentionInDays", "type": "int"},
+        "soft_delete_retention_in_days": {
+            "key": "properties.softDeleteRetentionInDays",
+            "type": "int",
+        },
         "storage_account": {"key": "properties.storageAccount", "type": "str"},
         "storage_accounts": {"key": "properties.storageAccounts", "type": "[str]"},
         "storage_hns_enabled": {"key": "properties.storageHnsEnabled", "type": "bool"},
         #'system_datastores_auth_mode': {'key': 'properties.systemDatastoresAuthMode', 'type': 'str'},
         "tenant_id": {"key": "properties.tenantId", "type": "str"},
         "v1_legacy_mode": {"key": "properties.v1LegacyMode", "type": "bool"},
-        "workspace_hub_config": {"key": "properties.workspaceHubConfig", "type": "WorkspaceHubConfig"},
+        "workspace_hub_config": {
+            "key": "properties.workspaceHubConfig",
+            "type": "WorkspaceHubConfig",
+        },
         "workspace_id": {"key": "properties.workspaceId", "type": "str"},
     }
 

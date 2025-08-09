@@ -47,7 +47,11 @@ class FileManager:
         return abs_path
 
     def generate_unique_filename(
-        self, prefix: str = "", suffix: str = "", extension: str = "", use_timestamp: bool = False
+        self,
+        prefix: str = "",
+        suffix: str = "",
+        extension: str = "",
+        use_timestamp: bool = False,
     ) -> str:
         """Generate a unique filename.
 
@@ -105,7 +109,13 @@ class FileManager:
             return os.path.join(scan_dir, filename)
         return scan_dir
 
-    def write_json(self, data: Any, filepath: Union[str, os.PathLike], indent: int = 2, ensure_dir: bool = True) -> str:
+    def write_json(
+        self,
+        data: Any,
+        filepath: Union[str, os.PathLike],
+        indent: int = 2,
+        ensure_dir: bool = True,
+    ) -> str:
         """Write data to JSON file.
 
         :param data: Data to write
@@ -166,10 +176,14 @@ class FileManager:
                             data.append(json.loads(line))
                         except json.JSONDecodeError as e:
                             if self.logger:
-                                self.logger.warning(f"Skipping invalid JSON line {line_num} in {abs_path}: {str(e)}")
+                                self.logger.warning(
+                                    f"Skipping invalid JSON line {line_num} in {abs_path}: {str(e)}"
+                                )
 
             if self.logger:
-                self.logger.debug(f"Successfully read {len(data)} records from JSONL {abs_path}")
+                self.logger.debug(
+                    f"Successfully read {len(data)} records from JSONL {abs_path}"
+                )
 
             return data
         except Exception as e:
@@ -177,7 +191,12 @@ class FileManager:
                 self.logger.error(f"Failed to read JSONL from {abs_path}: {str(e)}")
             raise
 
-    def write_jsonl(self, data: List[Dict], filepath: Union[str, os.PathLike], ensure_dir: bool = True) -> str:
+    def write_jsonl(
+        self,
+        data: List[Dict],
+        filepath: Union[str, os.PathLike],
+        ensure_dir: bool = True,
+    ) -> str:
         """Write data to JSONL file.
 
         :param data: List of dictionaries to write
@@ -195,7 +214,9 @@ class FileManager:
                 f.write(json.dumps(item) + "\n")
 
         if self.logger:
-            self.logger.debug(f"Successfully wrote {len(data)} records to JSONL {abs_path}")
+            self.logger.debug(
+                f"Successfully wrote {len(data)} records to JSONL {abs_path}"
+            )
 
         return abs_path
 
@@ -235,7 +256,9 @@ class FileManager:
         """
         return os.path.isfile(filepath)
 
-    def cleanup_file(self, filepath: Union[str, os.PathLike], ignore_errors: bool = True) -> bool:
+    def cleanup_file(
+        self, filepath: Union[str, os.PathLike], ignore_errors: bool = True
+    ) -> bool:
         """Delete a file if it exists.
 
         :param filepath: Path to the file to delete
@@ -256,7 +279,9 @@ class FileManager:
             return False
 
 
-def create_file_manager(base_output_dir: Optional[str] = None, logger=None) -> FileManager:
+def create_file_manager(
+    base_output_dir: Optional[str] = None, logger=None
+) -> FileManager:
     """Create a FileManager instance.
 
     :param base_output_dir: Base directory for file operations

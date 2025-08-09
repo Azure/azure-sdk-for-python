@@ -57,7 +57,8 @@ class ToolDecoder(json.JSONDecoder):
                 return RunStepCodeInterpreterToolCall(
                     id=details["id"],
                     code_interpreter=RunStepCodeInterpreterToolCallDetails(
-                        input=details["code_interpreter"]["input"], outputs=details["code_interpreter"]["outputs"]
+                        input=details["code_interpreter"]["input"],
+                        outputs=details["code_interpreter"]["outputs"],
                     ),
                 )
             elif details["type"] == "file_search":
@@ -70,7 +71,9 @@ class ToolDecoder(json.JSONDecoder):
                                 file_id=result["file_id"],
                                 score=result["score"],
                                 content=[
-                                    FileSearchToolCallContent(text=too_call_content["text"])
+                                    FileSearchToolCallContent(
+                                        text=too_call_content["text"]
+                                    )
                                     for too_call_content in result["content"]
                                 ],
                             )
@@ -78,12 +81,16 @@ class ToolDecoder(json.JSONDecoder):
                         ],
                         ranking_options=FileSearchRankingOptions(
                             ranker=details["file_search"]["ranking_options"]["ranker"],
-                            score_threshold=details["file_search"]["ranking_options"]["score_threshold"],
+                            score_threshold=details["file_search"]["ranking_options"][
+                                "score_threshold"
+                            ],
                         ),
                     ),
                 )
             elif details["type"] == "bing_grounding":
-                return RunStepBingGroundingToolCall(id=details["id"], bing_grounding=details["bing_grounding"])
+                return RunStepBingGroundingToolCall(
+                    id=details["id"], bing_grounding=details["bing_grounding"]
+                )
         return details
 
 
@@ -92,7 +99,11 @@ class ToolEncoder(json.JSONEncoder):
         if isinstance(obj, datetime):
             return obj.isoformat()
         if isinstance(obj, ToolCall):
-            return {"completed": obj.completed, "created": obj.created, "details": obj.details}
+            return {
+                "completed": obj.completed,
+                "created": obj.created,
+                "details": obj.details,
+            }
         if isinstance(obj, RunStepCodeInterpreterToolCall):
             return {
                 "id": obj.id,
@@ -110,7 +121,12 @@ class ToolEncoder(json.JSONEncoder):
         if isinstance(obj, RunStepFileSearchToolCallResults):
             return {"results": obj.results, "ranking_options": obj.ranking_options}
         if isinstance(obj, RunStepFileSearchToolCallResult):
-            return {"file_name": obj.file_name, "file_id": obj.file_id, "score": obj.score, "content": obj.content}
+            return {
+                "file_name": obj.file_name,
+                "file_id": obj.file_id,
+                "score": obj.score,
+                "content": obj.content,
+            }
         if isinstance(obj, FileSearchRankingOptions):
             return {"ranker": obj.ranker, "score_threshold": obj.score_threshold}
         if isinstance(obj, RunStepBingGroundingToolCall):
@@ -139,11 +155,31 @@ class ThreadRunDecoder(json.JSONDecoder):
                 instructions=obj["instructions"],
                 tools=obj["tools"],
                 created_at=datetime.fromtimestamp(obj["created_at"]),
-                expires_at=datetime.fromtimestamp(obj["expires_at"]) if obj.get("expires_at") else None,
-                started_at=datetime.fromtimestamp(obj["started_at"]) if obj.get("started_at") else None,
-                completed_at=datetime.fromtimestamp(obj["completed_at"]) if obj.get("completed_at") else None,
-                cancelled_at=datetime.fromtimestamp(obj["cancelled_at"]) if obj.get("cancelled_at") else None,
-                failed_at=datetime.fromtimestamp(obj["failed_at"]) if obj.get("failed_at") else None,
+                expires_at=(
+                    datetime.fromtimestamp(obj["expires_at"])
+                    if obj.get("expires_at")
+                    else None
+                ),
+                started_at=(
+                    datetime.fromtimestamp(obj["started_at"])
+                    if obj.get("started_at")
+                    else None
+                ),
+                completed_at=(
+                    datetime.fromtimestamp(obj["completed_at"])
+                    if obj.get("completed_at")
+                    else None
+                ),
+                cancelled_at=(
+                    datetime.fromtimestamp(obj["cancelled_at"])
+                    if obj.get("cancelled_at")
+                    else None
+                ),
+                failed_at=(
+                    datetime.fromtimestamp(obj["failed_at"])
+                    if obj.get("failed_at")
+                    else None
+                ),
                 incomplete_details=obj.get("incomplete_details"),
                 usage=obj.get("usage"),
                 temperature=obj.get("temperature"),
@@ -175,10 +211,18 @@ class ThreadRunEncoder(json.JSONEncoder):
                 "instructions": obj.instructions,
                 "tools": obj.tools,
                 "created_at": int(obj.created_at.timestamp()),
-                "expires_at": int(obj.expires_at.timestamp()) if obj.expires_at else None,
-                "started_at": int(obj.started_at.timestamp()) if obj.started_at else None,
-                "completed_at": int(obj.completed_at.timestamp()) if obj.completed_at else None,
-                "cancelled_at": int(obj.cancelled_at.timestamp()) if obj.cancelled_at else None,
+                "expires_at": (
+                    int(obj.expires_at.timestamp()) if obj.expires_at else None
+                ),
+                "started_at": (
+                    int(obj.started_at.timestamp()) if obj.started_at else None
+                ),
+                "completed_at": (
+                    int(obj.completed_at.timestamp()) if obj.completed_at else None
+                ),
+                "cancelled_at": (
+                    int(obj.cancelled_at.timestamp()) if obj.cancelled_at else None
+                ),
                 "failed_at": int(obj.failed_at.timestamp()) if obj.failed_at else None,
                 "incomplete_details": obj.incomplete_details,
                 "usage": obj.usage,

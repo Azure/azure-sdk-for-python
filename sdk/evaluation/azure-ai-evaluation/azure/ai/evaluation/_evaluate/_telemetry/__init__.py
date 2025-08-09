@@ -24,7 +24,9 @@ LOGGER = logging.getLogger(__name__)
 P = ParamSpec("P")
 
 
-def _get_evaluator_type(evaluator: Dict[str, Callable]) -> Literal["content-safety", "built-in", "custom"]:
+def _get_evaluator_type(
+    evaluator: Dict[str, Callable]
+) -> Literal["content-safety", "built-in", "custom"]:
     """
     Get evaluator type for telemetry.
 
@@ -37,7 +39,9 @@ def _get_evaluator_type(evaluator: Dict[str, Callable]) -> Literal["content-safe
     module_name = module.__name__ if module else ""
 
     built_in = module_name.startswith("azure.ai.evaluation._evaluators.")
-    content_safety = built_in and module_name.startswith("azure.ai.evaluation._evaluators._content_safety")
+    content_safety = built_in and module_name.startswith(
+        "azure.ai.evaluation._evaluators._content_safety"
+    )
 
     if content_safety:
         return "content-safety"

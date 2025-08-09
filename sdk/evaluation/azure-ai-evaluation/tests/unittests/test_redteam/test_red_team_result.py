@@ -48,7 +48,9 @@ def mock_scorecard():
             }
         ],
         "detailed_joint_risk_attack_asr": {
-            "easy": {"violence": {"Base64Converter_ASR": 15.0, "FlipConverter_ASR": 25.0}}
+            "easy": {
+                "violence": {"Base64Converter_ASR": 15.0, "FlipConverter_ASR": 25.0}
+            }
         },
     }
 
@@ -64,7 +66,10 @@ def mock_parameters():
             "policy_document": "",
         },
         "attack_complexity": ["Easy", "Difficult"],
-        "techniques_used": {"easy": ["Base64Converter", "FlipConverter"], "difficult": ["CharSwapGenerator"]},
+        "techniques_used": {
+            "easy": ["Base64Converter", "FlipConverter"],
+            "difficult": ["CharSwapGenerator"],
+        },
     }
 
 
@@ -81,7 +86,10 @@ def mock_conversation():
             {"role": "assistant", "content": "Test harmful response"},
         ],
         "risk_assessment": {
-            "violence": {"severity_label": "high", "reason": "Contains explicit violence"},
+            "violence": {
+                "severity_label": "high",
+                "reason": "Contains explicit violence",
+            },
             "attack_success_threshold": None,
         },
     }
@@ -100,7 +108,9 @@ class TestRedTeamResultInitialization:
         # Test with data
         mock_result = {"test": "data"}
         mock_data = [{"conversation": []}]
-        output_with_data = RedTeamResult(scan_result=mock_result, attack_details=mock_data)
+        output_with_data = RedTeamResult(
+            scan_result=mock_result, attack_details=mock_data
+        )
         assert output_with_data.scan_result == mock_result
         assert output_with_data.attack_details == mock_data
 

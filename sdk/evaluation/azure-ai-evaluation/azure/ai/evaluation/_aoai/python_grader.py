@@ -3,7 +3,10 @@
 # ---------------------------------------------------------
 from typing import Any, Dict, Union, Optional
 
-from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
+from azure.ai.evaluation._model_configurations import (
+    AzureOpenAIModelConfiguration,
+    OpenAIModelConfiguration,
+)
 from openai.types.graders import PythonGrader
 from azure.ai.evaluation._common._experimental import experimental
 

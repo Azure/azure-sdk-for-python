@@ -39,7 +39,9 @@ fetched_prompts = {}
 
 
 def red_team_fetch_harmful_prompt(
-    risk_category: str, strategy: str = "baseline", convert_with_strategy: Optional[str] = None
+    risk_category: str,
+    strategy: str = "baseline",
+    convert_with_strategy: Optional[str] = None,
 ) -> str:
     """
     Fetch a harmful prompt for a specific risk category to test content filters.
@@ -58,7 +60,9 @@ def red_team_fetch_harmful_prompt(
     # Run the async method in a new event loop
     result = asyncio.run(
         provider.fetch_harmful_prompt(
-            risk_category_text=risk_category, strategy=strategy, convert_with_strategy=convert_with_strategy
+            risk_category_text=risk_category,
+            strategy=strategy,
+            convert_with_strategy=convert_with_strategy,
         )
     )
 
@@ -91,7 +95,9 @@ def red_team_convert_prompt(prompt_or_id: str, strategy: str) -> str:
         provider._fetched_prompts[prompt_or_id] = fetched_prompts[prompt_or_id]
 
     # Run the async method in a new event loop
-    result = asyncio.run(provider.convert_prompt(prompt_or_id=prompt_or_id, strategy=strategy))
+    result = asyncio.run(
+        provider.convert_prompt(prompt_or_id=prompt_or_id, strategy=strategy)
+    )
 
     return json.dumps(result)
 
@@ -194,7 +200,13 @@ def red_team_send_to_target(prompt: str) -> str:
 
         return json.dumps({"status": "success", "prompt": prompt, "response": response})
     except Exception as e:
-        return json.dumps({"status": "error", "message": f"Error calling target function: {str(e)}", "prompt": prompt})
+        return json.dumps(
+            {
+                "status": "error",
+                "message": f"Error calling target function: {str(e)}",
+                "prompt": prompt,
+            }
+        )
 
 
 # Example User Input for Each Function

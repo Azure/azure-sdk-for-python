@@ -1,10 +1,18 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
+from azure.ai.evaluation._model_configurations import (
+    AzureOpenAIModelConfiguration,
+    OpenAIModelConfiguration,
+)
 
 from azure.ai.evaluation._constants import DEFAULT_AOAI_API_VERSION
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._exceptions import (
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+    EvaluationException,
+)
 from azure.ai.evaluation._user_agent import UserAgentSingleton
 from typing import Any, Dict, Union
 from azure.ai.evaluation._common._experimental import experimental
@@ -83,7 +91,9 @@ class AzureOpenAIGrader:
             # TODO set default values?
             return AzureOpenAI(
                 azure_endpoint=self._model_config["azure_endpoint"],
-                api_key=self._model_config.get("api_key", None),  # Default-style access to appease linters.
+                api_key=self._model_config.get(
+                    "api_key", None
+                ),  # Default-style access to appease linters.
                 api_version=DEFAULT_AOAI_API_VERSION,  # Force a known working version
                 azure_deployment=self._model_config.get("azure_deployment", ""),
                 default_headers=default_headers,
