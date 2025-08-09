@@ -6,6 +6,11 @@ Content Understanding is a solution that analyzes and comprehends various media 
 
 ## Getting started
 
+### Azure Content Understanding Resource
+- To get started, you need **an active Azure subscription**. If you don't have an Azure account, [create one for free](https://azure.microsoft.com/free/).
+- Once you have your Azure subscription, create an [Azure AI Foundry resource](https://portal.azure.com/#create/Microsoft.CognitiveServicesAIFoundry) in the Azure portal. Be sure to create it in a [supported region](https://learn.microsoft.com/azure/ai-services/content-understanding/language-region-support).
+- For more information, see: https://learn.microsoft.com/azure/ai-services/content-understanding/quickstart/use-rest-api?tabs=document
+
 ### Install the package
 
 ```bash
@@ -24,30 +29,71 @@ python -m pip install azure-ai-contentunderstanding
 
 This SDK includes comprehensive samples that demonstrate API-level usage of all Azure AI Content Understanding capabilities. These samples show you exactly how to call each API endpoint with proper authentication, error handling, and resource management.
 
-**👉 View All API Samples in README.md of generated_samples directory**
+## 📁 Sample Categories
 
-The samples cover three main API categories:
+### Content Analyzers
+Analyze documents and extract structured information:
 
-#### **🎯 Content Analysis APIs**
-- Document analysis and structure extraction
-- Binary file processing (PDFs, images, documents)
-- Custom analyzer creation and management
-- Operation status tracking and result retrieval
+- **`content_analyzers_analyze.py`** - Analyze text content for layout and structure
+- **`content_analyzers_analyze_binary.py`** - Analyze binary files (PDFs, images, documents)
+- **`content_analyzers_create_or_replace.py`** - Create or update custom analyzers
+- **`content_analyzers_get_analyzer.py`** - Retrieve analyzer configurations
+- **`content_analyzers_list.py`** - List all available analyzers
+- **`content_analyzers_update.py`** - Update existing analyzers
+- **`content_analyzers_delete_analyzer.py`** - Delete custom analyzers
+- **`content_analyzers_get_operation_status.py`** - Check analysis operation status
+- **`content_analyzers_get_result.py`** - Retrieve analysis results
+- **`content_analyzers_get_result_file.py`** - Download result files
 
-#### **🏷️ Content Classification APIs** 
-- Content categorization and classification
-- Custom classifier creation and training
-- Classification operation management
+### Content Classifiers
+Classify content into categories:
 
-#### **👤 Face Recognition APIs**
-- Person directory management
-- Face enrollment and management
-- Face similarity detection and person verification
-- Complete person/face lifecycle workflows
+- **`content_classifiers_classify.py`** - Classify text content
+- **`content_classifiers_classify_binary.py`** - Classify binary files
+- **`content_classifiers_create_or_replace.py`** - Create or update classifiers
+- **`content_classifiers_get_classifier.py`** - Retrieve classifier configurations
+- **`content_classifiers_list.py`** - List all available classifiers
+- **`content_classifiers_update.py`** - Update existing classifiers
+- **`content_classifiers_delete_classifier.py`** - Delete custom classifiers
+- **`content_classifiers_get_operation_status.py`** - Check classification operation status
+- **`content_classifiers_get_result.py`** - Retrieve classification results
 
-### 🌟 **Featured: Enhanced Face Similarity Demo**
+### Face Recognition & Person Management
+Comprehensive face recognition capabilities:
 
-### 🚀 **Quick Start with Samples**
+#### **Directory Management**
+- **`person_directories_create.py`** - Create person directories
+- **`person_directories_get.py`** - Retrieve directory information
+- **`person_directories_list.py`** - List all directories
+- **`person_directories_update.py`** - Update directory properties
+- **`person_directories_delete.py`** - Delete directories
+
+#### **Person Management**
+- **`person_directories_add_person.py`** - Add persons to directories
+- **`person_directories_get_person.py`** - Retrieve person information
+- **`person_directories_list_persons.py`** - List all persons in a directory
+- **`person_directories_update_person.py`** - Update person properties
+- **`person_directories_delete_person.py`** - Delete persons
+
+#### **Face Management**
+- **`person_directories_get_face.py`** - Retrieve face information
+- **`person_directories_list_faces.py`** - List all faces in a directory
+- **`person_directories_update_face.py`** - Update face associations
+- **`person_directories_delete_face.py`** - Delete faces
+
+#### **Face Recognition**
+- **`person_directories_find_similar_faces.py`** - Find similar faces (⭐ **Enhanced Demo**)
+- **`faces_detect.py`** - Detect faces in images
+
+#### **🎯 Enhanced Face Similarity Demo**
+`person_directories_find_similar_faces.py` provides a comprehensive demonstration:
+
+- **Test 1 (Positive Case)**: Enrolls Dad1 & Dad2 faces, queries with Dad3 → should find matches
+- **Test 2 (Negative Case)**: Queries with Mom1 (different person) → should find no matches
+- **Educational Output**: Clear explanations of expected results and confidence scores
+- **Real-world Scenarios**: Demonstrates both successful and failed face matching
+
+## 🚀 **Quick Start with Samples**
 
 1. **Set up authentication**:
    ```bash
@@ -56,10 +102,9 @@ The samples cover three main API categories:
    cp env.sample .env
    
    # Edit .env with your endpoint (required)
-   AZURE_CONTENT_UNDERSTANDING_ENDPOINT=https://your-resource-name.services.ai.azure.com/
-   
-     # Leave AZURE_CONTENT_UNDERSTANDING_KEY empty unless using key-based authentication (not recommended for production)
-  AZURE_CONTENT_UNDERSTANDING_KEY=
+   # AZURE_CONTENT_UNDERSTANDING_ENDPOINT=https://your-resource-name.services.ai.azure.com/  
+   # Leave AZURE_CONTENT_UNDERSTANDING_KEY empty unless using key-based authentication (not recommended for production)
+   # AZURE_CONTENT_UNDERSTANDING_KEY=
    
    # Use Azure CLI for authentication (recommended - secure)
    az login
