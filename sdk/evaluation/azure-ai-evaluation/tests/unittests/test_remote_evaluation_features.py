@@ -55,7 +55,9 @@ class TestRemoteEvaluationFeatures:
         # create f1 score eval
         f1_score_eval = F1ScoreEvaluator()
         # create aoai grader
-        aoai_grader = AzureOpenAIGrader(model_config=mock_aoai_model_config, grader_config=mock_grader_config)
+        aoai_grader = AzureOpenAIGrader(
+            model_config=mock_aoai_model_config, grader_config=mock_grader_config
+        )
         from azure.ai.evaluation._evaluate._evaluate import _map_names_to_builtins
         from azure.ai.evaluation._eval_mapping import EVAL_CLASS_MAP
 

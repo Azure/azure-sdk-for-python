@@ -134,7 +134,9 @@ class TestScorecardFormatting:
 
     def test_format_scorecard_empty(self):
         """Test scorecard formatting with empty data."""
-        scan_result = {"scorecard": {"risk_category_summary": [], "joint_risk_attack_summary": []}}
+        scan_result = {
+            "scorecard": {"risk_category_summary": [], "joint_risk_attack_summary": []}
+        }
 
         result = format_scorecard(scan_result)
 

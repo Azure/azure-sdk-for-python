@@ -16,9 +16,7 @@ DOCSTRING_DEFAULT_INDENTATION = 8
 EXPERIMENTAL_CLASS_MESSAGE = "This is an experimental class,"
 EXPERIMENTAL_METHOD_MESSAGE = "This is an experimental method,"
 EXPERIMENTAL_FIELD_MESSAGE = "This is an experimental field,"
-EXPERIMENTAL_LINK_MESSAGE = (
-    "and may change at any time. Please see https://aka.ms/azuremlexperimental for more information."
-)
+EXPERIMENTAL_LINK_MESSAGE = "and may change at any time. Please see https://aka.ms/azuremlexperimental for more information."
 
 _warning_cache = set()
 module_logger = logging.getLogger(__name__)
@@ -35,7 +33,9 @@ def experimental(wrapped: Type[T]) -> Type[T]: ...
 def experimental(wrapped: Callable[P, T]) -> Callable[P, T]: ...
 
 
-def experimental(wrapped: Union[Type[T], Callable[P, T]]) -> Union[Type[T], Callable[P, T]]:
+def experimental(
+    wrapped: Union[Type[T], Callable[P, T]]
+) -> Union[Type[T], Callable[P, T]]:
     """Add experimental tag to a class or a method.
 
     :param wrapped: Either a Class or Function to mark as experimental
@@ -74,14 +74,18 @@ def _add_class_docstring(cls: Type[T]) -> Type[T]:
 
         @functools.wraps(func)
         def wrapped(*args, **kwargs):
-            message = "Class {0}: {1} {2}".format(cls.__name__, EXPERIMENTAL_CLASS_MESSAGE, EXPERIMENTAL_LINK_MESSAGE)
+            message = "Class {0}: {1} {2}".format(
+                cls.__name__, EXPERIMENTAL_CLASS_MESSAGE, EXPERIMENTAL_LINK_MESSAGE
+            )
             if not _should_skip_warning() and not _is_warning_cached(message):
                 module_logger.warning(message)
             return func(*args, **kwargs)
 
         return wrapped
 
-    doc_string = DOCSTRING_TEMPLATE.format(EXPERIMENTAL_CLASS_MESSAGE, EXPERIMENTAL_LINK_MESSAGE)
+    doc_string = DOCSTRING_TEMPLATE.format(
+        EXPERIMENTAL_CLASS_MESSAGE, EXPERIMENTAL_LINK_MESSAGE
+    )
     if cls.__doc__:
         cls.__doc__ = _add_note_to_docstring(cls.__doc__, doc_string)
     else:
@@ -98,7 +102,9 @@ def _add_method_docstring(func: Callable[P, T]) -> Callable[P, T]:
     :return: A wrapped method marked as experimental
     :rtype: Callable[P,T]
     """
-    doc_string = DOCSTRING_TEMPLATE.format(EXPERIMENTAL_METHOD_MESSAGE, EXPERIMENTAL_LINK_MESSAGE)
+    doc_string = DOCSTRING_TEMPLATE.format(
+        EXPERIMENTAL_METHOD_MESSAGE, EXPERIMENTAL_LINK_MESSAGE
+    )
     if func.__doc__:
         func.__doc__ = _add_note_to_docstring(func.__doc__, doc_string)
     else:
@@ -107,7 +113,9 @@ def _add_method_docstring(func: Callable[P, T]) -> Callable[P, T]:
 
     @functools.wraps(func)
     def wrapped(*args: P.args, **kwargs: P.kwargs) -> T:
-        message = "Method {0}: {1} {2}".format(func.__name__, EXPERIMENTAL_METHOD_MESSAGE, EXPERIMENTAL_LINK_MESSAGE)
+        message = "Method {0}: {1} {2}".format(
+            func.__name__, EXPERIMENTAL_METHOD_MESSAGE, EXPERIMENTAL_LINK_MESSAGE
+        )
         if not _should_skip_warning() and not _is_warning_cached(message):
             module_logger.warning(message)
         return func(*args, **kwargs)

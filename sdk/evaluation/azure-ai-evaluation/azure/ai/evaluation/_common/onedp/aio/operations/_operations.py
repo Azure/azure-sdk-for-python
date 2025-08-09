@@ -87,7 +87,9 @@ from ...operations._operations import (
 from .._configuration import AIProjectClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]
+]
 JSON = MutableMapping[str, Any]
 
 
@@ -103,10 +105,18 @@ class ConnectionsOperations:
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: AsyncPipelineClient = (
+            input_args.pop(0) if input_args else kwargs.pop("client")
+        )
+        self._config: AIProjectClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = (
+            input_args.pop(0) if input_args else kwargs.pop("serializer")
+        )
+        self._deserialize: Deserializer = (
+            input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        )
 
     @distributed_trace_async
     async def get(self, name: str, **kwargs: Any) -> _models.Connection:
@@ -138,13 +148,17 @@ class ConnectionsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -155,7 +169,9 @@ class ConnectionsOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         response_headers = {}
@@ -174,7 +190,9 @@ class ConnectionsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_with_credentials(self, name: str, **kwargs: Any) -> _models.Connection:
+    async def get_with_credentials(
+        self, name: str, **kwargs: Any
+    ) -> _models.Connection:
         """Get a connection by name, with its connection credentials.
 
         :param name: The name of the resource. Required.
@@ -203,13 +221,17 @@ class ConnectionsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -220,7 +242,9 @@ class ConnectionsOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         response_headers = {}
@@ -294,10 +318,15 @@ class ConnectionsOperations:
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             else:
                 # make call to next link with the client's api-version
@@ -305,25 +334,36 @@ class ConnectionsOperations:
                 _next_request_params = case_insensitive_dict(
                     {
                         key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                        for key, value in urllib.parse.parse_qs(
+                            _parsed_next_link.query
+                        ).items()
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Connection], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Connection], deserialized.get("value", [])
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -332,13 +372,19 @@ class ConnectionsOperations:
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+            pipeline_response: PipelineResponse = (
+                await self._client._pipeline.run(  # pylint: disable=protected-access
+                    _request, stream=_stream, **kwargs
+                )
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -401,10 +447,15 @@ class ConnectionsOperations:
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             else:
                 # make call to next link with the client's api-version
@@ -412,25 +463,36 @@ class ConnectionsOperations:
                 _next_request_params = case_insensitive_dict(
                     {
                         key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                        for key, value in urllib.parse.parse_qs(
+                            _parsed_next_link.query
+                        ).items()
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Connection], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Connection], deserialized.get("value", [])
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -439,13 +501,19 @@ class ConnectionsOperations:
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+            pipeline_response: PipelineResponse = (
+                await self._client._pipeline.run(  # pylint: disable=protected-access
+                    _request, stream=_stream, **kwargs
+                )
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -465,15 +533,25 @@ class EvaluationsOperations:
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: AsyncPipelineClient = (
+            input_args.pop(0) if input_args else kwargs.pop("client")
+        )
+        self._config: AIProjectClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = (
+            input_args.pop(0) if input_args else kwargs.pop("serializer")
+        )
+        self._deserialize: Deserializer = (
+            input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        )
 
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "name", "client_request_id", "accept"]},
+        params_added_on={
+            "2025-05-15-preview": ["api_version", "name", "client_request_id", "accept"]
+        },
     )
     async def get(self, name: str, **kwargs: Any) -> _models.Evaluation:
         """Get an evaluation run by name.
@@ -504,13 +582,17 @@ class EvaluationsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -521,7 +603,9 @@ class EvaluationsOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         response_headers = {}
@@ -609,10 +693,15 @@ class EvaluationsOperations:
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             else:
                 # make call to next link with the client's api-version
@@ -620,25 +709,36 @@ class EvaluationsOperations:
                 _next_request_params = case_insensitive_dict(
                     {
                         key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                        for key, value in urllib.parse.parse_qs(
+                            _parsed_next_link.query
+                        ).items()
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Evaluation], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Evaluation], deserialized.get("value", [])
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -647,13 +747,19 @@ class EvaluationsOperations:
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+            pipeline_response: PipelineResponse = (
+                await self._client._pipeline.run(  # pylint: disable=protected-access
+                    _request, stream=_stream, **kwargs
+                )
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -662,7 +768,11 @@ class EvaluationsOperations:
 
     @overload
     async def create_run(
-        self, evaluation: _models.Evaluation, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        evaluation: _models.Evaluation,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.Evaluation:
         """Creates an evaluation run.
 
@@ -694,7 +804,11 @@ class EvaluationsOperations:
 
     @overload
     async def create_run(
-        self, evaluation: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        evaluation: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.Evaluation:
         """Creates an evaluation run.
 
@@ -711,7 +825,14 @@ class EvaluationsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "content_type", "accept"]},
+        params_added_on={
+            "2025-05-15-preview": [
+                "api_version",
+                "client_request_id",
+                "content_type",
+                "accept",
+            ]
+        },
     )
     async def create_run(
         self, evaluation: Union[_models.Evaluation, JSON, IO[bytes]], **kwargs: Any
@@ -736,7 +857,9 @@ class EvaluationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[_models.Evaluation] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
@@ -754,13 +877,17 @@ class EvaluationsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -771,7 +898,9 @@ class EvaluationsOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -786,7 +915,11 @@ class EvaluationsOperations:
 
     @overload
     async def create_agent_evaluation(
-        self, evaluation: _models.AgentEvaluationRequest, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        evaluation: _models.AgentEvaluationRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.AgentEvaluation:
         """Creates an agent evaluation run.
 
@@ -818,7 +951,11 @@ class EvaluationsOperations:
 
     @overload
     async def create_agent_evaluation(
-        self, evaluation: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        evaluation: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.AgentEvaluation:
         """Creates an agent evaluation run.
 
@@ -835,10 +972,19 @@ class EvaluationsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "content_type", "accept"]},
+        params_added_on={
+            "2025-05-15-preview": [
+                "api_version",
+                "client_request_id",
+                "content_type",
+                "accept",
+            ]
+        },
     )
     async def create_agent_evaluation(
-        self, evaluation: Union[_models.AgentEvaluationRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        evaluation: Union[_models.AgentEvaluationRequest, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.AgentEvaluation:
         """Creates an agent evaluation run.
 
@@ -860,7 +1006,9 @@ class EvaluationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[_models.AgentEvaluation] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
@@ -878,13 +1026,17 @@ class EvaluationsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -895,7 +1047,9 @@ class EvaluationsOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -911,9 +1065,18 @@ class EvaluationsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "run_id", "accept"]},
+        params_added_on={
+            "2025-05-15-preview": [
+                "api_version",
+                "client_request_id",
+                "run_id",
+                "accept",
+            ]
+        },
     )
-    async def get_agent_evaluation_results(self, run_id: str, **kwargs: Any) -> _models.AgentEvaluation:
+    async def get_agent_evaluation_results(
+        self, run_id: str, **kwargs: Any
+    ) -> _models.AgentEvaluation:
         """Get agent evaluation results.
 
         :param run_id: Agent run id, for agent API v1, it's ``[thread_id]:[run_id]``; for agent API v2,
@@ -943,13 +1106,17 @@ class EvaluationsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -960,7 +1127,9 @@ class EvaluationsOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -976,7 +1145,9 @@ class EvaluationsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "accept"]},
+        params_added_on={
+            "2025-05-15-preview": ["api_version", "client_request_id", "accept"]
+        },
     )
     async def check_annotation(self, **kwargs: Any) -> List[str]:
         """Check annotation supported by the service.
@@ -1004,13 +1175,17 @@ class EvaluationsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -1021,7 +1196,9 @@ class EvaluationsOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -1036,7 +1213,11 @@ class EvaluationsOperations:
 
     @overload
     async def submit_annotation(
-        self, annotation_dto: _models.AnnotationDTO, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        annotation_dto: _models.AnnotationDTO,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> str:
         """Submit the annotation.
 
@@ -1052,7 +1233,11 @@ class EvaluationsOperations:
 
     @overload
     async def submit_annotation(
-        self, annotation_dto: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        annotation_dto: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> str:
         """Submit the annotation.
 
@@ -1068,7 +1253,11 @@ class EvaluationsOperations:
 
     @overload
     async def submit_annotation(
-        self, annotation_dto: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        annotation_dto: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> str:
         """Submit the annotation.
 
@@ -1085,10 +1274,19 @@ class EvaluationsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "content_type", "accept"]},
+        params_added_on={
+            "2025-05-15-preview": [
+                "api_version",
+                "client_request_id",
+                "content_type",
+                "accept",
+            ]
+        },
     )
     async def submit_annotation(
-        self, annotation_dto: Union[_models.AnnotationDTO, JSON, IO[bytes]], **kwargs: Any
+        self,
+        annotation_dto: Union[_models.AnnotationDTO, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> str:
         """Submit the annotation.
 
@@ -1110,7 +1308,9 @@ class EvaluationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[str] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
@@ -1128,13 +1328,17 @@ class EvaluationsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -1145,7 +1349,9 @@ class EvaluationsOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -1161,9 +1367,18 @@ class EvaluationsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "operation_id", "accept"]},
+        params_added_on={
+            "2025-05-15-preview": [
+                "api_version",
+                "client_request_id",
+                "operation_id",
+                "accept",
+            ]
+        },
     )
-    async def operation_results(self, operation_id: str, **kwargs: Any) -> List[Dict[str, Any]]:
+    async def operation_results(
+        self, operation_id: str, **kwargs: Any
+    ) -> List[Dict[str, Any]]:
         """Poll for the operation results.
 
         :param operation_id: Operation ID for the polling operation. Required.
@@ -1192,13 +1407,17 @@ class EvaluationsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -1209,7 +1428,9 @@ class EvaluationsOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -1224,7 +1445,11 @@ class EvaluationsOperations:
 
     @overload
     async def upload_run(
-        self, evaluation: _models.EvaluationUpload, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        evaluation: _models.EvaluationUpload,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.Evaluation:
         """Upload the result to an evaluation run.
 
@@ -1256,7 +1481,11 @@ class EvaluationsOperations:
 
     @overload
     async def upload_run(
-        self, evaluation: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        evaluation: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.Evaluation:
         """Upload the result to an evaluation run.
 
@@ -1273,10 +1502,19 @@ class EvaluationsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "content_type", "accept"]},
+        params_added_on={
+            "2025-05-15-preview": [
+                "api_version",
+                "client_request_id",
+                "content_type",
+                "accept",
+            ]
+        },
     )
     async def upload_run(
-        self, evaluation: Union[_models.EvaluationUpload, JSON, IO[bytes]], **kwargs: Any
+        self,
+        evaluation: Union[_models.EvaluationUpload, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.Evaluation:
         """Upload the result to an evaluation run.
 
@@ -1298,7 +1536,9 @@ class EvaluationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[_models.Evaluation] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
@@ -1316,13 +1556,17 @@ class EvaluationsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -1333,7 +1577,9 @@ class EvaluationsOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -1348,7 +1594,12 @@ class EvaluationsOperations:
 
     @overload
     async def upload_update_run(
-        self, name: str, evaluation: _models.EvaluationUpload, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        evaluation: _models.EvaluationUpload,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.Evaluation:
         """Update the uploaded the result to an evaluation run.
 
@@ -1366,7 +1617,12 @@ class EvaluationsOperations:
 
     @overload
     async def upload_update_run(
-        self, name: str, evaluation: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        evaluation: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.Evaluation:
         """Update the uploaded the result to an evaluation run.
 
@@ -1384,7 +1640,12 @@ class EvaluationsOperations:
 
     @overload
     async def upload_update_run(
-        self, name: str, evaluation: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        evaluation: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.Evaluation:
         """Update the uploaded the result to an evaluation run.
 
@@ -1403,10 +1664,21 @@ class EvaluationsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "name", "content_type", "accept"]},
+        params_added_on={
+            "2025-05-15-preview": [
+                "api_version",
+                "client_request_id",
+                "name",
+                "content_type",
+                "accept",
+            ]
+        },
     )
     async def upload_update_run(
-        self, name: str, evaluation: Union[_models.EvaluationUpload, JSON, IO[bytes]], **kwargs: Any
+        self,
+        name: str,
+        evaluation: Union[_models.EvaluationUpload, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.Evaluation:
         """Update the uploaded the result to an evaluation run.
 
@@ -1430,7 +1702,9 @@ class EvaluationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[_models.Evaluation] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
@@ -1449,13 +1723,17 @@ class EvaluationsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -1466,7 +1744,9 @@ class EvaluationsOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -1492,10 +1772,18 @@ class DatasetsOperations:
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: AsyncPipelineClient = (
+            input_args.pop(0) if input_args else kwargs.pop("client")
+        )
+        self._config: AIProjectClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = (
+            input_args.pop(0) if input_args else kwargs.pop("serializer")
+        )
+        self._deserialize: Deserializer = (
+            input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        )
 
     @distributed_trace
     def list_versions(
@@ -1556,10 +1844,15 @@ class DatasetsOperations:
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             else:
                 # make call to next link with the client's api-version
@@ -1567,25 +1860,36 @@ class DatasetsOperations:
                 _next_request_params = case_insensitive_dict(
                     {
                         key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                        for key, value in urllib.parse.parse_qs(
+                            _parsed_next_link.query
+                        ).items()
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DatasetVersion], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.DatasetVersion], deserialized.get("value", [])
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1594,13 +1898,19 @@ class DatasetsOperations:
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+            pipeline_response: PipelineResponse = (
+                await self._client._pipeline.run(  # pylint: disable=protected-access
+                    _request, stream=_stream, **kwargs
+                )
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -1662,10 +1972,15 @@ class DatasetsOperations:
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             else:
                 # make call to next link with the client's api-version
@@ -1673,25 +1988,36 @@ class DatasetsOperations:
                 _next_request_params = case_insensitive_dict(
                     {
                         key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                        for key, value in urllib.parse.parse_qs(
+                            _parsed_next_link.query
+                        ).items()
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DatasetVersion], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.DatasetVersion], deserialized.get("value", [])
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1700,13 +2026,19 @@ class DatasetsOperations:
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+            pipeline_response: PipelineResponse = (
+                await self._client._pipeline.run(  # pylint: disable=protected-access
+                    _request, stream=_stream, **kwargs
+                )
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -1714,7 +2046,9 @@ class DatasetsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def get_version(self, name: str, version: str, **kwargs: Any) -> _models.DatasetVersion:
+    async def get_version(
+        self, name: str, version: str, **kwargs: Any
+    ) -> _models.DatasetVersion:
         """Get the specific version of the DatasetVersion.
 
         :param name: The name of the resource. Required.
@@ -1746,13 +2080,17 @@ class DatasetsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -1763,7 +2101,9 @@ class DatasetsOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -1809,19 +2149,25 @@ class DatasetsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
@@ -1855,7 +2201,13 @@ class DatasetsOperations:
 
     @overload
     async def create_or_update_version(
-        self, name: str, version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.DatasetVersion:
         """Create a new or update an existing DatasetVersion with the given version id.
 
@@ -1875,7 +2227,13 @@ class DatasetsOperations:
 
     @overload
     async def create_or_update_version(
-        self, name: str, version: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.DatasetVersion:
         """Create a new or update an existing DatasetVersion with the given version id.
 
@@ -1895,7 +2253,11 @@ class DatasetsOperations:
 
     @distributed_trace_async
     async def create_or_update_version(
-        self, name: str, version: str, body: Union[_models.DatasetVersion, JSON, IO[bytes]], **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        body: Union[_models.DatasetVersion, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.DatasetVersion:
         """Create a new or update an existing DatasetVersion with the given version id.
 
@@ -1921,7 +2283,9 @@ class DatasetsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[_models.DatasetVersion] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
@@ -1941,13 +2305,17 @@ class DatasetsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -1958,7 +2326,9 @@ class DatasetsOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -1999,7 +2369,13 @@ class DatasetsOperations:
 
     @overload
     async def start_pending_upload_version(
-        self, name: str, version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.PendingUploadResponse:
         """Start a new or get an existing pending upload of a dataset for a specific version.
 
@@ -2019,7 +2395,13 @@ class DatasetsOperations:
 
     @overload
     async def start_pending_upload_version(
-        self, name: str, version: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.PendingUploadResponse:
         """Start a new or get an existing pending upload of a dataset for a specific version.
 
@@ -2039,7 +2421,11 @@ class DatasetsOperations:
 
     @distributed_trace_async
     async def start_pending_upload_version(
-        self, name: str, version: str, body: Union[_models.PendingUploadRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        body: Union[_models.PendingUploadRequest, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.PendingUploadResponse:
         """Start a new or get an existing pending upload of a dataset for a specific version.
 
@@ -2065,7 +2451,9 @@ class DatasetsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[_models.PendingUploadResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
@@ -2085,13 +2473,17 @@ class DatasetsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -2102,7 +2494,9 @@ class DatasetsOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -2142,7 +2536,9 @@ class DatasetsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+        content_type: str = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json")
+        )
         cls: ClsType[_models.AssetCredentialResponse] = kwargs.pop("cls", None)
 
         _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
@@ -2157,13 +2553,17 @@ class DatasetsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -2174,13 +2574,17 @@ class DatasetsOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AssetCredentialResponse, response.json())
+            deserialized = _deserialize(
+                _models.AssetCredentialResponse, response.json()
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2200,10 +2604,18 @@ class IndexesOperations:
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: AsyncPipelineClient = (
+            input_args.pop(0) if input_args else kwargs.pop("client")
+        )
+        self._config: AIProjectClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = (
+            input_args.pop(0) if input_args else kwargs.pop("serializer")
+        )
+        self._deserialize: Deserializer = (
+            input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        )
 
     @distributed_trace
     def list_versions(
@@ -2264,10 +2676,15 @@ class IndexesOperations:
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             else:
                 # make call to next link with the client's api-version
@@ -2275,25 +2692,36 @@ class IndexesOperations:
                 _next_request_params = case_insensitive_dict(
                     {
                         key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                        for key, value in urllib.parse.parse_qs(
+                            _parsed_next_link.query
+                        ).items()
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Index], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Index], deserialized.get("value", [])
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2302,13 +2730,19 @@ class IndexesOperations:
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+            pipeline_response: PipelineResponse = (
+                await self._client._pipeline.run(  # pylint: disable=protected-access
+                    _request, stream=_stream, **kwargs
+                )
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -2370,10 +2804,15 @@ class IndexesOperations:
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             else:
                 # make call to next link with the client's api-version
@@ -2381,25 +2820,36 @@ class IndexesOperations:
                 _next_request_params = case_insensitive_dict(
                     {
                         key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                        for key, value in urllib.parse.parse_qs(
+                            _parsed_next_link.query
+                        ).items()
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Index], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Index], deserialized.get("value", [])
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2408,13 +2858,19 @@ class IndexesOperations:
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+            pipeline_response: PipelineResponse = (
+                await self._client._pipeline.run(  # pylint: disable=protected-access
+                    _request, stream=_stream, **kwargs
+                )
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -2422,7 +2878,9 @@ class IndexesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def get_version(self, name: str, version: str, **kwargs: Any) -> _models.Index:
+    async def get_version(
+        self, name: str, version: str, **kwargs: Any
+    ) -> _models.Index:
         """Get the specific version of the Index.
 
         :param name: The name of the resource. Required.
@@ -2454,13 +2912,17 @@ class IndexesOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -2471,7 +2933,9 @@ class IndexesOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -2517,19 +2981,25 @@ class IndexesOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
@@ -2537,7 +3007,13 @@ class IndexesOperations:
 
     @overload
     async def create_or_update_version(
-        self, name: str, version: str, body: _models.Index, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        body: _models.Index,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.Index:
         """Create a new or update an existing Index with the given version id.
 
@@ -2557,7 +3033,13 @@ class IndexesOperations:
 
     @overload
     async def create_or_update_version(
-        self, name: str, version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.Index:
         """Create a new or update an existing Index with the given version id.
 
@@ -2577,7 +3059,13 @@ class IndexesOperations:
 
     @overload
     async def create_or_update_version(
-        self, name: str, version: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.Index:
         """Create a new or update an existing Index with the given version id.
 
@@ -2597,7 +3085,11 @@ class IndexesOperations:
 
     @distributed_trace_async
     async def create_or_update_version(
-        self, name: str, version: str, body: Union[_models.Index, JSON, IO[bytes]], **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        body: Union[_models.Index, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.Index:
         """Create a new or update an existing Index with the given version id.
 
@@ -2623,7 +3115,9 @@ class IndexesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[_models.Index] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
@@ -2643,13 +3137,17 @@ class IndexesOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -2660,7 +3158,9 @@ class IndexesOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -2686,10 +3186,18 @@ class DeploymentsOperations:
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: AsyncPipelineClient = (
+            input_args.pop(0) if input_args else kwargs.pop("client")
+        )
+        self._config: AIProjectClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = (
+            input_args.pop(0) if input_args else kwargs.pop("serializer")
+        )
+        self._deserialize: Deserializer = (
+            input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        )
 
     @distributed_trace_async
     async def get(self, name: str, **kwargs: Any) -> _models.Deployment:
@@ -2721,13 +3229,17 @@ class DeploymentsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -2738,7 +3250,9 @@ class DeploymentsOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         response_headers = {}
@@ -2810,10 +3324,15 @@ class DeploymentsOperations:
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             else:
                 # make call to next link with the client's api-version
@@ -2821,25 +3340,36 @@ class DeploymentsOperations:
                 _next_request_params = case_insensitive_dict(
                     {
                         key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                        for key, value in urllib.parse.parse_qs(
+                            _parsed_next_link.query
+                        ).items()
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Deployment], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Deployment], deserialized.get("value", [])
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2848,13 +3378,19 @@ class DeploymentsOperations:
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+            pipeline_response: PipelineResponse = (
+                await self._client._pipeline.run(  # pylint: disable=protected-access
+                    _request, stream=_stream, **kwargs
+                )
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -2874,15 +3410,25 @@ class RedTeamsOperations:
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: AsyncPipelineClient = (
+            input_args.pop(0) if input_args else kwargs.pop("client")
+        )
+        self._config: AIProjectClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = (
+            input_args.pop(0) if input_args else kwargs.pop("serializer")
+        )
+        self._deserialize: Deserializer = (
+            input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        )
 
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "name", "client_request_id", "accept"]},
+        params_added_on={
+            "2025-05-15-preview": ["api_version", "name", "client_request_id", "accept"]
+        },
     )
     async def get(self, name: str, **kwargs: Any) -> _models.RedTeam:
         """Get a redteam by name.
@@ -2913,13 +3459,17 @@ class RedTeamsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -2930,7 +3480,9 @@ class RedTeamsOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         response_headers = {}
@@ -2952,7 +3504,14 @@ class RedTeamsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={
-            "2025-05-15-preview": ["api_version", "top", "skip", "maxpagesize", "client_request_id", "accept"]
+            "2025-05-15-preview": [
+                "api_version",
+                "top",
+                "skip",
+                "maxpagesize",
+                "client_request_id",
+                "accept",
+            ]
         },
     )
     def list(
@@ -2995,10 +3554,15 @@ class RedTeamsOperations:
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             else:
                 # make call to next link with the client's api-version
@@ -3006,25 +3570,36 @@ class RedTeamsOperations:
                 _next_request_params = case_insensitive_dict(
                     {
                         key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                        for key, value in urllib.parse.parse_qs(
+                            _parsed_next_link.query
+                        ).items()
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.RedTeam], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.RedTeam], deserialized.get("value", [])
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -3033,13 +3608,19 @@ class RedTeamsOperations:
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+            pipeline_response: PipelineResponse = (
+                await self._client._pipeline.run(  # pylint: disable=protected-access
+                    _request, stream=_stream, **kwargs
+                )
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -3048,7 +3629,11 @@ class RedTeamsOperations:
 
     @overload
     async def create_run(
-        self, red_team: _models.RedTeam, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        red_team: _models.RedTeam,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.RedTeam:
         """Creates a redteam run.
 
@@ -3080,7 +3665,11 @@ class RedTeamsOperations:
 
     @overload
     async def create_run(
-        self, red_team: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        red_team: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.RedTeam:
         """Creates a redteam run.
 
@@ -3097,9 +3686,18 @@ class RedTeamsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "content_type", "accept"]},
+        params_added_on={
+            "2025-05-15-preview": [
+                "api_version",
+                "client_request_id",
+                "content_type",
+                "accept",
+            ]
+        },
     )
-    async def create_run(self, red_team: Union[_models.RedTeam, JSON, IO[bytes]], **kwargs: Any) -> _models.RedTeam:
+    async def create_run(
+        self, red_team: Union[_models.RedTeam, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.RedTeam:
         """Creates a redteam run.
 
         :param red_team: Redteam to be run. Is one of the following types: RedTeam, JSON, IO[bytes]
@@ -3120,7 +3718,9 @@ class RedTeamsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[_models.RedTeam] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
@@ -3138,13 +3738,17 @@ class RedTeamsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -3155,7 +3759,9 @@ class RedTeamsOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -3170,7 +3776,11 @@ class RedTeamsOperations:
 
     @overload
     async def upload_run(
-        self, redteam: _models.RedTeamUpload, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        redteam: _models.RedTeamUpload,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.RedTeam:
         """Upload the result to a redteam run.
 
@@ -3202,7 +3812,11 @@ class RedTeamsOperations:
 
     @overload
     async def upload_run(
-        self, redteam: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        redteam: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.RedTeam:
         """Upload the result to a redteam run.
 
@@ -3219,7 +3833,14 @@ class RedTeamsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "content_type", "accept"]},
+        params_added_on={
+            "2025-05-15-preview": [
+                "api_version",
+                "client_request_id",
+                "content_type",
+                "accept",
+            ]
+        },
     )
     async def upload_run(
         self, redteam: Union[_models.RedTeamUpload, JSON, IO[bytes]], **kwargs: Any
@@ -3244,7 +3865,9 @@ class RedTeamsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[_models.RedTeam] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
@@ -3262,13 +3885,17 @@ class RedTeamsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -3279,7 +3906,9 @@ class RedTeamsOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -3294,7 +3923,12 @@ class RedTeamsOperations:
 
     @overload
     async def upload_update_run(
-        self, name: str, redteam: _models.RedTeamUpload, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        redteam: _models.RedTeamUpload,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.RedTeam:
         """Update the uploaded the result to an redteam run.
 
@@ -3312,7 +3946,12 @@ class RedTeamsOperations:
 
     @overload
     async def upload_update_run(
-        self, name: str, redteam: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        redteam: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.RedTeam:
         """Update the uploaded the result to an redteam run.
 
@@ -3330,7 +3969,12 @@ class RedTeamsOperations:
 
     @overload
     async def upload_update_run(
-        self, name: str, redteam: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        redteam: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.RedTeam:
         """Update the uploaded the result to an redteam run.
 
@@ -3349,10 +3993,21 @@ class RedTeamsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "name", "content_type", "accept"]},
+        params_added_on={
+            "2025-05-15-preview": [
+                "api_version",
+                "client_request_id",
+                "name",
+                "content_type",
+                "accept",
+            ]
+        },
     )
     async def upload_update_run(
-        self, name: str, redteam: Union[_models.RedTeamUpload, JSON, IO[bytes]], **kwargs: Any
+        self,
+        name: str,
+        redteam: Union[_models.RedTeamUpload, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.RedTeam:
         """Update the uploaded the result to an redteam run.
 
@@ -3376,7 +4031,9 @@ class RedTeamsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[_models.RedTeam] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
@@ -3395,13 +4052,17 @@ class RedTeamsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -3412,7 +4073,9 @@ class RedTeamsOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -3428,9 +4091,13 @@ class RedTeamsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "type", "accept"]},
+        params_added_on={
+            "2025-05-15-preview": ["api_version", "client_request_id", "type", "accept"]
+        },
     )
-    async def get_jail_break_dataset_with_type(self, type: str, **kwargs: Any) -> List[str]:
+    async def get_jail_break_dataset_with_type(
+        self, type: str, **kwargs: Any
+    ) -> List[str]:
         """Get the jailbreak dataset with type.
 
         :param type: Type of jailbreak dataset. Required.
@@ -3459,13 +4126,17 @@ class RedTeamsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -3476,7 +4147,9 @@ class RedTeamsOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -3551,13 +4224,17 @@ class RedTeamsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -3568,7 +4245,9 @@ class RedTeamsOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -3584,7 +4263,9 @@ class RedTeamsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "accept"]},
+        params_added_on={
+            "2025-05-15-preview": ["api_version", "client_request_id", "accept"]
+        },
     )
     async def get_jail_break_dataset(self, **kwargs: Any) -> List[str]:
         """Get the jailbreak dataset.
@@ -3612,13 +4293,17 @@ class RedTeamsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -3629,7 +4314,9 @@ class RedTeamsOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -3645,7 +4332,9 @@ class RedTeamsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "type", "accept"]},
+        params_added_on={
+            "2025-05-15-preview": ["api_version", "client_request_id", "type", "accept"]
+        },
     )
     async def get_template_parameters_with_type(self, type: str, **kwargs: Any) -> str:
         """Get template parameters with type.
@@ -3676,13 +4365,17 @@ class RedTeamsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -3693,7 +4386,9 @@ class RedTeamsOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -3709,7 +4404,9 @@ class RedTeamsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "accept"]},
+        params_added_on={
+            "2025-05-15-preview": ["api_version", "client_request_id", "accept"]
+        },
     )
     async def get_template_parameters(self, **kwargs: Any) -> str:
         """Get template parameters.
@@ -3737,13 +4434,17 @@ class RedTeamsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -3754,7 +4455,9 @@ class RedTeamsOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -3770,7 +4473,9 @@ class RedTeamsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "path", "accept"]},
+        params_added_on={
+            "2025-05-15-preview": ["api_version", "client_request_id", "path", "accept"]
+        },
     )
     async def get_template_parameters_image(self, *, path: str, **kwargs: Any) -> str:
         """Get the template parameters image.
@@ -3801,13 +4506,17 @@ class RedTeamsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -3818,7 +4527,9 @@ class RedTeamsOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -3833,7 +4544,11 @@ class RedTeamsOperations:
 
     @overload
     async def submit_simulation(
-        self, body: _models.SimulationDTO, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        body: _models.SimulationDTO,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.LongRunningResponse:
         """Submit a request for simulation.
 
@@ -3882,7 +4597,14 @@ class RedTeamsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "content_type", "accept"]},
+        params_added_on={
+            "2025-05-15-preview": [
+                "api_version",
+                "client_request_id",
+                "content_type",
+                "accept",
+            ]
+        },
     )
     async def submit_simulation(
         self, body: Union[_models.SimulationDTO, JSON, IO[bytes]], **kwargs: Any
@@ -3907,7 +4629,9 @@ class RedTeamsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[_models.LongRunningResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
@@ -3925,13 +4649,17 @@ class RedTeamsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -3942,7 +4670,9 @@ class RedTeamsOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -3958,9 +4688,18 @@ class RedTeamsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "operation_id", "accept"]},
+        params_added_on={
+            "2025-05-15-preview": [
+                "api_version",
+                "client_request_id",
+                "operation_id",
+                "accept",
+            ]
+        },
     )
-    async def operation_results(self, operation_id: str, **kwargs: Any) -> _models.ChatCompletions:
+    async def operation_results(
+        self, operation_id: str, **kwargs: Any
+    ) -> _models.ChatCompletions:
         """Poll for the operation results.
 
         :param operation_id: Operation ID for the polling operation. Required.
@@ -3989,13 +4728,17 @@ class RedTeamsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -4006,7 +4749,9 @@ class RedTeamsOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -4032,16 +4777,32 @@ class EvaluationResultsOperations:
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: AsyncPipelineClient = (
+            input_args.pop(0) if input_args else kwargs.pop("client")
+        )
+        self._config: AIProjectClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = (
+            input_args.pop(0) if input_args else kwargs.pop("serializer")
+        )
+        self._deserialize: Deserializer = (
+            input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        )
 
     @distributed_trace
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={
-            "2025-05-15-preview": ["api_version", "name", "top", "skip", "tags", "list_view_type", "accept"]
+            "2025-05-15-preview": [
+                "api_version",
+                "name",
+                "top",
+                "skip",
+                "tags",
+                "list_view_type",
+                "accept",
+            ]
         },
     )
     def list_versions(
@@ -4103,10 +4864,15 @@ class EvaluationResultsOperations:
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             else:
                 # make call to next link with the client's api-version
@@ -4114,25 +4880,36 @@ class EvaluationResultsOperations:
                 _next_request_params = case_insensitive_dict(
                     {
                         key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                        for key, value in urllib.parse.parse_qs(
+                            _parsed_next_link.query
+                        ).items()
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.EvaluationResult], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.EvaluationResult], deserialized.get("value", [])
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -4141,13 +4918,19 @@ class EvaluationResultsOperations:
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+            pipeline_response: PipelineResponse = (
+                await self._client._pipeline.run(  # pylint: disable=protected-access
+                    _request, stream=_stream, **kwargs
+                )
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -4157,7 +4940,16 @@ class EvaluationResultsOperations:
     @distributed_trace
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "top", "skip", "tags", "list_view_type", "accept"]},
+        params_added_on={
+            "2025-05-15-preview": [
+                "api_version",
+                "top",
+                "skip",
+                "tags",
+                "list_view_type",
+                "accept",
+            ]
+        },
     )
     def list_latest(
         self,
@@ -4214,10 +5006,15 @@ class EvaluationResultsOperations:
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             else:
                 # make call to next link with the client's api-version
@@ -4225,25 +5022,36 @@ class EvaluationResultsOperations:
                 _next_request_params = case_insensitive_dict(
                     {
                         key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                        for key, value in urllib.parse.parse_qs(
+                            _parsed_next_link.query
+                        ).items()
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.EvaluationResult], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.EvaluationResult], deserialized.get("value", [])
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -4252,13 +5060,19 @@ class EvaluationResultsOperations:
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+            pipeline_response: PipelineResponse = (
+                await self._client._pipeline.run(  # pylint: disable=protected-access
+                    _request, stream=_stream, **kwargs
+                )
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -4268,9 +5082,13 @@ class EvaluationResultsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "name", "version", "accept"]},
+        params_added_on={
+            "2025-05-15-preview": ["api_version", "name", "version", "accept"]
+        },
     )
-    async def get_version(self, name: str, version: str, **kwargs: Any) -> _models.EvaluationResult:
+    async def get_version(
+        self, name: str, version: str, **kwargs: Any
+    ) -> _models.EvaluationResult:
         """Get the specific version of the EvaluationResult.
 
         :param name: The name of the resource. Required.
@@ -4302,13 +5120,17 @@ class EvaluationResultsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -4319,7 +5141,9 @@ class EvaluationResultsOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -4335,7 +5159,9 @@ class EvaluationResultsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "name", "version", "accept"]},
+        params_added_on={
+            "2025-05-15-preview": ["api_version", "name", "version", "accept"]
+        },
     )
     async def delete_version(self, name: str, version: str, **kwargs: Any) -> None:
         """Delete the specific version of the EvaluationResult.
@@ -4369,19 +5195,25 @@ class EvaluationResultsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
@@ -4415,7 +5247,13 @@ class EvaluationResultsOperations:
 
     @overload
     async def create_or_update_version(
-        self, name: str, version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.EvaluationResult:
         """Create a new or update an existing EvaluationResult with the given version id.
 
@@ -4435,7 +5273,13 @@ class EvaluationResultsOperations:
 
     @overload
     async def create_or_update_version(
-        self, name: str, version: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.EvaluationResult:
         """Create a new or update an existing EvaluationResult with the given version id.
 
@@ -4456,10 +5300,22 @@ class EvaluationResultsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "name", "version", "content_type", "accept"]},
+        params_added_on={
+            "2025-05-15-preview": [
+                "api_version",
+                "name",
+                "version",
+                "content_type",
+                "accept",
+            ]
+        },
     )
     async def create_or_update_version(
-        self, name: str, version: str, body: Union[_models.EvaluationResult, JSON, IO[bytes]], **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        body: Union[_models.EvaluationResult, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.EvaluationResult:
         """Create a new or update an existing EvaluationResult with the given version id.
 
@@ -4485,7 +5341,9 @@ class EvaluationResultsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[_models.EvaluationResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
@@ -4505,13 +5363,17 @@ class EvaluationResultsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -4522,7 +5384,9 @@ class EvaluationResultsOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -4563,7 +5427,13 @@ class EvaluationResultsOperations:
 
     @overload
     async def start_pending_upload(
-        self, name: str, version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.PendingUploadResponse:
         """Create or start a pending upload of a evaluation results for a specific version.
 
@@ -4583,7 +5453,13 @@ class EvaluationResultsOperations:
 
     @overload
     async def start_pending_upload(
-        self, name: str, version: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.PendingUploadResponse:
         """Create or start a pending upload of a evaluation results for a specific version.
 
@@ -4604,10 +5480,22 @@ class EvaluationResultsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "name", "version", "content_type", "accept"]},
+        params_added_on={
+            "2025-05-15-preview": [
+                "api_version",
+                "name",
+                "version",
+                "content_type",
+                "accept",
+            ]
+        },
     )
     async def start_pending_upload(
-        self, name: str, version: str, body: Union[_models.PendingUploadRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        body: Union[_models.PendingUploadRequest, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.PendingUploadResponse:
         """Create or start a pending upload of a evaluation results for a specific version.
 
@@ -4633,7 +5521,9 @@ class EvaluationResultsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[_models.PendingUploadResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
@@ -4653,13 +5543,17 @@ class EvaluationResultsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -4670,7 +5564,9 @@ class EvaluationResultsOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -4711,7 +5607,13 @@ class EvaluationResultsOperations:
 
     @overload
     async def get_credentials(
-        self, name: str, version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.AssetCredentialResponse:
         """Enable downloading json.
 
@@ -4731,7 +5633,13 @@ class EvaluationResultsOperations:
 
     @overload
     async def get_credentials(
-        self, name: str, version: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.AssetCredentialResponse:
         """Enable downloading json.
 
@@ -4752,10 +5660,22 @@ class EvaluationResultsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "name", "version", "content_type", "accept"]},
+        params_added_on={
+            "2025-05-15-preview": [
+                "api_version",
+                "name",
+                "version",
+                "content_type",
+                "accept",
+            ]
+        },
     )
     async def get_credentials(
-        self, name: str, version: str, body: Union[_models.AssetCredentialRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        body: Union[_models.AssetCredentialRequest, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.AssetCredentialResponse:
         """Enable downloading json.
 
@@ -4781,7 +5701,9 @@ class EvaluationResultsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[_models.AssetCredentialResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
@@ -4801,13 +5723,17 @@ class EvaluationResultsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -4818,13 +5744,17 @@ class EvaluationResultsOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AssetCredentialResponse, response.json())
+            deserialized = _deserialize(
+                _models.AssetCredentialResponse, response.json()
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

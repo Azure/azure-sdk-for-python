@@ -28,7 +28,9 @@ def message_to_dict(message: ChatMessage, context: str = None) -> Dict[str, str]
     return {"role": message.role, "content": message.content, "context": context}
 
 
-def get_strategy_name(attack_strategy: Union[AttackStrategy, List[AttackStrategy]]) -> str:
+def get_strategy_name(
+    attack_strategy: Union[AttackStrategy, List[AttackStrategy]]
+) -> str:
     """Get a string name for an attack strategy or list of strategies.
 
     :param attack_strategy: The attack strategy or list of strategies
@@ -57,7 +59,9 @@ def get_flattened_attack_strategies(
     attack_strategies_temp = attack_strategies.copy()
 
     if AttackStrategy.EASY in attack_strategies_temp:
-        attack_strategies_temp.extend([AttackStrategy.Base64, AttackStrategy.Flip, AttackStrategy.Morse])
+        attack_strategies_temp.extend(
+            [AttackStrategy.Base64, AttackStrategy.Flip, AttackStrategy.Morse]
+        )
         attack_strategies_temp.remove(AttackStrategy.EASY)
 
     if AttackStrategy.MODERATE in attack_strategies_temp:
@@ -77,10 +81,14 @@ def get_flattened_attack_strategies(
     attack_strategies_temp.append(AttackStrategy.Baseline)
 
     for strategy in attack_strategies_temp:
-        if isinstance(strategy, List) and tuple(strategy) not in seen_strategies:  # For composed strategies
+        if (
+            isinstance(strategy, List) and tuple(strategy) not in seen_strategies
+        ):  # For composed strategies
             flattened_strategies.append([s for s in strategy])
             seen_strategies.add(tuple(strategy))
-        elif isinstance(strategy, AttackStrategy) and strategy not in seen_strategies:  # For single strategies
+        elif (
+            isinstance(strategy, AttackStrategy) and strategy not in seen_strategies
+        ):  # For single strategies
             flattened_strategies.append(strategy)
             seen_strategies.add(strategy)
 
@@ -108,13 +116,19 @@ def format_scorecard(redteam_result: RedTeamResult) -> str:
     :rtype: str
     """
     scorecard = redteam_result["scorecard"]
-    risk_summary = scorecard["risk_category_summary"][0] if scorecard["risk_category_summary"] else {}
+    risk_summary = (
+        scorecard["risk_category_summary"][0]
+        if scorecard["risk_category_summary"]
+        else {}
+    )
     overall_asr = risk_summary.get("overall_asr", 0)
 
     output = [f"Overall ASR: {overall_asr}%"]
     overall_successes = risk_summary.get("overall_attack_successes", 0)
     overall_total = risk_summary.get("overall_total", 0)
-    output.append(f"Attack Success: {overall_successes}/{overall_total} attacks were successful")
+    output.append(
+        f"Attack Success: {overall_successes}/{overall_total} attacks were successful"
+    )
 
     separator = "-" * 132
     output.append(separator)
@@ -136,7 +150,9 @@ def format_scorecard(redteam_result: RedTeamResult) -> str:
         moderate = "N/A" if is_none_or_nan(moderate_val) else f"{moderate_val}%"
         difficult = "N/A" if is_none_or_nan(difficult_val) else f"{difficult_val}%"
 
-        output.append(f"{risk_category:<21}| {baseline:<14} | {easy:<28} | {moderate:<31} | {difficult:<30}")
+        output.append(
+            f"{risk_category:<21}| {baseline:<14} | {easy:<28} | {moderate:<31} | {difficult:<30}"
+        )
 
     return "\n".join(output)
 
@@ -194,10 +210,16 @@ def write_pyrit_outputs_to_file(
 
     conversations = [
         [
-            (item.to_chat_message(), prompt_to_context.get(item.original_value, "") or item.labels.get("context", ""))
+            (
+                item.to_chat_message(),
+                prompt_to_context.get(item.original_value, "")
+                or item.labels.get("context", ""),
+            )
             for item in group
         ]
-        for conv_id, group in itertools.groupby(prompts_request_pieces, key=lambda x: x.conversation_id)
+        for conv_id, group in itertools.groupby(
+            prompts_request_pieces, key=lambda x: x.conversation_id
+        )
     ]
 
     # Check if we should overwrite existing file with more conversations
@@ -221,7 +243,10 @@ def write_pyrit_outputs_to_file(
                         json.dumps(
                             {
                                 "conversation": {
-                                    "messages": [message_to_dict(message[0], message[1]) for message in conversation]
+                                    "messages": [
+                                        message_to_dict(message[0], message[1])
+                                        for message in conversation
+                                    ]
                                 }
                             }
                         )
@@ -252,7 +277,10 @@ def write_pyrit_outputs_to_file(
                 json.dumps(
                     {
                         "conversation": {
-                            "messages": [message_to_dict(message[0], message[1]) for message in conversation]
+                            "messages": [
+                                message_to_dict(message[0], message[1])
+                                for message in conversation
+                            ]
                         }
                     }
                 )
@@ -260,5 +288,7 @@ def write_pyrit_outputs_to_file(
             )
         with Path(output_path).open("w") as f:
             f.writelines(json_lines)
-        logger.debug(f"Successfully wrote {len(conversations)} conversations to {output_path}")
+        logger.debug(
+            f"Successfully wrote {len(conversations)} conversations to {output_path}"
+        )
     return str(output_path)

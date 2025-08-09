@@ -63,9 +63,13 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
+    def __init__(
+        self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any
+    ) -> None:
         _endpoint = "{endpoint}"
-        self._config = AIProjectClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._config = AIProjectClientConfiguration(
+            endpoint=endpoint, credential=credential, **kwargs
+        )
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:
@@ -81,20 +85,38 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
                 self._config.custom_hook_policy,
                 self._config.logging_policy,
                 policies.DistributedTracingPolicy(**kwargs),
-                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                (
+                    policies.SensitiveHeaderCleanupPolicy(**kwargs)
+                    if self._config.redirect_policy
+                    else None
+                ),
                 self._config.http_logging_policy,
             ]
-        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+        self._client: AsyncPipelineClient = AsyncPipelineClient(
+            base_url=_endpoint, policies=_policies, **kwargs
+        )
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.connections = ConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.evaluations = EvaluationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.red_teams = RedTeamsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.connections = ConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.evaluations = EvaluationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.datasets = DatasetsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.indexes = IndexesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.deployments = DeploymentsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.red_teams = RedTeamsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.evaluation_results = EvaluationResultsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -121,10 +143,14 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
 
-        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+        request_copy.url = self._client.format_url(
+            request_copy.url, **path_format_arguments
+        )
         return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     async def close(self) -> None:

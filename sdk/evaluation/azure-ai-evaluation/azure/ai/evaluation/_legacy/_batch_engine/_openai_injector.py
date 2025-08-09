@@ -15,7 +15,9 @@ from azure.ai.evaluation._legacy._adapters._errors import MissingRequiredPackage
 from azure.ai.evaluation._legacy._batch_engine._result import TokenMetrics
 
 
-_token_metrics: ContextVar[TokenMetrics] = ContextVar("token_metrics", default=TokenMetrics(0, 0, 0))
+_token_metrics: ContextVar[TokenMetrics] = ContextVar(
+    "token_metrics", default=TokenMetrics(0, 0, 0)
+)
 KEY_ATTR_ORIGINAL: Final[str] = "_original"
 
 
@@ -88,10 +90,15 @@ def _openai_api_list() -> Generator[Tuple[Any, Callable, bool], None, None]:
                 continue
             yield cls, method, is_async
         except ImportError:
-            raise MissingRequiredPackage("Please install the 'openai' package to use the Azure AI Evaluation SDK")
+            raise MissingRequiredPackage(
+                "Please install the 'openai' package to use the Azure AI Evaluation SDK"
+            )
         except AttributeError:
             logging.warning(
-                "The module '%s' does not have class '%s' or method '%s'", module_name, class_name, method_name
+                "The module '%s' does not have class '%s' or method '%s'",
+                module_name,
+                class_name,
+                method_name,
             )
 
 
@@ -127,6 +134,11 @@ class CaptureOpenAITokenUsage:
         _token_metrics.set(TokenMetrics(0, 0, 0))
         return self._tokens
 
-    def __exit__(self, exc_type: Optional[Exception], exc_value: Optional[Exception], traceback: Optional[Any]) -> None:
+    def __exit__(
+        self,
+        exc_type: Optional[Exception],
+        exc_value: Optional[Exception],
+        traceback: Optional[Any],
+    ) -> None:
         captured_metrics = _token_metrics.get()
         self._tokens.update(captured_metrics)

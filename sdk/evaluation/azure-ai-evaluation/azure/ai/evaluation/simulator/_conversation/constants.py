@@ -7,7 +7,9 @@ from enum import Enum
 BOT_NAMES = ["chat_bot", "other_bot"]
 TASK_BOT_NAMES = ["system_bot", "simulated_bot"]
 
-REQUESTS_BATCH_SIZE = 200  # Number of input lines to process at once, must fit into memory
+REQUESTS_BATCH_SIZE = (
+    200  # Number of input lines to process at once, must fit into memory
+)
 OUTPUT_FILE = "openai_api_response.jsonl"
 
 # Azure endpoint constants

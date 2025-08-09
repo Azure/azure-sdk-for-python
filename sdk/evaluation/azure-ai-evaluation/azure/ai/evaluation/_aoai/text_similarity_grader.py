@@ -4,7 +4,10 @@
 from typing import Any, Dict, Union
 from typing_extensions import Literal
 
-from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
+from azure.ai.evaluation._model_configurations import (
+    AzureOpenAIModelConfiguration,
+    OpenAIModelConfiguration,
+)
 from openai.types.graders import TextSimilarityGrader
 from azure.ai.evaluation._common._experimental import experimental
 

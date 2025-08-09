@@ -9,7 +9,9 @@ from azure.core import PipelineClient
 
 from ..._configuration import AIProjectClientConfiguration
 from ..._serialization import Deserializer, Serializer
-from ..buildingblocks.operations._operations import ServicePatternsBuildingBlocksOperations
+from ..buildingblocks.operations._operations import (
+    ServicePatternsBuildingBlocksOperations,
+)
 
 
 class ServicePatternsOperations:
@@ -24,10 +26,18 @@ class ServicePatternsOperations:
 
     def __init__(self, *args, **kwargs):
         input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: PipelineClient = (
+            input_args.pop(0) if input_args else kwargs.pop("client")
+        )
+        self._config: AIProjectClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = (
+            input_args.pop(0) if input_args else kwargs.pop("serializer")
+        )
+        self._deserialize: Deserializer = (
+            input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        )
 
         self.building_blocks = ServicePatternsBuildingBlocksOperations(
             self._client, self._config, self._serialize, self._deserialize

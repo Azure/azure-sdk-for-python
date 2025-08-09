@@ -16,7 +16,12 @@ from urllib.parse import urlparse
 from azure.ai.evaluation._legacy._adapters.entities import Run
 from typing_extensions import Self
 
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._exceptions import (
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+    EvaluationException,
+)
 from azure.ai.evaluation._http_utils import get_http_client
 from azure.ai.evaluation._version import VERSION
 from azure.core.pipeline.policies import RetryPolicy
@@ -62,7 +67,9 @@ class RunStatus(enum.Enum):
     TERMINATED = 3
 
 
-class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-instance-attributes
+class EvalRun(
+    contextlib.AbstractContextManager
+):  # pylint: disable=too-many-instance-attributes
     """
     The simple singleton run class, used for accessing artifact store.
 
@@ -147,7 +154,9 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         :rtype: str
         """
         return (
-            "/subscriptions/{}/resourceGroups/{}/providers" "/Microsoft.MachineLearningServices" "/workspaces/{}"
+            "/subscriptions/{}/resourceGroups/{}/providers"
+            "/Microsoft.MachineLearningServices"
+            "/workspaces/{}"
         ).format(
             self._subscription_id,
             self._resource_group_name,
@@ -158,7 +167,9 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         """
         Start the run, or, if it is not applicable (for example, if tracking is not enabled), mark it as started.
         """
-        self._check_state_and_log("start run", {v for v in RunStatus if v != RunStatus.NOT_STARTED}, True)
+        self._check_state_and_log(
+            "start run", {v for v in RunStatus if v != RunStatus.NOT_STARTED}, True
+        )
         self._status = RunStatus.STARTED
         if self._tracking_uri is None:
             LOGGER.warning(
@@ -172,11 +183,15 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
             if self._promptflow_run is not None:
                 self._info = RunInfo(
                     self._promptflow_run.name,
-                    self._promptflow_run._experiment_name or "",  # pylint: disable=protected-access
+                    self._promptflow_run._experiment_name
+                    or "",  # pylint: disable=protected-access
                     self._promptflow_run.name,
                 )
             else:
-                url = f"https://{self._url_base}/mlflow/v2.0" f"{self._get_scope()}/api/2.0/mlflow/runs/create"
+                url = (
+                    f"https://{self._url_base}/mlflow/v2.0"
+                    f"{self._get_scope()}/api/2.0/mlflow/runs/create"
+                )
 
                 # Prepare tags: start with user tags, ensure mlflow.user is set
                 run_tags = self._tags.copy()
@@ -184,7 +199,9 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
                     run_tags["mlflow.user"] = "azure-ai-evaluation"
 
                 # Convert tags to MLflow format
-                tags_list = [{"key": key, "value": value} for key, value in run_tags.items()]
+                tags_list = [
+                    {"key": key, "value": value} for key, value in run_tags.items()
+                ]
 
                 body = {
                     "experiment_id": "0",
@@ -194,7 +211,9 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
                 }
                 if self._run_name:
                     body["run_name"] = self._run_name
-                response = self.request_with_retry(url=url, method="POST", json_dict=body)
+                response = self.request_with_retry(
+                    url=url, method="POST", json_dict=body
+                )
                 if response.status_code != 200:
                     self._info = RunInfo.generate(self._run_name)
                     LOGGER.warning(
@@ -222,7 +241,9 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         :raises EvaluationException: Raised if the run is not in ("FINISHED", "FAILED", "KILLED")
         """
         if not self._check_state_and_log(
-            "stop run", {RunStatus.BROKEN, RunStatus.NOT_STARTED, RunStatus.TERMINATED}, False
+            "stop run",
+            {RunStatus.BROKEN, RunStatus.NOT_STARTED, RunStatus.TERMINATED},
+            False,
         ):
             return
         if self._is_promptflow_run:
@@ -237,7 +258,10 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
                 category=ErrorCategory.FAILED_EXECUTION,
                 blame=ErrorBlame.UNKNOWN,
             )
-        url = f"https://{self._url_base}/mlflow/v2.0" f"{self._get_scope()}/api/2.0/mlflow/runs/update"
+        url = (
+            f"https://{self._url_base}/mlflow/v2.0"
+            f"{self._get_scope()}/api/2.0/mlflow/runs/update"
+        )
         body = {
             "run_uuid": self.info.run_id,
             "status": reason,
@@ -305,13 +329,22 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         :return: The url needed to track the mlflow metrics.
         :rtype: str
         """
-        return f"https://{self._url_base}" "/mlflow/v2.0" f"{self._get_scope()}" f"/api/2.0/mlflow/runs/log-metric"
+        return (
+            f"https://{self._url_base}"
+            "/mlflow/v2.0"
+            f"{self._get_scope()}"
+            f"/api/2.0/mlflow/runs/log-metric"
+        )
 
     def _get_token(self) -> str:
         return self._management_client.get_token().token
 
     def request_with_retry(
-        self, url: str, method: str, json_dict: Dict[str, Any], headers: Optional[Dict[str, str]] = None
+        self,
+        url: str,
+        method: str,
+        json_dict: Dict[str, Any],
+        headers: Optional[Dict[str, str]] = None,
     ) -> HttpResponse:
         """
         Send the request with retries.
@@ -342,7 +375,9 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
                 retry_backoff_factor=EvalRun._BACKOFF_FACTOR,
             )
         )
-        return session.request(method, url, headers=headers, json=json_dict, timeout=EvalRun._TIMEOUT)
+        return session.request(
+            method, url, headers=headers, json=json_dict, timeout=EvalRun._TIMEOUT
+        )
 
     def _log_warning(self, failed_op: str, response: HttpResponse) -> None:
         """
@@ -360,7 +395,9 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
             response.text(),
         )
 
-    def _check_state_and_log(self, action: str, bad_states: Set[RunStatus], should_raise: bool) -> bool:
+    def _check_state_and_log(
+        self, action: str, bad_states: Set[RunStatus], should_raise: bool
+    ) -> bool:
         """
         Check that the run is in the correct state and log worning if it is not.
 
@@ -390,7 +427,9 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
             return False
         return True
 
-    def log_artifact(self, artifact_folder: str, artifact_name: str = EVALUATION_ARTIFACT) -> None:
+    def log_artifact(
+        self, artifact_folder: str, artifact_name: str = EVALUATION_ARTIFACT
+    ) -> None:
         """
         The local implementation of mlflow-like artifact logging.
 
@@ -404,20 +443,28 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
             azure.ai.evaluation._evaluate._eval_run.EvalRun.EVALUATION_ARTIFACT.
         :type artifact_name: str
         """
-        if not self._check_state_and_log("log artifact", {RunStatus.BROKEN, RunStatus.NOT_STARTED}, False):
+        if not self._check_state_and_log(
+            "log artifact", {RunStatus.BROKEN, RunStatus.NOT_STARTED}, False
+        ):
             return
         # Check if artifact directory is empty or does not exist.
         if not os.path.isdir(artifact_folder):
-            LOGGER.warning("The path to the artifact is either not a directory or does not exist.")
+            LOGGER.warning(
+                "The path to the artifact is either not a directory or does not exist."
+            )
             return
         if not os.listdir(artifact_folder):
             LOGGER.warning("The path to the artifact is empty.")
             return
         if not os.path.isfile(os.path.join(artifact_folder, artifact_name)):
-            LOGGER.warning("The run results file was not found, skipping artifacts upload.")
+            LOGGER.warning(
+                "The run results file was not found, skipping artifacts upload."
+            )
             return
         # First we will list the files and the appropriate remote paths for them.
-        root_upload_path = posixpath.join("promptflow", "PromptFlowArtifacts", self.info.run_id)
+        root_upload_path = posixpath.join(
+            "promptflow", "PromptFlowArtifacts", self.info.run_id
+        )
         remote_paths: Dict[str, List[Dict[str, str]]] = {"paths": []}
         local_paths = []
         # Go over the artifact folder and upload all artifacts.
@@ -439,10 +486,14 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         )
         account_url = f"{datastore.account_name}.blob.{datastore.endpoint}"
 
-        svc_client = BlobServiceClient(account_url=account_url, credential=datastore.credential)
+        svc_client = BlobServiceClient(
+            account_url=account_url, credential=datastore.credential
+        )
         try:
             for local, remote in zip(local_paths, remote_paths["paths"]):
-                blob_client = svc_client.get_blob_client(container=datastore.container_name, blob=remote["path"])
+                blob_client = svc_client.get_blob_client(
+                    container=datastore.container_name, blob=remote["path"]
+                )
                 with open(local, "rb") as fp:
                     blob_client.upload_blob(fp, overwrite=True)
         except HttpResponseError as ex:
@@ -499,7 +550,9 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
                         json_dict={
                             "origin": "ExperimentRun",
                             "container": f"dcid.{self.info.run_id}",
-                            "path": posixpath.join("images", os.path.basename(remote_file_path)),
+                            "path": posixpath.join(
+                                "images", os.path.basename(remote_file_path)
+                            ),
                             "dataPath": {
                                 "dataStoreName": datastore.name,
                                 "relativePath": remote_file_path,
@@ -509,7 +562,9 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
                     if response.status_code != 200:
                         self._log_warning("register image artifact", response)
         except Exception as ex:  # pylint: disable=broad-exception-caught
-            LOGGER.debug("Exception occurred while registering image artifact. ex: %s", ex)
+            LOGGER.debug(
+                "Exception occurred while registering image artifact. ex: %s", ex
+            )
 
     def log_metric(self, key: str, value: float) -> None:
         """
@@ -520,7 +575,9 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         :param value: The valure to be logged.
         :type value: float
         """
-        if not self._check_state_and_log("log metric", {RunStatus.BROKEN, RunStatus.NOT_STARTED}, False):
+        if not self._check_state_and_log(
+            "log metric", {RunStatus.BROKEN, RunStatus.NOT_STARTED}, False
+        ):
             return
         body = {
             "run_uuid": self.info.run_id,
@@ -545,7 +602,9 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         :param properties: The properties to be written to run history.
         :type properties: dict
         """
-        if not self._check_state_and_log("write properties", {RunStatus.BROKEN, RunStatus.NOT_STARTED}, False):
+        if not self._check_state_and_log(
+            "write properties", {RunStatus.BROKEN, RunStatus.NOT_STARTED}, False
+        ):
             return
         # update host to run history and request PATCH API
         response = self.request_with_retry(
@@ -554,4 +613,8 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
             json_dict={"runId": self.info.run_id, "properties": properties},
         )
         if response.status_code != 200:
-            LOGGER.error("Fail writing properties '%s' to run history: %s", properties, response.text())
+            LOGGER.error(
+                "Fail writing properties '%s' to run history: %s",
+                properties,
+                response.text(),
+            )

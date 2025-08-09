@@ -17,7 +17,9 @@ class _CallbackChatTarget(PromptChatTarget):
     def __init__(
         self,
         *,
-        callback: Callable[[List[Dict], bool, Optional[str], Optional[Dict[str, Any]]], Dict],
+        callback: Callable[
+            [List[Dict], bool, Optional[str], Optional[Dict[str, Any]]], Dict
+        ],
         stream: bool = False,
         prompt_to_context: Optional[Dict[str, str]] = None,
     ) -> None:
@@ -40,12 +42,16 @@ class _CallbackChatTarget(PromptChatTarget):
         self._stream = stream
         self._prompt_to_context = prompt_to_context or {}
 
-    async def send_prompt_async(self, *, prompt_request: PromptRequestResponse) -> PromptRequestResponse:
+    async def send_prompt_async(
+        self, *, prompt_request: PromptRequestResponse
+    ) -> PromptRequestResponse:
 
         self._validate_request(prompt_request=prompt_request)
         request = prompt_request.request_pieces[0]
 
-        messages = self._memory.get_chat_messages_with_conversation_id(conversation_id=request.conversation_id)
+        messages = self._memory.get_chat_messages_with_conversation_id(
+            conversation_id=request.conversation_id
+        )
 
         messages.append(request.to_chat_message())
 
@@ -59,15 +65,22 @@ class _CallbackChatTarget(PromptChatTarget):
         # If context is not available via prompt_to_context, it can be fetched from the memory
         if not context_dict:
             memory_label_context = request.labels.get("context", None)
-            context_dict = {"context": memory_label_context} if memory_label_context else {}
+            context_dict = (
+                {"context": memory_label_context} if memory_label_context else {}
+            )
 
         # response_context contains "messages", "stream", "session_state, "context"
         response_context = await self._callback(messages=messages, stream=self._stream, session_state=None, context=context_dict)  # type: ignore
 
         response_text = response_context["messages"][-1]["content"]
-        response_entry = construct_response_from_request(request=request, response_text_pieces=[response_text])
+        response_entry = construct_response_from_request(
+            request=request, response_text_pieces=[response_text]
+        )
 
-        logger.info("Received the following response from the prompt target" + f"{response_text}")
+        logger.info(
+            "Received the following response from the prompt target"
+            + f"{response_text}"
+        )
         return response_entry
 
     def _validate_request(self, *, prompt_request: PromptRequestResponse) -> None:

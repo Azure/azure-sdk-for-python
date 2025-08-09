@@ -96,7 +96,9 @@ class RetryManager:
 
         # Special case for HTTP status errors
         if isinstance(exception, httpx.HTTPStatusError):
-            return exception.response.status_code == 500 or "model_error" in str(exception)
+            return exception.response.status_code == 500 or "model_error" in str(
+                exception
+            )
 
         return False
 
@@ -183,7 +185,9 @@ class RetryManager:
         }
 
 
-def create_standard_retry_manager(logger: Optional[logging.Logger] = None) -> RetryManager:
+def create_standard_retry_manager(
+    logger: Optional[logging.Logger] = None,
+) -> RetryManager:
     """Create a standard retry manager with default settings.
 
     :param logger: Optional logger instance

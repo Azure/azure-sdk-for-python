@@ -50,7 +50,9 @@ class RougeScorer(scoring.BaseScorer):
                             'The quick brown dog jumps on the log.')
     """
 
-    def __init__(self, rouge_types, use_stemmer=False, split_summaries=False, tokenizer=None):
+    def __init__(
+        self, rouge_types, use_stemmer=False, split_summaries=False, tokenizer=None
+    ):
         """Initializes a new RougeScorer.
 
         Valid rouge types that can be computed are:
@@ -138,8 +140,12 @@ class RougeScorer(scoring.BaseScorer):
                     sents = [x for x in sents if len(x)]
                     return sents
 
-                target_tokens_list = [self._tokenizer.tokenize(s) for s in get_sents(target)]
-                prediction_tokens_list = [self._tokenizer.tokenize(s) for s in get_sents(prediction)]
+                target_tokens_list = [
+                    self._tokenizer.tokenize(s) for s in get_sents(target)
+                ]
+                prediction_tokens_list = [
+                    self._tokenizer.tokenize(s) for s in get_sents(prediction)
+                ]
 
                 scores = _summary_level_lcs(target_tokens_list, prediction_tokens_list)
             elif re.match(r"rouge[0-9]$", rouge_type):

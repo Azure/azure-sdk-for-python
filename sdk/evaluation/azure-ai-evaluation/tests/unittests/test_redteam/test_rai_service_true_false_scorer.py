@@ -10,7 +10,9 @@ except ImportError:
     has_pyrit = False
 
 if has_pyrit:
-    from azure.ai.evaluation.red_team._utils._rai_service_true_false_scorer import AzureRAIServiceTrueFalseScorer
+    from azure.ai.evaluation.red_team._utils._rai_service_true_false_scorer import (
+        AzureRAIServiceTrueFalseScorer,
+    )
     from azure.ai.evaluation.red_team._attack_objective_generator import RiskCategory
     from pyrit.models import PromptRequestPiece, Score, UnvalidatedScore
     from pyrit.common import initialize_pyrit, IN_MEMORY
@@ -64,7 +66,9 @@ def true_false_scorer(mock_chat_target):
 @pytest.mark.asyncio
 @mock.patch.object(AzureRAIServiceTrueFalseScorer, "_score_value_with_llm")
 @mock.patch.object(AzureRAIServiceTrueFalseScorer, "validate")
-async def test_score_async_success(mock_validate, mock_score_llm, true_false_scorer, mock_prompt_request_piece):
+async def test_score_async_success(
+    mock_validate, mock_score_llm, true_false_scorer, mock_prompt_request_piece
+):
     """Tests the successful scoring flow."""
     mock_task = "Evaluate for sexual content"
     mock_unvalidated_score = UnvalidatedScore(
@@ -80,7 +84,9 @@ async def test_score_async_success(mock_validate, mock_score_llm, true_false_sco
     )
     mock_score_llm.return_value = mock_unvalidated_score
 
-    scores = await true_false_scorer.score_async(mock_prompt_request_piece, task=mock_task)
+    scores = await true_false_scorer.score_async(
+        mock_prompt_request_piece, task=mock_task
+    )
 
     mock_validate.assert_called_once_with(mock_prompt_request_piece, task=mock_task)
     mock_score_llm.assert_called_once_with(

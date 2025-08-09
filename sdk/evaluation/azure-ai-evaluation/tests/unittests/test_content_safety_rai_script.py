@@ -8,7 +8,11 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from azure.ai.evaluation._common.constants import EvaluationMetrics, HarmSeverityLevel, RAIService
+from azure.ai.evaluation._common.constants import (
+    EvaluationMetrics,
+    HarmSeverityLevel,
+    RAIService,
+)
 from azure.ai.evaluation._common.rai_service import (
     _get_service_discovery_url,
     ensure_service_availability,
@@ -139,13 +143,19 @@ class TestContentSafetyEvaluator:
         ensure_service_availability()"""
 
     @pytest.mark.asyncio
-    @patch("azure.ai.evaluation._http_utils.AsyncHttpPipeline.get", return_value=MockAsyncHttpResponse(200, json={}))
+    @patch(
+        "azure.ai.evaluation._http_utils.AsyncHttpPipeline.get",
+        return_value=MockAsyncHttpResponse(200, json={}),
+    )
     async def test_ensure_service_availability(self, client_mock):
         _ = await ensure_service_availability("dummy_url", "dummy_token")
         assert client_mock._mock_await_count == 1
 
     @pytest.mark.asyncio
-    @patch("azure.ai.evaluation._http_utils.AsyncHttpPipeline.get", return_value=MockAsyncHttpResponse(9001, json={}))
+    @patch(
+        "azure.ai.evaluation._http_utils.AsyncHttpPipeline.get",
+        return_value=MockAsyncHttpResponse(9001, json={}),
+    )
     async def test_ensure_service_availability_service_unavailable(self, client_mock):
         with pytest.raises(Exception) as exc_info:
             _ = await ensure_service_availability("dummy_url", "dummy_token")
@@ -154,12 +164,20 @@ class TestContentSafetyEvaluator:
         assert client_mock._mock_await_count == 1
 
     @pytest.mark.asyncio
-    @patch("azure.ai.evaluation._http_utils.AsyncHttpPipeline.get", return_value=MockAsyncHttpResponse(200, json={}))
-    async def test_ensure_service_availability_exception_capability_unavailable(self, client_mock):
+    @patch(
+        "azure.ai.evaluation._http_utils.AsyncHttpPipeline.get",
+        return_value=MockAsyncHttpResponse(200, json={}),
+    )
+    async def test_ensure_service_availability_exception_capability_unavailable(
+        self, client_mock
+    ):
         with pytest.raises(Exception) as exc_info:
-            _ = await ensure_service_availability("dummy_url", "dummy_token", capability="does not exist")
-        assert "The needed capability 'does not exist' is not supported by the RAI service in this region" in str(
-            exc_info._excinfo[1]
+            _ = await ensure_service_availability(
+                "dummy_url", "dummy_token", capability="does not exist"
+            )
+        assert (
+            "The needed capability 'does not exist' is not supported by the RAI service in this region"
+            in str(exc_info._excinfo[1])
         )
         assert client_mock._mock_await_count == 1
 
@@ -201,7 +219,9 @@ class TestContentSafetyEvaluator:
                 annotation_task=Tasks.CONTENT_HARM,
                 evaluator_name="dummy-evaluator",
             )
-        assert "Operation returned an invalid status '404 Not Found'" in str(exc_info._excinfo[1])
+        assert "Operation returned an invalid status '404 Not Found'" in str(
+            exc_info._excinfo[1]
+        )
 
     @pytest.mark.usefixtures("mock_token")
     @pytest.mark.usefixtures("mock_expired_token")
@@ -233,7 +253,10 @@ class TestContentSafetyEvaluator:
         assert RAIService.TIMEOUT == 1
         assert RAIService.SLEEP_TIME == 1.2
         res = await fetch_result(
-            operation_id="op-id", rai_svc_url="www.notarealurl.com", credential=None, token=mock_token
+            operation_id="op-id",
+            rai_svc_url="www.notarealurl.com",
+            credential=None,
+            token=mock_token,
         )
         assert client_mock._mock_await_count == 1
         assert res["result"] == "stuff"
@@ -249,12 +272,17 @@ class TestContentSafetyEvaluator:
     async def test_fetch_result_timeout(self, client_mock, mock_token):
         with pytest.raises(TimeoutError) as exc_info:
             _ = await fetch_result(
-                operation_id="op-id", rai_svc_url="www.notarealurl.com", credential=None, token=mock_token
+                operation_id="op-id",
+                rai_svc_url="www.notarealurl.com",
+                credential=None,
+                token=mock_token,
             )
         # We expect 2 calls; the initial call, then one more ~2 seconds later.
         assert client_mock._mock_await_count == 2
         # Don't bother checking exact time beyond seconds, that's never going to be consistent across machines.
-        assert "Fetching annotation result 2 times out after 1" in str(exc_info._excinfo[1])
+        assert "Fetching annotation result 2 times out after 1" in str(
+            exc_info._excinfo[1]
+        )
 
     def test_parse_response(self):
         batch_response = [{"not-a-metric": "not-a-value"}]
@@ -280,7 +308,11 @@ class TestContentSafetyEvaluator:
         # This tests ALL of it.
         batch_response[0] = {metric_name: str(response_value)}
 
-        result = parse_response(batch_response=batch_response, metric_name=metric_name, metric_display_name=metric_name)
+        result = parse_response(
+            batch_response=batch_response,
+            metric_name=metric_name,
+            metric_display_name=metric_name,
+        )
         assert result[metric_name] == HarmSeverityLevel.VeryLow.value
         assert result[metric_name + "_score"] == 0
         assert result[metric_name + "_reason"] == response_value["reasoning"]
@@ -290,7 +322,11 @@ class TestContentSafetyEvaluator:
             "reason": "This is a sample reason.",
         }
         batch_response[0] = {metric_name: str(response_value)}
-        result = parse_response(batch_response=batch_response, metric_name=metric_name, metric_display_name=metric_name)
+        result = parse_response(
+            batch_response=batch_response,
+            metric_name=metric_name,
+            metric_display_name=metric_name,
+        )
         assert result[metric_name] == HarmSeverityLevel.VeryLow.value
         assert result[metric_name + "_score"] == 0
         assert result[metric_name + "_reason"] == response_value["output"]["reason"]
@@ -327,7 +363,11 @@ class TestContentSafetyEvaluator:
         assert math.isnan(result[metric_name + "_score"])
 
         batch_response[0] = {metric_name: ["still not a number"]}
-        result = parse_response(batch_response=batch_response, metric_name=metric_name, metric_display_name=metric_name)
+        result = parse_response(
+            batch_response=batch_response,
+            metric_name=metric_name,
+            metric_display_name=metric_name,
+        )
         assert math.isnan(result[metric_name])
         assert math.isnan(result[metric_name + "_score"])
 
@@ -335,7 +375,8 @@ class TestContentSafetyEvaluator:
     @patch(
         "azure.ai.evaluation._http_utils.AsyncHttpPipeline.get",
         return_value=MockAsyncHttpResponse(
-            200, json={"properties": {"discoveryUrl": "https://www.url.com:123/thePath"}}
+            200,
+            json={"properties": {"discoveryUrl": "https://www.url.com:123/thePath"}},
         ),
     )
     async def test_get_service_discovery_url(self, client_mock):
@@ -347,14 +388,17 @@ class TestContentSafetyEvaluator:
             "resource_group_name": "fake-group",
         }
 
-        url = await _get_service_discovery_url(azure_ai_project=azure_ai_project, token=token)
+        url = await _get_service_discovery_url(
+            azure_ai_project=azure_ai_project, token=token
+        )
         assert url == "https://www.url.com:123"
 
     @pytest.mark.asyncio
     @patch(
         "azure.ai.evaluation._http_utils.AsyncHttpPipeline.get",
         return_value=MockAsyncHttpResponse(
-            201, json={"properties": {"discoveryUrl": "https://www.url.com:123/thePath"}}
+            201,
+            json={"properties": {"discoveryUrl": "https://www.url.com:123/thePath"}},
         ),
     )
     async def test_get_service_discovery_url_exception(self, client_mock):
@@ -366,14 +410,19 @@ class TestContentSafetyEvaluator:
         }
 
         with pytest.raises(Exception) as exc_info:
-            _ = await _get_service_discovery_url(azure_ai_project=azure_ai_project, token=token)
-        assert "Failed to connect to your Azure AI project." in str(exc_info._excinfo[1])
+            _ = await _get_service_discovery_url(
+                azure_ai_project=azure_ai_project, token=token
+            )
+        assert "Failed to connect to your Azure AI project." in str(
+            exc_info._excinfo[1]
+        )
 
     @pytest.mark.asyncio
     @patch(
         "azure.ai.evaluation._http_utils.AsyncHttpPipeline.get",
         return_value=MockAsyncHttpResponse(
-            200, json={"properties": {"discoveryUrl": "https://www.url.com:123/thePath"}}
+            200,
+            json={"properties": {"discoveryUrl": "https://www.url.com:123/thePath"}},
         ),
     )
     @patch(
@@ -420,12 +469,23 @@ class TestContentSafetyEvaluator:
     )
     @patch("azure.identity.DefaultAzureCredential")
     async def test_evaluate_with_rai_service(
-        self, cred_mock, fetch_token_mock, scv_mock, avail_mock, submit_mock, fetch_result_mock, parse_mock
+        self,
+        cred_mock,
+        fetch_token_mock,
+        scv_mock,
+        avail_mock,
+        submit_mock,
+        fetch_result_mock,
+        parse_mock,
     ):
         result = await evaluate_with_rai_service(
             "what is the weather outside?",
             EvaluationMetrics.HATE_FAIRNESS,
-            {"subscription_id": "fake-id", "project_name": "fake-name", "resource_group_name": "fake-group"},
+            {
+                "subscription_id": "fake-id",
+                "project_name": "fake-name",
+                "resource_group_name": "fake-group",
+            },
             DefaultAzureCredential(),
         )
         assert result == "wow-that's-a-lot-of-patches"
@@ -440,10 +500,10 @@ class TestContentSafetyEvaluator:
     # Groundedness is JSON
     def test_get_formatted_template_groundedness(self):
         tagged_text = "This text </> has <> tags."
-        bracketed_text = "{This text has {brackets}, and I didn't even both to even them out {."
-        quoted_text = (
-            'This text has \'quotes\', also it has "quotes", and it even has `backticks` and """ triple quotes""".'
+        bracketed_text = (
+            "{This text has {brackets}, and I didn't even both to even them out {."
         )
+        quoted_text = 'This text has \'quotes\', also it has "quotes", and it even has `backticks` and """ triple quotes""".'
         all_texts = [tagged_text, quoted_text, bracketed_text]
         for text in all_texts:
             input_kwargs = {
@@ -457,10 +517,10 @@ class TestContentSafetyEvaluator:
     # Default is basic markup.
     def test_get_formatted_template_default(self):
         tagged_text = "This text </> has <> tags."
-        bracketed_text = "{This text has {brackets}, and I didn't even both to even them out {."
-        quoted_text = (
-            'This text has \'quotes\', also it has "quotes", and it even has `backticks` and """ triple quotes""".'
+        bracketed_text = (
+            "{This text has {brackets}, and I didn't even both to even them out {."
         )
+        quoted_text = 'This text has \'quotes\', also it has "quotes", and it even has `backticks` and """ triple quotes""".'
         all_texts = [tagged_text, quoted_text, bracketed_text]
         for text in all_texts:
             input_kwargs = {
@@ -469,4 +529,7 @@ class TestContentSafetyEvaluator:
                 "context": text,
             }
             formatted_payload = get_formatted_template(input_kwargs, "DEFAULT")
-            assert html.unescape(re.match("\<Human\>{(.*?)}\<", formatted_payload)[1]) == text
+            assert (
+                html.unescape(re.match("\<Human\>{(.*?)}\<", formatted_payload)[1])
+                == text
+            )

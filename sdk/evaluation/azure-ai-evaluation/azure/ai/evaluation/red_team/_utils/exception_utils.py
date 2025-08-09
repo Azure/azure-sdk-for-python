@@ -66,7 +66,9 @@ class ExceptionHandler:
         :param logger: Logger instance for error reporting
         """
         self.logger = logger or logging.getLogger(__name__)
-        self.error_counts: Dict[ErrorCategory, int] = {category: 0 for category in ErrorCategory}
+        self.error_counts: Dict[ErrorCategory, int] = {
+            category: 0 for category in ErrorCategory
+        }
 
     def categorize_exception(self, exception: Exception) -> ErrorCategory:
         """Categorize an exception based on its type and message.
@@ -98,11 +100,15 @@ class ExceptionHandler:
             return ErrorCategory.TIMEOUT
 
         # File I/O errors
-        if isinstance(exception, (IOError, OSError, FileNotFoundError, PermissionError)):
+        if isinstance(
+            exception, (IOError, OSError, FileNotFoundError, PermissionError)
+        ):
             return ErrorCategory.FILE_IO
 
         # HTTP status code specific errors
-        if hasattr(exception, "response") and hasattr(exception.response, "status_code"):
+        if hasattr(exception, "response") and hasattr(
+            exception.response, "status_code"
+        ):
             status_code = exception.response.status_code
             if 500 <= status_code < 600:
                 return ErrorCategory.NETWORK
@@ -130,7 +136,10 @@ class ExceptionHandler:
         return ErrorCategory.UNKNOWN
 
     def determine_severity(
-        self, exception: Exception, category: ErrorCategory, context: Optional[Dict[str, Any]] = None
+        self,
+        exception: Exception,
+        category: ErrorCategory,
+        context: Optional[Dict[str, Any]] = None,
     ) -> ErrorSeverity:
         """Determine the severity of an exception.
 
@@ -160,7 +169,11 @@ class ExceptionHandler:
             return ErrorSeverity.MEDIUM
 
         # Task-specific errors are medium severity
-        if category in (ErrorCategory.ORCHESTRATOR, ErrorCategory.EVALUATION, ErrorCategory.DATA_PROCESSING):
+        if category in (
+            ErrorCategory.ORCHESTRATOR,
+            ErrorCategory.EVALUATION,
+            ErrorCategory.DATA_PROCESSING,
+        ):
             return ErrorSeverity.MEDIUM
 
         return ErrorSeverity.LOW
@@ -203,7 +216,11 @@ class ExceptionHandler:
         message += f": {str(exception)}"
 
         red_team_error = RedTeamError(
-            message=message, category=category, severity=severity, context=context, original_exception=exception
+            message=message,
+            category=category,
+            severity=severity,
+            context=context,
+            original_exception=exception,
         )
 
         # Log the error
@@ -249,7 +266,9 @@ class ExceptionHandler:
 
         # Log original exception traceback for debugging
         if error.original_exception and self.logger.isEnabledFor(logging.DEBUG):
-            self.logger.debug(f"Original exception traceback:\n{traceback.format_exc()}")
+            self.logger.debug(
+                f"Original exception traceback:\n{traceback.format_exc()}"
+            )
 
     def should_abort_scan(self) -> bool:
         """Determine if the scan should be aborted based on error patterns.
@@ -257,8 +276,13 @@ class ExceptionHandler:
         :return: True if the scan should be aborted
         """
         # Abort if we have too many high-severity errors
-        high_severity_categories = [ErrorCategory.AUTHENTICATION, ErrorCategory.CONFIGURATION]
-        high_severity_count = sum(self.error_counts[cat] for cat in high_severity_categories)
+        high_severity_categories = [
+            ErrorCategory.AUTHENTICATION,
+            ErrorCategory.CONFIGURATION,
+        ]
+        high_severity_count = sum(
+            self.error_counts[cat] for cat in high_severity_categories
+        )
 
         if high_severity_count > 2:
             return True
@@ -279,7 +303,11 @@ class ExceptionHandler:
         return {
             "total_errors": total_errors,
             "error_counts_by_category": dict(self.error_counts),
-            "most_common_category": max(self.error_counts, key=self.error_counts.get) if total_errors > 0 else None,
+            "most_common_category": (
+                max(self.error_counts, key=self.error_counts.get)
+                if total_errors > 0
+                else None
+            ),
             "should_abort": self.should_abort_scan(),
         }
 
@@ -298,10 +326,14 @@ class ExceptionHandler:
                 self.logger.info(f"  {category}: {count}")
 
         if summary["most_common_category"]:
-            self.logger.info(f"Most common error type: {summary['most_common_category']}")
+            self.logger.info(
+                f"Most common error type: {summary['most_common_category']}"
+            )
 
 
-def create_exception_handler(logger: Optional[logging.Logger] = None) -> ExceptionHandler:
+def create_exception_handler(
+    logger: Optional[logging.Logger] = None,
+) -> ExceptionHandler:
     """Create an ExceptionHandler instance.
 
     :param logger: Logger instance for error reporting
@@ -333,7 +365,10 @@ class exception_context:
     def __exit__(self, exc_type, exc_val, exc_tb):
         if exc_val is not None:
             self.error = self.handler.handle_exception(
-                exception=exc_val, context=self.context, task_name=self.task_name, reraise=False
+                exception=exc_val,
+                context=self.context,
+                task_name=self.task_name,
+                reraise=False,
             )
 
             # Reraise fatal errors unless specifically disabled

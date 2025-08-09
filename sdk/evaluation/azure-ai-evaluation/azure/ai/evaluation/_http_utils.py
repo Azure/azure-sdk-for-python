@@ -92,13 +92,25 @@ class HttpPipeline(Pipeline):
         """
         config = config or Configuration()
         config.headers_policy = (
-            headers_policy or cast(Optional[HeadersPolicy], config.headers_policy) or HeadersPolicy(**kwargs)
+            headers_policy
+            or cast(Optional[HeadersPolicy], config.headers_policy)
+            or HeadersPolicy(**kwargs)
         )
-        config.proxy_policy = proxy_policy or cast(Optional[ProxyPolicy], config.proxy_policy) or ProxyPolicy(**kwargs)
+        config.proxy_policy = (
+            proxy_policy
+            or cast(Optional[ProxyPolicy], config.proxy_policy)
+            or ProxyPolicy(**kwargs)
+        )
         config.redirect_policy = (
-            redirect_policy or cast(Optional[RedirectPolicy], config.redirect_policy) or RedirectPolicy(**kwargs)
+            redirect_policy
+            or cast(Optional[RedirectPolicy], config.redirect_policy)
+            or RedirectPolicy(**kwargs)
         )
-        config.retry_policy = retry_policy or cast(Optional[RetryPolicy], config.retry_policy) or RetryPolicy(**kwargs)
+        config.retry_policy = (
+            retry_policy
+            or cast(Optional[RetryPolicy], config.retry_policy)
+            or RetryPolicy(**kwargs)
+        )
         config.custom_hook_policy = (
             custom_hook_policy
             or cast(Optional[CustomHookPolicy], config.custom_hook_policy)
@@ -115,7 +127,9 @@ class HttpPipeline(Pipeline):
             or HttpLoggingPolicy(**kwargs)
         )
         config.user_agent_policy = (
-            user_agent_policy or cast(Optional[UserAgentPolicy], config.user_agent_policy) or UserAgentPolicy(**kwargs)
+            user_agent_policy
+            or cast(Optional[UserAgentPolicy], config.user_agent_policy)
+            or UserAgentPolicy(**kwargs)
         )
         config.polling_interval = kwargs.get("polling_interval", 30)
 
@@ -147,7 +161,11 @@ class HttpPipeline(Pipeline):
         :rtype: Self
         """
         cls = self.__class__
-        return cls(config=self._config, transport=kwargs.pop("transport", self._transport), **kwargs)
+        return cls(
+            config=self._config,
+            transport=kwargs.pop("transport", self._transport),
+            **kwargs,
+        )
 
     def request(
         self,
@@ -175,7 +193,9 @@ class HttpPipeline(Pipeline):
 
         return self.run(request, **kwargs).http_response
 
-    def delete(self: "HttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> HttpResponse:
+    def delete(
+        self: "HttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]
+    ) -> HttpResponse:
         """Send a DELETE request.
 
         :param str url: The request url
@@ -185,7 +205,9 @@ class HttpPipeline(Pipeline):
 
         return self.request(self.delete.__name__.upper(), url, **kwargs)
 
-    def put(self: "HttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> HttpResponse:
+    def put(
+        self: "HttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]
+    ) -> HttpResponse:
         """Send a PUT request.
 
         :param str url: The request url
@@ -195,7 +217,9 @@ class HttpPipeline(Pipeline):
 
         return self.request(self.put.__name__.upper(), url, **kwargs)
 
-    def get(self: "HttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> HttpResponse:
+    def get(
+        self: "HttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]
+    ) -> HttpResponse:
         """Send a GET request.
 
         :param str url: The request url
@@ -205,7 +229,9 @@ class HttpPipeline(Pipeline):
 
         return self.request(self.get.__name__.upper(), url, **kwargs)
 
-    def post(self: "HttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> HttpResponse:
+    def post(
+        self: "HttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]
+    ) -> HttpResponse:
         """Send a POST request.
 
         :param str url: The request url
@@ -215,7 +241,9 @@ class HttpPipeline(Pipeline):
 
         return self.request(self.post.__name__.upper(), url, **kwargs)
 
-    def head(self: "HttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> HttpResponse:
+    def head(
+        self: "HttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]
+    ) -> HttpResponse:
         """Send a HEAD request.
 
         :param str url: The request url
@@ -225,7 +253,9 @@ class HttpPipeline(Pipeline):
 
         return self.request(self.head.__name__.upper(), url, **kwargs)
 
-    def options(self: "HttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> HttpResponse:
+    def options(
+        self: "HttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]
+    ) -> HttpResponse:
         """Send a OPTIONS request.
 
         :param str url: The request url
@@ -235,7 +265,9 @@ class HttpPipeline(Pipeline):
 
         return self.request(self.options.__name__.upper(), url, **kwargs)
 
-    def patch(self: "HttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> HttpResponse:
+    def patch(
+        self: "HttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]
+    ) -> HttpResponse:
         """Send a PATCH request.
 
         :param str url: The request url
@@ -288,16 +320,24 @@ class AsyncHttpPipeline(AsyncPipeline):
         """
         config = config or Configuration()
         config.headers_policy = (
-            headers_policy or cast(Optional[HeadersPolicy], config.headers_policy) or HeadersPolicy(**kwargs)
+            headers_policy
+            or cast(Optional[HeadersPolicy], config.headers_policy)
+            or HeadersPolicy(**kwargs)
         )
-        config.proxy_policy = proxy_policy or cast(Optional[ProxyPolicy], config.proxy_policy) or ProxyPolicy(**kwargs)
+        config.proxy_policy = (
+            proxy_policy
+            or cast(Optional[ProxyPolicy], config.proxy_policy)
+            or ProxyPolicy(**kwargs)
+        )
         config.redirect_policy = (
             redirect_policy
             or cast(Optional[AsyncRedirectPolicy], config.redirect_policy)
             or AsyncRedirectPolicy(**kwargs)
         )
         config.retry_policy = (
-            retry_policy or cast(Optional[AsyncRetryPolicy], config.retry_policy) or AsyncRetryPolicy(**kwargs)
+            retry_policy
+            or cast(Optional[AsyncRetryPolicy], config.retry_policy)
+            or AsyncRetryPolicy(**kwargs)
         )
         config.custom_hook_policy = (
             custom_hook_policy
@@ -315,7 +355,9 @@ class AsyncHttpPipeline(AsyncPipeline):
             or HttpLoggingPolicy(**kwargs)
         )
         config.user_agent_policy = (
-            user_agent_policy or cast(Optional[UserAgentPolicy], config.user_agent_policy) or UserAgentPolicy(**kwargs)
+            user_agent_policy
+            or cast(Optional[UserAgentPolicy], config.user_agent_policy)
+            or UserAgentPolicy(**kwargs)
         )
         config.polling_interval = kwargs.get("polling_interval", 30)
 
@@ -347,7 +389,11 @@ class AsyncHttpPipeline(AsyncPipeline):
         :rtype: Self
         """
         cls = self.__class__
-        return cls(config=self._config, transport=kwargs.pop("transport", self._transport), **kwargs)
+        return cls(
+            config=self._config,
+            transport=kwargs.pop("transport", self._transport),
+            **kwargs,
+        )
 
     async def request(
         self,
@@ -375,7 +421,9 @@ class AsyncHttpPipeline(AsyncPipeline):
 
         return (await self.run(request, **kwargs)).http_response
 
-    async def delete(self: "AsyncHttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> AsyncHttpResponse:
+    async def delete(
+        self: "AsyncHttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]
+    ) -> AsyncHttpResponse:
         """Send a DELETE request.
 
         :param str url: The request url
@@ -384,7 +432,9 @@ class AsyncHttpPipeline(AsyncPipeline):
         """
         return await self.request(self.delete.__name__.upper(), url, **kwargs)
 
-    async def put(self: "AsyncHttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> AsyncHttpResponse:
+    async def put(
+        self: "AsyncHttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]
+    ) -> AsyncHttpResponse:
         """Send a PUT request.
 
         :param str url: The request url
@@ -394,7 +444,9 @@ class AsyncHttpPipeline(AsyncPipeline):
 
         return await self.request(self.put.__name__.upper(), url, **kwargs)
 
-    async def get(self: "AsyncHttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> AsyncHttpResponse:
+    async def get(
+        self: "AsyncHttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]
+    ) -> AsyncHttpResponse:
         """Send a GET request.
 
         :param str url: The request url
@@ -404,7 +456,9 @@ class AsyncHttpPipeline(AsyncPipeline):
 
         return await self.request(self.get.__name__.upper(), url, **kwargs)
 
-    async def post(self: "AsyncHttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> AsyncHttpResponse:
+    async def post(
+        self: "AsyncHttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]
+    ) -> AsyncHttpResponse:
         """Send a POST request.
 
         :param str url: The request url
@@ -414,7 +468,9 @@ class AsyncHttpPipeline(AsyncPipeline):
 
         return await self.request(self.post.__name__.upper(), url, **kwargs)
 
-    async def head(self: "AsyncHttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> AsyncHttpResponse:
+    async def head(
+        self: "AsyncHttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]
+    ) -> AsyncHttpResponse:
         """Send a HEAD request.
 
         :param str url: The request url
@@ -424,7 +480,9 @@ class AsyncHttpPipeline(AsyncPipeline):
 
         return await self.request(self.head.__name__.upper(), url, **kwargs)
 
-    async def options(self: "AsyncHttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> AsyncHttpResponse:
+    async def options(
+        self: "AsyncHttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]
+    ) -> AsyncHttpResponse:
         """Send a OPTIONS request.
 
         :param str url: The request url
@@ -434,7 +492,9 @@ class AsyncHttpPipeline(AsyncPipeline):
 
         return await self.request(self.options.__name__.upper(), url, **kwargs)
 
-    async def patch(self: "AsyncHttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> AsyncHttpResponse:
+    async def patch(
+        self: "AsyncHttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]
+    ) -> AsyncHttpResponse:
         """Send a PATCH request.
 
         :param str url: The request url
@@ -454,7 +514,9 @@ def get_http_client(**kwargs: Any) -> HttpPipeline:
     :returns: An HttpPipeline with a set of applied policies:
     :rtype: HttpPipeline
     """
-    kwargs.setdefault("user_agent_policy", UserAgentPolicy(base_user_agent=UserAgentSingleton().value))
+    kwargs.setdefault(
+        "user_agent_policy", UserAgentPolicy(base_user_agent=UserAgentSingleton().value)
+    )
     return HttpPipeline(**kwargs)
 
 
@@ -464,5 +526,7 @@ def get_async_http_client(**kwargs: Any) -> AsyncHttpPipeline:
     :returns: An AsyncHttpPipeline with a set of applied policies:
     :rtype: AsyncHttpPipeline
     """
-    kwargs.setdefault("user_agent_policy", UserAgentPolicy(base_user_agent=UserAgentSingleton().value))
+    kwargs.setdefault(
+        "user_agent_policy", UserAgentPolicy(base_user_agent=UserAgentSingleton().value)
+    )
     return AsyncHttpPipeline(**kwargs)

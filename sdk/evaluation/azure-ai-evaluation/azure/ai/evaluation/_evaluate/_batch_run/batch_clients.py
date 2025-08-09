@@ -4,7 +4,16 @@
 
 import pandas
 from os import PathLike
-from typing import Any, Awaitable, Callable, Dict, Optional, Protocol, Union, runtime_checkable
+from typing import (
+    Any,
+    Awaitable,
+    Callable,
+    Dict,
+    Optional,
+    Protocol,
+    Union,
+    runtime_checkable,
+)
 
 
 class BatchClientRun(Protocol):
@@ -49,7 +58,9 @@ class BatchClient(Protocol):
         """
         ...
 
-    def get_details(self, client_run: BatchClientRun, all_results: bool = False) -> pandas.DataFrame:
+    def get_details(
+        self, client_run: BatchClientRun, all_results: bool = False
+    ) -> pandas.DataFrame:
         """Get the details of the run.
 
         :param client_run: The run to get the details of.

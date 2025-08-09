@@ -45,7 +45,9 @@ def setup_logger(logger_name="RedTeamLogger", output_dir=None):
     # File handler - captures all logs at DEBUG level with detailed formatting
     file_handler = logging.FileHandler(log_filepath)
     file_handler.setLevel(logging.DEBUG)
-    file_formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(name)s - %(message)s")
+    file_formatter = logging.Formatter(
+        "%(asctime)s - %(levelname)s - %(name)s - %(message)s"
+    )
     file_handler.setFormatter(file_formatter)
     logger.addHandler(file_handler)
 
@@ -98,7 +100,9 @@ def log_strategy_start(logger, strategy_name, risk_category):
     :param risk_category: The risk category being processed
     :type risk_category: str
     """
-    logger.info(f"Starting processing of {strategy_name} strategy for {risk_category} risk category")
+    logger.info(
+        f"Starting processing of {strategy_name} strategy for {risk_category} risk category"
+    )
 
 
 def log_strategy_completion(logger, strategy_name, risk_category, elapsed_time=None):
@@ -114,9 +118,13 @@ def log_strategy_completion(logger, strategy_name, risk_category, elapsed_time=N
     :type elapsed_time: float
     """
     if elapsed_time:
-        logger.info(f"Completed {strategy_name} strategy for {risk_category} risk category in {elapsed_time:.2f}s")
+        logger.info(
+            f"Completed {strategy_name} strategy for {risk_category} risk category in {elapsed_time:.2f}s"
+        )
     else:
-        logger.info(f"Completed {strategy_name} strategy for {risk_category} risk category")
+        logger.info(
+            f"Completed {strategy_name} strategy for {risk_category} risk category"
+        )
 
 
 def log_error(logger, message, exception=None, context=None):

@@ -45,22 +45,36 @@ class TestRunIdsFromConversation(unittest.TestCase):
             ]
         }
         expected_run_ids = ["run1", "run2", "run3"]
-        self.assertEqual(AIAgentConverter._run_ids_from_conversation(conversation), expected_run_ids)
+        self.assertEqual(
+            AIAgentConverter._run_ids_from_conversation(conversation), expected_run_ids
+        )
 
     def test_run_ids_from_conversation_empty(self):
         conversation = {"messages": []}
         expected_run_ids = []
-        self.assertEqual(AIAgentConverter._run_ids_from_conversation(conversation), expected_run_ids)
+        self.assertEqual(
+            AIAgentConverter._run_ids_from_conversation(conversation), expected_run_ids
+        )
 
     def test_run_ids_from_conversation_no_run_id(self):
         conversation = {
             "messages": [
-                {"role": "user", "content": [{"text": {"value": "message1"}}], "createdAt": "2023-01-01T00:00:00Z"},
-                {"role": "agent", "content": [{"text": {"value": "message2"}}], "createdAt": "2023-01-01T01:00:00Z"},
+                {
+                    "role": "user",
+                    "content": [{"text": {"value": "message1"}}],
+                    "createdAt": "2023-01-01T00:00:00Z",
+                },
+                {
+                    "role": "agent",
+                    "content": [{"text": {"value": "message2"}}],
+                    "createdAt": "2023-01-01T01:00:00Z",
+                },
             ]
         }
         expected_run_ids = []
-        self.assertEqual(AIAgentConverter._run_ids_from_conversation(conversation), expected_run_ids)
+        self.assertEqual(
+            AIAgentConverter._run_ids_from_conversation(conversation), expected_run_ids
+        )
 
 
 if __name__ == "__main__":

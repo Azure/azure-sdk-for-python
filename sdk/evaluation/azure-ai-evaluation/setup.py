@@ -23,7 +23,10 @@ NAMESPACE_NAME = PACKAGE_NAME.replace("-", ".")
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(PACKAGE_FOLDER_PATH, "_version.py"), "r") as fd:
-    version = cast(Match[Any], re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE)).group(1)
+    version = cast(
+        Match[Any],
+        re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE),
+    ).group(1)
 if not version:
     raise RuntimeError("Cannot find version information")
 

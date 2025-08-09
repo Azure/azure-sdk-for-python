@@ -57,12 +57,16 @@ class TestEvaluatePerformance:
 
     def test_evaluate_parallelism(self, ten_queries_file):
         """Test that ensures that parallelism speeds up evaluation as expected by running
-        an a test evaluator with a built-in sleep in both non-parallel and parallel modes."""
+        an a test evaluator with a built-in sleep in both non-parallel and parallel modes.
+        """
         slow_eval = SlowEvaluator()
         # run the evaluation with targets
         start = time.perf_counter()
         result = evaluate(
-            data=ten_queries_file, evaluators={"slow": slow_eval}, _use_pf_client=False, _use_run_submitter_client=False
+            data=ten_queries_file,
+            evaluators={"slow": slow_eval},
+            _use_pf_client=False,
+            _use_run_submitter_client=False,
         )
         end = time.perf_counter()
         # Time duration is stored as variable just to make sure pytest output

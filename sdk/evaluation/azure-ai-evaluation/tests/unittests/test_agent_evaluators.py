@@ -28,7 +28,10 @@ class TestEvaluate:
                 }
             ],
         )
-        assert result[ToolCallAccuracyEvaluator._RESULT_KEY] == ToolCallAccuracyEvaluator._NOT_APPLICABLE_RESULT
+        assert (
+            result[ToolCallAccuracyEvaluator._RESULT_KEY]
+            == ToolCallAccuracyEvaluator._NOT_APPLICABLE_RESULT
+        )
         assert (
             ToolCallAccuracyEvaluator._NO_TOOL_CALLS_MESSAGE
             in result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}_reason"]
@@ -46,7 +49,10 @@ class TestEvaluate:
                 }
             ],
         )
-        assert result[ToolCallAccuracyEvaluator._RESULT_KEY] == ToolCallAccuracyEvaluator._NOT_APPLICABLE_RESULT
+        assert (
+            result[ToolCallAccuracyEvaluator._RESULT_KEY]
+            == ToolCallAccuracyEvaluator._NOT_APPLICABLE_RESULT
+        )
         assert (
             ToolCallAccuracyEvaluator._NO_TOOL_DEFINITIONS_MESSAGE
             in result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}_reason"]
@@ -72,7 +78,10 @@ class TestEvaluate:
                 }
             ],
         )
-        assert result[ToolCallAccuracyEvaluator._RESULT_KEY] == ToolCallAccuracyEvaluator._NOT_APPLICABLE_RESULT
+        assert (
+            result[ToolCallAccuracyEvaluator._RESULT_KEY]
+            == ToolCallAccuracyEvaluator._NOT_APPLICABLE_RESULT
+        )
         assert (
             ToolCallAccuracyEvaluator._NO_TOOL_CALLS_MESSAGE
             in result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}_reason"]
@@ -81,7 +90,9 @@ class TestEvaluate:
         # Test with tool call for which definition is not provided
         result = tool_call_accuracy(
             query="Where is the Eiffel Tower?",
-            tool_calls=[{"type": "tool_call", "name": "some_other_tool", "arguments": {}}],
+            tool_calls=[
+                {"type": "tool_call", "name": "some_other_tool", "arguments": {}}
+            ],
             tool_definitions=[
                 {
                     "name": "fetch_weather",
@@ -98,7 +109,10 @@ class TestEvaluate:
                 }
             ],
         )
-        assert result[ToolCallAccuracyEvaluator._RESULT_KEY] == ToolCallAccuracyEvaluator._NOT_APPLICABLE_RESULT
+        assert (
+            result[ToolCallAccuracyEvaluator._RESULT_KEY]
+            == ToolCallAccuracyEvaluator._NOT_APPLICABLE_RESULT
+        )
         assert (
             ToolCallAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE
             in result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}_reason"]

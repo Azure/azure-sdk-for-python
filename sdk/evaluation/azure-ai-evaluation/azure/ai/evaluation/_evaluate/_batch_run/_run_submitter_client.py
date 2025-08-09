@@ -10,7 +10,18 @@ import itertools
 from collections import defaultdict
 from concurrent.futures import Future
 from os import PathLike
-from typing import Any, Callable, Dict, Final, List, Mapping, Optional, Sequence, Union, cast
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Final,
+    List,
+    Mapping,
+    Optional,
+    Sequence,
+    Union,
+    cast,
+)
 
 from .batch_clients import BatchClientRun, HasAsyncCallable
 from ..._legacy._batch_engine._run_submitter import RunSubmitter
@@ -18,7 +29,9 @@ from ..._legacy._batch_engine._config import BatchEngineConfig
 from ..._legacy._batch_engine._run import Run
 from ..._legacy._adapters._constants import LINE_NUMBER
 from ..._legacy._adapters.types import AttrDict
-from ..._legacy._common._thread_pool_executor_with_context import ThreadPoolExecutorWithContext
+from ..._legacy._common._thread_pool_executor_with_context import (
+    ThreadPoolExecutorWithContext,
+)
 from ..._evaluate._utils import _has_aggregator
 from ..._constants import Prefixes, PF_BATCH_TIMEOUT_SEC
 
@@ -30,7 +43,12 @@ MISSING_VALUE: Final[int] = sys.maxsize
 
 
 class RunSubmitterClient:
-    def __init__(self, *, raise_on_errors: bool = False, config: Optional[BatchEngineConfig] = None) -> None:
+    def __init__(
+        self,
+        *,
+        raise_on_errors: bool = False,
+        config: Optional[BatchEngineConfig] = None,
+    ) -> None:
         if config:
             self._config = config
         else:
@@ -46,7 +64,8 @@ class RunSubmitterClient:
         self._config.raise_on_error = raise_on_errors
 
         self._thread_pool = ThreadPoolExecutorWithContext(
-            thread_name_prefix="evaluators_thread", max_workers=self._config.max_concurrency
+            thread_name_prefix="evaluators_thread",
+            max_workers=self._config.max_concurrency,
         )
 
     def run(
@@ -91,13 +110,17 @@ class RunSubmitterClient:
 
         return run_future
 
-    def get_details(self, client_run: BatchClientRun, all_results: bool = False) -> pd.DataFrame:
+    def get_details(
+        self, client_run: BatchClientRun, all_results: bool = False
+    ) -> pd.DataFrame:
         run = self._get_run(client_run)
 
         def concat(*dataframes: pd.DataFrame) -> pd.DataFrame:
             return pd.concat(dataframes, axis=1, verify_integrity=True)
 
-        def to_dataframe(items: Sequence[Mapping[str, Any]], *, max_length: Optional[int] = None) -> pd.DataFrame:
+        def to_dataframe(
+            items: Sequence[Mapping[str, Any]], *, max_length: Optional[int] = None
+        ) -> pd.DataFrame:
             """Convert a sequence of dictionaries to a DataFrame.
 
             :param items: Sequence of dictionaries to convert.
@@ -108,10 +131,13 @@ class RunSubmitterClient:
             :rtype: pd.DataFrame
             """
             max_length = None if all_results else self._config.default_num_results
-            return pd.DataFrame(data=items if all_results else itertools.islice(items, max_length))
+            return pd.DataFrame(
+                data=items if all_results else itertools.islice(items, max_length)
+            )
 
         inputs = concat(
-            to_dataframe(run.inputs), to_dataframe([{LINE_NUMBER: i} for i in range(len(run.inputs))])
+            to_dataframe(run.inputs),
+            to_dataframe([{LINE_NUMBER: i} for i in range(len(run.inputs))]),
         ).add_prefix(Prefixes.INPUTS)
 
         outputs = to_dataframe(run.outputs).add_prefix(Prefixes.OUTPUTS)
@@ -131,13 +157,17 @@ class RunSubmitterClient:
                 if len(result_df.columns) == 1 and result_df.columns[0] == "output":
                     aggregate_input = result_df["output"].tolist()
                 else:
-                    aggregate_input = [AttrDict(item) for item in result_df.to_dict("records")]
+                    aggregate_input = [
+                        AttrDict(item) for item in result_df.to_dict("records")
+                    ]
 
                 aggr_func = getattr(run.dynamic_callable, "__aggregate__")
                 aggregated_metrics = aggr_func(aggregate_input)
 
         except Exception as ex:  # pylint: disable=broad-exception-caught
-            LOGGER.warning("Error calculating aggregations for evaluator, failed with error %s", ex)
+            LOGGER.warning(
+                "Error calculating aggregations for evaluator, failed with error %s", ex
+            )
 
         if not isinstance(aggregated_metrics, dict):
             LOGGER.warning(

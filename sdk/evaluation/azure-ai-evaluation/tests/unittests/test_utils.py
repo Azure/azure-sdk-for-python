@@ -48,14 +48,20 @@ class TestUtils(unittest.TestCase):
             {
                 "role": "system",
                 "content": [
-                    {"type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison."}
+                    {
+                        "type": "text",
+                        "text": "This is a nature boardwalk at the University of Wisconsin-Madison.",
+                    }
                 ],
             },
             {
                 "role": "user",
                 "content": [
                     {"type": "text", "text": "Can you describe this image?"},
-                    {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{encoded_image}"}},
+                    {
+                        "type": "image_url",
+                        "image_url": {"url": f"data:image/jpeg;base64,{encoded_image}"},
+                    },
                 ],
             },
         ]
@@ -73,7 +79,10 @@ class TestUtils(unittest.TestCase):
                 {
                     "role": "system",
                     "content": [
-                        {"type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison."}
+                        {
+                            "type": "text",
+                            "text": "This is a nature boardwalk at the University of Wisconsin-Madison.",
+                        }
                     ],
                 },
                 {
@@ -107,7 +116,10 @@ class TestUtils(unittest.TestCase):
                 {
                     "role": "system",
                     "content": [
-                        {"type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison."}
+                        {
+                            "type": "text",
+                            "text": "This is a nature boardwalk at the University of Wisconsin-Madison.",
+                        }
                     ],
                 },
                 {
@@ -135,7 +147,10 @@ class TestUtils(unittest.TestCase):
                 {
                     "role": "system",
                     "content": [
-                        {"type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison."}
+                        {
+                            "type": "text",
+                            "text": "This is a nature boardwalk at the University of Wisconsin-Madison.",
+                        }
                     ],
                 },
                 {
@@ -163,7 +178,10 @@ class TestUtils(unittest.TestCase):
                 {
                     "role": "system",
                     "content": [
-                        {"type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison."}
+                        {
+                            "type": "text",
+                            "text": "This is a nature boardwalk at the University of Wisconsin-Madison.",
+                        }
                     ],
                 },
                 {
@@ -212,7 +230,10 @@ class TestUtils(unittest.TestCase):
                 {
                     "role": "system",
                     "content": [
-                        {"type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison."}
+                        {
+                            "type": "text",
+                            "text": "This is a nature boardwalk at the University of Wisconsin-Madison.",
+                        }
                     ],
                 },
                 {
@@ -303,9 +324,18 @@ class TestUtils(unittest.TestCase):
         """Test _get_conversation_history function"""
         # Test basic conversation
         query = [
-            {"role": "user", "content": [{"type": "text", "text": "What is the weather?"}]},
-            {"role": "assistant", "content": [{"type": "text", "text": "It's sunny today."}]},
-            {"role": "user", "content": [{"type": "text", "text": "Will it rain tomorrow?"}]},
+            {
+                "role": "user",
+                "content": [{"type": "text", "text": "What is the weather?"}],
+            },
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "It's sunny today."}],
+            },
+            {
+                "role": "user",
+                "content": [{"type": "text", "text": "Will it rain tomorrow?"}],
+            },
         ]
 
         result = _get_conversation_history(query)
@@ -317,22 +347,36 @@ class TestUtils(unittest.TestCase):
 
         # Test conversation with multiple messages per turn
         query = [
-            {"role": "user", "content": [{"type": "text", "text": "Hello"}, {"type": "text", "text": "How are you?"}]},
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": "Hello"},
+                    {"type": "text", "text": "How are you?"},
+                ],
+            },
             {
                 "role": "assistant",
-                "content": [{"type": "text", "text": "Hi there!"}, {"type": "text", "text": "I'm doing well, thanks."}],
+                "content": [
+                    {"type": "text", "text": "Hi there!"},
+                    {"type": "text", "text": "I'm doing well, thanks."},
+                ],
             },
         ]
 
         # there is an assertion because there is one user query ["Hello", "How are you?"] and one agent response ["Hi there!", "I'm doing well, thanks."]
         # the user query length needs to be one more than the agent response length
-        with pytest.raises(EvaluationException, match=str(ErrorMessage.MALFORMED_CONVERSATION_HISTORY)):
+        with pytest.raises(
+            EvaluationException, match=str(ErrorMessage.MALFORMED_CONVERSATION_HISTORY)
+        ):
             _get_conversation_history(query)
 
         # Test conversation ending with user message
         query = [
             {"role": "user", "content": [{"type": "text", "text": "First question"}]},
-            {"role": "assistant", "content": [{"type": "text", "text": "First answer"}]},
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "First answer"}],
+            },
             {"role": "user", "content": [{"type": "text", "text": "Second question"}]},
         ]
 
@@ -347,9 +391,18 @@ class TestUtils(unittest.TestCase):
         """Test _get_conversation_history with system messages"""
         query = [
             {"role": "system", "content": "This is a system message."},
-            {"role": "user", "content": [{"type": "text", "text": "What is the weather?"}]},
-            {"role": "assistant", "content": [{"type": "text", "text": "It's sunny today."}]},
-            {"role": "user", "content": [{"type": "text", "text": "Will it rain tomorrow?"}]},
+            {
+                "role": "user",
+                "content": [{"type": "text", "text": "What is the weather?"}],
+            },
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "It's sunny today."}],
+            },
+            {
+                "role": "user",
+                "content": [{"type": "text", "text": "Will it rain tomorrow?"}],
+            },
         ]
 
         result = _get_conversation_history(query, include_system_messages=True)
@@ -373,7 +426,10 @@ class TestUtils(unittest.TestCase):
         assert result == expected
 
         # Test with messages missing content
-        query = [{"role": "user"}, {"role": "user", "content": [{"type": "text", "text": "Has content"}]}]
+        query = [
+            {"role": "user"},
+            {"role": "user", "content": [{"type": "text", "text": "Has content"}]},
+        ]
 
         result = _get_conversation_history(query)
         expected = {"user_queries": [[["Has content"]]], "agent_responses": []}
@@ -436,7 +492,12 @@ class TestUtils(unittest.TestCase):
         # Test valid conversation
         query = [
             {"role": "user", "content": [{"type": "text", "text": "What is AI?"}]},
-            {"role": "assistant", "content": [{"type": "text", "text": "AI stands for Artificial Intelligence."}]},
+            {
+                "role": "assistant",
+                "content": [
+                    {"type": "text", "text": "AI stands for Artificial Intelligence."}
+                ],
+            },
             {"role": "user", "content": [{"type": "text", "text": "Tell me more."}]},
         ]
 
@@ -461,7 +522,12 @@ class TestUtils(unittest.TestCase):
         query = [
             {"role": "system", "content": "This is a system message."},
             {"role": "user", "content": [{"type": "text", "text": "What is AI?"}]},
-            {"role": "assistant", "content": [{"type": "text", "text": "AI stands for Artificial Intelligence."}]},
+            {
+                "role": "assistant",
+                "content": [
+                    {"type": "text", "text": "AI stands for Artificial Intelligence."}
+                ],
+            },
             {"role": "user", "content": [{"type": "text", "text": "Tell me more."}]},
         ]
 
@@ -484,7 +550,10 @@ class TestUtils(unittest.TestCase):
         agent_response_msgs = [
             {
                 "role": "assistant",
-                "content": [{"type": "text", "text": "Hello!"}, {"type": "text", "text": "How can I help you?"}],
+                "content": [
+                    {"type": "text", "text": "Hello!"},
+                    {"type": "text", "text": "How can I help you?"},
+                ],
             }
         ]
 
@@ -493,8 +562,14 @@ class TestUtils(unittest.TestCase):
 
         # Test with multiple assistant messages
         agent_response_msgs = [
-            {"role": "assistant", "content": [{"type": "text", "text": "First response"}]},
-            {"role": "assistant", "content": [{"type": "text", "text": "Second response"}]},
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "First response"}],
+            },
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "Second response"}],
+            },
         ]
 
         result = _get_agent_response(agent_response_msgs)
@@ -503,7 +578,10 @@ class TestUtils(unittest.TestCase):
         # Test with non-assistant messages
         agent_response_msgs = [
             {"role": "user", "content": [{"type": "text", "text": "User message"}]},
-            {"role": "assistant", "content": [{"type": "text", "text": "Assistant message"}]},
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "Assistant message"}],
+            },
         ]
 
         result = _get_agent_response(agent_response_msgs)
@@ -517,7 +595,10 @@ class TestUtils(unittest.TestCase):
         agent_response_msgs = [
             {"content": [{"type": "text", "text": "No role"}]},
             {"role": "assistant"},
-            {"role": "assistant", "content": [{"type": "text", "text": "Valid message"}]},
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "Valid message"}],
+            },
         ]
 
         result = _get_agent_response(agent_response_msgs)
@@ -541,9 +622,14 @@ class TestUtils(unittest.TestCase):
             {
                 "role": "tool",
                 "tool_call_id": "123",
-                "content": [{"type": "tool_result", "tool_result": "It's sunny in Seattle."}],
+                "content": [
+                    {"type": "tool_result", "tool_result": "It's sunny in Seattle."}
+                ],
             },
-            {"role": "assistant", "content": [{"type": "text", "text": "How can I help you?"}]},
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "How can I help you?"}],
+            },
         ]
 
         result = _get_agent_response(agent_response_msgs, include_tool_messages=True)
@@ -560,7 +646,10 @@ class TestUtils(unittest.TestCase):
         response = [
             {
                 "role": "assistant",
-                "content": [{"type": "text", "text": "Hello!"}, {"type": "text", "text": "How can I help you?"}],
+                "content": [
+                    {"type": "text", "text": "Hello!"},
+                    {"type": "text", "text": "How can I help you?"},
+                ],
             }
         ]
 
@@ -573,7 +662,9 @@ class TestUtils(unittest.TestCase):
         assert result == ""
 
         # Test with no valid assistant messages
-        response = [{"role": "user", "content": [{"type": "text", "text": "User message"}]}]
+        response = [
+            {"role": "user", "content": [{"type": "text", "text": "User message"}]}
+        ]
         result = reformat_agent_response(response)
         assert result == response
 
@@ -596,10 +687,15 @@ class TestUtils(unittest.TestCase):
 
         # Test _get_conversation_history assertion error
         query_with_unbalanced_turns = [
-            {"role": "assistant", "content": [{"type": "text", "text": "Response without user query"}]}
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "Response without user query"}],
+            }
         ]
 
-        with pytest.raises(EvaluationException, match=str(ErrorMessage.MALFORMED_CONVERSATION_HISTORY)):
+        with pytest.raises(
+            EvaluationException, match=str(ErrorMessage.MALFORMED_CONVERSATION_HISTORY)
+        ):
             _get_conversation_history(query_with_unbalanced_turns)
 
     def test_extract_text_from_content_with_list(self):
@@ -609,14 +705,21 @@ class TestUtils(unittest.TestCase):
         assert _extract_text_from_content(content) == ["Hello", " world"]
 
         # Test with mixed content (text and non-text)
-        content = [{"text": "Hello"}, {"type": "image", "url": "image.jpg"}, {"text": " world"}]
+        content = [
+            {"text": "Hello"},
+            {"type": "image", "url": "image.jpg"},
+            {"text": " world"},
+        ]
         assert _extract_text_from_content(content) == ["Hello", " world"]
 
         # Test with empty list
         assert _extract_text_from_content([]) == []
 
         # Test with non-text items only
-        content = [{"type": "image", "url": "image.jpg"}, {"type": "video", "url": "video.mp4"}]
+        content = [
+            {"type": "image", "url": "image.jpg"},
+            {"type": "video", "url": "video.mp4"},
+        ]
         assert _extract_text_from_content(content) == []
 
     def test_get_conversation_history_with_queries_and_responses(self):
@@ -629,17 +732,25 @@ class TestUtils(unittest.TestCase):
         ]
 
         result = _get_conversation_history(conversation)
-        expected = {"user_queries": [[["Hello"]], [["How are you?"]]], "agent_responses": [[["Hi there!"]]]}
+        expected = {
+            "user_queries": [[["Hello"]], [["How are you?"]]],
+            "agent_responses": [[["Hi there!"]]],
+        }
         assert result == expected
 
         conversation = []
-        with pytest.raises(EvaluationException, match=str(ErrorMessage.MALFORMED_CONVERSATION_HISTORY)):
+        with pytest.raises(
+            EvaluationException, match=str(ErrorMessage.MALFORMED_CONVERSATION_HISTORY)
+        ):
             _get_conversation_history(conversation)
 
     def test_pretty_format_conversation_history_with_dict(self):
         """Test _pretty_format_conversation_history function with dict input."""
         # Test with conversation history dict
-        conversation_history = {"user_queries": [[["Hello"]], [["How are you?"]]], "agent_responses": [[["Hi there!"]]]}
+        conversation_history = {
+            "user_queries": [[["Hello"]], [["How are you?"]]],
+            "agent_responses": [[["Hi there!"]]],
+        }
 
         formatted = _pretty_format_conversation_history(conversation_history)
         assert "User turn 1:" in formatted
@@ -728,7 +839,10 @@ class TestUtils(unittest.TestCase):
 
     def test_reformat_agent_response_with_tool_calls(self):
         response = [
-            {"role": "assistant", "content": [{"type": "text", "text": "Let me check that for you."}]},
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "Let me check that for you."}],
+            },
             {
                 "role": "assistant",
                 "content": [
@@ -737,7 +851,10 @@ class TestUtils(unittest.TestCase):
                         "tool_call": {
                             "id": "tool_call_1",
                             "type": "function",
-                            "function": {"name": "get_orders", "arguments": {"account_number": "123"}},
+                            "function": {
+                                "name": "get_orders",
+                                "arguments": {"account_number": "123"},
+                            },
                         },
                     }
                 ],
@@ -745,9 +862,14 @@ class TestUtils(unittest.TestCase):
             {
                 "role": "tool",
                 "tool_call_id": "tool_call_1",
-                "content": [{"type": "tool_result", "tool_result": '[{ "order_id": "A1" }]'}],
+                "content": [
+                    {"type": "tool_result", "tool_result": '[{ "order_id": "A1" }]'}
+                ],
             },
-            {"role": "assistant", "content": [{"type": "text", "text": "You have one order on file."}]},
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "You have one order on file."}],
+            },
         ]
 
         formatted = reformat_agent_response(response, include_tool_messages=True)
@@ -759,17 +881,31 @@ class TestUtils(unittest.TestCase):
 
     def test_reformat_agent_response_with_tool_calls_non_function(self):
         response = [
-            {"role": "assistant", "content": [{"type": "text", "text": "Let me check that for you."}]},
             {
                 "role": "assistant",
-                "content": [{"type": "tool_call", "tool_call_id": "tool_call_1", "name": "get_orders"}],
+                "content": [{"type": "text", "text": "Let me check that for you."}],
+            },
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "tool_call_1",
+                        "name": "get_orders",
+                    }
+                ],
             },
             {
                 "role": "tool",
                 "tool_call_id": "tool_call_1",
-                "content": [{"type": "tool_result", "tool_result": '[{ "order_id": "A1" }]'}],
+                "content": [
+                    {"type": "tool_result", "tool_result": '[{ "order_id": "A1" }]'}
+                ],
             },
-            {"role": "assistant", "content": [{"type": "text", "text": "You have one order on file."}]},
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "You have one order on file."}],
+            },
         ]
         formatted = reformat_agent_response(response, include_tool_messages=True)
         assert "[TOOL_CALL] get_orders()" in formatted
@@ -779,7 +915,10 @@ class TestUtils(unittest.TestCase):
 
     def test_reformat_agent_response_without_tool_calls(self):
         response = [
-            {"role": "assistant", "content": [{"type": "text", "text": "Let me check that for you."}]},
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "Let me check that for you."}],
+            },
             {
                 "role": "assistant",
                 "content": [
@@ -788,7 +927,10 @@ class TestUtils(unittest.TestCase):
                         "tool_call": {
                             "id": "tool_call_1",
                             "type": "function",
-                            "function": {"name": "get_orders", "arguments": {"account_number": "123"}},
+                            "function": {
+                                "name": "get_orders",
+                                "arguments": {"account_number": "123"},
+                            },
                         },
                     }
                 ],
@@ -796,9 +938,14 @@ class TestUtils(unittest.TestCase):
             {
                 "role": "tool",
                 "tool_call_id": "tool_call_1",
-                "content": [{"type": "tool_result", "tool_result": '[{ "order_id": "A1" }]'}],
+                "content": [
+                    {"type": "tool_result", "tool_result": '[{ "order_id": "A1" }]'}
+                ],
             },
-            {"role": "assistant", "content": [{"type": "text", "text": "You have one order on file."}]},
+            {
+                "role": "assistant",
+                "content": [{"type": "text", "text": "You have one order on file."}],
+            },
         ]
 
         formatted = reformat_agent_response(response, include_tool_messages=False)
@@ -810,15 +957,31 @@ class TestUtils(unittest.TestCase):
             {
                 "name": "search",
                 "description": "Searches the web.",
-                "parameters": {"properties": {"query": {"type": "string"}, "lang": {"type": "string"}}},
+                "parameters": {
+                    "properties": {
+                        "query": {"type": "string"},
+                        "lang": {"type": "string"},
+                    }
+                },
             }
         ]
-        expected_output = "TOOL_DEFINITIONS:\n" "- search: Searches the web. (inputs: query, lang)"
+        expected_output = (
+            "TOOL_DEFINITIONS:\n" "- search: Searches the web. (inputs: query, lang)"
+        )
         self.assertEqual(reformat_tool_definitions(tools), expected_output)
 
     def test_tool_with_no_parameters(self):
-        tools = [{"name": "ping", "description": "Check if server is reachable.", "parameters": {}}]
-        expected_output = "TOOL_DEFINITIONS:\n" "- ping: Check if server is reachable. (inputs: no parameters)"
+        tools = [
+            {
+                "name": "ping",
+                "description": "Check if server is reachable.",
+                "parameters": {},
+            }
+        ]
+        expected_output = (
+            "TOOL_DEFINITIONS:\n"
+            "- ping: Check if server is reachable. (inputs: no parameters)"
+        )
         self.assertEqual(reformat_tool_definitions(tools), expected_output)
 
     def test_tool_missing_description_and_parameters(self):
@@ -827,17 +990,30 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(reformat_tool_definitions(tools), expected_output)
 
     def test_tool_missing_name(self):
-        tools = [{"description": "Does something.", "parameters": {"properties": {"x": {"type": "number"}}}}]
-        expected_output = "TOOL_DEFINITIONS:\n" "- unnamed_tool: Does something. (inputs: x)"
+        tools = [
+            {
+                "description": "Does something.",
+                "parameters": {"properties": {"x": {"type": "number"}}},
+            }
+        ]
+        expected_output = (
+            "TOOL_DEFINITIONS:\n" "- unnamed_tool: Does something. (inputs: x)"
+        )
         self.assertEqual(reformat_tool_definitions(tools), expected_output)
 
     def test_multiple_tools(self):
         tools = [
-            {"name": "alpha", "description": "Tool A.", "parameters": {"properties": {"a1": {"type": "string"}}}},
+            {
+                "name": "alpha",
+                "description": "Tool A.",
+                "parameters": {"properties": {"a1": {"type": "string"}}},
+            },
             {"name": "beta", "description": "Tool B.", "parameters": {}},
         ]
         expected_output = (
-            "TOOL_DEFINITIONS:\n" "- alpha: Tool A. (inputs: a1)\n" "- beta: Tool B. (inputs: no parameters)"
+            "TOOL_DEFINITIONS:\n"
+            "- alpha: Tool A. (inputs: a1)\n"
+            "- beta: Tool B. (inputs: no parameters)"
         )
         self.assertEqual(reformat_tool_definitions(tools), expected_output)
 
