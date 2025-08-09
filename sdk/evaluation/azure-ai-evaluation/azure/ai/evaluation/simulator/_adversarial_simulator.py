@@ -211,7 +211,7 @@ class AdversarialSimulator:
         concurrent_async_task = min(concurrent_async_task, 1000)
         semaphore = asyncio.Semaphore(concurrent_async_task)
         sim_results = []
-        tasks = []
+        tasks: List[Any] = []
         total_tasks = sum(len(t.template_parameters) for t in templates)
         if max_simulation_results > total_tasks:
             logger.warning(
