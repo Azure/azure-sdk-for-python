@@ -119,15 +119,15 @@ async def main():
         )
         
         # The actual analysis result is in operation_status.result
-        analysis_result = operation_status.result
-        if analysis_result is None:
+        operation_result = operation_status.result
+        if operation_result is None:
             print("⚠️  No analysis result available")
             return
-        print(f"✅ Analysis result contains {len(analysis_result.contents)} contents")
+        print(f"✅ Analysis result contains {len(operation_result.contents)} contents")
 
         # Look for keyframe files in the analysis result markdown
         keyframe_files = set()
-        for content in analysis_result.contents:
+        for content in operation_result.contents:
             # Extract keyframe IDs from "markdown" if it exists and is a string
             markdown_content = getattr(content, 'markdown', '')
             if isinstance(markdown_content, str):

@@ -82,8 +82,8 @@ async def main():
         # List all persons in the directory
         print(f"📋 Listing all persons in directory '{person_directory_id}'...")
         
-        response = client.person_directories.list_persons(person_directory_id=person_directory_id)
-        persons = [person async for person in response]
+        list_response = client.person_directories.list_persons(person_directory_id=person_directory_id)
+        persons = [person async for person in list_response]
         
         print(f"✅ Found {len(persons)} persons in directory")
         print()
