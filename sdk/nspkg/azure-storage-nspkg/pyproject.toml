@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=77.0.3", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-storage-nspkg"
+version = "3.1.0"
+authors = [
+    {name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com"},
+]
+description = "Microsoft Azure Storage Namespace Package [Internal]"
+keywords = ["azure", "azure sdk"]
+license = "MIT"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 2",
+    "Programming Language :: Python :: 2.7",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.3",
+    "Programming Language :: Python :: 3.4",
+    "Programming Language :: Python :: 3.5",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+]
+dependencies = [
+    "azure-nspkg>=2.0.0",
+]
+readme = "README.md"
+
+[project.urls]
+repository = "https://github.com/Azure/azure-storage-python"
+
+[tool.setuptools.packages.find]
+include = ["azure.storage"]
+
+[tool.azure-sdk-build]
+namespace_package = true
