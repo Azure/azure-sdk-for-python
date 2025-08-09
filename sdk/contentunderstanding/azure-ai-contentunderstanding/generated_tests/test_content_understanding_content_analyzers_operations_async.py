@@ -227,6 +227,9 @@ async def download_keyframes_and_assert_async(client, analysis_operation_id: str
     print(f"Successfully completed get_result_file test - downloaded {files_retrieved} keyframe images")
 
 
+import pytest
+
+@pytest.mark.live_test_only
 class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandingClientTestBaseAsync):
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async

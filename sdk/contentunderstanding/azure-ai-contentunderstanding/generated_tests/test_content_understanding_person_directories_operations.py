@@ -240,6 +240,9 @@ def identify_persons_in_image(
         print(f"Error identifying persons: {ex}")
 
 
+import pytest
+
+@pytest.mark.live_test_only
 class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingClientTestBase):
     @ContentUnderstandingPreparer()
     @recorded_by_proxy

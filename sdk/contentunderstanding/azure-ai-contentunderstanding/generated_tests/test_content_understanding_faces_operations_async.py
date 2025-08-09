@@ -26,6 +26,9 @@ def generate_test_id() -> str:
     return f"test_{date_str}_{time_str}_{guid}"
 
 
+import pytest
+
+@pytest.mark.live_test_only
 class TestContentUnderstandingFacesOperationsAsync(ContentUnderstandingClientTestBaseAsync):
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async

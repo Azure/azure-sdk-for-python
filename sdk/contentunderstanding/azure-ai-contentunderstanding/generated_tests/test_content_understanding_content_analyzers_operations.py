@@ -227,6 +227,7 @@ def download_keyframes_and_assert_sync(client, analysis_operation_id: str, resul
     print(f"Successfully completed get_result_file test - downloaded {files_retrieved} keyframe images")
 
 
+@pytest.mark.live_test_only
 class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingClientTestBase):
     @ContentUnderstandingPreparer()
     @recorded_by_proxy

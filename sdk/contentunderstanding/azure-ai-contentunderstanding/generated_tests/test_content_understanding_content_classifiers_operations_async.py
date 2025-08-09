@@ -134,6 +134,9 @@ async def delete_classifier_and_assert(client, classifier_id: str, created_class
         print(f"Classifier {classifier_id} was not created, no cleanup needed")
 
 
+import pytest
+
+@pytest.mark.live_test_only
 class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstandingClientTestBaseAsync):
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async

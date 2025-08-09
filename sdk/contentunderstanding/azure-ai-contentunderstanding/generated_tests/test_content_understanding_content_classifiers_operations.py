@@ -133,6 +133,9 @@ def delete_classifier_and_assert_sync(client, classifier_id: str, created_classi
         print(f"Classifier {classifier_id} was not created, no cleanup needed")
 
 
+import pytest
+
+@pytest.mark.live_test_only
 class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingClientTestBase):
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
