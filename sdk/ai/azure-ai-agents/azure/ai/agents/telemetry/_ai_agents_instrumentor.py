@@ -129,7 +129,7 @@ class AIAgentsInstrumentor:
           and function call tool related function names, function parameter names and
           values. True will enable content recording, False will disable it. If no value
           is provided, then the value read from environment variable
-          AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED is used. If the environment variable
+          OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT is used. If the environment variable
           is not found, then the value will default to False. Please note that successive calls
           to instrument will always apply the content recording value provided with the most
           recent call to instrument (including applying the environment variable if no value is
@@ -191,14 +191,36 @@ class _AIAgentsInstrumentorPreview:
         and function call tool related function names, function parameter names and
         values. True will enable content recording, False will disable it. If no value
         is provided, then the value read from environment variable
-        AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED is used. If the environment variable
+        OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT is used. If the environment variable
         is not found, then the value will default to False.
 
         :type enable_content_recording: bool, optional
         """
         if enable_content_recording is None:
-            var_value = os.environ.get("AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED")
+
+            # AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED was introduced before the standard 
+            # OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT was defined by OTEL. Support both
+            # of them moving forward, but only document the standard one.
+            var_value_new = os.environ.get("OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT")
+            var_value_old = os.environ.get("AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED") # Deprecated, undocumented.
+            var_value : str|None = None
+
+            if (var_value_new and var_value_old and var_value_new != var_value_old):
+                logger.error("""
+                    Environment variables OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT
+                    and AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED are both set, and
+                    their values differ. Message content recording in this run will be disabled
+                    as a result. Please set OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT only.
+                    """
+                )
+                var_value = None
+            elif var_value_new:
+                var_value = var_value_new
+            elif var_value_old:
+                var_value = var_value_old
+
             enable_content_recording = self._str_to_bool(var_value)
+
         if not self.is_instrumented():
             self._instrument_agents(enable_content_recording)
         else:
