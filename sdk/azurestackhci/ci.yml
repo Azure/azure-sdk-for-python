@@ -31,3 +31,5 @@ extends:
     Artifacts:
     - name: azure-mgmt-azurestackhci
       safeName: azuremgmtazurestackhci
+    - name: azure-mgmt-azurestackhcivm
+      safeName: azuremgmtazurestackhcivm
