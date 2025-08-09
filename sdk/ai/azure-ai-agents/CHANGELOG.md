@@ -6,6 +6,8 @@
 ### Features Added
 
 - Add support for Browser Automation tool.
+- Add support for environment variable `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` as defined by
+  [OpenTelemetry](https://opentelemetry.io/), to control tracing of user and Agent messages content.
 
 ### Bugs Fixed
 

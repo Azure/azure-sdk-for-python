@@ -25,7 +25,7 @@ USAGE:
     Set these environment variables with your own values:
     * PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
                           page of your Azure AI Foundry portal.
-    * AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
+    * OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT - Optional. Set to `true` to trace the content of chat
       messages, which may contain personal data. False by default.
 """
 import asyncio
