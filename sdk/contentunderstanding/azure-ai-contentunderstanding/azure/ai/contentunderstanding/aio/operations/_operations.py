@@ -1780,7 +1780,7 @@ class PersonDirectoriesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            
+
             # Handle both response formats:
             # 1. Direct array: [...]
             # 2. Wrapped in "value" property: {"value": [...], "nextLink": "..."}
@@ -1792,7 +1792,7 @@ class PersonDirectoriesOperations:
                 # API returned object with "value" property
                 list_of_elem = _deserialize(List[_models.PersonDirectory], deserialized.get("value", []))
                 next_link = deserialized.get("nextLink") or None
-            
+
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return next_link, AsyncList(list_of_elem)
@@ -2325,7 +2325,7 @@ class PersonDirectoriesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            
+
             # Handle both response formats:
             # 1. Direct array: [...]
             # 2. Wrapped in "value" property: {"value": [...], "nextLink": "..."}
@@ -2337,7 +2337,7 @@ class PersonDirectoriesOperations:
                 # API returned object with "value" property
                 list_of_elem = _deserialize(List[_models.PersonDirectoryPerson], deserialized.get("value", []))
                 next_link = deserialized.get("nextLink") or None
-            
+
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return next_link, AsyncList(list_of_elem)
@@ -2879,7 +2879,7 @@ class PersonDirectoriesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            
+
             # Handle both response formats:
             # 1. Direct array: [...]
             # 2. Wrapped in "value" property: {"value": [...], "nextLink": "..."}
@@ -2891,7 +2891,7 @@ class PersonDirectoriesOperations:
                 # API returned object with "value" property
                 list_of_elem = _deserialize(List[_models.PersonDirectoryFace], deserialized.get("value", []))
                 next_link = deserialized.get("nextLink") or None
-            
+
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return next_link, AsyncList(list_of_elem)
