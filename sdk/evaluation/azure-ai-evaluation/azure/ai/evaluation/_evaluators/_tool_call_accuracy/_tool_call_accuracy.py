@@ -44,10 +44,20 @@ def _get_needed_built_in_definitions(tool_calls: List[Dict]) -> List[Dict]:
     for tool_call in tool_calls:
         if isinstance(tool_call, dict):
             tool_type = tool_call.get("type")
+
+            # Handle non-converter format: {type: "bing_custom_search", "bing_custom_search": {...}}
             if tool_type in _BUILT_IN_DESCRIPTIONS:
                 built_in_def = _get_built_in_definition(tool_type)
                 if built_in_def and built_in_def not in needed_definitions:
                     needed_definitions.append(built_in_def)
+
+            # Handle converter format: {type: "tool_call", name: "bing_custom_search", arguments: {...}}
+            elif tool_type == "tool_call":
+                tool_name = tool_call.get("name")
+                if tool_name in _BUILT_IN_DESCRIPTIONS:
+                    built_in_def = _get_built_in_definition(tool_name)
+                    if built_in_def and built_in_def not in needed_definitions:
+                        needed_definitions.append(built_in_def)
 
     return needed_definitions
 
@@ -301,14 +311,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         }
 
     def _extract_needed_tool_definitions(self, tool_calls, tool_definitions):
-        """Extract the tool definitions that are needed for the provided tool calls.
-        :param tool_calls: List of tool calls to evaluate.
-        :type tool_calls: List[dict]
-        :param tool_definitions: List of tool definitions to use for evaluation.
-        :type tool_definitions: List[dict]
-        :return: List of tool definitions that are needed for the provided tool calls.
-        :rtype: List[dict]
-        """
+        """Extract the tool definitions that are needed for the provided tool calls."""
         needed_tool_definitions = []
 
         # Add all user-provided tool definitions
@@ -323,48 +326,78 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             if isinstance(tool_call, dict):
                 tool_type = tool_call.get("type")
 
-                # Check if this is a built-in tool (has "type" and is in built-in types)
-                if tool_type and _get_built_in_definition(tool_type):
-                    # This is a built-in tool, already handled above
+                # Handle your expected format: {type: "bing_custom_search", "bing_custom_search": {...}}
+                if tool_type and tool_type in _BUILT_IN_DESCRIPTIONS:
+                    # This is a built-in tool in your format, already handled above
                     continue
 
-                # Handle function tools and openapi tools that have function structure
-                tool_name = None
-                if tool_call.get("type") == "openapi" and "function" in tool_call:
-                    # OpenAPI tools have nested function structure
-                    tool_name = tool_call["function"].get("name")
-                elif tool_call.get("type") == "tool_call" and tool_call.get("name"):
-                    # Tool call with explicit name (like in the test case)
+                # Handle converter format: {type: "tool_call", name: "bing_custom_search", arguments: {...}}
+                elif tool_type == "tool_call":
                     tool_name = tool_call.get("name")
-                else:
-                    # Regular function tools
-                    tool_name = tool_call.get("name")
-
-                if tool_name:
-                    # Verify that the tool definition exists in user-provided definitions
-                    tool_definition_exists = any(
-                        tool.get("name") == tool_name and tool.get("type", "function") == "function"
-                        for tool in tool_definitions
-                    )
-                    if not tool_definition_exists:
+                    if tool_name and tool_name in _BUILT_IN_DESCRIPTIONS:
+                        # This is a built-in tool from converter, already handled above
+                        continue
+                    elif tool_name:
+                        # This is a regular function tool from converter
+                        tool_definition_exists = any(
+                            tool.get("name") == tool_name and tool.get("type", "function") == "function"
+                            for tool in tool_definitions
+                        )
+                        if not tool_definition_exists:
+                            raise EvaluationException(
+                                message=f"Tool definition for {tool_name} not found",
+                                blame=ErrorBlame.USER_ERROR,
+                                category=ErrorCategory.INVALID_VALUE,
+                                target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
+                            )
+                    else:
                         raise EvaluationException(
-                            message=f"Tool definition for {tool_name} not found",
+                            message=f"Tool call missing name: {tool_call}",
                             blame=ErrorBlame.USER_ERROR,
                             category=ErrorCategory.INVALID_VALUE,
                             target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
                         )
+
+                # Handle OpenAPI tools that have function structure (your format)
+                elif tool_type == "openapi" and "function" in tool_call:
+                    tool_name = tool_call["function"].get("name")
+                    if tool_name:
+                        tool_definition_exists = any(tool.get("name") == tool_name for tool in tool_definitions)
+                        if not tool_definition_exists:
+                            raise EvaluationException(
+                                message=f"Tool definition for {tool_name} not found",
+                                blame=ErrorBlame.USER_ERROR,
+                                category=ErrorCategory.INVALID_VALUE,
+                                target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
+                            )
+
+                # Handle regular function tools (your format)
                 else:
-                    # Tool call doesn't have a recognizable name or type
-                    raise EvaluationException(
-                        message=f"Tool call missing name or type: {tool_call}",
-                        blame=ErrorBlame.USER_ERROR,
-                        category=ErrorCategory.INVALID_VALUE,
-                        target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
-                    )
+                    tool_name = tool_call.get("name")
+                    if tool_name:
+                        tool_definition_exists = any(
+                            tool.get("name") == tool_name and tool.get("type", "function") == "function"
+                            for tool in tool_definitions
+                        )
+                        if not tool_definition_exists:
+                            raise EvaluationException(
+                                message=f"Tool definition for {tool_name} not found",
+                                blame=ErrorBlame.USER_ERROR,
+                                category=ErrorCategory.INVALID_VALUE,
+                                target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
+                            )
+                    else:
+                        # Unknown tool format
+                        raise EvaluationException(
+                            message=f"Tool call missing name or type: {tool_call}",
+                            blame=ErrorBlame.USER_ERROR,
+                            category=ErrorCategory.INVALID_VALUE,
+                            target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
+                        )
             else:
                 # Tool call is not a dictionary
                 raise EvaluationException(
-                    message=f"Tool call missing name or type: {tool_call}",
+                    message=f"Tool call is not a dictionary: {tool_call}",
                     blame=ErrorBlame.USER_ERROR,
                     category=ErrorCategory.INVALID_VALUE,
                     target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
