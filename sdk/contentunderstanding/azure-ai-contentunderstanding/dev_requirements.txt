@@ -3,3 +3,4 @@
 ../../identity/azure-identity
 aiohttp
 setuptools
+pytest-xdist

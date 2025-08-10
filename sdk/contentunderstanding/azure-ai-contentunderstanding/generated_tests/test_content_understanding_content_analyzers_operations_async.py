@@ -229,7 +229,6 @@ async def download_keyframes_and_assert_async(client, analysis_operation_id: str
 
 import pytest
 
-@pytest.mark.live_test_only
 class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandingClientTestBaseAsync):
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
@@ -749,6 +748,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             # Always clean up the created analyzer, even if the test fails
             await delete_analyzer_and_assert(client, analyzer_id, created_analyzer)
 
+    @pytest.mark.live_test_only
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_analyzers_get_result_file(self, contentunderstanding_endpoint):

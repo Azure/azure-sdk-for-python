@@ -28,7 +28,6 @@ def generate_test_id() -> str:
 
 import pytest
 
-@pytest.mark.live_test_only
 class TestContentUnderstandingFacesOperationsAsync(ContentUnderstandingClientTestBaseAsync):
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async

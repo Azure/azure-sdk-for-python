@@ -29,7 +29,7 @@ def get_content_understanding_credential_async():
 class ContentUnderstandingClientTestBaseAsync(AzureRecordedTestCase):
 
     def create_async_client(self, endpoint):
-        credential = get_content_understanding_credential_async()
+        credential = self.get_credential(ContentUnderstandingClient, is_async=True)
         return self.create_client_from_credential(
             ContentUnderstandingClient,
             credential=credential,

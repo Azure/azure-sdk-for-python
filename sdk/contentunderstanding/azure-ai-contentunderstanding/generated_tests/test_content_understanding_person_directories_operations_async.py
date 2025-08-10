@@ -273,7 +273,6 @@ async def identify_persons_in_image_async(
 
 import pytest
 
-@pytest.mark.live_test_only
 class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstandingClientTestBaseAsync):
     async def asyncTearDown(self):
         """Clean up any remaining resources after each test."""

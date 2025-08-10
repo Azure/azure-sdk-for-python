@@ -26,10 +26,11 @@ def get_content_understanding_credential():
         return DefaultAzureCredential()
 
 
+
 class ContentUnderstandingClientTestBase(AzureRecordedTestCase):
 
     def create_client(self, endpoint):
-        credential = get_content_understanding_credential()
+        credential = self.get_credential(ContentUnderstandingClient, is_async=False)
         return self.create_client_from_credential(
             ContentUnderstandingClient,
             credential=credential,

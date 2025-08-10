@@ -27,7 +27,6 @@ def generate_test_id() -> str:
 
 import pytest
 
-@pytest.mark.live_test_only
 class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase):
     @ContentUnderstandingPreparer()
     @recorded_by_proxy

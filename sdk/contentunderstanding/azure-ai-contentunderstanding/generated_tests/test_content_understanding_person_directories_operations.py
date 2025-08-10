@@ -242,7 +242,6 @@ def identify_persons_in_image(
 
 import pytest
 
-@pytest.mark.live_test_only
 class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingClientTestBase):
     @ContentUnderstandingPreparer()
     @recorded_by_proxy

@@ -135,7 +135,6 @@ def delete_classifier_and_assert_sync(client, classifier_id: str, created_classi
 
 import pytest
 
-@pytest.mark.live_test_only
 class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingClientTestBase):
     @ContentUnderstandingPreparer()
     @recorded_by_proxy

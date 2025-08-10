@@ -227,7 +227,6 @@ def download_keyframes_and_assert_sync(client, analysis_operation_id: str, resul
     print(f"Successfully completed get_result_file test - downloaded {files_retrieved} keyframe images")
 
 
-@pytest.mark.live_test_only
 class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingClientTestBase):
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
@@ -747,6 +746,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
             # Always clean up the created analyzer, even if the test fails
             delete_analyzer_and_assert_sync(client, analyzer_id, created_analyzer)
 
+    @pytest.mark.live_test_only
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
     def test_content_analyzers_get_result_file(self, contentunderstanding_endpoint):
