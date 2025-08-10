@@ -24,17 +24,28 @@
 import copy
 import json
 import time
+from typing import Any
 
 from urllib.parse import urlparse
+from azure.core import AsyncPipelineClient
 from azure.core.exceptions import DecodeError  # type: ignore
 
 from .. import exceptions
 from .. import http_constants
 from . import _retry_utility_async
+from ..documents import ConnectionPolicy
+from .._request_object import RequestObject
+from ._global_partition_endpoint_manager_per_partition_automatic_failover_async import _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync
 from .._synchronized_request import _request_body_from_data, _replace_url_prefix
 
 
-async def _Request(global_endpoint_manager, request_params, connection_policy, pipeline_client, request, **kwargs): # pylint: disable=too-many-statements
+async def _Request(
+        global_endpoint_manager: _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync,
+        request_params: RequestObject,
+        connection_policy: ConnectionPolicy,
+        pipeline_client: AsyncPipelineClient,
+        request: Any,
+        **kwargs): # pylint: disable=too-many-statements
     """Makes one http request using the requests module.
 
     :param _GlobalEndpointManager global_endpoint_manager:
@@ -76,8 +87,9 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
         base_url = request_params.endpoint_override
     else:
         pk_range_wrapper = None
-        if global_endpoint_manager.is_circuit_breaker_applicable(request_params):
-            # Circuit breaker is applicable, so we need to use the endpoint from the request
+        if (global_endpoint_manager.is_circuit_breaker_applicable(request_params) or
+                global_endpoint_manager.is_per_partition_automatic_failover_applicable(request_params)):
+            # Circuit breaker or per-partition failover are applicable, so we need to use the endpoint from the request
             pk_range_wrapper = await global_endpoint_manager.create_pk_range_wrapper(request_params)
         base_url = global_endpoint_manager.resolve_service_endpoint_for_partition(request_params, pk_range_wrapper)
     if not request.url.startswith(base_url):
