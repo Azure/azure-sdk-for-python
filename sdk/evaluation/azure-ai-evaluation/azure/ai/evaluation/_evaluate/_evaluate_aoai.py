@@ -446,9 +446,8 @@ def _get_graders_and_column_mappings(
     if column_mappings is None:
         return [({name: grader}, None) for name, grader in graders.items()]
     default_mapping = column_mappings.get("default", None)
-        default_mapping = None
-    else:
-        default_mapping = column_mappings.get("default", None)
+    if default_mapping is None:
+        default_mapping = {}
     return [({name: grader}, None if column_mappings is None else column_mappings.get(name, default_mapping)) for name, grader in graders.items()]
 
 
