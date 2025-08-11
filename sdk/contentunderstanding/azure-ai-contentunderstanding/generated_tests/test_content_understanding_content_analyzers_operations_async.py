@@ -10,11 +10,10 @@ import os
 import re
 from typing import Tuple, Union, Dict, Any, Optional
 from devtools_testutils.aio import recorded_by_proxy_async
-from testpreparer import ContentUnderstandingPreparer
-from testpreparer_async import ContentUnderstandingClientTestBaseAsync
+from testpreparer_async import ContentUnderstandingClientTestBaseAsync, ContentUnderstandingPreparer
 from azure.ai.contentunderstanding.models import ContentAnalyzer
 from test_helpers import (
-    generate_analyzer_id,
+    generate_analyzer_id_async,
     extract_operation_id_from_poller,
     new_simple_content_analyzer_object,
     new_marketing_video_analyzer_object,
@@ -24,7 +23,7 @@ from test_helpers import (
     save_keyframe_image_to_file,
     PollerType
 )
-
+from devtools_testutils import is_live, is_live_and_not_recording
 
 async def analyzer_in_list_async(client, analyzer_id: str) -> bool:
     """Check if an analyzer with the given ID exists in the list of analyzers (async version).
@@ -87,8 +86,11 @@ async def create_analyzer_and_assert_async(
     # Check that the operation status has expected fields
     assert hasattr(status_response, 'status') or hasattr(status_response, 'operation_status')
     assert hasattr(status_response, 'id')
-    assert status_response.id == operation_id
-    
+    if is_live():
+        # Only verify the operation_id during live testing (and not in recorded tests) as 
+        # operation_id is sanitized in recording.
+        assert status_response.id == operation_id
+
     # Wait for the operation to complete
     print(f"  Waiting for analyzer {analyzer_id} to be created")
     response = await poller.result()
@@ -242,7 +244,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         - Clean up created analyzer
         """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        analyzer_id = generate_analyzer_id()
+        analyzer_id = await generate_analyzer_id_async(client, "test_content_analyzers_get_operation_status")
         created_analyzer = False
 
         content_analyzer = new_simple_content_analyzer_object(
@@ -279,7 +281,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         - Clean up created analyzer
         """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        analyzer_id = generate_analyzer_id()
+        analyzer_id = await generate_analyzer_id_async(client, "test_content_analyzers_begin_create_with_content_analyzer")
         created_analyzer = False
 
         content_analyzer = new_simple_content_analyzer_object(
@@ -307,7 +309,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         - Clean up created analyzer
         """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        analyzer_id = generate_analyzer_id()
+        analyzer_id = await generate_analyzer_id_async(client, "test_content_analyzers_begin_create_with_json")
         created_analyzer = False
 
         try:
@@ -363,7 +365,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         - Clean up created analyzer
         """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        analyzer_id = generate_analyzer_id()
+        analyzer_id = await generate_analyzer_id_async(client, "test_content_analyzers_update")
         created_analyzer = False
 
         # Create initial analyzer
@@ -461,7 +463,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         - Clean up if deletion failed
         """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        analyzer_id = generate_analyzer_id()
+        analyzer_id = await generate_analyzer_id_async(client, "test_content_analyzers_delete")
         created_analyzer = False
 
         # Create a simple analyzer for deletion test
@@ -551,7 +553,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         - Clean up created analyzer
         """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        analyzer_id = generate_analyzer_id()
+        analyzer_id = await generate_analyzer_id_async(client, "test_content_analyzers_begin_analyze_url")
         created_analyzer = False
 
         # Create a simple analyzer for URL analysis
@@ -611,7 +613,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         - Clean up created analyzer
         """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        analyzer_id = generate_analyzer_id()
+        analyzer_id = await generate_analyzer_id_async(client, "test_content_analyzers_begin_analyze_binary")
         created_analyzer = False
 
         # Create a simple analyzer for binary analysis
@@ -671,7 +673,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         - Clean up created analyzer
         """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        analyzer_id = generate_analyzer_id()
+        analyzer_id = await generate_analyzer_id_async(client, "test_content_analyzers_get_result")
         created_analyzer = False
 
         # Create a simple analyzer for binary analysis
@@ -725,7 +727,8 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             assert hasattr(operation_status, 'id'), "Operation status should have id property"
             assert hasattr(operation_status, 'status'), "Operation status should have status property"
             assert hasattr(operation_status, 'result'), "Operation status should have result property"
-            assert operation_status.id == analysis_operation_id, f"Operation status ID should match operation ID {analysis_operation_id}"
+            if is_live():
+                assert operation_status.id == analysis_operation_id, f"Operation status ID should match operation ID {analysis_operation_id}"
             assert operation_status.status == "Succeeded", f"Operation status should be Succeeded, got {operation_status.status}"
             
             # The actual analysis result is in operation_status.result
@@ -748,7 +751,6 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             # Always clean up the created analyzer, even if the test fails
             await delete_analyzer_and_assert(client, analyzer_id, created_analyzer)
 
-    @pytest.mark.live_test_only
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_content_analyzers_get_result_file(self, contentunderstanding_endpoint):
@@ -762,8 +764,11 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         - Verify image file content is returned and save to test_output
         - Clean up created analyzer
         """
+        if not is_live_and_not_recording():
+            pytest.skip("This test requires live mode to run, as it involves large video files that are too big for test proxy to record")
+            return  # Skip this test in playback mode as it requires large video files is too big for test proxy to record
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        analyzer_id = generate_analyzer_id()
+        analyzer_id = await generate_analyzer_id_async(client, "test_content_analyzers_get_result_file")
         created_analyzer = False
 
         # Create a marketing video analyzer based on the template

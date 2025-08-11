@@ -16,6 +16,7 @@ from azure.ai.contentunderstanding.models import ContentAnalyzer, ContentAnalyze
 from azure.ai.contentunderstanding.models import GenerationMethod, FieldType, AnalysisMode, ProcessingLocation
 from azure.ai.contentunderstanding.models import ContentClassifier, ClassifierCategory
 
+from devtools_testutils import is_live
 
 class PollerType(Enum):
     """Enum to distinguish different types of pollers for operation ID extraction."""
@@ -25,22 +26,33 @@ class PollerType(Enum):
     CLASSIFY_CALL = "classify_call"
 
 
-def generate_analyzer_id() -> str:
+def generate_analyzer_id(client, test_name: str) -> str:
     """Generate a unique analyzer ID with current date, time, and GUID."""
-    now = datetime.now()
-    date_str = now.strftime("%Y%m%d")
-    time_str = now.strftime("%H%M%S")
-    guid = str(uuid.uuid4()).replace("-", "")[:8]
-    return f"python-sdk-test-analyzer-{date_str}-{time_str}-{guid}"
+    analyzer_id = f"python-sdk-test-analyzer-{test_name}"
+    if is_live():
+        client.content_analyzers.delete(analyzer_id=analyzer_id)
+    # # Verify deletion
+    # assert not await analyzer_in_list_async(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
+    # print(f"Analyzer {analyzer_id} is deleted successfully")
+    return analyzer_id
 
 
-def generate_classifier_id() -> str:
-    """Generate a unique classifier ID with current date, time, and GUID."""
-    now = datetime.now()
-    date_str = now.strftime("%Y%m%d")
-    time_str = now.strftime("%H%M%S")
-    guid = str(uuid.uuid4()).replace("-", "")[:8]
-    return f"python-sdk-test-classifier-{date_str}-{time_str}-{guid}"
+def generate_classifier_id_sync(client, test_name: str) -> str:
+    """Generate a unique classifier ID with current date, time, and GUID (sync version)."""
+    classifier_id = f"python-sdk-test-classifier-{test_name}"
+    if is_live():
+        # Ensure to clean up any left-over resources from any failed tests
+        client.content_classifiers.delete(classifier_id=classifier_id)
+    return classifier_id
+
+
+async def generate_classifier_id_async(client, test_name: str) -> str:
+    """Generate a unique classifier ID with current date, time, and GUID (async version)."""
+    classifier_id = f"python-sdk-test-classifier-{test_name}"
+    if is_live():
+        # Ensure to clean up any left-over resources from any failed tests
+        await client.content_classifiers.delete(classifier_id=classifier_id)
+    return classifier_id
 
 
 def extract_operation_id_from_poller(poller: Any, poller_type: PollerType) -> str:

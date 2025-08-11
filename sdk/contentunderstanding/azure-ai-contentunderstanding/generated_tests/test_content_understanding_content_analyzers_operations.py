@@ -25,6 +25,8 @@ from test_helpers import (
     PollerType
 )
 
+from devtools_testutils import is_live, is_live_and_not_recording
+
 
 def analyzer_in_list_sync(client, analyzer_id: str) -> bool:
     """Check if an analyzer with the given ID exists in the list of analyzers (sync version).
@@ -87,8 +89,11 @@ def create_analyzer_and_assert_sync(
     # Check that the operation status has expected fields
     assert hasattr(status_response, 'status') or hasattr(status_response, 'operation_status')
     assert hasattr(status_response, 'id')
-    assert status_response.id == operation_id
-    
+    if is_live():
+        # Only verify the operation_id during live testing (and not in recorded tests) as
+        # operation_id is sanitized in recording.
+        assert status_response.id == operation_id
+
     # Wait for the operation to complete
     print(f"  Waiting for analyzer {analyzer_id} to be created")
     response = poller.result()
@@ -240,7 +245,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         - Clean up created analyzer
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        analyzer_id = generate_analyzer_id()
+        analyzer_id = generate_analyzer_id(client, "test_content_analyzers_get_operation_status")
         created_analyzer = False
 
         content_analyzer = new_simple_content_analyzer_object(
@@ -277,7 +282,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         - Clean up created analyzer
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        analyzer_id = generate_analyzer_id()
+        analyzer_id = generate_analyzer_id(client, "test_content_analyzers_begin_create_with_content_analyzer")
         created_analyzer = False
 
         content_analyzer = new_simple_content_analyzer_object(
@@ -305,7 +310,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         - Clean up created analyzer
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        analyzer_id = generate_analyzer_id()
+        analyzer_id = generate_analyzer_id(client, "test_content_analyzers_begin_create_with_json")
         created_analyzer = False
 
         try:
@@ -361,7 +366,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         - Clean up created analyzer
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        analyzer_id = generate_analyzer_id()
+        analyzer_id = generate_analyzer_id(client, "test_content_analyzers_update")
         created_analyzer = False
 
         # Create initial analyzer
@@ -459,7 +464,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         - Clean up if deletion failed
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        analyzer_id = generate_analyzer_id()
+        analyzer_id = generate_analyzer_id(client, "test_content_analyzers_delete")
         created_analyzer = False
 
         # Create a simple analyzer for deletion test
@@ -549,7 +554,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         - Clean up created analyzer
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        analyzer_id = generate_analyzer_id()
+        analyzer_id = generate_analyzer_id(client, "test_content_analyzers_begin_analyze_url")
         created_analyzer = False
 
         # Create a simple analyzer for URL analysis
@@ -609,7 +614,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         - Clean up created analyzer
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        analyzer_id = generate_analyzer_id()
+        analyzer_id = generate_analyzer_id(client, "test_content_analyzers_begin_analyze_binary")
         created_analyzer = False
 
         # Create a simple analyzer for binary analysis
@@ -669,7 +674,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         - Clean up created analyzer
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        analyzer_id = generate_analyzer_id()
+        analyzer_id = generate_analyzer_id(client, "test_content_analyzers_get_result")
         created_analyzer = False
 
         # Create a simple analyzer for binary analysis
@@ -723,7 +728,8 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
             assert hasattr(operation_status, 'id'), "Operation status should have id property"
             assert hasattr(operation_status, 'status'), "Operation status should have status property"
             assert hasattr(operation_status, 'result'), "Operation status should have result property"
-            assert operation_status.id == analysis_operation_id, f"Operation status ID should match operation ID {analysis_operation_id}"
+            if is_live():
+                assert operation_status.id == analysis_operation_id, f"Operation status ID should match operation ID {analysis_operation_id}"
             assert operation_status.status == "Succeeded", f"Operation status should be Succeeded, got {operation_status.status}"
             
             # The actual analysis result is in operation_status.result
@@ -746,7 +752,6 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
             # Always clean up the created analyzer, even if the test fails
             delete_analyzer_and_assert_sync(client, analyzer_id, created_analyzer)
 
-    @pytest.mark.live_test_only
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
     def test_content_analyzers_get_result_file(self, contentunderstanding_endpoint):
@@ -760,8 +765,10 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         - Verify image file content is returned and save to test_output
         - Clean up created analyzer
         """
+        if not is_live_and_not_recording():
+            return  # Skip this test in playback mode as it requires large video files is too big for test proxy to record
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        analyzer_id = generate_analyzer_id()
+        analyzer_id = generate_analyzer_id(client, "test_content_analyzers_get_result_file")
         created_analyzer = False
 
         # Create a marketing video analyzer based on the template

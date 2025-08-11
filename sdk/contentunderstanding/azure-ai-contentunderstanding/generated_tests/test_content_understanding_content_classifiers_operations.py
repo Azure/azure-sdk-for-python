@@ -9,10 +9,11 @@ import pytest
 import os
 from typing import Tuple, Union, Dict, Any, Optional
 from devtools_testutils import recorded_by_proxy
+from devtools_testutils import is_live
 from testpreparer import ContentUnderstandingClientTestBase, ContentUnderstandingPreparer
 from azure.ai.contentunderstanding.models import ContentClassifier
 from test_helpers import (
-    generate_classifier_id,
+    generate_classifier_id_sync,
     generate_analyzer_id,
     extract_operation_id_from_poller,
     new_simple_classifier_schema,
@@ -86,7 +87,8 @@ def create_classifier_and_assert_sync(
     # Check that the operation status has expected fields
     assert hasattr(status_response, 'status') or hasattr(status_response, 'operation_status')
     assert hasattr(status_response, 'id')
-    assert status_response.id == operation_id
+    if is_live():
+        assert status_response.id == operation_id
     
     # Wait for the operation to complete
     print(f"  Waiting for classifier {classifier_id} to be created")
@@ -147,7 +149,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
         - Clean up created classifier
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        classifier_id = generate_classifier_id()
+        classifier_id = generate_classifier_id_sync(client, "test_content_classifiers_get_operation_status")
         created_classifier = False
 
         # Create a simple classifier for operation status test
@@ -175,7 +177,8 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
             
             # Check that the operation status has expected fields
             assert hasattr(response, 'id')
-            assert response.id == operation_id
+            if is_live():
+                assert response.id == operation_id
             assert hasattr(response, 'status') or hasattr(response, 'operation_status')
             
             # The operation should be completed since we waited for it in create_classifier_and_assert_sync
@@ -199,7 +202,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
         - Clean up created classifier
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        classifier_id = generate_classifier_id()
+        classifier_id = generate_classifier_id_sync(client, "test_content_classifiers_begin_create_or_replace")
         created_classifier = False
 
         # Create a simple classifier
@@ -233,7 +236,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
         - Clean up created classifier
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        classifier_id = generate_classifier_id()
+        classifier_id = generate_classifier_id_sync(client, "test_content_classifiers_update")
         created_classifier = False
 
         # Create initial classifier
@@ -310,7 +313,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
         - Clean up created classifier
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        classifier_id = generate_classifier_id()
+        classifier_id = generate_classifier_id_sync(client, "test_content_classifiers_get")
         created_classifier = False
 
         # Create a simple classifier for get test
@@ -352,7 +355,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
         - Clean up if deletion failed
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        classifier_id = generate_classifier_id()
+        classifier_id = generate_classifier_id_sync(client, "test_content_classifiers_delete")
         created_classifier = False
 
         # Create a simple classifier for deletion test
@@ -409,7 +412,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
         result = [r for r in response]
         
         # Verify we get at least one classifier in the list (after creating one)
-        classifier_id = generate_classifier_id()
+        classifier_id = generate_classifier_id_sync(client, "test_content_classifiers_list")
         created_classifier = False
 
         # Create a simple classifier to ensure we have at least one in the list
@@ -462,7 +465,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
         - Clean up created classifier
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        classifier_id = generate_classifier_id()
+        classifier_id = generate_classifier_id_sync(client, "test_content_classifiers_begin_classify")
         created_classifier = False
 
         # Create a simple classifier for classification test
@@ -529,7 +532,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
         - Clean up created classifier
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        classifier_id = generate_classifier_id()
+        classifier_id = generate_classifier_id_sync(client, "test_content_classifiers_begin_classify_binary")
         created_classifier = False
 
         # Create a simple classifier for binary classification test
@@ -599,7 +602,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
         - Clean up created classifier
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        classifier_id = generate_classifier_id()
+        classifier_id = generate_classifier_id_sync(client, "test_content_classifiers_get_result")
         created_classifier = False
 
         # Create a simple classifier for get result test
@@ -658,7 +661,8 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
             assert hasattr(operation_status, 'id'), "Operation status should have id property"
             assert hasattr(operation_status, 'status'), "Operation status should have status property"
             assert hasattr(operation_status, 'result'), "Operation status should have result property"
-            assert operation_status.id == classify_operation_id, f"Operation status ID should match operation ID {classify_operation_id}"
+            if is_live():
+                assert operation_status.id == classify_operation_id, f"Operation status ID should match operation ID {classify_operation_id}"
             assert operation_status.status == "Succeeded", f"Operation status should be Succeeded, got {operation_status.status}"
             
             # Check the class name of the operation status

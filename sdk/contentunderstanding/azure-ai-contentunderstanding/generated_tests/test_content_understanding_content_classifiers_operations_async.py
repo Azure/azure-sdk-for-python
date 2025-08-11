@@ -9,11 +9,12 @@ import pytest
 import os
 from typing import Tuple, Union, Dict, Any, Optional
 from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import is_live
 from testpreparer import ContentUnderstandingPreparer
 from testpreparer_async import ContentUnderstandingClientTestBaseAsync
 from azure.ai.contentunderstanding.models import ContentClassifier
 from test_helpers import (
-    generate_classifier_id,
+    generate_classifier_id_async,
     generate_analyzer_id,
     extract_operation_id_from_poller,
     new_simple_classifier_schema,
@@ -87,7 +88,8 @@ async def create_classifier_and_assert_async(
     # Check that the operation status has expected fields
     assert hasattr(status_response, 'status') or hasattr(status_response, 'operation_status')
     assert hasattr(status_response, 'id')
-    assert status_response.id == operation_id
+    if is_live():
+        assert status_response.id == operation_id
     
     # Wait for the operation to complete
     print(f"  Waiting for classifier {classifier_id} to be created")
@@ -149,7 +151,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
         - Clean up created classifier
         """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        classifier_id = generate_classifier_id()
+        classifier_id = await generate_classifier_id_async(client, "test_content_classifiers_get_operation_status")
         created_classifier = False
 
         classifier_schema = new_simple_classifier_schema(
@@ -163,14 +165,28 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
             poller, operation_id = await create_classifier_and_assert_async(client, classifier_id, classifier_schema)
             created_classifier = True
 
-            # Check final operation status after completion
-            final_status_response = await client.content_classifiers.get_operation_status(
+            # Get operation status
+            print(f"Getting operation status for operation_id: {operation_id}")
+            response = await client.content_classifiers.get_operation_status(
                 classifier_id=classifier_id,
                 operation_id=operation_id,
             )
+
+            # Verify the operation status response
+            assert response is not None
+            print(f"Operation status response: {response}")
             
-            assert final_status_response is not None
-            print(f"Final operation status: {final_status_response}")
+            # Check that the operation status has expected fields
+            assert hasattr(response, 'id')
+            if is_live():
+                assert response.id == operation_id
+            assert hasattr(response, 'status') or hasattr(response, 'operation_status')
+            
+            # The operation should be completed since we waited for it in create_classifier_and_assert_async
+            if hasattr(response, 'status'):
+                assert response.status in ["Succeeded", "Completed"]
+            elif hasattr(response, 'operation_status'):
+                assert response.operation_status in ["Succeeded", "Completed"]
 
         finally:
             # Always clean up the created classifier, even if the test fails
@@ -186,7 +202,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
         - Clean up created classifier
         """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        classifier_id = generate_classifier_id()
+        classifier_id = await generate_classifier_id_async(client, "test_content_classifiers_begin_create_or_replace")
         created_classifier = False
 
         classifier_schema = new_simple_classifier_schema(
@@ -216,7 +232,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
         - Clean up created classifier
         """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        classifier_id = generate_classifier_id()
+        classifier_id = await generate_classifier_id_async(client, "test_content_classifiers_update")
         created_classifier = False
 
         # Create initial classifier
@@ -293,7 +309,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
         
         # First, create a classifier to get
-        classifier_id = generate_classifier_id()
+        classifier_id = await generate_classifier_id_async(client, "test_content_classifiers_get")
         created_classifier = False
 
         classifier_schema = new_simple_classifier_schema(
@@ -334,7 +350,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
         - Clean up if deletion failed
         """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        classifier_id = generate_classifier_id()
+        classifier_id = await generate_classifier_id_async(client, "test_content_classifiers_delete")
         created_classifier = False
 
         # Create a simple classifier for deletion test
@@ -391,7 +407,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
         result = [r async for r in response]
         
         # Verify we get at least one classifier in the list (after creating one)
-        classifier_id = generate_classifier_id()
+        classifier_id = await generate_classifier_id_async(client, "test_content_classifiers_list")
         created_classifier = False
 
         classifier_schema = new_simple_classifier_schema(
@@ -456,7 +472,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
         - Clean up created classifier
         """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        classifier_id = generate_classifier_id()
+        classifier_id = await generate_classifier_id_async(client, "test_content_classifiers_begin_classify")
         created_classifier = False
 
         # Create a simple classifier for URL classification
@@ -515,7 +531,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
         - Clean up created classifier
         """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        classifier_id = generate_classifier_id()
+        classifier_id = await generate_classifier_id_async(client, "test_content_classifiers_begin_classify_binary")
         created_classifier = False
 
         # Create a simple classifier for binary classification
@@ -575,7 +591,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
         - Clean up created classifier
         """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        classifier_id = generate_classifier_id()
+        classifier_id = await generate_classifier_id_async(client, "test_content_classifiers_get_result")
         created_classifier = False
 
         # Create a simple classifier for binary classification
@@ -629,7 +645,8 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
             assert hasattr(operation_status, 'id'), "Operation status should have id property"
             assert hasattr(operation_status, 'status'), "Operation status should have status property"
             assert hasattr(operation_status, 'result'), "Operation status should have result property"
-            assert operation_status.id == classification_operation_id, f"Operation status ID should match operation ID {classification_operation_id}"
+            if is_live():
+                assert operation_status.id == classification_operation_id, f"Operation status ID should match operation ID {classification_operation_id}"
             assert operation_status.status == "Succeeded", f"Operation status should be Succeeded, got {operation_status.status}"
             
             # Check the class name of the operation status

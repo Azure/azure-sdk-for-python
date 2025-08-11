@@ -10,7 +10,8 @@ from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.core.credentials import AzureKeyCredential
 from azure.identity import DefaultAzureCredential
 from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
+import functools
 
 
 def get_content_understanding_credential_async():
@@ -34,4 +35,11 @@ class ContentUnderstandingClientTestBaseAsync(AzureRecordedTestCase):
             ContentUnderstandingClient,
             credential=credential,
             endpoint=endpoint,
+            connection_verify=False,  # Disable SSL verification for localhost
         )
+
+ContentUnderstandingPreparer = functools.partial(
+    PowerShellPreparer,
+    "contentunderstanding",
+    contentunderstanding_endpoint="https://fake_contentunderstanding_endpoint.services.ai.azure.com/",
+)
