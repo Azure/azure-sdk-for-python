@@ -944,7 +944,7 @@ class TestStorageDirectory(StorageRecordedTestCase):
         directory.create_subdirectory("subdir1")
         directory.create_subdirectory("subdir2")
         directory.upload_file("file1", "data1")
-        
+
         snapshot = share_client.create_snapshot()
         directory.create_subdirectory("subdir3")
         directory.upload_file("file2", "data2")
@@ -1452,6 +1452,29 @@ class TestStorageDirectory(StorageRecordedTestCase):
         assert server_returned_permission == user_given_permission_binary
 
         new_directory_client.delete_directory()
+
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_create_directory_semantics(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+
+        directory = share_client.create_directory('dir1', file_property_semantics=None)
+        props = directory.get_directory_properties()
+        assert props is not None
+
+        directory = share_client.create_directory('dir2', file_property_semantics='New')
+        props = directory.get_directory_properties()
+        assert props is not None
+
+        directory = share_client.create_directory(
+            'dir3', file_property_semantics='Restore', file_permission=TEST_FILE_PERMISSIONS
+        )
+        props = directory.get_directory_properties()
+        assert props is not None
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
