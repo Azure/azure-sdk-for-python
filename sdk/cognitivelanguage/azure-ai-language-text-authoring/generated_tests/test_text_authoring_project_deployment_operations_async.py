@@ -81,29 +81,3 @@ class TestTextAuthoringProjectDeploymentOperationsAsync(TextAuthoringProjectClie
 
         # please add some check logic here by yourself
         # ...
-
-    @TextAuthoringProjectPreparer()
-    @recorded_by_proxy_async
-    async def test_deployment_get_deployment_delete_from_resources_status(self, textauthoringproject_endpoint):
-        client = self.create_async_client(endpoint=textauthoringproject_endpoint)
-        response = await client.deployment.get_deployment_delete_from_resources_status(
-            project_name="str",
-            deployment_name="str",
-            job_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @TextAuthoringProjectPreparer()
-    @recorded_by_proxy_async
-    async def test_deployment_get_deployment_status(self, textauthoringproject_endpoint):
-        client = self.create_async_client(endpoint=textauthoringproject_endpoint)
-        response = await client.deployment.get_deployment_status(
-            project_name="str",
-            deployment_name="str",
-            job_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...

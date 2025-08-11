@@ -154,27 +154,3 @@ class TestTextAuthoringAsync(TextAuthoringClientTestBaseAsync):
 
         # please add some check logic here by yourself
         # ...
-
-    @TextAuthoringPreparer()
-    @recorded_by_proxy_async
-    async def test_get_export_status(self, textauthoring_endpoint):
-        client = self.create_async_client(endpoint=textauthoring_endpoint)
-        response = await client.get_export_status(
-            project_name="str",
-            job_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @TextAuthoringPreparer()
-    @recorded_by_proxy_async
-    async def test_get_import_status(self, textauthoring_endpoint):
-        client = self.create_async_client(endpoint=textauthoring_endpoint)
-        response = await client.get_import_status(
-            project_name="str",
-            job_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...

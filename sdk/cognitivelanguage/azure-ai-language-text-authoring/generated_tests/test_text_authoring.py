@@ -147,27 +147,3 @@ class TestTextAuthoring(TextAuthoringClientTestBase):
 
         # please add some check logic here by yourself
         # ...
-
-    @TextAuthoringPreparer()
-    @recorded_by_proxy
-    def test_get_export_status(self, textauthoring_endpoint):
-        client = self.create_client(endpoint=textauthoring_endpoint)
-        response = client.get_export_status(
-            project_name="str",
-            job_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @TextAuthoringPreparer()
-    @recorded_by_proxy
-    def test_get_import_status(self, textauthoring_endpoint):
-        client = self.create_client(endpoint=textauthoring_endpoint)
-        response = client.get_import_status(
-            project_name="str",
-            job_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...

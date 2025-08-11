@@ -93,48 +93,12 @@ class TestTextAuthoringProjectProjectOperations(TextAuthoringProjectClientTestBa
 
     @TextAuthoringProjectPreparer()
     @recorded_by_proxy
-    def test_project_get_assign_deployment_resources_status(self, textauthoringproject_endpoint):
-        client = self.create_client(endpoint=textauthoringproject_endpoint)
-        response = client.project.get_assign_deployment_resources_status(
-            project_name="str",
-            job_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @TextAuthoringProjectPreparer()
-    @recorded_by_proxy
-    def test_project_get_unassign_deployment_resources_status(self, textauthoringproject_endpoint):
-        client = self.create_client(endpoint=textauthoringproject_endpoint)
-        response = client.project.get_unassign_deployment_resources_status(
-            project_name="str",
-            job_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @TextAuthoringProjectPreparer()
-    @recorded_by_proxy
     def test_project_begin_swap_deployments(self, textauthoringproject_endpoint):
         client = self.create_client(endpoint=textauthoringproject_endpoint)
         response = client.project.begin_swap_deployments(
             project_name="str",
             body={"firstDeploymentName": "str", "secondDeploymentName": "str"},
         ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @TextAuthoringProjectPreparer()
-    @recorded_by_proxy
-    def test_project_get_swap_deployments_status(self, textauthoringproject_endpoint):
-        client = self.create_client(endpoint=textauthoringproject_endpoint)
-        response = client.project.get_swap_deployments_status(
-            project_name="str",
-            job_id="str",
-        )
 
         # please add some check logic here by yourself
         # ...
@@ -152,35 +116,12 @@ class TestTextAuthoringProjectProjectOperations(TextAuthoringProjectClientTestBa
 
     @TextAuthoringProjectPreparer()
     @recorded_by_proxy
-    def test_project_get_project_deletion_status(self, textauthoringproject_endpoint):
-        client = self.create_client(endpoint=textauthoringproject_endpoint)
-        response = client.project.get_project_deletion_status(
-            job_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @TextAuthoringProjectPreparer()
-    @recorded_by_proxy
     def test_project_begin_export(self, textauthoringproject_endpoint):
         client = self.create_client(endpoint=textauthoringproject_endpoint)
         response = client.project.begin_export(
             project_name="str",
             string_index_type="str",
         ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @TextAuthoringProjectPreparer()
-    @recorded_by_proxy
-    def test_project_get_export_status(self, textauthoringproject_endpoint):
-        client = self.create_client(endpoint=textauthoringproject_endpoint)
-        response = client.project.get_export_status(
-            project_name="str",
-            job_id="str",
-        )
 
         # please add some check logic here by yourself
         # ...
@@ -219,18 +160,6 @@ class TestTextAuthoringProjectProjectOperations(TextAuthoringProjectClientTestBa
 
     @TextAuthoringProjectPreparer()
     @recorded_by_proxy
-    def test_project_get_copy_project_status(self, textauthoringproject_endpoint):
-        client = self.create_client(endpoint=textauthoringproject_endpoint)
-        response = client.project.get_copy_project_status(
-            project_name="str",
-            job_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @TextAuthoringProjectPreparer()
-    @recorded_by_proxy
     def test_project_begin_train(self, textauthoringproject_endpoint):
         client = self.create_client(endpoint=textauthoringproject_endpoint)
         response = client.project.begin_train(
@@ -249,18 +178,6 @@ class TestTextAuthoringProjectProjectOperations(TextAuthoringProjectClientTestBa
                 "evaluationOptions": {"kind": "str", "testingSplitPercentage": 0, "trainingSplitPercentage": 0},
             },
         ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @TextAuthoringProjectPreparer()
-    @recorded_by_proxy
-    def test_project_get_training_status(self, textauthoringproject_endpoint):
-        client = self.create_client(endpoint=textauthoringproject_endpoint)
-        response = client.project.get_training_status(
-            project_name="str",
-            job_id="str",
-        )
 
         # please add some check logic here by yourself
         # ...

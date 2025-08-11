@@ -56,19 +56,6 @@ class TestTextAuthoringProjectExportedModelOperationsAsync(TextAuthoringProjectC
 
     @TextAuthoringProjectPreparer()
     @recorded_by_proxy_async
-    async def test_exported_model_get_exported_model_job_status(self, textauthoringproject_endpoint):
-        client = self.create_async_client(endpoint=textauthoringproject_endpoint)
-        response = await client.exported_model.get_exported_model_job_status(
-            project_name="str",
-            exported_model_name="str",
-            job_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @TextAuthoringProjectPreparer()
-    @recorded_by_proxy_async
     async def test_exported_model_get_exported_model_manifest(self, textauthoringproject_endpoint):
         client = self.create_async_client(endpoint=textauthoringproject_endpoint)
         response = await client.exported_model.get_exported_model_manifest(
