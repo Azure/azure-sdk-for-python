@@ -89,7 +89,7 @@ async def main():
                     
                     citation = (
                         vector_store_files.get(
-                            annotation.file_citation.file_id,  annotation.file_citation.file_id)
+                            annotation.file_citation.file_id, annotation.file_citation.file_id)
                     )
                     last_text = last_text.replace(annotation.text, f" [{citation}]")
                 print(f"{msg.role}: {last_text}")

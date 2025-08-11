@@ -89,12 +89,13 @@ class TestAgentClientBase(AzureRecordedTestCase):
 
         :param message: The message to look for annotations.
         :param uri_annotation: The annotation to look for.
-        :return: 
+        :return:  True if the message contains the required URL annotation.
+        :rtype: bool
         """
         url_annotations = message.url_citation_annotations
         if url_annotations:
             for url in url_annotations:
-                if ((uri_annotation.url == '*' and  url.url_citation.url) or url.url_citation.url == uri_annotation.url) and\
+                if ((uri_annotation.url == '*' and url.url_citation.url) or url.url_citation.url == uri_annotation.url) and\
                   ((uri_annotation.title == '*' and url.url_citation.title) or url.url_citation.title == uri_annotation.title):
                     return True
         return False
@@ -110,6 +111,8 @@ class TestAgentClientBase(AzureRecordedTestCase):
 
         :param message: The message to look for annotations.
         :param file_annotation: The annotation to look for.
+        :return: True if the message contains the required file annotation, otherwise False.
+        :rtype: bool
         """
         file_annotations = message.file_citation_annotations
         if file_annotations:

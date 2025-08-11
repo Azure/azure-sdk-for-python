@@ -3287,7 +3287,7 @@ class TestAgentClient(TestAgentClientBase):
         for fle in client.vector_store_files.list(vector_store.id):
             # We have only one file in vector store.
             file_id = fle.id
-        assert file_id is  not None, "No files were found in the vector store."
+        assert file_id is not None, "No files were found in the vector store."
         return FileSearchTool(vector_store_ids=[vector_store.id]), file_id
 
     @agentClientPreparer()
@@ -3466,7 +3466,7 @@ class TestAgentClient(TestAgentClientBase):
         :param specific_message_text: The specific text to search in the messages. Must be all lower-case.
         :param minimal_text_length: The minimal length of a text.
         :param uri_annotation: The URI annotation, which have to present in response.
-        :param file_annotation: The file annotation, which have to present in response.a
+        :param file_annotation: The file annotation, which have to present in response.
         """
         if headers is None:
             headers = {}

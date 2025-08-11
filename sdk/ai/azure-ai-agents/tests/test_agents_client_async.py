@@ -3109,7 +3109,7 @@ class TestAgentClientAsync(TestAgentClientBase):
         async for fle in client.vector_store_files.list(vector_store.id):
             # We have only one file in vector store.
             file_id = fle.id
-        assert file_id is  not None, "No files were found in the vector store."
+        assert file_id is not None, "No files were found in the vector store."
         return FileSearchTool(vector_store_ids=[vector_store.id]), file_id
 
     @agentClientPreparer()
