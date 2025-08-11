@@ -23,6 +23,7 @@ from ._evaluators._protected_material import ProtectedMaterialEvaluator
 from ._evaluators._qa import QAEvaluator
 from ._evaluators._response_completeness import ResponseCompletenessEvaluator
 from ._evaluators._task_adherence import TaskAdherenceEvaluator
+from ._evaluators._task_success import TaskSuccessEvaluator
 from ._evaluators._relevance import RelevanceEvaluator
 from ._evaluators._retrieval import RetrievalEvaluator
 from ._evaluators._rouge import RougeScoreEvaluator, RougeType
@@ -104,6 +105,7 @@ __all__ = [
     "GroundednessProEvaluator",
     "ResponseCompletenessEvaluator",
     "TaskAdherenceEvaluator",
+    "TaskSuccessEvaluator",
     "IntentResolutionEvaluator",
     "RelevanceEvaluator",
     "SimilarityEvaluator",
