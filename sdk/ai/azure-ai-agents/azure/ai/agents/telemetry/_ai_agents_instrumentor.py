@@ -128,8 +128,8 @@ class AIAgentsInstrumentor:
           of the traces or not. Content in this context refers to chat message content
           and function call tool related function names, function parameter names and
           values. `True` will enable content recording, `False` will disable it. If no value
-          is provided, then the value read from the environment variable
-          OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT or
+          is provided, then the value read from environment variables
+          OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT and
           AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED is used. The latter is supported
           for legacy reasons. New code should use the former, which is defined by OTEL.
           If the environment variable is not found, then the value will default to `False`.
@@ -193,8 +193,8 @@ class _AIAgentsInstrumentorPreview:
           of the traces or not. Content in this context refers to chat message content
           and function call tool related function names, function parameter names and
           values. `True` will enable content recording, `False` will disable it. If no value
-          is provided, then the value read from the environment variable
-          OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT or
+          is provided, then the value read from environment variables
+          OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT and
           AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED is used. The latter is supported
           for legacy reasons. New code should use the former, which is defined by OTEL.
           If the environment variable is not found, then the value will default to `False`.
