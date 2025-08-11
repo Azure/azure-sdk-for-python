@@ -126,10 +126,6 @@ def _parse_onesettings_response(response: requests.Response) -> OneSettingsRespo
     status_code = response.status_code
     version = None
 
-    if not response:
-        logger.warning("No settings found in OneSettings response")
-        return OneSettingsResponse(etag, refresh_interval, settings, version)
-
     # Extract headers
     if response.headers:
         etag = response.headers.get("ETag")

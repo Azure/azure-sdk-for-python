@@ -189,8 +189,13 @@ class TestConfigurationManager(unittest.TestCase):
         # Version cache should not be updated
         self.assertEqual(manager._version_cache, 10)
 
-    def test_get_python_configuration_call(self):
+    @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
+    def test_get_python_configuration_call(self, mock_worker_class):
         """Test _update_configuration_and_get_refresh_interval function calls manager correctly."""
+        # Configure the mock worker
+        mock_worker_instance = Mock()
+        mock_worker_class.return_value = mock_worker_instance
+        
         with patch.object(_ConfigurationManager, 'get_configuration_and_refresh_interval') as mock_get_config:
             mock_get_config.return_value = 1800.0
             
