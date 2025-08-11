@@ -370,10 +370,8 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 )
             else:
                 # Force a refresh to make sure secrets are up to date
-                configuration_settings, self._refresh_on = (
-                    await client.load_configuration_settings(
-                        self._selects, self._refresh_on, headers=headers, **inner_kwargs
-                    )
+                configuration_settings, self._refresh_on = await client.load_configuration_settings(
+                    self._selects, self._refresh_on, headers=headers, **inner_kwargs
                 )
 
             configuration_settings_processed: Dict[str, Any] = {}
