@@ -84,7 +84,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     _LLM_SCORE_KEY = "tool_calls_success_level"
 
-    id = "id"
+    id = "azureai://built-in/evaluators/tool_call_accuracy"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
@@ -267,39 +267,6 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             f"{self._result_key}_reason": error_message,
             "details": {},
         }
-
-    def _parse_tools_from_response(self, response):
-        """Parse the response to extract tool calls and results.
-        :param response: The response to parse.
-        :type response: Union[str, List[dict]]
-        :return: List of tool calls extracted from the response.
-        :rtype: List[dict]
-        """
-        tool_calls = []
-        tool_results_map = {}
-        if isinstance(response, list):
-            for message in response:
-                # Extract tool calls from assistant messages
-                if message.get("role") == "assistant" and isinstance(message.get("content"), list):
-                    for content_item in message.get("content"):
-                        if isinstance(content_item, dict) and content_item.get("type") == "tool_call":
-                            tool_calls.append(content_item)
-
-                # Extract tool results from tool messages
-                elif message.get("role") == "tool" and message.get("tool_call_id"):
-                    tool_call_id = message.get("tool_call_id")
-                    if isinstance(message.get("content"), list) and len(message.get("content")) > 0:
-                        result_content = message.get("content")[0]
-                        if isinstance(result_content, dict) and result_content.get("type") == "tool_result":
-                            tool_results_map[tool_call_id] = result_content
-
-        # Attach results to their corresponding calls
-        for tool_call in tool_calls:
-            tool_call_id = tool_call.get("tool_call_id")
-            if tool_call_id in tool_results_map:
-                tool_call["tool_result"] = tool_results_map[tool_call_id]["tool_result"]
-
-        return tool_calls
 
     def _extract_needed_tool_definitions(self, tool_calls, tool_definitions):
         """Extract the tool definitions that are needed for the provided tool calls.

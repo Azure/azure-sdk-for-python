@@ -9,12 +9,10 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import List
 from ._patch_datasets_async import DatasetsOperations
-from ._patch_inference_async import InferenceOperations
 from ._patch_telemetry_async import TelemetryOperations
 from ._patch_connections_async import ConnectionsOperations
 
 __all__: List[str] = [
-    "InferenceOperations",
     "TelemetryOperations",
     "DatasetsOperations",
     "ConnectionsOperations",

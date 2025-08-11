@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from azure.ai.agents.models._models import RunStepConnectedAgentToolCall
 
 """
 DESCRIPTION:
@@ -154,11 +155,12 @@ with project_client:
     for run_step in agents_client.run_steps.list(thread_id=thread.id, run_id=run.id, order=ListSortOrder.ASCENDING):
         if isinstance(run_step.step_details, RunStepToolCallDetails):
             for tool_call in run_step.step_details.tool_calls:
-                print(
-                    f"\tAgent: {tool_call._data['connected_agent']['name']} "
-                    f"query: {tool_call._data['connected_agent']['arguments']} ",
-                    f"output: {tool_call._data['connected_agent']['output']}",
-                )
+                if isinstance(tool_call, RunStepConnectedAgentToolCall):
+                    print(
+                        f"\tAgent: {tool_call.connected_agent.name} "
+                        f"query: {tool_call.connected_agent.arguments} ",
+                        f"output: {tool_call.connected_agent.output}",
+                    )
     # [END list_tool_calls]
 
     # [START list_messages]

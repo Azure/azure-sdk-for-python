@@ -36,6 +36,7 @@ To report an issue with the client library, or request additional features, plea
     - [Function call](#create-agent-with-function-call)
     - [Azure Function Call](#create-agent-with-azure-function-call)
     - [OpenAPI](#create-agent-with-openapi)
+    - [Browser Automation](#create-agent-with-browser-automation)
     - [Fabric data](#create-an-agent-with-fabric)
     - [Connected agents](#create-an-agent-using-another-agents)
     - [Deep Research](#create-agent-with-deep-research)
@@ -394,11 +395,11 @@ Here is an example:
 <!-- SNIPPET:sample_agents_deep_research.create_agent_with_deep_research_tool -->
 
 ```python
-conn_id = project_client.connections.get(name=os.environ["BING_RESOURCE_NAME"]).id
+bing_connection = project_client.connections.get(name=os.environ["BING_RESOURCE_NAME"])
 
 # Initialize a Deep Research tool with Bing Connection ID and Deep Research model deployment name
 deep_research_tool = DeepResearchTool(
-    bing_grounding_connection_id=conn_id,
+    bing_grounding_connection_id=bing_connection.id,
     deep_research_model=os.environ["DEEP_RESEARCH_MODEL_DEPLOYMENT_NAME"],
 )
 
@@ -861,6 +862,41 @@ with project_client:
 
 <!-- END SNIPPET -->
 
+### Create Agent with Browser Automation
+
+To enable your Agent to perform automated Browser navigation tasks, you will need the `BrowserAutomationTool`, along with a connection to
+a [Microsoft Playwright Workspace](https://azure.microsoft.com/products/playwright-testing) resource.
+
+Here is an example:
+
+<!-- SNIPPET:sample_agents_browser_automation.create_agent_with_browser_automation -->
+
+```python
+connection_id = os.environ["AZURE_PLAYWRIGHT_CONNECTION_ID"]
+
+# Initialize Browser Automation tool and add the connection id
+browser_automation = BrowserAutomationTool(connection_id=connection_id)
+
+with project_client:
+
+    agents_client = project_client.agents
+
+    # Create a new Agent that has the Browser Automation tool attached.
+    # Note: To add Browser Automation tool to an existing Agent with an `agent_id`, do the following:
+    # agent = agents_client.update_agent(agent_id, tools=browser_automation.definitions)
+    agent = agents_client.create_agent(
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
+        name="my-agent",
+        instructions="""
+            You are an Agent helping with browser automation tasks. 
+            You can answer questions, provide information, and assist with various tasks 
+            related to web browsing using the Browser Automation tool available to you.
+            """,
+        tools=browser_automation.definitions,
+    )
+```
+
+<!-- END SNIPPET -->
 
 ### Create an Agent with Fabric
 
@@ -1041,11 +1077,12 @@ To understand what calls were made by the main agent to the connected ones, we w
 for run_step in agents_client.run_steps.list(thread_id=thread.id, run_id=run.id, order=ListSortOrder.ASCENDING):
     if isinstance(run_step.step_details, RunStepToolCallDetails):
         for tool_call in run_step.step_details.tool_calls:
-            print(
-                f"\tAgent: {tool_call._data['connected_agent']['name']} "
-                f"query: {tool_call._data['connected_agent']['arguments']} ",
-                f"output: {tool_call._data['connected_agent']['output']}",
-            )
+            if isinstance(tool_call, RunStepConnectedAgentToolCall):
+                print(
+                    f"\tAgent: {tool_call.connected_agent.name} "
+                    f"query: {tool_call.connected_agent.arguments} ",
+                    f"output: {tool_call.connected_agent.output}",
+                )
 ```
 
 <!-- END SNIPPET -->

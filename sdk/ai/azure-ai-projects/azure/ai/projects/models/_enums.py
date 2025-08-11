@@ -127,6 +127,13 @@ class DeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Model deployment"""
 
 
+class EvaluationTargetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Allowed types of evaluation targets."""
+
+    MODEL_RESPONSE_GENERATION = "modelResponseGeneration"
+    """Evaluation target that uses a model for response generation."""
+
+
 class IndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of IndexType."""
 
