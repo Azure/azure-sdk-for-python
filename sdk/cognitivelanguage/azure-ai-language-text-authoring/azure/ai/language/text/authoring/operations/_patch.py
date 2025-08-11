@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -19,42 +20,42 @@ from ._operations import (
 )
 
 from ..models import (
-    TextAuthoringAssignDeploymentResourcesDetails,
-    TextAuthoringTrainingJobResult,
-    TextAuthoringCopyProjectDetails,
-    TextAuthoringTrainingJobDetails,
-    TextAuthoringAssignDeploymentResourcesDetails,
-    TextAuthoringUnassignDeploymentResourcesDetails,
-    TextAuthoringSwapDeploymentsDetails,
-    TextAuthoringCopyProjectDetails,
-    TextAuthoringDeploymentResourcesState,
-    TextAuthoringCopyProjectState,
-    TextAuthoringExportProjectState,
-    TextAuthoringProjectMetadata,
-    TextAuthoringProjectDeletionState,
-    TextAuthoringSwapDeploymentsState,
-    TextAuthoringTrainingState,
-    TextAuthoringDeploymentResourcesState,
-    TextAuthoringAssignedDeploymentResource,
-    TextAuthoringProjectDeployment,
-    TextAuthoringExportedTrainedModel,
-    TextAuthoringProjectTrainedModel,
-    TextAuthoringDeleteDeploymentDetails,
-    TextAuthoringCreateDeploymentDetails,
-    TextAuthoringDeploymentDeleteFromResourcesState,
-    TextAuthoringDeploymentState,
-    TextAuthoringExportedModelDetails,
-    TextAuthoringExportedTrainedModel,
-    TextAuthoringExportedModelState,
-    TextAuthoringEvaluationDetails,
-    TextAuthoringEvaluationJobResult,
-    TextAuthoringEvaluationState,
-    TextAuthoringLoadSnapshotState,
-    TextAuthoringProjectTrainedModel,
-    TextAuthoringEvalSummary,
+    AssignDeploymentResourcesDetails,
+    TrainingJobResult,
+    CopyProjectDetails,
+    TrainingJobDetails,
+    AssignDeploymentResourcesDetails,
+    UnassignDeploymentResourcesDetails,
+    SwapDeploymentsDetails,
+    CopyProjectDetails,
+    DeploymentResourcesState,
+    CopyProjectState,
+    ExportProjectState,
+    ProjectMetadata,
+    ProjectDeletionState,
+    SwapDeploymentsState,
+    TrainingState,
+    DeploymentResourcesState,
+    AssignedDeploymentResource,
+    ProjectDeployment,
+    ExportedTrainedModel,
+    ProjectTrainedModel,
+    DeleteDeploymentDetails,
+    CreateDeploymentDetails,
+    DeploymentDeleteFromResourcesState,
+    DeploymentState,
+    ExportedModelDetails,
+    ExportedTrainedModel,
+    ExportedModelState,
+    EvaluationDetails,
+    EvaluationJobResult,
+    EvaluationState,
+    LoadSnapshotState,
+    ProjectTrainedModel,
+    EvalSummary,
     StringIndexType,
-    TextAuthoringDocumentEvalResult,
-    ExportedModelManifest
+    DocumentEvalResult,
+    ExportedModelManifest,
 )
 from azure.core.paging import ItemPaged
 from collections.abc import MutableMapping
@@ -73,7 +74,7 @@ class ProjectOperations(ProjectOperationsGenerated):
     @distributed_trace
     def begin_assign_deployment_resources(  # type: ignore[override]
         self,
-        body: Union[TextAuthoringAssignDeploymentResourcesDetails, JSON, IO[bytes]],
+        body: Union[AssignDeploymentResourcesDetails, JSON, IO[bytes]],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -86,14 +87,14 @@ class ProjectOperations(ProjectOperationsGenerated):
     @distributed_trace
     def begin_cancel_training_job(  # type: ignore[override]
         self, job_id: str, **kwargs: Any
-    ) -> LROPoller[TextAuthoringTrainingJobResult]:
+    ) -> LROPoller[TrainingJobResult]:
         """Cancel a training job without requiring project_name explicitly."""
         return super().begin_cancel_training_job(project_name=self._project_name, job_id=job_id, **kwargs)
 
     @distributed_trace
     def begin_copy_project(  # type: ignore[override]
         self,
-        body: Union[TextAuthoringCopyProjectDetails, JSON, IO[bytes]],
+        body: Union[CopyProjectDetails, JSON, IO[bytes]],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -106,11 +107,11 @@ class ProjectOperations(ProjectOperationsGenerated):
     @distributed_trace
     def begin_train(  # type: ignore[override]
         self,
-        body: Union[TextAuthoringTrainingJobDetails, JSON, IO[bytes]],
+        body: Union[TrainingJobDetails, JSON, IO[bytes]],
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[TextAuthoringTrainingJobResult]:
+    ) -> LROPoller[TrainingJobResult]:
         """Begin training without requiring project_name explicitly."""
         return super().begin_train(project_name=self._project_name, body=body, content_type=content_type, **kwargs)
 
@@ -136,7 +137,7 @@ class ProjectOperations(ProjectOperationsGenerated):
     @distributed_trace
     def begin_swap_deployments(  # type: ignore[override]
         self,
-        body: Union[TextAuthoringSwapDeploymentsDetails, JSON, IO[bytes]] = _Unset,
+        body: Union[SwapDeploymentsDetails, JSON, IO[bytes]] = _Unset,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -148,7 +149,7 @@ class ProjectOperations(ProjectOperationsGenerated):
     @distributed_trace
     def begin_unassign_deployment_resources(  # type: ignore[override]
         self,
-        body: Union[TextAuthoringUnassignDeploymentResourcesDetails, JSON, IO[bytes]] = _Unset,
+        body: Union[UnassignDeploymentResourcesDetails, JSON, IO[bytes]] = _Unset,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -167,7 +168,7 @@ class ProjectOperations(ProjectOperationsGenerated):
         project_kind: Union[str, Any] = _Unset,
         storage_input_container_name: Optional[str] = _Unset,
         **kwargs: Any
-    ) -> TextAuthoringCopyProjectDetails:
+    ) -> CopyProjectDetails:
         return super().copy_project_authorization(
             project_name=self._project_name,
             body=body,
@@ -181,49 +182,47 @@ class ProjectOperations(ProjectOperationsGenerated):
     @distributed_trace
     def get_assign_deployment_resources_status(  # type: ignore[override]
         self, job_id: str, **kwargs: Any
-    ) -> TextAuthoringDeploymentResourcesState:
+    ) -> DeploymentResourcesState:
         return super().get_assign_deployment_resources_status(project_name=self._project_name, job_id=job_id, **kwargs)
 
     @distributed_trace
     def get_copy_project_status(  # type: ignore[override]
         self, job_id: str, **kwargs: Any
-    ) -> TextAuthoringCopyProjectState:
+    ) -> CopyProjectState:
         return super().get_copy_project_status(project_name=self._project_name, job_id=job_id, **kwargs)
 
     @distributed_trace
     def get_export_status(  # type: ignore[override]
         self, job_id: str, **kwargs: Any
-    ) -> TextAuthoringExportProjectState:
+    ) -> ExportProjectState:
         return super().get_export_status(project_name=self._project_name, job_id=job_id, **kwargs)
 
     @distributed_trace
     def get_project(  # type: ignore[override]
         self, project_name: str = _Unset, **kwargs: Any
-    ) -> TextAuthoringProjectMetadata:
+    ) -> ProjectMetadata:
         return super().get_project(project_name=self._project_name, **kwargs)
 
     @distributed_trace
     def get_project_deletion_status(  # type: ignore[override]
         self, job_id: str, **kwargs: Any
-    ) -> TextAuthoringProjectDeletionState:
+    ) -> ProjectDeletionState:
         return super().get_project_deletion_status(project_name=self._project_name, job_id=job_id, **kwargs)
 
     @distributed_trace
     def get_swap_deployments_status(  # type: ignore[override]
         self, job_id: str, **kwargs: Any
-    ) -> TextAuthoringSwapDeploymentsState:
+    ) -> SwapDeploymentsState:
         return super().get_swap_deployments_status(project_name=self._project_name, job_id=job_id, **kwargs)
 
     @distributed_trace
-    def get_training_status(  # type: ignore[override]
-        self, job_id: str, **kwargs: Any
-    ) -> TextAuthoringTrainingState:
+    def get_training_status(self, job_id: str, **kwargs: Any) -> TrainingState:  # type: ignore[override]
         return super().get_training_status(project_name=self._project_name, job_id=job_id, **kwargs)
 
     @distributed_trace
     def get_unassign_deployment_resources_status(  # type: ignore[override]
         self, job_id: str, **kwargs: Any
-    ) -> TextAuthoringDeploymentResourcesState:
+    ) -> DeploymentResourcesState:
         return super().get_unassign_deployment_resources_status(
             project_name=self._project_name, job_id=job_id, **kwargs
         )
@@ -231,31 +230,31 @@ class ProjectOperations(ProjectOperationsGenerated):
     @distributed_trace
     def list_deployment_resources(  # type: ignore[override]
         self, *, skip: Optional[int] = _Unset, top: Optional[int] = _Unset, **kwargs: Any
-    ) -> ItemPaged[TextAuthoringAssignedDeploymentResource]:
+    ) -> ItemPaged[AssignedDeploymentResource]:
         return super().list_deployment_resources(project_name=self._project_name, skip=skip, top=top, **kwargs)
 
     @distributed_trace
     def list_deployments(  # type: ignore[override]
         self, *, skip: Optional[int] = _Unset, top: Optional[int] = _Unset, **kwargs: Any
-    ) -> ItemPaged[TextAuthoringProjectDeployment]:
+    ) -> ItemPaged[ProjectDeployment]:
         return super().list_deployments(project_name=self._project_name, skip=skip, top=top, **kwargs)
 
     @distributed_trace
     def list_exported_models(  # type: ignore[override]
         self, *, skip: Optional[int] = _Unset, top: Optional[int] = _Unset, **kwargs: Any
-    ) -> ItemPaged[TextAuthoringExportedTrainedModel]:
+    ) -> ItemPaged[ExportedTrainedModel]:
         return super().list_exported_models(project_name=self._project_name, skip=skip, top=top, **kwargs)
 
     @distributed_trace
     def list_trained_models(  # type: ignore[override]
         self, *, skip: Optional[int] = _Unset, top: Optional[int] = _Unset, **kwargs: Any
-    ) -> ItemPaged[TextAuthoringProjectTrainedModel]:
+    ) -> ItemPaged[ProjectTrainedModel]:
         return super().list_trained_models(project_name=self._project_name, skip=skip, top=top, **kwargs)
 
     @distributed_trace
     def list_training_jobs(  # type: ignore[override]
         self, *, skip: Optional[int] = _Unset, top: Optional[int] = _Unset, **kwargs: Any
-    ) -> ItemPaged[TextAuthoringTrainingState]:
+    ) -> ItemPaged[TrainingState]:
         return super().list_training_jobs(project_name=self._project_name, skip=skip, top=top, **kwargs)
 
 
@@ -275,7 +274,7 @@ class DeploymentOperations(DeploymentOperationsGenerated):
     def begin_delete_deployment_from_resources(  # type: ignore[override]
         self,
         deployment_name: str,
-        body: Union[TextAuthoringDeleteDeploymentDetails, JSON, IO[bytes]],
+        body: Union[DeleteDeploymentDetails, JSON, IO[bytes]],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -292,7 +291,7 @@ class DeploymentOperations(DeploymentOperationsGenerated):
     def begin_deploy_project(  # type: ignore[override]
         self,
         deployment_name: str,
-        body: Union[TextAuthoringCreateDeploymentDetails, JSON, IO[bytes]],
+        body: Union[CreateDeploymentDetails, JSON, IO[bytes]],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -308,13 +307,13 @@ class DeploymentOperations(DeploymentOperationsGenerated):
     @distributed_trace
     def get_deployment(  # type: ignore[override]
         self, deployment_name: str, **kwargs: Any
-    ) -> TextAuthoringProjectDeployment:
+    ) -> ProjectDeployment:
         return super().get_deployment(project_name=self._project_name, deployment_name=deployment_name, **kwargs)
 
     @distributed_trace
     def get_deployment_delete_from_resources_status(  # type: ignore[override]
         self, deployment_name: str, job_id: str, **kwargs: Any
-    ) -> TextAuthoringDeploymentDeleteFromResourcesState:
+    ) -> DeploymentDeleteFromResourcesState:
         return super().get_deployment_delete_from_resources_status(
             project_name=self._project_name, deployment_name=deployment_name, job_id=job_id, **kwargs
         )
@@ -322,7 +321,7 @@ class DeploymentOperations(DeploymentOperationsGenerated):
     @distributed_trace
     def get_deployment_status(  # type: ignore[override]
         self, deployment_name: str, job_id: str, **kwargs: Any
-    ) -> TextAuthoringDeploymentState:
+    ) -> DeploymentState:
         return super().get_deployment_status(
             project_name=self._project_name, deployment_name=deployment_name, job_id=job_id, **kwargs
         )
@@ -338,7 +337,7 @@ class ExportedModelOperations(ExportedModelOperationsGenerated):
     def begin_create_or_update_exported_model(  # type: ignore[override]
         self,
         exported_model_name: str,
-        body: Union[TextAuthoringExportedModelDetails, JSON, IO[bytes]],
+        body: Union[ExportedModelDetails, JSON, IO[bytes]],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -364,7 +363,7 @@ class ExportedModelOperations(ExportedModelOperationsGenerated):
     @distributed_trace
     def get_exported_model(  # type: ignore[override]
         self, exported_model_name: str, **kwargs: Any
-    ) -> TextAuthoringExportedTrainedModel:
+    ) -> ExportedTrainedModel:
         return super().get_exported_model(
             project_name=self._project_name,
             exported_model_name=exported_model_name,
@@ -374,14 +373,14 @@ class ExportedModelOperations(ExportedModelOperationsGenerated):
     @distributed_trace
     def get_exported_model_job_status(  # type: ignore[override]
         self, exported_model_name: str, job_id: str, **kwargs: Any
-    ) -> TextAuthoringExportedModelState:
+    ) -> ExportedModelState:
         return super().get_exported_model_job_status(
             project_name=self._project_name,
             exported_model_name=exported_model_name,
             job_id=job_id,
             **kwargs,
         )
-    
+
     @distributed_trace
     def get_exported_model_manifest(  # type: ignore[override]
         self, exported_model_name: str, **kwargs: Any
@@ -403,11 +402,11 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
     def begin_evaluate_model(  # type: ignore[override]
         self,
         trained_model_label: str,
-        body: Union[TextAuthoringEvaluationDetails, dict, IO[bytes]],
+        body: Union[EvaluationDetails, dict, IO[bytes]],
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[TextAuthoringEvaluationJobResult]:
+    ) -> LROPoller[EvaluationJobResult]:
         return super().begin_evaluate_model(
             project_name=self._project_name,
             trained_model_label=trained_model_label,
@@ -435,7 +434,7 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
     @distributed_trace
     def get_evaluation_status(  # type: ignore[override]
         self, trained_model_label: str, job_id: str, **kwargs: Any
-    ) -> TextAuthoringEvaluationState:
+    ) -> EvaluationState:
         return super().get_evaluation_status(
             project_name=self._project_name,
             trained_model_label=trained_model_label,
@@ -446,7 +445,7 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
     @distributed_trace
     def get_load_snapshot_status(  # type: ignore[override]
         self, trained_model_label: str, job_id: str, **kwargs: Any
-    ) -> TextAuthoringLoadSnapshotState:
+    ) -> LoadSnapshotState:
         return super().get_load_snapshot_status(
             project_name=self._project_name,
             trained_model_label=trained_model_label,
@@ -463,7 +462,7 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
         string_index_type: Union[str, StringIndexType],
         top: Optional[int] = None,
         **kwargs: Any
-    ) -> ItemPaged[TextAuthoringDocumentEvalResult]:
+    ) -> ItemPaged[DocumentEvalResult]:
         return super().get_model_evaluation_results(
             project_name=self._project_name,
             trained_model_label=trained_model_label,
@@ -476,7 +475,7 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
     @distributed_trace
     def get_model_evaluation_summary(  # type: ignore[override]
         self, trained_model_label: str, **kwargs: Any
-    ) -> TextAuthoringEvalSummary:
+    ) -> EvalSummary:
         return super().get_model_evaluation_summary(
             project_name=self._project_name,
             trained_model_label=trained_model_label,
@@ -486,7 +485,7 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
     @distributed_trace
     def get_trained_model(  # type: ignore[override]
         self, trained_model_label: str, **kwargs: Any
-    ) -> TextAuthoringProjectTrainedModel:
+    ) -> ProjectTrainedModel:
         return super().get_trained_model(
             project_name=self._project_name,
             trained_model_label=trained_model_label,

@@ -141,7 +141,7 @@ class TestTextAuthoring(TextAuthoringClientTestBase):
                 },
                 "projectFileVersion": "str",
                 "stringIndexType": "str",
-                "assets": "text_authoring_exported_project_asset",
+                "assets": "exported_project_asset",
             },
         ).result()  # call '.result()' to poll until service return final result
 
