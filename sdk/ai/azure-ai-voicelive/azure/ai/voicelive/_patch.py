@@ -1,7 +1,7 @@
 # coding=utf-8
 # --------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for license information.
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
 # --------------------------------------------------------------------------
 """Customize generated code here.
 
@@ -9,11 +9,11 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import json
 import logging
-from typing import Any, Dict, Iterator, List, Optional, Sequence, Tuple, Union
+from contextlib import AbstractContextManager
+from typing import Any, Dict, Iterator, List, NotRequired, Optional, Sequence, Tuple, Union, Mapping
 from typing_extensions import TypedDict
+from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
-from urllib.parse import urlparse, urlunparse, urlencode, parse_qs
-from azure.ai.voicelive.models._enums import ClientEventType
 from azure.ai.voicelive.models._models import (
     ClientEventConversationItemCreate,
     ClientEventConversationItemDelete,
@@ -29,7 +29,7 @@ from azure.ai.voicelive.models._models import (
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.exceptions import AzureError
 
-from .models import ClientEvent, ServerEvent, RequestSession
+from .models import ClientEvent, RequestSession, ServerEvent
 
 __all__: List[str] = [
     "connect",
@@ -44,33 +44,64 @@ __all__: List[str] = [
     "ConversationResource",
     "ConversationItemResource",
     "TranscriptionSessionResource",
-]  # Add all objects you want publicly available to users at this package level
+]
 
 log = logging.getLogger(__name__)
 
 
 class WebsocketConnectionOptions(TypedDict, total=False):
-    """Websocket connection options for VoiceLive API WebSocket connections.
+    """
+    Advanced WebSocket connection options for the synchronous VoiceLive API.
 
-    Based on options from the websockets library.
+    These options are passed directly to :func:`websockets.sync.client.connect`
+    and control low-level WebSocket behavior.  
+    All keys are optional — if omitted, the `websockets` library's defaults apply.  
+    Unsupported or unknown keys are ignored.
+
+    :keyword extensions: WebSocket extensions to negotiate with the server.
+        Usually provided by the library; override with caution.
+    :type extensions: Sequence[Any]
+
+    :keyword subprotocols: A list of subprotocols to negotiate during the
+        WebSocket handshake.
+    :type subprotocols: Sequence[str]
+
+    :keyword compression: Name of the compression method to use, or a
+        compression configuration object.
+        Set to ``None`` or an empty string to disable compression.
+    :type compression: str
+
+    :keyword max_size: Maximum size in bytes for incoming messages.
+        Messages larger than this will close the connection with a
+        `PayloadTooBig` exception.
+    :type max_size: int
+
+    :keyword max_queue: Maximum number of incoming messages to queue before
+        processing. Can be:
+        - An integer limit.
+        - A tuple of ``(high_watermark, low_watermark)`` integers or None.
+    :type max_queue: int or tuple[int | None, int | None]
+
+    :keyword write_limit: TCP write buffer limit. Can be:
+        - A single integer limit.
+        - A tuple of ``(limit, interval)`` where ``interval`` is optional.
+    :type write_limit: int or tuple[int, int | None]
     """
 
-    extensions: Optional[Sequence[Any]]
-    subprotocols: Optional[Sequence[str]]
-    compression: Optional[str]
-    max_size: Optional[int]
-    max_queue: Optional[Union[int, Tuple[Optional[int], Optional[int]]]]
-    write_limit: Optional[Union[int, Tuple[int, Optional[int]]]]
+    extensions: NotRequired[Sequence[Any]]
+    subprotocols: NotRequired[Sequence[str]]
+    compression: NotRequired[str]
+    max_size: NotRequired[int]
+    max_queue: NotRequired[Union[int, Tuple[Optional[int], Optional[int]]]]
+    write_limit: NotRequired[Union[int, Tuple[int, Optional[int]]]]
 
 
 class ConnectionError(AzureError):
-    """Base exception for VoiceLive WebSocket connection errors."""
-
-    pass
+    """Base exception for Voice Live WebSocket connection errors."""
 
 
 class ConnectionClosed(ConnectionError):
-    """Exception raised when a WebSocket connection is closed."""
+    """Raised when a WebSocket connection is closed."""
 
     def __init__(self, code: int, reason: str) -> None:
         self.code = code
@@ -89,21 +120,22 @@ class SessionResource:
         """
         self._connection = connection
 
-    def update(self, *, session: Dict[str, Any] | RequestSession, event_id: Optional[str] = None) -> None:
+    def update(self, *, session: Mapping[str, Any] | RequestSession, event_id: Optional[str] = None) -> None:
         """Update the session configuration.
 
         :param session: Session configuration parameters.
-        :type session: Dict[str, Any]
+        :type session: Mapping[str, Any] or ~azure.ai.voicelive.models.RequestSession
         :param event_id: Optional ID for the event.
-        :type event_id: Optional[str]
+        :type event_id: str
         """
         if isinstance(session, RequestSession):
-            session = session.as_dict()
+            payload = session.as_dict()
+        else:
+            payload = dict(session)
 
-        event = ClientEventSessionUpdate(session=session)
+        event = ClientEventSessionUpdate(session=payload)
         if event_id:
             event["event_id"] = event_id
-
         self._connection.send(event)
 
 
@@ -118,43 +150,37 @@ class ResponseResource:
         """
         self._connection = connection
 
-    def create(self, *, response: Optional[Dict[str, Any]] = None, event_id: Optional[str] = None) -> None:
+    def create(self, *, response: Optional[Mapping[str, Any]] = None, event_id: Optional[str] = None) -> None:
         """Create a response from the model.
 
-        This event instructs the server to create a Response, which means triggering
-        model inference. When in Server VAD mode, the server will create Responses
-        automatically.
+        Triggers model inference. In Server VAD mode, the server may create
+        responses automatically.
 
         :param response: Optional response configuration.
-        :type response: Optional[Dict[str, Any]]
+        :type response: Mapping[str, Any] or None
         :param event_id: Optional ID for the event.
-        :type event_id: Optional[str]
+        :type event_id: str
         """
         event = ClientEventResponseCreate()
         if response:
-            event["response"] = response
+            event["response"] = dict(response)
         if event_id:
             event["event_id"] = event_id
-
         self._connection.send(event)
 
     def cancel(self, *, response_id: Optional[str] = None, event_id: Optional[str] = None) -> None:
         """Cancel an in-progress response.
 
-        The server will respond with a `response.cancelled` event or an error
-        if there is no response to cancel.
-
         :param response_id: Optional ID of the response to cancel.
-        :type response_id: Optional[str]
+        :type response_id: str
         :param event_id: Optional ID for the event.
-        :type event_id: Optional[str]
+        :type event_id: str
         """
         event = ClientEventResponseCancel()
         if response_id:
             event["response_id"] = response_id
         if event_id:
             event["event_id"] = event_id
-
         self._connection.send(event)
 
 
@@ -172,49 +198,38 @@ class InputAudioBufferResource:
     def append(self, *, audio: str, event_id: Optional[str] = None) -> None:
         """Append audio to the input buffer.
 
-        The audio buffer is temporary storage you can write to and later commit.
-        In Server VAD mode, the audio buffer is used to detect speech and the
-        server will decide when to commit.
-
-        :param audio: Base64-encoded audio data.
+        :param audio: Base64-encoded audio data. Must match the session's ``input_audio_format``.
         :type audio: str
         :param event_id: Optional ID for the event.
-        :type event_id: Optional[str]
+        :type event_id: str
         """
         event = ClientEventInputAudioBufferAppend(audio=audio)
         if event_id:
             event["event_id"] = event_id
-
         self._connection.send(event)
 
     def commit(self, *, event_id: Optional[str] = None) -> None:
-        """Commit the input audio buffer.
+        """Commit the input audio buffer to create a user message item.
 
-        This will create a new user message item in the conversation.
-        When in Server VAD mode, the client does not need to send this event,
-        the server will commit the audio buffer automatically.
+        In Server VAD mode, the server commits automatically.
 
         :param event_id: Optional ID for the event.
-        :type event_id: Optional[str]
+        :type event_id: str
         """
         event = ClientEventInputAudioBufferCommit()
         if event_id:
             event["event_id"] = event_id
-
         self._connection.send(event)
 
     def clear(self, *, event_id: Optional[str] = None) -> None:
         """Clear the input audio buffer.
 
-        The server will respond with an `input_audio_buffer.cleared` event.
-
         :param event_id: Optional ID for the event.
-        :type event_id: Optional[str]
+        :type event_id: str
         """
         event = ClientEventInputAudioBufferClear()
         if event_id:
             event["event_id"] = event_id
-
         self._connection.send(event)
 
 
@@ -230,18 +245,14 @@ class OutputAudioBufferResource:
         self._connection = connection
 
     def clear(self, *, event_id: Optional[str] = None) -> None:
-        """Clear the output audio buffer.
-
-        This will trigger the server to stop generating audio and emit
-        an `output_audio_buffer.cleared` event.
+        """Clear the output audio buffer and stop generation.
 
         :param event_id: Optional ID for the event.
-        :type event_id: Optional[str]
+        :type event_id: str
         """
-        event = {"type": "output_audio_buffer.clear"}
+        event: Dict[str, Any] = {"type": "output_audio_buffer.clear"}
         if event_id:
             event["event_id"] = event_id
-
         self._connection.send(event)
 
 
@@ -257,79 +268,67 @@ class ConversationItemResource:
         self._connection = connection
 
     def create(
-        self, *, item: Dict[str, Any], previous_item_id: Optional[str] = None, event_id: Optional[str] = None
+        self, *, item: Mapping[str, Any], previous_item_id: Optional[str] = None, event_id: Optional[str] = None
     ) -> None:
         """Create a new conversation item.
 
-        Add a new Item to the Conversation's context, including messages,
-        function calls, and function call responses.
-
-        :param item: The item to create.
-        :type item: Dict[str, Any]
-        :param previous_item_id: Optional ID of the item after which to insert this item.
-        :type previous_item_id: Optional[str]
+        :param item: The item to create (message, function call, etc.).
+        :type item: Mapping[str, Any]
+        :param previous_item_id: Insert after this item, if provided.
+        :type previous_item_id: str
         :param event_id: Optional ID for the event.
-        :type event_id: Optional[str]
+        :type event_id: str
         """
-        event = ClientEventConversationItemCreate(item=item)
+        event = ClientEventConversationItemCreate(item=dict(item))
         if previous_item_id:
             event["previous_item_id"] = previous_item_id
         if event_id:
             event["event_id"] = event_id
-
         self._connection.send(event)
 
     def delete(self, *, item_id: str, event_id: Optional[str] = None) -> None:
         """Delete a conversation item.
 
-        Remove an item from the conversation history.
-
         :param item_id: ID of the item to delete.
         :type item_id: str
         :param event_id: Optional ID for the event.
-        :type event_id: Optional[str]
+        :type event_id: str
         """
         event = ClientEventConversationItemDelete(item_id=item_id)
-
+        if event_id:
+            event["event_id"] = event_id
         self._connection.send(event)
 
     def retrieve(self, *, item_id: str, event_id: Optional[str] = None) -> None:
         """Retrieve a conversation item.
 
-        Get the server's representation of a specific item in the conversation history.
-
         :param item_id: ID of the item to retrieve.
         :type item_id: str
         :param event_id: Optional ID for the event.
-        :type event_id: Optional[str]
+        :type event_id: str
         """
         event = ClientEventConversationItemRetrieve(item_id=item_id)
         if event_id:
             event["event_id"] = event_id
-
         self._connection.send(event)
 
     def truncate(self, *, item_id: str, audio_end_ms: int, content_index: int, event_id: Optional[str] = None) -> None:
-        """Truncate a conversation item's audio.
-
-        Truncate a previous assistant message's audio, useful when the user interrupts.
+        """Truncate a prior assistant item's audio (e.g., on user interruption).
 
         :param item_id: ID of the item to truncate.
         :type item_id: str
-        :param audio_end_ms: Time in milliseconds where to truncate the audio.
+        :param audio_end_ms: Millisecond offset to cut at.
         :type audio_end_ms: int
-        :param content_index: Index of the content to truncate.
+        :param content_index: Content index within the item.
         :type content_index: int
         :param event_id: Optional ID for the event.
-        :type event_id: Optional[str]
+        :type event_id: str
         """
         event = ClientEventConversationItemTruncate(
             item_id=item_id, audio_end_ms=audio_end_ms, content_index=content_index
         )
-
         if event_id:
             event["event_id"] = event_id
-
         self._connection.send(event)
 
 
@@ -357,24 +356,34 @@ class TranscriptionSessionResource:
         """
         self._connection = connection
 
-    def update(self, *, session: Dict[str, Any], event_id: Optional[str] = None) -> None:
+    def update(self, *, session: Mapping[str, Any], event_id: Optional[str] = None) -> None:
         """Update the transcription session.
 
         :param session: Transcription session configuration.
-        :type session: Dict[str, Any]
+        :type session: Mapping[str, Any]
         :param event_id: Optional ID for the event.
-        :type event_id: Optional[str]
+        :type event_id: str
         """
-        event = {"type": "transcription_session.update", "session": session}
+        event: Dict[str, Any] = {"type": "transcription_session.update", "session": dict(session)}
         if event_id:
             event["event_id"] = event_id
-
         self._connection.send(event)
 
 
 class VoiceLiveConnection:
     """
-    Represents a live WebSocket connection to the Voice Live API.
+    Represents a live WebSocket connection to the Azure Voice Live API.
+
+    This class exposes resource helpers:
+
+    - :attr:`session` – manage session configuration updates.
+    - :attr:`response` – create or cancel model responses.
+    - :attr:`input_audio_buffer` – append/commit/clear captured audio.
+    - :attr:`output_audio_buffer` – clear generated audio output.
+    - :attr:`conversation` – manage conversation items.
+    - :attr:`transcription_session` – update transcription configuration.
+
+    Instances are yielded by :func:`~azure.ai.voicelive.connect`.
 
     :ivar session: Resource for managing session configuration and updates.
     :vartype session: ~azure.ai.voicelive.SessionResource
@@ -397,7 +406,6 @@ class VoiceLiveConnection:
         """
         self._connection = connection
 
-        # Add all resource attributes
         self.session = SessionResource(self)
         self.response = ResponseResource(self)
         self.input_audio_buffer = InputAudioBufferResource(self)
@@ -408,8 +416,8 @@ class VoiceLiveConnection:
     def __iter__(self) -> Iterator[ServerEvent]:
         """Yield typed events until the connection is closed.
 
-        :return: An iterator of ServerEvent objects.
-        :rtype: Iterator[~azure.ai.voicelive.models.ServerEvent]
+        :return: An iterator of :class:`~azure.ai.voicelive.models.ServerEvent`.
+        :rtype: collections.abc.Iterator[~azure.ai.voicelive.models.ServerEvent]
         """
         try:
             while True:
@@ -439,11 +447,11 @@ class VoiceLiveConnection:
         :raises ConnectionClosed: If the connection is closed.
         """
         try:
-            message = self._connection.recv(decode=False)
-            log.debug(f"Received websocket message: %s", message)
+            message = self._connection.recv(decode=False)  # websockets.sync: return bytes if decode=False
+            log.debug("Received websocket message: %s", message)
             return message
         except Exception as e:
-            code = getattr(e, "code", 1006)  # Default to 1006 (Abnormal Closure) if no code
+            code = getattr(e, "code", 1006)  # 1006 = Abnormal Closure
             reason = str(e)
             raise ConnectionClosed(code, reason) from e
 
@@ -451,14 +459,11 @@ class VoiceLiveConnection:
         """Send an event to the server.
 
         :param event: The event to send, either as a dictionary or a ClientEvent.
-        :type event: Union[Dict[str, Any], ~azure.ai.voicelive.models.ClientEvent]
+        :type event: Union[dict[str, Any], ~azure.ai.voicelive.models.ClientEvent]
         :raises ConnectionError: If the event cannot be sent.
         """
         try:
-            if isinstance(event, dict):
-                data = json.dumps(event)
-            else:
-                data = ClientEvent.serialize(event)
+            data = json.dumps(event) if isinstance(event, dict) else ClientEvent.serialize(event)
             self._connection.send(data)
         except Exception as e:
             log.error(f"Failed to send event: {e}")
@@ -467,19 +472,23 @@ class VoiceLiveConnection:
     def close(self, *, code: int = 1000, reason: str = "") -> None:
         """Close the WebSocket connection.
 
-        :param code: WebSocket close code.
+        Gracefully terminates the connection to the Voice Live service and
+        releases the underlying socket resources.
+
+        :param code: WebSocket close code to send to the server. Defaults to ``1000`` (Normal Closure).
         :type code: int
-        :param reason: Reason for closing the connection.
+        :param reason: Optional reason string to include in the close frame.
         :type reason: str
         """
         try:
+            # websockets.sync expects `close(code=..., reason=...)`
             self._connection.close(code=code, reason=reason)
         except Exception as e:
             log.warning(f"Error closing connection: {e}")
 
 
-class VoiceLiveConnectionManager:
-    """Manager for VoiceLive WebSocket connections."""
+class _VoiceLiveConnectionManager(AbstractContextManager["VoiceLiveConnection"]):
+    """Context manager for Voice Live WebSocket connections (internal)."""
 
     def __init__(
         self,
@@ -487,35 +496,29 @@ class VoiceLiveConnectionManager:
         credential: Union[AzureKeyCredential, TokenCredential],
         endpoint: str,
         model: str,
-        api_version: str = "2024-10-01",
-        extra_query: Dict[str, Any],
-        extra_headers: Dict[str, Any],
-        connection_options: WebsocketConnectionOptions = {},
+        api_version: str,
+        extra_query: Mapping[str, Any],
+        extra_headers: Mapping[str, Any],
+        connection_options: WebsocketConnectionOptions,
         **kwargs: Any,
     ) -> None:
         self._credential = credential
         self._endpoint = endpoint
         self.__credential_scopes = kwargs.pop("credential_scopes", "https://cognitiveservices.azure.com/.default")
         self.__model = model
-        self.__apiVersion = api_version
-        self.__connection = None
+        self.__api_version = api_version
+        self.__connection: Optional[VoiceLiveConnection] = None
         self.__extra_query = extra_query
         self.__extra_headers = extra_headers
         self.__connection_options = connection_options
 
     def __enter__(self) -> VoiceLiveConnection:
-        """Create and return a WebSocket connection.
-
-        :return: A VoiceLiveConnection instance.
-        :rtype: ~azure.ai.voicelive.VoiceLiveConnection
-        :raises ImportError: If the websockets package is not installed.
-        :raises ConnectionError: If the connection cannot be established.
-        """
+        """Open and return a WebSocket connection."""
         try:
-            from websockets.sync.client import connect
+            from websockets.sync.client import connect as ws_connect
             from websockets.exceptions import WebSocketException
         except ImportError as exc:
-            raise ImportError("You need to install `websockets` to use WebSocket functionality") from exc
+            raise ImportError("Install `websockets` to use WebSocket functionality: pip install websockets") from exc
 
         try:
             url = self._prepare_url()
@@ -524,73 +527,41 @@ class VoiceLiveConnectionManager:
             if self.__connection_options:
                 log.debug("Connection options: %s", self.__connection_options)
 
-            # Get auth headers
-            auth_headers = self._get_auth_headers()
-            headers = {**auth_headers, **self.__extra_headers}
-
-            connection = connect(
-                url,
-                additional_headers=headers,
-                **self.__connection_options,
-            )
-
-            self.__connection = VoiceLiveConnection(connection)
+            headers = {**self._get_auth_headers(), **dict(self.__extra_headers)}
+            ws = ws_connect(url, additional_headers=headers, **self.__connection_options)
+            self.__connection = VoiceLiveConnection(ws)
             return self.__connection
         except WebSocketException as e:
             raise ConnectionError(f"Failed to establish WebSocket connection: {e}") from e
 
-    def _get_auth_headers(self) -> Dict[str, str]:
-        """Get authentication headers for WebSocket connection.
+    def __exit__(self, exc_type, exc, exc_tb) -> None:
+        """Close the connection when exiting the context."""
+        if self.__connection is not None:
+            self.__connection.close()
 
-        :return: A dictionary of authentication headers.
-        :rtype: Dict[str, str]
-        """
+    def _get_auth_headers(self) -> Dict[str, str]:
+        """Get authentication headers for WebSocket connection."""
         if isinstance(self._credential, AzureKeyCredential):
             return {"api-key": self._credential.key}
-        else:
-            # Use token credential to get a token
-            token = self._credential.get_token(self.__credential_scopes)
-            return {"Authorization": f"Bearer {token.token}"}
+        token = self._credential.get_token(self.__credential_scopes)
+        return {"Authorization": f"Bearer {token.token}"}
 
     def _prepare_url(self) -> str:
         """Prepare the WebSocket URL."""
-        # Parse the base URL
         parsed = urlparse(self._endpoint)
+        scheme = "wss" if parsed.scheme == "https" else ("ws" if parsed.scheme == "http" else parsed.scheme)
 
-        # Ensure WebSocket scheme
-        if parsed.scheme.startswith("http"):
-            scheme = "wss" if parsed.scheme == "https" else "ws"
-        else:
-            scheme = parsed.scheme
+        params: Dict[str, Any] = {"model": self.__model, "api-version": self.__api_version}
+        params.update(dict(self.__extra_query))
 
-        # Prepare query parameters
-        params = {"model": self.__model, "api-version": self.__apiVersion}
-        params.update(self.__extra_query)
-
-        # Parse existing query parameters and merge with new ones
+        # Merge existing query params without overriding new ones
         existing_params = parse_qs(parsed.query)
-        # Flatten existing params (parse_qs returns lists)
         for key, value_list in existing_params.items():
-            if key not in params:  # Don't override new params
+            if key not in params:
                 params[key] = value_list[0] if value_list else ""
 
-        # Build the path (equivalent to raw_path operations)
         path = parsed.path.rstrip("/") + "/voice-agent/realtime"
-
-        # Reconstruct the URL
-        url = urlunparse((scheme, parsed.netloc, path, parsed.params, urlencode(params), parsed.fragment))
-
-        return url
-
-    def __exit__(self, exc_type, exc, exc_tb) -> None:
-        """Clean up the connection when exiting context.
-
-        :param exc_type: Exception type, if any.
-        :param exc: Exception value, if any.
-        :param exc_tb: Exception traceback, if any.
-        """
-        if self.__connection is not None:
-            self.__connection.close()
+        return urlunparse((scheme, parsed.netloc, path, parsed.params, urlencode(params), parsed.fragment))
 
 
 def connect(
@@ -599,50 +570,51 @@ def connect(
     credential: Union[AzureKeyCredential, TokenCredential],
     model: str,
     api_version: str = "2025-05-01-preview",
-    query: Dict[str, Any] = {},
-    headers: Dict[str, Any] = {},
+    query: Optional[Mapping[str, Any]] = None,
+    headers: Optional[Mapping[str, Any]] = None,
     connection_options: WebsocketConnectionOptions = {},
     **kwargs: Any,
-) -> VoiceLiveConnectionManager:
+) -> AbstractContextManager["VoiceLiveConnection"]:
     """
-    Establish a WebSocket connection to the Azure Voice Live API.
+    Create and manage a synchronous WebSocket connection to the Azure Voice Live API.
 
-    Example:
-        >>> with connect(
-        >>>     endpoint="https://<region>.api.cognitive.microsoft.com",
-        >>>     credential=AzureKeyCredential("<api-key>"),
-        >>>     model="my-model-id"
-        >>> ) as connection:
-        >>>     connection.session.update(session={...})
+    This helper returns a standard context manager that:
+    - Authenticates with the service using an API key or Azure Active Directory token.
+    - Builds the correct WebSocket URL and query parameters.
+    - Establishes the connection and yields a :class:`~azure.ai.voicelive.VoiceLiveConnection`
+      for sending and receiving events.
+    - Automatically closes the connection on context exit.
 
-    :param endpoint: The service endpoint, e.g. "https://<region>.api.cognitive.microsoft.com".
+    **Supported credentials**
+      - :class:`~azure.core.credentials.AzureKeyCredential` (API key).
+      - :class:`~azure.core.credentials.TokenCredential` (AAD), e.g. :class:`azure.identity.DefaultAzureCredential`.
+
+    :param endpoint: Service endpoint, e.g., ``https://<region>.api.cognitive.microsoft.com``.
     :type endpoint: str
     :param credential: Credential used to authenticate the WebSocket connection.
-        Either an API key (`AzureKeyCredential`) or a token-based credential (`TokenCredential`).
-    :type credential: Union[~azure.core.credentials.AzureKeyCredential, ~azure.core.credentials.TokenCredential]
-    :param model: The model ID to use for the Voice Live session.
+    :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
+    :param model: Model identifier to use for the session.
     :type model: str
-    :param api_version: The API version to use (default is "2025-05-01-preview").
+    :param api_version: API version to use. Defaults to ``"2025-05-01-preview"``.
     :type api_version: str
-    :param query: Additional query parameters to include in the WebSocket URL.
-    :type query: Dict[str, Any]
-    :param headers: Additional headers to include in the WebSocket handshake.
-    :type headers: Dict[str, Any]
-    :param connection_options: Advanced WebSocket options (e.g. compression, max size).
-    :type connection_options: WebsocketConnectionOptions
-    :param kwargs: Additional keyword arguments passed to the connection manager.
+    :param query: Optional query parameters to include in the WebSocket URL.
+    :type query: Mapping[str, Any] or None
+    :param headers: Optional headers to include in the WebSocket handshake.
+    :type headers: Mapping[str, Any] or None
+    :param connection_options: Advanced WebSocket options passed to :func:`websockets.sync.client.connect`.
+    :type connection_options: ~azure.ai.voicelive.WebsocketConnectionOptions
+    :param kwargs: Additional keyword arguments reserved for future use.
     :type kwargs: Any
-
-    :return: A connection manager for managing the Voice Live WebSocket session.
-    :rtype: VoiceLiveConnectionManager
+    :return: A context manager that yields a connected :class:`~azure.ai.voicelive.VoiceLiveConnection`.
+    :rtype: contextlib.AbstractContextManager[~azure.ai.voicelive.VoiceLiveConnection]
     """
-    return VoiceLiveConnectionManager(
+    return _VoiceLiveConnectionManager(
         credential=credential,
         endpoint=endpoint,
         model=model,
         api_version=api_version,
-        extra_query=query,
-        extra_headers=headers,
+        extra_query=query or {},
+        extra_headers=headers or {},
         connection_options=connection_options,
         **kwargs,
     )
