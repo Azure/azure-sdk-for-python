@@ -97,7 +97,7 @@ class TestConversationsCase(TestConversations):
         if response.display_name:
             print(f"Display Name: {response.display_name}")
 
-        for action_result in response.actions.items_property or []:
+        for action_result in response.actions.task_results or []:
             print(f"\nAction Name: {action_result.name}")
             print(f"Action Status: {action_result.status}")
             print(f"Kind: {action_result.kind}")
