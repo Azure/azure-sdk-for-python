@@ -417,6 +417,9 @@
 # PRLabel: %Cognitive - Language
 /sdk/cognitivelanguage/                                              @quentinRobinson @wangyuantao
 
+# PRLabel: %Content Understanding
+/sdk/contentunderstanding/                                           @yungshinlintw @vkurpad
+
 # PRLabel: %Cognitive - Personalizer
 /sdk/personalizer/                                                   @sharathmalladi
 
