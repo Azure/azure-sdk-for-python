@@ -46,7 +46,6 @@ from ._models import (  # type: ignore
     ConversationItemWithReferenceContent,
     ConversationRequestItem,
     ConversationResponseItem,
-    ErrorDetails,
     FunctionTool,
     IceServer,
     InputAudio,
@@ -112,6 +111,7 @@ from ._models import (  # type: ignore
     VideoCrop,
     VideoParams,
     VideoResolution,
+    VoiceLiveErrorDetails,
 )
 
 from ._enums import (  # type: ignore
@@ -130,7 +130,6 @@ from ._enums import (  # type: ignore
     ToolChoiceLiteral,
     ToolType,
 )
-
 from ._patch import __all__ as _patch_all
 from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
@@ -168,7 +167,6 @@ __all__ = [
     "ConversationItemWithReferenceContent",
     "ConversationRequestItem",
     "ConversationResponseItem",
-    "ErrorDetails",
     "FunctionTool",
     "IceServer",
     "InputAudio",
@@ -234,6 +232,7 @@ __all__ = [
     "VideoCrop",
     "VideoParams",
     "VideoResolution",
+    "VoiceLiveErrorDetails",
     "AnimationOutputType",
     "AudioFormat",
     "AudioTimestampType",

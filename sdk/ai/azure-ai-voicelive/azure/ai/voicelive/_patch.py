@@ -14,7 +14,18 @@ from typing_extensions import TypedDict
 
 from urllib.parse import urlparse, urlunparse, urlencode, parse_qs
 from azure.ai.voicelive.models._enums import ClientEventType
-from azure.ai.voicelive.models._models import ClientEventConversationItemCreate, ClientEventConversationItemDelete, ClientEventConversationItemRetrieve, ClientEventConversationItemTruncate, ClientEventInputAudioBufferAppend, ClientEventInputAudioBufferClear, ClientEventInputAudioBufferCommit, ClientEventResponseCancel, ClientEventResponseCreate, ClientEventSessionUpdate
+from azure.ai.voicelive.models._models import (
+    ClientEventConversationItemCreate,
+    ClientEventConversationItemDelete,
+    ClientEventConversationItemRetrieve,
+    ClientEventConversationItemTruncate,
+    ClientEventInputAudioBufferAppend,
+    ClientEventInputAudioBufferClear,
+    ClientEventInputAudioBufferCommit,
+    ClientEventResponseCancel,
+    ClientEventResponseCreate,
+    ClientEventSessionUpdate,
+)
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.exceptions import AzureError
 
@@ -312,7 +323,9 @@ class ConversationItemResource:
         :param event_id: Optional ID for the event.
         :type event_id: Optional[str]
         """
-        event = ClientEventConversationItemTruncate(item_id=item_id, audio_end_ms=audio_end_ms, content_index=content_index)
+        event = ClientEventConversationItemTruncate(
+            item_id=item_id, audio_end_ms=audio_end_ms, content_index=content_index
+        )
 
         if event_id:
             event["event_id"] = event_id

@@ -152,6 +152,8 @@ class ServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RESPONSE_AUDIO_TIMESTAMP_DONE = "response.audio_timestamp.done"
     RESPONSE_ANIMATION_VISEME_DELTA = "response.animation_viseme.delta"
     RESPONSE_ANIMATION_VISEME_DONE = "response.animation_viseme.done"
+    RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA = "response.function_call_arguments.delta"
+    RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE = "response.function_call_arguments.done"
 
 
 class ToolChoiceLiteral(str, Enum, metaclass=CaseInsensitiveEnumMeta):

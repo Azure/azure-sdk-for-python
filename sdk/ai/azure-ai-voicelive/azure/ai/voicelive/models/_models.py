@@ -1467,54 +1467,6 @@ class ConversationResponseItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorDetails(_Model):
-    """Error object returned in case of API failure.
-
-    :ivar code: Error code, or null if unspecified.
-    :vartype code: str
-    :ivar message: Human-readable error message. Required.
-    :vartype message: str
-    :ivar param: Parameter name related to the error, if applicable.
-    :vartype param: str
-    :ivar type: Type or category of the error.
-    :vartype type: str
-    :ivar event_id: Event id of the error.
-    :vartype event_id: str
-    """
-
-    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Error code, or null if unspecified."""
-    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Human-readable error message. Required."""
-    param: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Parameter name related to the error, if applicable."""
-    type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Type or category of the error."""
-    event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Event id of the error."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        message: str,
-        code: Optional[str] = None,
-        param: Optional[str] = None,
-        type: Optional[str] = None,
-        event_id: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class Tool(_Model):
     """The base representation of a voicelive tool definition.
 
@@ -3047,6 +2999,7 @@ class ServerEvent(_Model):
     ServerEventResponseAudioTranscriptDelta, ServerEventResponseAudioTranscriptDone,
     ServerEventResponseContentPartAdded, ServerEventResponseContentPartDone,
     ServerEventResponseCreated, ServerEventResponseDone, ResponseEmotionHypothesis,
+    ServerEventResponseFunctionCallArgumentsDelta, ServerEventResponseFunctionCallArgumentsDone,
     ServerEventResponseOutputItemAdded, ServerEventResponseOutputItemDone,
     ServerEventResponseTextDelta, ServerEventResponseTextDone, ServerEventSessionAvatarConnecting,
     ServerEventSessionCreated, ServerEventSessionUpdated
@@ -3065,7 +3018,8 @@ class ServerEvent(_Model):
      "response.audio.delta", "response.audio.done", "response.animation_blendshapes.delta",
      "response.animation_blendshapes.done", "response.emotion_hypothesis",
      "response.audio_timestamp.delta", "response.audio_timestamp.done",
-     "response.animation_viseme.delta", and "response.animation_viseme.done".
+     "response.animation_viseme.delta", "response.animation_viseme.done",
+     "response.function_call_arguments.delta", and "response.function_call_arguments.done".
     :vartype type: str or ~azure.ai.voicelive.models.ServerEventType
     :ivar event_id:
     :vartype event_id: str
@@ -3088,7 +3042,8 @@ class ServerEvent(_Model):
      \"response.audio.delta\", \"response.audio.done\", \"response.animation_blendshapes.delta\",
      \"response.animation_blendshapes.done\", \"response.emotion_hypothesis\",
      \"response.audio_timestamp.delta\", \"response.audio_timestamp.done\",
-     \"response.animation_viseme.delta\", and \"response.animation_viseme.done\"."""
+     \"response.animation_viseme.delta\", \"response.animation_viseme.done\",
+     \"response.function_call_arguments.delta\", and \"response.function_call_arguments.done\"."""
     event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
 
     @overload
@@ -3333,7 +3288,7 @@ class ServerEventConversationItemInputAudioTranscriptionFailed(
     :ivar content_index: The index of the content part containing the audio. Required.
     :vartype content_index: int
     :ivar error: Details of the transcription error. Required.
-    :vartype error: ~azure.ai.voicelive.models.ErrorDetails
+    :vartype error: ~azure.ai.voicelive.models.VoiceLiveErrorDetails
     """
 
     type: Literal[ServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_FAILED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -3343,7 +3298,7 @@ class ServerEventConversationItemInputAudioTranscriptionFailed(
     """The ID of the user message item. Required."""
     content_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The index of the content part containing the audio. Required."""
-    error: "_models.ErrorDetails" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    error: "_models.VoiceLiveErrorDetails" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Details of the transcription error. Required."""
 
     @overload
@@ -3352,7 +3307,7 @@ class ServerEventConversationItemInputAudioTranscriptionFailed(
         *,
         item_id: str,
         content_index: int,
-        error: "_models.ErrorDetails",
+        error: "_models.VoiceLiveErrorDetails",
         event_id: Optional[str] = None,
     ) -> None: ...
 
@@ -4116,6 +4071,126 @@ class ServerEventResponseDone(ServerEvent, discriminator="response.done"):
         super().__init__(*args, type=ServerEventType.RESPONSE_DONE, **kwargs)
 
 
+class ServerEventResponseFunctionCallArgumentsDelta(
+    ServerEvent, discriminator="response.function_call_arguments.delta"
+):  # pylint: disable=name-too-long
+    """Returned when the model-generated function call arguments are updated.
+
+    :ivar event_id:
+    :vartype event_id: str
+    :ivar type: The event type, must be ``response.function_call_arguments.delta``. Required.
+    :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA
+    :ivar response_id: The ID of the response. Required.
+    :vartype response_id: str
+    :ivar item_id: The ID of the function call item. Required.
+    :vartype item_id: str
+    :ivar output_index: The index of the output item in the response. Required.
+    :vartype output_index: int
+    :ivar call_id: The ID of the function call. Required.
+    :vartype call_id: str
+    :ivar delta: The arguments delta as a JSON string. Required.
+    :vartype delta: str
+    """
+
+    type: Literal[ServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The event type, must be ``response.function_call_arguments.delta``. Required."""
+    response_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the response. Required."""
+    item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the function call item. Required."""
+    output_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The index of the output item in the response. Required."""
+    call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the function call. Required."""
+    delta: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The arguments delta as a JSON string. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        response_id: str,
+        item_id: str,
+        output_index: int,
+        call_id: str,
+        delta: str,
+        event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type=ServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA, **kwargs)
+
+
+class ServerEventResponseFunctionCallArgumentsDone(
+    ServerEvent, discriminator="response.function_call_arguments.done"
+):  # pylint: disable=name-too-long
+    """Returned when the model-generated function call arguments are done streaming.
+    Also emitted when a Response is interrupted, incomplete, or cancelled.
+
+    :ivar event_id:
+    :vartype event_id: str
+    :ivar type: The event type, must be ``response.function_call_arguments.done``. Required.
+    :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE
+    :ivar response_id: The ID of the response. Required.
+    :vartype response_id: str
+    :ivar item_id: The ID of the function call item. Required.
+    :vartype item_id: str
+    :ivar output_index: The index of the output item in the response. Required.
+    :vartype output_index: int
+    :ivar call_id: The ID of the function call. Required.
+    :vartype call_id: str
+    :ivar arguments: The final arguments as a JSON string. Required.
+    :vartype arguments: str
+    :ivar name: The name of the function call. Required.
+    :vartype name: str
+    """
+
+    type: Literal[ServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The event type, must be ``response.function_call_arguments.done``. Required."""
+    response_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the response. Required."""
+    item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the function call item. Required."""
+    output_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The index of the output item in the response. Required."""
+    call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the function call. Required."""
+    arguments: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The final arguments as a JSON string. Required."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the function call. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        response_id: str,
+        item_id: str,
+        output_index: int,
+        call_id: str,
+        arguments: str,
+        name: str,
+        event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type=ServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE, **kwargs)
+
+
 class ServerEventResponseOutputItemAdded(ServerEvent, discriminator="response.output_item.added"):
     """Returned when a new Item is created during Response generation.
 
@@ -4650,6 +4725,54 @@ class VideoResolution(_Model):
         *,
         width: int,
         height: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VoiceLiveErrorDetails(_Model):
+    """Error object returned in case of API failure.
+
+    :ivar code: Error code, or null if unspecified.
+    :vartype code: str
+    :ivar message: Human-readable error message. Required.
+    :vartype message: str
+    :ivar param: Parameter name related to the error, if applicable.
+    :vartype param: str
+    :ivar type: Type or category of the error.
+    :vartype type: str
+    :ivar event_id: Event id of the error.
+    :vartype event_id: str
+    """
+
+    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Error code, or null if unspecified."""
+    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Human-readable error message. Required."""
+    param: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Parameter name related to the error, if applicable."""
+    type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Type or category of the error."""
+    event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Event id of the error."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        message: str,
+        code: Optional[str] = None,
+        param: Optional[str] = None,
+        type: Optional[str] = None,
+        event_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
