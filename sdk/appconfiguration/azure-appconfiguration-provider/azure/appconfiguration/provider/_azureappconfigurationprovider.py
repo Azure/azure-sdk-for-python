@@ -23,8 +23,8 @@ from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-
     SecretReferenceConfigurationSetting,
 )
 from azure.core.exceptions import AzureError, HttpResponseError
-from azure.keyvault.secrets import SecretClient, KeyVaultSecretIdentifier
 from ._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
+from ._secret_provider import SecretProvider
 from ._constants import (
     FEATURE_MANAGEMENT_KEY,
     FEATURE_FLAG_KEY,
@@ -246,46 +246,6 @@ def _buildprovider(
     return AzureAppConfigurationProvider(**kwargs)
 
 
-def _resolve_keyvault_reference(
-    config: "SecretReferenceConfigurationSetting", provider: "AzureAppConfigurationProvider"
-) -> str:
-    # pylint:disable=protected-access
-    if not (provider._keyvault_credential or provider._keyvault_client_configs or provider._secret_resolver):
-        raise ValueError(
-            """
-            Either a credential to Key Vault, custom Key Vault client, or a secret resolver must be set to resolve Key
-             Vault references.
-            """
-        )
-
-    if config.secret_id is None:
-        raise ValueError("Key Vault reference must have a uri value.")
-
-    keyvault_identifier = KeyVaultSecretIdentifier(config.secret_id)
-
-    vault_url = keyvault_identifier.vault_url + "/"
-
-    # pylint:disable=protected-access
-    referenced_client = provider._secret_clients.get(vault_url, None)
-
-    vault_config = provider._keyvault_client_configs.get(vault_url, {})
-    credential = vault_config.pop("credential", provider._keyvault_credential)
-
-    if referenced_client is None and credential is not None:
-        referenced_client = SecretClient(vault_url=vault_url, credential=credential, **vault_config)
-        provider._secret_clients[vault_url] = referenced_client
-
-    if referenced_client:
-        secret_value = referenced_client.get_secret(keyvault_identifier.name, version=keyvault_identifier.version).value
-        if secret_value is not None:
-            return secret_value
-
-    if provider._secret_resolver:
-        return provider._secret_resolver(config.secret_id)
-
-    raise ValueError("No Secret Client found for Key Vault reference %s" % (vault_url))
-
-
 class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylint: disable=too-many-instance-attributes
     """
     Provides a dictionary-like interface to Azure App Configuration settings. Enables loading of sets of configuration
@@ -321,7 +281,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             load_balancing_enabled=kwargs.pop("load_balancing_enabled", False),
             **kwargs,
         )
-        self._secret_clients: Dict[str, SecretClient] = {}
+        self._secret_provider = SecretProvider(**kwargs)
         self._on_refresh_success: Optional[Callable] = kwargs.pop("on_refresh_success", None)
         self._on_refresh_error: Optional[Callable[[Exception], None]] = kwargs.pop("on_refresh_error", None)
 
@@ -346,7 +306,6 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         self._replica_client_manager.refresh_clients()
         self._replica_client_manager.find_active_clients()
         replica_count = self._replica_client_manager.get_client_count() - 1
-
         while client := self._replica_client_manager.get_next_active_client():
             headers = update_correlation_context_header(
                 kwargs.pop("headers", {}),
@@ -354,7 +313,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 replica_count,
                 self._feature_flag_enabled,
                 self._feature_filter_usage,
-                self._uses_key_vault,
+                self._secret_provider.uses_key_vault,
                 self._uses_load_balancing,
                 is_failover_request,
                 self._uses_ai_configuration,
@@ -382,24 +341,33 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         if self._on_refresh_success:
             self._on_refresh_success()
 
-    def _refresh_configuration_settings(self, force: bool = False, **kwargs: Any) -> None:
+    def _refresh_configuration_settings(self, **kwargs: Any) -> None:
 
         def refresh_operation(client, headers, **inner_kwargs):
             configuration_settings: Optional[List[ConfigurationSetting]] = None
             need_refresh = False
-            force = inner_kwargs.pop("force", False)
-            if not force:
+            reset_secret_timer = False
+
+            if (
+                self._secret_provider.secret_refresh_timer
+                and self._secret_provider.secret_refresh_timer.needs_refresh()
+            ):
+                self._secret_provider.bust_cache()
+                reset_secret_timer = True
+                need_refresh = True
+
+            if not need_refresh:
                 need_refresh, self._refresh_on, configuration_settings = client.refresh_configuration_settings(
                     self._selects, self._refresh_on, headers=headers, **inner_kwargs
                 )
             else:
                 # Force a refresh to make sure secrets are up to date
-                configuration_settings = client.load_configuration_settings(
+                configuration_settings, self._refresh_on = client.load_configuration_settings(
                     self._selects, self._refresh_on, headers=headers, **inner_kwargs
-                )[0]
-                need_refresh = True
+                )
 
             configuration_settings_processed: Dict[str, Any] = {}
+
             if configuration_settings is not None:
                 configuration_settings_processed = self._process_configurations(configuration_settings)
 
@@ -415,8 +383,8 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                     self._dict[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = feature_flags
 
             self._refresh_timer.reset()
-            if self._secret_refresh_timer:
-                self._secret_refresh_timer.reset()
+            if reset_secret_timer and self._secret_provider.secret_refresh_timer:
+                self._secret_provider.secret_refresh_timer.reset()
 
             return True
 
@@ -424,8 +392,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             refresh_operation=refresh_operation,
             error_log_message="Failed to refresh configurations from endpoint %s",
             timer=self._refresh_timer,
-            refresh_condition=bool(self._refresh_on or force),
-            force=force,
+            refresh_condition=bool(self._refresh_on),
             **kwargs,
         )
 
@@ -461,16 +428,18 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         )
 
     def refresh(self, **kwargs) -> None:  # pylint: disable=too-many-statements
-        if not self._refresh_on and not self._feature_flag_refresh_enabled and not self._secret_refresh_timer:
+        if (
+            not self._refresh_on
+            and not self._feature_flag_refresh_enabled
+            and not self._secret_provider.secret_refresh_timer
+        ):
             logger.debug("Refresh called but no refresh enabled.")
             return
         if not self._refresh_lock.acquire(blocking=False):  # pylint: disable= consider-using-with
             logger.debug("Refresh called but refresh already in progress.")
             return
         try:
-            if self._secret_refresh_timer and self._secret_refresh_timer.needs_refresh():
-                self._refresh_configuration_settings(force=True, **kwargs)
-            elif self._refresh_timer and self._refresh_timer.needs_refresh():
+            if self._refresh_timer and self._refresh_timer.needs_refresh():
                 self._refresh_configuration_settings(**kwargs)
             if self._feature_flag_refresh_enabled and (
                 self._feature_flag_refresh_timer and self._feature_flag_refresh_timer.needs_refresh()
@@ -497,7 +466,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 replica_count,
                 self._feature_flag_enabled,
                 self._feature_filter_usage,
-                self._uses_key_vault,
+                self._secret_provider.uses_key_vault,
                 self._uses_load_balancing,
                 is_failover_request,
                 self._uses_ai_configuration,
@@ -568,7 +537,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
 
     def _process_key_value(self, config):
         if isinstance(config, SecretReferenceConfigurationSetting):
-            return _resolve_keyvault_reference(config, self)
+            return self._secret_provider.resolve_keyvault_reference(config)
         if is_json_content_type(config.content_type) and not isinstance(config, FeatureFlagConfigurationSetting):
             try:
                 if APP_CONFIG_AI_MIME_PROFILE in config.content_type:
@@ -598,17 +567,14 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         """
         Closes the connection to Azure App Configuration.
         """
-        for client in self._secret_clients.values():
-            client.close()
+        self._secret_provider.close()
         self._replica_client_manager.close()
 
     def __enter__(self) -> "AzureAppConfigurationProvider":
         self._replica_client_manager.__enter__()
-        for client in self._secret_clients.values():
-            client.__enter__()
+        self._secret_provider.__enter__()
         return self
 
     def __exit__(self, *args) -> None:
         self._replica_client_manager.__exit__()
-        for client in self._secret_clients.values():
-            client.__exit__()
+        self._secret_provider.__exit__()

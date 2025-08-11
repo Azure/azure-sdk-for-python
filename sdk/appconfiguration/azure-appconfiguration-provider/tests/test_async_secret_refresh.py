@@ -8,7 +8,7 @@ import asyncio
 import unittest
 from unittest.mock import Mock, patch
 from azure.appconfiguration import SecretReferenceConfigurationSetting
-from azure.appconfiguration.provider import SettingSelector
+from azure.appconfiguration.provider import SettingSelector, WatchKey
 from devtools_testutils import recorded_by_proxy
 from async_preparers import app_config_aad_decorator_async
 from asynctestcase import AppConfigTestCase
@@ -17,7 +17,7 @@ from asynctestcase import AppConfigTestCase
 class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
     @recorded_by_proxy
     @app_config_aad_decorator_async
-    async def test_secret_refresh_timer(
+    async def testsecret_refresh_timer(
         self,
         appconfiguration_endpoint_string,
         appconfiguration_keyvault_secret_url,
@@ -81,7 +81,8 @@ class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
             keyvault_secret_url2=appconfiguration_keyvault_secret_url2,
             on_refresh_success=mock_callback,
-            refresh_interval=999999,
+            refresh_on=[WatchKey("secret")],
+            refresh_interval=1,
             secret_refresh_interval=1,  # Using a short interval for testing
         )
 
@@ -182,10 +183,10 @@ class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
             secret_refresh_interval=5,  # Secret refresh interval is short
         )
 
-        # Now patch the refresh method and _secret_refresh_timer to control behavior
+        # Now patch the refresh method and secret_refresh_timer to control behavior
         with patch.object(client, "refresh") as mock_refresh:
-            # Now patch the _secret_refresh_timer to control its behavior
-            with patch.object(client, "_secret_refresh_timer") as mock_timer:
+            # Now patch the secret_refresh_timer to control its behavior
+            with patch.object(client._secret_provider, "secret_refresh_timer") as mock_timer:
                 # Make needs_refresh() return True to simulate timer expiration
                 mock_timer.needs_refresh.return_value = True
 
@@ -223,7 +224,7 @@ class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
         )
 
         # Verify the secret refresh timer exists
-        assert client._secret_refresh_timer is not None
+        assert client._secret_provider.secret_refresh_timer is not None
 
         # We can only verify that it exists, but can't directly access the internal refresh_interval
         # as it's a protected attribute
@@ -239,5 +240,5 @@ class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
         )
 
         # Verify timer is created only when secret_refresh_interval is provided
-        assert client._secret_refresh_timer is not None
-        assert client2._secret_refresh_timer is None
+        assert client._secret_provider.secret_refresh_timer is not None
+        assert client2._secret_provider.secret_refresh_timer is None
