@@ -6,25 +6,20 @@
 # cSpell:disable
 from typing import Any
 
-import datetime
-import functools
 import json
-import logging
 import os
 import pytest
-import sys
 import io
 import time
 
-
 from azure.ai.agents.aio import AgentsClient
-from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.agents.models import (
     AzureFunctionTool,
     AzureFunctionStorageQueue,
     AgentStreamEvent,
     AgentThread,
+    BrowserAutomationTool,
     CodeInterpreterTool,
     CodeInterpreterToolResource,
     ConnectedAgentTool,
@@ -40,6 +35,7 @@ from azure.ai.agents.models import (
     ResponseFormatJsonSchema,
     ResponseFormatJsonSchemaType,
     RunAdditionalFieldList,
+    RunStepBrowserAutomationToolCall,
     RunStepConnectedAgentToolCall,
     RunStepDeepResearchToolCall,
     DeepResearchTool,
@@ -61,7 +57,7 @@ from azure.ai.agents.models import (
     VectorStoreDataSource,
     VectorStoreDataSourceAssetType,
 )
-from devtools_testutils.azure_testcase import is_live
+from test_agents_client_base import TestAgentClientBase, agentClientPreparer, fetch_current_datetime_recordings, fetch_current_datetime_live
 
 # TODO clean this up / get rid of anything not in use
 
@@ -73,70 +69,13 @@ issues I've noticed with the code:
     when using the endpoint from Howie, delete_agent(agent.id) did not work but would not cause an error
 """
 
-# Set to True to enable SDK logging
-LOGGING_ENABLED = True
-
-if LOGGING_ENABLED:
-    # Create a logger for the 'azure' SDK
-    # See https://docs.python.org/3/library/logging.html
-    logger = logging.getLogger("azure")
-    logger.setLevel(logging.DEBUG)  # INFO or DEBUG
-
-    # Configure a console output
-    handler = logging.StreamHandler(stream=sys.stdout)
-    logger.addHandler(handler)
-
-
-agentClientPreparer = functools.partial(
-    EnvironmentVariableLoader,
-    "azure_ai_agents",
-    # TODO: uncomment this endpoint when re running with 1DP
-    # azure_ai_agents_tests_project_endpoint="https://aiservices-id.services.ai.azure.com/api/projects/project-name",
-    # TODO: remove this endpoint when re running with 1DP
-    azure_ai_agents_tests_project_connection_string="https://Sanitized.api.azureml.ms/agents/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/",
-    azure_ai_agents_tests_project_endpoint="https://Sanitized.services.ai.azure.com/api/projects/00000",
-    azure_ai_agents_tests_data_path="azureml://subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-resour-cegr-oupfoo1/workspaces/abcd-abcdabcdabcda-abcdefghijklm/datastores/workspaceblobstore/paths/LocalUpload/000000000000/product_info_1.md",
-    azure_ai_agents_tests_storage_queue="https://foobar.queue.core.windows.net",
-    azure_ai_agents_tests_search_index_name="sample_index",
-    azure_ai_agents_tests_search_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/someindex",
-    azure_ai_agents_tests_bing_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.CognitiveServices/accounts/00000/projects/00000/connections/00000",
-    azure_ai_agents_tests_deep_research_model="gpt-4o-deep-research",
-    azure_ai_agents_tests_is_test_run="True",
-)
-
-
-# create tool for agent use
-def fetch_current_datetime_live():
-    """
-    Get the current time as a JSON string.
-
-    :return: Static time string so that test recordings work.
-    :rtype: str
-    """
-    current_datetime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    time_json = json.dumps({"current_time": current_datetime})
-    return time_json
-
-
-# create tool for agent use
-def fetch_current_datetime_recordings():
-    """
-    Get the current time as a JSON string.
-
-    :return: Static time string so that test recordings work.
-    :rtype: str
-    """
-    time_json = json.dumps({"current_time": "2024-10-10 12:30:19"})
-    return time_json
-
-
 # Statically defined user functions for fast reference
 user_functions_recording = {fetch_current_datetime_recordings}
 user_functions_live = {fetch_current_datetime_live}
 
 
 # The test class name needs to start with "Test" to get collected by pytest
-class TestAgentClientAsync(AzureRecordedTestCase):
+class TestAgentClientAsync(TestAgentClientBase):
 
     # helper function: create client using environment variables
     def create_client(self, by_endpoint=False, **kwargs) -> AgentsClient:
@@ -2977,6 +2916,38 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
     @agentClientPreparer()
     @recorded_by_proxy_async
+    async def test_browser_automation_tool(self, **kwargs):
+        connection_id = kwargs["azure_ai_agents_tests_playwright_connection_id"]
+        async with self.create_client(by_endpoint=True, **kwargs) as client:
+            browser_automation_tool = BrowserAutomationTool(connection_id=connection_id)
+            await self._do_test_tool(
+                client=client,
+                model_name="gpt-4o",
+                tool_to_test=browser_automation_tool,
+                instructions="""
+                    You are an Agent helping with browser automation tasks.
+                    You can answer questions, provide information, and assist with various tasks
+                    related to web browsing using the Browser Automation tool available to you.
+                    """,
+                prompt="""
+                    Your goal is to report the percent of Microsoft year-to-date stock price change.
+                    To do that, go to the website finance.yahoo.com.
+                    At the top of the page, you will find a search bar.
+                    Enter the value 'MSFT', to get information about the Microsoft stock price.
+                    At the top of the resulting page you will see a default chart of Microsoft stock price.
+                    Click on 'YTD' at the top of that chart, and read the value that shows up right underneath it.
+                    Report your result using exactly the following sentence, followed by the value you found:
+                    `The year-to-date (YTD) stock price change for Microsoft (MSFT) is`
+                    """,
+                # The tool is very slow to run, since the Microsoft Playwright Workspace service needs to
+                # load a VM and open a browser. Use a large polling interval to avoid tons of REST API calls in test recordings.
+                polling_interval=60,
+                expected_class=RunStepBrowserAutomationToolCall,
+                specific_message_text="the year-to-date (ytd) stock price change for microsoft (msft) is",
+            )
+
+    @agentClientPreparer()
+    @recorded_by_proxy_async
     async def test_deep_research_tool(self, **kwargs):
         """Test using the DeepResearchTool with an agent."""
         # create client
@@ -3068,10 +3039,12 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         :param tool_to_test: The pre created tool to be used.
         :param instructions: The instructions, given to an agent.
         :param prompt: The prompt, given in the first user message.
+        :param expected_class: If a tool call is expected, the name of the class derived from RunStepToolCall
+               corresponding to the expected tool call (e.g. RunStepBrowserAutomationToolCall).
         :param headers: The headers used to call the agents.
                For example: {"x-ms-enable-preview": "true"}
         :param polling_interval: The polling interval (useful, when we need to wait longer times).
-        :param specific_message_text: The specific text to search in the messages.
+        :param specific_message_text: The specific text to search in the messages.  Must be all lower-case.
         """
         if headers is None:
             headers = {}
@@ -3129,6 +3102,8 @@ class TestAgentClientAsync(AzureRecordedTestCase):
                                 found_step = True
                                 if "connected_agent_name" in kwargs:
                                     assert tool_call.connected_agent.name == kwargs["connected_agent_name"]
+                                if isinstance(tool_call, RunStepBrowserAutomationToolCall):
+                                    self._validate_run_step_browser_automation_tool_call(tool_call)
                 assert found_step, f"The {expected_class} was not found."
         finally:
             await client.delete_agent(agent.id)
@@ -3210,10 +3185,6 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         finally:
             await client.delete_agent(agent.id)
             await client.threads.delete(thread.id)
-
-    def _sleep_time(self, sleep: int = 1) -> int:
-        """Return sleep or zero if we are running the recording."""
-        return sleep if is_live() else 0
 
     async def _get_file_id_maybe(self, ai_client: AgentsClient, **kwargs) -> str:
         """Return file id if kwargs has file path."""
