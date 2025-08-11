@@ -131,7 +131,7 @@ class AIAgentsInstrumentor:
           is provided, then the value read from environment variables
           OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT and
           AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED is used. The latter is supported
-          for legacy reasons. New code should use the former, which is defined by OTEL.
+          for legacy reasons. Applications are encouraged to use the former, which is defined by OTEL.
           If the environment variable is not found, then the value will default to `False`.
           Please note that successive calls
           to instrument will always apply the content recording value provided with the most
@@ -196,7 +196,7 @@ class _AIAgentsInstrumentorPreview:
           is provided, then the value read from environment variables
           OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT and
           AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED is used. The latter is supported
-          for legacy reasons. New code should use the former, which is defined by OTEL.
+          for legacy reasons. Applications are encouraged to use the former, which is defined by OTEL.
           If the environment variable is not found, then the value will default to `False`.
           Please note that successive calls
           to instrument will always apply the content recording value provided with the most
