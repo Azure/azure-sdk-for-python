@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 from typing import Mapping, Union, Any, Iterator, KeysView, ItemsView, ValuesView, TypeVar, overload, Optional, Dict
-from azure.appconfiguration import SecretReferenceConfigurationSetting
+from azure.appconfiguration import SecretReferenceConfigurationSetting  # type:ignore # pylint:disable=no-name-in-module
 from azure.keyvault.secrets import SecretClient, KeyVaultSecretIdentifier
 from ._azureappconfigurationproviderbase import _RefreshTimer
 

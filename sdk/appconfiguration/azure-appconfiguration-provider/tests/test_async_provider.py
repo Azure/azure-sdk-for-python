@@ -10,13 +10,13 @@ from testcase import has_feature_flag
 from asynctestcase import AppConfigTestCase
 from test_constants import FEATURE_MANAGEMENT_KEY
 from unittest.mock import MagicMock, patch
-import asyncio
 from azure.appconfiguration.provider._azureappconfigurationproviderbase import (
     update_correlation_context_header,
 )
 from azure.appconfiguration.provider.aio._azureappconfigurationproviderasync import (
     _buildprovider,
 )
+
 
 class TestAppConfigurationProvider(AppConfigTestCase):
     # method: provider_creation
