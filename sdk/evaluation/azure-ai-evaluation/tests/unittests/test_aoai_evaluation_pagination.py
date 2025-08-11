@@ -44,6 +44,7 @@ class TestAOAIPagination:
             eval_group_id="test-group",
             eval_run_id="test-run",
             grader_name_map={"grader-1": "test_grader"},
+            expected_rows=10,
         )
 
         # Mock the wait_for_run_conclusion response
@@ -93,6 +94,7 @@ class TestAOAIPagination:
             eval_group_id="test-group",
             eval_run_id="test-run",
             grader_name_map={"grader-1": "test_grader"},
+            expected_rows=250,
         )
 
         # Mock run results
@@ -164,6 +166,7 @@ class TestAOAIPagination:
             eval_group_id="test-group",
             eval_run_id="test-run",
             grader_name_map={"grader-1": "test_grader"},
+            expected_rows=5,
         )
 
         mock_run_results = Mock()
@@ -205,6 +208,7 @@ class TestAOAIPagination:
             eval_group_id="test-group",
             eval_run_id="test-run",
             grader_name_map={"grader-1": "test_grader"},
+            expected_rows=10,
         )
 
         mock_run_results = Mock()

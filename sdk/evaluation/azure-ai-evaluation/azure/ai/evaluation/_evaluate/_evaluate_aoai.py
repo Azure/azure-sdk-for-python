@@ -29,6 +29,10 @@ class OAIEvalRunCreationInfo(TypedDict, total=True):
     eval_group_id: str
     eval_run_id: str
     grader_name_map: Dict[str, str]
+    # Total number of expected rows in the original dataset. Used to
+    # re-align AOAI grader results to guard against silent row drops
+    # causing horizontal concatenation misalignment.
+    expected_rows: int
 
 
 def _split_evaluators_and_grader_configs(
@@ -157,7 +161,11 @@ def _begin_single_aoai_evaluation(
     )
 
     return OAIEvalRunCreationInfo(
-        client=client, eval_group_id=eval_group_info.id, eval_run_id=eval_run_id, grader_name_map=grader_name_map
+        client=client,
+        eval_group_id=eval_group_info.id,
+        eval_run_id=eval_run_id,
+        grader_name_map=grader_name_map,
+        expected_rows=len(data),
     )
 
 
@@ -309,10 +317,46 @@ def _get_single_run_results(
                 listed_results[col_name] = listed_results[col_name][:num_rows]
 
     output_df = pd.DataFrame(listed_results)
-    # sort by index
+    # Sort by original datasource_item_id for deterministic ordering
     output_df = output_df.sort_values("index", ascending=[True])
-    # remove index column
-    output_df.drop(columns=["index"], inplace=True)
+
+    # Preserve original ids as index, then pad to expected length
+    output_df.set_index("index", inplace=True)
+    expected = run_info.get("expected_rows", None)
+    if expected is not None:
+        # Reindex to expected rows (assumes 0..expected-1 original id space)
+        pre_len = len(output_df)
+        output_df = output_df.reindex(range(expected))
+        if pre_len != expected:
+            # Log warning about missing rows; count rows fully missing (all NaN)
+            missing_rows = expected - pre_len
+            LOGGER.warning(
+                "AOAI grader run %s returned %d/%d rows; %d missing row(s) padded with NaN for alignment.",
+                run_info["eval_run_id"],
+                pre_len,
+                expected,
+                missing_rows,
+            )
+            # For each grader present, add a 'row_missing' boolean column to aid downstream debugging
+            grader_user_names = set()
+            for col in output_df.columns:
+                if col.startswith("outputs."):
+                    parts = col.split(".")
+                    if len(parts) > 2:
+                        grader_user_names.add(parts[1])
+            if grader_user_names:
+                missing_index_mask = output_df.isna().all(axis=1)
+                for g in grader_user_names:
+                    col_name = f"outputs.{g}.row_missing"
+                    if col_name not in output_df:
+                        output_df[col_name] = False
+                    output_df.loc[missing_index_mask, col_name] = True
+    else:
+        # Drop the temporary index column if we cannot realign (backwards compatibility case)
+        pass
+
+    # Finally, reset to RangeIndex so concatenation aligns naturally on position
+    output_df.reset_index(drop=True, inplace=True)
     return output_df, run_metrics
 
 
@@ -406,6 +450,8 @@ def _get_graders_and_column_mappings(
     :rtype: List[Tuple[Dict[str, AoaiGrader], Optional[Dict[str, str]]]]
     """
 
+    if column_mappings is None:
+        return [({name: grader}, None) for name, grader in graders.items()]
     default_mapping = column_mappings.get("default", None)
     return [({name: grader}, column_mappings.get(name, default_mapping)) for name, grader in graders.items()]
 
