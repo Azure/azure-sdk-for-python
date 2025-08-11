@@ -330,7 +330,7 @@ def _get_single_run_results(
                 missing_rows,
             )
             # Add a per-grader 'row_missing' boolean for padded rows
-            grader_user_names: set[str] = set()
+            grader_user_names: Set[str] = set()
             for col in output_df.columns:
                 if col.startswith("outputs."):
                     parts = col.split(".")
