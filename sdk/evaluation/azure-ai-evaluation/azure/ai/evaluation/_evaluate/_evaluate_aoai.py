@@ -446,7 +446,10 @@ def _get_graders_and_column_mappings(
     if column_mappings is None:
         return [({name: grader}, None) for name, grader in graders.items()]
     default_mapping = column_mappings.get("default", None)
-    return [({name: grader}, column_mappings.get(name, default_mapping)) for name, grader in graders.items()]
+        default_mapping = None
+    else:
+        default_mapping = column_mappings.get("default", None)
+    return [({name: grader}, None if column_mappings is None else column_mappings.get(name, default_mapping)) for name, grader in graders.items()]
 
 
 def _generate_data_source_config(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]) -> Dict[str, Any]:
