@@ -269,8 +269,8 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         max_backoff: int = min(kwargs.pop("max_backoff", 600), interval)
 
         self._replica_client_manager = ConfigurationClientManager(
-            connection_string=kwargs.pop("connection_string", None),
-            endpoint=kwargs.pop("endpoint", None),
+            connection_string=kwargs.pop("connection_string"),
+            endpoint=kwargs.pop("endpoint"),
             credential=kwargs.pop("credential", None),
             user_agent=user_agent,
             retry_total=kwargs.pop("retry_total", 2),

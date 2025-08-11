@@ -274,7 +274,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
 
         self._replica_client_manager = AsyncConfigurationClientManager(
             connection_string=kwargs.pop("connection_string", None),
-            endpoint=kwargs.pop("endpoint", None),
+            endpoint=kwargs.pop("endpoint"),
             credential=kwargs.pop("credential", None),
             user_agent=user_agent,
             retry_total=kwargs.pop("retry_total", 2),

@@ -19,6 +19,7 @@ from azure.appconfiguration.provider._azureappconfigurationproviderbase import (
     delay_failure,
     update_correlation_context_header,
 )
+from azure.appconfiguration.provider._azureappconfigurationprovider import _buildprovider
 
 
 def sleep(seconds):
@@ -147,7 +148,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             ]
 
             # Create the provider with the mocked client manager
-            provider = AzureAppConfigurationProvider(connection_string="mock_connection_string")
+            provider = _buildprovider("=mock_connection_string;;", None, None)
             provider._replica_client_manager = mock_client_manager
 
             # Call the method to process key-value pairs
