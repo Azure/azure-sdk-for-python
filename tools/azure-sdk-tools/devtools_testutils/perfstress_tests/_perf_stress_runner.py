@@ -114,6 +114,9 @@ class _PerfStressRunner:
         per_test_arg_parser.add_argument(
             "--insecure", action="store_true", help="Disable SSL validation. Default is False.", default=False
         )
+        per_test_arg_parser.add_argument(
+            "-l", "--latency", action="store_true", help="Track per-operation latency statistics.", default=False
+        )
 
         # Per-test args
         self._test_class_to_run.add_arguments(per_test_arg_parser)
@@ -264,13 +267,16 @@ class _PerfStressRunner:
 
     def _report_results(self):
         """Calculate and log the test run results across all child processes"""
-        operations = []
+        total_operations = 0
+        operations_per_second = 0.0
+        latencies = []
         while not self.results.empty():
-            operations.append(self.results.get())
+            result: Tuple[int, int, float, List[float]] = self.results.get()
+            total_operations += result[1]
+            operations_per_second += result[1] / result[2] if result[2] else 0
+            latencies.extend(result[3])
 
-        total_operations = self._get_completed_operations(operations)
         self.logger.info("")
-        operations_per_second = self._get_operations_per_second(operations)
         if operations_per_second:
             seconds_per_operation = 1 / operations_per_second
             weighted_average_seconds = total_operations / operations_per_second
@@ -282,6 +288,10 @@ class _PerfStressRunner:
                     self._format_number(seconds_per_operation, 4),
                 )
             )
+
+            if self.per_test_args.latency and len(latencies) > 0:
+                self.logger.info("")
+                self._print_latencies(latencies)
         else:
             self.logger.info("Completed without generating operation statistics.")
         self.logger.info("")
@@ -335,3 +345,12 @@ class _PerfStressRunner:
         decimals = max(0, significant_digits - math.floor(log) - 1)
 
         return ("{:,." + str(decimals) + "f}").format(rounded)
+
+    def _print_latencies(self, latencies: List[float]):
+        self.logger.info("=== Latency Distribution ===")
+        latencies.sort()
+
+        percentiles = [50.0, 75.0, 90.0, 95.0, 99.0, 99.9, 100.0]
+        for p in percentiles:
+            index = math.ceil(p / 100 * len(latencies)) - 1
+            self.logger.info(f"{p:5.1f}% {latencies[index]:10.2f}ms")

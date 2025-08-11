@@ -133,7 +133,7 @@ async def _run_tests(duration: int, args, tests, results, status, *, with_profil
 
         # Add final test results to the results queue to be accumulated by the parent process.
         for test in tests:
-            results.put((test._parallel_index, test.completed_operations, test.last_completion_time))
+            results.put((test._parallel_index, test.completed_operations, test.last_completion_time, test._latencies))
     finally:
         # Clean up status reporting thread.
         stop_status.set()
