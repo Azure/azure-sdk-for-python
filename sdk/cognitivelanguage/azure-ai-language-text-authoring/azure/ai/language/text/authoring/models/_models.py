@@ -2873,14 +2873,14 @@ class ExportedEntityListSynonym(_Model):
     :ivar language: Represents the language of the synonyms. This is BCP-47 representation of a
      language. For example, use "en" for English, "en-gb" for English (UK), "es" for Spanish etc.
     :vartype language: str
-    :ivar values_property: The list of synonyms.
-    :vartype values_property: list[str]
+    :ivar synonyms: The list of synonyms.
+    :vartype synonyms: list[str]
     """
 
     language: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Represents the language of the synonyms. This is BCP-47 representation of a language. For
      example, use \"en\" for English, \"en-gb\" for English (UK), \"es\" for Spanish etc."""
-    values_property: Optional[List[str]] = rest_field(
+    synonyms: Optional[List[str]] = rest_field(
         name="values", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of synonyms."""
@@ -2890,7 +2890,7 @@ class ExportedEntityListSynonym(_Model):
         self,
         *,
         language: Optional[str] = None,
-        values_property: Optional[List[str]] = None,
+        synonyms: Optional[List[str]] = None,
     ) -> None: ...
 
     @overload
