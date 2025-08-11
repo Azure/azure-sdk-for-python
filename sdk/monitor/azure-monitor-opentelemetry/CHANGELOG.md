@@ -3,6 +3,8 @@
 ## 1.6.13 (Unreleased)
 
 ### Features Added
+- Updated README to specify the python version supported by the distro.
+  ([]())
 
 ### Breaking Changes
 
