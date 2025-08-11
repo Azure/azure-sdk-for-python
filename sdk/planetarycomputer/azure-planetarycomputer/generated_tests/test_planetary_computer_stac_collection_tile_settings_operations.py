@@ -14,9 +14,9 @@ from testpreparer import PlanetaryComputerClientTestBase, PlanetaryComputerPrepa
 class TestPlanetaryComputerStacCollectionTileSettingsOperations(PlanetaryComputerClientTestBase):
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_stac_collection_tile_settings_get_all(self, planetarycomputer_endpoint):
+    def test_stac_collection_tile_settings_get(self, planetarycomputer_endpoint):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        response = client.stac_collection_tile_settings.get_all(
+        response = client.stac_collection_tile_settings.get(
             collection_id="str",
         )
 

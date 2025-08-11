@@ -14,9 +14,9 @@ from testpreparer import PlanetaryComputerClientTestBase, PlanetaryComputerPrepa
 class TestPlanetaryComputerIngestionsOperations(PlanetaryComputerClientTestBase):
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_ingestions_list_all(self, planetarycomputer_endpoint):
+    def test_ingestions_list(self, planetarycomputer_endpoint):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        response = client.ingestions.list_all(
+        response = client.ingestions.list(
             collection_id="str",
         )
 
@@ -92,9 +92,9 @@ class TestPlanetaryComputerIngestionsOperations(PlanetaryComputerClientTestBase)
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_ingestions_ingestion_runs_list_all(self, planetarycomputer_endpoint):
+    def test_ingestions_ingestion_runs_list(self, planetarycomputer_endpoint):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        response = client.ingestions.ingestion_runs.list_all(
+        response = client.ingestions.ingestion_runs.list(
             collection_id="str",
             ingestion_id="str",
         )

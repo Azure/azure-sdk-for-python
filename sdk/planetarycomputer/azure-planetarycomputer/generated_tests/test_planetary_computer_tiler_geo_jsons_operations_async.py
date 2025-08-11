@@ -15,9 +15,9 @@ from testpreparer_async import PlanetaryComputerClientTestBaseAsync
 class TestPlanetaryComputerTilerGeoJsonsOperationsAsync(PlanetaryComputerClientTestBaseAsync):
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_tiler_geo_jsons_crop_widthx_height_format(self, planetarycomputer_endpoint):
+    async def test_tiler_geo_jsons_crop_width_by_height_format(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.tiler_geo_jsons.crop_widthx_height_format(
+        response = await client.tiler_geo_jsons.crop_width_by_height_format(
             collection_id="str",
             item_id="str",
             width=0.0,

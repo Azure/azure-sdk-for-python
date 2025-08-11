@@ -14,9 +14,9 @@ from testpreparer import PlanetaryComputerClientTestBase, PlanetaryComputerPrepa
 class TestPlanetaryComputerIngestionSourcesOperations(PlanetaryComputerClientTestBase):
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_ingestion_sources_list_all(self, planetarycomputer_endpoint):
+    def test_ingestion_sources_list(self, planetarycomputer_endpoint):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        response = client.ingestion_sources.list_all()
+        response = client.ingestion_sources.list()
 
         # please add some check logic here by yourself
         # ...

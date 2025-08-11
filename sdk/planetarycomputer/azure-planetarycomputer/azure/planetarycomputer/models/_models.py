@@ -1107,39 +1107,6 @@ class IngestionDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IngestionDefinitionsPagedResponse(_Model):
-    """Ingestions Definitions paged response.
-
-    :ivar value: Ingestion Definitions. Required.
-    :vartype value: list[~azure.planetarycomputer.models.IngestionDefinition]
-    :ivar next_link: Next page.
-    :vartype next_link: str
-    """
-
-    value: List["_models.IngestionDefinition"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Ingestion Definitions. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
-    """Next page."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: List["_models.IngestionDefinition"],
-        next_link: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class IngestionRun(_Model):
     """Microsoft Planetary Computer Pro geo-catalog ingestion run.
 
@@ -1300,39 +1267,6 @@ class IngestionRunOperation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IngestionRunsPagedResponse(_Model):
-    """Ingestion Runs paged response.
-
-    :ivar value: Ingestion Runs. Required.
-    :vartype value: list[~azure.planetarycomputer.models.IngestionRun]
-    :ivar next_link: Next page.
-    :vartype next_link: str
-    """
-
-    value: List["_models.IngestionRun"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Ingestion Runs. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
-    """Next page."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: List["_models.IngestionRun"],
-        next_link: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class IngestionSource(_Model):
     """Ingestion Source.
 
@@ -1363,41 +1297,6 @@ class IngestionSource(_Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         kind: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class IngestionSourcesPagedResponse(_Model):
-    """Ingestion Sources paged response.
-
-    :ivar value: Ingestion sources. Required.
-    :vartype value: list[~azure.planetarycomputer.models.IngestionSourceSummary]
-    :ivar next_link: Next page.
-    :vartype next_link: str
-    """
-
-    value: List["_models.IngestionSourceSummary"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Ingestion sources. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
-    """Next page."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: List["_models.IngestionSourceSummary"],
-        next_link: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -1915,41 +1814,6 @@ class Link(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedIdentitiesPagedResponse(_Model):
-    """Managed Identities paged response.
-
-    :ivar value: Managed Identities. Required.
-    :vartype value: list[~azure.planetarycomputer.models.ManagedIdentityMetadata]
-    :ivar next_link: Next page.
-    :vartype next_link: str
-    """
-
-    value: List["_models.ManagedIdentityMetadata"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Managed Identities. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
-    """Next page."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: List["_models.ManagedIdentityMetadata"],
-        next_link: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class ManagedIdentityConnection(_Model):
     """Managed Identity connection information.
 
@@ -2063,10 +1927,10 @@ class Metadata(_Model):
     :vartype type: str or ~azure.planetarycomputer.models.MetadataType
     :ivar bounds: Geographic bounding box in [west, south, east, north] format.
     :vartype bounds: str
-    :ivar minzoom: Minimum zoom level supported.
-    :vartype minzoom: int
-    :ivar maxzoom: Maximum zoom level supported.
-    :vartype maxzoom: int
+    :ivar min_zoom: Minimum zoom level supported.
+    :vartype min_zoom: int
+    :ivar max_zoom: Maximum zoom level supported.
+    :vartype max_zoom: int
     :ivar name: Human-readable name for the resource.
     :vartype name: str
     :ivar assets: List of asset identifiers included in the resource.
@@ -2081,9 +1945,9 @@ class Metadata(_Model):
     """Type of metadata resource. Known values are: \"mosaic\" and \"search\"."""
     bounds: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Geographic bounding box in [west, south, east, north] format."""
-    minzoom: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    min_zoom: Optional[int] = rest_field(name="minzoom", visibility=["read", "create", "update", "delete", "query"])
     """Minimum zoom level supported."""
-    maxzoom: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    max_zoom: Optional[int] = rest_field(name="maxzoom", visibility=["read", "create", "update", "delete", "query"])
     """Maximum zoom level supported."""
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Human-readable name for the resource."""
@@ -2098,8 +1962,8 @@ class Metadata(_Model):
         *,
         type: Optional[Union[str, "_models.MetadataType"]] = None,
         bounds: Optional[str] = None,
-        minzoom: Optional[int] = None,
-        maxzoom: Optional[int] = None,
+        min_zoom: Optional[int] = None,
+        max_zoom: Optional[int] = None,
         name: Optional[str] = None,
         assets: Optional[List[str]] = None,
         defaults: Optional[Dict[str, str]] = None,
@@ -2405,39 +2269,6 @@ class Operation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationsPagedResponse(_Model):
-    """Operations paged response.
-
-    :ivar value: Operations. Required.
-    :vartype value: list[~azure.planetarycomputer.models.Operation]
-    :ivar next_link: Next page.
-    :vartype next_link: str
-    """
-
-    value: List["_models.Operation"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Operations. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
-    """Next page."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: List["_models.Operation"],
-        next_link: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class OperationStatusHistoryItem(_Model):
     """Operation status history item.
 
@@ -2476,6 +2307,175 @@ class OperationStatusHistoryItem(_Model):
         status: Union[str, "_models.OperationStatus"],
         error_code: Optional[str] = None,
         error_message: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PageIngestionDefinition(_Model):
+    """Generic paged response model.
+
+    :ivar value: The items on the page. Required.
+    :vartype value: list[~azure.planetarycomputer.models.IngestionDefinition]
+    :ivar next_link: Link to the next page of results.
+    :vartype next_link: str
+    """
+
+    value: List["_models.IngestionDefinition"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The items on the page. Required."""
+    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
+    """Link to the next page of results."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: List["_models.IngestionDefinition"],
+        next_link: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PageIngestionRun(_Model):
+    """Generic paged response model.
+
+    :ivar value: The items on the page. Required.
+    :vartype value: list[~azure.planetarycomputer.models.IngestionRun]
+    :ivar next_link: Link to the next page of results.
+    :vartype next_link: str
+    """
+
+    value: List["_models.IngestionRun"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The items on the page. Required."""
+    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
+    """Link to the next page of results."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: List["_models.IngestionRun"],
+        next_link: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PageIngestionSourceSummary(_Model):
+    """Generic paged response model.
+
+    :ivar value: The items on the page. Required.
+    :vartype value: list[~azure.planetarycomputer.models.IngestionSourceSummary]
+    :ivar next_link: Link to the next page of results.
+    :vartype next_link: str
+    """
+
+    value: List["_models.IngestionSourceSummary"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The items on the page. Required."""
+    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
+    """Link to the next page of results."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: List["_models.IngestionSourceSummary"],
+        next_link: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PageManagedIdentityMetadata(_Model):
+    """Generic paged response model.
+
+    :ivar value: The items on the page. Required.
+    :vartype value: list[~azure.planetarycomputer.models.ManagedIdentityMetadata]
+    :ivar next_link: Link to the next page of results.
+    :vartype next_link: str
+    """
+
+    value: List["_models.ManagedIdentityMetadata"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The items on the page. Required."""
+    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
+    """Link to the next page of results."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: List["_models.ManagedIdentityMetadata"],
+        next_link: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PageOperation(_Model):
+    """Generic paged response model.
+
+    :ivar value: The items on the page. Required.
+    :vartype value: list[~azure.planetarycomputer.models.Operation]
+    :ivar next_link: Link to the next page of results.
+    :vartype next_link: str
+    """
+
+    value: List["_models.Operation"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The items on the page. Required."""
+    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
+    """Link to the next page of results."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: List["_models.Operation"],
+        next_link: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -2535,12 +2535,12 @@ class PgStacSearch(_Model):
     :vartype search: ~azure.planetarycomputer.models.CqlFilter
     :ivar where: SQL WHERE clause representing the search filters. Required.
     :vartype where: str
-    :ivar orderby: SQL ORDER BY clause for sorting results. Required.
-    :vartype orderby: str
-    :ivar lastused: Timestamp when the search was last accessed. Required.
-    :vartype lastused: ~datetime.datetime
-    :ivar usecount: Number of times the search has been accessed. Required.
-    :vartype usecount: int
+    :ivar order_by: SQL ORDER BY clause for sorting results. Required.
+    :vartype order_by: str
+    :ivar last_used: Timestamp when the search was last accessed. Required.
+    :vartype last_used: ~datetime.datetime
+    :ivar use_count: Number of times the search has been accessed. Required.
+    :vartype use_count: int
     :ivar metadata: Additional metadata associated with the search. Required.
     :vartype metadata: ~azure.planetarycomputer.models.Metadata
     """
@@ -2551,13 +2551,13 @@ class PgStacSearch(_Model):
     """Search. Required."""
     where: str = rest_field(name="_where", visibility=["read", "create", "update", "delete", "query"])
     """SQL WHERE clause representing the search filters. Required."""
-    orderby: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    order_by: str = rest_field(name="orderby", visibility=["read", "create", "update", "delete", "query"])
     """SQL ORDER BY clause for sorting results. Required."""
-    lastused: datetime.datetime = rest_field(
-        visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    last_used: datetime.datetime = rest_field(
+        name="lastused", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """Timestamp when the search was last accessed. Required."""
-    usecount: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    use_count: int = rest_field(name="usecount", visibility=["read", "create", "update", "delete", "query"])
     """Number of times the search has been accessed. Required."""
     metadata: "_models.Metadata" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Additional metadata associated with the search. Required."""
@@ -2569,9 +2569,9 @@ class PgStacSearch(_Model):
         hash: str,
         search: "_models.CqlFilter",
         where: str,
-        orderby: str,
-        lastused: datetime.datetime,
-        usecount: int,
+        order_by: str,
+        last_used: datetime.datetime,
+        use_count: int,
         metadata: "_models.Metadata",
     ) -> None: ...
 
@@ -2766,7 +2766,7 @@ class RegisterResponse(_Model):
     :vartype links: list[~azure.planetarycomputer.models.Link]
     """
 
-    search_id: str = rest_field(name="searchId", visibility=["read", "create", "update", "delete", "query"])
+    search_id: str = rest_field(name="searchid", visibility=["read", "create", "update", "delete", "query"])
     """Unique identifier for the registered search. Required."""
     links: Optional[List["_models.Link"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Related links for the registered mosaic."""
@@ -3658,10 +3658,10 @@ class TileJsonResponse(_Model):
     :vartype grids: list[str]
     :ivar data: Array of data file URL templates.
     :vartype data: list[str]
-    :ivar minzoom: Minimum zoom level available in the tile set.
-    :vartype minzoom: int
-    :ivar maxzoom: Maximum zoom level available in the tile set.
-    :vartype maxzoom: int
+    :ivar min_zoom: Minimum zoom level available in the tile set.
+    :vartype min_zoom: int
+    :ivar max_zoom: Maximum zoom level available in the tile set.
+    :vartype max_zoom: int
     :ivar bounds: Bounds.
     :vartype bounds: list[float]
     :ivar center: Default center point [longitude, latitude, zoom] for the tile set.
@@ -3692,9 +3692,9 @@ class TileJsonResponse(_Model):
     """Array of UTFGrid URL templates."""
     data: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Array of data file URL templates."""
-    minzoom: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    min_zoom: Optional[int] = rest_field(name="minzoom", visibility=["read", "create", "update", "delete", "query"])
     """Minimum zoom level available in the tile set."""
-    maxzoom: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    max_zoom: Optional[int] = rest_field(name="maxzoom", visibility=["read", "create", "update", "delete", "query"])
     """Maximum zoom level available in the tile set."""
     bounds: Optional[List[float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Bounds."""
@@ -3716,8 +3716,8 @@ class TileJsonResponse(_Model):
         scheme: Optional[Union[str, "_models.TileJsonScheme"]] = None,
         grids: Optional[List[str]] = None,
         data: Optional[List[str]] = None,
-        minzoom: Optional[int] = None,
-        maxzoom: Optional[int] = None,
+        min_zoom: Optional[int] = None,
+        max_zoom: Optional[int] = None,
         bounds: Optional[List[float]] = None,
         center: Optional[List[float]] = None,
     ) -> None: ...
@@ -4031,10 +4031,10 @@ class TilerInfo(_Model):
     :vartype offsets: list[int]
     :ivar colormap: Colormap.
     :vartype colormap: dict[str, list[str]]
-    :ivar minzoom: Minzoom.
-    :vartype minzoom: int
-    :ivar maxzoom: Maxzoom.
-    :vartype maxzoom: int
+    :ivar min_zoom: Minzoom.
+    :vartype min_zoom: int
+    :ivar max_zoom: Maxzoom.
+    :vartype max_zoom: int
     """
 
     bounds: List[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -4071,9 +4071,9 @@ class TilerInfo(_Model):
     """Offsets."""
     colormap: Optional[Dict[str, List[str]]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Colormap."""
-    minzoom: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    min_zoom: Optional[int] = rest_field(name="minzoom", visibility=["read", "create", "update", "delete", "query"])
     """Minzoom."""
-    maxzoom: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    max_zoom: Optional[int] = rest_field(name="maxzoom", visibility=["read", "create", "update", "delete", "query"])
     """Maxzoom."""
 
     @overload
@@ -4094,8 +4094,8 @@ class TilerInfo(_Model):
         scales: Optional[List[int]] = None,
         offsets: Optional[List[int]] = None,
         colormap: Optional[Dict[str, List[str]]] = None,
-        minzoom: Optional[int] = None,
-        maxzoom: Optional[int] = None,
+        min_zoom: Optional[int] = None,
+        max_zoom: Optional[int] = None,
     ) -> None: ...
 
     @overload

@@ -14,9 +14,9 @@ from testpreparer import PlanetaryComputerClientTestBase, PlanetaryComputerPrepa
 class TestPlanetaryComputerTilerTileMatrixSetsOperations(PlanetaryComputerClientTestBase):
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_tiler_tile_matrix_sets_get_zxy_scalex_format(self, planetarycomputer_endpoint):
+    def test_tiler_tile_matrix_sets_get_zxy_scale_by_format(self, planetarycomputer_endpoint):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        response = client.tiler_tile_matrix_sets.get_zxy_scalex_format(
+        response = client.tiler_tile_matrix_sets.get_zxy_scale_by_format(
             collection_id="str",
             item_id="str",
             tile_matrix_set_id="str",

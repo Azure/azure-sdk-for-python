@@ -797,7 +797,7 @@ class TileMatrixCornerOfOrigin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Origin at the bottom-left corner (Y increases upward)"""
 
 
-class Tilematrixsetid(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class TileMatrixSetId(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Identifier selecting one of the TileMatrixSetId supported (default:
     'WebMercatorQuad')Standard identifier for a coordinate reference system and tiling scheme used
     for serving map tiles.

@@ -15,9 +15,9 @@ from testpreparer_async import PlanetaryComputerClientTestBaseAsync
 class TestPlanetaryComputerStacCollectionTileSettingsOperationsAsync(PlanetaryComputerClientTestBaseAsync):
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_stac_collection_tile_settings_get_all(self, planetarycomputer_endpoint):
+    async def test_stac_collection_tile_settings_get(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.stac_collection_tile_settings.get_all(
+        response = await client.stac_collection_tile_settings.get(
             collection_id="str",
         )
 

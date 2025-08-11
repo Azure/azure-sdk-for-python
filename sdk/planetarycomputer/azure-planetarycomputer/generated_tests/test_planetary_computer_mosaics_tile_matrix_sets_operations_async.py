@@ -15,9 +15,9 @@ from testpreparer_async import PlanetaryComputerClientTestBaseAsync
 class TestPlanetaryComputerMosaicsTileMatrixSetsOperationsAsync(PlanetaryComputerClientTestBaseAsync):
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_mosaics_tile_matrix_sets_get_zxy_scalex_format(self, planetarycomputer_endpoint):
+    async def test_mosaics_tile_matrix_sets_get_zxy_scale_by_format(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.mosaics_tile_matrix_sets.get_zxy_scalex_format(
+        response = await client.mosaics_tile_matrix_sets.get_zxy_scale_by_format(
             search_id="str",
             tile_matrix_set_id="str",
             z=0.0,

@@ -15,9 +15,9 @@ from testpreparer_async import PlanetaryComputerClientTestBaseAsync
 class TestPlanetaryComputerIngestionsOperationsAsync(PlanetaryComputerClientTestBaseAsync):
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_ingestions_list_all(self, planetarycomputer_endpoint):
+    async def test_ingestions_list(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.ingestions.list_all(
+        response = await client.ingestions.list(
             collection_id="str",
         )
 
@@ -95,9 +95,9 @@ class TestPlanetaryComputerIngestionsOperationsAsync(PlanetaryComputerClientTest
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_ingestions_ingestion_runs_list_all(self, planetarycomputer_endpoint):
+    async def test_ingestions_ingestion_runs_list(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.ingestions.ingestion_runs.list_all(
+        response = await client.ingestions.ingestion_runs.list(
             collection_id="str",
             ingestion_id="str",
         )

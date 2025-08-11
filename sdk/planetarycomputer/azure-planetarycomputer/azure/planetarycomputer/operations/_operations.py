@@ -46,7 +46,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_ingestions_list_all_request(
+def build_ingestions_list_request(
     collection_id: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -353,7 +353,7 @@ def build_stac_items_delete_request(collection_id: str, item_id: str, **kwargs: 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_sources_list_all_request(
+def build_ingestion_sources_list_request(
     *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -516,7 +516,7 @@ def build_ingestion_operations_get_request(operation_id: str, **kwargs: Any) -> 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_operations_list_all_request(  # pylint: disable=name-too-long
+def build_ingestion_operations_list_request(
     *,
     top: Optional[int] = None,
     skip: Optional[int] = None,
@@ -1380,7 +1380,7 @@ def build_stac_collection_render_options_delete_request(  # pylint: disable=name
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_stac_collection_tile_settings_get_all_request(  # pylint: disable=name-too-long
+def build_stac_collection_tile_settings_get_request(  # pylint: disable=name-too-long
     collection_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1687,15 +1687,15 @@ def build_tiler_asset_statistics_get_all_request(  # pylint: disable=name-too-lo
     *,
     assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_bidx: Optional[List[str]] = None,
+    asset_band_indices: Optional[List[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
     max_size: Optional[int] = None,
     categorical: Optional[bool] = None,
-    c: Optional[List[str]] = None,
-    p: Optional[List[int]] = None,
+    categories_pixels: Optional[List[str]] = None,
+    percentiles: Optional[List[int]] = None,
     histogram_bins: Optional[str] = None,
     histogram_range: Optional[str] = None,
     **kwargs: Any,
@@ -1721,8 +1721,8 @@ def build_tiler_asset_statistics_get_all_request(  # pylint: disable=name-too-lo
         _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_bidx is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_bidx", asset_bidx, "[str]", div=",")
+    if asset_band_indices is not None:
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if nodata is not None:
@@ -1735,10 +1735,10 @@ def build_tiler_asset_statistics_get_all_request(  # pylint: disable=name-too-lo
         _params["max_size"] = _SERIALIZER.query("max_size", max_size, "int")
     if categorical is not None:
         _params["categorical"] = _SERIALIZER.query("categorical", categorical, "bool")
-    if c is not None:
-        _params["c"] = [_SERIALIZER.query("c", q, "str") if q is not None else "" for q in c]
-    if p is not None:
-        _params["p"] = [_SERIALIZER.query("p", q, "int") if q is not None else "" for q in p]
+    if categories_pixels is not None:
+        _params["c"] = _SERIALIZER.query("categories_pixels", categories_pixels, "[str]", div=",")
+    if percentiles is not None:
+        _params["p"] = _SERIALIZER.query("percentiles", percentiles, "[int]", div=",")
     if histogram_bins is not None:
         _params["histogram_bins"] = _SERIALIZER.query("histogram_bins", histogram_bins, "str")
     if histogram_range is not None:
@@ -1756,15 +1756,15 @@ def build_tiler_statistics_get_all_request(
     *,
     assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_bidx: Optional[List[str]] = None,
+    asset_band_indices: Optional[List[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
     max_size: Optional[int] = None,
     categorical: Optional[bool] = None,
-    c: Optional[List[str]] = None,
-    p: Optional[List[int]] = None,
+    categories_pixels: Optional[List[str]] = None,
+    percentiles: Optional[List[int]] = None,
     histogram_bins: Optional[str] = None,
     histogram_range: Optional[str] = None,
     **kwargs: Any,
@@ -1790,8 +1790,8 @@ def build_tiler_statistics_get_all_request(
         _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_bidx is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_bidx", asset_bidx, "[str]", div=",")
+    if asset_band_indices is not None:
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if nodata is not None:
@@ -1804,10 +1804,10 @@ def build_tiler_statistics_get_all_request(
         _params["max_size"] = _SERIALIZER.query("max_size", max_size, "int")
     if categorical is not None:
         _params["categorical"] = _SERIALIZER.query("categorical", categorical, "bool")
-    if c is not None:
-        _params["c"] = [_SERIALIZER.query("c", q, "str") if q is not None else "" for q in c]
-    if p is not None:
-        _params["p"] = [_SERIALIZER.query("p", q, "int") if q is not None else "" for q in p]
+    if categories_pixels is not None:
+        _params["c"] = _SERIALIZER.query("categories_pixels", categories_pixels, "[str]", div=",")
+    if percentiles is not None:
+        _params["p"] = _SERIALIZER.query("percentiles", percentiles, "[int]", div=",")
     if histogram_bins is not None:
         _params["histogram_bins"] = _SERIALIZER.query("histogram_bins", histogram_bins, "str")
     if histogram_range is not None:
@@ -1825,7 +1825,7 @@ def build_tiler_geo_json_statistics_get_all_request(  # pylint: disable=name-too
     *,
     assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_bidx: Optional[List[str]] = None,
+    asset_band_indices: Optional[List[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -1833,8 +1833,8 @@ def build_tiler_geo_json_statistics_get_all_request(  # pylint: disable=name-too
     resampling: Optional[Union[str, _models.Resampling]] = None,
     max_size: Optional[int] = None,
     categorical: Optional[bool] = None,
-    c: Optional[List[str]] = None,
-    p: Optional[List[int]] = None,
+    categories_pixels: Optional[List[str]] = None,
+    percentiles: Optional[List[int]] = None,
     histogram_bins: Optional[str] = None,
     histogram_range: Optional[str] = None,
     **kwargs: Any,
@@ -1861,8 +1861,8 @@ def build_tiler_geo_json_statistics_get_all_request(  # pylint: disable=name-too
         _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_bidx is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_bidx", asset_bidx, "[str]", div=",")
+    if asset_band_indices is not None:
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if nodata is not None:
@@ -1877,10 +1877,10 @@ def build_tiler_geo_json_statistics_get_all_request(  # pylint: disable=name-too
         _params["max_size"] = _SERIALIZER.query("max_size", max_size, "int")
     if categorical is not None:
         _params["categorical"] = _SERIALIZER.query("categorical", categorical, "bool")
-    if c is not None:
-        _params["c"] = [_SERIALIZER.query("c", q, "str") if q is not None else "" for q in c]
-    if p is not None:
-        _params["p"] = [_SERIALIZER.query("p", q, "int") if q is not None else "" for q in p]
+    if categories_pixels is not None:
+        _params["c"] = _SERIALIZER.query("categories_pixels", categories_pixels, "[str]", div=",")
+    if percentiles is not None:
+        _params["p"] = _SERIALIZER.query("percentiles", percentiles, "[int]", div=",")
     if histogram_bins is not None:
         _params["histogram_bins"] = _SERIALIZER.query("histogram_bins", histogram_bins, "str")
     if histogram_range is not None:
@@ -1894,7 +1894,7 @@ def build_tiler_geo_json_statistics_get_all_request(  # pylint: disable=name-too
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_tiles_get_zxy_scalex_format_request(  # pylint: disable=name-too-long
+def build_tiler_tiles_get_zxy_scale_by_format_request(  # pylint: disable=name-too-long
     collection_id: str,
     item_id: str,
     z: float,
@@ -1905,13 +1905,13 @@ def build_tiler_tiles_get_zxy_scalex_format_request(  # pylint: disable=name-too
     *,
     assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_bidx: Optional[List[str]] = None,
+    asset_band_indices: Optional[List[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
     algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
-    tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
+    tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
     buffer: Optional[str] = None,
     color_formula: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
@@ -1949,8 +1949,8 @@ def build_tiler_tiles_get_zxy_scalex_format_request(  # pylint: disable=name-too
         _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_bidx is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_bidx", asset_bidx, "[str]", div=",")
+    if asset_band_indices is not None:
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if nodata is not None:
@@ -1989,7 +1989,7 @@ def build_tiler_tiles_get_zxy_scalex_format_request(  # pylint: disable=name-too
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_tile_matrix_sets_get_zxy_scalex_format_request(  # pylint: disable=name-too-long
+def build_tiler_tile_matrix_sets_get_zxy_scale_by_format_request(  # pylint: disable=name-too-long
     collection_id: str,
     item_id: str,
     tile_matrix_set_id: str,
@@ -2001,7 +2001,7 @@ def build_tiler_tile_matrix_sets_get_zxy_scalex_format_request(  # pylint: disab
     *,
     assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_bidx: Optional[List[str]] = None,
+    asset_band_indices: Optional[List[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -2045,8 +2045,8 @@ def build_tiler_tile_matrix_sets_get_zxy_scalex_format_request(  # pylint: disab
         _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_bidx is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_bidx", asset_bidx, "[str]", div=",")
+    if asset_band_indices is not None:
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if nodata is not None:
@@ -2089,17 +2089,17 @@ def build_tiler_tile_json_operations_get_request(  # pylint: disable=name-too-lo
     *,
     assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_bidx: Optional[List[str]] = None,
+    asset_band_indices: Optional[List[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
     algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
-    tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
+    tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
     tile_format: Optional[Union[str, _models.ImageType]] = None,
     tile_scale: Optional[int] = None,
-    minzoom: Optional[int] = None,
-    maxzoom: Optional[int] = None,
+    min_zoom: Optional[int] = None,
+    max_zoom: Optional[int] = None,
     buffer: Optional[str] = None,
     color_formula: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
@@ -2130,8 +2130,8 @@ def build_tiler_tile_json_operations_get_request(  # pylint: disable=name-too-lo
         _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_bidx is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_bidx", asset_bidx, "[str]", div=",")
+    if asset_band_indices is not None:
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if nodata is not None:
@@ -2148,10 +2148,10 @@ def build_tiler_tile_json_operations_get_request(  # pylint: disable=name-too-lo
         _params["tile_format"] = _SERIALIZER.query("tile_format", tile_format, "str")
     if tile_scale is not None:
         _params["tile_scale"] = _SERIALIZER.query("tile_scale", tile_scale, "int")
-    if minzoom is not None:
-        _params["minzoom"] = _SERIALIZER.query("minzoom", minzoom, "int")
-    if maxzoom is not None:
-        _params["maxzoom"] = _SERIALIZER.query("maxzoom", maxzoom, "int")
+    if min_zoom is not None:
+        _params["minzoom"] = _SERIALIZER.query("min_zoom", min_zoom, "int")
+    if max_zoom is not None:
+        _params["maxzoom"] = _SERIALIZER.query("max_zoom", max_zoom, "int")
     if buffer is not None:
         _params["buffer"] = _SERIALIZER.query("buffer", buffer, "str")
     if color_formula is not None:
@@ -2180,7 +2180,7 @@ def build_tiler_tile_json_tile_matrix_sets_get_request(  # pylint: disable=name-
     *,
     assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_bidx: Optional[List[str]] = None,
+    asset_band_indices: Optional[List[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -2188,8 +2188,8 @@ def build_tiler_tile_json_tile_matrix_sets_get_request(  # pylint: disable=name-
     algorithm_params: Optional[str] = None,
     tile_format: Optional[Union[str, _models.ImageType]] = None,
     tile_scale: Optional[int] = None,
-    minzoom: Optional[int] = None,
-    maxzoom: Optional[int] = None,
+    min_zoom: Optional[int] = None,
+    max_zoom: Optional[int] = None,
     buffer: Optional[str] = None,
     color_formula: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
@@ -2221,8 +2221,8 @@ def build_tiler_tile_json_tile_matrix_sets_get_request(  # pylint: disable=name-
         _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_bidx is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_bidx", asset_bidx, "[str]", div=",")
+    if asset_band_indices is not None:
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if nodata is not None:
@@ -2237,10 +2237,10 @@ def build_tiler_tile_json_tile_matrix_sets_get_request(  # pylint: disable=name-
         _params["tile_format"] = _SERIALIZER.query("tile_format", tile_format, "str")
     if tile_scale is not None:
         _params["tile_scale"] = _SERIALIZER.query("tile_scale", tile_scale, "int")
-    if minzoom is not None:
-        _params["minzoom"] = _SERIALIZER.query("minzoom", minzoom, "int")
-    if maxzoom is not None:
-        _params["maxzoom"] = _SERIALIZER.query("maxzoom", maxzoom, "int")
+    if min_zoom is not None:
+        _params["minzoom"] = _SERIALIZER.query("min_zoom", min_zoom, "int")
+    if max_zoom is not None:
+        _params["maxzoom"] = _SERIALIZER.query("max_zoom", max_zoom, "int")
     if buffer is not None:
         _params["buffer"] = _SERIALIZER.query("buffer", buffer, "str")
     if color_formula is not None:
@@ -2268,17 +2268,17 @@ def build_tiler_wmts_get_capabilities_xml_request(  # pylint: disable=name-too-l
     *,
     assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_bidx: Optional[List[str]] = None,
+    asset_band_indices: Optional[List[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
     algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
-    tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
+    tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
     tile_format: Optional[Union[str, _models.ImageType]] = None,
     tile_scale: Optional[int] = None,
-    minzoom: Optional[int] = None,
-    maxzoom: Optional[int] = None,
+    min_zoom: Optional[int] = None,
+    max_zoom: Optional[int] = None,
     buffer: Optional[str] = None,
     color_formula: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
@@ -2309,8 +2309,8 @@ def build_tiler_wmts_get_capabilities_xml_request(  # pylint: disable=name-too-l
         _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_bidx is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_bidx", asset_bidx, "[str]", div=",")
+    if asset_band_indices is not None:
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if nodata is not None:
@@ -2327,10 +2327,10 @@ def build_tiler_wmts_get_capabilities_xml_request(  # pylint: disable=name-too-l
         _params["tile_format"] = _SERIALIZER.query("tile_format", tile_format, "str")
     if tile_scale is not None:
         _params["tile_scale"] = _SERIALIZER.query("tile_scale", tile_scale, "int")
-    if minzoom is not None:
-        _params["minzoom"] = _SERIALIZER.query("minzoom", minzoom, "int")
-    if maxzoom is not None:
-        _params["maxzoom"] = _SERIALIZER.query("maxzoom", maxzoom, "int")
+    if min_zoom is not None:
+        _params["minzoom"] = _SERIALIZER.query("min_zoom", min_zoom, "int")
+    if max_zoom is not None:
+        _params["maxzoom"] = _SERIALIZER.query("max_zoom", max_zoom, "int")
     if buffer is not None:
         _params["buffer"] = _SERIALIZER.query("buffer", buffer, "str")
     if color_formula is not None:
@@ -2359,7 +2359,7 @@ def build_tiler_wmts_tile_matrix_sets_get_capabilities_xml_request(  # pylint: d
     *,
     assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_bidx: Optional[List[str]] = None,
+    asset_band_indices: Optional[List[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -2367,8 +2367,8 @@ def build_tiler_wmts_tile_matrix_sets_get_capabilities_xml_request(  # pylint: d
     algorithm_params: Optional[str] = None,
     tile_format: Optional[Union[str, _models.ImageType]] = None,
     tile_scale: Optional[int] = None,
-    minzoom: Optional[int] = None,
-    maxzoom: Optional[int] = None,
+    min_zoom: Optional[int] = None,
+    max_zoom: Optional[int] = None,
     buffer: Optional[str] = None,
     color_formula: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
@@ -2400,8 +2400,8 @@ def build_tiler_wmts_tile_matrix_sets_get_capabilities_xml_request(  # pylint: d
         _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_bidx is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_bidx", asset_bidx, "[str]", div=",")
+    if asset_band_indices is not None:
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if nodata is not None:
@@ -2416,10 +2416,10 @@ def build_tiler_wmts_tile_matrix_sets_get_capabilities_xml_request(  # pylint: d
         _params["tile_format"] = _SERIALIZER.query("tile_format", tile_format, "str")
     if tile_scale is not None:
         _params["tile_scale"] = _SERIALIZER.query("tile_scale", tile_scale, "int")
-    if minzoom is not None:
-        _params["minzoom"] = _SERIALIZER.query("minzoom", minzoom, "int")
-    if maxzoom is not None:
-        _params["maxzoom"] = _SERIALIZER.query("maxzoom", maxzoom, "int")
+    if min_zoom is not None:
+        _params["minzoom"] = _SERIALIZER.query("min_zoom", min_zoom, "int")
+    if max_zoom is not None:
+        _params["maxzoom"] = _SERIALIZER.query("max_zoom", max_zoom, "int")
     if buffer is not None:
         _params["buffer"] = _SERIALIZER.query("buffer", buffer, "str")
     if color_formula is not None:
@@ -2449,7 +2449,7 @@ def build_tiler_points_get_lon_lat_request(
     *,
     assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_bidx: Optional[List[str]] = None,
+    asset_band_indices: Optional[List[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -2480,8 +2480,8 @@ def build_tiler_points_get_lon_lat_request(
         _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_bidx is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_bidx", asset_bidx, "[str]", div=",")
+    if asset_band_indices is not None:
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if nodata is not None:
@@ -2506,7 +2506,7 @@ def build_tiler_previews_get_format_request(
     *,
     assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_bidx: Optional[List[str]] = None,
+    asset_band_indices: Optional[List[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -2546,8 +2546,8 @@ def build_tiler_previews_get_format_request(
         _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_bidx is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_bidx", asset_bidx, "[str]", div=",")
+    if asset_band_indices is not None:
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if nodata is not None:
@@ -2592,7 +2592,7 @@ def build_tiler_previews_get_request(
     *,
     assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_bidx: Optional[List[str]] = None,
+    asset_band_indices: Optional[List[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -2632,8 +2632,8 @@ def build_tiler_previews_get_request(
         _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_bidx is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_bidx", asset_bidx, "[str]", div=",")
+    if asset_band_indices is not None:
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if nodata is not None:
@@ -2674,7 +2674,7 @@ def build_tiler_previews_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_parts_get_minx_miny_maxx_maxy_widthx_height_format_request(  # pylint: disable=name-too-long
+def build_tiler_parts_get_cropped_to_bounding_box_width_by_height_request(  # pylint: disable=name-too-long
     collection_id: str,
     item_id: str,
     minx: float,
@@ -2687,7 +2687,7 @@ def build_tiler_parts_get_minx_miny_maxx_maxy_widthx_height_format_request(  # p
     *,
     assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_bidx: Optional[List[str]] = None,
+    asset_band_indices: Optional[List[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -2732,8 +2732,8 @@ def build_tiler_parts_get_minx_miny_maxx_maxy_widthx_height_format_request(  # p
         _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_bidx is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_bidx", asset_bidx, "[str]", div=",")
+    if asset_band_indices is not None:
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if nodata is not None:
@@ -2770,7 +2770,7 @@ def build_tiler_parts_get_minx_miny_maxx_maxy_widthx_height_format_request(  # p
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_parts_get_minx_miny_maxx_maxy_format_request(  # pylint: disable=name-too-long
+def build_tiler_parts_get_cropped_to_bounding_box_request(  # pylint: disable=name-too-long
     collection_id: str,
     item_id: str,
     minx: float,
@@ -2781,7 +2781,7 @@ def build_tiler_parts_get_minx_miny_maxx_maxy_format_request(  # pylint: disable
     *,
     assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_bidx: Optional[List[str]] = None,
+    asset_band_indices: Optional[List[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -2826,8 +2826,8 @@ def build_tiler_parts_get_minx_miny_maxx_maxy_format_request(  # pylint: disable
         _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_bidx is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_bidx", asset_bidx, "[str]", div=",")
+    if asset_band_indices is not None:
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if nodata is not None:
@@ -2868,7 +2868,7 @@ def build_tiler_parts_get_minx_miny_maxx_maxy_format_request(  # pylint: disable
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_geo_jsons_crop_widthx_height_format_request(  # pylint: disable=name-too-long
+def build_tiler_geo_jsons_crop_width_by_height_format_request(  # pylint: disable=name-too-long
     collection_id: str,
     item_id: str,
     width: float,
@@ -2877,7 +2877,7 @@ def build_tiler_geo_jsons_crop_widthx_height_format_request(  # pylint: disable=
     *,
     assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_bidx: Optional[List[str]] = None,
+    asset_band_indices: Optional[List[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -2918,8 +2918,8 @@ def build_tiler_geo_jsons_crop_widthx_height_format_request(  # pylint: disable=
         _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_bidx is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_bidx", asset_bidx, "[str]", div=",")
+    if asset_band_indices is not None:
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if nodata is not None:
@@ -2963,7 +2963,7 @@ def build_tiler_geo_jsons_crop_format_request(  # pylint: disable=name-too-long
     *,
     assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_bidx: Optional[List[str]] = None,
+    asset_band_indices: Optional[List[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -3004,8 +3004,8 @@ def build_tiler_geo_jsons_crop_format_request(  # pylint: disable=name-too-long
         _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_bidx is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_bidx", asset_bidx, "[str]", div=",")
+    if asset_band_indices is not None:
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if nodata is not None:
@@ -3146,7 +3146,7 @@ def build_maps_interval_legends_get_by_classmap_name_request(  # pylint: disable
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_mosaics_tiles_get_zxy_scalex_format_request(  # pylint: disable=name-too-long
+def build_mosaics_tiles_get_zxy_scale_by_format_request(  # pylint: disable=name-too-long
     search_id: str,
     z: float,
     x: float,
@@ -3156,18 +3156,18 @@ def build_mosaics_tiles_get_zxy_scalex_format_request(  # pylint: disable=name-t
     *,
     assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_bidx: Optional[List[str]] = None,
+    asset_band_indices: Optional[List[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
     scan_limit: Optional[int] = None,
     items_limit: Optional[int] = None,
     time_limit: Optional[int] = None,
-    exitwhenfull: Optional[bool] = None,
-    skipcovered: Optional[bool] = None,
+    exit_when_full: Optional[bool] = None,
+    skip_covered: Optional[bool] = None,
     algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
-    tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
+    tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
     buffer: Optional[str] = None,
     color_formula: Optional[str] = None,
     collection: Optional[str] = None,
@@ -3204,8 +3204,8 @@ def build_mosaics_tiles_get_zxy_scalex_format_request(  # pylint: disable=name-t
         _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_bidx is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_bidx", asset_bidx, "[str]", div=",")
+    if asset_band_indices is not None:
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if nodata is not None:
@@ -3218,10 +3218,10 @@ def build_mosaics_tiles_get_zxy_scalex_format_request(  # pylint: disable=name-t
         _params["items_limit"] = _SERIALIZER.query("items_limit", items_limit, "int")
     if time_limit is not None:
         _params["time_limit"] = _SERIALIZER.query("time_limit", time_limit, "int")
-    if exitwhenfull is not None:
-        _params["exitwhenfull"] = _SERIALIZER.query("exitwhenfull", exitwhenfull, "bool")
-    if skipcovered is not None:
-        _params["skipcovered"] = _SERIALIZER.query("skipcovered", skipcovered, "bool")
+    if exit_when_full is not None:
+        _params["exitwhenfull"] = _SERIALIZER.query("exit_when_full", exit_when_full, "bool")
+    if skip_covered is not None:
+        _params["skipcovered"] = _SERIALIZER.query("skip_covered", skip_covered, "bool")
     if algorithm is not None:
         _params["algorithm"] = _SERIALIZER.query("algorithm", algorithm, "str")
     if algorithm_params is not None:
@@ -3254,7 +3254,7 @@ def build_mosaics_tiles_get_zxy_scalex_format_request(  # pylint: disable=name-t
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_mosaics_tile_matrix_sets_get_zxy_scalex_format_request(  # pylint: disable=name-too-long
+def build_mosaics_tile_matrix_sets_get_zxy_scale_by_format_request(  # pylint: disable=name-too-long
     search_id: str,
     tile_matrix_set_id: str,
     z: float,
@@ -3265,15 +3265,15 @@ def build_mosaics_tile_matrix_sets_get_zxy_scalex_format_request(  # pylint: dis
     *,
     assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_bidx: Optional[List[str]] = None,
+    asset_band_indices: Optional[List[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
     scan_limit: Optional[int] = None,
     items_limit: Optional[int] = None,
     time_limit: Optional[int] = None,
-    exitwhenfull: Optional[bool] = None,
-    skipcovered: Optional[bool] = None,
+    exit_when_full: Optional[bool] = None,
+    skip_covered: Optional[bool] = None,
     algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
     buffer: Optional[str] = None,
@@ -3313,8 +3313,8 @@ def build_mosaics_tile_matrix_sets_get_zxy_scalex_format_request(  # pylint: dis
         _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_bidx is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_bidx", asset_bidx, "[str]", div=",")
+    if asset_band_indices is not None:
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if nodata is not None:
@@ -3327,10 +3327,10 @@ def build_mosaics_tile_matrix_sets_get_zxy_scalex_format_request(  # pylint: dis
         _params["items_limit"] = _SERIALIZER.query("items_limit", items_limit, "int")
     if time_limit is not None:
         _params["time_limit"] = _SERIALIZER.query("time_limit", time_limit, "int")
-    if exitwhenfull is not None:
-        _params["exitwhenfull"] = _SERIALIZER.query("exitwhenfull", exitwhenfull, "bool")
-    if skipcovered is not None:
-        _params["skipcovered"] = _SERIALIZER.query("skipcovered", skipcovered, "bool")
+    if exit_when_full is not None:
+        _params["exitwhenfull"] = _SERIALIZER.query("exit_when_full", exit_when_full, "bool")
+    if skip_covered is not None:
+        _params["skipcovered"] = _SERIALIZER.query("skip_covered", skip_covered, "bool")
     if algorithm is not None:
         _params["algorithm"] = _SERIALIZER.query("algorithm", algorithm, "str")
     if algorithm_params is not None:
@@ -3366,20 +3366,20 @@ def build_mosaics_tile_json_operations_get_request(  # pylint: disable=name-too-
     *,
     assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_bidx: Optional[List[str]] = None,
+    asset_band_indices: Optional[List[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
     scan_limit: Optional[int] = None,
     items_limit: Optional[int] = None,
     time_limit: Optional[int] = None,
-    exitwhenfull: Optional[bool] = None,
-    skipcovered: Optional[bool] = None,
-    tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
+    exit_when_full: Optional[bool] = None,
+    skip_covered: Optional[bool] = None,
+    tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
     tile_format: Optional[Union[str, _models.ImageType]] = None,
     tile_scale: Optional[int] = None,
-    minzoom: Optional[int] = None,
-    maxzoom: Optional[int] = None,
+    min_zoom: Optional[int] = None,
+    max_zoom: Optional[int] = None,
     buffer: Optional[float] = None,
     color_formula: Optional[str] = None,
     collection: Optional[str] = None,
@@ -3413,8 +3413,8 @@ def build_mosaics_tile_json_operations_get_request(  # pylint: disable=name-too-
         _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_bidx is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_bidx", asset_bidx, "[str]", div=",")
+    if asset_band_indices is not None:
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if nodata is not None:
@@ -3427,20 +3427,20 @@ def build_mosaics_tile_json_operations_get_request(  # pylint: disable=name-too-
         _params["items_limit"] = _SERIALIZER.query("items_limit", items_limit, "int")
     if time_limit is not None:
         _params["time_limit"] = _SERIALIZER.query("time_limit", time_limit, "int")
-    if exitwhenfull is not None:
-        _params["exitwhenfull"] = _SERIALIZER.query("exitwhenfull", exitwhenfull, "bool")
-    if skipcovered is not None:
-        _params["skipcovered"] = _SERIALIZER.query("skipcovered", skipcovered, "bool")
+    if exit_when_full is not None:
+        _params["exitwhenfull"] = _SERIALIZER.query("exit_when_full", exit_when_full, "bool")
+    if skip_covered is not None:
+        _params["skipcovered"] = _SERIALIZER.query("skip_covered", skip_covered, "bool")
     if tile_matrix_set_id is not None:
         _params["tileMatrixSetId"] = _SERIALIZER.query("tile_matrix_set_id", tile_matrix_set_id, "str")
     if tile_format is not None:
         _params["tile_format"] = _SERIALIZER.query("tile_format", tile_format, "str")
     if tile_scale is not None:
         _params["tile_scale"] = _SERIALIZER.query("tile_scale", tile_scale, "int")
-    if minzoom is not None:
-        _params["minzoom"] = _SERIALIZER.query("minzoom", minzoom, "int")
-    if maxzoom is not None:
-        _params["maxzoom"] = _SERIALIZER.query("maxzoom", maxzoom, "int")
+    if min_zoom is not None:
+        _params["minzoom"] = _SERIALIZER.query("min_zoom", min_zoom, "int")
+    if max_zoom is not None:
+        _params["maxzoom"] = _SERIALIZER.query("max_zoom", max_zoom, "int")
     if buffer is not None:
         _params["buffer"] = _SERIALIZER.query("buffer", buffer, "float")
     if color_formula is not None:
@@ -3476,19 +3476,19 @@ def build_mosaics_tile_matrix_sets_tile_json_get_request(  # pylint: disable=nam
     *,
     assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_bidx: Optional[List[str]] = None,
+    asset_band_indices: Optional[List[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
     scan_limit: Optional[int] = None,
     items_limit: Optional[int] = None,
     time_limit: Optional[int] = None,
-    exitwhenfull: Optional[bool] = None,
-    skipcovered: Optional[bool] = None,
+    exit_when_full: Optional[bool] = None,
+    skip_covered: Optional[bool] = None,
     algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
-    minzoom: Optional[int] = None,
-    maxzoom: Optional[int] = None,
+    min_zoom: Optional[int] = None,
+    max_zoom: Optional[int] = None,
     tile_format: Optional[Union[str, _models.ImageType]] = None,
     tile_scale: Optional[int] = None,
     buffer: Optional[str] = None,
@@ -3523,8 +3523,8 @@ def build_mosaics_tile_matrix_sets_tile_json_get_request(  # pylint: disable=nam
         _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_bidx is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_bidx", asset_bidx, "[str]", div=",")
+    if asset_band_indices is not None:
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if nodata is not None:
@@ -3537,18 +3537,18 @@ def build_mosaics_tile_matrix_sets_tile_json_get_request(  # pylint: disable=nam
         _params["items_limit"] = _SERIALIZER.query("items_limit", items_limit, "int")
     if time_limit is not None:
         _params["time_limit"] = _SERIALIZER.query("time_limit", time_limit, "int")
-    if exitwhenfull is not None:
-        _params["exitwhenfull"] = _SERIALIZER.query("exitwhenfull", exitwhenfull, "bool")
-    if skipcovered is not None:
-        _params["skipcovered"] = _SERIALIZER.query("skipcovered", skipcovered, "bool")
+    if exit_when_full is not None:
+        _params["exitwhenfull"] = _SERIALIZER.query("exit_when_full", exit_when_full, "bool")
+    if skip_covered is not None:
+        _params["skipcovered"] = _SERIALIZER.query("skip_covered", skip_covered, "bool")
     if algorithm is not None:
         _params["algorithm"] = _SERIALIZER.query("algorithm", algorithm, "str")
     if algorithm_params is not None:
         _params["algorithm_params"] = _SERIALIZER.query("algorithm_params", algorithm_params, "str")
-    if minzoom is not None:
-        _params["minzoom"] = _SERIALIZER.query("minzoom", minzoom, "int")
-    if maxzoom is not None:
-        _params["maxzoom"] = _SERIALIZER.query("maxzoom", maxzoom, "int")
+    if min_zoom is not None:
+        _params["minzoom"] = _SERIALIZER.query("min_zoom", min_zoom, "int")
+    if max_zoom is not None:
+        _params["maxzoom"] = _SERIALIZER.query("max_zoom", max_zoom, "int")
     if tile_format is not None:
         _params["tile_format"] = _SERIALIZER.query("tile_format", tile_format, "str")
     if tile_scale is not None:
@@ -3583,17 +3583,17 @@ def build_mosaics_wmts_mosaics_get_capabilities_xml_request(  # pylint: disable=
     *,
     assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_bidx: Optional[List[str]] = None,
+    asset_band_indices: Optional[List[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
     algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
-    tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
+    tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
     tile_format: Optional[Union[str, _models.ImageType]] = None,
     tile_scale: Optional[int] = None,
-    minzoom: Optional[int] = None,
-    maxzoom: Optional[int] = None,
+    min_zoom: Optional[int] = None,
+    max_zoom: Optional[int] = None,
     buffer: Optional[str] = None,
     color_formula: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
@@ -3623,8 +3623,8 @@ def build_mosaics_wmts_mosaics_get_capabilities_xml_request(  # pylint: disable=
         _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_bidx is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_bidx", asset_bidx, "[str]", div=",")
+    if asset_band_indices is not None:
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if nodata is not None:
@@ -3641,10 +3641,10 @@ def build_mosaics_wmts_mosaics_get_capabilities_xml_request(  # pylint: disable=
         _params["tile_format"] = _SERIALIZER.query("tile_format", tile_format, "str")
     if tile_scale is not None:
         _params["tile_scale"] = _SERIALIZER.query("tile_scale", tile_scale, "int")
-    if minzoom is not None:
-        _params["minzoom"] = _SERIALIZER.query("minzoom", minzoom, "int")
-    if maxzoom is not None:
-        _params["maxzoom"] = _SERIALIZER.query("maxzoom", maxzoom, "int")
+    if min_zoom is not None:
+        _params["minzoom"] = _SERIALIZER.query("min_zoom", min_zoom, "int")
+    if max_zoom is not None:
+        _params["maxzoom"] = _SERIALIZER.query("max_zoom", max_zoom, "int")
     if buffer is not None:
         _params["buffer"] = _SERIALIZER.query("buffer", buffer, "str")
     if color_formula is not None:
@@ -3672,7 +3672,7 @@ def build_mosaics_wmts_mosaics_tile_matrix_sets_get_capabilities_xml_request(  #
     *,
     assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
-    asset_bidx: Optional[List[str]] = None,
+    asset_band_indices: Optional[List[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -3680,8 +3680,8 @@ def build_mosaics_wmts_mosaics_tile_matrix_sets_get_capabilities_xml_request(  #
     algorithm_params: Optional[str] = None,
     tile_format: Optional[Union[str, _models.ImageType]] = None,
     tile_scale: Optional[int] = None,
-    minzoom: Optional[int] = None,
-    maxzoom: Optional[int] = None,
+    min_zoom: Optional[int] = None,
+    max_zoom: Optional[int] = None,
     buffer: Optional[str] = None,
     color_formula: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
@@ -3712,8 +3712,8 @@ def build_mosaics_wmts_mosaics_tile_matrix_sets_get_capabilities_xml_request(  #
         _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
     if expression is not None:
         _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_bidx is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_bidx", asset_bidx, "[str]", div=",")
+    if asset_band_indices is not None:
+        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
     if asset_as_band is not None:
         _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
     if nodata is not None:
@@ -3728,10 +3728,10 @@ def build_mosaics_wmts_mosaics_tile_matrix_sets_get_capabilities_xml_request(  #
         _params["tile_format"] = _SERIALIZER.query("tile_format", tile_format, "str")
     if tile_scale is not None:
         _params["tile_scale"] = _SERIALIZER.query("tile_scale", tile_scale, "int")
-    if minzoom is not None:
-        _params["minzoom"] = _SERIALIZER.query("minzoom", minzoom, "int")
-    if maxzoom is not None:
-        _params["maxzoom"] = _SERIALIZER.query("maxzoom", maxzoom, "int")
+    if min_zoom is not None:
+        _params["minzoom"] = _SERIALIZER.query("min_zoom", min_zoom, "int")
+    if max_zoom is not None:
+        _params["maxzoom"] = _SERIALIZER.query("max_zoom", max_zoom, "int")
     if buffer is not None:
         _params["buffer"] = _SERIALIZER.query("buffer", buffer, "str")
     if color_formula is not None:
@@ -3808,9 +3808,9 @@ def build_mosaics_assets_for_tiles_get_zxy_assets_request(  # pylint: disable=na
     scan_limit: Optional[int] = None,
     items_limit: Optional[int] = None,
     time_limit: Optional[int] = None,
-    exitwhenfull: Optional[bool] = None,
-    skipcovered: Optional[bool] = None,
-    tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
+    exit_when_full: Optional[bool] = None,
+    skip_covered: Optional[bool] = None,
+    tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
     **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -3838,10 +3838,10 @@ def build_mosaics_assets_for_tiles_get_zxy_assets_request(  # pylint: disable=na
         _params["items_limit"] = _SERIALIZER.query("items_limit", items_limit, "int")
     if time_limit is not None:
         _params["time_limit"] = _SERIALIZER.query("time_limit", time_limit, "int")
-    if exitwhenfull is not None:
-        _params["exitwhenfull"] = _SERIALIZER.query("exitwhenfull", exitwhenfull, "bool")
-    if skipcovered is not None:
-        _params["skipcovered"] = _SERIALIZER.query("skipcovered", skipcovered, "bool")
+    if exit_when_full is not None:
+        _params["exitwhenfull"] = _SERIALIZER.query("exit_when_full", exit_when_full, "bool")
+    if skip_covered is not None:
+        _params["skipcovered"] = _SERIALIZER.query("skip_covered", skip_covered, "bool")
     if tile_matrix_set_id is not None:
         _params["tileMatrixSetId"] = _SERIALIZER.query("tile_matrix_set_id", tile_matrix_set_id, "str")
 
@@ -3861,8 +3861,8 @@ def build_mosaics_assets_for_tile_matrix_sets_get_zxy_assets_request(  # pylint:
     scan_limit: Optional[int] = None,
     items_limit: Optional[int] = None,
     time_limit: Optional[int] = None,
-    exitwhenfull: Optional[bool] = None,
-    skipcovered: Optional[bool] = None,
+    exit_when_full: Optional[bool] = None,
+    skip_covered: Optional[bool] = None,
     **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -3891,10 +3891,10 @@ def build_mosaics_assets_for_tile_matrix_sets_get_zxy_assets_request(  # pylint:
         _params["items_limit"] = _SERIALIZER.query("items_limit", items_limit, "int")
     if time_limit is not None:
         _params["time_limit"] = _SERIALIZER.query("time_limit", time_limit, "int")
-    if exitwhenfull is not None:
-        _params["exitwhenfull"] = _SERIALIZER.query("exitwhenfull", exitwhenfull, "bool")
-    if skipcovered is not None:
-        _params["skipcovered"] = _SERIALIZER.query("skipcovered", skipcovered, "bool")
+    if exit_when_full is not None:
+        _params["exitwhenfull"] = _SERIALIZER.query("exit_when_full", exit_when_full, "bool")
+    if skip_covered is not None:
+        _params["skipcovered"] = _SERIALIZER.query("skip_covered", skip_covered, "bool")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -3910,8 +3910,8 @@ def build_mosaics_assets_for_points_get_lon_lat_assets_request(  # pylint: disab
     scan_limit: Optional[int] = None,
     items_limit: Optional[int] = None,
     time_limit: Optional[int] = None,
-    exitwhenfull: Optional[bool] = None,
-    skipcovered: Optional[bool] = None,
+    exit_when_full: Optional[bool] = None,
+    skip_covered: Optional[bool] = None,
     coord_crs: Optional[str] = None,
     **kwargs: Any,
 ) -> HttpRequest:
@@ -3939,10 +3939,10 @@ def build_mosaics_assets_for_points_get_lon_lat_assets_request(  # pylint: disab
         _params["items_limit"] = _SERIALIZER.query("items_limit", items_limit, "int")
     if time_limit is not None:
         _params["time_limit"] = _SERIALIZER.query("time_limit", time_limit, "int")
-    if exitwhenfull is not None:
-        _params["exitwhenfull"] = _SERIALIZER.query("exitwhenfull", exitwhenfull, "bool")
-    if skipcovered is not None:
-        _params["skipcovered"] = _SERIALIZER.query("skipcovered", skipcovered, "bool")
+    if exit_when_full is not None:
+        _params["exitwhenfull"] = _SERIALIZER.query("exit_when_full", exit_when_full, "bool")
+    if skip_covered is not None:
+        _params["skipcovered"] = _SERIALIZER.query("skip_covered", skip_covered, "bool")
     if coord_crs is not None:
         _params["coord-crs"] = _SERIALIZER.query("coord_crs", coord_crs, "str")
 
@@ -4060,7 +4060,7 @@ def build_sas_get_sign_request(*, href: str, duration: Optional[int] = None, **k
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestions_ingestion_runs_list_all_request(  # pylint: disable=name-too-long
+def build_ingestions_ingestion_runs_list_request(  # pylint: disable=name-too-long
     collection_id: str, ingestion_id: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4168,9 +4168,9 @@ class IngestionsOperations:
         )
 
     @distributed_trace
-    def list_all(
+    def list(
         self, collection_id: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> _models.IngestionDefinitionsPagedResponse:
+    ) -> _models.PageIngestionDefinition:
         """Get ingestions of a catalog.
 
         :param collection_id: Catalog collection id. Required.
@@ -4179,9 +4179,8 @@ class IngestionsOperations:
         :paramtype top: int
         :keyword skip: The number of items to skip. Default value is None.
         :paramtype skip: int
-        :return: IngestionDefinitionsPagedResponse. The IngestionDefinitionsPagedResponse is compatible
-         with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.IngestionDefinitionsPagedResponse
+        :return: PageIngestionDefinition. The PageIngestionDefinition is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.PageIngestionDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4195,9 +4194,9 @@ class IngestionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.IngestionDefinitionsPagedResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.PageIngestionDefinition] = kwargs.pop("cls", None)
 
-        _request = build_ingestions_list_all_request(
+        _request = build_ingestions_list_request(
             collection_id=collection_id,
             top=top,
             skip=skip,
@@ -4229,7 +4228,7 @@ class IngestionsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.IngestionDefinitionsPagedResponse, response.json())
+            deserialized = _deserialize(_models.PageIngestionDefinition, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5682,18 +5681,18 @@ class IngestionSourcesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list_all(
+    def list(
         self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> _models.IngestionSourcesPagedResponse:
+    ) -> _models.PageIngestionSourceSummary:
         """Get ingestion sources in a geo-catalog.
 
         :keyword top: The number of items to return. Default value is None.
         :paramtype top: int
         :keyword skip: The number of items to skip. Default value is None.
         :paramtype skip: int
-        :return: IngestionSourcesPagedResponse. The IngestionSourcesPagedResponse is compatible with
+        :return: PageIngestionSourceSummary. The PageIngestionSourceSummary is compatible with
          MutableMapping
-        :rtype: ~azure.planetarycomputer.models.IngestionSourcesPagedResponse
+        :rtype: ~azure.planetarycomputer.models.PageIngestionSourceSummary
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -5707,9 +5706,9 @@ class IngestionSourcesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.IngestionSourcesPagedResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.PageIngestionSourceSummary] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_sources_list_all_request(
+        _request = build_ingestion_sources_list_request(
             top=top,
             skip=skip,
             api_version=self._config.api_version,
@@ -5740,7 +5739,7 @@ class IngestionSourcesOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.IngestionSourcesPagedResponse, response.json())
+            deserialized = _deserialize(_models.PageIngestionSourceSummary, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -6116,12 +6115,12 @@ class IngestionSourcesOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def list_managed_identities(self, **kwargs: Any) -> _models.ManagedIdentitiesPagedResponse:
+    def list_managed_identities(self, **kwargs: Any) -> _models.PageManagedIdentityMetadata:
         """Get all managed identities with access to storage accounts configured for a geo-catalog.
 
-        :return: ManagedIdentitiesPagedResponse. The ManagedIdentitiesPagedResponse is compatible with
+        :return: PageManagedIdentityMetadata. The PageManagedIdentityMetadata is compatible with
          MutableMapping
-        :rtype: ~azure.planetarycomputer.models.ManagedIdentitiesPagedResponse
+        :rtype: ~azure.planetarycomputer.models.PageManagedIdentityMetadata
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -6135,7 +6134,7 @@ class IngestionSourcesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ManagedIdentitiesPagedResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.PageManagedIdentityMetadata] = kwargs.pop("cls", None)
 
         _request = build_ingestion_sources_list_managed_identities_request(
             api_version=self._config.api_version,
@@ -6166,7 +6165,7 @@ class IngestionSourcesOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.ManagedIdentitiesPagedResponse, response.json())
+            deserialized = _deserialize(_models.PageManagedIdentityMetadata, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -6252,7 +6251,7 @@ class IngestionOperationsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_all(
+    def list(
         self,
         *,
         top: Optional[int] = None,
@@ -6260,7 +6259,7 @@ class IngestionOperationsOperations:
         collection_id: Optional[str] = None,
         status: Optional[Union[str, _models.OperationStatus]] = None,
         **kwargs: Any,
-    ) -> _models.OperationsPagedResponse:
+    ) -> _models.PageOperation:
         """Get operations of a geo-catalog collection.
 
         :keyword top: The number of items to return. Default value is None.
@@ -6272,8 +6271,8 @@ class IngestionOperationsOperations:
         :keyword status: Operation status used to filter the results. Known values are: "Pending",
          "Running", "Succeeded", "Canceled", "Canceling", and "Failed". Default value is None.
         :paramtype status: str or ~azure.planetarycomputer.models.OperationStatus
-        :return: OperationsPagedResponse. The OperationsPagedResponse is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.OperationsPagedResponse
+        :return: PageOperation. The PageOperation is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.PageOperation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -6287,9 +6286,9 @@ class IngestionOperationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.OperationsPagedResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.PageOperation] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_operations_list_all_request(
+        _request = build_ingestion_operations_list_request(
             top=top,
             skip=skip,
             collection_id=collection_id,
@@ -6322,7 +6321,7 @@ class IngestionOperationsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.OperationsPagedResponse, response.json())
+            deserialized = _deserialize(_models.PageOperation, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9699,7 +9698,7 @@ class StacCollectionTileSettingsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get_all(self, collection_id: str, **kwargs: Any) -> _models.TileSettings:
+    def get(self, collection_id: str, **kwargs: Any) -> _models.TileSettings:
         """Get Collection Tile Settings.
 
         Get the tile settings for a given collection.
@@ -9723,7 +9722,7 @@ class StacCollectionTileSettingsOperations:
 
         cls: ClsType[_models.TileSettings] = kwargs.pop("cls", None)
 
-        _request = build_stac_collection_tile_settings_get_all_request(
+        _request = build_stac_collection_tile_settings_get_request(
             collection_id=collection_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -10820,15 +10819,15 @@ class TilerAssetStatisticsOperations:
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_bidx: Optional[List[str]] = None,
+        asset_band_indices: Optional[List[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         categorical: Optional[bool] = None,
-        c: Optional[List[str]] = None,
-        p: Optional[List[int]] = None,
+        categories_pixels: Optional[List[str]] = None,
+        percentiles: Optional[List[int]] = None,
         histogram_bins: Optional[str] = None,
         histogram_range: Optional[str] = None,
         **kwargs: Any,
@@ -10845,8 +10844,9 @@ class TilerAssetStatisticsOperations:
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_bidx: Per asset band indexes (coma separated indexes). Default value is None.
-        :paramtype asset_bidx: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword nodata: Overwrite internal Nodata value. Default value is None.
@@ -10861,10 +10861,11 @@ class TilerAssetStatisticsOperations:
         :paramtype max_size: int
         :keyword categorical: Return statistics for categorical dataset. Default value is None.
         :paramtype categorical: bool
-        :keyword c: List of values for which to report counts. Default value is None.
-        :paramtype c: list[str]
-        :keyword p: List of percentile values (default to [2, 98]). Default value is None.
-        :paramtype p: list[int]
+        :keyword categories_pixels: List of pixel categorical values for which to report counts.
+         Default value is None.
+        :paramtype categories_pixels: list[str]
+        :keyword percentiles: List of percentile values (default to [2, 98]). Default value is None.
+        :paramtype percentiles: list[int]
         :keyword histogram_bins: Defines the number of equal-width bins in the given range (10, by
          default).
 
@@ -10911,15 +10912,15 @@ class TilerAssetStatisticsOperations:
             item_id=item_id,
             assets=assets,
             expression=expression,
-            asset_bidx=asset_bidx,
+            asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
             nodata=nodata,
             unscale=unscale,
             resampling=resampling,
             max_size=max_size,
             categorical=categorical,
-            c=c,
-            p=p,
+            categories_pixels=categories_pixels,
+            percentiles=percentiles,
             histogram_bins=histogram_bins,
             histogram_range=histogram_range,
             api_version=self._config.api_version,
@@ -10983,15 +10984,15 @@ class TilerStatisticsOperations:
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_bidx: Optional[List[str]] = None,
+        asset_band_indices: Optional[List[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         categorical: Optional[bool] = None,
-        c: Optional[List[str]] = None,
-        p: Optional[List[int]] = None,
+        categories_pixels: Optional[List[str]] = None,
+        percentiles: Optional[List[int]] = None,
         histogram_bins: Optional[str] = None,
         histogram_range: Optional[str] = None,
         **kwargs: Any,
@@ -11008,8 +11009,9 @@ class TilerStatisticsOperations:
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_bidx: Per asset band indexes (coma separated indexes). Default value is None.
-        :paramtype asset_bidx: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword nodata: Overwrite internal Nodata value. Default value is None.
@@ -11024,10 +11026,11 @@ class TilerStatisticsOperations:
         :paramtype max_size: int
         :keyword categorical: Return statistics for categorical dataset. Default value is None.
         :paramtype categorical: bool
-        :keyword c: List of values for which to report counts. Default value is None.
-        :paramtype c: list[str]
-        :keyword p: List of percentile values (default to [2, 98]). Default value is None.
-        :paramtype p: list[int]
+        :keyword categories_pixels: List of pixel categorical values for which to report counts.
+         Default value is None.
+        :paramtype categories_pixels: list[str]
+        :keyword percentiles: List of percentile values (default to [2, 98]). Default value is None.
+        :paramtype percentiles: list[int]
         :keyword histogram_bins: Defines the number of equal-width bins in the given range (10, by
          default).
 
@@ -11074,15 +11077,15 @@ class TilerStatisticsOperations:
             item_id=item_id,
             assets=assets,
             expression=expression,
-            asset_bidx=asset_bidx,
+            asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
             nodata=nodata,
             unscale=unscale,
             resampling=resampling,
             max_size=max_size,
             categorical=categorical,
-            c=c,
-            p=p,
+            categories_pixels=categories_pixels,
+            percentiles=percentiles,
             histogram_bins=histogram_bins,
             histogram_range=histogram_range,
             api_version=self._config.api_version,
@@ -11147,7 +11150,7 @@ class TilerGeoJsonStatisticsOperations:
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_bidx: Optional[List[str]] = None,
+        asset_band_indices: Optional[List[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -11155,8 +11158,8 @@ class TilerGeoJsonStatisticsOperations:
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         categorical: Optional[bool] = None,
-        c: Optional[List[str]] = None,
-        p: Optional[List[int]] = None,
+        categories_pixels: Optional[List[str]] = None,
+        percentiles: Optional[List[int]] = None,
         histogram_bins: Optional[str] = None,
         histogram_range: Optional[str] = None,
         content_type: str = "application/json",
@@ -11176,8 +11179,9 @@ class TilerGeoJsonStatisticsOperations:
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_bidx: Per asset band indexes (coma separated indexes). Default value is None.
-        :paramtype asset_bidx: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword nodata: Overwrite internal Nodata value. Default value is None.
@@ -11195,10 +11199,11 @@ class TilerGeoJsonStatisticsOperations:
         :paramtype max_size: int
         :keyword categorical: Return statistics for categorical dataset. Default value is None.
         :paramtype categorical: bool
-        :keyword c: List of values for which to report counts. Default value is None.
-        :paramtype c: list[str]
-        :keyword p: List of percentile values (default to [2, 98]). Default value is None.
-        :paramtype p: list[int]
+        :keyword categories_pixels: List of pixel categorical values for which to report counts.
+         Default value is None.
+        :paramtype categories_pixels: list[str]
+        :keyword percentiles: List of percentile values (default to [2, 98]). Default value is None.
+        :paramtype percentiles: list[int]
         :keyword histogram_bins: Defines the number of equal-width bins in the given range (10, by
          default).
 
@@ -11241,7 +11246,7 @@ class TilerGeoJsonStatisticsOperations:
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_bidx: Optional[List[str]] = None,
+        asset_band_indices: Optional[List[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -11249,8 +11254,8 @@ class TilerGeoJsonStatisticsOperations:
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         categorical: Optional[bool] = None,
-        c: Optional[List[str]] = None,
-        p: Optional[List[int]] = None,
+        categories_pixels: Optional[List[str]] = None,
+        percentiles: Optional[List[int]] = None,
         histogram_bins: Optional[str] = None,
         histogram_range: Optional[str] = None,
         content_type: str = "application/json",
@@ -11270,8 +11275,9 @@ class TilerGeoJsonStatisticsOperations:
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_bidx: Per asset band indexes (coma separated indexes). Default value is None.
-        :paramtype asset_bidx: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword nodata: Overwrite internal Nodata value. Default value is None.
@@ -11289,10 +11295,11 @@ class TilerGeoJsonStatisticsOperations:
         :paramtype max_size: int
         :keyword categorical: Return statistics for categorical dataset. Default value is None.
         :paramtype categorical: bool
-        :keyword c: List of values for which to report counts. Default value is None.
-        :paramtype c: list[str]
-        :keyword p: List of percentile values (default to [2, 98]). Default value is None.
-        :paramtype p: list[int]
+        :keyword categories_pixels: List of pixel categorical values for which to report counts.
+         Default value is None.
+        :paramtype categories_pixels: list[str]
+        :keyword percentiles: List of percentile values (default to [2, 98]). Default value is None.
+        :paramtype percentiles: list[int]
         :keyword histogram_bins: Defines the number of equal-width bins in the given range (10, by
          default).
 
@@ -11335,7 +11342,7 @@ class TilerGeoJsonStatisticsOperations:
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_bidx: Optional[List[str]] = None,
+        asset_band_indices: Optional[List[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -11343,8 +11350,8 @@ class TilerGeoJsonStatisticsOperations:
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         categorical: Optional[bool] = None,
-        c: Optional[List[str]] = None,
-        p: Optional[List[int]] = None,
+        categories_pixels: Optional[List[str]] = None,
+        percentiles: Optional[List[int]] = None,
         histogram_bins: Optional[str] = None,
         histogram_range: Optional[str] = None,
         content_type: str = "application/json",
@@ -11364,8 +11371,9 @@ class TilerGeoJsonStatisticsOperations:
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_bidx: Per asset band indexes (coma separated indexes). Default value is None.
-        :paramtype asset_bidx: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword nodata: Overwrite internal Nodata value. Default value is None.
@@ -11383,10 +11391,11 @@ class TilerGeoJsonStatisticsOperations:
         :paramtype max_size: int
         :keyword categorical: Return statistics for categorical dataset. Default value is None.
         :paramtype categorical: bool
-        :keyword c: List of values for which to report counts. Default value is None.
-        :paramtype c: list[str]
-        :keyword p: List of percentile values (default to [2, 98]). Default value is None.
-        :paramtype p: list[int]
+        :keyword categories_pixels: List of pixel categorical values for which to report counts.
+         Default value is None.
+        :paramtype categories_pixels: list[str]
+        :keyword percentiles: List of percentile values (default to [2, 98]). Default value is None.
+        :paramtype percentiles: list[int]
         :keyword histogram_bins: Defines the number of equal-width bins in the given range (10, by
          default).
 
@@ -11429,7 +11438,7 @@ class TilerGeoJsonStatisticsOperations:
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_bidx: Optional[List[str]] = None,
+        asset_band_indices: Optional[List[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -11437,8 +11446,8 @@ class TilerGeoJsonStatisticsOperations:
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         categorical: Optional[bool] = None,
-        c: Optional[List[str]] = None,
-        p: Optional[List[int]] = None,
+        categories_pixels: Optional[List[str]] = None,
+        percentiles: Optional[List[int]] = None,
         histogram_bins: Optional[str] = None,
         histogram_range: Optional[str] = None,
         **kwargs: Any,
@@ -11458,8 +11467,9 @@ class TilerGeoJsonStatisticsOperations:
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_bidx: Per asset band indexes (coma separated indexes). Default value is None.
-        :paramtype asset_bidx: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword nodata: Overwrite internal Nodata value. Default value is None.
@@ -11477,10 +11487,11 @@ class TilerGeoJsonStatisticsOperations:
         :paramtype max_size: int
         :keyword categorical: Return statistics for categorical dataset. Default value is None.
         :paramtype categorical: bool
-        :keyword c: List of values for which to report counts. Default value is None.
-        :paramtype c: list[str]
-        :keyword p: List of percentile values (default to [2, 98]). Default value is None.
-        :paramtype p: list[int]
+        :keyword categories_pixels: List of pixel categorical values for which to report counts.
+         Default value is None.
+        :paramtype categories_pixels: list[str]
+        :keyword percentiles: List of percentile values (default to [2, 98]). Default value is None.
+        :paramtype percentiles: list[int]
         :keyword histogram_bins: Defines the number of equal-width bins in the given range (10, by
          default).
 
@@ -11536,7 +11547,7 @@ class TilerGeoJsonStatisticsOperations:
             item_id=item_id,
             assets=assets,
             expression=expression,
-            asset_bidx=asset_bidx,
+            asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
             nodata=nodata,
             unscale=unscale,
@@ -11544,8 +11555,8 @@ class TilerGeoJsonStatisticsOperations:
             resampling=resampling,
             max_size=max_size,
             categorical=categorical,
-            c=c,
-            p=p,
+            categories_pixels=categories_pixels,
+            percentiles=percentiles,
             histogram_bins=histogram_bins,
             histogram_range=histogram_range,
             content_type=content_type,
@@ -11604,7 +11615,7 @@ class TilerTilesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get_zxy_scalex_format(
+    def get_zxy_scale_by_format(
         self,
         collection_id: str,
         item_id: str,
@@ -11616,13 +11627,13 @@ class TilerTilesOperations:
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_bidx: Optional[List[str]] = None,
+        asset_band_indices: Optional[List[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
         algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
-        tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
+        tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
         buffer: Optional[str] = None,
         color_formula: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
@@ -11661,8 +11672,9 @@ class TilerTilesOperations:
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_bidx: Per asset band indexes (coma separated indexes). Default value is None.
-        :paramtype asset_bidx: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword nodata: Overwrite internal Nodata value. Default value is None.
@@ -11680,7 +11692,7 @@ class TilerTilesOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~azure.planetarycomputer.models.Tilematrixsetid
+        :paramtype tile_matrix_set_id: str or ~azure.planetarycomputer.models.TileMatrixSetId
         :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
          Output
          **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
@@ -11753,7 +11765,7 @@ class TilerTilesOperations:
 
         cls: ClsType[Optional[Iterator[bytes]]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_tiles_get_zxy_scalex_format_request(
+        _request = build_tiler_tiles_get_zxy_scale_by_format_request(
             collection_id=collection_id,
             item_id=item_id,
             z=z,
@@ -11763,7 +11775,7 @@ class TilerTilesOperations:
             format=format,
             assets=assets,
             expression=expression,
-            asset_bidx=asset_bidx,
+            asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
             nodata=nodata,
             unscale=unscale,
@@ -11841,7 +11853,7 @@ class TilerTileMatrixSetsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get_zxy_scalex_format(
+    def get_zxy_scale_by_format(
         self,
         collection_id: str,
         item_id: str,
@@ -11854,7 +11866,7 @@ class TilerTileMatrixSetsOperations:
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_bidx: Optional[List[str]] = None,
+        asset_band_indices: Optional[List[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -11900,8 +11912,9 @@ class TilerTileMatrixSetsOperations:
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_bidx: Per asset band indexes (coma separated indexes). Default value is None.
-        :paramtype asset_bidx: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword nodata: Overwrite internal Nodata value. Default value is None.
@@ -11985,7 +11998,7 @@ class TilerTileMatrixSetsOperations:
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_tile_matrix_sets_get_zxy_scalex_format_request(
+        _request = build_tiler_tile_matrix_sets_get_zxy_scale_by_format_request(
             collection_id=collection_id,
             item_id=item_id,
             tile_matrix_set_id=tile_matrix_set_id,
@@ -11996,7 +12009,7 @@ class TilerTileMatrixSetsOperations:
             format=format,
             assets=assets,
             expression=expression,
-            asset_bidx=asset_bidx,
+            asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
             nodata=nodata,
             unscale=unscale,
@@ -12078,17 +12091,17 @@ class TilerTileJsonOperationsOperations:
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_bidx: Optional[List[str]] = None,
+        asset_band_indices: Optional[List[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
         algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
-        tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
+        tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
         tile_format: Optional[Union[str, _models.ImageType]] = None,
         tile_scale: Optional[int] = None,
-        minzoom: Optional[int] = None,
-        maxzoom: Optional[int] = None,
+        min_zoom: Optional[int] = None,
+        max_zoom: Optional[int] = None,
         buffer: Optional[str] = None,
         color_formula: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
@@ -12110,8 +12123,9 @@ class TilerTileJsonOperationsOperations:
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_bidx: Per asset band indexes (coma separated indexes). Default value is None.
-        :paramtype asset_bidx: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword nodata: Overwrite internal Nodata value. Default value is None.
@@ -12129,7 +12143,7 @@ class TilerTileJsonOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~azure.planetarycomputer.models.Tilematrixsetid
+        :paramtype tile_matrix_set_id: str or ~azure.planetarycomputer.models.TileMatrixSetId
         :keyword tile_format: Default will be automatically defined if the output image needs a mask
          (png) or
          not (jpeg). Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and "pngraw".
@@ -12138,10 +12152,10 @@ class TilerTileJsonOperationsOperations:
         :keyword tile_scale: Tile scale factor affecting output size. Values > 1 produce larger tiles
          (e.g., 1=256x256, 2=512x512). Default value is None.
         :paramtype tile_scale: int
-        :keyword minzoom: Overwrite default minzoom. Default value is None.
-        :paramtype minzoom: int
-        :keyword maxzoom: Overwrite default maxzoom. Default value is None.
-        :paramtype maxzoom: int
+        :keyword min_zoom: Overwrite default minzoom. Default value is None.
+        :paramtype min_zoom: int
+        :keyword max_zoom: Overwrite default maxzoom. Default value is None.
+        :paramtype max_zoom: int
         :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
          Output
          **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
@@ -12214,7 +12228,7 @@ class TilerTileJsonOperationsOperations:
             item_id=item_id,
             assets=assets,
             expression=expression,
-            asset_bidx=asset_bidx,
+            asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
             nodata=nodata,
             unscale=unscale,
@@ -12223,8 +12237,8 @@ class TilerTileJsonOperationsOperations:
             tile_matrix_set_id=tile_matrix_set_id,
             tile_format=tile_format,
             tile_scale=tile_scale,
-            minzoom=minzoom,
-            maxzoom=maxzoom,
+            min_zoom=min_zoom,
+            max_zoom=max_zoom,
             buffer=buffer,
             color_formula=color_formula,
             resampling=resampling,
@@ -12294,7 +12308,7 @@ class TilerTileJsonTileMatrixSetsOperations:
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_bidx: Optional[List[str]] = None,
+        asset_band_indices: Optional[List[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -12302,8 +12316,8 @@ class TilerTileJsonTileMatrixSetsOperations:
         algorithm_params: Optional[str] = None,
         tile_format: Optional[Union[str, _models.ImageType]] = None,
         tile_scale: Optional[int] = None,
-        minzoom: Optional[int] = None,
-        maxzoom: Optional[int] = None,
+        min_zoom: Optional[int] = None,
+        max_zoom: Optional[int] = None,
         buffer: Optional[str] = None,
         color_formula: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
@@ -12327,8 +12341,9 @@ class TilerTileJsonTileMatrixSetsOperations:
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_bidx: Per asset band indexes (coma separated indexes). Default value is None.
-        :paramtype asset_bidx: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword nodata: Overwrite internal Nodata value. Default value is None.
@@ -12348,10 +12363,10 @@ class TilerTileJsonTileMatrixSetsOperations:
         :keyword tile_scale: Tile scale factor affecting output size. Values > 1 produce larger tiles
          (e.g., 1=256x256, 2=512x512). Default value is None.
         :paramtype tile_scale: int
-        :keyword minzoom: Overwrite default minzoom. Default value is None.
-        :paramtype minzoom: int
-        :keyword maxzoom: Overwrite default maxzoom. Default value is None.
-        :paramtype maxzoom: int
+        :keyword min_zoom: Overwrite default minzoom. Default value is None.
+        :paramtype min_zoom: int
+        :keyword max_zoom: Overwrite default maxzoom. Default value is None.
+        :paramtype max_zoom: int
         :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
          Output
          **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
@@ -12425,7 +12440,7 @@ class TilerTileJsonTileMatrixSetsOperations:
             tile_matrix_set_id=tile_matrix_set_id,
             assets=assets,
             expression=expression,
-            asset_bidx=asset_bidx,
+            asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
             nodata=nodata,
             unscale=unscale,
@@ -12433,8 +12448,8 @@ class TilerTileJsonTileMatrixSetsOperations:
             algorithm_params=algorithm_params,
             tile_format=tile_format,
             tile_scale=tile_scale,
-            minzoom=minzoom,
-            maxzoom=maxzoom,
+            min_zoom=min_zoom,
+            max_zoom=max_zoom,
             buffer=buffer,
             color_formula=color_formula,
             resampling=resampling,
@@ -12503,17 +12518,17 @@ class TilerWmtsOperations:
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_bidx: Optional[List[str]] = None,
+        asset_band_indices: Optional[List[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
         algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
-        tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
+        tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
         tile_format: Optional[Union[str, _models.ImageType]] = None,
         tile_scale: Optional[int] = None,
-        minzoom: Optional[int] = None,
-        maxzoom: Optional[int] = None,
+        min_zoom: Optional[int] = None,
+        max_zoom: Optional[int] = None,
         buffer: Optional[str] = None,
         color_formula: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
@@ -12535,8 +12550,9 @@ class TilerWmtsOperations:
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_bidx: Per asset band indexes (coma separated indexes). Default value is None.
-        :paramtype asset_bidx: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword nodata: Overwrite internal Nodata value. Default value is None.
@@ -12554,17 +12570,17 @@ class TilerWmtsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~azure.planetarycomputer.models.Tilematrixsetid
+        :paramtype tile_matrix_set_id: str or ~azure.planetarycomputer.models.TileMatrixSetId
         :keyword tile_format: Output image type. Default is png. Known values are: "png", "npy", "tif",
          "jpeg", "jpg", "jp2", "webp", and "pngraw". Default value is None.
         :paramtype tile_format: str or ~azure.planetarycomputer.models.ImageType
         :keyword tile_scale: Tile scale factor affecting output size. Values > 1 produce larger tiles
          (e.g., 1=256x256, 2=512x512). Default value is None.
         :paramtype tile_scale: int
-        :keyword minzoom: Overwrite default minzoom. Default value is None.
-        :paramtype minzoom: int
-        :keyword maxzoom: Overwrite default maxzoom. Default value is None.
-        :paramtype maxzoom: int
+        :keyword min_zoom: Overwrite default minzoom. Default value is None.
+        :paramtype min_zoom: int
+        :keyword max_zoom: Overwrite default maxzoom. Default value is None.
+        :paramtype max_zoom: int
         :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
          Output
          **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
@@ -12637,7 +12653,7 @@ class TilerWmtsOperations:
             item_id=item_id,
             assets=assets,
             expression=expression,
-            asset_bidx=asset_bidx,
+            asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
             nodata=nodata,
             unscale=unscale,
@@ -12646,8 +12662,8 @@ class TilerWmtsOperations:
             tile_matrix_set_id=tile_matrix_set_id,
             tile_format=tile_format,
             tile_scale=tile_scale,
-            minzoom=minzoom,
-            maxzoom=maxzoom,
+            min_zoom=min_zoom,
+            max_zoom=max_zoom,
             buffer=buffer,
             color_formula=color_formula,
             resampling=resampling,
@@ -12722,7 +12738,7 @@ class TilerWmtsTileMatrixSetsOperations:
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_bidx: Optional[List[str]] = None,
+        asset_band_indices: Optional[List[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -12730,8 +12746,8 @@ class TilerWmtsTileMatrixSetsOperations:
         algorithm_params: Optional[str] = None,
         tile_format: Optional[Union[str, _models.ImageType]] = None,
         tile_scale: Optional[int] = None,
-        minzoom: Optional[int] = None,
-        maxzoom: Optional[int] = None,
+        min_zoom: Optional[int] = None,
+        max_zoom: Optional[int] = None,
         buffer: Optional[str] = None,
         color_formula: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
@@ -12755,8 +12771,9 @@ class TilerWmtsTileMatrixSetsOperations:
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_bidx: Per asset band indexes (coma separated indexes). Default value is None.
-        :paramtype asset_bidx: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword nodata: Overwrite internal Nodata value. Default value is None.
@@ -12774,10 +12791,10 @@ class TilerWmtsTileMatrixSetsOperations:
         :keyword tile_scale: Tile scale factor affecting output size. Values > 1 produce larger tiles
          (e.g., 1=256x256, 2=512x512). Default value is None.
         :paramtype tile_scale: int
-        :keyword minzoom: Overwrite default minzoom. Default value is None.
-        :paramtype minzoom: int
-        :keyword maxzoom: Overwrite default maxzoom. Default value is None.
-        :paramtype maxzoom: int
+        :keyword min_zoom: Overwrite default minzoom. Default value is None.
+        :paramtype min_zoom: int
+        :keyword max_zoom: Overwrite default maxzoom. Default value is None.
+        :paramtype max_zoom: int
         :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
          Output
          **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
@@ -12851,7 +12868,7 @@ class TilerWmtsTileMatrixSetsOperations:
             tile_matrix_set_id=tile_matrix_set_id,
             assets=assets,
             expression=expression,
-            asset_bidx=asset_bidx,
+            asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
             nodata=nodata,
             unscale=unscale,
@@ -12859,8 +12876,8 @@ class TilerWmtsTileMatrixSetsOperations:
             algorithm_params=algorithm_params,
             tile_format=tile_format,
             tile_scale=tile_scale,
-            minzoom=minzoom,
-            maxzoom=maxzoom,
+            min_zoom=min_zoom,
+            max_zoom=max_zoom,
             buffer=buffer,
             color_formula=color_formula,
             resampling=resampling,
@@ -12931,7 +12948,7 @@ class TilerPointsOperations:
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_bidx: Optional[List[str]] = None,
+        asset_band_indices: Optional[List[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -12955,8 +12972,9 @@ class TilerPointsOperations:
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_bidx: Per asset band indexes (coma separated indexes). Default value is None.
-        :paramtype asset_bidx: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword nodata: Overwrite internal Nodata value. Default value is None.
@@ -12994,7 +13012,7 @@ class TilerPointsOperations:
             lat=lat,
             assets=assets,
             expression=expression,
-            asset_bidx=asset_bidx,
+            asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
             nodata=nodata,
             unscale=unscale,
@@ -13062,7 +13080,7 @@ class TilerPreviewsOperations:
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_bidx: Optional[List[str]] = None,
+        asset_band_indices: Optional[List[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -13094,8 +13112,9 @@ class TilerPreviewsOperations:
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_bidx: Per asset band indexes (coma separated indexes). Default value is None.
-        :paramtype asset_bidx: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword nodata: Overwrite internal Nodata value. Default value is None.
@@ -13184,7 +13203,7 @@ class TilerPreviewsOperations:
             format=format,
             assets=assets,
             expression=expression,
-            asset_bidx=asset_bidx,
+            asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
             nodata=nodata,
             unscale=unscale,
@@ -13249,7 +13268,7 @@ class TilerPreviewsOperations:
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_bidx: Optional[List[str]] = None,
+        asset_band_indices: Optional[List[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -13280,8 +13299,9 @@ class TilerPreviewsOperations:
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_bidx: Per asset band indexes (coma separated indexes). Default value is None.
-        :paramtype asset_bidx: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword nodata: Overwrite internal Nodata value. Default value is None.
@@ -13372,7 +13392,7 @@ class TilerPreviewsOperations:
             item_id=item_id,
             assets=assets,
             expression=expression,
-            asset_bidx=asset_bidx,
+            asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
             nodata=nodata,
             unscale=unscale,
@@ -13449,7 +13469,7 @@ class TilerPartsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get_minx_miny_maxx_maxy_widthx_height_format(  # pylint: disable=name-too-long
+    def get_cropped_to_bounding_box_width_by_height(  # pylint: disable=name-too-long
         self,
         collection_id: str,
         item_id: str,
@@ -13463,7 +13483,7 @@ class TilerPartsOperations:
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_bidx: Optional[List[str]] = None,
+        asset_band_indices: Optional[List[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -13506,8 +13526,9 @@ class TilerPartsOperations:
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_bidx: Per asset band indexes (coma separated indexes). Default value is None.
-        :paramtype asset_bidx: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword nodata: Overwrite internal Nodata value. Default value is None.
@@ -13589,7 +13610,7 @@ class TilerPartsOperations:
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_parts_get_minx_miny_maxx_maxy_widthx_height_format_request(
+        _request = build_tiler_parts_get_cropped_to_bounding_box_width_by_height_request(
             collection_id=collection_id,
             item_id=item_id,
             minx=minx,
@@ -13601,7 +13622,7 @@ class TilerPartsOperations:
             format=format,
             assets=assets,
             expression=expression,
-            asset_bidx=asset_bidx,
+            asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
             nodata=nodata,
             unscale=unscale,
@@ -13658,7 +13679,7 @@ class TilerPartsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_minx_miny_maxx_maxy_format(
+    def get_cropped_to_bounding_box(
         self,
         collection_id: str,
         item_id: str,
@@ -13670,7 +13691,7 @@ class TilerPartsOperations:
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_bidx: Optional[List[str]] = None,
+        asset_band_indices: Optional[List[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -13711,8 +13732,9 @@ class TilerPartsOperations:
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_bidx: Per asset band indexes (coma separated indexes). Default value is None.
-        :paramtype asset_bidx: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword nodata: Overwrite internal Nodata value. Default value is None.
@@ -13798,7 +13820,7 @@ class TilerPartsOperations:
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_parts_get_minx_miny_maxx_maxy_format_request(
+        _request = build_tiler_parts_get_cropped_to_bounding_box_request(
             collection_id=collection_id,
             item_id=item_id,
             minx=minx,
@@ -13808,7 +13830,7 @@ class TilerPartsOperations:
             format=format,
             assets=assets,
             expression=expression,
-            asset_bidx=asset_bidx,
+            asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
             nodata=nodata,
             unscale=unscale,
@@ -13885,7 +13907,7 @@ class TilerGeoJsonsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
-    def crop_widthx_height_format(
+    def crop_width_by_height_format(
         self,
         collection_id: str,
         item_id: str,
@@ -13896,7 +13918,7 @@ class TilerGeoJsonsOperations:
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_bidx: Optional[List[str]] = None,
+        asset_band_indices: Optional[List[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -13933,8 +13955,9 @@ class TilerGeoJsonsOperations:
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_bidx: Per asset band indexes (coma separated indexes). Default value is None.
-        :paramtype asset_bidx: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword nodata: Overwrite internal Nodata value. Default value is None.
@@ -14006,7 +14029,7 @@ class TilerGeoJsonsOperations:
         """
 
     @overload
-    def crop_widthx_height_format(
+    def crop_width_by_height_format(
         self,
         collection_id: str,
         item_id: str,
@@ -14017,7 +14040,7 @@ class TilerGeoJsonsOperations:
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_bidx: Optional[List[str]] = None,
+        asset_band_indices: Optional[List[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -14054,8 +14077,9 @@ class TilerGeoJsonsOperations:
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_bidx: Per asset band indexes (coma separated indexes). Default value is None.
-        :paramtype asset_bidx: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword nodata: Overwrite internal Nodata value. Default value is None.
@@ -14127,7 +14151,7 @@ class TilerGeoJsonsOperations:
         """
 
     @overload
-    def crop_widthx_height_format(
+    def crop_width_by_height_format(
         self,
         collection_id: str,
         item_id: str,
@@ -14138,7 +14162,7 @@ class TilerGeoJsonsOperations:
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_bidx: Optional[List[str]] = None,
+        asset_band_indices: Optional[List[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -14175,8 +14199,9 @@ class TilerGeoJsonsOperations:
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_bidx: Per asset band indexes (coma separated indexes). Default value is None.
-        :paramtype asset_bidx: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword nodata: Overwrite internal Nodata value. Default value is None.
@@ -14248,7 +14273,7 @@ class TilerGeoJsonsOperations:
         """
 
     @distributed_trace
-    def crop_widthx_height_format(
+    def crop_width_by_height_format(
         self,
         collection_id: str,
         item_id: str,
@@ -14259,7 +14284,7 @@ class TilerGeoJsonsOperations:
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_bidx: Optional[List[str]] = None,
+        asset_band_indices: Optional[List[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -14296,8 +14321,9 @@ class TilerGeoJsonsOperations:
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_bidx: Per asset band indexes (coma separated indexes). Default value is None.
-        :paramtype asset_bidx: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword nodata: Overwrite internal Nodata value. Default value is None.
@@ -14385,7 +14411,7 @@ class TilerGeoJsonsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_tiler_geo_jsons_crop_widthx_height_format_request(
+        _request = build_tiler_geo_jsons_crop_width_by_height_format_request(
             collection_id=collection_id,
             item_id=item_id,
             width=width,
@@ -14393,7 +14419,7 @@ class TilerGeoJsonsOperations:
             format=format,
             assets=assets,
             expression=expression,
-            asset_bidx=asset_bidx,
+            asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
             nodata=nodata,
             unscale=unscale,
@@ -14460,7 +14486,7 @@ class TilerGeoJsonsOperations:
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_bidx: Optional[List[str]] = None,
+        asset_band_indices: Optional[List[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -14496,8 +14522,9 @@ class TilerGeoJsonsOperations:
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_bidx: Per asset band indexes (coma separated indexes). Default value is None.
-        :paramtype asset_bidx: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword nodata: Overwrite internal Nodata value. Default value is None.
@@ -14582,7 +14609,7 @@ class TilerGeoJsonsOperations:
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_bidx: Optional[List[str]] = None,
+        asset_band_indices: Optional[List[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -14618,8 +14645,9 @@ class TilerGeoJsonsOperations:
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_bidx: Per asset band indexes (coma separated indexes). Default value is None.
-        :paramtype asset_bidx: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword nodata: Overwrite internal Nodata value. Default value is None.
@@ -14704,7 +14732,7 @@ class TilerGeoJsonsOperations:
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_bidx: Optional[List[str]] = None,
+        asset_band_indices: Optional[List[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -14740,8 +14768,9 @@ class TilerGeoJsonsOperations:
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_bidx: Per asset band indexes (coma separated indexes). Default value is None.
-        :paramtype asset_bidx: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword nodata: Overwrite internal Nodata value. Default value is None.
@@ -14826,7 +14855,7 @@ class TilerGeoJsonsOperations:
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_bidx: Optional[List[str]] = None,
+        asset_band_indices: Optional[List[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -14862,8 +14891,9 @@ class TilerGeoJsonsOperations:
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_bidx: Per asset band indexes (coma separated indexes). Default value is None.
-        :paramtype asset_bidx: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword nodata: Overwrite internal Nodata value. Default value is None.
@@ -14961,7 +14991,7 @@ class TilerGeoJsonsOperations:
             format=format,
             assets=assets,
             expression=expression,
-            asset_bidx=asset_bidx,
+            asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
             nodata=nodata,
             unscale=unscale,
@@ -15352,7 +15382,7 @@ class MosaicsTilesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get_zxy_scalex_format(
+    def get_zxy_scale_by_format(
         self,
         search_id: str,
         z: float,
@@ -15363,18 +15393,18 @@ class MosaicsTilesOperations:
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_bidx: Optional[List[str]] = None,
+        asset_band_indices: Optional[List[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
         scan_limit: Optional[int] = None,
         items_limit: Optional[int] = None,
         time_limit: Optional[int] = None,
-        exitwhenfull: Optional[bool] = None,
-        skipcovered: Optional[bool] = None,
+        exit_when_full: Optional[bool] = None,
+        skip_covered: Optional[bool] = None,
         algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
-        tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
+        tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
         buffer: Optional[str] = None,
         color_formula: Optional[str] = None,
         collection: Optional[str] = None,
@@ -15411,8 +15441,9 @@ class MosaicsTilesOperations:
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_bidx: Per asset band indexes (coma separated indexes). Default value is None.
-        :paramtype asset_bidx: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword nodata: Overwrite internal Nodata value. Default value is None.
@@ -15428,13 +15459,13 @@ class MosaicsTilesOperations:
         :keyword time_limit: Return after N seconds to avoid long requests (defaults to 5 in PgSTAC).
          Default value is None.
         :paramtype time_limit: int
-        :keyword exitwhenfull: Return as soon as the geometry is fully covered (defaults to True in
+        :keyword exit_when_full: Return as soon as the geometry is fully covered (defaults to True in
          PgSTAC). Default value is None.
-        :paramtype exitwhenfull: bool
-        :keyword skipcovered: Skip any items that would show up completely under the previous items
+        :paramtype exit_when_full: bool
+        :keyword skip_covered: Skip any items that would show up completely under the previous items
          (defaults
          to True in PgSTAC). Default value is None.
-        :paramtype skipcovered: bool
+        :paramtype skip_covered: bool
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
         :paramtype algorithm: str or ~azure.planetarycomputer.models.Algorithm
@@ -15446,7 +15477,7 @@ class MosaicsTilesOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~azure.planetarycomputer.models.Tilematrixsetid
+        :paramtype tile_matrix_set_id: str or ~azure.planetarycomputer.models.TileMatrixSetId
         :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
          Output
          **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
@@ -15519,7 +15550,7 @@ class MosaicsTilesOperations:
 
         cls: ClsType[Optional[Iterator[bytes]]] = kwargs.pop("cls", None)
 
-        _request = build_mosaics_tiles_get_zxy_scalex_format_request(
+        _request = build_mosaics_tiles_get_zxy_scale_by_format_request(
             search_id=search_id,
             z=z,
             x=x,
@@ -15528,15 +15559,15 @@ class MosaicsTilesOperations:
             format=format,
             assets=assets,
             expression=expression,
-            asset_bidx=asset_bidx,
+            asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
             nodata=nodata,
             unscale=unscale,
             scan_limit=scan_limit,
             items_limit=items_limit,
             time_limit=time_limit,
-            exitwhenfull=exitwhenfull,
-            skipcovered=skipcovered,
+            exit_when_full=exit_when_full,
+            skip_covered=skip_covered,
             algorithm=algorithm,
             algorithm_params=algorithm_params,
             tile_matrix_set_id=tile_matrix_set_id,
@@ -15611,7 +15642,7 @@ class MosaicsTileMatrixSetsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get_zxy_scalex_format(
+    def get_zxy_scale_by_format(
         self,
         search_id: str,
         tile_matrix_set_id: str,
@@ -15623,15 +15654,15 @@ class MosaicsTileMatrixSetsOperations:
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_bidx: Optional[List[str]] = None,
+        asset_band_indices: Optional[List[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
         scan_limit: Optional[int] = None,
         items_limit: Optional[int] = None,
         time_limit: Optional[int] = None,
-        exitwhenfull: Optional[bool] = None,
-        skipcovered: Optional[bool] = None,
+        exit_when_full: Optional[bool] = None,
+        skip_covered: Optional[bool] = None,
         algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         buffer: Optional[str] = None,
@@ -15672,8 +15703,9 @@ class MosaicsTileMatrixSetsOperations:
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_bidx: Per asset band indexes (coma separated indexes). Default value is None.
-        :paramtype asset_bidx: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword nodata: Overwrite internal Nodata value. Default value is None.
@@ -15689,13 +15721,13 @@ class MosaicsTileMatrixSetsOperations:
         :keyword time_limit: Return after N seconds to avoid long requests (defaults to 5 in PgSTAC).
          Default value is None.
         :paramtype time_limit: int
-        :keyword exitwhenfull: Return as soon as the geometry is fully covered (defaults to True in
+        :keyword exit_when_full: Return as soon as the geometry is fully covered (defaults to True in
          PgSTAC). Default value is None.
-        :paramtype exitwhenfull: bool
-        :keyword skipcovered: Skip any items that would show up completely under the previous items
+        :paramtype exit_when_full: bool
+        :keyword skip_covered: Skip any items that would show up completely under the previous items
          (defaults
          to True in PgSTAC). Default value is None.
-        :paramtype skipcovered: bool
+        :paramtype skip_covered: bool
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
         :paramtype algorithm: str or ~azure.planetarycomputer.models.Algorithm
@@ -15773,7 +15805,7 @@ class MosaicsTileMatrixSetsOperations:
 
         cls: ClsType[Optional[Iterator[bytes]]] = kwargs.pop("cls", None)
 
-        _request = build_mosaics_tile_matrix_sets_get_zxy_scalex_format_request(
+        _request = build_mosaics_tile_matrix_sets_get_zxy_scale_by_format_request(
             search_id=search_id,
             tile_matrix_set_id=tile_matrix_set_id,
             z=z,
@@ -15783,15 +15815,15 @@ class MosaicsTileMatrixSetsOperations:
             format=format,
             assets=assets,
             expression=expression,
-            asset_bidx=asset_bidx,
+            asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
             nodata=nodata,
             unscale=unscale,
             scan_limit=scan_limit,
             items_limit=items_limit,
             time_limit=time_limit,
-            exitwhenfull=exitwhenfull,
-            skipcovered=skipcovered,
+            exit_when_full=exit_when_full,
+            skip_covered=skip_covered,
             algorithm=algorithm,
             algorithm_params=algorithm_params,
             buffer=buffer,
@@ -15871,20 +15903,20 @@ class MosaicsTileJsonOperationsOperations:
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_bidx: Optional[List[str]] = None,
+        asset_band_indices: Optional[List[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
         scan_limit: Optional[int] = None,
         items_limit: Optional[int] = None,
         time_limit: Optional[int] = None,
-        exitwhenfull: Optional[bool] = None,
-        skipcovered: Optional[bool] = None,
-        tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
+        exit_when_full: Optional[bool] = None,
+        skip_covered: Optional[bool] = None,
+        tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
         tile_format: Optional[Union[str, _models.ImageType]] = None,
         tile_scale: Optional[int] = None,
-        minzoom: Optional[int] = None,
-        maxzoom: Optional[int] = None,
+        min_zoom: Optional[int] = None,
+        max_zoom: Optional[int] = None,
         buffer: Optional[float] = None,
         color_formula: Optional[str] = None,
         collection: Optional[str] = None,
@@ -15908,8 +15940,9 @@ class MosaicsTileJsonOperationsOperations:
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_bidx: Per asset band indexes (coma separated indexes). Default value is None.
-        :paramtype asset_bidx: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword nodata: Overwrite internal Nodata value. Default value is None.
@@ -15925,19 +15958,19 @@ class MosaicsTileJsonOperationsOperations:
         :keyword time_limit: Return after N seconds to avoid long requests (defaults to 5 in PgSTAC).
          Default value is None.
         :paramtype time_limit: int
-        :keyword exitwhenfull: Return as soon as the geometry is fully covered (defaults to True in
+        :keyword exit_when_full: Return as soon as the geometry is fully covered (defaults to True in
          PgSTAC). Default value is None.
-        :paramtype exitwhenfull: bool
-        :keyword skipcovered: Skip any items that would show up completely under the previous items
+        :paramtype exit_when_full: bool
+        :keyword skip_covered: Skip any items that would show up completely under the previous items
          (defaults
          to True in PgSTAC). Default value is None.
-        :paramtype skipcovered: bool
+        :paramtype skip_covered: bool
         :keyword tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported
          (default: 'WebMercatorQuad'). Known values are: "CanadianNAD83_LCC", "EuropeanETRS89_LAEAQuad",
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~azure.planetarycomputer.models.Tilematrixsetid
+        :paramtype tile_matrix_set_id: str or ~azure.planetarycomputer.models.TileMatrixSetId
         :keyword tile_format: Default will be automatically defined if the output image needs a mask
          (png) or
          not (jpeg). Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and "pngraw".
@@ -15946,10 +15979,10 @@ class MosaicsTileJsonOperationsOperations:
         :keyword tile_scale: Tile scale factor affecting output size. Values > 1 produce larger tiles
          (e.g., 1=256x256, 2=512x512). Default value is None.
         :paramtype tile_scale: int
-        :keyword minzoom: Overwrite default minzoom. Default value is None.
-        :paramtype minzoom: int
-        :keyword maxzoom: Overwrite default maxzoom. Default value is None.
-        :paramtype maxzoom: int
+        :keyword min_zoom: Overwrite default minzoom. Default value is None.
+        :paramtype min_zoom: int
+        :keyword max_zoom: Overwrite default maxzoom. Default value is None.
+        :paramtype max_zoom: int
         :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
          Output
          **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
@@ -16031,20 +16064,20 @@ class MosaicsTileJsonOperationsOperations:
             search_id=search_id,
             assets=assets,
             expression=expression,
-            asset_bidx=asset_bidx,
+            asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
             nodata=nodata,
             unscale=unscale,
             scan_limit=scan_limit,
             items_limit=items_limit,
             time_limit=time_limit,
-            exitwhenfull=exitwhenfull,
-            skipcovered=skipcovered,
+            exit_when_full=exit_when_full,
+            skip_covered=skip_covered,
             tile_matrix_set_id=tile_matrix_set_id,
             tile_format=tile_format,
             tile_scale=tile_scale,
-            minzoom=minzoom,
-            maxzoom=maxzoom,
+            min_zoom=min_zoom,
+            max_zoom=max_zoom,
             buffer=buffer,
             color_formula=color_formula,
             collection=collection,
@@ -16117,19 +16150,19 @@ class MosaicsTileMatrixSetsTileJsonOperations:
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_bidx: Optional[List[str]] = None,
+        asset_band_indices: Optional[List[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
         scan_limit: Optional[int] = None,
         items_limit: Optional[int] = None,
         time_limit: Optional[int] = None,
-        exitwhenfull: Optional[bool] = None,
-        skipcovered: Optional[bool] = None,
+        exit_when_full: Optional[bool] = None,
+        skip_covered: Optional[bool] = None,
         algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
-        minzoom: Optional[int] = None,
-        maxzoom: Optional[int] = None,
+        min_zoom: Optional[int] = None,
+        max_zoom: Optional[int] = None,
         tile_format: Optional[Union[str, _models.ImageType]] = None,
         tile_scale: Optional[int] = None,
         buffer: Optional[str] = None,
@@ -16155,8 +16188,9 @@ class MosaicsTileMatrixSetsTileJsonOperations:
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_bidx: Per asset band indexes (coma separated indexes). Default value is None.
-        :paramtype asset_bidx: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword nodata: Overwrite internal Nodata value. Default value is None.
@@ -16172,22 +16206,22 @@ class MosaicsTileMatrixSetsTileJsonOperations:
         :keyword time_limit: Return after N seconds to avoid long requests (defaults to 5 in PgSTAC).
          Default value is None.
         :paramtype time_limit: int
-        :keyword exitwhenfull: Return as soon as the geometry is fully covered (defaults to True in
+        :keyword exit_when_full: Return as soon as the geometry is fully covered (defaults to True in
          PgSTAC). Default value is None.
-        :paramtype exitwhenfull: bool
-        :keyword skipcovered: Skip any items that would show up completely under the previous items
+        :paramtype exit_when_full: bool
+        :keyword skip_covered: Skip any items that would show up completely under the previous items
          (defaults
          to True in PgSTAC). Default value is None.
-        :paramtype skipcovered: bool
+        :paramtype skip_covered: bool
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
         :paramtype algorithm: str or ~azure.planetarycomputer.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
-        :keyword minzoom: Overwrite default minzoom. Default value is None.
-        :paramtype minzoom: int
-        :keyword maxzoom: Overwrite default maxzoom. Default value is None.
-        :paramtype maxzoom: int
+        :keyword min_zoom: Overwrite default minzoom. Default value is None.
+        :paramtype min_zoom: int
+        :keyword max_zoom: Overwrite default maxzoom. Default value is None.
+        :paramtype max_zoom: int
         :keyword tile_format: Default will be automatically defined if the output image needs a mask
          (png) or
          not (jpeg). Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and "pngraw".
@@ -16273,19 +16307,19 @@ class MosaicsTileMatrixSetsTileJsonOperations:
             tile_matrix_set_id=tile_matrix_set_id,
             assets=assets,
             expression=expression,
-            asset_bidx=asset_bidx,
+            asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
             nodata=nodata,
             unscale=unscale,
             scan_limit=scan_limit,
             items_limit=items_limit,
             time_limit=time_limit,
-            exitwhenfull=exitwhenfull,
-            skipcovered=skipcovered,
+            exit_when_full=exit_when_full,
+            skip_covered=skip_covered,
             algorithm=algorithm,
             algorithm_params=algorithm_params,
-            minzoom=minzoom,
-            maxzoom=maxzoom,
+            min_zoom=min_zoom,
+            max_zoom=max_zoom,
             tile_format=tile_format,
             tile_scale=tile_scale,
             buffer=buffer,
@@ -16357,17 +16391,17 @@ class MosaicsWmtsMosaicsOperations:
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_bidx: Optional[List[str]] = None,
+        asset_band_indices: Optional[List[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
         algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
-        tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
+        tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
         tile_format: Optional[Union[str, _models.ImageType]] = None,
         tile_scale: Optional[int] = None,
-        minzoom: Optional[int] = None,
-        maxzoom: Optional[int] = None,
+        min_zoom: Optional[int] = None,
+        max_zoom: Optional[int] = None,
         buffer: Optional[str] = None,
         color_formula: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
@@ -16387,8 +16421,9 @@ class MosaicsWmtsMosaicsOperations:
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_bidx: Per asset band indexes (coma separated indexes). Default value is None.
-        :paramtype asset_bidx: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword nodata: Overwrite internal Nodata value. Default value is None.
@@ -16406,17 +16441,17 @@ class MosaicsWmtsMosaicsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~azure.planetarycomputer.models.Tilematrixsetid
+        :paramtype tile_matrix_set_id: str or ~azure.planetarycomputer.models.TileMatrixSetId
         :keyword tile_format: Output image type. Default is png. Known values are: "png", "npy", "tif",
          "jpeg", "jpg", "jp2", "webp", and "pngraw". Default value is None.
         :paramtype tile_format: str or ~azure.planetarycomputer.models.ImageType
         :keyword tile_scale: Tile scale factor affecting output size. Values > 1 produce larger tiles
          (e.g., 1=256x256, 2=512x512). Default value is None.
         :paramtype tile_scale: int
-        :keyword minzoom: Overwrite default minzoom. Default value is None.
-        :paramtype minzoom: int
-        :keyword maxzoom: Overwrite default maxzoom. Default value is None.
-        :paramtype maxzoom: int
+        :keyword min_zoom: Overwrite default minzoom. Default value is None.
+        :paramtype min_zoom: int
+        :keyword max_zoom: Overwrite default maxzoom. Default value is None.
+        :paramtype max_zoom: int
         :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
          Output
          **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
@@ -16488,7 +16523,7 @@ class MosaicsWmtsMosaicsOperations:
             search_id=search_id,
             assets=assets,
             expression=expression,
-            asset_bidx=asset_bidx,
+            asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
             nodata=nodata,
             unscale=unscale,
@@ -16497,8 +16532,8 @@ class MosaicsWmtsMosaicsOperations:
             tile_matrix_set_id=tile_matrix_set_id,
             tile_format=tile_format,
             tile_scale=tile_scale,
-            minzoom=minzoom,
-            maxzoom=maxzoom,
+            min_zoom=min_zoom,
+            max_zoom=max_zoom,
             buffer=buffer,
             color_formula=color_formula,
             resampling=resampling,
@@ -16569,7 +16604,7 @@ class MosaicsWmtsMosaicsTileMatrixSetsOperations:  # pylint: disable=name-too-lo
         *,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        asset_bidx: Optional[List[str]] = None,
+        asset_band_indices: Optional[List[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -16577,8 +16612,8 @@ class MosaicsWmtsMosaicsTileMatrixSetsOperations:  # pylint: disable=name-too-lo
         algorithm_params: Optional[str] = None,
         tile_format: Optional[Union[str, _models.ImageType]] = None,
         tile_scale: Optional[int] = None,
-        minzoom: Optional[int] = None,
-        maxzoom: Optional[int] = None,
+        min_zoom: Optional[int] = None,
+        max_zoom: Optional[int] = None,
         buffer: Optional[str] = None,
         color_formula: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
@@ -16600,8 +16635,9 @@ class MosaicsWmtsMosaicsTileMatrixSetsOperations:  # pylint: disable=name-too-lo
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
         :paramtype expression: str
-        :keyword asset_bidx: Per asset band indexes (coma separated indexes). Default value is None.
-        :paramtype asset_bidx: list[str]
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
         :keyword nodata: Overwrite internal Nodata value. Default value is None.
@@ -16619,10 +16655,10 @@ class MosaicsWmtsMosaicsTileMatrixSetsOperations:  # pylint: disable=name-too-lo
         :keyword tile_scale: Tile scale factor affecting output size. Values > 1 produce larger tiles
          (e.g., 1=256x256, 2=512x512). Default value is None.
         :paramtype tile_scale: int
-        :keyword minzoom: Overwrite default minzoom. Default value is None.
-        :paramtype minzoom: int
-        :keyword maxzoom: Overwrite default maxzoom. Default value is None.
-        :paramtype maxzoom: int
+        :keyword min_zoom: Overwrite default minzoom. Default value is None.
+        :paramtype min_zoom: int
+        :keyword max_zoom: Overwrite default maxzoom. Default value is None.
+        :paramtype max_zoom: int
         :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
          Output
          **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
@@ -16695,7 +16731,7 @@ class MosaicsWmtsMosaicsTileMatrixSetsOperations:  # pylint: disable=name-too-lo
             tile_matrix_set_id=tile_matrix_set_id,
             assets=assets,
             expression=expression,
-            asset_bidx=asset_bidx,
+            asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
             nodata=nodata,
             unscale=unscale,
@@ -16703,8 +16739,8 @@ class MosaicsWmtsMosaicsTileMatrixSetsOperations:  # pylint: disable=name-too-lo
             algorithm_params=algorithm_params,
             tile_format=tile_format,
             tile_scale=tile_scale,
-            minzoom=minzoom,
-            maxzoom=maxzoom,
+            min_zoom=min_zoom,
+            max_zoom=max_zoom,
             buffer=buffer,
             color_formula=color_formula,
             resampling=resampling,
@@ -17089,9 +17125,9 @@ class MosaicsAssetsForTilesOperations:
         scan_limit: Optional[int] = None,
         items_limit: Optional[int] = None,
         time_limit: Optional[int] = None,
-        exitwhenfull: Optional[bool] = None,
-        skipcovered: Optional[bool] = None,
-        tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
+        exit_when_full: Optional[bool] = None,
+        skip_covered: Optional[bool] = None,
+        tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
         **kwargs: Any,
     ) -> Optional[List[Any]]:
         """Assets For Tile.
@@ -17118,20 +17154,20 @@ class MosaicsAssetsForTilesOperations:
         :keyword time_limit: Return after N seconds to avoid long requests (defaults to 5 in PgSTAC).
          Default value is None.
         :paramtype time_limit: int
-        :keyword exitwhenfull: Return as soon as the geometry is fully covered (defaults to True in
+        :keyword exit_when_full: Return as soon as the geometry is fully covered (defaults to True in
          PgSTAC). Default value is None.
-        :paramtype exitwhenfull: bool
-        :keyword skipcovered: Skip any items that would show up completely under the previous items
+        :paramtype exit_when_full: bool
+        :keyword skip_covered: Skip any items that would show up completely under the previous items
          (defaults
          to True in PgSTAC). Default value is None.
-        :paramtype skipcovered: bool
+        :paramtype skip_covered: bool
         :keyword tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported
          (default:
          'WebMercatorQuad'). Known values are: "CanadianNAD83_LCC", "EuropeanETRS89_LAEAQuad",
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~azure.planetarycomputer.models.Tilematrixsetid
+        :paramtype tile_matrix_set_id: str or ~azure.planetarycomputer.models.TileMatrixSetId
         :return: list of any or None
         :rtype: list[any] or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -17157,8 +17193,8 @@ class MosaicsAssetsForTilesOperations:
             scan_limit=scan_limit,
             items_limit=items_limit,
             time_limit=time_limit,
-            exitwhenfull=exitwhenfull,
-            skipcovered=skipcovered,
+            exit_when_full=exit_when_full,
+            skip_covered=skip_covered,
             tile_matrix_set_id=tile_matrix_set_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -17227,8 +17263,8 @@ class MosaicsAssetsForTileMatrixSetsOperations:
         scan_limit: Optional[int] = None,
         items_limit: Optional[int] = None,
         time_limit: Optional[int] = None,
-        exitwhenfull: Optional[bool] = None,
-        skipcovered: Optional[bool] = None,
+        exit_when_full: Optional[bool] = None,
+        skip_covered: Optional[bool] = None,
         **kwargs: Any,
     ) -> Optional[List[Any]]:
         """Assets For Tile Tilematrixsetid As Path.
@@ -17257,13 +17293,13 @@ class MosaicsAssetsForTileMatrixSetsOperations:
         :keyword time_limit: Return after N seconds to avoid long requests (defaults to 5 in PgSTAC).
          Default value is None.
         :paramtype time_limit: int
-        :keyword exitwhenfull: Return as soon as the geometry is fully covered (defaults to True in
+        :keyword exit_when_full: Return as soon as the geometry is fully covered (defaults to True in
          PgSTAC). Default value is None.
-        :paramtype exitwhenfull: bool
-        :keyword skipcovered: Skip any items that would show up completely under the previous items
+        :paramtype exit_when_full: bool
+        :keyword skip_covered: Skip any items that would show up completely under the previous items
          (defaults
          to True in PgSTAC). Default value is None.
-        :paramtype skipcovered: bool
+        :paramtype skip_covered: bool
         :return: list of any or None
         :rtype: list[any] or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -17290,8 +17326,8 @@ class MosaicsAssetsForTileMatrixSetsOperations:
             scan_limit=scan_limit,
             items_limit=items_limit,
             time_limit=time_limit,
-            exitwhenfull=exitwhenfull,
-            skipcovered=skipcovered,
+            exit_when_full=exit_when_full,
+            skip_covered=skip_covered,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -17357,11 +17393,11 @@ class MosaicsAssetsForPointsOperations:
         scan_limit: Optional[int] = None,
         items_limit: Optional[int] = None,
         time_limit: Optional[int] = None,
-        exitwhenfull: Optional[bool] = None,
-        skipcovered: Optional[bool] = None,
+        exit_when_full: Optional[bool] = None,
+        skip_covered: Optional[bool] = None,
         coord_crs: Optional[str] = None,
         **kwargs: Any,
-    ) -> Optional[List[Any]]:
+    ) -> List[_models.Asset]:
         """Assets For Point.
 
         Return a list of assets for a given point.
@@ -17381,18 +17417,18 @@ class MosaicsAssetsForPointsOperations:
         :keyword time_limit: Return after N seconds to avoid long requests (defaults to 5 in PgSTAC).
          Default value is None.
         :paramtype time_limit: int
-        :keyword exitwhenfull: Return as soon as the geometry is fully covered (defaults to True in
+        :keyword exit_when_full: Return as soon as the geometry is fully covered (defaults to True in
          PgSTAC). Default value is None.
-        :paramtype exitwhenfull: bool
-        :keyword skipcovered: Skip any items that would show up completely under the previous items
+        :paramtype exit_when_full: bool
+        :keyword skip_covered: Skip any items that would show up completely under the previous items
          (defaults
          to True in PgSTAC). Default value is None.
-        :paramtype skipcovered: bool
+        :paramtype skip_covered: bool
         :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
          Default value is None.
         :paramtype coord_crs: str
-        :return: list of any or None
-        :rtype: list[any] or None
+        :return: list of Asset
+        :rtype: list[~azure.planetarycomputer.models.Asset]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -17406,7 +17442,7 @@ class MosaicsAssetsForPointsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[Optional[List[Any]]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.Asset]] = kwargs.pop("cls", None)
 
         _request = build_mosaics_assets_for_points_get_lon_lat_assets_request(
             search_id=search_id,
@@ -17415,8 +17451,8 @@ class MosaicsAssetsForPointsOperations:
             scan_limit=scan_limit,
             items_limit=items_limit,
             time_limit=time_limit,
-            exitwhenfull=exitwhenfull,
-            skipcovered=skipcovered,
+            exit_when_full=exit_when_full,
+            skip_covered=skip_covered,
             coord_crs=coord_crs,
             api_version=self._config.api_version,
             headers=_headers,
@@ -17434,7 +17470,7 @@ class MosaicsAssetsForPointsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200]:
             if _stream:
                 try:
                     response.read()  # Load the body in memory and close the socket
@@ -17443,12 +17479,10 @@ class MosaicsAssetsForPointsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = None
-        if response.status_code == 200:
-            if _stream:
-                deserialized = response.iter_bytes()
-            else:
-                deserialized = _deserialize(List[Any], response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(List[_models.Asset], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -17840,7 +17874,7 @@ class IngestionsIngestionRunsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list_all(
+    def list(
         self,
         collection_id: str,
         ingestion_id: str,
@@ -17848,7 +17882,7 @@ class IngestionsIngestionRunsOperations:
         top: Optional[int] = None,
         skip: Optional[int] = None,
         **kwargs: Any,
-    ) -> _models.IngestionRunsPagedResponse:
+    ) -> _models.PageIngestionRun:
         """Get the runs of an ingestion.
 
         :param collection_id: Catalog collection id. Required.
@@ -17859,9 +17893,8 @@ class IngestionsIngestionRunsOperations:
         :paramtype top: int
         :keyword skip: The number of items to skip. Default value is None.
         :paramtype skip: int
-        :return: IngestionRunsPagedResponse. The IngestionRunsPagedResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.planetarycomputer.models.IngestionRunsPagedResponse
+        :return: PageIngestionRun. The PageIngestionRun is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.PageIngestionRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -17875,9 +17908,9 @@ class IngestionsIngestionRunsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.IngestionRunsPagedResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.PageIngestionRun] = kwargs.pop("cls", None)
 
-        _request = build_ingestions_ingestion_runs_list_all_request(
+        _request = build_ingestions_ingestion_runs_list_request(
             collection_id=collection_id,
             ingestion_id=ingestion_id,
             top=top,
@@ -17910,7 +17943,7 @@ class IngestionsIngestionRunsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.IngestionRunsPagedResponse, response.json())
+            deserialized = _deserialize(_models.PageIngestionRun, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

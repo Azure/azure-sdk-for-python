@@ -26,9 +26,9 @@ class TestPlanetaryComputerIngestionOperationsOperationsAsync(PlanetaryComputerC
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_ingestion_operations_list_all(self, planetarycomputer_endpoint):
+    async def test_ingestion_operations_list(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.ingestion_operations.list_all()
+        response = await client.ingestion_operations.list()
 
         # please add some check logic here by yourself
         # ...

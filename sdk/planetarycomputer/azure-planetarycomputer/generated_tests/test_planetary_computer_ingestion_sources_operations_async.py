@@ -15,9 +15,9 @@ from testpreparer_async import PlanetaryComputerClientTestBaseAsync
 class TestPlanetaryComputerIngestionSourcesOperationsAsync(PlanetaryComputerClientTestBaseAsync):
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_ingestion_sources_list_all(self, planetarycomputer_endpoint):
+    async def test_ingestion_sources_list(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.ingestion_sources.list_all()
+        response = await client.ingestion_sources.list()
 
         # please add some check logic here by yourself
         # ...

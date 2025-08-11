@@ -15,7 +15,7 @@ from azure.planetarycomputer import PlanetaryComputerClient
     pip install azure-identity
     pip install azure-planetarycomputer
 # USAGE
-    python tiler_parts_get_minx_miny_maxx_maxy_format.py
+    python tiler_parts_get_minx_miny_maxx_maxy_width_by_height_format.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,18 +29,20 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.tiler_parts.get_cropped_to_bounding_box(
+    response = client.tiler_parts.get_cropped_to_bounding_box_width_by_height(
         collection_id="naip",
         item_id="naip_1m_2019_3857",
         minx=-80.627296,
         miny=27.997976,
         maxx=-80.560208,
         maxy=28.064522,
+        width=4.1,
+        height=0.08,
         format="png",
     )
     print(response)
 
 
-# x-ms-original-file: 2025-04-30-preview/TilerParts_GetMinxMinyMaxxMaxyFormat.json
+# x-ms-original-file: 2025-04-30-preview/TilerParts_GetMinxMinyMaxxMaxyWidthByHeightFormat.json
 if __name__ == "__main__":
     main()

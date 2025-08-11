@@ -14,9 +14,9 @@ from testpreparer import PlanetaryComputerClientTestBase, PlanetaryComputerPrepa
 class TestPlanetaryComputerTilerPartsOperations(PlanetaryComputerClientTestBase):
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_tiler_parts_get_minx_miny_maxx_maxy_widthx_height_format(self, planetarycomputer_endpoint):
+    def test_tiler_parts_get_cropped_to_bounding_box_width_by_height(self, planetarycomputer_endpoint):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        response = client.tiler_parts.get_minx_miny_maxx_maxy_widthx_height_format(
+        response = client.tiler_parts.get_cropped_to_bounding_box_width_by_height(
             collection_id="str",
             item_id="str",
             minx=0.0,
@@ -33,9 +33,9 @@ class TestPlanetaryComputerTilerPartsOperations(PlanetaryComputerClientTestBase)
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_tiler_parts_get_minx_miny_maxx_maxy_format(self, planetarycomputer_endpoint):
+    def test_tiler_parts_get_cropped_to_bounding_box(self, planetarycomputer_endpoint):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        response = client.tiler_parts.get_minx_miny_maxx_maxy_format(
+        response = client.tiler_parts.get_cropped_to_bounding_box(
             collection_id="str",
             item_id="str",
             minx=0.0,
