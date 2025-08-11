@@ -16,7 +16,7 @@ from azure.ai.contentunderstanding.models import ContentAnalyzer, ContentAnalyze
 from azure.ai.contentunderstanding.models import GenerationMethod, FieldType, AnalysisMode, ProcessingLocation
 from azure.ai.contentunderstanding.models import ContentClassifier, ClassifierCategory
 
-from devtools_testutils import is_live
+from devtools_testutils import is_live, is_live_and_not_recording
 
 class PollerType(Enum):
     """Enum to distinguish different types of pollers for operation ID extraction."""
@@ -26,16 +26,19 @@ class PollerType(Enum):
     CLASSIFY_CALL = "classify_call"
 
 
-def generate_analyzer_id(client, test_name: str) -> str:
+def generate_analyzer_id_sync(client, test_name: str) -> str:
     """Generate a unique analyzer ID with current date, time, and GUID."""
     analyzer_id = f"python-sdk-test-analyzer-{test_name}"
     if is_live():
         client.content_analyzers.delete(analyzer_id=analyzer_id)
-    # # Verify deletion
-    # assert not await analyzer_in_list_async(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
-    # print(f"Analyzer {analyzer_id} is deleted successfully")
     return analyzer_id
 
+async def generate_analyzer_id_async(client, test_name: str) -> str:
+    """Generate a unique analyzer ID with current date, time, and GUID."""
+    analyzer_id = f"python-sdk-test-analyzer-{test_name}"
+    if is_live():
+        await client.content_analyzers.delete(analyzer_id=analyzer_id)
+    return analyzer_id
 
 def generate_classifier_id_sync(client, test_name: str) -> str:
     """Generate a unique classifier ID with current date, time, and GUID (sync version)."""
@@ -475,23 +478,30 @@ def save_keyframe_image_to_file(
 
 
 # Person Directory Helper Functions
-def generate_person_directory_id() -> str:
-    """Generate a unique person directory ID with current date, time, and GUID."""
-    now = datetime.now()
-    date_str = now.strftime("%Y%m%d")
-    time_str = now.strftime("%H%M%S")
-    guid = str(uuid.uuid4()).replace("-", "")[:8]
-    return f"person_directory_id_{date_str}_{time_str}_{guid}"
+def generate_person_directory_id_sync(client, test_name: str) -> str:
+    """Generate a unique person directory ID with current date, time, and GUID (sync version)."""
+    person_directory_id = f"python-sdk-test-{test_name}"
+    if is_live_and_not_recording():
+        # Ensure to clean up any left-over resources from any failed tests
+        try:
+            client.person_directories.delete(person_directory_id=person_directory_id)
+        except Exception:
+            # Ignore errors if directory doesn't exist
+            pass
+    return person_directory_id
 
 
-def generate_person_id() -> str:
-    """Generate a unique person ID."""
-    return f"person_{str(uuid.uuid4()).replace('-', '')[:8]}"
-
-
-def generate_face_id() -> str:
-    """Generate a unique face ID."""
-    return f"face_{str(uuid.uuid4()).replace('-', '')[:8]}"
+async def generate_person_directory_id_async(client, test_name: str) -> str:
+    """Generate a unique person directory ID with current date, time, and GUID (async version)."""
+    person_directory_id = f"python-sdk-test-{test_name}"
+    if is_live_and_not_recording():
+        # Ensure to clean up any left-over resources from any failed tests
+        try:
+            await client.person_directories.delete(person_directory_id=person_directory_id)
+        except Exception:
+            # Ignore errors if directory doesn't exist
+            pass
+    return person_directory_id
 
 
 def read_image_to_base64(image_path: str) -> str:

@@ -15,11 +15,8 @@ from testpreparer_async import ContentUnderstandingClientTestBaseAsync
 from azure.ai.contentunderstanding.models import ContentClassifier
 from test_helpers import (
     generate_classifier_id_async,
-    generate_analyzer_id,
     extract_operation_id_from_poller,
     new_simple_classifier_schema,
-    new_enhanced_classifier_schema,
-    new_simple_content_analyzer_object,
     assert_poller_properties,
     assert_classifier_result,
     save_classifier_result_to_file,

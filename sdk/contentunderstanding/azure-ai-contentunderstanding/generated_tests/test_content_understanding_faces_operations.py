@@ -11,19 +11,10 @@ import uuid
 from datetime import datetime
 from typing import Optional, Dict, Any, List
 from devtools_testutils import recorded_by_proxy
+from devtools_testutils import is_live
 from testpreparer import ContentUnderstandingClientTestBase, ContentUnderstandingPreparer
 from azure.core.exceptions import ResourceNotFoundError
 from test_helpers import read_image_to_base64
-
-
-def generate_test_id() -> str:
-    """Generate a unique test ID with current date, time, and GUID."""
-    now = datetime.now()
-    date_str = now.strftime("%Y%m%d")
-    time_str = now.strftime("%H%M%S")
-    guid = str(uuid.uuid4()).replace("-", "")[:8]
-    return f"test_{date_str}_{time_str}_{guid}"
-
 
 import pytest
 
@@ -132,6 +123,8 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
             if hasattr(face2, 'bounding_box') and face2.bounding_box:
                 bbox2 = face2.bounding_box
                 print(f"Detected Face 2: BoundingBox(left={bbox2.left}, top={bbox2.top}, width={bbox2.width}, height={bbox2.height})")
+                # Validate bounding box coordinates
+                assert bbox2.width > 0 and bbox2.height > 0, "Face 2 bounding box should have positive dimensions"
         
         # For faces of the same person, we expect high confidence
         print(f"Confidence score: {response.confidence} (expected high for same person)")

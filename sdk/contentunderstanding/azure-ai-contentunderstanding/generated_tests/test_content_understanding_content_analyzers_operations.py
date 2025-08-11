@@ -14,7 +14,7 @@ from testpreparer import ContentUnderstandingPreparer
 from testpreparer import ContentUnderstandingClientTestBase
 from azure.ai.contentunderstanding.models import ContentAnalyzer
 from test_helpers import (
-    generate_analyzer_id,
+    generate_analyzer_id_sync,
     extract_operation_id_from_poller,
     new_simple_content_analyzer_object,
     new_marketing_video_analyzer_object,
@@ -245,7 +245,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         - Clean up created analyzer
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        analyzer_id = generate_analyzer_id(client, "test_content_analyzers_get_operation_status")
+        analyzer_id = generate_analyzer_id_sync(client, "test_content_analyzers_get_operation_status")
         created_analyzer = False
 
         content_analyzer = new_simple_content_analyzer_object(
@@ -282,7 +282,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         - Clean up created analyzer
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        analyzer_id = generate_analyzer_id(client, "test_content_analyzers_begin_create_with_content_analyzer")
+        analyzer_id = generate_analyzer_id_sync(client, "test_content_analyzers_begin_create_with_content_analyzer")
         created_analyzer = False
 
         content_analyzer = new_simple_content_analyzer_object(
@@ -310,7 +310,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         - Clean up created analyzer
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        analyzer_id = generate_analyzer_id(client, "test_content_analyzers_begin_create_with_json")
+        analyzer_id = generate_analyzer_id_sync(client, "test_content_analyzers_begin_create_with_json")
         created_analyzer = False
 
         try:
@@ -366,7 +366,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         - Clean up created analyzer
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        analyzer_id = generate_analyzer_id(client, "test_content_analyzers_update")
+        analyzer_id = generate_analyzer_id_sync(client, "test_content_analyzers_update")
         created_analyzer = False
 
         # Create initial analyzer
@@ -464,7 +464,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         - Clean up if deletion failed
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        analyzer_id = generate_analyzer_id(client, "test_content_analyzers_delete")
+        analyzer_id = generate_analyzer_id_sync(client, "test_content_analyzers_delete")
         created_analyzer = False
 
         # Create a simple analyzer for deletion test
@@ -554,7 +554,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         - Clean up created analyzer
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        analyzer_id = generate_analyzer_id(client, "test_content_analyzers_begin_analyze_url")
+        analyzer_id = generate_analyzer_id_sync(client, "test_content_analyzers_begin_analyze_url")
         created_analyzer = False
 
         # Create a simple analyzer for URL analysis
@@ -614,7 +614,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         - Clean up created analyzer
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        analyzer_id = generate_analyzer_id(client, "test_content_analyzers_begin_analyze_binary")
+        analyzer_id = generate_analyzer_id_sync(client, "test_content_analyzers_begin_analyze_binary")
         created_analyzer = False
 
         # Create a simple analyzer for binary analysis
@@ -674,7 +674,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         - Clean up created analyzer
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        analyzer_id = generate_analyzer_id(client, "test_content_analyzers_get_result")
+        analyzer_id = generate_analyzer_id_sync(client, "test_content_analyzers_get_result")
         created_analyzer = False
 
         # Create a simple analyzer for binary analysis
@@ -768,7 +768,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         if not is_live_and_not_recording():
             return  # Skip this test in playback mode as it requires large video files is too big for test proxy to record
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        analyzer_id = generate_analyzer_id(client, "test_content_analyzers_get_result_file")
+        analyzer_id = generate_analyzer_id_sync(client, "test_content_analyzers_get_result_file")
         created_analyzer = False
 
         # Create a marketing video analyzer based on the template
