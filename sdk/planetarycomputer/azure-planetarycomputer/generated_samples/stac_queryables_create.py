@@ -8,7 +8,8 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.planetarycomputer import PlanetaryComputerClient, QueryableDefinition
+from azure.planetarycomputer import PlanetaryComputerClient
+from azure.planetarycomputer.models import QueryableDefinition
 
 """
 # PREREQUISITES
