@@ -14,6 +14,9 @@ from ._blob_client import BlobClient
 from ._container_client import ContainerClient
 
 class BlobLeaseClient:
+    id: str
+    etag: Optional[str]
+    last_modified: Optional[datetime]
     def __init__(self, client: Union[BlobClient, ContainerClient], lease_id: Optional[str] = None) -> None: ...
     @distributed_trace
     def acquire(
