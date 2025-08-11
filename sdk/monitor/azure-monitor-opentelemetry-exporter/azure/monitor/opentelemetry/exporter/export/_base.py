@@ -87,7 +87,8 @@ class BaseExporter:
         """
         parsed_connection_string = ConnectionStringParser(kwargs.get("connection_string"))
 
-        self._configuration_manager = _ConfigurationManager()
+        # TODO: Re-add this once all parts of OneSettings is finished
+        # self._configuration_manager = _ConfigurationManager()
 
         self._api_version = kwargs.get("api_version") or _SERVICE_API_LATEST
         if self._is_stats_exporter():
