@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.planetarycomputer import PlanetaryComputerClient
+from azure.planetarycomputer import PlanetaryComputerClient, QueryableDefinition
 
 """
 # PREREQUISITES
@@ -32,10 +32,13 @@ def main():
     response = client.stac_queryables.create(
         collection_id="36fcb8da-9b15-49e0-b400-0d2e751e2061",
         body=[
-            {
-                "definition": {"data_type": "number", "description": "Like cloud cover, but with more party tricks"},
-                "name": "eo:clown_cover",
-            }
+            QueryableDefinition(
+                definition={
+                    "data_type": "number",
+                    "description": "Like cloud cover, but with more party tricks",
+                },
+                name="eo:clown_cover",
+            )
         ],
     )
     print(response)
