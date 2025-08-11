@@ -23,7 +23,7 @@ async def flow_side_effect(timeout, **kwargs):
         if tool_type == "tool_call":
             if tool_name in [
                 "bing_custom_search",
-                "bing_grounding", 
+                "bing_grounding",
                 "file_search",
                 "azure_ai_search",
                 "fabric_dataagent",

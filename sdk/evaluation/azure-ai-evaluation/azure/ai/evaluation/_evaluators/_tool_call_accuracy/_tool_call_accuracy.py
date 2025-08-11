@@ -138,7 +138,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         self,
         *,
         query: Union[str, List[dict]],
-        tool_definitions: Union[dict, List[dict]] = None,
+        tool_definitions: Union[dict, List[dict]],
         tool_calls: Union[dict, List[dict]] = None,
         response: Union[str, List[dict]] = None,
     ) -> Dict[str, Union[str, float]]:
