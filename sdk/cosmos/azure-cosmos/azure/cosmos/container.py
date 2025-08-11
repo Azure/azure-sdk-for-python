@@ -304,6 +304,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             session_token: Optional[str] = None,
             initial_headers: Optional[Dict[str, str]] = None,
             excluded_locations: Optional[List[str]] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            throughput_bucket: Optional[int] = None,
             **kwargs: Any
     ) -> CosmosList:
         """Reads multiple items from the container.
@@ -321,6 +323,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations.
+        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
+            request. Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The read-many operation failed.
         :returns: A CosmosList containing the retrieved items. Items that were not found are omitted from the list.
         :rtype: ~azure.cosmos.CosmosList
@@ -334,17 +340,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['consistencyLevel'] = consistency_level
         if excluded_locations is not None:
             kwargs['excludedLocations'] = excluded_locations
-
-        # Optimization: If only one item, use point read
-        if len(items) == 1:
-            item_id, partition_key = items[0]
-            if item_id is None or partition_key is None:
-                raise ValueError("Each item must have an 'id' and a partition key value.")
-            try:
-                result = self.read_item(item=item_id, partition_key=partition_key, **kwargs)
-                return CosmosList([result], response_headers=result.get_response_headers())
-            except exceptions.CosmosResourceNotFoundError as e:
-                return CosmosList([], response_headers=e.headers)
+        if priority is not None:
+            kwargs['priority'] = priority
+        if throughput_bucket is not None:
+            kwargs["throughput_bucket"] = throughput_bucket
 
         kwargs['max_concurrency'] = max_concurrency
         query_options = build_options(kwargs)

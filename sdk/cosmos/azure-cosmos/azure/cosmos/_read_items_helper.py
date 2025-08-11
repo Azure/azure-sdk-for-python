@@ -26,7 +26,7 @@ from typing import Dict, List, Tuple, Any, Mapping, Optional, TYPE_CHECKING
 
 from azure.core.utils import CaseInsensitiveDict
 
-from azure.cosmos import _base
+from azure.cosmos import _base, exceptions
 from azure.cosmos._query_builder import _QueryBuilder
 from azure.cosmos.partition_key import _get_partition_key_from_partition_key_definition
 from azure.cosmos import CosmosList
@@ -207,50 +207,18 @@ class ReadItemsHelperSync:
         :return: A tuple containing the list of query results with original indices and the request charge.
         :rtype: tuple[list[tuple[int, dict[str, any]]], float]
         """
-        captured_headers = {}
-
-        # Create a local hook that just captures headers
-        def local_response_hook(hook_headers, _):
-            # Only capture headers, don't call original hook here
-            captured_headers.update(hook_headers)
-
-        request_kwargs = self.kwargs.copy()
-        request_kwargs['response_hook'] = local_response_hook
-
-        # Create a map of original indices to document IDs for lookup after query
         id_to_idx = {item[1]: item[0] for item in chunk_partition_items}
-        # Strip the index for the query builder
         items_for_query = [(item[1], item[2]) for item in chunk_partition_items]
+        request_kwargs = self.kwargs.copy()
 
-        if _QueryBuilder.is_id_partition_key_query(items_for_query, self.partition_key_definition):
-            query_obj = _QueryBuilder.build_id_in_query(items_for_query)
-        elif _QueryBuilder.is_single_logical_partition_query(items_for_query):
-            query_obj = _QueryBuilder.build_pk_and_id_in_query(items_for_query, self.partition_key_definition)
+        if len(items_for_query) == 1:
+            item_id, pk_value = items_for_query[0]
+            result, headers = self._execute_point_read(item_id, pk_value, request_kwargs)
+            chunk_results = [(id_to_idx[item_id], result)] if result else []
         else:
-            # Pass only the current chunk to the query builder
-            partition_items_dict = {partition_id: items_for_query}
-            query_obj = _QueryBuilder.build_parameterized_query_for_items(
-                partition_items_dict, self.partition_key_definition)
+            chunk_results, headers = self._execute_query(partition_id, items_for_query, id_to_idx, request_kwargs)
 
-        # Execute query with the response hook
-        query_iterator = self.client.QueryItems(self.collection_link, query_obj, self.options, **request_kwargs)
-        results = list(query_iterator)
-
-        # Associate each result with its original index
-        indexed_results = []
-        for result in results:
-            # Get the ID from the result document
-            doc_id = result.get('id')
-            if doc_id in id_to_idx:
-                # Associate result with its original index
-                indexed_results.append((id_to_idx[doc_id], result))
-            else:
-                # This shouldn't happen, but if it does, log a warning
-                self.logger.warning("Received document with unexpected ID: %s", doc_id)
-
-        # Process the captured headers
         total_ru_charge = 0.0
-        headers = CaseInsensitiveDict(captured_headers)
         charge = headers.get('x-ms-request-charge')
         if charge:
             try:
@@ -258,4 +226,66 @@ class ReadItemsHelperSync:
             except (ValueError, TypeError):
                 self.logger.warning("Invalid request charge format: %s", charge)
 
-        return indexed_results, total_ru_charge
+        return chunk_results, total_ru_charge
+
+    def _execute_query(
+            self,
+            partition_id: str,
+            items_for_query: List[Tuple[str, "_PartitionKeyType"]],
+            id_to_idx: Dict[str, int],
+            request_kwargs: Dict[str, Any]
+    ) -> Tuple[List[Tuple[int, Any]], CaseInsensitiveDict]:
+        """Builds and executes a query for a chunk of items."""
+        captured_headers = {}
+
+        def local_response_hook(hook_headers, _):
+            captured_headers.update(hook_headers)
+
+        request_kwargs['response_hook'] = local_response_hook
+
+        if _QueryBuilder.is_id_partition_key_query(items_for_query, self.partition_key_definition):
+            query_obj = _QueryBuilder.build_id_in_query(items_for_query)
+        elif _QueryBuilder.is_single_logical_partition_query(items_for_query):
+            query_obj = _QueryBuilder.build_pk_and_id_in_query(items_for_query, self.partition_key_definition)
+        else:
+            partition_items_dict = {partition_id: items_for_query}
+            query_obj = _QueryBuilder.build_parameterized_query_for_items(
+                partition_items_dict, self.partition_key_definition)
+
+        query_iterator = self.client.QueryItems(self.collection_link, query_obj, self.options, **request_kwargs)
+        results = list(query_iterator)
+
+        chunk_indexed_results = []
+        for item in results:
+            doc_id = item.get('id')
+            if doc_id in id_to_idx:
+                chunk_indexed_results.append((id_to_idx[doc_id], item))
+            else:
+                self.logger.warning("Received document with unexpected ID: %s", doc_id)
+
+        return chunk_indexed_results, CaseInsensitiveDict(captured_headers)
+
+    def _execute_point_read(
+            self,
+            item_id: str,
+            pk_value: "_PartitionKeyType",
+            request_kwargs: Dict[str, Any]
+    ) -> Tuple[Optional[Any], CaseInsensitiveDict]:
+        """Executes a point read for a single item."""
+        doc_link = f"{self.collection_link}/docs/{item_id}"
+        point_read_options = self.options.copy()
+        point_read_options["partitionKey"] = pk_value
+        captured_headers = {}
+
+        def local_response_hook(hook_headers, _):
+            captured_headers.update(hook_headers)
+
+        request_kwargs['response_hook'] = local_response_hook
+        request_kwargs.pop("containerProperties", None)
+
+        try:
+            result = self.client.ReadItem(doc_link, point_read_options, **request_kwargs)
+            return result, CaseInsensitiveDict(captured_headers)
+        except exceptions.CosmosResourceNotFoundError as e:
+            captured_headers.update(e.headers)
+            return None, CaseInsensitiveDict(captured_headers)

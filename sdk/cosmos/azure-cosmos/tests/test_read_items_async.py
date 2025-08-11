@@ -127,25 +127,6 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(read_items), 1)
         self.assertEqual(read_items[0]['id'], item_ids[0])
 
-    async def test_read_single_item_uses_point_read_async(self):
-        """Test that for a single item, read_items uses the read_item optimization."""
-        with patch.object(self.container, 'read_item', autospec=True) as mock_read_item:
-            # Mock the return value of read_item to be a CosmosDict with headers
-            mock_headers = CaseInsensitiveDict({'x-ms-request-charge': '1.23'})
-            mock_read_item.return_value = CosmosDict(
-                {"id": "item1", "_rid": "some_rid"},
-                response_headers=mock_headers
-            )
-
-            items_to_read = [("item1", "pk1")]
-            result = await self.container.read_items(items=items_to_read)
-
-            # Verify that read_item was awaited exactly once with the correct arguments
-            mock_read_item.assert_awaited_once_with(item="item1", partition_key="pk1")
-
-            # Verify the result contains the item and headers
-            self.assertEqual(len(result), 1)
-            self.assertEqual(result[0]['id'], 'item1')
 
     async def test_read_items_different_partition_key_async(self):
         """Tests read_items with partition key different from id."""
@@ -479,20 +460,35 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
             await client_with_faults.close()
 
     async def test_read_after_container_recreation_async(self):
-        """Tests read_items after a container is deleted and recreated."""
+        """Tests read_items after a container is deleted and recreated with a different configuration."""
         container_id = self.container.id
-        initial_items_to_read, initial_item_ids = await self._create_records_for_read_items(self.container, 3, "initial")
+        initial_items_to_read, initial_item_ids = await self._create_records_for_read_items(self.container, 3,
+                                                                                             "initial")
 
         read_items_before = await self.container.read_items(items=initial_items_to_read)
         self.assertEqual(len(read_items_before), len(initial_item_ids))
 
         await self.database.delete_container(self.container)
 
-        # Recreate the container and re-assign self.container so it's cleaned up in asyncTearDown
-        self.container = await self.database.create_container(id=container_id,
-                                                               partition_key=PartitionKey(path="/id"))
+        # Recreate the container with a different partition key and throughput
+        self.container = await self.database.create_container(
+            id=container_id,
+            partition_key=PartitionKey(path="/pk"),
+            offer_throughput=400
+        )
 
-        new_items_to_read, new_item_ids = await self._create_records_for_read_items(self.container, 5, "new")
+        # Create new items with the new partition key structure
+        new_items_to_read = []
+        new_item_ids = []
+        creation_tasks = []
+        for i in range(5):
+            doc_id = f"new_item_{i}_{uuid.uuid4()}"
+            pk_value = f"new_pk_{i}"
+            new_item_ids.append(doc_id)
+            new_items_to_read.append((doc_id, pk_value))
+            task = self.container.create_item({'id': doc_id, 'pk': pk_value, 'data': i})
+            creation_tasks.append(task)
+        await asyncio.gather(*creation_tasks)
 
         read_items_after = await self.container.read_items(items=new_items_to_read)
         self.assertEqual(len(read_items_after), len(new_item_ids))

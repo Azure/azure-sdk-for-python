@@ -11,8 +11,8 @@ from azure.cosmos import PartitionKey
 
 
 @pytest.mark.cosmosSplit
-class TestReadManyItemsPartitionSplitScenarios(unittest.IsolatedAsyncioTestCase):
-    """Tests the behavior of read_many_items in scenarios involving partition splits."""
+class TestReadItemsPartitionSplitScenarios(unittest.IsolatedAsyncioTestCase):
+    """Tests the behavior of read_items in scenarios involving partition splits."""
 
     created_db: DatabaseProxy = None
     client: CosmosClient = None
@@ -28,10 +28,10 @@ class TestReadManyItemsPartitionSplitScenarios(unittest.IsolatedAsyncioTestCase)
     async def asyncTearDown(self):
         await self.client.close()
 
-    async def test_read_many_items_with_partition_split_async(self):
-        """Tests that read_many_items works correctly after a partition split."""
+    async def test_read_items_with_partition_split_async(self):
+        """Tests that read_items works correctly after a partition split."""
         container = await self.database.create_container(
-            "read_many_items_split_test_async" + str(uuid.uuid4()),
+            "read_items_split_test_async" + str(uuid.uuid4()),
             PartitionKey(path="/pk"),
             offer_throughput=400)
         # 1. Create 100 items to read
@@ -43,18 +43,18 @@ class TestReadManyItemsPartitionSplitScenarios(unittest.IsolatedAsyncioTestCase)
             await container.create_item({'id': doc_id, 'data': i})
             items_to_read.append((doc_id, doc_id))
 
-        # 2. Initial read_many_items call before the split
-        print("Performing initial read_many_items call...")
-        initial_read_items = await container.read_many_items(items=items_to_read)
+        # 2. Initial read_items call before the split
+        print("Performing initial read_items call...")
+        initial_read_items = await container.read_items(items=items_to_read)
         self.assertEqual(len(initial_read_items), len(items_to_read))
         print("Initial call successful.")
 
         # 3. Trigger a partition split
         await test_config.TestConfig.trigger_split_async(container, 11000)
 
-        # 4. Call read_many_items again after the split
-        print("Performing post-split read_many_items call...")
-        final_read_items = await container.read_many_items(items=items_to_read)
+        # 4. Call read_items again after the split
+        print("Performing post-split read_items call...")
+        final_read_items = await container.read_items(items=items_to_read)
 
         # 5. Verify the results
         self.assertEqual(len(final_read_items), len(items_to_read))
