@@ -46,7 +46,7 @@ readme = {file = ["README.md"], content-type = "text/markdown"}
 exclude = ["samples*", "tests*", "doc*", "azure"]
 
 [tool.setuptools.package-data]
-"azure.cosmos" = ["py.typed"]
+pytyped = ["py.typed"]
 "azure" = ["__init__.py"]
 
 [tool.azure-sdk-build]
