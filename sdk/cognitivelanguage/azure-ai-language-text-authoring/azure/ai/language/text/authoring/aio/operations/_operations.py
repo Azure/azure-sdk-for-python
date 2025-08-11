@@ -106,23 +106,23 @@ class _TextAuthoringClientOperationsMixin(
     @distributed_trace
     def list_projects(
         self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> AsyncItemPaged["_models.ProjectMetadata"]:
+    ) -> AsyncItemPaged["_models.ProjectDetails"]:
         """Lists the existing projects.
 
         :keyword top: The number of result items to return. Default value is None.
         :paramtype top: int
         :keyword skip: The number of result items to skip. Default value is None.
         :paramtype skip: int
-        :return: An iterator like instance of ProjectMetadata
+        :return: An iterator like instance of ProjectDetails
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.language.text.authoring.models.ProjectMetadata]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.language.text.authoring.models.ProjectDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.ProjectMetadata]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.ProjectDetails]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -174,7 +174,7 @@ class _TextAuthoringClientOperationsMixin(
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ProjectMetadata], deserialized.get("value", []))
+            list_of_elem = _deserialize(List[_models.ProjectDetails], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -596,29 +596,29 @@ class _TextAuthoringClientOperationsMixin(
     async def create_project(
         self,
         project_name: str,
-        body: _models.CreateProjectDetails,
+        body: _models.CreateProjectOptions,
         *,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
-    ) -> _models.ProjectMetadata:
+    ) -> _models.ProjectDetails:
         """The most basic operation that applies to a resource.
 
         :param project_name: The new project name. Required.
         :type project_name: str
         :param body: The request body. Required.
-        :type body: ~azure.ai.language.text.authoring.models.CreateProjectDetails
+        :type body: ~azure.ai.language.text.authoring.models.CreateProjectOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: ProjectMetadata. The ProjectMetadata is compatible with MutableMapping
-        :rtype: ~azure.ai.language.text.authoring.models.ProjectMetadata
+        :return: ProjectDetails. The ProjectDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.language.text.authoring.models.ProjectDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def create_project(
         self, project_name: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.ProjectMetadata:
+    ) -> _models.ProjectDetails:
         """The most basic operation that applies to a resource.
 
         :param project_name: The new project name. Required.
@@ -628,15 +628,15 @@ class _TextAuthoringClientOperationsMixin(
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: ProjectMetadata. The ProjectMetadata is compatible with MutableMapping
-        :rtype: ~azure.ai.language.text.authoring.models.ProjectMetadata
+        :return: ProjectDetails. The ProjectDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.language.text.authoring.models.ProjectDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def create_project(
         self, project_name: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.ProjectMetadata:
+    ) -> _models.ProjectDetails:
         """The most basic operation that applies to a resource.
 
         :param project_name: The new project name. Required.
@@ -646,24 +646,24 @@ class _TextAuthoringClientOperationsMixin(
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: ProjectMetadata. The ProjectMetadata is compatible with MutableMapping
-        :rtype: ~azure.ai.language.text.authoring.models.ProjectMetadata
+        :return: ProjectDetails. The ProjectDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.language.text.authoring.models.ProjectDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
     async def create_project(
-        self, project_name: str, body: Union[_models.CreateProjectDetails, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.ProjectMetadata:
+        self, project_name: str, body: Union[_models.CreateProjectOptions, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.ProjectDetails:
         """The most basic operation that applies to a resource.
 
         :param project_name: The new project name. Required.
         :type project_name: str
-        :param body: The request body. Is one of the following types: CreateProjectDetails, JSON,
+        :param body: The request body. Is one of the following types: CreateProjectOptions, JSON,
          IO[bytes] Required.
-        :type body: ~azure.ai.language.text.authoring.models.CreateProjectDetails or JSON or IO[bytes]
-        :return: ProjectMetadata. The ProjectMetadata is compatible with MutableMapping
-        :rtype: ~azure.ai.language.text.authoring.models.ProjectMetadata
+        :type body: ~azure.ai.language.text.authoring.models.CreateProjectOptions or JSON or IO[bytes]
+        :return: ProjectDetails. The ProjectDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.language.text.authoring.models.ProjectDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -678,7 +678,7 @@ class _TextAuthoringClientOperationsMixin(
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ProjectMetadata] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ProjectDetails] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
         _content = None
@@ -719,7 +719,7 @@ class _TextAuthoringClientOperationsMixin(
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.ProjectMetadata, response.json())
+            deserialized = _deserialize(_models.ProjectDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -727,13 +727,13 @@ class _TextAuthoringClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_project(self, project_name: str, **kwargs: Any) -> _models.ProjectMetadata:
+    async def get_project(self, project_name: str, **kwargs: Any) -> _models.ProjectDetails:
         """Gets the details of a project.
 
         :param project_name: The new project name. Required.
         :type project_name: str
-        :return: ProjectMetadata. The ProjectMetadata is compatible with MutableMapping
-        :rtype: ~azure.ai.language.text.authoring.models.ProjectMetadata
+        :return: ProjectDetails. The ProjectDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.language.text.authoring.models.ProjectDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -747,7 +747,7 @@ class _TextAuthoringClientOperationsMixin(
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ProjectMetadata] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ProjectDetails] = kwargs.pop("cls", None)
 
         _request = build_text_authoring_get_project_request(
             project_name=project_name,
@@ -779,7 +779,7 @@ class _TextAuthoringClientOperationsMixin(
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.ProjectMetadata, response.json())
+            deserialized = _deserialize(_models.ProjectDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3470,13 +3470,13 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_project(self, project_name: str, **kwargs: Any) -> _models.ProjectMetadata:
+    async def get_project(self, project_name: str, **kwargs: Any) -> _models.ProjectDetails:
         """Gets the details of a project.
 
         :param project_name: The new project name. Required.
         :type project_name: str
-        :return: ProjectMetadata. The ProjectMetadata is compatible with MutableMapping
-        :rtype: ~azure.ai.language.text.authoring.models.ProjectMetadata
+        :return: ProjectDetails. The ProjectDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.language.text.authoring.models.ProjectDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3490,7 +3490,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ProjectMetadata] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ProjectDetails] = kwargs.pop("cls", None)
 
         _request = build_project_get_project_request(
             project_name=project_name,
@@ -3522,7 +3522,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.ProjectMetadata, response.json())
+            deserialized = _deserialize(_models.ProjectDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

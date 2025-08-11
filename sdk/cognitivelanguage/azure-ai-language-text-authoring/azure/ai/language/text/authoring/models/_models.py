@@ -373,7 +373,7 @@ class CreateDeploymentDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CreateProjectDetails(_Model):
+class CreateProjectOptions(_Model):
     """Represents the options used to create or update a project.
 
     :ivar project_kind: The project kind. Required. Known values are:
@@ -3104,7 +3104,7 @@ class ExportedProject(_Model):
      <https://aka.ms/text-analytics-offsets>`_. Required. "Utf16CodeUnit"
     :vartype string_index_type: str or ~azure.ai.language.text.authoring.models.StringIndexType
     :ivar metadata: Represents the project metadata. Required.
-    :vartype metadata: ~azure.ai.language.text.authoring.models.CreateProjectDetails
+    :vartype metadata: ~azure.ai.language.text.authoring.models.CreateProjectOptions
     :ivar assets: Represents the project assets.
     :vartype assets: ~azure.ai.language.text.authoring.models.ExportedProjectAsset
     """
@@ -3119,7 +3119,7 @@ class ExportedProject(_Model):
     """Specifies the method used to interpret string offsets. For additional information see
      `https://aka.ms/text-analytics-offsets <https://aka.ms/text-analytics-offsets>`_. Required.
      \"Utf16CodeUnit\""""
-    metadata: "_models.CreateProjectDetails" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    metadata: "_models.CreateProjectOptions" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Represents the project metadata. Required."""
     assets: Optional["_models.ExportedProjectAsset"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -3132,7 +3132,7 @@ class ExportedProject(_Model):
         *,
         project_file_version: str,
         string_index_type: Union[str, "_models.StringIndexType"],
-        metadata: "_models.CreateProjectDetails",
+        metadata: "_models.CreateProjectOptions",
         assets: Optional["_models.ExportedProjectAsset"] = None,
     ) -> None: ...
 
@@ -3754,7 +3754,7 @@ class ProjectDeployment(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProjectMetadata(_Model):
+class ProjectDetails(_Model):
     """Represents the metadata of a project.
 
     :ivar created_on: Represents the project creation datetime. Required.
