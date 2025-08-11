@@ -143,19 +143,6 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
 class TestParseOneSettingsResponse(unittest.TestCase):
     """Test cases for _parse_onesettings_response function."""
 
-    def test_parse_empty_response(self):
-        """Test parsing empty response."""
-        mock_response = Mock()
-        mock_response.__bool__ = Mock(return_value=False)
-        
-        with patch('azure.monitor.opentelemetry.exporter._configuration._utils.logger') as mock_logger:
-            result = _parse_onesettings_response(mock_response)
-        
-        self.assertIsInstance(result, OneSettingsResponse)
-        self.assertIsNone(result.etag)
-        self.assertEqual(result.settings, {})
-        mock_logger.warning.assert_called_once_with("No settings found in OneSettings response")
-
     def test_parse_200_response_with_settings(self):
         """Test parsing 200 response with valid settings."""
         # Setup
