@@ -36,11 +36,11 @@ dependencies = [
 dynamic = ["version", "readme"]
 
 [project.urls]
-repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk"
+repository = "https://github.com/Azure/azure-sdk-for-python/"
 
 [tool.setuptools.dynamic]
 version = {attr = "azure.cosmos._version.VERSION"}
-readme = {file = ["README.md"], content-type = "text/markdown"}
+readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
 
 [tool.setuptools.packages.find]
 exclude = ["samples*", "tests*", "doc*", "azure"]
