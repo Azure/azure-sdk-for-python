@@ -40,8 +40,7 @@ readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
 exclude = ["samples*", "tests*", "doc*", "stress*", "azure"]
 
 [tool.setuptools.package-data]
-"azure.servicebus" = ["py.typed"]
-"azure.servicebus.management._generated" = ["py.typed"]
+pytyped = ["py.typed"]
 
 [tool.azure-sdk-build]
 pyright = false
