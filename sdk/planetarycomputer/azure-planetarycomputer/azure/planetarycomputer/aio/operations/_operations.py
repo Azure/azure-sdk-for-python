@@ -8750,7 +8750,7 @@ class TilerWmtsTileMatrixSetsOperations:
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any
-    ) -> str:
+    ) -> AsyncIterator[bytes]:
         """Wmts Tilematrixsetid As Path.
 
         OGC WMTS endpoint.
@@ -8838,8 +8838,8 @@ class TilerWmtsTileMatrixSetsOperations:
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
-        :return: str
-        :rtype: str
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -8853,7 +8853,7 @@ class TilerWmtsTileMatrixSetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[str] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_tiler_wmts_tile_matrix_sets_get_capabilities_xml_request(
             collection_id=collection_id,
@@ -8887,7 +8887,7 @@ class TilerWmtsTileMatrixSetsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = kwargs.pop("stream", True)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -8906,10 +8906,7 @@ class TilerWmtsTileMatrixSetsOperations:
         response_headers = {}
         response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize_xml(str, response.text())
+        deserialized = response.iter_bytes()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -12389,7 +12386,7 @@ class MosaicsWmtsMosaicsOperations:
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any
-    ) -> Optional[str]:
+    ) -> Optional[AsyncIterator[bytes]]:
         """Wmts.
 
         OGC WMTS endpoint.
@@ -12480,8 +12477,8 @@ class MosaicsWmtsMosaicsOperations:
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
-        :return: str or None
-        :rtype: str or None
+        :return: AsyncIterator[bytes] or None
+        :rtype: AsyncIterator[bytes] or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -12495,7 +12492,7 @@ class MosaicsWmtsMosaicsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[Optional[str]] = kwargs.pop("cls", None)
+        cls: ClsType[Optional[AsyncIterator[bytes]]] = kwargs.pop("cls", None)
 
         _request = build_mosaics_wmts_mosaics_get_capabilities_xml_request(
             search_id=search_id,
@@ -12528,7 +12525,7 @@ class MosaicsWmtsMosaicsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = kwargs.pop("stream", True)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -12549,10 +12546,7 @@ class MosaicsWmtsMosaicsOperations:
         if response.status_code == 200:
             response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
 
-            if _stream:
-                deserialized = response.iter_bytes()
-            else:
-                deserialized = _deserialize_xml(str, response.text())
+            deserialized = response.iter_bytes()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -12603,7 +12597,7 @@ class MosaicsWmtsMosaicsTileMatrixSetsOperations:  # pylint: disable=name-too-lo
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any
-    ) -> Optional[str]:
+    ) -> Optional[AsyncIterator[bytes]]:
         """Wmts Tilematrixsetid As Path.
 
         OGC WMTS endpoint.
@@ -12689,8 +12683,8 @@ class MosaicsWmtsMosaicsTileMatrixSetsOperations:  # pylint: disable=name-too-lo
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
-        :return: str or None
-        :rtype: str or None
+        :return: AsyncIterator[bytes] or None
+        :rtype: AsyncIterator[bytes] or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -12704,7 +12698,7 @@ class MosaicsWmtsMosaicsTileMatrixSetsOperations:  # pylint: disable=name-too-lo
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[Optional[str]] = kwargs.pop("cls", None)
+        cls: ClsType[Optional[AsyncIterator[bytes]]] = kwargs.pop("cls", None)
 
         _request = build_mosaics_wmts_mosaics_tile_matrix_sets_get_capabilities_xml_request(
             search_id=search_id,
@@ -12737,7 +12731,7 @@ class MosaicsWmtsMosaicsTileMatrixSetsOperations:  # pylint: disable=name-too-lo
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = kwargs.pop("stream", True)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -12758,10 +12752,7 @@ class MosaicsWmtsMosaicsTileMatrixSetsOperations:  # pylint: disable=name-too-lo
         if response.status_code == 200:
             response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
 
-            if _stream:
-                deserialized = response.iter_bytes()
-            else:
-                deserialized = _deserialize_xml(str, response.text())
+            deserialized = response.iter_bytes()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -12944,7 +12935,7 @@ class MosaicsRegisterSearchOperations:
             body = {
                 "bbox": bbox,
                 "collections": collections,
-                "datetime": datetime,
+                "datetime_property": datetime,
                 "filter": filter,
                 "filter_lang": filter_lang,
                 "ids": ids,

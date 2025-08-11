@@ -454,12 +454,9 @@ def build_ingestion_sources_create_or_replace_request(  # pylint: disable=name-t
 
 
 def build_ingestion_sources_delete_request(id: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/inma/ingestion-sources/{id}"
     path_format_arguments = {
@@ -471,10 +468,7 @@ def build_ingestion_sources_delete_request(id: str, **kwargs: Any) -> HttpReques
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_ingestion_sources_list_managed_identities_request(  # pylint: disable=name-too-long
@@ -557,33 +551,24 @@ def build_ingestion_operations_list_all_request(  # pylint: disable=name-too-lon
 
 
 def build_ingestion_operations_delete_all_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/inma/operations"
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_ingestion_operations_delete_request(  # pylint: disable=name-too-long
     operation_id: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/inma/operations/{operationId}"
     path_format_arguments = {
@@ -595,10 +580,7 @@ def build_ingestion_operations_delete_request(  # pylint: disable=name-too-long
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_stac_landing_pages_get_request(**kwargs: Any) -> HttpRequest:
@@ -776,12 +758,9 @@ def build_stac_queryables_get_all_request(**kwargs: Any) -> HttpRequest:
 
 
 def build_stac_queryables_delete_request(collection_id: str, queryable_name: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/stac/collections/{collectionId}/queryables/{queryableName}"
     path_format_arguments = {
@@ -794,10 +773,7 @@ def build_stac_queryables_delete_request(collection_id: str, queryable_name: str
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_stac_queryables_get_all_by_collection_request(  # pylint: disable=name-too-long
@@ -1041,12 +1017,9 @@ def build_stac_collection_assets_create_or_replace_request(  # pylint: disable=n
 def build_stac_collection_assets_delete_request(  # pylint: disable=name-too-long
     collection_id: str, asset_id: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/stac/collections/{collectionId}/assets/{assetId}"
     path_format_arguments = {
@@ -1059,10 +1032,7 @@ def build_stac_collection_assets_delete_request(  # pylint: disable=name-too-lon
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_stac_collection_config_get_request(collection_id: str, **kwargs: Any) -> HttpRequest:
@@ -1204,12 +1174,9 @@ def build_stac_collection_mosaics_create_or_replace_request(  # pylint: disable=
 def build_stac_collection_mosaics_delete_request(  # pylint: disable=name-too-long
     collection_id: str, mosaic_id: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/stac/collections/{collectionId}/configurations/mosaics/{mosaicId}"
     path_format_arguments = {
@@ -1222,10 +1189,7 @@ def build_stac_collection_mosaics_delete_request(  # pylint: disable=name-too-lo
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_stac_collection_partition_types_get_request(  # pylint: disable=name-too-long
@@ -1398,12 +1362,9 @@ def build_stac_collection_render_options_create_or_replace_request(  # pylint: d
 def build_stac_collection_render_options_delete_request(  # pylint: disable=name-too-long
     collection_id: str, render_option_id: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/stac/collections/{collectionId}/configurations/render-options/{renderOptionId}"
     path_format_arguments = {
@@ -1416,10 +1377,7 @@ def build_stac_collection_render_options_delete_request(  # pylint: disable=name
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_stac_collection_tile_settings_get_all_request(  # pylint: disable=name-too-long
@@ -4066,12 +4024,9 @@ def build_sas_get_token_request(collection_id: str, *, duration: Optional[int] =
 
 
 def build_sas_revoke_token_request(*, duration: Optional[int] = None, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/sas/token/revoke"
 
@@ -4080,10 +4035,7 @@ def build_sas_revoke_token_request(*, duration: Optional[int] = None, **kwargs: 
     if duration is not None:
         _params["duration"] = _SERIALIZER.query("duration", duration, "int")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
 
 
 def build_sas_get_sign_request(*, href: str, duration: Optional[int] = None, **kwargs: Any) -> HttpRequest:
@@ -12788,7 +12740,7 @@ class TilerWmtsTileMatrixSetsOperations:
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any,
-    ) -> str:
+    ) -> Iterator[bytes]:
         """Wmts Tilematrixsetid As Path.
 
         OGC WMTS endpoint.
@@ -12876,8 +12828,8 @@ class TilerWmtsTileMatrixSetsOperations:
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
-        :return: str
-        :rtype: str
+        :return: Iterator[bytes]
+        :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -12891,7 +12843,7 @@ class TilerWmtsTileMatrixSetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[str] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_tiler_wmts_tile_matrix_sets_get_capabilities_xml_request(
             collection_id=collection_id,
@@ -12925,7 +12877,7 @@ class TilerWmtsTileMatrixSetsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = kwargs.pop("stream", True)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -12944,10 +12896,7 @@ class TilerWmtsTileMatrixSetsOperations:
         response_headers = {}
         response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize_xml(str, response.text())
+        deserialized = response.iter_bytes()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -16427,7 +16376,7 @@ class MosaicsWmtsMosaicsOperations:
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any,
-    ) -> Optional[str]:
+    ) -> Optional[Iterator[bytes]]:
         """Wmts.
 
         OGC WMTS endpoint.
@@ -16518,8 +16467,8 @@ class MosaicsWmtsMosaicsOperations:
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
-        :return: str or None
-        :rtype: str or None
+        :return: Iterator[bytes] or None
+        :rtype: Iterator[bytes] or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -16533,7 +16482,7 @@ class MosaicsWmtsMosaicsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[Optional[str]] = kwargs.pop("cls", None)
+        cls: ClsType[Optional[Iterator[bytes]]] = kwargs.pop("cls", None)
 
         _request = build_mosaics_wmts_mosaics_get_capabilities_xml_request(
             search_id=search_id,
@@ -16566,7 +16515,7 @@ class MosaicsWmtsMosaicsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = kwargs.pop("stream", True)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -16587,10 +16536,7 @@ class MosaicsWmtsMosaicsOperations:
         if response.status_code == 200:
             response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
 
-            if _stream:
-                deserialized = response.iter_bytes()
-            else:
-                deserialized = _deserialize_xml(str, response.text())
+            deserialized = response.iter_bytes()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -16641,7 +16587,7 @@ class MosaicsWmtsMosaicsTileMatrixSetsOperations:  # pylint: disable=name-too-lo
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any,
-    ) -> Optional[str]:
+    ) -> Optional[Iterator[bytes]]:
         """Wmts Tilematrixsetid As Path.
 
         OGC WMTS endpoint.
@@ -16727,8 +16673,8 @@ class MosaicsWmtsMosaicsTileMatrixSetsOperations:  # pylint: disable=name-too-lo
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
-        :return: str or None
-        :rtype: str or None
+        :return: Iterator[bytes] or None
+        :rtype: Iterator[bytes] or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -16742,7 +16688,7 @@ class MosaicsWmtsMosaicsTileMatrixSetsOperations:  # pylint: disable=name-too-lo
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[Optional[str]] = kwargs.pop("cls", None)
+        cls: ClsType[Optional[Iterator[bytes]]] = kwargs.pop("cls", None)
 
         _request = build_mosaics_wmts_mosaics_tile_matrix_sets_get_capabilities_xml_request(
             search_id=search_id,
@@ -16775,7 +16721,7 @@ class MosaicsWmtsMosaicsTileMatrixSetsOperations:  # pylint: disable=name-too-lo
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = kwargs.pop("stream", True)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -16796,10 +16742,7 @@ class MosaicsWmtsMosaicsTileMatrixSetsOperations:  # pylint: disable=name-too-lo
         if response.status_code == 200:
             response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
 
-            if _stream:
-                deserialized = response.iter_bytes()
-            else:
-                deserialized = _deserialize_xml(str, response.text())
+            deserialized = response.iter_bytes()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -16982,7 +16925,7 @@ class MosaicsRegisterSearchOperations:
             body = {
                 "bbox": bbox,
                 "collections": collections,
-                "datetime": datetime,
+                "datetime_property": datetime,
                 "filter": filter,
                 "filter_lang": filter_lang,
                 "ids": ids,
