@@ -74,7 +74,7 @@ class TestSessionTokenUnitTest(unittest.TestCase):
         self.assertIsNotNone(session_token_merged)
         self.assertTrue(session_token_merged.equals(session_token1.merge(session_token2)))
 
-        # same vector clock version with GLSN increase (no failover)
+        # same vector clock version with global lsn increase (no failover)
         session_token1 = VectorSessionToken.create("1#100#1=20#2=5")
         session_token2 = VectorSessionToken.create("1#197#1=20#2=5")
         self.assertIsNotNone(session_token1)
@@ -83,7 +83,7 @@ class TestSessionTokenUnitTest(unittest.TestCase):
         self.assertTrue(session_token1.merge(session_token2).equals(
             VectorSessionToken.create("1#197#1=20#2=5")))
 
-        # same vector clock version with GLSN increase and LLSN increase
+        # same vector clock version with global lsn increase and local lsn increase
         session_token1 = VectorSessionToken.create("1#100#1=20#2=5")
         session_token2 = VectorSessionToken.create("1#197#1=23#2=15")
         self.assertIsNotNone(session_token1)
