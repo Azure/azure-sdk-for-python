@@ -294,6 +294,10 @@ else:
 ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
 vector_store = agents_client.vector_stores.create_and_poll(data_sources=[ds], name="sample_vector_store")
 print(f"Created vector store, vector store ID: {vector_store.id}")
+vector_store_files = {}
+for fle in agents_client.vector_store_files.list(vector_store.id):
+    uploaded_file = agents_client.files.get(fle.id)
+    vector_store_files[fle.id] = uploaded_file.filename
 
 # Create a file search tool
 file_search_tool = FileSearchTool(vector_store_ids=[vector_store.id])
