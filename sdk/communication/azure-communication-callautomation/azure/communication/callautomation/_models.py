@@ -1040,13 +1040,13 @@ class PiiRedactionOptions:
 class TeamsPhoneCallDetails:
     """The call details which will be sent to the target.
 
-    :keyword teams_phone_caller_details: Container for details relating to the original caller of the
+    :keyword teams_phone_caller: Container for details relating to the original caller of the
      call.
-    :paramtype teams_phone_caller_details:
+    :paramtype teams_phone_caller:
      ~azure.communication.callautomation.models.TeamsPhoneCallerDetails
-    :keyword teams_phone_source_details: Container for details relating to the entity responsible for
+    :keyword teams_phone_source: Container for details relating to the entity responsible for
      the creation of these call details.
-    :paramtype teams_phone_source_details:
+    :paramtype teams_phone_source:
      ~azure.communication.callautomation.models.TeamsPhoneSourceDetails
     :keyword session_id: Id to exclusively identify this call session. IVR will use this for their
      telemetry/reporting.
@@ -1068,9 +1068,9 @@ class TeamsPhoneCallDetails:
     :paramtype suggested_actions: str
     """
 
-    teams_phone_caller_details: Optional["TeamsPhoneCallerDetails"]
+    teams_phone_caller: Optional["TeamsPhoneCallerDetails"]
     """Gets or sets the caller details."""
-    teams_phone_source_details: Optional["TeamsPhoneSourceDetails"]
+    teams_phone_source: Optional["TeamsPhoneSourceDetails"]
     """Gets or sets the source details."""
     session_id: Optional[str]
     """Gets or sets the session id."""
@@ -1088,8 +1088,8 @@ class TeamsPhoneCallDetails:
     """Gets or sets the suggested actions."""
 
     def __init__(self, *,
-                 teams_phone_caller_details: Optional["TeamsPhoneCallerDetails"] = None,
-                 teams_phone_source_details: Optional["TeamsPhoneSourceDetails"] = None,
+                 teams_phone_caller: Optional["TeamsPhoneCallerDetails"] = None,
+                 teams_phone_source: Optional["TeamsPhoneSourceDetails"] = None,
                  session_id: Optional[str] = None,
                  intent: Optional[str] = None,
                  call_topic: Optional[str] = None,
@@ -1097,8 +1097,8 @@ class TeamsPhoneCallDetails:
                  transcript_url: Optional[str] = None,
                  call_sentiment: Optional[str] = None,
                  suggested_actions: Optional[str] = None):
-        self.teams_phone_caller_details = teams_phone_caller_details
-        self.teams_phone_source_details = teams_phone_source_details
+        self.teams_phone_caller = teams_phone_caller
+        self.teams_phone_source = teams_phone_source
         self.session_id = session_id
         self.intent = intent
         self.call_topic = call_topic
@@ -1109,8 +1109,8 @@ class TeamsPhoneCallDetails:
 
     def _to_generated(self):
         return TeamsPhoneCallDetailsInternal(
-            teams_phone_caller_details=self.teams_phone_caller_details,
-            teams_phone_source_details=self.teams_phone_source_details,
+            teams_phone_caller_details=self.teams_phone_caller,
+            teams_phone_source_details=self.teams_phone_source,
             session_id=self.session_id,
             intent=self.intent,
             call_topic=self.call_topic,
