@@ -215,17 +215,21 @@ class TestAOAIPagination:
         mock_run_results.status = "completed"
         mock_run_results.per_testing_criteria_results = [Mock(testing_criteria="grader-1", passed=20, failed=0)]
 
-        # Create results in non-sequential order across pages
+        # Create results in non-sequential order across pages, covering ids 0..9 exactly
         page1_items = [
             MockOutputItem(
-                id=f"item-{i}", datasource_item_id=i * 2, results=[{"name": "grader-1", "passed": True, "score": i}]
+                id=f"item-{i}",
+                datasource_item_id=i,  # was i * 2
+                results=[{"name": "grader-1", "passed": True, "score": i}],
             )
             for i in [5, 3, 8, 1, 9]
         ]
 
         page2_items = [
             MockOutputItem(
-                id=f"item-{i}", datasource_item_id=i * 2, results=[{"name": "grader-1", "passed": True, "score": i}]
+                id=f"item-{i}",
+                datasource_item_id=i,  # was i * 2
+                results=[{"name": "grader-1", "passed": True, "score": i}],
             )
             for i in [2, 7, 4, 6, 0]
         ]
@@ -242,7 +246,7 @@ class TestAOAIPagination:
         ):
             df, metrics = _get_single_run_results(run_info)
 
-        # Verify results are sorted by datasource_item_id
+        # Verify results are sorted by datasource_item_id (0..9)
         scores = df["outputs.test_grader.score"].tolist()
-        expected_scores = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]  # Sorted by datasource_item_id
+        expected_scores = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         assert scores == expected_scores

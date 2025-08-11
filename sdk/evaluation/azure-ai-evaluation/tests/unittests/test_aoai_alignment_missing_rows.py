@@ -2,11 +2,17 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from unittest.mock import Mock, patch
+import logging
 from typing import List
-import pandas as pd
+from unittest.mock import Mock, patch
 
-from azure.ai.evaluation._evaluate._evaluate_aoai import _get_single_run_results, OAIEvalRunCreationInfo
+import pandas as pd
+import pytest
+
+from azure.ai.evaluation._evaluate._evaluate_aoai import (
+    OAIEvalRunCreationInfo,
+    _get_single_run_results,
+)
 
 
 class MockOutputItem:
@@ -22,56 +28,63 @@ class MockOutputItemsList:
         self.has_more = has_more
 
 
-def test_alignment_with_missing_rows(monkeypatch):
-    """Ensure missing rows are padded with NaN and not cause row shifts."""
+@pytest.mark.unittest
+def test_aoai_results_preserve_order_with_unordered_output_items(caplog):
+    """AOAI output_items can arrive unordered; results should align to row ids (0..N-1)."""
     mock_client = Mock()
-    # expected 5 rows, but one (id=2) will be missing
+    expected_rows = 5
     run_info = OAIEvalRunCreationInfo(
         client=mock_client,
         eval_group_id="grp",
         eval_run_id="run",
         grader_name_map={"grader-1": "rel"},
-        expected_rows=5,
+        expected_rows=expected_rows,
     )
 
-    # Mock concluded run results
+    # Completed run; pass_rate comes from per_testing_criteria_results
     mock_run_results = Mock()
     mock_run_results.status = "completed"
-    # passed=3 failed=1 -> pass rate 0.75
-    mock_run_results.per_testing_criteria_results = [Mock(testing_criteria="grader-1", passed=3, failed=1)]
+    mock_run_results.per_testing_criteria_results = [Mock(testing_criteria="grader-1", passed=4, failed=1)]
 
-    # Return rows 0,1,3,4; omit 2
-    mock_items = [
-        MockOutputItem(id="i0", datasource_item_id=0, results=[{"name": "grader-1", "passed": True, "score": 0.9}]),
-        MockOutputItem(id="i1", datasource_item_id=1, results=[{"name": "grader-1", "passed": False, "score": 0.1}]),
-        MockOutputItem(id="i3", datasource_item_id=3, results=[{"name": "grader-1", "passed": True, "score": 0.8}]),
-        MockOutputItem(id="i4", datasource_item_id=4, results=[{"name": "grader-1", "passed": True, "score": 0.95}]),
+    # Unordered items: ids [3,0,4,1,2]; score equals its id for easy checks
+    unordered_items = [
+        MockOutputItem(id="i3", datasource_item_id=3, results=[{"name": "grader-1", "passed": True, "score": 3.0}]),
+        MockOutputItem(id="i0", datasource_item_id=0, results=[{"name": "grader-1", "passed": True, "score": 0.0}]),
+        MockOutputItem(id="i4", datasource_item_id=4, results=[{"name": "grader-1", "passed": False, "score": 4.0}]),
+        MockOutputItem(id="i1", datasource_item_id=1, results=[{"name": "grader-1", "passed": True, "score": 1.0}]),
+        MockOutputItem(id="i2", datasource_item_id=2, results=[{"name": "grader-1", "passed": True, "score": 2.0}]),
     ]
+    mock_client.evals.runs.output_items.list.return_value = MockOutputItemsList(data=unordered_items, has_more=False)
 
-    mock_client.evals.runs.output_items.list.return_value = MockOutputItemsList(data=mock_items, has_more=False)
+    caplog.set_level(logging.WARNING, logger="azure.ai.evaluation._evaluate._evaluate_aoai")
 
     with patch(
-        "azure.ai.evaluation._evaluate._evaluate_aoai._wait_for_run_conclusion", return_value=mock_run_results
+        "azure.ai.evaluation._evaluate._evaluate_aoai._wait_for_run_conclusion",
+        return_value=mock_run_results,
     ):
         df, metrics = _get_single_run_results(run_info)
 
-    # Expect 5 rows, with row 2 all NaN except for row_missing flag
-    assert len(df) == 5
-    # score column exists
+    # Shape and index
+    assert len(df) == expected_rows
+    assert list(df.index) == list(range(expected_rows))
+
     score_col = "outputs.rel.score"
     assert score_col in df.columns
 
-    # Row 2 should be NaN for the score
-    assert pd.isna(df.loc[2, score_col])
+    # Each row i should have score == float(i), proving correct alignment after sort/reindex
+    for i in range(expected_rows):
+        assert df.loc[i, score_col] == float(i)
 
-    # Row alignment: original row 3 score should remain at index 3, not shifted to 2
-    assert df.loc[3, score_col] == 0.8
-
-    # Row missing flag set only for the missing row
+    # No missing-row padding in this test; the row_missing flag should not exist
     missing_flag_col = "outputs.rel.row_missing"
-    assert missing_flag_col in df.columns
-    assert df.loc[2, missing_flag_col] is True
-    assert df[missing_flag_col].sum() == 1
+    assert missing_flag_col not in df.columns
 
-    # Pass rate computed
-    assert metrics["rel.pass_rate"] == 0.75
+    # Pass rate surfaced from per_testing_criteria_results
+    assert metrics["rel.pass_rate"] == 4 / 5
+
+    # No warning about padding missing rows in this scenario
+    assert not any(
+        "missing row(s) padded with NaN for alignment" in rec.message
+        for rec in caplog.records
+        if rec.levelno >= logging.WARNING
+    )

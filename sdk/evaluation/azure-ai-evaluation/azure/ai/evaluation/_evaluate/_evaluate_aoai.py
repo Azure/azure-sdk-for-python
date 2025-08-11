@@ -222,7 +222,7 @@ def _get_single_run_results(
         )
 
     # Convert run results into a dictionary of metrics
-    run_metrics = {}
+    run_metrics: Dict[str, Any] = {}
     if run_results.per_testing_criteria_results is None:
         msg = (
             "AOAI evaluation run returned no results, despite 'completed' status. This might"
@@ -239,28 +239,16 @@ def _get_single_run_results(
         grader_name = run_info["grader_name_map"][criteria_result.testing_criteria]
         passed = criteria_result.passed
         failed = criteria_result.failed
-        ratio = passed / (passed + failed)
+        ratio = passed / (passed + failed) if (passed + failed) else 0.0
         formatted_column_name = f"{grader_name}.pass_rate"
         run_metrics[formatted_column_name] = ratio
 
-    # Get full results and convert them into a dataframe.
-    # Notes on raw full data output from OAI eval runs:
-    # Each row in the full results list in itself a list.
-    # Each entry corresponds to one grader's results from the criteria list
-    # that was inputted to the eval group.
-    # Each entry is a dictionary, with a name, sample, passed boolean, and score number.
-    # The name is used to figure out which grader the entry refers to, the sample is ignored.
-    # The passed and score values are then added to the results dictionary, prepended with the grader's name
-    # as entered by the user in the inputted dictionary.
-    # Other values, if they exist, are also added to the results dictionary.
-
     # Collect all results with pagination
-    all_results = []
-    next_cursor = None
+    all_results: List[Any] = []
+    next_cursor: Optional[str] = None
     limit = 100  # Max allowed by API
 
     while True:
-        # Build kwargs for the API call
         list_kwargs = {"eval_id": run_info["eval_group_id"], "run_id": run_info["eval_run_id"], "limit": limit}
         if next_cursor is not None:
             list_kwargs["after"] = next_cursor
@@ -273,28 +261,25 @@ def _get_single_run_results(
         # Check for more pages
         if hasattr(raw_list_results, "has_more") and raw_list_results.has_more:
             if hasattr(raw_list_results, "data") and len(raw_list_results.data) > 0:
-                # Get the last item's ID for cursor-based pagination
                 next_cursor = raw_list_results.data[-1].id
             else:
                 break
         else:
             break
 
-    listed_results = {"index": []}
-    # raw data has no order guarantees, we need to sort them by their
-    # datasource_item_id
+    listed_results: Dict[str, List[Any]] = {"index": []}
+    # Raw data has no order guarantees; capture datasource_item_id per row for ordering.
     for row_result in all_results:
-        # Add the datasource_item_id for later sorting
         listed_results["index"].append(row_result.datasource_item_id)
         for single_grader_row_result in row_result.results:
             grader_name = run_info["grader_name_map"][single_grader_row_result["name"]]
             for name, value in single_grader_row_result.items():
-                if name in ["name"]:  # Todo decide if we also want to exclude "sample"
+                if name in ["name"]:
                     continue
                 if name.lower() == "passed":
-                    # create a `_result` column for each grader
+                    # Create a `_result` column for each grader
                     result_column_name = f"outputs.{grader_name}.{grader_name}_result"
-                    if len(result_column_name) < 50:  # TODO: is this the limit? Should we keep "passed"?
+                    if len(result_column_name) < 50:
                         if result_column_name not in listed_results:
                             listed_results[result_column_name] = []
                         listed_results[result_column_name].append(EVALUATION_PASS_FAIL_MAPPING[value])
@@ -304,31 +289,38 @@ def _get_single_run_results(
                     listed_results[formatted_column_name] = []
                 listed_results[formatted_column_name].append(value)
 
-    # Ensure all columns have the same length as the index
+    # Ensure all columns are the same length as the 'index' list
     num_rows = len(listed_results["index"])
     for col_name in list(listed_results.keys()):
         if col_name != "index":
             col_length = len(listed_results[col_name])
             if col_length < num_rows:
-                # Pad with None values
                 listed_results[col_name].extend([None] * (num_rows - col_length))
             elif col_length > num_rows:
-                # This shouldn't happen, but truncate if it does
                 listed_results[col_name] = listed_results[col_name][:num_rows]
 
     output_df = pd.DataFrame(listed_results)
-    # Sort by original datasource_item_id for deterministic ordering
-    output_df = output_df.sort_values("index", ascending=[True])
+
+    # If the 'index' column is missing for any reason, synthesize it from the current RangeIndex.
+    if "index" not in output_df.columns:
+        output_df["index"] = list(range(len(output_df)))
+
+    # Deterministic ordering by original datasource_item_id
+    output_df = output_df.sort_values("index", ascending=True)
+
+    # Keep a temporary row-id copy for debugging/inspection.
+    # Use underscores (not hyphens) to avoid pandas column handling quirks.
+    output_df["__azure_ai_evaluation_index"] = output_df["index"]
 
     # Preserve original ids as index, then pad to expected length
     output_df.set_index("index", inplace=True)
+
     expected = run_info.get("expected_rows", None)
     if expected is not None:
-        # Reindex to expected rows (assumes 0..expected-1 original id space)
         pre_len = len(output_df)
+        # Assumes original datasource_item_id space is 0..expected-1
         output_df = output_df.reindex(range(expected))
         if pre_len != expected:
-            # Log warning about missing rows; count rows fully missing (all NaN)
             missing_rows = expected - pre_len
             LOGGER.warning(
                 "AOAI grader run %s returned %d/%d rows; %d missing row(s) padded with NaN for alignment.",
@@ -337,8 +329,8 @@ def _get_single_run_results(
                 expected,
                 missing_rows,
             )
-            # For each grader present, add a 'row_missing' boolean column to aid downstream debugging
-            grader_user_names = set()
+            # Add a per-grader 'row_missing' boolean for padded rows
+            grader_user_names: set[str] = set()
             for col in output_df.columns:
                 if col.startswith("outputs."):
                     parts = col.split(".")
@@ -351,11 +343,12 @@ def _get_single_run_results(
                     if col_name not in output_df:
                         output_df[col_name] = False
                     output_df.loc[missing_index_mask, col_name] = True
-    else:
-        # Drop the temporary index column if we cannot realign (backwards compatibility case)
-        pass
 
-    # Finally, reset to RangeIndex so concatenation aligns naturally on position
+    # Drop the temporary helper column before returning (no public surface change)
+    if "__azure_ai_evaluation_index" in output_df.columns:
+        output_df.drop(columns=["__azure_ai_evaluation_index"], inplace=True, errors="ignore")
+
+    # Reset to RangeIndex so downstream concatenation aligns on position
     output_df.reset_index(drop=True, inplace=True)
     return output_df, run_metrics
 
