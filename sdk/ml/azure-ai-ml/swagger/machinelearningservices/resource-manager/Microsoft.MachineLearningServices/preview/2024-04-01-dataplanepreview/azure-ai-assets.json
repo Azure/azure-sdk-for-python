@@ -13,7 +13,7 @@
     "https"
   ],
   "x-ms-parameterized-host": {
-    "hostTemplate": "{endpoint}/genericasset/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}",
+    "hostTemplate": "{endpoint}/genericasset/v2.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices",
     "useSchemePrefix": false,
     "parameters": [
       {
@@ -36,13 +36,6 @@
         "name": "resourceGroupName",
         "in": "path",
         "description": "The name of the Resource Group.",
-        "required": true,
-        "type": "string"
-      },
-      {
-        "name": "workspaceName",
-        "in": "path",
-        "description": "The name of the AzureML workspace or AI project.",
         "required": true,
         "type": "string"
       }
@@ -133,6 +126,99 @@
         }
       }
     },
+    "/registries/{registryName}/deploymenttemplates": {
+      "get": {
+        "operationId": "DeploymentTemplates_ListDeploymentTemplates",
+        "description": "List deployment templates.",
+        "parameters": [
+          {
+            "$ref": "#/parameters/Azure.Core.Foundations.ApiVersionParameter"
+          },
+          {
+            "name": "registryName",
+            "in": "path",
+            "description": "The name of the AzureML registry.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Filter by deployment template name.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "tags",
+            "in": "query",
+            "description": "Comma-separated list of tag names (and optionally values). Example: tag1,tag2=value2.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "continuationToken",
+            "in": "query",
+            "description": "Continuation token for pagination.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "continuation-token-from-header",
+            "in": "header",
+            "description": "Continuation token for pagination (from header).",
+            "required": false,
+            "type": "string",
+            "x-ms-client-name": "continuationTokenFromHeader"
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "description": "Maximum number of items to return.",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "stage",
+            "in": "query",
+            "description": "Filter by deployment template stage.",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "listViewType",
+            "in": "query",
+            "description": "View type for including/excluding (for example) archived entities.",
+            "required": false,
+            "type": "string",
+            "default": "ActiveOnly"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "schema": {
+              "$ref": "#/definitions/PagedDeploymentTemplate"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/Azure.Core.Foundations.ErrorResponse"
+            },
+            "headers": {
+              "x-ms-error-code": {
+                "type": "string",
+                "description": "String error code indicating what went wrong."
+              }
+            }
+          }
+        },
+        "x-ms-pageable": {
+          "nextLinkName": "nextLink"
+        }
+      }
+    },
     "/registries/{registryName}/deploymenttemplates/{name}/versions/{version}": {
       "get": {
         "operationId": "DeploymentTemplates_Get",
@@ -192,11 +278,9 @@
             }
           }
         }
-      }
-    },
-    "/registries/{registryName}/deploymenttemplates/{name}/versions/{version}/{type}": {
+      },
       "delete": {
-        "operationId": "DeploymentTemplates_DeleteGenericAsset",
+        "operationId": "DeploymentTemplates_DeleteDeploymentTemplate",
         "description": "Delete a specific version of a deployment template.",
         "parameters": [
           {
@@ -206,13 +290,6 @@
             "name": "registryName",
             "in": "path",
             "description": "The name of the AzureML registry.",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "type",
-            "in": "path",
-            "description": "The type of the deployment template.",
             "required": true,
             "type": "string"
           },
@@ -910,6 +987,28 @@
       "required": [
         "requestTimeout",
         "maxConcurrentRequestsPerInstance"
+      ]
+    },
+    "PagedDeploymentTemplate": {
+      "type": "object",
+      "description": "Paged collection of DeploymentTemplate items.",
+      "properties": {
+        "value": {
+          "type": "array",
+          "description": "The list of Deployment Templates.",
+          "items": {
+            "$ref": "#/definitions/DeploymentTemplate"
+          },
+          "x-ms-identifiers": []
+        },
+        "nextLink": {
+          "type": "string",
+          "format": "uri",
+          "description": "The link to the next page of items"
+        }
+      },
+      "required": [
+        "value"
       ]
     },
     "PagedIndex": {

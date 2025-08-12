@@ -14,6 +14,7 @@ try:
     from ._models_py3 import DeploymentTemplate
     from ._models_py3 import Index
     from ._models_py3 import OnlineRequestSettings
+    from ._models_py3 import PagedDeploymentTemplate
     from ._models_py3 import PagedIndex
     from ._models_py3 import ProbeSettings
     from ._models_py3 import SystemData
@@ -26,6 +27,7 @@ except (SyntaxError, ImportError):
     from ._models import DeploymentTemplate  # type: ignore
     from ._models import Index  # type: ignore
     from ._models import OnlineRequestSettings  # type: ignore
+    from ._models import PagedDeploymentTemplate  # type: ignore
     from ._models import PagedIndex  # type: ignore
     from ._models import ProbeSettings  # type: ignore
     from ._models import SystemData  # type: ignore
@@ -39,6 +41,7 @@ __all__ = [
     'DeploymentTemplate',
     'Index',
     'OnlineRequestSettings',
+    'PagedDeploymentTemplate',
     'PagedIndex',
     'ProbeSettings',
     'SystemData',

@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING
 from msrest import Serializer
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
@@ -22,7 +23,7 @@ from .._vendor import _convert_request, _format_url_section
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Optional, TypeVar
+    from typing import Any, Callable, Dict, Iterable, Optional, TypeVar
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -70,6 +71,60 @@ def build_create_request(
     )
 
 
+def build_list_deployment_templates_request(
+    registry_name,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2024-04-01-preview")  # type: str
+    name = kwargs.pop('name', None)  # type: Optional[str]
+    tags = kwargs.pop('tags', None)  # type: Optional[str]
+    continuation_token_parameter = kwargs.pop('continuation_token_parameter', None)  # type: Optional[str]
+    continuation_token_from_header = kwargs.pop('continuation_token_from_header', None)  # type: Optional[str]
+    count = kwargs.pop('count', None)  # type: Optional[int]
+    stage = kwargs.pop('stage', None)  # type: Optional[str]
+    list_view_type = kwargs.pop('list_view_type', "ActiveOnly")  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/registries/{registryName}/deploymenttemplates")
+    path_format_arguments = {
+        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    if name is not None:
+        _query_parameters['name'] = _SERIALIZER.query("name", name, 'str')
+    if tags is not None:
+        _query_parameters['tags'] = _SERIALIZER.query("tags", tags, 'str')
+    if continuation_token_parameter is not None:
+        _query_parameters['continuationToken'] = _SERIALIZER.query("continuation_token_parameter", continuation_token_parameter, 'str')
+    if count is not None:
+        _query_parameters['count'] = _SERIALIZER.query("count", count, 'int')
+    if stage is not None:
+        _query_parameters['stage'] = _SERIALIZER.query("stage", stage, 'str')
+    if list_view_type is not None:
+        _query_parameters['listViewType'] = _SERIALIZER.query("list_view_type", list_view_type, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if continuation_token_from_header is not None:
+        _header_parameters['continuation-token-from-header'] = _SERIALIZER.header("continuation_token_from_header", continuation_token_from_header, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
+
 def build_get_request(
     registry_name,  # type: str
     name,  # type: str
@@ -110,9 +165,8 @@ def build_get_request(
     )
 
 
-def build_delete_generic_asset_request(
+def build_delete_deployment_template_request(
     registry_name,  # type: str
-    type,  # type: str
     name,  # type: str
     version,  # type: str
     **kwargs  # type: Any
@@ -122,10 +176,9 @@ def build_delete_generic_asset_request(
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/registries/{registryName}/deploymenttemplates/{name}/versions/{version}/{type}")
+    _url = kwargs.pop("template_url", "/registries/{registryName}/deploymenttemplates/{name}/versions/{version}")
     path_format_arguments = {
         "registryName": _SERIALIZER.url("registry_name", registry_name, 'str'),
-        "type": _SERIALIZER.url("type", type, 'str'),
         "name": _SERIALIZER.url("name", name, 'str', max_length=254, min_length=0, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9-_]*$'),
         "version": _SERIALIZER.url("version", version, 'str'),
     }
@@ -177,7 +230,6 @@ class DeploymentTemplatesOperations(object):
         endpoint,  # type: str
         subscription_id,  # type: str
         resource_group_name,  # type: str
-        workspace_name,  # type: str
         registry_name,  # type: str
         name,  # type: str
         version,  # type: str
@@ -193,8 +245,6 @@ class DeploymentTemplatesOperations(object):
         :type subscription_id: str
         :param resource_group_name: The name of the Resource Group.
         :type resource_group_name: str
-        :param workspace_name: The name of the AzureML workspace or AI project.
-        :type workspace_name: str
         :param registry_name: The name of the AzureML registry.
         :type registry_name: str
         :param name: Name of the deployment template.
@@ -233,7 +283,6 @@ class DeploymentTemplatesOperations(object):
             "endpoint": self._serialize.url("endpoint", endpoint, 'str', skip_quote=True),
             "subscriptionId": self._serialize.url("subscription_id", subscription_id, 'str'),
             "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            "workspaceName": self._serialize.url("workspace_name", workspace_name, 'str'),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
@@ -256,12 +305,150 @@ class DeploymentTemplatesOperations(object):
 
 
     @distributed_trace
+    def list_deployment_templates(
+        self,
+        endpoint,  # type: str
+        subscription_id,  # type: str
+        resource_group_name,  # type: str
+        registry_name,  # type: str
+        name=None,  # type: Optional[str]
+        tags=None,  # type: Optional[str]
+        continuation_token_parameter=None,  # type: Optional[str]
+        continuation_token_from_header=None,  # type: Optional[str]
+        count=None,  # type: Optional[int]
+        stage=None,  # type: Optional[str]
+        list_view_type="ActiveOnly",  # type: Optional[str]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable["_models.PagedDeploymentTemplate"]
+        """List deployment templates.
+
+        :param endpoint: Supported Azure-AI asset endpoints.
+        :type endpoint: str
+        :param subscription_id: The ID of the target subscription.
+        :type subscription_id: str
+        :param resource_group_name: The name of the Resource Group.
+        :type resource_group_name: str
+        :param registry_name: The name of the AzureML registry.
+        :type registry_name: str
+        :param name: Filter by deployment template name.
+        :type name: str
+        :param tags: Comma-separated list of tag names (and optionally values). Example:
+         tag1,tag2=value2.
+        :type tags: str
+        :param continuation_token_parameter: Continuation token for pagination.
+        :type continuation_token_parameter: str
+        :param continuation_token_from_header: Continuation token for pagination (from header).
+        :type continuation_token_from_header: str
+        :param count: Maximum number of items to return.
+        :type count: int
+        :param stage: Filter by deployment template stage.
+        :type stage: str
+        :param list_view_type: View type for including/excluding (for example) archived entities.
+        :type list_view_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either PagedDeploymentTemplate or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.PagedDeploymentTemplate]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = kwargs.pop('api_version', "2024-04-01-preview")  # type: str
+
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PagedDeploymentTemplate"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        def prepare_request(next_link=None):
+            if not next_link:
+                
+                request = build_list_deployment_templates_request(
+                    registry_name=registry_name,
+                    api_version=api_version,
+                    name=name,
+                    tags=tags,
+                    continuation_token_parameter=continuation_token_parameter,
+                    continuation_token_from_header=continuation_token_from_header,
+                    count=count,
+                    stage=stage,
+                    list_view_type=list_view_type,
+                    template_url=self.list_deployment_templates.metadata['url'],
+                )
+                request = _convert_request(request)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("endpoint", endpoint, 'str', skip_quote=True),
+                    "subscriptionId": self._serialize.url("subscription_id", subscription_id, 'str'),
+                    "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
+
+            else:
+                
+                request = build_list_deployment_templates_request(
+                    registry_name=registry_name,
+                    api_version=api_version,
+                    name=name,
+                    tags=tags,
+                    continuation_token_parameter=continuation_token_parameter,
+                    continuation_token_from_header=continuation_token_from_header,
+                    count=count,
+                    stage=stage,
+                    list_view_type=list_view_type,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("endpoint", endpoint, 'str', skip_quote=True),
+                    "subscriptionId": self._serialize.url("subscription_id", subscription_id, 'str'),
+                    "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
+
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("endpoint", endpoint, 'str', skip_quote=True),
+                    "subscriptionId": self._serialize.url("subscription_id", subscription_id, 'str'),
+                    "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                }
+                request.method = "GET"
+            return request
+
+        def extract_data(pipeline_response):
+            deserialized = self._deserialize("PagedDeploymentTemplate", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.AzureCoreFoundationsErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+
+        return ItemPaged(
+            get_next, extract_data
+        )
+    list_deployment_templates.metadata = {'url': "/registries/{registryName}/deploymenttemplates"}  # type: ignore
+
+    @distributed_trace
     def get(
         self,
         endpoint,  # type: str
         subscription_id,  # type: str
         resource_group_name,  # type: str
-        workspace_name,  # type: str
         registry_name,  # type: str
         name,  # type: str
         version,  # type: str
@@ -277,8 +464,6 @@ class DeploymentTemplatesOperations(object):
         :type subscription_id: str
         :param resource_group_name: The name of the Resource Group.
         :type resource_group_name: str
-        :param workspace_name: The name of the AzureML workspace or AI project.
-        :type workspace_name: str
         :param registry_name: The name of the AzureML registry.
         :type registry_name: str
         :param name: Name of the deployment template.
@@ -314,7 +499,6 @@ class DeploymentTemplatesOperations(object):
             "endpoint": self._serialize.url("endpoint", endpoint, 'str', skip_quote=True),
             "subscriptionId": self._serialize.url("subscription_id", subscription_id, 'str'),
             "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            "workspaceName": self._serialize.url("workspace_name", workspace_name, 'str'),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
@@ -341,14 +525,12 @@ class DeploymentTemplatesOperations(object):
 
 
     @distributed_trace
-    def delete_generic_asset(  # pylint: disable=inconsistent-return-statements
+    def delete_deployment_template(  # pylint: disable=inconsistent-return-statements
         self,
         endpoint,  # type: str
         subscription_id,  # type: str
         resource_group_name,  # type: str
-        workspace_name,  # type: str
         registry_name,  # type: str
-        type,  # type: str
         name,  # type: str
         version,  # type: str
         **kwargs  # type: Any
@@ -362,12 +544,8 @@ class DeploymentTemplatesOperations(object):
         :type subscription_id: str
         :param resource_group_name: The name of the Resource Group.
         :type resource_group_name: str
-        :param workspace_name: The name of the AzureML workspace or AI project.
-        :type workspace_name: str
         :param registry_name: The name of the AzureML registry.
         :type registry_name: str
-        :param type: The type of the deployment template.
-        :type type: str
         :param name: Name of the deployment template.
         :type name: str
         :param version: Version of the deployment template.
@@ -386,20 +564,18 @@ class DeploymentTemplatesOperations(object):
         api_version = kwargs.pop('api_version', "2024-04-01-preview")  # type: str
 
         
-        request = build_delete_generic_asset_request(
+        request = build_delete_deployment_template_request(
             registry_name=registry_name,
-            type=type,
             name=name,
             version=version,
             api_version=api_version,
-            template_url=self.delete_generic_asset.metadata['url'],
+            template_url=self.delete_deployment_template.metadata['url'],
         )
         request = _convert_request(request)
         path_format_arguments = {
             "endpoint": self._serialize.url("endpoint", endpoint, 'str', skip_quote=True),
             "subscriptionId": self._serialize.url("subscription_id", subscription_id, 'str'),
             "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            "workspaceName": self._serialize.url("workspace_name", workspace_name, 'str'),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
@@ -418,5 +594,5 @@ class DeploymentTemplatesOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete_generic_asset.metadata = {'url': "/registries/{registryName}/deploymenttemplates/{name}/versions/{version}/{type}"}  # type: ignore
+    delete_deployment_template.metadata = {'url': "/registries/{registryName}/deploymenttemplates/{name}/versions/{version}"}  # type: ignore
 

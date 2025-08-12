@@ -493,6 +493,44 @@ class OnlineRequestSettings(msrest.serialization.Model):
         self.max_concurrent_requests_per_instance = max_concurrent_requests_per_instance
 
 
+class PagedDeploymentTemplate(msrest.serialization.Model):
+    """Paged collection of DeploymentTemplate items.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: Required. The list of Deployment Templates.
+    :vartype value: list[~azure.mgmt.machinelearningservices.models.DeploymentTemplate]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'required': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[DeploymentTemplate]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: List["DeploymentTemplate"],
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: Required. The list of Deployment Templates.
+        :paramtype value: list[~azure.mgmt.machinelearningservices.models.DeploymentTemplate]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
+        super(PagedDeploymentTemplate, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
 class PagedIndex(msrest.serialization.Model):
     """Paged collection of IndexVersion items.
 
