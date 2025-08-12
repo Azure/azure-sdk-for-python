@@ -1,19 +1,23 @@
 
 # Release History
 
-## 1.2.0b2 (Unreleased)
+## 1.2.0b2 (2025-08-12)
 
 ### Features Added
 
 - Add support for Browser Automation tool.
+- Add support for environment variable `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` as defined by
+[OpenTelemetry](https://opentelemetry.io/), to control tracing of user and Agent messages.
 
 ### Bugs Fixed
 
-- Added `RunStepConnectedAgentToolCall` and `RunStepDeltaConnectedAgentToolCall` for deserializing Connected Agent tool updates in non-streaming and streaming scenarios.
+- Added `RunStepConnectedAgentToolCall` and `RunStepDeltaConnectedAgentToolCall` for deserializing Connected
+Agent tool updates in non-streaming and streaming scenarios.
 
 ### Sample updates
 
-- Add new samples `sample_agents_browser_automation.py` and `sample_agents_browser_automation_async.py`.
+- Add new Browser Automation tool samples, named `sample_agents_browser_automation.py`
+and `sample_agents_browser_automation_async.py`.
 
 ## 1.2.0b1 (2025-08-05)
 
