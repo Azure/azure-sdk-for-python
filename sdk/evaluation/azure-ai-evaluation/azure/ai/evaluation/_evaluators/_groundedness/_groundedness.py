@@ -1,7 +1,9 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import os, logging
+import os
+import logging
+from inspect import signature
 from typing import Dict, List, Optional, Union
 
 from typing_extensions import overload, override
@@ -114,7 +116,14 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         )
         self._model_config = model_config
         self.threshold = threshold
-        # Needs to be set because it's used in call method to re-validate prompt if `query` is provided
+
+        # Cache whether AsyncPrompty.load supports the is_reasoning_model parameter.
+        try:
+            self._has_is_reasoning_model_param: bool = (
+                "is_reasoning_model" in signature(AsyncPrompty.load).parameters
+            )
+        except Exception:  # Very defensive: if inspect fails, assume not supported
+            self._has_is_reasoning_model_param = False
 
     @overload
     def __call__(
@@ -208,11 +217,8 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 self._DEFAULT_OPEN_API_VERSION,
                 UserAgentSingleton().value,
             )
-            # Prefer feature detection over broad exception handling
-            from inspect import signature
 
-            sig = signature(AsyncPrompty.load)
-            if "is_reasoning_model" in sig.parameters:
+            if self._has_is_reasoning_model_param:
                 self._flow = AsyncPrompty.load(
                     source=self._prompty_file,
                     model=prompty_model_config,
@@ -312,4 +318,4 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             logger.debug(f"Error extracting context from agent response : {str(ex)}")
             context = ""
 
-        return context if context else None
+        return context if context else
