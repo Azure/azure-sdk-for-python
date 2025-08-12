@@ -55,18 +55,18 @@ steps:
 
   - template: /eng/pipelines/templates/steps/use-venv.yml
 
-  - script: |
-      # Install PortAudio system deps for PyAudio (non-Windows)
-      if ($IsLinux) {
-        sudo apt-get update
-        sudo apt-get install -y portaudio19-dev libasound2-dev
-      } elseif ($IsMacOS) {
-        brew update
-        brew install portaudio
-      }
+  - pwsh: |
+    # OS-specific system deps
+    if ($IsLinux) {
+      sudo apt-get update
+      sudo apt-get install -y portaudio19-dev libasound2-dev
+    } elseif ($IsMacOS) {
+      brew update
+      brew install portaudio
+    }
 
-      python -m pip install -r eng/ci_tools.txt
-    displayName: 'Prep Environment'
+    python -m pip install -r eng/ci_tools.txt
+  displayName: 'Prep Environment'
 
   - template: set-dev-build.yml
 
