@@ -1,11 +1,9 @@
 ## Release History
 
-### 4.14.0b2 (Unreleased)
+### 4.14.0b2 (2025-08-12)
 
 #### Features Added
 * Added feed range support in `query_items`. See [PR 41722](https://github.com/Azure/azure-sdk-for-python/pull/41722).
-
-#### Breaking Changes
 
 #### Bugs Fixed
 * Fixed session container session token logic. The SDK will now only send the relevant partition-local session tokens for read document requests and write requests when multi-region writes are enabled, as opposed to the entire compound session token for the container for every document request. See [PR 41678](https://github.com/Azure/azure-sdk-for-python/pull/41678).
