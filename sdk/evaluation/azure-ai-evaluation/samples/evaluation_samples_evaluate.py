@@ -95,7 +95,7 @@ class EvaluationEvaluateSamples(object):
 
         # [START intent_resolution_evaluator]
         import os
-        from azure.ai.evaluation import CoherenceEvaluator
+        from azure.ai.evaluation import IntentResolutionEvaluator
 
         model_config = {
             "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
@@ -421,6 +421,80 @@ class EvaluationEvaluateSamples(object):
 
         task_adherence_evaluator(query=query, response=response, tool_definitions=tool_definitions)
         # [END task_adherence_evaluator]
+
+        # [START task_success_evaluator]
+        import os
+        from azure.ai.evaluation import TaskSuccessEvaluator
+
+        model_config = {
+            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
+            "api_key": os.environ.get("AZURE_OPENAI_KEY"),
+            "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
+        }
+
+        task_success_evaluator = TaskSuccessEvaluator(model_config=model_config)
+
+        query = [
+            {"role": "system", "content": "You are a travel booking assistant. Help users find and book flights."},
+            {"role": "user", "content": [{"type": "text", "text": "I need to book a flight from London to Paris for tomorrow"}]},
+        ]
+
+        response = [
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call": {
+                            "id": "search_001",
+                            "type": "function",
+                            "function": {
+                                "name": "search_flights", 
+                                "arguments": {
+                                    "origin": "London", 
+                                    "destination": "Paris", 
+                                    "departure_date": "2025-08-13"
+                                }
+                            },
+                        },
+                    }
+                ],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "search_001",
+                "content": [
+                    {"type": "tool_result", "tool_result": '{"flights": [{"flight_id": "BA309", "price": "£89", "departure": "10:30", "arrival": "13:45"}, {"flight_id": "AF1234", "price": "£95", "departure": "14:20", "arrival": "17:35"}]}'}
+                ],
+            },
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "text", 
+                        "text": "I found 2 flights from London to Paris for tomorrow:\n\n1. BA309 departing 10:30, arriving 13:45 - £89\n2. AF1234 departing 14:20, arriving 17:35 - £95\n\nWould you like me to book one of these flights for you?"
+                    }
+                ],
+            },
+        ]
+
+        tool_definitions = [
+            {
+                "name": "search_flights",
+                "description": "Search for available flights between two cities.",
+                "parameters": {
+                    "type": "object", 
+                    "properties": {
+                        "origin": {"type": "string", "description": "Departure city"},
+                        "destination": {"type": "string", "description": "Arrival city"},
+                        "departure_date": {"type": "string", "description": "Departure date in YYYY-MM-DD format"}
+                    }
+                },
+            }
+        ]
+
+        task_success_evaluator(query=query, response=response, tool_definitions=tool_definitions)
+        # [END task_success_evaluator]
 
         # [START indirect_attack_evaluator]
         import os

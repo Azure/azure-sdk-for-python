@@ -142,13 +142,13 @@ class TaskSuccessEvaluator(PromptyEvaluatorBase[Union[str, bool]]):
         eval_input["response"] = reformat_agent_response(eval_input["response"], logger, include_tool_messages=True)
         if "tool_definitions" in eval_input and eval_input["tool_definitions"] is not None:
             eval_input["tool_definitions"] = reformat_tool_definitions(eval_input["tool_definitions"], logger)
-        
+
         llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
         if isinstance(llm_output, dict):
             success = llm_output.get("success", False)
             if isinstance(success, str):
                 success = success.upper() == "TRUE"
-            
+
             success_result = "pass" if success == True else "fail"
             reason = llm_output.get("explanation", "")
             print(f"LLM output: {llm_output}")  # Debugging line to check the output structure
