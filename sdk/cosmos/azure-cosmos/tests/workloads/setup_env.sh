@@ -9,6 +9,8 @@ set -e
 echo "[Step 1] System update and install dependencies: started."
 sudo apt-get update
 sudo apt-get install -y python3-pip python3.12-venv wget gnupg
+sudo apt install neovim
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 echo "[Step 1] System update and install dependencies: completed."
 
 # 2. Create and activate Python virtual environment
@@ -23,6 +25,8 @@ pip install --upgrade pip
 cd ../../
 pip install -r dev_requirements.txt
 pip install azure-monitor-opentelemetry
+# azure core needs to be reinstalled to avoid cannot find Spanning Error from open telemetry
+pip install ../../../../core/azure-core
 echo "[Step 3] Install Python requirements: completed."
 
 # 4. Install the current azure-cosmos package
