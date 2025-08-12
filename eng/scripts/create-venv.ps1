@@ -33,10 +33,10 @@ if (!(Test-Path $venvPath)) {
         Write-Host "Creating virtual environment '$VenvName' using virtualenv and python located at '$invokingPython'."
         python -m pip install virtualenv==20.25.1
         python -m virtualenv "$venvPath"
-        $pythonVersion = python --version
-        Write-Host "Virtual environment '$VenvName' created at directory path '$venvPath' utilizing python version $pythonVersion."
-        Write-Host "##vso[task.setvariable variable=$($VenvName)_LOCATION]$venvPath"
     }
+    $pythonVersion = python --version
+    Write-Host "Virtual environment '$VenvName' created at directory path '$venvPath' utilizing python version $pythonVersion."
+    Write-Host "##vso[task.setvariable variable=$($VenvName)_LOCATION]$venvPath"
 }
 else {
     Write-Host "Virtual environment '$VenvName' already exists. Skipping creation."
