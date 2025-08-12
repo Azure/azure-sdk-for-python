@@ -20,7 +20,7 @@ echo "[Step 2] Create and activate Python virtual environment: completed."
 # 3. Install Python requirements
 echo "[Step 3] Install Python requirements: started."
 pip install --upgrade pip
-pip install -r dev_requirements.txt
+pip install -r ../../dev_requirements.txt
 pip install azure-monitor-opentelemetry
 echo "[Step 3] Install Python requirements: completed."
 
