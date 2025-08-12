@@ -530,7 +530,6 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
         variables = kwargs.pop("variables", {})
 
-        # Act
         self._setup(storage_account_name, storage_account_key)
 
         blob_name = self._get_blob_reference()
@@ -544,6 +543,20 @@ class TestStorageBlobTags(StorageRecordedTestCase):
 
         with pytest.raises(ResourceModifiedError):
             blob.set_blob_tags(first_tags, if_modified_since=early)
+        with pytest.raises(ResourceModifiedError):
+            blob.get_blob_tags(if_modified_since=early)
+        blob.set_blob_tags(first_tags, if_unmodified_since=early)
+        tags = blob.get_blob_tags(if_unmodified_since=early)
+        assert tags == first_tags
+
+        blob.upload_blob(b"def456", overwrite=True)
+        with pytest.raises(ResourceModifiedError):
+            blob.set_blob_tags(second_tags, if_unmodified_since=early)
+        with pytest.raises(ResourceModifiedError):
+            blob.get_blob_tags(if_unmodified_since=early)
+        blob.set_blob_tags(second_tags, if_modified_since=early)
+        tags = blob.get_blob_tags(if_modified_since=early)
+        assert tags == second_tags
 
         return variables
 
