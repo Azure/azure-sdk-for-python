@@ -55,18 +55,24 @@ steps:
 
   - template: /eng/pipelines/templates/steps/use-venv.yml
 
-  - pwsh: |
-    # OS-specific system deps
-    if ($IsLinux) {
-      sudo apt-get update
-      sudo apt-get install -y portaudio19-dev libasound2-dev
-    } elseif ($IsMacOS) {
-      brew update
-      brew install portaudio
-    }
+  - script: |
+      if [[ "$AGENT_OS" == "Linux" ]]; then
+        sudo apt-get update
+        sudo apt-get install -y portaudio19-dev libasound2-dev
+      elif [[ "$AGENT_OS" == "Darwin" ]]; then
+        brew update
+        brew install portaudio
+      fi
 
-    python -m pip install -r eng/ci_tools.txt
-  displayName: 'Prep Environment'
+      python -m pip install -r eng/ci_tools.txt
+    displayName: 'Prep Environment (Unix)'
+    condition: ne(variables['Agent.OS'], 'Windows_NT')
+
+    # Windows: just pip install (no PortAudio needed)
+  - script: |
+      python -m pip install -r eng/ci_tools.txt
+    displayName: 'Prep Environment (Windows)'
+    condition: eq(variables['Agent.OS'], 'Windows_NT')
 
   - template: set-dev-build.yml
 
