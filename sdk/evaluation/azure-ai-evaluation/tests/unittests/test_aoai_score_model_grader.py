@@ -57,13 +57,9 @@ def basic_score_grader_config():
 class TestAzureOpenAIScoreModelGrader:
     """Test suite for AzureOpenAIScoreModelGrader."""
 
-    def test_grader_initialization_valid_config(
-        self, mock_aoai_model_config, basic_score_grader_config
-    ):
+    def test_grader_initialization_valid_config(self, mock_aoai_model_config, basic_score_grader_config):
         """Test successful grader initialization with valid configuration."""
-        grader = AzureOpenAIScoreModelGrader(
-            model_config=mock_aoai_model_config, **basic_score_grader_config
-        )
+        grader = AzureOpenAIScoreModelGrader(model_config=mock_aoai_model_config, **basic_score_grader_config)
 
         assert grader is not None
         assert grader.id == AzureOpenAIScoreModelGrader.id
@@ -81,25 +77,19 @@ class TestAzureOpenAIScoreModelGrader:
             "input": [{"role": "user", "content": "Rate this: {{ item.data }}"}],
         }
 
-        grader = AzureOpenAIScoreModelGrader(
-            model_config=mock_aoai_model_config, **minimal_config
-        )
+        grader = AzureOpenAIScoreModelGrader(model_config=mock_aoai_model_config, **minimal_config)
 
         assert grader is not None
         assert grader._grader_config.name == "Minimal Grader"
         assert grader._grader_config.range == [0.0, 1.0]  # Default range
         assert grader.pass_threshold == 0.5  # Default threshold
 
-    def test_grader_initialization_missing_model_config(
-        self, basic_score_grader_config
-    ):
+    def test_grader_initialization_missing_model_config(self, basic_score_grader_config):
         """Test that grader initialization fails without model config."""
         with pytest.raises(TypeError):
             AzureOpenAIScoreModelGrader(**basic_score_grader_config)
 
-    def test_grader_initialization_invalid_model_config(
-        self, basic_score_grader_config
-    ):
+    def test_grader_initialization_invalid_model_config(self, basic_score_grader_config):
         """Test grader initialization with invalid model config."""
         bad_model_config = AzureOpenAIModelConfiguration(
             azure_deployment="test-deployment",
@@ -108,15 +98,11 @@ class TestAzureOpenAIScoreModelGrader:
         )
 
         with pytest.raises(Exception) as excinfo:
-            AzureOpenAIScoreModelGrader(
-                model_config=bad_model_config, **basic_score_grader_config
-            )
+            AzureOpenAIScoreModelGrader(model_config=bad_model_config, **basic_score_grader_config)
 
         assert "api_key" in str(excinfo.value)
 
-    def test_grader_initialization_missing_required_fields(
-        self, mock_aoai_model_config
-    ):
+    def test_grader_initialization_missing_required_fields(self, mock_aoai_model_config):
         """Test grader initialization fails with missing required fields."""
         # Missing name
         with pytest.raises(TypeError):
@@ -136,9 +122,7 @@ class TestAzureOpenAIScoreModelGrader:
 
         # Missing input
         with pytest.raises(TypeError):
-            AzureOpenAIScoreModelGrader(
-                model_config=mock_aoai_model_config, name="Test", model="gpt-4"
-            )
+            AzureOpenAIScoreModelGrader(model_config=mock_aoai_model_config, name="Test", model="gpt-4")
 
     def test_grader_initialization_invalid_range(self, mock_aoai_model_config):
         """Test grader initialization with invalid range values."""
@@ -178,19 +162,13 @@ class TestAzureOpenAIScoreModelGrader:
         )
 
         # Should not raise exception when validate=False
-        grader = AzureOpenAIScoreModelGrader(
-            model_config=bad_model_config, validate=False, **basic_score_grader_config
-        )
+        grader = AzureOpenAIScoreModelGrader(model_config=bad_model_config, validate=False, **basic_score_grader_config)
 
         assert grader is not None
 
-    def test_grader_registry_integration(
-        self, mock_aoai_model_config, basic_score_grader_config
-    ):
+    def test_grader_registry_integration(self, mock_aoai_model_config, basic_score_grader_config):
         """Test that score model grader integrates with the grader registry."""
-        grader = AzureOpenAIScoreModelGrader(
-            model_config=mock_aoai_model_config, **basic_score_grader_config
-        )
+        grader = AzureOpenAIScoreModelGrader(model_config=mock_aoai_model_config, **basic_score_grader_config)
 
         # Test grader conversion
         init_params = {
@@ -205,17 +183,13 @@ class TestAzureOpenAIScoreModelGrader:
         assert isinstance(converted_grader, AzureOpenAIScoreModelGrader)
         assert converted_grader._model_config == mock_aoai_model_config
 
-    def test_grader_split_recognition(
-        self, mock_aoai_model_config, basic_score_grader_config
-    ):
+    def test_grader_split_recognition(self, mock_aoai_model_config, basic_score_grader_config):
         """Test that score model grader is correctly recognized as AOAI grader."""
         from azure.ai.evaluation import F1ScoreEvaluator
 
         built_in_eval = F1ScoreEvaluator()
         custom_eval = lambda x: x
-        score_grader = AzureOpenAIScoreModelGrader(
-            model_config=mock_aoai_model_config, **basic_score_grader_config
-        )
+        score_grader = AzureOpenAIScoreModelGrader(model_config=mock_aoai_model_config, **basic_score_grader_config)
 
         evaluators = {
             "f1_score": built_in_eval,
@@ -231,13 +205,9 @@ class TestAzureOpenAIScoreModelGrader:
         assert "custom_eval" in just_evaluators
         assert "score_grader" in aoai_graders
 
-    def test_grader_config_properties(
-        self, mock_aoai_model_config, basic_score_grader_config
-    ):
+    def test_grader_config_properties(self, mock_aoai_model_config, basic_score_grader_config):
         """Test that grader configuration properties are accessible."""
-        grader = AzureOpenAIScoreModelGrader(
-            model_config=mock_aoai_model_config, **basic_score_grader_config
-        )
+        grader = AzureOpenAIScoreModelGrader(model_config=mock_aoai_model_config, **basic_score_grader_config)
 
         config = grader._grader_config
 
@@ -262,9 +232,7 @@ class TestAzureOpenAIScoreModelGrader:
             "pass_threshold": 3.0,
         }
 
-        grader = AzureOpenAIScoreModelGrader(
-            model_config=mock_aoai_model_config, **config_1_to_5
-        )
+        grader = AzureOpenAIScoreModelGrader(model_config=mock_aoai_model_config, **config_1_to_5)
 
         assert grader._grader_config.range == [1.0, 5.0]
         assert grader.pass_threshold == 3.0
@@ -278,25 +246,19 @@ class TestAzureOpenAIScoreModelGrader:
             # No pass_threshold specified - should default to 5.0 (midpoint)
         }
 
-        grader = AzureOpenAIScoreModelGrader(
-            model_config=mock_aoai_model_config, **config_0_to_10
-        )
+        grader = AzureOpenAIScoreModelGrader(model_config=mock_aoai_model_config, **config_0_to_10)
 
         assert grader._grader_config.range == [0.0, 10.0]
         assert grader.pass_threshold == 5.0  # Midpoint default
 
     @patch("azure.ai.evaluation._aoai.score_model_grader.AzureOpenAIGrader.get_client")
-    def test_grader_with_mocked_client(
-        self, mock_get_client, mock_aoai_model_config, basic_score_grader_config
-    ):
+    def test_grader_with_mocked_client(self, mock_get_client, mock_aoai_model_config, basic_score_grader_config):
         """Test grader creation and basic properties with mocked client."""
         # Mock the client to avoid actual API calls
         mock_client = AsyncMock()
         mock_get_client.return_value = mock_client
 
-        grader = AzureOpenAIScoreModelGrader(
-            model_config=mock_aoai_model_config, **basic_score_grader_config
-        )
+        grader = AzureOpenAIScoreModelGrader(model_config=mock_aoai_model_config, **basic_score_grader_config)
 
         assert grader is not None
         assert grader.id == AzureOpenAIScoreModelGrader.id
@@ -316,10 +278,7 @@ class TestScoreModelGraderUsagePatterns:
             "input": [
                 {
                     "role": "system",
-                    "content": (
-                        "Assess conversation quality based on helpfulness, "
-                        "accuracy, and completeness."
-                    ),
+                    "content": ("Assess conversation quality based on helpfulness, " "accuracy, and completeness."),
                 },
                 {
                     "role": "user",
@@ -334,9 +293,7 @@ class TestScoreModelGraderUsagePatterns:
             "pass_threshold": 0.7,
         }
 
-        grader = AzureOpenAIScoreModelGrader(
-            model_config=mock_aoai_model_config, **config
-        )
+        grader = AzureOpenAIScoreModelGrader(model_config=mock_aoai_model_config, **config)
 
         assert grader._grader_config.name == "Conversation Quality"
         assert grader.pass_threshold == 0.7
@@ -349,16 +306,12 @@ class TestScoreModelGraderUsagePatterns:
             "input": [
                 {
                     "role": "system",
-                    "content": (
-                        "Rate how helpful the AI response is to " "the user's question."
-                    ),
+                    "content": ("Rate how helpful the AI response is to " "the user's question."),
                 },
                 {
                     "role": "user",
                     "content": (
-                        "Question: {{ item.question }}\n"
-                        "Response: {{ item.response }}\n"
-                        "Helpfulness (0-10):"
+                        "Question: {{ item.question }}\n" "Response: {{ item.response }}\n" "Helpfulness (0-10):"
                     ),
                 },
             ],
@@ -367,9 +320,7 @@ class TestScoreModelGraderUsagePatterns:
             "sampling_params": {"temperature": 0.0},
         }
 
-        grader = AzureOpenAIScoreModelGrader(
-            model_config=mock_aoai_model_config, **config
-        )
+        grader = AzureOpenAIScoreModelGrader(model_config=mock_aoai_model_config, **config)
 
         assert grader._grader_config.range == [0.0, 10.0]
         assert grader.pass_threshold == 6.0
@@ -379,13 +330,9 @@ class TestScoreModelGraderUsagePatterns:
 class TestScoreModelGraderIntegration:
     """Test integration with evaluation framework."""
 
-    def test_grader_in_evaluators_dict(
-        self, mock_aoai_model_config, basic_score_grader_config
-    ):
+    def test_grader_in_evaluators_dict(self, mock_aoai_model_config, basic_score_grader_config):
         """Test using score grader in evaluators dictionary."""
-        grader = AzureOpenAIScoreModelGrader(
-            model_config=mock_aoai_model_config, **basic_score_grader_config
-        )
+        grader = AzureOpenAIScoreModelGrader(model_config=mock_aoai_model_config, **basic_score_grader_config)
 
         # Test that grader can be used in evaluators dict
         evaluators = {"quality_score": grader}
@@ -402,9 +349,7 @@ class TestScoreModelGraderIntegration:
             model_config=mock_aoai_model_config,
             name="Quality Assessment",
             model="gpt-4o-mini",
-            input=[
-                {"role": "user", "content": "Rate quality: {{ item.conversation }}"}
-            ],
+            input=[{"role": "user", "content": "Rate quality: {{ item.conversation }}"}],
             range=[0.0, 1.0],
         )
 
@@ -412,9 +357,7 @@ class TestScoreModelGraderIntegration:
             model_config=mock_aoai_model_config,
             name="Helpfulness Assessment",
             model="gpt-4o-mini",
-            input=[
-                {"role": "user", "content": "Rate helpfulness: {{ item.conversation }}"}
-            ],
+            input=[{"role": "user", "content": "Rate helpfulness: {{ item.conversation }}"}],
             range=[0.0, 1.0],
         )
 
@@ -465,9 +408,7 @@ class TestScoreModelGraderIntegration:
         assert "not recognized" in str(excinfo.value)
 
         # Test successful conversion
-        grader = _convert_remote_eval_params_to_grader(
-            AzureOpenAIScoreModelGrader.id, init_params=init_params
-        )
+        grader = _convert_remote_eval_params_to_grader(AzureOpenAIScoreModelGrader.id, init_params=init_params)
 
         assert isinstance(grader, AzureOpenAIScoreModelGrader)
 
@@ -768,10 +709,7 @@ class TestAzureOpenAIScoreModelGraderTemplateEdgeCases:
 
     def test_grader_with_nested_templates(self, mock_aoai_model_config):
         """Test grader with nested template variables."""
-        nested_template = (
-            "{{ item.conversation[0].message }} vs "
-            "{{ item.conversation[1].message }}"
-        )
+        nested_template = "{{ item.conversation[0].message }} vs " "{{ item.conversation[1].message }}"
 
         grader = AzureOpenAIScoreModelGrader(
             model_config=mock_aoai_model_config,
@@ -857,9 +795,7 @@ class TestAzureOpenAIScoreModelGraderConfigurationEdgeCases:
         from azure.ai.evaluation._exceptions import EvaluationException
 
         with pytest.raises(EvaluationException):
-            config = AzureOpenAIModelConfiguration(
-                azure_deployment="", azure_endpoint="", api_key="", api_version=""
-            )
+            config = AzureOpenAIModelConfiguration(azure_deployment="", azure_endpoint="", api_key="", api_version="")
             AzureOpenAIScoreModelGrader(
                 model_config=config,
                 name="Empty Creds",
@@ -932,9 +868,7 @@ class TestAzureOpenAIScoreModelGraderRegistryEdgeCases:
         }
 
         with pytest.raises(Exception):
-            _convert_remote_eval_params_to_grader(
-                AzureOpenAIScoreModelGrader.id, init_params=invalid_params
-            )
+            _convert_remote_eval_params_to_grader(AzureOpenAIScoreModelGrader.id, init_params=invalid_params)
 
     def test_registry_conversion_with_extra_params(self, mock_aoai_model_config):
         """Test grader conversion with extra unknown parameters."""
@@ -948,9 +882,7 @@ class TestAzureOpenAIScoreModelGraderRegistryEdgeCases:
         }
 
         # Should succeed and ignore extra params
-        grader = _convert_remote_eval_params_to_grader(
-            AzureOpenAIScoreModelGrader.id, init_params=params_with_extra
-        )
+        grader = _convert_remote_eval_params_to_grader(AzureOpenAIScoreModelGrader.id, init_params=params_with_extra)
 
         assert isinstance(grader, AzureOpenAIScoreModelGrader)
         assert grader._grader_config.name == "Extra Params"
@@ -1026,9 +958,7 @@ class TestAzureOpenAIScoreModelGraderCompatibility:
                 "score_grader": score_grader,
             }
 
-            just_evaluators, aoai_graders = _split_evaluators_and_grader_configs(
-                evaluators
-            )
+            just_evaluators, aoai_graders = _split_evaluators_and_grader_configs(evaluators)
 
             assert len(just_evaluators) >= 2  # f1 and custom
             assert len(aoai_graders) == 1
@@ -1049,17 +979,10 @@ class TestAzureOpenAIScoreModelGraderCompatibility:
 
         # Should have meaningful string representation
         grader_str = str(grader)
-        assert (
-            "AzureOpenAIScoreModelGrader" in grader_str
-            or "String Repr Test" in grader_str
-        )
+        assert "AzureOpenAIScoreModelGrader" in grader_str or "String Repr Test" in grader_str
 
-    @patch(
-        "azure.ai.evaluation._aoai.score_model_grader." "AzureOpenAIGrader.get_client"
-    )
-    def test_grader_with_client_initialization_error(
-        self, mock_get_client, mock_aoai_model_config
-    ):
+    @patch("azure.ai.evaluation._aoai.score_model_grader." "AzureOpenAIGrader.get_client")
+    def test_grader_with_client_initialization_error(self, mock_get_client, mock_aoai_model_config):
         """Test grader behavior when client initialization fails."""
         mock_get_client.side_effect = Exception("Client initialization failed")
 

@@ -42,9 +42,7 @@ def chat_target_with_context(mock_callback):
         "test prompt": "test context data",
         "another prompt": "another context",
     }
-    return _CallbackChatTarget(
-        callback=mock_callback, prompt_to_context=prompt_to_context
-    )
+    return _CallbackChatTarget(callback=mock_callback, prompt_to_context=prompt_to_context)
 
 
 @pytest.fixture(scope="function")
@@ -54,9 +52,7 @@ def mock_request():
     request_piece.conversation_id = "test-id"
     request_piece.converted_value = "test prompt"
     request_piece.converted_value_data_type = "text"
-    request_piece.to_chat_message.return_value = MagicMock(
-        role="user", content="test prompt"
-    )
+    request_piece.to_chat_message.return_value = MagicMock(role="user", content="test prompt")
     request_piece.labels.get.return_value = None
 
     request = MagicMock()
@@ -88,9 +84,7 @@ class TestCallbackChatTargetInitialization:
     def test_init_with_context(self, mock_callback):
         """Test the initialization of _CallbackChatTarget with context mapping."""
         prompt_to_context = {"test": "context"}
-        target = _CallbackChatTarget(
-            callback=mock_callback, prompt_to_context=prompt_to_context
-        )
+        target = _CallbackChatTarget(callback=mock_callback, prompt_to_context=prompt_to_context)
 
         assert target._callback == mock_callback
         assert target._stream is False
@@ -124,14 +118,10 @@ class TestCallbackChatTargetPrompts:
             assert call_args["context"] == {}
 
             # Check memory usage
-            mock_memory.get_chat_messages_with_conversation_id.assert_called_once_with(
-                conversation_id="test-id"
-            )
+            mock_memory.get_chat_messages_with_conversation_id.assert_called_once_with(conversation_id="test-id")
 
     @pytest.mark.asyncio
-    async def test_send_prompt_async_with_context(
-        self, chat_target_with_context, mock_request, mock_callback
-    ):
+    async def test_send_prompt_async_with_context(self, chat_target_with_context, mock_request, mock_callback):
         """Test send_prompt_async method with context mapping."""
         with patch.object(chat_target_with_context, "_memory") as mock_memory, patch(
             "azure.ai.evaluation.red_team._callback_chat_target.construct_response_from_request"
@@ -143,9 +133,7 @@ class TestCallbackChatTargetPrompts:
             mock_construct.return_value = mock_request
 
             # Call the method
-            response = await chat_target_with_context.send_prompt_async(
-                prompt_request=mock_request
-            )
+            response = await chat_target_with_context.send_prompt_async(prompt_request=mock_request)
 
             # Check that callback was called with correct parameters including context
             mock_callback.assert_called_once()
@@ -155,23 +143,17 @@ class TestCallbackChatTargetPrompts:
             assert call_args["context"] == {"context": "test context data"}
 
             # Check memory usage
-            mock_memory.get_chat_messages_with_conversation_id.assert_called_once_with(
-                conversation_id="test-id"
-            )
+            mock_memory.get_chat_messages_with_conversation_id.assert_called_once_with(conversation_id="test-id")
 
     @pytest.mark.asyncio
-    async def test_send_prompt_async_with_context_not_found(
-        self, chat_target_with_context, mock_callback
-    ):
+    async def test_send_prompt_async_with_context_not_found(self, chat_target_with_context, mock_callback):
         """Test send_prompt_async method with context mapping but prompt not found."""
         # Create a request with a prompt that's not in the context mapping
         request_piece = MagicMock()
         request_piece.conversation_id = "test-id"
         request_piece.converted_value = "unknown prompt"  # Not in context mapping
         request_piece.converted_value_data_type = "text"
-        request_piece.to_chat_message.return_value = MagicMock(
-            role="user", content="unknown prompt"
-        )
+        request_piece.to_chat_message.return_value = MagicMock(role="user", content="unknown prompt")
         request_piece.labels.get.return_value = None
 
         mock_request = MagicMock()
@@ -187,9 +169,7 @@ class TestCallbackChatTargetPrompts:
             mock_construct.return_value = mock_request
 
             # Call the method
-            response = await chat_target_with_context.send_prompt_async(
-                prompt_request=mock_request
-            )
+            response = await chat_target_with_context.send_prompt_async(prompt_request=mock_request)
 
             # Check that callback was called with empty context since prompt wasn't found
             mock_callback.assert_called_once()

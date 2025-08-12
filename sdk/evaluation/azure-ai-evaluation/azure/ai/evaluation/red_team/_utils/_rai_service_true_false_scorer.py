@@ -84,9 +84,7 @@ class AzureRAIServiceTrueFalseScorer(Scorer):
         self.validate(request_response, task=task)
 
         if not self._scoring_target_red_llm.context:
-            self._scoring_target_red_llm.context = request_response.labels.get(
-                "context", ""
-            )
+            self._scoring_target_red_llm.context = request_response.labels.get("context", "")
 
         unvalidated_score: UnvalidatedScore = await self._score_value_with_llm(
             prompt_target=self._scoring_target_red_llm,
@@ -98,9 +96,7 @@ class AzureRAIServiceTrueFalseScorer(Scorer):
             orchestrator_identifier=request_response.orchestrator_identifier,
         )
 
-        score = unvalidated_score.to_score(
-            score_value=unvalidated_score.raw_score_value
-        )
+        score = unvalidated_score.to_score(score_value=unvalidated_score.raw_score_value)
 
         # self._memory.add_scores_to_memory(scores=[score])
         return [score]

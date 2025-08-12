@@ -66,9 +66,7 @@ class ExceptionHandler:
         :param logger: Logger instance for error reporting
         """
         self.logger = logger or logging.getLogger(__name__)
-        self.error_counts: Dict[ErrorCategory, int] = {
-            category: 0 for category in ErrorCategory
-        }
+        self.error_counts: Dict[ErrorCategory, int] = {category: 0 for category in ErrorCategory}
 
     def categorize_exception(self, exception: Exception) -> ErrorCategory:
         """Categorize an exception based on its type and message.
@@ -100,15 +98,11 @@ class ExceptionHandler:
             return ErrorCategory.TIMEOUT
 
         # File I/O errors
-        if isinstance(
-            exception, (IOError, OSError, FileNotFoundError, PermissionError)
-        ):
+        if isinstance(exception, (IOError, OSError, FileNotFoundError, PermissionError)):
             return ErrorCategory.FILE_IO
 
         # HTTP status code specific errors
-        if hasattr(exception, "response") and hasattr(
-            exception.response, "status_code"
-        ):
+        if hasattr(exception, "response") and hasattr(exception.response, "status_code"):
             status_code = exception.response.status_code
             if 500 <= status_code < 600:
                 return ErrorCategory.NETWORK
@@ -266,9 +260,7 @@ class ExceptionHandler:
 
         # Log original exception traceback for debugging
         if error.original_exception and self.logger.isEnabledFor(logging.DEBUG):
-            self.logger.debug(
-                f"Original exception traceback:\n{traceback.format_exc()}"
-            )
+            self.logger.debug(f"Original exception traceback:\n{traceback.format_exc()}")
 
     def should_abort_scan(self) -> bool:
         """Determine if the scan should be aborted based on error patterns.
@@ -280,9 +272,7 @@ class ExceptionHandler:
             ErrorCategory.AUTHENTICATION,
             ErrorCategory.CONFIGURATION,
         ]
-        high_severity_count = sum(
-            self.error_counts[cat] for cat in high_severity_categories
-        )
+        high_severity_count = sum(self.error_counts[cat] for cat in high_severity_categories)
 
         if high_severity_count > 2:
             return True
@@ -303,11 +293,7 @@ class ExceptionHandler:
         return {
             "total_errors": total_errors,
             "error_counts_by_category": dict(self.error_counts),
-            "most_common_category": (
-                max(self.error_counts, key=self.error_counts.get)
-                if total_errors > 0
-                else None
-            ),
+            "most_common_category": (max(self.error_counts, key=self.error_counts.get) if total_errors > 0 else None),
             "should_abort": self.should_abort_scan(),
         }
 
@@ -326,9 +312,7 @@ class ExceptionHandler:
                 self.logger.info(f"  {category}: {count}")
 
         if summary["most_common_category"]:
-            self.logger.info(
-                f"Most common error type: {summary['most_common_category']}"
-            )
+            self.logger.info(f"Most common error type: {summary['most_common_category']}")
 
 
 def create_exception_handler(

@@ -98,9 +98,7 @@ class TestSimulator:
         }
         with pytest.raises(ValueError) as exc_info:
             Simulator._validate_model_config(model_config)
-        assert "model_config 'type' must be 'azure_openai' or 'openai'" in str(
-            exc_info.value
-        )
+        assert "model_config 'type' must be 'azure_openai' or 'openai'" in str(exc_info.value)
 
     def test_validate_model_config_none_values(self):
         model_config = {
@@ -128,9 +126,7 @@ class TestSimulator:
 
     @pytest.mark.asyncio
     @patch("azure.ai.evaluation.simulator._simulator.AsyncPrompty.load")
-    async def test_generate_query_responses(
-        self, mock_async_prompty_load, valid_azure_model_config
-    ):
+    async def test_generate_query_responses(self, mock_async_prompty_load, valid_azure_model_config):
         simulator = Simulator(model_config=valid_azure_model_config)
         mock_flow = AsyncMock()
         mock_flow.return_value = '[{"q": "query1", "r": "response1"}]'
@@ -146,9 +142,7 @@ class TestSimulator:
         assert query_responses == [{"q": "query1", "r": "response1"}]
 
     @patch("azure.ai.evaluation.simulator._simulator.AsyncPrompty.load")
-    def test_load_user_simulation_flow(
-        self, mock_async_prompty_load, valid_azure_model_config
-    ):
+    def test_load_user_simulation_flow(self, mock_async_prompty_load, valid_azure_model_config):
         simulator = Simulator(model_config=valid_azure_model_config)
         mock_async_prompty_load.return_value = AsyncMock()
         user_flow = simulator._load_user_simulation_flow(
@@ -159,9 +153,7 @@ class TestSimulator:
         assert user_flow is not None
 
     @pytest.mark.asyncio
-    @patch(
-        "azure.ai.evaluation.simulator._simulator.Simulator._load_user_simulation_flow"
-    )
+    @patch("azure.ai.evaluation.simulator._simulator.Simulator._load_user_simulation_flow")
     @patch("azure.ai.evaluation.simulator._simulator.Simulator._get_target_response")
     async def test_complete_conversation(
         self,
@@ -215,13 +207,9 @@ class TestSimulator:
         assert response == ("Assistant response", "assistant context")
 
     @pytest.mark.asyncio
-    async def test_call_with_both_conversation_turns_and_text_tasks(
-        self, valid_openai_model_config
-    ):
+    async def test_call_with_both_conversation_turns_and_text_tasks(self, valid_openai_model_config):
         simulator = Simulator(model_config=valid_openai_model_config)
-        with pytest.raises(
-            ValueError, match="Cannot specify both conversation_turns and text/tasks"
-        ):
+        with pytest.raises(ValueError, match="Cannot specify both conversation_turns and text/tasks"):
             await simulator(
                 target=AsyncMock(),
                 max_conversation_turns=2,
@@ -236,13 +224,9 @@ class TestSimulator:
         "azure.ai.evaluation.simulator._simulator.Simulator._simulate_with_predefined_turns",
         new_callable=AsyncMock,
     )
-    async def test_call_with_conversation_turns(
-        self, mock_simulate_with_predefined_turns, valid_openai_model_config
-    ):
+    async def test_call_with_conversation_turns(self, mock_simulate_with_predefined_turns, valid_openai_model_config):
         simulator = Simulator(model_config=valid_openai_model_config)
-        mock_simulate_with_predefined_turns.return_value = [
-            JsonLineChatProtocol({"messages": []})
-        ]
+        mock_simulate_with_predefined_turns.return_value = [JsonLineChatProtocol({"messages": []})]
 
         result = await simulator(
             target=AsyncMock(),
@@ -270,9 +254,7 @@ class TestSimulator:
     ):
         simulator = Simulator(model_config=valid_openai_model_config)
         mock_generate_query_responses.return_value = [{"q": "query", "r": "response"}]
-        mock_create_conversations_from_query_responses.return_value = [
-            JsonLineChatProtocol({"messages": []})
-        ]
+        mock_create_conversations_from_query_responses.return_value = [JsonLineChatProtocol({"messages": []})]
 
         result = await simulator(
             target=AsyncMock(),
@@ -302,14 +284,10 @@ class TestSimulator:
     ):
         simulator = Simulator(model_config=valid_openai_model_config)
         mock_generate_query_responses.return_value = [{"q": "query", "r": "response"}]
-        mock_create_conversations_from_query_responses.return_value = [
-            JsonLineChatProtocol({"messages": []})
-        ]
+        mock_create_conversations_from_query_responses.return_value = [JsonLineChatProtocol({"messages": []})]
         tasks = [{"task": "task1"}]
 
-        with pytest.warns(
-            UserWarning, match="You have specified 'num_queries' > len\\('tasks'\\)"
-        ):
+        with pytest.warns(UserWarning, match="You have specified 'num_queries' > len\\('tasks'\\)"):
             result = await simulator(
                 target=AsyncMock(),
                 max_conversation_turns=2,
@@ -338,14 +316,10 @@ class TestSimulator:
     ):
         simulator = Simulator(model_config=valid_openai_model_config)
         mock_generate_query_responses.return_value = [{"q": "query", "r": "response"}]
-        mock_create_conversations_from_query_responses.return_value = [
-            JsonLineChatProtocol({"messages": []})
-        ]
+        mock_create_conversations_from_query_responses.return_value = [JsonLineChatProtocol({"messages": []})]
         tasks = [{"task": "task1"}, {"task": "task2"}]
 
-        with pytest.warns(
-            UserWarning, match="You have specified 'num_queries' < len\\('tasks'\\)"
-        ):
+        with pytest.warns(UserWarning, match="You have specified 'num_queries' < len\\('tasks'\\)"):
             result = await simulator(
                 target=AsyncMock(),
                 max_conversation_turns=2,

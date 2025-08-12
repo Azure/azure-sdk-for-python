@@ -21,9 +21,7 @@ class TestAdvSimulator:
             "resource_group_name": project_scope["resource_group_name"],
             "project_name": project_scope["project_name"],
         }
-        simulator = AdversarialSimulator(
-            azure_ai_project=azure_ai_project, credential=azure_cred
-        )
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
         assert callable(simulator)
 
     def test_incorrect_scenario_raises_error(self, azure_cred, project_scope):
@@ -39,9 +37,7 @@ class TestAdvSimulator:
         async def callback(x):
             return x
 
-        simulator = AdversarialSimulator(
-            azure_ai_project=azure_ai_project, credential=azure_cred
-        )
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
         with pytest.raises(EvaluationException):
             asyncio.run(
                 simulator(
@@ -88,9 +84,7 @@ class TestAdvSimulator:
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(
-            azure_ai_project=azure_ai_project, credential=azure_cred
-        )
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
 
         outputs = asyncio.run(
             simulator(
@@ -145,9 +139,7 @@ class TestAdvSimulator:
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(
-            azure_ai_project=azure_ai_project, credential=azure_cred
-        )
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
 
         outputs = asyncio.run(
             simulator(
@@ -173,9 +165,7 @@ class TestAdvSimulator:
             ("project_scope_onedp", "azure_cred_onedp"),
         ),
     )
-    def test_adv_code_vuln_sim_responds_with_one_response(
-        self, request, proj_scope, cred
-    ):
+    def test_adv_code_vuln_sim_responds_with_one_response(self, request, proj_scope, cred):
         project_scope = request.getfixturevalue(proj_scope)
         azure_cred = request.getfixturevalue(cred)
         os.environ.pop("RAI_SVC_URL", None)
@@ -208,9 +198,7 @@ class TestAdvSimulator:
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(
-            azure_ai_project=project_scope, credential=azure_cred
-        )
+        simulator = AdversarialSimulator(azure_ai_project=project_scope, credential=azure_cred)
 
         outputs = asyncio.run(
             simulator(
@@ -222,14 +210,9 @@ class TestAdvSimulator:
         )
         assert len(outputs) == 1
         assert outputs[0]["messages"][0]["content"] is not None
-        assert (
-            outputs[0]["messages"][1]["content"]
-            == "SELECT * FROM users WHERE username = {user_input};"
-        )
+        assert outputs[0]["messages"][1]["content"] == "SELECT * FROM users WHERE username = {user_input};"
 
-    def test_adv_ungrounded_attributes_sim_responds_with_one_response(
-        self, azure_cred, project_scope
-    ):
+    def test_adv_ungrounded_attributes_sim_responds_with_one_response(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.simulator import (
             AdversarialScenario,
@@ -275,9 +258,7 @@ class TestAdvSimulator:
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(
-            azure_ai_project=azure_ai_project, credential=azure_cred
-        )
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
 
         outputs = asyncio.run(
             simulator(
@@ -299,9 +280,7 @@ class TestAdvSimulator:
             ("project_scope_onedp", "azure_cred_onedp"),
         ),
     )
-    def test_adv_conversation_sim_responds_with_responses(
-        self, request, proj_scope, cred
-    ):
+    def test_adv_conversation_sim_responds_with_responses(self, request, proj_scope, cred):
         project_scope = request.getfixturevalue(proj_scope)
         azure_cred = request.getfixturevalue(cred)
         os.environ.pop("RAI_SVC_URL", None)
@@ -327,9 +306,7 @@ class TestAdvSimulator:
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(
-            azure_ai_project=project_scope, credential=azure_cred
-        )
+        simulator = AdversarialSimulator(azure_ai_project=project_scope, credential=azure_cred)
 
         outputs = asyncio.run(
             simulator(
@@ -346,9 +323,7 @@ class TestAdvSimulator:
         assert len(outputs) == 1
         assert len(outputs[0]["messages"]) == 3
 
-    def test_adv_conversation_image_understanding_sim_responds_with_responses(
-        self, azure_cred, project_scope
-    ):
+    def test_adv_conversation_image_understanding_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.simulator import AdversarialSimulator
         from azure.ai.evaluation.simulator._adversarial_scenario import (
@@ -378,9 +353,7 @@ class TestAdvSimulator:
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(
-            azure_ai_project=azure_ai_project, credential=azure_cred
-        )
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
 
         outputs = asyncio.run(
             simulator(
@@ -401,9 +374,7 @@ class TestAdvSimulator:
 
         def has_image_url_with_url(content):
             return any(
-                isinstance(item, dict)
-                and item.get("type") == "image_url"
-                and "url" in item.get("image_url", {})
+                isinstance(item, dict) and item.get("type") == "image_url" and "url" in item.get("image_url", {})
                 for item in content
             )
 
@@ -422,9 +393,7 @@ class TestAdvSimulator:
             ]
         )
 
-    def test_adv_conversation_image_gen_sim_responds_with_responses(
-        self, azure_cred, project_scope
-    ):
+    def test_adv_conversation_image_gen_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.simulator import AdversarialSimulator
         from azure.ai.evaluation.simulator._adversarial_scenario import (
@@ -447,9 +416,7 @@ class TestAdvSimulator:
             content = [
                 {
                     "type": "image_url",
-                    "image_url": {
-                        "url": "http://www.firstaidforfree.com/wp-content/uploads/2017/01/First-Aid-Kit.jpg"
-                    },
+                    "image_url": {"url": "http://www.firstaidforfree.com/wp-content/uploads/2017/01/First-Aid-Kit.jpg"},
                 }
             ]
 
@@ -462,9 +429,7 @@ class TestAdvSimulator:
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(
-            azure_ai_project=azure_ai_project, credential=azure_cred
-        )
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
 
         outputs = asyncio.run(
             simulator(
@@ -485,9 +450,7 @@ class TestAdvSimulator:
 
         def has_image_url_with_url(content):
             return any(
-                isinstance(item, dict)
-                and item.get("type") == "image_url"
-                and "url" in item.get("image_url", {})
+                isinstance(item, dict) and item.get("type") == "image_url" and "url" in item.get("image_url", {})
                 for item in content
             )
 
@@ -506,9 +469,7 @@ class TestAdvSimulator:
             ]
         )
 
-    def test_adv_summarization_sim_responds_with_responses(
-        self, azure_cred, project_scope
-    ):
+    def test_adv_summarization_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.simulator import (
             AdversarialScenario,
@@ -538,9 +499,7 @@ class TestAdvSimulator:
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(
-            azure_ai_project=azure_ai_project, credential=azure_cred
-        )
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
 
         outputs = asyncio.run(
             simulator(
@@ -556,9 +515,7 @@ class TestAdvSimulator:
         )
         assert len(outputs) == 1
 
-    def test_adv_summarization_jailbreak_sim_responds_with_responses(
-        self, azure_cred, project_scope
-    ):
+    def test_adv_summarization_jailbreak_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.simulator import (
             AdversarialScenario,
@@ -588,9 +545,7 @@ class TestAdvSimulator:
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(
-            azure_ai_project=azure_ai_project, credential=azure_cred
-        )
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
 
         outputs = asyncio.run(
             simulator(
@@ -637,9 +592,7 @@ class TestAdvSimulator:
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(
-            azure_ai_project=azure_ai_project, credential=azure_cred
-        )
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
 
         outputs = asyncio.run(
             simulator(
@@ -656,9 +609,7 @@ class TestAdvSimulator:
         )
         assert len(outputs) == 1
 
-    def test_adv_protected_matierial_sim_responds_with_responses(
-        self, azure_cred, project_scope
-    ):
+    def test_adv_protected_matierial_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.simulator import (
             AdversarialScenario,
@@ -688,9 +639,7 @@ class TestAdvSimulator:
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(
-            azure_ai_project=azure_ai_project, credential=azure_cred
-        )
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
 
         outputs = asyncio.run(
             simulator(
@@ -736,9 +685,7 @@ class TestAdvSimulator:
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(
-            azure_ai_project=azure_ai_project, credential=azure_cred
-        )
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
 
         outputs = asyncio.run(
             simulator(
@@ -792,9 +739,7 @@ class TestAdvSimulator:
                 "context": context,
             }
 
-        simulator = IndirectAttackSimulator(
-            azure_ai_project=azure_ai_project, credential=azure_cred
-        )
+        simulator = IndirectAttackSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
 
         outputs = asyncio.run(
             simulator(
@@ -840,9 +785,7 @@ class TestAdvSimulator:
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(
-            azure_ai_project=azure_ai_project, credential=azure_cred
-        )
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
 
         outputs1 = asyncio.run(
             simulator(
@@ -926,9 +869,7 @@ class TestAdvSimulator:
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(
-            azure_ai_project=azure_ai_project, credential=azure_cred
-        )
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
 
         outputs1 = asyncio.run(
             simulator(
@@ -1009,9 +950,7 @@ class TestAdvSimulator:
                 "context": context,
             }
 
-        simulator = DirectAttackSimulator(
-            azure_ai_project=azure_ai_project, credential=azure_cred
-        )
+        simulator = DirectAttackSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
 
         outputs1 = asyncio.run(
             simulator(
@@ -1055,32 +994,16 @@ class TestAdvSimulator:
             )
         )
         # Make sure the regular prompt exists within the jailbroken equivalent, but also that they aren't identical.
-        outputs1["regular"][0]["messages"][0]["content"] in outputs1["jailbreak"][0][
-            "messages"
-        ][0]["content"]
-        outputs1["regular"][0]["messages"][0]["content"] != outputs1["jailbreak"][0][
-            "messages"
-        ][0]["content"]
+        outputs1["regular"][0]["messages"][0]["content"] in outputs1["jailbreak"][0]["messages"][0]["content"]
+        outputs1["regular"][0]["messages"][0]["content"] != outputs1["jailbreak"][0]["messages"][0]["content"]
         # Check that outputs1 and outputs2 are identical, but not identical to outputs3
-        outputs1["regular"][0]["messages"][0]["content"] == outputs2["regular"][0][
-            "messages"
-        ][0]["content"]
-        outputs1["jailbreak"][0]["messages"][0]["content"] == outputs2["jailbreak"][0][
-            "messages"
-        ][0]["content"]
-        outputs1["regular"][0]["messages"][0]["content"] != outputs3["regular"][0][
-            "messages"
-        ][0]["content"]
-        outputs1["jailbreak"][0]["messages"][0]["content"] != outputs3["jailbreak"][0][
-            "messages"
-        ][0]["content"]
+        outputs1["regular"][0]["messages"][0]["content"] == outputs2["regular"][0]["messages"][0]["content"]
+        outputs1["jailbreak"][0]["messages"][0]["content"] == outputs2["jailbreak"][0]["messages"][0]["content"]
+        outputs1["regular"][0]["messages"][0]["content"] != outputs3["regular"][0]["messages"][0]["content"]
+        outputs1["jailbreak"][0]["messages"][0]["content"] != outputs3["jailbreak"][0]["messages"][0]["content"]
         # Check that outputs3 has the same equivalency as outputs1, even without a provided seed.
-        outputs3["regular"][0]["messages"][0]["content"] in outputs3["jailbreak"][0][
-            "messages"
-        ][0]["content"]
-        outputs3["regular"][0]["messages"][0]["content"] != outputs3["jailbreak"][0][
-            "messages"
-        ][0]["content"]
+        outputs3["regular"][0]["messages"][0]["content"] in outputs3["jailbreak"][0]["messages"][0]["content"]
+        outputs3["regular"][0]["messages"][0]["content"] != outputs3["jailbreak"][0]["messages"][0]["content"]
 
     def test_regular_and_jailbreak_outputs_match(self, azure_cred, project_scope):
         """
@@ -1123,9 +1046,7 @@ class TestAdvSimulator:
                 "context": context,
             }
 
-        simulator = DirectAttackSimulator(
-            azure_ai_project=azure_ai_project, credential=azure_cred
-        )
+        simulator = DirectAttackSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
 
         # Run the simulator to obtain both regular and jailbreak outputs
         outputs = asyncio.run(
@@ -1139,20 +1060,14 @@ class TestAdvSimulator:
         regular_output = outputs["regular"].to_eval_qr_json_lines()
         jailbreak_output = outputs["jailbreak"].to_eval_qr_json_lines()
 
-        regular_lines = [
-            json.loads(line) for line in regular_output.strip().splitlines()
-        ]
-        jailbreak_lines = [
-            json.loads(line) for line in jailbreak_output.strip().splitlines()
-        ]
+        regular_lines = [json.loads(line) for line in regular_output.strip().splitlines()]
+        jailbreak_lines = [json.loads(line) for line in jailbreak_output.strip().splitlines()]
 
         assert len(regular_lines) == len(
             jailbreak_lines
         ), "Mismatch in number of output lines between regular and jailbreak."
 
-        for idx, (reg_line, jb_line) in enumerate(
-            zip(regular_lines, jailbreak_lines), start=1
-        ):
+        for idx, (reg_line, jb_line) in enumerate(zip(regular_lines, jailbreak_lines), start=1):
             # Check if the categories match
             assert reg_line["category"] == jb_line["category"], (
                 f"Category mismatch at line {idx}: "

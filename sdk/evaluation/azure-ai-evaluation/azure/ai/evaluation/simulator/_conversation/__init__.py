@@ -125,23 +125,16 @@ class ConversationBot:
         )
         self.persona_template_args = instantiation_parameters
         if self.role == ConversationRole.USER:
-            self.name: str = cast(
-                str, self.persona_template_args.get("name", role.value)
-            )
+            self.name: str = cast(str, self.persona_template_args.get("name", role.value))
         else:
-            self.name = (
-                cast(str, self.persona_template_args.get("chatbot_name", role.value))
-                or model.name
-            )
+            self.name = cast(str, self.persona_template_args.get("chatbot_name", role.value)) or model.name
         self.model = model
 
         self.logger = logging.getLogger(repr(self))
         self.conversation_starter: Optional[Union[str, jinja2.Template, Dict]] = None
         if role == ConversationRole.USER:
             if "conversation_starter" in self.persona_template_args:
-                conversation_starter_content = self.persona_template_args[
-                    "conversation_starter"
-                ]
+                conversation_starter_content = self.persona_template_args["conversation_starter"]
                 if isinstance(conversation_starter_content, dict):
                     self.conversation_starter = conversation_starter_content
                 else:
@@ -185,13 +178,9 @@ class ConversationBot:
         if turn_number == 0 and self.conversation_starter is not None:
             # if conversation_starter is a dictionary, pass it into samples as is
             if isinstance(self.conversation_starter, dict):
-                samples: List[Union[str, jinja2.Template, Dict]] = [
-                    self.conversation_starter
-                ]
+                samples: List[Union[str, jinja2.Template, Dict]] = [self.conversation_starter]
             if isinstance(self.conversation_starter, jinja2.Template):
-                samples = [
-                    self.conversation_starter.render(**self.persona_template_args)
-                ]
+                samples = [self.conversation_starter.render(**self.persona_template_args)]
             else:
                 samples = [self.conversation_starter]
             jailbreak_string = self.persona_template_args.get("jailbreak_string", None)
@@ -223,27 +212,15 @@ class ConversationBot:
         messages = [{"role": "system", "content": prompt}]
 
         # The ChatAPI must respond as ASSISTANT, so if this bot is USER, we need to reverse the messages
-        if (self.role == ConversationRole.USER) and (
-            isinstance(self.model, (OpenAIChatCompletionsModel))
-        ):
+        if (self.role == ConversationRole.USER) and (isinstance(self.model, (OpenAIChatCompletionsModel))):
             # in here we need to simulate the user, The chatapi only generate turn as assistant and
             # can't generate turn as user
             # thus we reverse all rules in history messages,
             # so that messages produced from the other bot passed here as user messages
-            messages.extend(
-                [
-                    turn.to_openai_chat_format(reverse=True)
-                    for turn in conversation_history[-max_history:]
-                ]
-            )
+            messages.extend([turn.to_openai_chat_format(reverse=True) for turn in conversation_history[-max_history:]])
             prompt_role = ConversationRole.USER.value
         else:
-            messages.extend(
-                [
-                    turn.to_openai_chat_format()
-                    for turn in conversation_history[-max_history:]
-                ]
-            )
+            messages.extend([turn.to_openai_chat_format() for turn in conversation_history[-max_history:]])
             prompt_role = self.role.value
 
         response = await self.model.get_conversation_completion(
@@ -340,9 +317,7 @@ class CallbackConversationBot(ConversationBot):
         return response, {}, time_taken, result
 
     # Bug 3354264: template is unused in the method - is this intentional?
-    def _to_chat_protocol(
-        self, template, conversation_history, template_parameters
-    ):  # pylint: disable=unused-argument
+    def _to_chat_protocol(self, template, conversation_history, template_parameters):  # pylint: disable=unused-argument
         messages = []
 
         for _, m in enumerate(conversation_history):
@@ -395,9 +370,7 @@ class MultiModalConversationBot(ConversationBot):
         session_state: Optional[Dict[str, Any]] = None,
     ) -> Tuple[dict, dict, float, dict]:
         previous_prompt = conversation_history[-1]
-        chat_protocol_message = await self._to_chat_protocol(
-            conversation_history, self.user_template_parameters
-        )
+        chat_protocol_message = await self._to_chat_protocol(conversation_history, self.user_template_parameters)
 
         # replace prompt with {image.jpg} tags with image content data.
         conversation_history.pop()
@@ -447,9 +420,7 @@ class MultiModalConversationBot(ConversationBot):
 
         return response, chat_protocol_message, time_taken, result
 
-    async def _to_chat_protocol(
-        self, conversation_history, template_parameters
-    ):  # pylint: disable=unused-argument
+    async def _to_chat_protocol(self, conversation_history, template_parameters):  # pylint: disable=unused-argument
         messages = []
 
         for _, m in enumerate(conversation_history):
@@ -468,12 +439,7 @@ class MultiModalConversationBot(ConversationBot):
     async def _to_multi_modal_content(self, text: str) -> list:
         split_text = re.findall(r"[^{}]+|\{[^{}]*\}", text)
         messages = [
-            (
-                text.strip("{}").replace("image:", "").strip()
-                if text.startswith("{")
-                else text
-            )
-            for text in split_text
+            (text.strip("{}").replace("image:", "").strip() if text.startswith("{") else text) for text in split_text
         ]
         contents = []
         for msg in messages:
@@ -481,9 +447,7 @@ class MultiModalConversationBot(ConversationBot):
                 if isinstance(self.rai_client, RAIClient):
                     encoded_image = await self.rai_client.get_image_data(msg)
                 else:
-                    response = self.rai_client.red_teams.get_template_parameters_image(
-                        path=msg, stream="true"
-                    )
+                    response = self.rai_client.red_teams.get_template_parameters_image(path=msg, stream="true")
                     image_data = b"".join(response)
                     encoded_image = base64.b64encode(image_data).decode("utf-8")
 

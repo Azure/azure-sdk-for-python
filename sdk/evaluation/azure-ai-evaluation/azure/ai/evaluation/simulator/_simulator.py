@@ -91,14 +91,10 @@ class Simulator:
 
         missing_keys = [key for key in required_keys if key not in model_config]
         if missing_keys:
-            raise ValueError(
-                f"model_config is missing required keys: {', '.join(missing_keys)}"
-            )
+            raise ValueError(f"model_config is missing required keys: {', '.join(missing_keys)}")
         none_keys = [key for key in required_keys if model_config.get(key) is None]
         if none_keys:
-            raise ValueError(
-                f"The following keys in model_config must not be None: {', '.join(none_keys)}"
-            )
+            raise ValueError(f"The following keys in model_config must not be None: {', '.join(none_keys)}")
 
     async def __call__(
         self,
@@ -258,16 +254,12 @@ class Simulator:
         semaphore = asyncio.Semaphore(concurrent_async_tasks)
         progress_bar_lock = asyncio.Lock()
 
-        async def run_simulation(
-            simulation: List[Union[str, Dict[str, Any]]]
-        ) -> JsonLineChatProtocol:
+        async def run_simulation(simulation: List[Union[str, Dict[str, Any]]]) -> JsonLineChatProtocol:
             async with semaphore:
                 current_simulation = ConversationHistory()
                 for simulated_turn in simulation:
                     if isinstance(simulated_turn, str):
-                        user_turn = Turn(
-                            role=ConversationRole.USER, content=simulated_turn
-                        )
+                        user_turn = Turn(role=ConversationRole.USER, content=simulated_turn)
                     elif isinstance(simulated_turn, dict):
                         user_turn = Turn(
                             role=ConversationRole.USER,
@@ -279,12 +271,10 @@ class Simulator:
                             "Each simulated turn must be a string or a dict with 'content' and 'context' keys"
                         )
                     current_simulation.add_to_history(user_turn)
-                    assistant_response, assistant_context = (
-                        await self._get_target_response(
-                            target=target,
-                            api_call_delay_sec=api_call_delay_sec,
-                            conversation_history=current_simulation,
-                        )
+                    assistant_response, assistant_context = await self._get_target_response(
+                        target=target,
+                        api_call_delay_sec=api_call_delay_sec,
+                        conversation_history=current_simulation,
                     )
                     assistant_turn = Turn(
                         role=ConversationRole.ASSISTANT,
@@ -316,10 +306,7 @@ class Simulator:
                     }
                 )
 
-        tasks = [
-            asyncio.create_task(run_simulation(simulation))
-            for simulation in conversation_turns
-        ]
+        tasks = [asyncio.create_task(run_simulation(simulation)) for simulation in conversation_turns]
         results = await asyncio.gather(*tasks)
         progress_bar.close()
         return results
@@ -372,9 +359,7 @@ class Simulator:
                 **user_simulator_prompty_options,
             )
             user_response = self._parse_prompty_response(response=user_response_content)
-            user_turn = Turn(
-                role=ConversationRole.USER, content=user_response["content"]
-            )
+            user_turn = Turn(role=ConversationRole.USER, content=user_response["content"])
             current_simulation.add_to_history(user_turn)
             await asyncio.sleep(api_call_delay_sec)
             assistant_response, assistant_context = await self._get_target_response(
@@ -726,9 +711,7 @@ class Simulator:
                     action="Your goal is to make sure the task is completed by asking the right questions. Do not ask the same questions again.",
                 )
             if isinstance(conversation_starter_from_simulated_user, dict):
-                conversation_starter_from_simulated_user = (
-                    conversation_starter_from_simulated_user["content"]
-                )
+                conversation_starter_from_simulated_user = conversation_starter_from_simulated_user["content"]
             user_turn = Turn(
                 role=ConversationRole.USER,
                 content=conversation_starter_from_simulated_user,

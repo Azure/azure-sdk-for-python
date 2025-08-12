@@ -39,12 +39,8 @@ from azure.ai.evaluation._azure._clients import LiteMLClient
 from azure.core.credentials import TokenCredential
 
 PROMPTFLOW_ROOT = Path(__file__, "..", "..", "..").resolve()
-CONNECTION_FILE = (
-    PROMPTFLOW_ROOT / "azure-ai-evaluation" / "connections.json"
-).resolve()
-RECORDINGS_TEST_CONFIGS_ROOT = Path(
-    PROMPTFLOW_ROOT / "azure-ai-evaluation/tests/test_configs"
-).resolve()
+CONNECTION_FILE = (PROMPTFLOW_ROOT / "azure-ai-evaluation" / "connections.json").resolve()
+RECORDINGS_TEST_CONFIGS_ROOT = Path(PROMPTFLOW_ROOT / "azure-ai-evaluation/tests/test_configs").resolve()
 ZERO_GUID: Final[str] = "00000000-0000-0000-0000-000000000000"
 
 
@@ -53,9 +49,7 @@ def pytest_configure(config: pytest.Config) -> None:
     config.addinivalue_line("markers", "azuretest: mark test as an Azure test.")
     config.addinivalue_line("markers", "localtest: mark test as a local test.")
     config.addinivalue_line("markers", "unittest: mark test as a unit test.")
-    config.addinivalue_line(
-        "markers", "performance_test: mark test as a performance test."
-    )
+    config.addinivalue_line("markers", "performance_test: mark test as a performance test.")
 
     # suppress deprecation warnings for now
     config.addinivalue_line("filterwarnings", "ignore::DeprecationWarning")
@@ -156,9 +150,7 @@ def add_sanitizers(
         ]
 
         for header_suffix, value in replacements:
-            add_header_regex_sanitizer(
-                key=f"X-Stainless-{header_suffix}", regex="^.*$", value=value
-            )
+            add_header_regex_sanitizer(key=f"X-Stainless-{header_suffix}", regex="^.*$", value=value)
 
     def azure_ai_generative_sanitizer():
         """Sanitize header values from azure-ai-generative"""
@@ -182,9 +174,7 @@ def add_sanitizers(
             regex=project_scope["resource_group_name"],
             value=SanitizedValues.RESOURCE_GROUP_NAME,
         )
-        add_general_regex_sanitizer(
-            regex=project_scope["project_name"], value=SanitizedValues.WORKSPACE_NAME
-        )
+        add_general_regex_sanitizer(regex=project_scope["project_name"], value=SanitizedValues.WORKSPACE_NAME)
         add_general_regex_sanitizer(
             regex=model_config["azure_endpoint"],
             value=mock_model_config["azure_endpoint"],
@@ -221,9 +211,7 @@ def add_sanitizers(
         # In the eval run history, sanitize additional values such as the upn (which contains the user's email)
         add_body_key_sanitizer(json_path="$..userObjectId", value=ZERO_GUID)
         add_body_key_sanitizer(json_path="$..userPuId", value="0000000000000000")
-        add_body_key_sanitizer(
-            json_path="$..userIss", value="https://sts.windows.net/" + ZERO_GUID
-        )
+        add_body_key_sanitizer(json_path="$..userIss", value="https://sts.windows.net/" + ZERO_GUID)
         add_body_key_sanitizer(json_path="$..userTenantId", value=ZERO_GUID)
         add_body_key_sanitizer(json_path="$..upn", value="Sanitized")
 
@@ -281,9 +269,7 @@ def redirect_asyncio_requests_traffic() -> Generator[None, Any, None]:
         # this makes the request look like it was made to the original endpoint instead of to the proxy
         # without this, things like LROPollers can get broken by polling the wrong endpoint
         parsed_result = url_parse.urlparse(result.request.url)
-        upstream_uri = url_parse.urlparse(
-            result.request.headers["x-recording-upstream-base-uri"]
-        )
+        upstream_uri = url_parse.urlparse(result.request.headers["x-recording-upstream-base-uri"])
         upstream_uri_dict = {
             "scheme": upstream_uri.scheme,
             "netloc": upstream_uri.netloc,
@@ -343,9 +329,7 @@ def redirect_openai_requests():
 
 
 @pytest.fixture
-def recorded_test(
-    recorded_test, redirect_openai_requests, redirect_asyncio_requests_traffic
-):
+def recorded_test(recorded_test, redirect_openai_requests, redirect_asyncio_requests_traffic):
     return recorded_test
 
 
@@ -364,9 +348,7 @@ def get_config(
     defaults: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     if is_live():
-        assert (
-            key in connection_file
-        ), f"Connection '{key}' not found in dev connections."
+        assert key in connection_file, f"Connection '{key}' not found in dev connections."
 
     config = deepcopy(connection_file.get(key, {}).get("value", {}))
 
@@ -448,9 +430,7 @@ def model_config_onedp(
 
 
 @pytest.fixture
-def non_azure_openai_model_config(
-    connection_file: Mapping[str, Any]
-) -> OpenAIModelConfiguration:
+def non_azure_openai_model_config(connection_file: Mapping[str, Any]) -> OpenAIModelConfiguration:
     """Requires the following in your local connections.json file. If not present, ask around the team.
 
         "openai_model_config": {
@@ -478,33 +458,19 @@ def non_azure_openai_model_config(
 
 
 @pytest.fixture
-def project_scope(
-    connection_file: Mapping[str, Any], mock_project_scope: Dict[str, Any]
-) -> Dict[str, Any]:
-    config = (
-        get_config(connection_file, KEY_AZURE_PROJECT_SCOPE)
-        if is_live()
-        else mock_project_scope
-    )
+def project_scope(connection_file: Mapping[str, Any], mock_project_scope: Dict[str, Any]) -> Dict[str, Any]:
+    config = get_config(connection_file, KEY_AZURE_PROJECT_SCOPE) if is_live() else mock_project_scope
     return config
 
 
 @pytest.fixture
-def project_scope_onedp(
-    connection_file: Mapping[str, Any], mock_onedp_project_scope: Dict[str, Any]
-) -> Dict[str, Any]:
-    config = (
-        get_config(connection_file, KEY_ONE_DP_PROJECT_SCOPE)
-        if is_live()
-        else mock_onedp_project_scope
-    )
+def project_scope_onedp(connection_file: Mapping[str, Any], mock_onedp_project_scope: Dict[str, Any]) -> Dict[str, Any]:
+    config = get_config(connection_file, KEY_ONE_DP_PROJECT_SCOPE) if is_live() else mock_onedp_project_scope
     return config
 
 
 @pytest.fixture
-def datastore_project_scopes(
-    connection_file, project_scope, mock_project_scope
-) -> Dict[str, Any]:
+def datastore_project_scopes(connection_file, project_scope, mock_project_scope) -> Dict[str, Any]:
     keys = {
         "none": "azure_ai_entra_id_project_scope",
         "private": "azure_ai_private_connection_project_scope",
@@ -549,9 +515,7 @@ def mock_trace_destination_to_cloud(project_scope: dict):
 def mock_validate_trace_destination():
     """Mock validate trace destination config to use in unit tests."""
 
-    with patch(
-        "promptflow._sdk._tracing.TraceDestinationConfig.validate", return_value=None
-    ):
+    with patch("promptflow._sdk._tracing.TraceDestinationConfig.validate", return_value=None):
         yield
 
 
@@ -659,15 +623,10 @@ def pytest_collection_modifyitems(items):
     parents = {}
     for item in items:
         # Check if parent contains 'localtest' marker and remove it.
-        if (
-            any(mark.name == "localtest" for mark in item.parent.own_markers)
-            or id(item.parent) in parents
-        ):
+        if any(mark.name == "localtest" for mark in item.parent.own_markers) or id(item.parent) in parents:
             if id(item.parent) not in parents:
                 item.parent.own_markers = [
-                    marker
-                    for marker in item.own_markers
-                    if getattr(marker, "name", None) != "localtest"
+                    marker for marker in item.own_markers if getattr(marker, "name", None) != "localtest"
                 ]
                 parents[id(item.parent)] = item.parent
             if not item.get_closest_marker("azuretest"):

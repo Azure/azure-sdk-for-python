@@ -50,9 +50,7 @@ else:
     from typing import MutableMapping  # type: ignore
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
-ClsType = Optional[
-    Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]
-]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
 class RAISvcOperations:
@@ -67,18 +65,12 @@ class RAISvcOperations:
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client: AsyncPipelineClient = (
-            input_args.pop(0) if input_args else kwargs.pop("client")
-        )
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: MachineLearningServicesClientConfiguration = (
             input_args.pop(0) if input_args else kwargs.pop("config")
         )
-        self._serialize: Serializer = (
-            input_args.pop(0) if input_args else kwargs.pop("serializer")
-        )
-        self._deserialize: Deserializer = (
-            input_args.pop(0) if input_args else kwargs.pop("deserializer")
-        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
     async def get_annotation(self, **kwargs: Any) -> List[str]:
@@ -107,28 +99,20 @@ class RAISvcOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str"
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name",
                 self._config.resource_group_name,
                 "str",
             ),
-            "workspaceName": self._serialize.url(
-                "self._config.workspace_name", self._config.workspace_name, "str"
-            ),
+            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = (
-            await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -139,9 +123,7 @@ class RAISvcOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -156,11 +138,7 @@ class RAISvcOperations:
 
     @overload
     async def submit_annotation(
-        self,
-        body: _models.AnnotationDTO,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: _models.AnnotationDTO, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.LongRunningResponse:
         """Submit a request for annotation.
 
@@ -230,9 +208,7 @@ class RAISvcOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop(
-            "content_type", _headers.pop("Content-Type", None)
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.LongRunningResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
@@ -250,28 +226,20 @@ class RAISvcOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str"
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name",
                 self._config.resource_group_name,
                 "str",
             ),
-            "workspaceName": self._serialize.url(
-                "self._config.workspace_name", self._config.workspace_name, "str"
-            ),
+            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = (
-            await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -282,9 +250,7 @@ class RAISvcOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -327,28 +293,20 @@ class RAISvcOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str"
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name",
                 self._config.resource_group_name,
                 "str",
             ),
-            "workspaceName": self._serialize.url(
-                "self._config.workspace_name", self._config.workspace_name, "str"
-            ),
+            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = (
-            await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -359,9 +317,7 @@ class RAISvcOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -375,9 +331,7 @@ class RAISvcOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_attack_objectives(
-        self, *, risk_types: List[str], lang: str, **kwargs: Any
-    ) -> str:
+    async def get_attack_objectives(self, *, risk_types: List[str], lang: str, **kwargs: Any) -> str:
         """Get the attack objectives.
 
         :keyword risk_types: Risk types for the attack objectives dataset. Required.
@@ -409,28 +363,20 @@ class RAISvcOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str"
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name",
                 self._config.resource_group_name,
                 "str",
             ),
-            "workspaceName": self._serialize.url(
-                "self._config.workspace_name", self._config.workspace_name, "str"
-            ),
+            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = (
-            await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -441,9 +387,7 @@ class RAISvcOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -483,28 +427,20 @@ class RAISvcOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str"
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name",
                 self._config.resource_group_name,
                 "str",
             ),
-            "workspaceName": self._serialize.url(
-                "self._config.workspace_name", self._config.workspace_name, "str"
-            ),
+            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = (
-            await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -515,9 +451,7 @@ class RAISvcOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -560,28 +494,20 @@ class RAISvcOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str"
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name",
                 self._config.resource_group_name,
                 "str",
             ),
-            "workspaceName": self._serialize.url(
-                "self._config.workspace_name", self._config.workspace_name, "str"
-            ),
+            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = (
-            await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -592,9 +518,7 @@ class RAISvcOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -634,28 +558,20 @@ class RAISvcOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str"
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name",
                 self._config.resource_group_name,
                 "str",
             ),
-            "workspaceName": self._serialize.url(
-                "self._config.workspace_name", self._config.workspace_name, "str"
-            ),
+            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = (
-            await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -666,9 +582,7 @@ class RAISvcOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -711,28 +625,20 @@ class RAISvcOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str"
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name",
                 self._config.resource_group_name,
                 "str",
             ),
-            "workspaceName": self._serialize.url(
-                "self._config.workspace_name", self._config.workspace_name, "str"
-            ),
+            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = (
-            await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -743,9 +649,7 @@ class RAISvcOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -760,11 +664,7 @@ class RAISvcOperations:
 
     @overload
     async def submit_simulation(
-        self,
-        body: _models.SimulationDTO,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: _models.SimulationDTO, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.LongRunningResponse:
         """Submit a request for simulation.
 
@@ -834,9 +734,7 @@ class RAISvcOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop(
-            "content_type", _headers.pop("Content-Type", None)
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.LongRunningResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
@@ -854,28 +752,20 @@ class RAISvcOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str"
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name",
                 self._config.resource_group_name,
                 "str",
             ),
-            "workspaceName": self._serialize.url(
-                "self._config.workspace_name", self._config.workspace_name, "str"
-            ),
+            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = (
-            await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -886,9 +776,7 @@ class RAISvcOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -903,11 +791,7 @@ class RAISvcOperations:
 
     @overload
     async def submit_aoai_evaluation(
-        self,
-        body: _models.GradersDTO,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: _models.GradersDTO, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.LongRunningResponse:
         """Submit a request for graders.
 
@@ -977,9 +861,7 @@ class RAISvcOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop(
-            "content_type", _headers.pop("Content-Type", None)
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.LongRunningResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
@@ -997,28 +879,20 @@ class RAISvcOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str"
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name",
                 self._config.resource_group_name,
                 "str",
             ),
-            "workspaceName": self._serialize.url(
-                "self._config.workspace_name", self._config.workspace_name, "str"
-            ),
+            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = (
-            await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1029,9 +903,7 @@ class RAISvcOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -1046,12 +918,7 @@ class RAISvcOperations:
 
     @distributed_trace_async
     async def get_operation_result(
-        self,
-        operation_id: str,
-        *,
-        api_key: Optional[str] = None,
-        model_endpoint: Optional[str] = None,
-        **kwargs: Any
+        self, operation_id: str, *, api_key: Optional[str] = None, model_endpoint: Optional[str] = None, **kwargs: Any
     ) -> str:
         """Get the operation result.
 
@@ -1087,28 +954,20 @@ class RAISvcOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
-            "subscriptionId": self._serialize.url(
-                "self._config.subscription_id", self._config.subscription_id, "str"
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name",
                 self._config.resource_group_name,
                 "str",
             ),
-            "workspaceName": self._serialize.url(
-                "self._config.workspace_name", self._config.workspace_name, "str"
-            ),
+            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = (
-            await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1119,9 +978,7 @@ class RAISvcOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if _stream:

@@ -102,18 +102,12 @@ def _begin_aoai_evaluation(
     :rtype: List[OAIEvalRunCreationInfo]
     """
 
-    LOGGER.info(
-        "AOAI: Aoai graders detected among evaluator inputs. Preparing to create OAI eval group..."
-    )
+    LOGGER.info("AOAI: Aoai graders detected among evaluator inputs. Preparing to create OAI eval group...")
     all_eval_run_info: List[OAIEvalRunCreationInfo] = []
 
-    for selected_graders, selected_column_mapping in _get_graders_and_column_mappings(
-        graders, column_mappings
-    ):
+    for selected_graders, selected_column_mapping in _get_graders_and_column_mappings(graders, column_mappings):
         all_eval_run_info.append(
-            _begin_single_aoai_evaluation(
-                selected_graders, data, selected_column_mapping, run_name
-            )
+            _begin_single_aoai_evaluation(selected_graders, data, selected_column_mapping, run_name)
         )
 
     return all_eval_run_info
@@ -161,9 +155,7 @@ def _begin_single_aoai_evaluation(
         metadata={"is_foundry_eval": "true"},
     )
 
-    LOGGER.info(
-        f"AOAI: Eval group created with id {eval_group_info.id}. Creating eval run next..."
-    )
+    LOGGER.info(f"AOAI: Eval group created with id {eval_group_info.id}. Creating eval run next...")
     # Use eval group info to map grader IDs back to user-assigned names.
     grader_name_map = {}
     num_criteria = len(eval_group_info.testing_criteria)
@@ -179,9 +171,7 @@ def _begin_single_aoai_evaluation(
         grader_name_map[criteria.id] = name
 
     # Create eval run
-    eval_run_id = _begin_eval_run(
-        client, eval_group_info.id, run_name, data, column_mapping
-    )
+    eval_run_id = _begin_eval_run(client, eval_group_info.id, run_name, data, column_mapping)
     LOGGER.info(
         f"AOAI: Eval run created with id {eval_run_id}."
         + " Results will be retrieved after normal evaluation is complete..."
@@ -238,9 +228,7 @@ def _get_single_run_results(
     :raises EvaluationException: If the evaluation run fails or is not completed before timing out.
     """
     # Wait for evaluation run to complete
-    run_results = _wait_for_run_conclusion(
-        run_info["client"], run_info["eval_group_id"], run_info["eval_run_id"]
-    )
+    run_results = _wait_for_run_conclusion(run_info["client"], run_info["eval_group_id"], run_info["eval_run_id"])
 
     if run_results.status != "completed":
         raise EvaluationException(
@@ -299,9 +287,7 @@ def _get_single_run_results(
         if next_cursor is not None:
             list_kwargs["after"] = next_cursor
 
-        raw_list_results = run_info["client"].evals.runs.output_items.list(
-            **list_kwargs
-        )
+        raw_list_results = run_info["client"].evals.runs.output_items.list(**list_kwargs)
 
         # Add current page results
         all_results.extend(raw_list_results.data)
@@ -330,14 +316,10 @@ def _get_single_run_results(
                 if name.lower() == "passed":
                     # create a `_result` column for each grader
                     result_column_name = f"outputs.{grader_name}.{grader_name}_result"
-                    if (
-                        len(result_column_name) < 50
-                    ):  # TODO: is this the limit? Should we keep "passed"?
+                    if len(result_column_name) < 50:  # TODO: is this the limit? Should we keep "passed"?
                         if result_column_name not in listed_results:
                             listed_results[result_column_name] = []
-                        listed_results[result_column_name].append(
-                            EVALUATION_PASS_FAIL_MAPPING[value]
-                        )
+                        listed_results[result_column_name].append(EVALUATION_PASS_FAIL_MAPPING[value])
 
                 formatted_column_name = f"outputs.{grader_name}.{name}"
                 if formatted_column_name not in listed_results:
@@ -364,9 +346,7 @@ def _get_single_run_results(
     return output_df, run_metrics
 
 
-def _convert_remote_eval_params_to_grader(
-    grader_id: str, init_params: Dict[str, Any]
-) -> AzureOpenAIGrader:
+def _convert_remote_eval_params_to_grader(grader_id: str, init_params: Dict[str, Any]) -> AzureOpenAIGrader:
     """
     Helper function for the remote evaluation service.
     Given a model ID that refers to a specific AOAI grader wrapper class, return an instance of that class
@@ -457,15 +437,10 @@ def _get_graders_and_column_mappings(
     """
 
     default_mapping = column_mappings.get("default", None)
-    return [
-        ({name: grader}, column_mappings.get(name, default_mapping))
-        for name, grader in graders.items()
-    ]
+    return [({name: grader}, column_mappings.get(name, default_mapping)) for name, grader in graders.items()]
 
 
-def _generate_data_source_config(
-    input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
-) -> Dict[str, Any]:
+def _generate_data_source_config(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]) -> Dict[str, Any]:
     """Produce a data source config that maps all columns from the supplied data source into
     the OAI API. The mapping is naive unless a column mapping is provided, in which case
     the column mapping's values overrule the relevant naive mappings
@@ -527,9 +502,7 @@ def _generate_default_data_source_config(input_data_df: pd.DataFrame) -> Dict[st
     return data_source_config
 
 
-def _get_data_source(
-    input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
-) -> Dict[str, Any]:
+def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]) -> Dict[str, Any]:
     """
     Given a dataframe of data to be evaluated, and an optional column mapping,
     produce a dictionary can be used as the data source input for an OAI evaluation run.
@@ -551,11 +524,7 @@ def _get_data_source(
         entry_pieces = formatted_entry[2:-1].split(".")
         if len(entry_pieces) == 2 and entry_pieces[0] == "data":
             column_to_source_map[name] = entry_pieces[1]
-        elif (
-            len(entry_pieces) == 3
-            and entry_pieces[0] == "run"
-            and entry_pieces[1] == "outputs"
-        ):
+        elif len(entry_pieces) == 3 and entry_pieces[0] == "run" and entry_pieces[1] == "outputs":
             column_to_source_map[name] = f"__outputs.{entry_pieces[2]}"
 
     # Using the above mapping, transform the input dataframe into a content
@@ -638,9 +607,7 @@ def _wait_for_run_conclusion(
     :rtype: Any
     """
 
-    LOGGER.info(
-        f"AOAI: Getting OAI eval run results from group/run {eval_group_id}/{eval_run_id}..."
-    )
+    LOGGER.info(f"AOAI: Getting OAI eval run results from group/run {eval_group_id}/{eval_run_id}...")
     total_wait = 0
     iters = 0
     # start with ~51 minutes of exponential backoff

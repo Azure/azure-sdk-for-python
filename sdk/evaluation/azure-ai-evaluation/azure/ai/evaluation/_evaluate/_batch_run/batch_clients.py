@@ -58,9 +58,7 @@ class BatchClient(Protocol):
         """
         ...
 
-    def get_details(
-        self, client_run: BatchClientRun, all_results: bool = False
-    ) -> pandas.DataFrame:
+    def get_details(self, client_run: BatchClientRun, all_results: bool = False) -> pandas.DataFrame:
         """Get the details of the run.
 
         :param client_run: The run to get the details of.

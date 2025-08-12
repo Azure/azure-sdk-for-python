@@ -37,9 +37,7 @@ from azure.ai.evaluation._model_configurations import (
 )
 
 
-def strategy_converter_map() -> (
-    Dict[Any, Union[PromptConverter, List[PromptConverter], None]]
-):
+def strategy_converter_map() -> Dict[Any, Union[PromptConverter, List[PromptConverter], None]]:
     """
     Returns a mapping of attack strategies to their corresponding converters.
     """
@@ -164,9 +162,7 @@ def get_chat_target(
             has_callback_signature = False
 
         if has_callback_signature:
-            chat_target = _CallbackChatTarget(
-                callback=target, prompt_to_context=prompt_to_context
-            )
+            chat_target = _CallbackChatTarget(callback=target, prompt_to_context=prompt_to_context)
         else:
 
             async def callback_target(

@@ -168,16 +168,11 @@ class TestContentSafetyEvaluator:
         "azure.ai.evaluation._http_utils.AsyncHttpPipeline.get",
         return_value=MockAsyncHttpResponse(200, json={}),
     )
-    async def test_ensure_service_availability_exception_capability_unavailable(
-        self, client_mock
-    ):
+    async def test_ensure_service_availability_exception_capability_unavailable(self, client_mock):
         with pytest.raises(Exception) as exc_info:
-            _ = await ensure_service_availability(
-                "dummy_url", "dummy_token", capability="does not exist"
-            )
-        assert (
-            "The needed capability 'does not exist' is not supported by the RAI service in this region"
-            in str(exc_info._excinfo[1])
+            _ = await ensure_service_availability("dummy_url", "dummy_token", capability="does not exist")
+        assert "The needed capability 'does not exist' is not supported by the RAI service in this region" in str(
+            exc_info._excinfo[1]
         )
         assert client_mock._mock_await_count == 1
 
@@ -219,9 +214,7 @@ class TestContentSafetyEvaluator:
                 annotation_task=Tasks.CONTENT_HARM,
                 evaluator_name="dummy-evaluator",
             )
-        assert "Operation returned an invalid status '404 Not Found'" in str(
-            exc_info._excinfo[1]
-        )
+        assert "Operation returned an invalid status '404 Not Found'" in str(exc_info._excinfo[1])
 
     @pytest.mark.usefixtures("mock_token")
     @pytest.mark.usefixtures("mock_expired_token")
@@ -280,9 +273,7 @@ class TestContentSafetyEvaluator:
         # We expect 2 calls; the initial call, then one more ~2 seconds later.
         assert client_mock._mock_await_count == 2
         # Don't bother checking exact time beyond seconds, that's never going to be consistent across machines.
-        assert "Fetching annotation result 2 times out after 1" in str(
-            exc_info._excinfo[1]
-        )
+        assert "Fetching annotation result 2 times out after 1" in str(exc_info._excinfo[1])
 
     def test_parse_response(self):
         batch_response = [{"not-a-metric": "not-a-value"}]
@@ -388,9 +379,7 @@ class TestContentSafetyEvaluator:
             "resource_group_name": "fake-group",
         }
 
-        url = await _get_service_discovery_url(
-            azure_ai_project=azure_ai_project, token=token
-        )
+        url = await _get_service_discovery_url(azure_ai_project=azure_ai_project, token=token)
         assert url == "https://www.url.com:123"
 
     @pytest.mark.asyncio
@@ -410,12 +399,8 @@ class TestContentSafetyEvaluator:
         }
 
         with pytest.raises(Exception) as exc_info:
-            _ = await _get_service_discovery_url(
-                azure_ai_project=azure_ai_project, token=token
-            )
-        assert "Failed to connect to your Azure AI project." in str(
-            exc_info._excinfo[1]
-        )
+            _ = await _get_service_discovery_url(azure_ai_project=azure_ai_project, token=token)
+        assert "Failed to connect to your Azure AI project." in str(exc_info._excinfo[1])
 
     @pytest.mark.asyncio
     @patch(
@@ -500,10 +485,10 @@ class TestContentSafetyEvaluator:
     # Groundedness is JSON
     def test_get_formatted_template_groundedness(self):
         tagged_text = "This text </> has <> tags."
-        bracketed_text = (
-            "{This text has {brackets}, and I didn't even both to even them out {."
+        bracketed_text = "{This text has {brackets}, and I didn't even both to even them out {."
+        quoted_text = (
+            'This text has \'quotes\', also it has "quotes", and it even has `backticks` and """ triple quotes""".'
         )
-        quoted_text = 'This text has \'quotes\', also it has "quotes", and it even has `backticks` and """ triple quotes""".'
         all_texts = [tagged_text, quoted_text, bracketed_text]
         for text in all_texts:
             input_kwargs = {
@@ -517,10 +502,10 @@ class TestContentSafetyEvaluator:
     # Default is basic markup.
     def test_get_formatted_template_default(self):
         tagged_text = "This text </> has <> tags."
-        bracketed_text = (
-            "{This text has {brackets}, and I didn't even both to even them out {."
+        bracketed_text = "{This text has {brackets}, and I didn't even both to even them out {."
+        quoted_text = (
+            'This text has \'quotes\', also it has "quotes", and it even has `backticks` and """ triple quotes""".'
         )
-        quoted_text = 'This text has \'quotes\', also it has "quotes", and it even has `backticks` and """ triple quotes""".'
         all_texts = [tagged_text, quoted_text, bracketed_text]
         for text in all_texts:
             input_kwargs = {
@@ -529,7 +514,4 @@ class TestContentSafetyEvaluator:
                 "context": text,
             }
             formatted_payload = get_formatted_template(input_kwargs, "DEFAULT")
-            assert (
-                html.unescape(re.match("\<Human\>{(.*?)}\<", formatted_payload)[1])
-                == text
-            )
+            assert html.unescape(re.match("\<Human\>{(.*?)}\<", formatted_payload)[1]) == text

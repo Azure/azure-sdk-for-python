@@ -25,9 +25,7 @@ from azure.ai.evaluation import AzureOpenAIModelConfiguration
 
 
 PROMPTY_TEST_DIR: Final[Path] = Path(path.dirname(__file__), "data").resolve()
-EVALUATOR_ROOT_DIR: Final[Path] = Path(
-    path.dirname(__file__), "../../azure/ai/evaluation/_evaluators"
-).resolve()
+EVALUATOR_ROOT_DIR: Final[Path] = Path(path.dirname(__file__), "../../azure/ai/evaluation/_evaluators").resolve()
 BASIC_PROMPTY: Final[Path] = PROMPTY_TEST_DIR / "basic.prompty"
 IMAGE_PROMPTY: Final[Path] = PROMPTY_TEST_DIR / "image.prompty"
 JSON_PROMPTY: Final[Path] = PROMPTY_TEST_DIR / "json.prompty"
@@ -61,13 +59,8 @@ class TestPrompty:
         assert prompty
         assert isinstance(prompty, AsyncPrompty)
         assert prompty.name == "Basic Prompt"
-        assert (
-            prompty.description
-            == "A basic prompt that uses the GPT-3 chat API to answer questions"
-        )
-        assert {"firstName", "lastName", "question"} == {
-            k for k, _ in prompty._data.get("inputs", {}).items()
-        }
+        assert prompty.description == "A basic prompt that uses the GPT-3 chat API to answer questions"
+        assert {"firstName", "lastName", "question"} == {k for k, _ in prompty._data.get("inputs", {}).items()}
 
         rendered = prompty.render(firstName="Bob", question="What is the answer?")
         assert str(rendered) == expected_prompt
@@ -77,13 +70,8 @@ class TestPrompty:
         assert prompty
         assert isinstance(prompty, AsyncPrompty)
         assert prompty.name == "Basic Prompt with Image"
-        assert (
-            prompty.description
-            == "A basic prompt that uses the GPT-3 chat API to answer questions"
-        )
-        assert {"question", "image"} == {
-            k for k, _ in prompty._data.get("inputs", {}).items()
-        }
+        assert prompty.description == "A basic prompt that uses the GPT-3 chat API to answer questions"
+        assert {"question", "image"} == {k for k, _ in prompty._data.get("inputs", {}).items()}
 
         rendered = prompty.render(question="What is this a picture of?")
         assert rendered[0]["role"] == "system"
@@ -104,9 +92,7 @@ class TestPrompty:
     @pytest.mark.asyncio
     async def test_first_match_text(self, prompty_config: Dict[str, Any]):
         prompty = AsyncPrompty(COHERENCE_PROMPTY, **prompty_config)
-        result = await prompty(
-            query="What is the capital of France?", response="France capital Paris"
-        )
+        result = await prompty(query="What is the capital of France?", response="France capital Paris")
 
         # We expect an output string that contains <S0>chain of thoughts</S0> <S1>explanation<S1> <S2>int_score</S2>
         assert isinstance(result, str)
@@ -124,9 +110,7 @@ class TestPrompty:
     @pytest.mark.asyncio
     async def test_first_match_image(self, prompty_config: Dict[str, Any]):
         prompty = AsyncPrompty(IMAGE_PROMPTY, **prompty_config)
-        result = await prompty(
-            image="image1.jpg", question="What is this a picture of?"
-        )
+        result = await prompty(image="image1.jpg", question="What is this a picture of?")
         assert isinstance(result, str)
         assert "apple" in result.lower()
 
@@ -134,9 +118,7 @@ class TestPrompty:
     async def test_first_match_text_streaming(self, prompty_config: Dict[str, Any]):
         prompty_config["model"]["parameters"]["stream"] = True
         prompty = AsyncPrompty(BASIC_PROMPTY, **prompty_config)
-        result = await prompty(
-            firstName="Bob", question="What is the capital of France?"
-        )
+        result = await prompty(firstName="Bob", question="What is the capital of France?")
 
         assert isinstance(result, AsyncGenerator)
         combined = ""
@@ -151,9 +133,7 @@ class TestPrompty:
     async def test_first_match_image_streaming(self, prompty_config: Dict[str, Any]):
         prompty_config["model"]["parameters"]["stream"] = True
         prompty = AsyncPrompty(IMAGE_PROMPTY, **prompty_config)
-        result = await prompty(
-            image="image1.jpg", question="What is this a picture of?"
-        )
+        result = await prompty(image="image1.jpg", question="What is this a picture of?")
 
         assert isinstance(result, AsyncGenerator)
         combined = ""
@@ -171,9 +151,7 @@ class TestPrompty:
             {"firstName": {"type": "str"}, "answer": {"type": "str"}},
         ],
     )
-    async def test_first_match_text_json(
-        self, prompty_config: Dict[str, Any], outputs: Mapping[str, Any]
-    ):
+    async def test_first_match_text_json(self, prompty_config: Dict[str, Any], outputs: Mapping[str, Any]):
         prompty_config["outputs"] = outputs
         prompty = AsyncPrompty(JSON_PROMPTY, **prompty_config)
         result = await prompty(question="What is the capital of France?")
@@ -200,9 +178,7 @@ class TestPrompty:
         assert "does_not_exist" in ex.value.message
 
     @pytest.mark.asyncio
-    async def test_first_match_text_json_streaming(
-        self, prompty_config: Dict[str, Any]
-    ):
+    async def test_first_match_text_json_streaming(self, prompty_config: Dict[str, Any]):
         prompty_config["model"]["parameters"]["stream"] = True
         prompty = AsyncPrompty(JSON_PROMPTY, **prompty_config)
         result = await prompty(
@@ -219,9 +195,7 @@ class TestPrompty:
     async def test_full_text(self, prompty_config: Dict[str, Any]):
         prompty_config["model"]["response"] = "full"
         prompty = AsyncPrompty(BASIC_PROMPTY, **prompty_config)
-        result = await prompty(
-            firstName="Bob", question="What is the capital of France?"
-        )
+        result = await prompty(firstName="Bob", question="What is the capital of France?")
         assert isinstance(result, ChatCompletion)
         response: str = result.choices[0].message.content or ""
         assert "Bob" in response

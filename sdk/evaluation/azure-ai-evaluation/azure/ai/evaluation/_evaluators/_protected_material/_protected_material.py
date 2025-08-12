@@ -128,6 +128,4 @@ class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
         :return: The fluency score.
         :rtype: Union[Dict[str, Union[str, bool]], Dict[str, Union[float, Dict[str, List[Union[str, bool]]]]]]
         """
-        return super().__call__(
-            query=query, response=response, conversation=conversation, **kwargs
-        )
+        return super().__call__(query=query, response=response, conversation=conversation, **kwargs)

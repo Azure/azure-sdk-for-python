@@ -64,9 +64,7 @@ class TestAIAgentConverter(unittest.TestCase):
         self.assertFalse(AIAgentConverter._is_agent_tool_call(message))
 
         # Test case where message is not an agent tool call (content is empty)
-        message = Message(
-            role="assistant", content=[], createdAt="2023-01-01T00:00:00Z"
-        )
+        message = Message(role="assistant", content=[], createdAt="2023-01-01T00:00:00Z")
         self.assertFalse(AIAgentConverter._is_agent_tool_call(message))
 
     class CustomEncoder(json.JSONEncoder):
@@ -119,9 +117,7 @@ class TestAIAgentConverter(unittest.TestCase):
         self.assertTrue(isinstance(messages[0], AssistantMessage))
         tool_call_content = messages[0].content[0]
         self.assertTrue(tool_call_content["type"] == "tool_call")
-        self.assertTrue(
-            tool_call_content["tool_call_id"] == "call_CNw8VOVOBxKF3ggZM2Fif1V0"
-        )
+        self.assertTrue(tool_call_content["tool_call_id"] == "call_CNw8VOVOBxKF3ggZM2Fif1V0")
         self.assertTrue(tool_call_content["name"] == "code_interpreter")
         self.assertTrue(
             tool_call_content["arguments"]
@@ -168,9 +164,7 @@ class TestAIAgentConverter(unittest.TestCase):
         self.assertTrue(isinstance(messages[0], AssistantMessage))
         tool_call_content = messages[0].content[0]
         self.assertTrue(tool_call_content["type"] == "tool_call")
-        self.assertTrue(
-            tool_call_content["tool_call_id"] == "call_sot1fUR9Pazh3enT2E6EjX5g"
-        )
+        self.assertTrue(tool_call_content["tool_call_id"] == "call_sot1fUR9Pazh3enT2E6EjX5g")
         self.assertTrue(tool_call_content["name"] == "file_search")
         self.assertTrue(
             tool_call_content["arguments"]
@@ -219,13 +213,10 @@ class TestAIAgentConverter(unittest.TestCase):
         self.assertTrue(isinstance(messages[0], AssistantMessage))
         tool_call_content = messages[0].content[0]
         self.assertTrue(tool_call_content["type"] == "tool_call")
-        self.assertTrue(
-            tool_call_content["tool_call_id"] == "call_PG9cYqLGAVO30BWBwgHMcvJQ"
-        )
+        self.assertTrue(tool_call_content["tool_call_id"] == "call_PG9cYqLGAVO30BWBwgHMcvJQ")
         self.assertTrue(tool_call_content["name"] == "bing_grounding")
         self.assertTrue(
-            tool_call_content["arguments"]
-            == {"requesturl": "https://api.bing.microsoft.com/v7.0/search?q="}
+            tool_call_content["arguments"] == {"requesturl": "https://api.bing.microsoft.com/v7.0/search?q="}
         )
 
     def test_extract_tool_definitions(self):
@@ -291,18 +282,13 @@ class TestAIAgentConverter(unittest.TestCase):
   "parallel_tool_calls": true
 }"""
         thread_run = json.loads(thread_run_data, cls=ThreadRunDecoder)
-        tool_definitions = AIAgentConverter._extract_function_tool_definitions(
-            thread_run
-        )
+        tool_definitions = AIAgentConverter._extract_function_tool_definitions(thread_run)
         self.assertTrue(len(tool_definitions) == 2)
         self.assertTrue(tool_definitions[0].name == "fetch_weather")
         self.assertTrue(
-            tool_definitions[0].description
-            == "Fetches the weather information for the specified location."
+            tool_definitions[0].description == "Fetches the weather information for the specified location."
         )
-        self.assertTrue(
-            tool_definitions[0].parameters["properties"]["location"]["type"] == "string"
-        )
+        self.assertTrue(tool_definitions[0].parameters["properties"]["location"]["type"] == "string")
         self.assertTrue(
             tool_definitions[0].parameters["properties"]["location"]["description"]
             == "The location to fetch weather for."
@@ -315,12 +301,9 @@ class TestAIAgentConverter(unittest.TestCase):
             + "generate code, and create graphs and charts using your data. Supports "
             + "up to 20 files."
         )
+        self.assertTrue(tool_definitions[1].parameters["properties"]["input"]["type"] == "string")
         self.assertTrue(
-            tool_definitions[1].parameters["properties"]["input"]["type"] == "string"
-        )
-        self.assertTrue(
-            tool_definitions[1].parameters["properties"]["input"]["description"]
-            == "Generated code to be executed."
+            tool_definitions[1].parameters["properties"]["input"]["description"] == "Generated code to be executed."
         )
 
 

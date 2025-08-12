@@ -30,10 +30,7 @@ def mock_credential():
 class TestConversationThresholdBehavior:
     """Test threshold behavior in conversation evaluators."""
 
-    @patch(
-        "azure.ai.evaluation._evaluators._relevance._relevance."
-        "RelevanceEvaluator.__call__"
-    )
+    @patch("azure.ai.evaluation._evaluators._relevance._relevance." "RelevanceEvaluator.__call__")
     def test_relevance_evaluator_with_conversation(self, mock_call, test_model_config):
         """Test relevance evaluator with conversation input."""
         mock_result = {
@@ -59,10 +56,7 @@ class TestConversationThresholdBehavior:
 class TestMultipleEvaluatorThresholds:
     """Test multiple evaluators with different thresholds."""
 
-    @patch(
-        "azure.ai.evaluation._evaluators._relevance._relevance."
-        "RelevanceEvaluator.__call__"
-    )
+    @patch("azure.ai.evaluation._evaluators._relevance._relevance." "RelevanceEvaluator.__call__")
     def test_evaluators_with_different_thresholds(self, mock_call, test_model_config):
         """Test that evaluators can have different thresholds."""
         mock_result = {
@@ -88,10 +82,7 @@ class TestMultipleEvaluatorThresholds:
         assert "evaluation_per_turn" in result1
         assert "evaluation_per_turn" in result2
 
-    @patch(
-        "azure.ai.evaluation._evaluators._relevance._relevance."
-        "RelevanceEvaluator.__call__"
-    )
+    @patch("azure.ai.evaluation._evaluators._relevance._relevance." "RelevanceEvaluator.__call__")
     def test_threshold_comparison_behavior(self, mock_call, test_model_config):
         """Test how different thresholds affect evaluation results."""
         mock_result_high = {
@@ -106,12 +97,8 @@ class TestMultipleEvaluatorThresholds:
         }
         mock_call.side_effect = [mock_result_high, mock_result_low]
 
-        strict_evaluator = RelevanceEvaluator(
-            model_config=test_model_config, threshold=4
-        )
-        lenient_evaluator = RelevanceEvaluator(
-            model_config=test_model_config, threshold=2
-        )
+        strict_evaluator = RelevanceEvaluator(model_config=test_model_config, threshold=4)
+        lenient_evaluator = RelevanceEvaluator(model_config=test_model_config, threshold=2)
         conversation = {
             "messages": [
                 {"role": "user", "content": "What is the capital of France?"},
@@ -133,16 +120,12 @@ class TestEvaluatorsCombinedWithSample:
     def test_sample_evaluators_threshold_setup(self, test_model_config):
         """Test setting up evaluators with different thresholds."""
         evaluators = [
-            RelevanceEvaluator(model_config=test_model_config, threshold=threshold)
-            for threshold in [1, 3, 5]
+            RelevanceEvaluator(model_config=test_model_config, threshold=threshold) for threshold in [1, 3, 5]
         ]
         for i, evaluator in enumerate(evaluators):
             assert evaluator._threshold == [1, 3, 5][i]
 
-    @patch(
-        "azure.ai.evaluation._evaluators._relevance._relevance."
-        "RelevanceEvaluator.__call__"
-    )
+    @patch("azure.ai.evaluation._evaluators._relevance._relevance." "RelevanceEvaluator.__call__")
     def test_sample_evaluators_passing_thresholds(self, mock_call, test_model_config):
         """Test evaluators with passing threshold values."""
         mock_result = {

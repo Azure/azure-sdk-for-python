@@ -173,15 +173,11 @@ class TestChatTargetFunctions:
 
         result = get_chat_target(callback_fn)
 
-        mock_callback_chat_target.assert_called_once_with(
-            callback=callback_fn, prompt_to_context=None
-        )
+        mock_callback_chat_target.assert_called_once_with(callback=callback_fn, prompt_to_context=None)
         assert result == mock_instance
 
     @patch("azure.ai.evaluation.red_team._utils.strategy_utils._CallbackChatTarget")
-    def test_get_chat_target_callback_function_with_context(
-        self, mock_callback_chat_target
-    ):
+    def test_get_chat_target_callback_function_with_context(self, mock_callback_chat_target):
         """Test getting chat target from a callback function with context mapping."""
         mock_instance = MagicMock()
         mock_callback_chat_target.return_value = mock_instance
@@ -192,9 +188,7 @@ class TestChatTargetFunctions:
         prompt_to_context = {"test prompt": "test context"}
         result = get_chat_target(callback_fn, prompt_to_context=prompt_to_context)
 
-        mock_callback_chat_target.assert_called_once_with(
-            callback=callback_fn, prompt_to_context=prompt_to_context
-        )
+        mock_callback_chat_target.assert_called_once_with(callback=callback_fn, prompt_to_context=prompt_to_context)
         assert result == mock_instance
 
     @patch("azure.ai.evaluation.red_team._utils.strategy_utils._CallbackChatTarget")
@@ -213,9 +207,7 @@ class TestChatTargetFunctions:
         assert result == mock_instance
 
     @patch("azure.ai.evaluation.red_team._utils.strategy_utils._CallbackChatTarget")
-    def test_get_chat_target_simple_function_with_context(
-        self, mock_callback_chat_target
-    ):
+    def test_get_chat_target_simple_function_with_context(self, mock_callback_chat_target):
         """Test getting chat target from a simple function with context mapping."""
         mock_instance = MagicMock()
         mock_callback_chat_target.return_value = mock_instance
@@ -242,9 +234,7 @@ class TestChatTargetFunctions:
             return "Response without context"
 
         prompt_to_context = {"test prompt": "test context"}
-        result = get_chat_target(
-            simple_fn_with_context, prompt_to_context=prompt_to_context
-        )
+        result = get_chat_target(simple_fn_with_context, prompt_to_context=prompt_to_context)
 
         # Verify we get a callback target
         assert isinstance(result, _CallbackChatTarget)
@@ -280,7 +270,5 @@ class TestOrchestratorFunctions:
         mock_prompts = ["test prompt"]
         mock_converter = MagicMock()
 
-        result = orchestrators[0](
-            mock_chat_target, mock_prompts, mock_converter, "test-strategy", "test-risk"
-        )
+        result = orchestrators[0](mock_chat_target, mock_prompts, mock_converter, "test-strategy", "test-risk")
         assert result is None

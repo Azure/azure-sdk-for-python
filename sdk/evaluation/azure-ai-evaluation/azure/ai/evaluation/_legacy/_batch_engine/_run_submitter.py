@@ -80,19 +80,13 @@ class RunSubmitter:
             # unnecessary Flow loading code was removed here. Instead do direct calls to _submit_bulk_run
             await self._submit_bulk_run(run=run, local_storage=local_storage, **kwargs)
 
-        self.stream_run(
-            run=run, storage=local_storage, raise_on_error=self._config.raise_on_error
-        )
+        self.stream_run(run=run, storage=local_storage, raise_on_error=self._config.raise_on_error)
         return run
 
-    async def _submit_bulk_run(
-        self, run: Run, local_storage: AbstractRunStorage, **kwargs
-    ) -> None:
+    async def _submit_bulk_run(self, run: Run, local_storage: AbstractRunStorage, **kwargs) -> None:
         logger = self._config.logger
 
-        logger.info(
-            f"Submitting run {run.name}, log path: {local_storage.logger.file_path}"
-        )
+        logger.info(f"Submitting run {run.name}, log path: {local_storage.logger.file_path}")
 
         # Old code loaded the Flex flow, parsed input and outputs types. That logic has been
         # removed since it is unnecessary. It also parsed and set environment variables. This
@@ -136,16 +130,12 @@ class RunSubmitter:
                 executor=self._executor,
             )
 
-            batch_result = await batch_engine.run(
-                data=run.inputs, column_mapping=run.column_mapping, id=run.name
-            )
+            batch_result = await batch_engine.run(data=run.inputs, column_mapping=run.column_mapping, id=run.name)
             run._status = RunStatus.from_batch_result_status(batch_result.status)
 
             error_logs: Sequence[str] = []
             if run._status != RunStatus.COMPLETED:
-                error_logs.append(
-                    f"Run {run.name} failed with status {batch_result.status}."
-                )
+                error_logs.append(f"Run {run.name} failed with status {batch_result.status}.")
                 if batch_result.error:
                     error_logs.append(f"Error: {str(batch_result.error)}")
 
@@ -154,9 +144,7 @@ class RunSubmitter:
         except Exception as e:
             run._status = RunStatus.FAILED
             # when run failed in executor, store the exception in result and dump to file
-            logger.warning(
-                f"Run {run.name} failed when executing in executor with exception {e}."
-            )
+            logger.warning(f"Run {run.name} failed when executing in executor with exception {e}.")
             # for user error, swallow stack trace and return failed run since user don't need the stack trace
             if not isinstance(e, BatchEngineValidationError):
                 # for other errors, raise it to user to help debug root cause.
@@ -186,9 +174,7 @@ class RunSubmitter:
     @staticmethod
     def _validate_inputs(run: Run):
         if not run.inputs and not run.previous_run:
-            raise BatchEngineValidationError(
-                "Either data, or a previous run must be specified for the evaluation run."
-            )
+            raise BatchEngineValidationError("Either data, or a previous run must be specified for the evaluation run.")
 
     @staticmethod
     def _validate_column_mapping(column_mapping: Optional[Mapping[str, str]]):
@@ -196,13 +182,9 @@ class RunSubmitter:
             return
 
         if not isinstance(column_mapping, Mapping):
-            raise BatchEngineValidationError(
-                f"Column mapping must be a dict, got {type(column_mapping)}."
-            )
+            raise BatchEngineValidationError(f"Column mapping must be a dict, got {type(column_mapping)}.")
 
-        has_mapping = any(
-            [isinstance(v, str) and v.startswith("$") for v in column_mapping.values()]
-        )
+        has_mapping = any([isinstance(v, str) and v.startswith("$") for v in column_mapping.values()])
         if not has_mapping:
             raise BatchEngineValidationError(
                 "Column mapping must contain at least one mapping binding, "

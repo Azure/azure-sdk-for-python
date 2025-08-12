@@ -23,16 +23,12 @@ def async_callback():
 
 @pytest.mark.unittest
 class TestSimulator:
-    @patch(
-        "azure.ai.evaluation.simulator._model_tools._rai_client.RAIClient._get_service_discovery_url"
-    )
+    @patch("azure.ai.evaluation.simulator._model_tools._rai_client.RAIClient._get_service_discovery_url")
     @patch(
         "azure.ai.evaluation.simulator._model_tools.AdversarialTemplateHandler._get_content_harm_template_collections"
     )
     @patch("azure.ai.evaluation.simulator.AdversarialSimulator._simulate_async")
-    @patch(
-        "azure.ai.evaluation.simulator.AdversarialSimulator._ensure_service_dependencies"
-    )
+    @patch("azure.ai.evaluation.simulator.AdversarialSimulator._ensure_service_dependencies")
     def test_initialization_with_all_valid_scenarios(
         self,
         mock_ensure_service_dependencies,
@@ -68,15 +64,11 @@ class TestSimulator:
             AdversarialScenario.ADVERSARIAL_CONTENT_GEN_GROUNDED,
         ]
         for scenario in available_scenarios:
-            simulator = AdversarialSimulator(
-                azure_ai_project=azure_ai_project, credential=azure_cred
-            )
+            simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
             assert callable(simulator)
             # simulator(scenario=scenario, max_conversation_turns=1, max_simulation_results=3, target=async_callback)
 
-    @patch(
-        "azure.ai.evaluation.simulator._model_tools._rai_client.RAIClient._get_service_discovery_url"
-    )
+    @patch("azure.ai.evaluation.simulator._model_tools._rai_client.RAIClient._get_service_discovery_url")
     @patch(
         "azure.ai.evaluation.simulator._model_tools.AdversarialTemplateHandler._get_content_harm_template_collections"
     )
@@ -97,9 +89,7 @@ class TestSimulator:
         async def callback(x):
             return x
 
-        simulator = AdversarialSimulator(
-            azure_ai_project=azure_ai_project, credential=azure_cred
-        )
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
         with pytest.raises(EvaluationException):
             outputs = asyncio.run(
                 simulator(
@@ -110,16 +100,12 @@ class TestSimulator:
                 )
             )
 
-    @patch(
-        "azure.ai.evaluation.simulator._model_tools._rai_client.RAIClient._get_service_discovery_url"
-    )
+    @patch("azure.ai.evaluation.simulator._model_tools._rai_client.RAIClient._get_service_discovery_url")
     @patch(
         "azure.ai.evaluation.simulator._model_tools.AdversarialTemplateHandler._get_content_harm_template_collections"
     )
     @patch("azure.ai.evaluation.simulator.AdversarialSimulator._simulate_async")
-    @patch(
-        "azure.ai.evaluation.simulator.AdversarialSimulator._ensure_service_dependencies"
-    )
+    @patch("azure.ai.evaluation.simulator.AdversarialSimulator._ensure_service_dependencies")
     def test_initialization_parity_with_evals(
         self,
         mock_ensure_service_dependencies,
@@ -154,8 +140,6 @@ class TestSimulator:
             AdversarialScenario.ADVERSARIAL_CONTENT_GEN_GROUNDED,
         ]
         for scenario in available_scenarios:
-            simulator = AdversarialSimulator(
-                azure_ai_project=azure_ai_project, credential="test_credential"
-            )
+            simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential="test_credential")
             assert callable(simulator)
             # simulator(scenario=scenario, max_conversation_turns=1, max_simulation_results=3, target=async_callback)

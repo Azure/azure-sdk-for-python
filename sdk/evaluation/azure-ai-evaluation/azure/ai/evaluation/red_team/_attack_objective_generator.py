@@ -73,18 +73,14 @@ class _AttackObjectiveGenerator:
 
         # Convert to absolute path if it's a relative path
         if not custom_prompts_path.is_absolute():
-            self.logger.info(
-                f"Converting relative path '{custom_prompts_path}' to absolute path"
-            )
+            self.logger.info(f"Converting relative path '{custom_prompts_path}' to absolute path")
             custom_prompts_path = Path.cwd() / custom_prompts_path
 
         self.logger.debug(f"Using absolute path: {custom_prompts_path}")
 
         # Check if the file exists
         if not custom_prompts_path.exists():
-            raise ValueError(
-                f"Custom attack seed prompts file not found: {custom_prompts_path}"
-            )
+            raise ValueError(f"Custom attack seed prompts file not found: {custom_prompts_path}")
 
         try:
             # Load JSON file
@@ -97,9 +93,7 @@ class _AttackObjectiveGenerator:
                     f"Custom attack seed prompts must be a JSON array, got {type(self.custom_prompts)}, see https://aka.ms/airedteamingagent-howtodoc for more information"
                 )
 
-            self.logger.info(
-                f"Loaded {len(self.custom_prompts)} prompts from {self.custom_attack_seed_prompts}"
-            )
+            self.logger.info(f"Loaded {len(self.custom_prompts)} prompts from {self.custom_attack_seed_prompts}")
 
             # Initialize dictionary for categorized prompts
             for risk_category in RiskCategory:
@@ -116,15 +110,11 @@ class _AttackObjectiveGenerator:
                         continue
 
                     if "metadata" not in prompt:
-                        self.logger.warning(
-                            f"Skipping prompt {i}: missing 'metadata' field"
-                        )
+                        self.logger.warning(f"Skipping prompt {i}: missing 'metadata' field")
                         continue
 
                     if "messages" not in prompt or not prompt["messages"]:
-                        self.logger.warning(
-                            f"Skipping prompt {i}: missing or empty 'messages' field"
-                        )
+                        self.logger.warning(f"Skipping prompt {i}: missing or empty 'messages' field")
                         continue
 
                     # Check metadata structure
@@ -220,31 +210,21 @@ class _AttackObjectiveGenerator:
                     "No valid prompts found in custom attack seed prompts file. See https://aka.ms/airedteamingagent-howtodoc for more information"
                 )
 
-            self.logger.info(
-                f"Loaded {valid_prompts_count} valid prompts from custom attack seed prompts file"
-            )
+            self.logger.info(f"Loaded {valid_prompts_count} valid prompts from custom attack seed prompts file")
 
             if invalid_prompts_count > 0:
                 self.logger.warning(f"Skipped {invalid_prompts_count} invalid prompts")
 
             # Log the breakdown by risk category
             category_counts = {
-                cat: len(prompts)
-                for cat, prompts in self.valid_prompts_by_category.items()
-                if len(prompts) > 0
+                cat: len(prompts) for cat, prompts in self.valid_prompts_by_category.items() if len(prompts) > 0
             }
             self.logger.info(f"Prompt distribution by risk category: {category_counts}")
 
             # Automatically extract risk categories from valid prompts if not provided
             if not self.risk_categories:
-                categories_with_prompts = [
-                    cat
-                    for cat, prompts in self.valid_prompts_by_category.items()
-                    if prompts
-                ]
-                self.risk_categories = [
-                    RiskCategory(cat) for cat in categories_with_prompts
-                ]
+                categories_with_prompts = [cat for cat, prompts in self.valid_prompts_by_category.items() if prompts]
+                self.risk_categories = [RiskCategory(cat) for cat in categories_with_prompts]
                 self.logger.info(
                     f"Automatically set risk categories based on valid prompts: {[cat.value for cat in self.risk_categories]}"
                 )

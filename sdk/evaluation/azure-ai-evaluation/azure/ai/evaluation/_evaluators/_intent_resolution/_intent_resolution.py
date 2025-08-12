@@ -73,9 +73,7 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(
-        self, model_config, *, threshold=_DEFAULT_INTENT_RESOLUTION_THRESHOLD, **kwargs
-    ):
+    def __init__(self, model_config, *, threshold=_DEFAULT_INTENT_RESOLUTION_THRESHOLD, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold
@@ -186,7 +184,5 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             return response_dict
         # If llm_output is not a dictionary, return NaN for the score. This should never happen
         if logger:
-            logger.warning(
-                "LLM output is not a dictionary, returning NaN for the score."
-            )
+            logger.warning("LLM output is not a dictionary, returning NaN for the score.")
         return {self._result_key: math.nan}

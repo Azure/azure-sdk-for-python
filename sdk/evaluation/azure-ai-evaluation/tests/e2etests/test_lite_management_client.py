@@ -5,9 +5,7 @@ from azure.core.credentials import AzureSasCredential, TokenCredential, AccessTo
 from azure.ai.evaluation._azure._clients import LiteMLClient
 
 
-@pytest.mark.usefixtures(
-    "model_config", "project_scope", "recording_injection", "recorded_test"
-)
+@pytest.mark.usefixtures("model_config", "project_scope", "recording_injection", "recorded_test")
 class TestLiteAzureManagementClient(object):
     """End to end tests for the lite Azure management client."""
 
@@ -67,14 +65,8 @@ class TestLiteAzureManagementClient(object):
         if include_credentials:
             assert (
                 (config_name == "account_key" and isinstance(store.credential, str))
-                or (
-                    config_name == "sas"
-                    and isinstance(store.credential, AzureSasCredential)
-                )
-                or (
-                    config_name == "none"
-                    and isinstance(store.credential, TokenCredential)
-                )
+                or (config_name == "sas" and isinstance(store.credential, AzureSasCredential))
+                or (config_name == "none" and isinstance(store.credential, TokenCredential))
             )
         else:
             assert store.credential == None

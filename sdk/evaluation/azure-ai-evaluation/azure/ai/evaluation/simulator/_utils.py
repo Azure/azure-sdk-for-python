@@ -140,11 +140,6 @@ class JsonLineChatProtocol(dict):
                     )
                     user_message = assistant_message = None
                 else:
-                    json_lines += (
-                        json.dumps(
-                            {"query": user_message, "response": assistant_message}
-                        )
-                        + "\n"
-                    )
+                    json_lines += json.dumps({"query": user_message, "response": assistant_message}) + "\n"
                     user_message = assistant_message = None
         return json_lines

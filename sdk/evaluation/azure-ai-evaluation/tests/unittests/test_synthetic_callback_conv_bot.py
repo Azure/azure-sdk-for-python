@@ -51,9 +51,7 @@ class TestCallbackConversationBot:
         session = AsyncMock()  # Mock any external session or client if needed
 
         # Call generate_response and verify the result
-        response, _, time_taken, result = await bot.generate_response(
-            session, conversation_history, max_history=10
-        )
+        response, _, time_taken, result = await bot.generate_response(session, conversation_history, max_history=10)
 
         assert response["samples"][0] == "Test response"
         assert "stop" in response["finish_reason"]
@@ -82,9 +80,7 @@ class TestCallbackConversationBot:
         session = AsyncMock()  # Mock any external session or client if needed
 
         # Call generate_response and verify the result
-        response, _, time_taken, result = await bot.generate_response(
-            session, conversation_history, max_history=10
-        )
+        response, _, time_taken, result = await bot.generate_response(session, conversation_history, max_history=10)
 
         assert response["samples"][0] == "Callback did not return a response."
         assert "stop" in response["finish_reason"]

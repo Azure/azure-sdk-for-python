@@ -45,9 +45,7 @@ from ._utils.logging_utils import log_strategy_start, log_error
 from ._utils.formatting_utils import write_pyrit_outputs_to_file
 
 
-def network_retry_decorator(
-    retry_config, logger, strategy_name, risk_category_name, prompt_idx=None
-):
+def network_retry_decorator(retry_config, logger, strategy_name, risk_category_name, prompt_idx=None):
     """Create a reusable retry decorator for network operations.
 
     :param retry_config: Retry configuration dictionary
@@ -75,9 +73,7 @@ def network_retry_decorator(
                 httpcore.ReadTimeout,
                 httpx.HTTPStatusError,
             ) as e:
-                prompt_detail = (
-                    f" for prompt {prompt_idx}" if prompt_idx is not None else ""
-                )
+                prompt_detail = f" for prompt {prompt_idx}" if prompt_idx is not None else ""
                 logger.warning(
                     f"Network error{prompt_detail} for {strategy_name}/{risk_category_name}: {type(e).__name__}: {str(e)}"
                 )
@@ -157,16 +153,9 @@ class OrchestratorManager:
         :rtype: Callable
         """
         if isinstance(attack_strategy, list):
-            if (
-                AttackStrategy.MultiTurn in attack_strategy
-                or AttackStrategy.Crescendo in attack_strategy
-            ):
-                self.logger.error(
-                    "MultiTurn and Crescendo strategies are not supported in composed attacks."
-                )
-                raise ValueError(
-                    "MultiTurn and Crescendo strategies are not supported in composed attacks."
-                )
+            if AttackStrategy.MultiTurn in attack_strategy or AttackStrategy.Crescendo in attack_strategy:
+                self.logger.error("MultiTurn and Crescendo strategies are not supported in composed attacks.")
+                raise ValueError("MultiTurn and Crescendo strategies are not supported in composed attacks.")
         elif AttackStrategy.MultiTurn == attack_strategy:
             return self._multi_turn_orchestrator
         elif AttackStrategy.Crescendo == attack_strategy:
@@ -218,17 +207,13 @@ class OrchestratorManager:
 
         # Create converter list from single converter or list of converters
         converter_list = (
-            [converter]
-            if converter and isinstance(converter, PromptConverter)
-            else converter if converter else []
+            [converter] if converter and isinstance(converter, PromptConverter) else converter if converter else []
         )
 
         # Log which converter is being used
         if converter_list:
             if isinstance(converter_list, list) and len(converter_list) > 0:
-                converter_names = [
-                    c.__class__.__name__ for c in converter_list if c is not None
-                ]
+                converter_names = [c.__class__.__name__ for c in converter_list if c is not None]
                 self.logger.debug(f"Using converters: {', '.join(converter_names)}")
             elif converter is not None:
                 self.logger.debug(f"Using converter: {converter.__class__.__name__}")
@@ -237,14 +222,10 @@ class OrchestratorManager:
 
         # Initialize orchestrator
         try:
-            orchestrator = PromptSendingOrchestrator(
-                objective_target=chat_target, prompt_converters=converter_list
-            )
+            orchestrator = PromptSendingOrchestrator(objective_target=chat_target, prompt_converters=converter_list)
 
             if not all_prompts:
-                self.logger.warning(
-                    f"No prompts provided to orchestrator for {strategy_name}/{risk_category_name}"
-                )
+                self.logger.warning(f"No prompts provided to orchestrator for {strategy_name}/{risk_category_name}")
                 if task_statuses:
                     task_statuses[task_key] = TASK_STATUS["COMPLETED"]
                 return orchestrator
@@ -254,21 +235,15 @@ class OrchestratorManager:
 
             # If scan output directory exists, place the file there
             if self.scan_output_dir:
-                output_path = os.path.join(
-                    self.scan_output_dir, f"{base_path}{DATA_EXT}"
-                )
+                output_path = os.path.join(self.scan_output_dir, f"{base_path}{DATA_EXT}")
             else:
                 output_path = f"{base_path}{DATA_EXT}"
 
             if red_team_info:
-                red_team_info[strategy_name][risk_category_name][
-                    "data_file"
-                ] = output_path
+                red_team_info[strategy_name][risk_category_name]["data_file"] = output_path
 
             # Process all prompts at once
-            self.logger.debug(
-                f"Processing {len(all_prompts)} prompts for {strategy_name}/{risk_category_name}"
-            )
+            self.logger.debug(f"Processing {len(all_prompts)} prompts for {strategy_name}/{risk_category_name}")
             start_time = datetime.now()
 
             # Calculate appropriate timeout for single-turn orchestrator
@@ -276,9 +251,7 @@ class OrchestratorManager:
 
             try:
                 # Create retry-enabled function using the reusable decorator
-                @network_retry_decorator(
-                    self.retry_config, self.logger, strategy_name, risk_category_name
-                )
+                @network_retry_decorator(self.retry_config, self.logger, strategy_name, risk_category_name)
                 async def send_all_with_retry():
                     return await asyncio.wait_for(
                         orchestrator.send_prompts_async(
@@ -305,9 +278,7 @@ class OrchestratorManager:
                 if task_statuses:
                     task_statuses[task_key] = TASK_STATUS["TIMEOUT"]
                 if red_team_info:
-                    red_team_info[strategy_name][risk_category_name]["status"] = (
-                        TASK_STATUS["INCOMPLETE"]
-                    )
+                    red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
             except Exception as e:
                 log_error(
                     self.logger,
@@ -316,9 +287,7 @@ class OrchestratorManager:
                     f"{strategy_name}/{risk_category_name}",
                 )
                 if red_team_info:
-                    red_team_info[strategy_name][risk_category_name]["status"] = (
-                        TASK_STATUS["INCOMPLETE"]
-                    )
+                    red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
 
             if task_statuses:
                 task_statuses[task_key] = TASK_STATUS["COMPLETED"]
@@ -389,9 +358,7 @@ class OrchestratorManager:
         # Log which converter is being used
         if converter_list:
             if isinstance(converter_list, list) and len(converter_list) > 0:
-                converter_names = [
-                    c.__class__.__name__ for c in converter_list if c is not None
-                ]
+                converter_names = [c.__class__.__name__ for c in converter_list if c is not None]
                 self.logger.debug(f"Using converters: {', '.join(converter_names)}")
             elif converter is not None:
                 self.logger.debug(f"Using converter: {converter.__class__.__name__}")
@@ -474,9 +441,7 @@ class OrchestratorManager:
 
                     # Execute the retry-enabled function
                     await send_prompt_with_retry()
-                    prompt_duration = (
-                        datetime.now() - prompt_start_time
-                    ).total_seconds()
+                    prompt_duration = (datetime.now() - prompt_start_time).total_seconds()
                     self.logger.debug(
                         f"Successfully processed prompt {prompt_idx+1} for {strategy_name}/{risk_category_name} in {prompt_duration:.2f} seconds"
                     )
@@ -489,9 +454,7 @@ class OrchestratorManager:
                     )
 
                     # Print progress to console
-                    if (
-                        prompt_idx < len(all_prompts) - 1
-                    ):  # Don't print for the last prompt
+                    if prompt_idx < len(all_prompts) - 1:  # Don't print for the last prompt
                         print(
                             f"Strategy {strategy_name}, Risk {risk_category_name}: Processed prompt {prompt_idx+1}/{len(all_prompts)}"
                         )
@@ -500,19 +463,13 @@ class OrchestratorManager:
                     self.logger.warning(
                         f"Batch {prompt_idx+1} for {strategy_name}/{risk_category_name} timed out after {calculated_timeout} seconds, continuing with partial results"
                     )
-                    print(
-                        f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category_name}, Batch {prompt_idx+1}"
-                    )
+                    print(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category_name}, Batch {prompt_idx+1}")
                     # Set task status to TIMEOUT
-                    batch_task_key = (
-                        f"{strategy_name}_{risk_category_name}_prompt_{prompt_idx+1}"
-                    )
+                    batch_task_key = f"{strategy_name}_{risk_category_name}_prompt_{prompt_idx+1}"
                     if task_statuses:
                         task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
                     if red_team_info:
-                        red_team_info[strategy_name][risk_category_name]["status"] = (
-                            TASK_STATUS["INCOMPLETE"]
-                        )
+                        red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
                     continue
                 except Exception as e:
                     log_error(
@@ -522,9 +479,7 @@ class OrchestratorManager:
                         f"{strategy_name}/{risk_category_name}",
                     )
                     if red_team_info:
-                        red_team_info[strategy_name][risk_category_name]["status"] = (
-                            TASK_STATUS["INCOMPLETE"]
-                        )
+                        red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
                     continue
             except Exception as e:
                 log_error(
@@ -667,9 +622,7 @@ class OrchestratorManager:
 
                     # Execute the retry-enabled function
                     await send_prompt_with_retry()
-                    prompt_duration = (
-                        datetime.now() - prompt_start_time
-                    ).total_seconds()
+                    prompt_duration = (datetime.now() - prompt_start_time).total_seconds()
                     self.logger.debug(
                         f"Successfully processed prompt {prompt_idx+1} for {strategy_name}/{risk_category_name} in {prompt_duration:.2f} seconds"
                     )
@@ -682,9 +635,7 @@ class OrchestratorManager:
                     )
 
                     # Print progress to console
-                    if (
-                        prompt_idx < len(all_prompts) - 1
-                    ):  # Don't print for the last prompt
+                    if prompt_idx < len(all_prompts) - 1:  # Don't print for the last prompt
                         print(
                             f"Strategy {strategy_name}, Risk {risk_category_name}: Processed prompt {prompt_idx+1}/{len(all_prompts)}"
                         )
@@ -693,19 +644,13 @@ class OrchestratorManager:
                     self.logger.warning(
                         f"Batch {prompt_idx+1} for {strategy_name}/{risk_category_name} timed out after {calculated_timeout} seconds, continuing with partial results"
                     )
-                    print(
-                        f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category_name}, Batch {prompt_idx+1}"
-                    )
+                    print(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category_name}, Batch {prompt_idx+1}")
                     # Set task status to TIMEOUT
-                    batch_task_key = (
-                        f"{strategy_name}_{risk_category_name}_prompt_{prompt_idx+1}"
-                    )
+                    batch_task_key = f"{strategy_name}_{risk_category_name}_prompt_{prompt_idx+1}"
                     if task_statuses:
                         task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
                     if red_team_info:
-                        red_team_info[strategy_name][risk_category_name]["status"] = (
-                            TASK_STATUS["INCOMPLETE"]
-                        )
+                        red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
                     continue
                 except Exception as e:
                     log_error(
@@ -715,9 +660,7 @@ class OrchestratorManager:
                         f"{strategy_name}/{risk_category_name}",
                     )
                     if red_team_info:
-                        red_team_info[strategy_name][risk_category_name]["status"] = (
-                            TASK_STATUS["INCOMPLETE"]
-                        )
+                        red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
                     continue
             except Exception as e:
                 log_error(

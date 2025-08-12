@@ -93,12 +93,9 @@ class MLflowIntegration:
             )
 
         if self._one_dp_project:
-            response = (
-                self.generated_rai_client._evaluation_onedp_client.start_red_team_run(
-                    red_team=RedTeamUpload(
-                        display_name=run_name
-                        or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
-                    )
+            response = self.generated_rai_client._evaluation_onedp_client.start_red_team_run(
+                red_team=RedTeamUpload(
+                    display_name=run_name or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
                 )
             )
 
@@ -108,9 +105,7 @@ class MLflowIntegration:
         else:
             trace_destination = _trace_destination_from_project_scope(azure_ai_project)
             if not trace_destination:
-                self.logger.warning(
-                    "Could not determine trace destination from project scope"
-                )
+                self.logger.warning("Could not determine trace destination from project scope")
                 raise EvaluationException(
                     message="Could not determine trace destination",
                     blame=ErrorBlame.SYSTEM_ERROR,
@@ -127,13 +122,9 @@ class MLflowIntegration:
                 credential=azure_ai_project.get("credential"),
             )
 
-            tracking_uri = management_client.workspace_get_info(
-                ws_triad.workspace_name
-            ).ml_flow_tracking_uri
+            tracking_uri = management_client.workspace_get_info(ws_triad.workspace_name).ml_flow_tracking_uri
 
-            run_display_name = (
-                run_name or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
-            )
+            run_display_name = run_name or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
             self.logger.debug(f"Starting MLFlow run with name: {run_display_name}")
             eval_run = EvalRun(
                 run_name=run_display_name,
@@ -144,9 +135,7 @@ class MLflowIntegration:
                 management_client=management_client,
             )
             eval_run._start_run()
-            self.logger.debug(
-                f"MLFlow run started successfully with ID: {eval_run.info.run_id}"
-            )
+            self.logger.debug(f"MLFlow run started successfully with ID: {eval_run.info.run_id}")
 
             self.trace_destination = trace_destination
             self.logger.debug(f"MLFlow run created successfully with ID: {eval_run}")
@@ -186,53 +175,35 @@ class MLflowIntegration:
         with tempfile.TemporaryDirectory() as tmpdir:
             if self.scan_output_dir:
                 artifact_path = os.path.join(self.scan_output_dir, artifact_name)
-                self.logger.debug(
-                    f"Saving artifact to scan output directory: {artifact_path}"
-                )
+                self.logger.debug(f"Saving artifact to scan output directory: {artifact_path}")
                 with open(artifact_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
                     if _skip_evals:
                         # In _skip_evals mode, we write the conversations in conversation/messages format
-                        f.write(
-                            json.dumps(
-                                {"conversations": redteam_result.attack_details or []}
-                            )
-                        )
+                        f.write(json.dumps({"conversations": redteam_result.attack_details or []}))
                     elif redteam_result.scan_result:
                         # Create a copy to avoid modifying the original scan result
                         result_with_conversations = (
-                            redteam_result.scan_result.copy()
-                            if isinstance(redteam_result.scan_result, dict)
-                            else {}
+                            redteam_result.scan_result.copy() if isinstance(redteam_result.scan_result, dict) else {}
                         )
 
                         # Preserve all original fields needed for scorecard generation
-                        result_with_conversations["scorecard"] = (
-                            result_with_conversations.get("scorecard", {})
-                        )
-                        result_with_conversations["parameters"] = (
-                            result_with_conversations.get("parameters", {})
-                        )
+                        result_with_conversations["scorecard"] = result_with_conversations.get("scorecard", {})
+                        result_with_conversations["parameters"] = result_with_conversations.get("parameters", {})
 
                         # Add conversations field with all conversation data including user messages
-                        result_with_conversations["conversations"] = (
-                            redteam_result.attack_details or []
-                        )
+                        result_with_conversations["conversations"] = redteam_result.attack_details or []
 
                         # Keep original attack_details field to preserve compatibility with existing code
                         if (
                             "attack_details" not in result_with_conversations
                             and redteam_result.attack_details is not None
                         ):
-                            result_with_conversations["attack_details"] = (
-                                redteam_result.attack_details
-                            )
+                            result_with_conversations["attack_details"] = redteam_result.attack_details
 
                         json.dump(result_with_conversations, f)
 
                 eval_info_path = os.path.join(self.scan_output_dir, eval_info_name)
-                self.logger.debug(
-                    f"Saving evaluation info to scan output directory: {eval_info_path}"
-                )
+                self.logger.debug(f"Saving evaluation info to scan output directory: {eval_info_path}")
                 with open(eval_info_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
                     # Remove evaluation_result from red_team_info before logging
                     red_team_info_logged = {}
@@ -244,18 +215,14 @@ class MLflowIntegration:
                             info_dict_copy.pop("evaluation_result", None)
                             red_team_info_logged[strategy][harm] = info_dict_copy
                     f.write(json.dumps(red_team_info_logged, indent=2))
-                self.logger.debug(
-                    f"Successfully wrote redteam_info.json to: {eval_info_path}"
-                )
+                self.logger.debug(f"Successfully wrote redteam_info.json to: {eval_info_path}")
 
                 # Also save a human-readable scorecard if available
                 if not _skip_evals and redteam_result.scan_result:
                     from ._utils.formatting_utils import format_scorecard
 
                     scorecard_path = os.path.join(self.scan_output_dir, "scorecard.txt")
-                    with open(
-                        scorecard_path, "w", encoding=DefaultOpenEncoding.WRITE
-                    ) as f:
+                    with open(scorecard_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
                         f.write(format_scorecard(redteam_result.scan_result))
                     self.logger.debug(f"Saved scorecard to: {scorecard_path}")
 
@@ -267,11 +234,7 @@ class MLflowIntegration:
                     encoding=DefaultOpenEncoding.WRITE,
                 ) as f:
                     if _skip_evals:
-                        f.write(
-                            json.dumps(
-                                {"conversations": redteam_result.attack_details or []}
-                            )
-                        )
+                        f.write(json.dumps({"conversations": redteam_result.attack_details or []}))
                     elif redteam_result.scan_result:
                         json.dump(redteam_result.scan_result, f)
 
@@ -295,9 +258,7 @@ class MLflowIntegration:
                         shutil.copy(file_path, os.path.join(tmpdir, file))
                         self.logger.debug(f"Copied file to artifact directory: {file}")
                     except Exception as e:
-                        self.logger.warning(
-                            f"Failed to copy file {file} to artifact directory: {str(e)}"
-                        )
+                        self.logger.warning(f"Failed to copy file {file} to artifact directory: {str(e)}")
 
                 properties.update({"scan_output_dir": str(self.scan_output_dir)})
             else:
@@ -305,11 +266,7 @@ class MLflowIntegration:
                 artifact_file = Path(tmpdir) / artifact_name
                 with open(artifact_file, "w", encoding=DefaultOpenEncoding.WRITE) as f:
                     if _skip_evals:
-                        f.write(
-                            json.dumps(
-                                {"conversations": redteam_result.attack_details or []}
-                            )
-                        )
+                        f.write(json.dumps({"conversations": redteam_result.attack_details or []}))
                     elif redteam_result.scan_result:
                         json.dump(redteam_result.scan_result, f)
                 self.logger.debug(f"Logged artifact: {artifact_name}")
@@ -328,25 +285,21 @@ class MLflowIntegration:
 
                 if joint_attack_summary:
                     for risk_category_summary in joint_attack_summary:
-                        risk_category = risk_category_summary.get(
-                            "risk_category"
-                        ).lower()
+                        risk_category = risk_category_summary.get("risk_category").lower()
                         for key, value in risk_category_summary.items():
                             if key != "risk_category":
-                                metrics.update(
-                                    {f"{risk_category}_{key}": cast(float, value)}
-                                )
-                                self.logger.debug(
-                                    f"Logged metric: {risk_category}_{key} = {value}"
-                                )
+                                metrics.update({f"{risk_category}_{key}": cast(float, value)})
+                                self.logger.debug(f"Logged metric: {risk_category}_{key} = {value}")
 
             if self._one_dp_project:
                 try:
-                    create_evaluation_result_response = self.generated_rai_client._evaluation_onedp_client.create_evaluation_result(
-                        name=uuid.uuid4(),
-                        path=tmpdir,
-                        metrics=metrics,
-                        result_type=ResultType.REDTEAM,
+                    create_evaluation_result_response = (
+                        self.generated_rai_client._evaluation_onedp_client.create_evaluation_result(
+                            name=uuid.uuid4(),
+                            path=tmpdir,
+                            metrics=metrics,
+                            result_type=ResultType.REDTEAM,
+                        )
                     )
 
                     update_run_response = self.generated_rai_client._evaluation_onedp_client.update_red_team_run(
@@ -364,22 +317,16 @@ class MLflowIntegration:
                     )
                     self.logger.debug(f"Updated UploadRun: {update_run_response.id}")
                 except Exception as e:
-                    self.logger.warning(
-                        f"Failed to upload red team results to AI Foundry: {str(e)}"
-                    )
+                    self.logger.warning(f"Failed to upload red team results to AI Foundry: {str(e)}")
             else:
                 # Log the entire directory to MLFlow
                 try:
                     eval_run.log_artifact(tmpdir, artifact_name)
                     if self.scan_output_dir:
                         eval_run.log_artifact(tmpdir, eval_info_name)
-                    self.logger.debug(
-                        f"Successfully logged artifacts directory to AI Foundry"
-                    )
+                    self.logger.debug(f"Successfully logged artifacts directory to AI Foundry")
                 except Exception as e:
-                    self.logger.warning(
-                        f"Failed to log artifacts to AI Foundry: {str(e)}"
-                    )
+                    self.logger.warning(f"Failed to log artifacts to AI Foundry: {str(e)}")
 
                 for k, v in metrics.items():
                     eval_run.log_metric(k, v)

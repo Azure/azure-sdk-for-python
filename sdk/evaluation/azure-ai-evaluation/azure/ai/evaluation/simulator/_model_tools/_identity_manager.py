@@ -75,9 +75,7 @@ class APITokenManager(ABC):
             self.logger.info(f"Using DEFAULT_IDENTITY_CLIENT_ID: {identity_client_id}")
             return ManagedIdentityCredential(client_id=identity_client_id)
 
-        self.logger.info(
-            "Environment variable DEFAULT_IDENTITY_CLIENT_ID is not set, using DefaultAzureCredential"
-        )
+        self.logger.info("Environment variable DEFAULT_IDENTITY_CLIENT_ID is not set, using DefaultAzureCredential")
         return DefaultAzureCredential()
 
     @abstractmethod

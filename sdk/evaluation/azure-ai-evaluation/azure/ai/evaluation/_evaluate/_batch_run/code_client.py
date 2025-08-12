@@ -49,21 +49,15 @@ class CodeRun:
         self.aggregated_metrics = aggregator(self)
 
     def get_result_df(self, exclude_inputs: bool = False) -> pd.DataFrame:
-        batch_run_timeout = get_int_env_var(
-            PF_BATCH_TIMEOUT_SEC, PF_BATCH_TIMEOUT_SEC_DEFAULT
-        )
+        batch_run_timeout = get_int_env_var(PF_BATCH_TIMEOUT_SEC, PF_BATCH_TIMEOUT_SEC_DEFAULT)
         result_df = cast(pd.DataFrame, self.run.result(timeout=batch_run_timeout))
         if exclude_inputs:
-            result_df = result_df.drop(
-                columns=[col for col in result_df.columns if col.startswith("inputs.")]
-            )
+            result_df = result_df.drop(columns=[col for col in result_df.columns if col.startswith("inputs.")])
         return result_df
 
     def get_aggregated_metrics(self) -> Dict[str, Any]:
         try:
-            batch_run_timeout = get_int_env_var(
-                PF_BATCH_TIMEOUT_SEC, PF_BATCH_TIMEOUT_SEC_DEFAULT
-            )
+            batch_run_timeout = get_int_env_var(PF_BATCH_TIMEOUT_SEC, PF_BATCH_TIMEOUT_SEC_DEFAULT)
             aggregated_metrics: Optional[Any] = (
                 cast(Dict, self.aggregated_metrics.result(timeout=batch_run_timeout))
                 if self.aggregated_metrics is not None
@@ -83,9 +77,7 @@ class CodeRun:
                 self.evaluator_name,
             )
 
-        aggregated_metrics = (
-            aggregated_metrics if isinstance(aggregated_metrics, dict) else {}
-        )
+        aggregated_metrics = aggregated_metrics if isinstance(aggregated_metrics, dict) else {}
 
         return aggregated_metrics
 
@@ -115,14 +107,8 @@ class CodeClient:  # pylint: disable=client-accepts-api-version-keyword
         for value in cast(Sequence[Dict[str, Any]], input_df.to_dict("records")):
             # Filter out only the parameters that are present in the input data
             # if no parameters then pass data as is
-            filtered_values = (
-                {k: v for k, v in value.items() if k in parameters}
-                if len(parameters) > 0
-                else value
-            )
-            row_metric_futures.append(
-                self._thread_pool.submit(evaluator, **filtered_values)
-            )
+            filtered_values = {k: v for k, v in value.items() if k in parameters} if len(parameters) > 0 else value
+            row_metric_futures.append(self._thread_pool.submit(evaluator, **filtered_values))
 
         for row_number, row_metric_future in enumerate(row_metric_futures):
             try:
@@ -150,15 +136,10 @@ class CodeClient:  # pylint: disable=client-accepts-api-version-keyword
         try:
             if _has_aggregator(evaluator):
                 evaluator_output = run.get_result_df(exclude_inputs=True)
-                if (
-                    len(evaluator_output.columns) == 1
-                    and evaluator_output.columns[0] == "output"
-                ):
+                if len(evaluator_output.columns) == 1 and evaluator_output.columns[0] == "output":
                     aggregate_input = evaluator_output["output"].tolist()
                 else:
-                    aggregate_input = [
-                        AttrDict(item) for item in evaluator_output.to_dict("records")
-                    ]
+                    aggregate_input = [AttrDict(item) for item in evaluator_output.to_dict("records")]
 
                 aggr_func = getattr(evaluator, "__aggregate__")
                 aggregated_output = aggr_func(aggregate_input)
@@ -210,9 +191,7 @@ class CodeClient:  # pylint: disable=client-accepts-api-version-keyword
             ),
         )
 
-    def get_details(
-        self, client_run: BatchClientRun, all_results: bool = False
-    ) -> pd.DataFrame:
+    def get_details(self, client_run: BatchClientRun, all_results: bool = False) -> pd.DataFrame:
         run = self._get_result(client_run)
         result_df = run.get_result_df(exclude_inputs=not all_results)
         return result_df
@@ -232,9 +211,7 @@ class CodeClient:  # pylint: disable=client-accepts-api-version-keyword
             return {}
         return aggregated_metrics
 
-    def get_run_summary(
-        self, client_run: BatchClientRun
-    ) -> Any:  # pylint: disable=unused-argument
+    def get_run_summary(self, client_run: BatchClientRun) -> Any:  # pylint: disable=unused-argument
         # Not implemented
         return None
 

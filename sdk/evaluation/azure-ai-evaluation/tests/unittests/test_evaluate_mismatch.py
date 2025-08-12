@@ -144,10 +144,7 @@ class TestTargetFailureHandling:
 
                 # Verify column mapping uses data references instead of run outputs
                 assert "response" in result["column_mapping"]["default"]
-                assert (
-                    result["column_mapping"]["default"]["response"]
-                    == "${data.__outputs.response}"
-                )
+                assert result["column_mapping"]["default"]["response"] == "${data.__outputs.response}"
 
     @patch("azure.ai.evaluation._evaluate._evaluate._apply_target_to_data")
     @patch("azure.ai.evaluation._evaluate._evaluate._validate_and_load_data")
@@ -175,16 +172,11 @@ class TestTargetFailureHandling:
 
         # Verify batch_run_data is the dataframe
         assert isinstance(result["batch_run_data"], pd.DataFrame)
-        assert_frame_equal(
-            result["batch_run_data"], sample_dataframe_with_target_outputs
-        )
+        assert_frame_equal(result["batch_run_data"], sample_dataframe_with_target_outputs)
 
         # Verify column mapping uses data references
         assert "response" in result["column_mapping"]["default"]
-        assert (
-            result["column_mapping"]["default"]["response"]
-            == "${data.__outputs.response}"
-        )
+        assert result["column_mapping"]["default"]["response"] == "${data.__outputs.response}"
 
     @patch("azure.ai.evaluation._evaluate._evaluate.json.dumps")
     @patch("azure.ai.evaluation._evaluate._evaluate.pd.isna")
@@ -203,12 +195,8 @@ class TestTargetFailureHandling:
             mock_file.close = Mock()
             mock_temp_file.return_value = mock_file
 
-            with patch(
-                "azure.ai.evaluation._evaluate._evaluate._apply_target_to_data"
-            ) as mock_apply_target:
-                with patch(
-                    "azure.ai.evaluation._evaluate._evaluate._validate_and_load_data"
-                ) as mock_load_data:
+            with patch("azure.ai.evaluation._evaluate._evaluate._apply_target_to_data") as mock_apply_target:
+                with patch("azure.ai.evaluation._evaluate._evaluate._validate_and_load_data") as mock_load_data:
                     mock_load_data.return_value = pd.DataFrame({"query": ["test"]})
                     mock_apply_target.return_value = (
                         sample_dataframe_with_target_outputs,
@@ -237,15 +225,9 @@ class TestTargetFailureHandling:
                 with patch("os.unlink") as mock_unlink:
                     mock_exists.return_value = True
 
-                    with patch(
-                        "azure.ai.evaluation._evaluate._evaluate._apply_target_to_data"
-                    ) as mock_apply_target:
-                        with patch(
-                            "azure.ai.evaluation._evaluate._evaluate._validate_and_load_data"
-                        ) as mock_load_data:
-                            mock_load_data.return_value = pd.DataFrame(
-                                {"query": ["test"]}
-                            )
+                    with patch("azure.ai.evaluation._evaluate._evaluate._apply_target_to_data") as mock_apply_target:
+                        with patch("azure.ai.evaluation._evaluate._evaluate._validate_and_load_data") as mock_load_data:
+                            mock_load_data.return_value = pd.DataFrame({"query": ["test"]})
                             mock_apply_target.return_value = (
                                 pd.DataFrame(
                                     {
@@ -258,23 +240,17 @@ class TestTargetFailureHandling:
                             )
 
                             # Mock json.dumps to raise an exception
-                            with patch(
-                                "json.dumps", side_effect=Exception("JSON error")
-                            ):
+                            with patch("json.dumps", side_effect=Exception("JSON error")):
                                 with pytest.raises(Exception):
                                     _preprocess_data(
                                         data="/test/path.jsonl",
-                                        evaluators_and_graders={
-                                            "test_eval": _simple_evaluator
-                                        },
+                                        evaluators_and_graders={"test_eval": _simple_evaluator},
                                         target=_target_with_failures,
                                         _use_pf_client=True,
                                     )
 
                                 # Verify cleanup was attempted
-                                mock_unlink.assert_called_once_with(
-                                    "/tmp/test_temp_file.jsonl"
-                                )
+                                mock_unlink.assert_called_once_with("/tmp/test_temp_file.jsonl")
 
     @patch("azure.ai.evaluation._evaluate._evaluate.EvalRunContext")
     def test_run_callable_evaluators_temp_file_cleanup(self, mock_eval_context):
@@ -284,9 +260,7 @@ class TestTargetFailureHandling:
         validated_data = ValidatedData(
             evaluators={"test_eval": _simple_evaluator},
             graders={},
-            input_data_df=pd.DataFrame(
-                {"query": ["test"], "__outputs.response": ["response"]}
-            ),
+            input_data_df=pd.DataFrame({"query": ["test"], "__outputs.response": ["response"]}),
             column_mapping={"default": {"response": "${data.__outputs.response}"}},
             target_run=None,
             batch_run_client=Mock(spec=ProxyClient),
@@ -296,9 +270,7 @@ class TestTargetFailureHandling:
         # Mock the batch client run methods
         mock_run = Mock()
         validated_data["batch_run_client"].run.return_value = mock_run
-        validated_data["batch_run_client"].get_details.return_value = pd.DataFrame(
-            {"outputs.test_eval.score": [10]}
-        )
+        validated_data["batch_run_client"].get_details.return_value = pd.DataFrame({"outputs.test_eval.score": [10]})
         validated_data["batch_run_client"].get_metrics.return_value = {}
         validated_data["batch_run_client"].get_run_summary.return_value = {
             "failed_lines": 0,
@@ -317,18 +289,14 @@ class TestTargetFailureHandling:
                     mock_unlink.assert_called_once_with(temp_file_path)
 
     @patch("azure.ai.evaluation._evaluate._evaluate.EvalRunContext")
-    def test_run_callable_evaluators_no_cleanup_for_non_temp_files(
-        self, mock_eval_context
-    ):
+    def test_run_callable_evaluators_no_cleanup_for_non_temp_files(self, mock_eval_context):
         """Test that _run_callable_evaluators doesn't clean up non-temp files."""
         # Create mock validated data with regular file (not in temp directory)
         regular_file_path = "/data/test_eval.jsonl"
         validated_data = ValidatedData(
             evaluators={"test_eval": _simple_evaluator},
             graders={},
-            input_data_df=pd.DataFrame(
-                {"query": ["test"], "__outputs.response": ["response"]}
-            ),
+            input_data_df=pd.DataFrame({"query": ["test"], "__outputs.response": ["response"]}),
             column_mapping={"default": {"response": "${data.__outputs.response}"}},
             target_run=None,
             batch_run_client=Mock(spec=ProxyClient),
@@ -338,9 +306,7 @@ class TestTargetFailureHandling:
         # Mock the batch client run methods
         mock_run = Mock()
         validated_data["batch_run_client"].run.return_value = mock_run
-        validated_data["batch_run_client"].get_details.return_value = pd.DataFrame(
-            {"outputs.test_eval.score": [10]}
-        )
+        validated_data["batch_run_client"].get_details.return_value = pd.DataFrame({"outputs.test_eval.score": [10]})
         validated_data["batch_run_client"].get_metrics.return_value = {}
         validated_data["batch_run_client"].get_run_summary.return_value = {
             "failed_lines": 0,
@@ -357,17 +323,11 @@ class TestTargetFailureHandling:
 
     def test_column_mapping_uses_data_reference_for_proxy_client_with_target(self):
         """Test that column mapping uses ${data.__outputs.column} for ProxyClient with target failures."""
-        with patch(
-            "azure.ai.evaluation._evaluate._evaluate._apply_target_to_data"
-        ) as mock_apply_target:
-            with patch(
-                "azure.ai.evaluation._evaluate._evaluate._validate_and_load_data"
-            ) as mock_load_data:
+        with patch("azure.ai.evaluation._evaluate._evaluate._apply_target_to_data") as mock_apply_target:
+            with patch("azure.ai.evaluation._evaluate._evaluate._validate_and_load_data") as mock_load_data:
                 mock_load_data.return_value = pd.DataFrame({"query": ["test"]})
                 mock_apply_target.return_value = (
-                    pd.DataFrame(
-                        {"query": ["test"], "__outputs.response": ["response"]}
-                    ),
+                    pd.DataFrame({"query": ["test"], "__outputs.response": ["response"]}),
                     {"response"},
                     Mock(),
                 )
@@ -387,24 +347,15 @@ class TestTargetFailureHandling:
                         )
 
                         # Verify column mapping uses data reference
-                        assert (
-                            result["column_mapping"]["default"]["response"]
-                            == "${data.__outputs.response}"
-                        )
+                        assert result["column_mapping"]["default"]["response"] == "${data.__outputs.response}"
 
     def test_column_mapping_uses_data_reference_for_dataframe_clients_with_target(self):
         """Test that column mapping uses ${data.__outputs.column} for DataFrame clients with target."""
-        with patch(
-            "azure.ai.evaluation._evaluate._evaluate._apply_target_to_data"
-        ) as mock_apply_target:
-            with patch(
-                "azure.ai.evaluation._evaluate._evaluate._validate_and_load_data"
-            ) as mock_load_data:
+        with patch("azure.ai.evaluation._evaluate._evaluate._apply_target_to_data") as mock_apply_target:
+            with patch("azure.ai.evaluation._evaluate._evaluate._validate_and_load_data") as mock_load_data:
                 mock_load_data.return_value = pd.DataFrame({"query": ["test"]})
                 mock_apply_target.return_value = (
-                    pd.DataFrame(
-                        {"query": ["test"], "__outputs.response": ["response"]}
-                    ),
+                    pd.DataFrame({"query": ["test"], "__outputs.response": ["response"]}),
                     {"response"},
                     Mock(),
                 )
@@ -417,22 +368,15 @@ class TestTargetFailureHandling:
                 )
 
                 # Verify column mapping uses data reference
-                assert (
-                    result["column_mapping"]["default"]["response"]
-                    == "${data.__outputs.response}"
-                )
+                assert result["column_mapping"]["default"]["response"] == "${data.__outputs.response}"
 
     @patch("azure.ai.evaluation._evaluate._evaluate.EvalRunContext")
-    def test_run_callable_evaluators_doesnt_pass_target_run_when_using_complete_dataframe(
-        self, mock_eval_context
-    ):
+    def test_run_callable_evaluators_doesnt_pass_target_run_when_using_complete_dataframe(self, mock_eval_context):
         """Test that target_run is not passed when using complete dataframe with ProxyClient."""
         validated_data = ValidatedData(
             evaluators={"test_eval": _simple_evaluator},
             graders={},
-            input_data_df=pd.DataFrame(
-                {"query": ["test"], "__outputs.response": ["response"]}
-            ),
+            input_data_df=pd.DataFrame({"query": ["test"], "__outputs.response": ["response"]}),
             column_mapping={"default": {"response": "${data.__outputs.response}"}},
             target_run=Mock(),  # This should not be passed to run()
             batch_run_client=Mock(spec=ProxyClient),
@@ -442,9 +386,7 @@ class TestTargetFailureHandling:
         # Mock the batch client run methods
         mock_run = Mock()
         validated_data["batch_run_client"].run.return_value = mock_run
-        validated_data["batch_run_client"].get_details.return_value = pd.DataFrame(
-            {"outputs.test_eval.score": [10]}
-        )
+        validated_data["batch_run_client"].get_details.return_value = pd.DataFrame({"outputs.test_eval.score": [10]})
         validated_data["batch_run_client"].get_metrics.return_value = {}
         validated_data["batch_run_client"].get_run_summary.return_value = {
             "failed_lines": 0,
@@ -459,9 +401,7 @@ class TestTargetFailureHandling:
                     # Verify run was called with target_run (the original target_run should still be passed)
                     validated_data["batch_run_client"].run.assert_called_once()
                     call_args = validated_data["batch_run_client"].run.call_args
-                    assert (
-                        "run" in call_args[1]
-                    )  # target_run should be passed in kwargs
+                    assert "run" in call_args[1]  # target_run should be passed in kwargs
 
     @patch("azure.ai.evaluation._evaluate._evaluate.LOGGER")
     def test_temp_file_cleanup_warning_on_failure(self, mock_logger):
@@ -469,9 +409,7 @@ class TestTargetFailureHandling:
         validated_data = ValidatedData(
             evaluators={"test_eval": _simple_evaluator},
             graders={},
-            input_data_df=pd.DataFrame(
-                {"query": ["test"], "__outputs.response": ["response"]}
-            ),
+            input_data_df=pd.DataFrame({"query": ["test"], "__outputs.response": ["response"]}),
             column_mapping={"default": {"response": "${data.__outputs.response}"}},
             target_run=None,
             batch_run_client=Mock(spec=ProxyClient),
@@ -481,9 +419,7 @@ class TestTargetFailureHandling:
         # Mock the batch client run methods
         mock_run = Mock()
         validated_data["batch_run_client"].run.return_value = mock_run
-        validated_data["batch_run_client"].get_details.return_value = pd.DataFrame(
-            {"outputs.test_eval.score": [10]}
-        )
+        validated_data["batch_run_client"].get_details.return_value = pd.DataFrame({"outputs.test_eval.score": [10]})
         validated_data["batch_run_client"].get_metrics.return_value = {}
         validated_data["batch_run_client"].get_run_summary.return_value = {
             "failed_lines": 0,
@@ -493,9 +429,7 @@ class TestTargetFailureHandling:
         with patch("tempfile.gettempdir", return_value="/tmp"):
             with patch("os.path.exists", return_value=True):
                 with patch("os.unlink", side_effect=Exception("Cleanup failed")):
-                    with patch(
-                        "azure.ai.evaluation._evaluate._evaluate.EvalRunContext"
-                    ):
+                    with patch("azure.ai.evaluation._evaluate._evaluate.EvalRunContext"):
                         _run_callable_evaluators(validated_data)
 
                         # Verify warning was logged
@@ -511,9 +445,7 @@ class TestTargetFailureHandling:
         self, mock_load_data, mock_apply_target, mock_validate_columns
     ):
         """Test that no temp file is created when there's no target function."""
-        mock_load_data.return_value = pd.DataFrame(
-            {"query": ["test"], "response": ["response"]}
-        )
+        mock_load_data.return_value = pd.DataFrame({"query": ["test"], "response": ["response"]})
 
         with patch("tempfile.NamedTemporaryFile") as mock_temp_file:
             result = _preprocess_data(
@@ -531,17 +463,11 @@ class TestTargetFailureHandling:
 
     def test_temp_file_creation_path_with_proxy_client(self):
         """Test that the temp file creation path is exercised for ProxyClient."""
-        with patch(
-            "azure.ai.evaluation._evaluate._evaluate._apply_target_to_data"
-        ) as mock_apply_target:
-            with patch(
-                "azure.ai.evaluation._evaluate._evaluate._validate_and_load_data"
-            ) as mock_load_data:
+        with patch("azure.ai.evaluation._evaluate._evaluate._apply_target_to_data") as mock_apply_target:
+            with patch("azure.ai.evaluation._evaluate._evaluate._validate_and_load_data") as mock_load_data:
                 mock_load_data.return_value = pd.DataFrame({"query": ["test"]})
                 mock_apply_target.return_value = (
-                    pd.DataFrame(
-                        {"query": ["test"], "__outputs.response": ["response"]}
-                    ),
+                    pd.DataFrame({"query": ["test"], "__outputs.response": ["response"]}),
                     {"response"},
                     Mock(),
                 )
@@ -552,9 +478,7 @@ class TestTargetFailureHandling:
                     mock_file.close = Mock()
                     mock_temp_file.return_value = mock_file
 
-                    with patch(
-                        "json.dumps", return_value='{"test": "data"}'
-                    ) as mock_json_dumps:
+                    with patch("json.dumps", return_value='{"test": "data"}') as mock_json_dumps:
                         result = _preprocess_data(
                             data="/test/path.jsonl",
                             evaluators_and_graders={"test_eval": _simple_evaluator},
@@ -583,15 +507,9 @@ class TestTargetFailureHandling:
             }
         )
 
-        with patch(
-            "azure.ai.evaluation._evaluate._evaluate._apply_target_to_data"
-        ) as mock_apply_target:
-            with patch(
-                "azure.ai.evaluation._evaluate._evaluate._validate_and_load_data"
-            ) as mock_load_data:
-                mock_load_data.return_value = pd.DataFrame(
-                    {"query": ["test1", "test2", "test3"]}
-                )
+        with patch("azure.ai.evaluation._evaluate._evaluate._apply_target_to_data") as mock_apply_target:
+            with patch("azure.ai.evaluation._evaluate._evaluate._validate_and_load_data") as mock_load_data:
+                mock_load_data.return_value = pd.DataFrame({"query": ["test1", "test2", "test3"]})
                 mock_apply_target.return_value = (sample_df, {"response"}, Mock())
 
                 result = _preprocess_data(

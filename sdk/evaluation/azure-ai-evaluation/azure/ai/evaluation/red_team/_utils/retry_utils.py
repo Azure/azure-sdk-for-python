@@ -96,9 +96,7 @@ class RetryManager:
 
         # Special case for HTTP status errors
         if isinstance(exception, httpx.HTTPStatusError):
-            return exception.response.status_code == 500 or "model_error" in str(
-                exception
-            )
+            return exception.response.status_code == 500 or "model_error" in str(exception)
 
         return False
 

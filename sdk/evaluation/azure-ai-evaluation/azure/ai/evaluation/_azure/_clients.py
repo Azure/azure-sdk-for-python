@@ -159,9 +159,7 @@ class LiteMLClient:
                     blame=ErrorBlame.SYSTEM_ERROR,
                 )
 
-        return BlobStoreInfo(
-            name, account_name, endpoint, container_name, blob_store_credential
-        )
+        return BlobStoreInfo(name, account_name, endpoint, container_name, blob_store_credential)
 
     def workspace_get_info(self, workspace_name: str) -> Workspace:
         # https://learn.microsoft.com/rest/api/azureml/workspaces/get?view=rest-azureml-2024-10-01
@@ -172,9 +170,7 @@ class LiteMLClient:
             headers=self._get_headers(),
         )
 
-        self._throw_on_http_error(
-            workspace_response, f"get '{workspace_name}' workspace"
-        )
+        self._throw_on_http_error(workspace_response, f"get '{workspace_name}' workspace")
         workspace = Workspace.deserialize(workspace_response)
         return workspace
 

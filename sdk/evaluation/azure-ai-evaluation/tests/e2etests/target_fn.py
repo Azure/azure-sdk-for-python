@@ -3,9 +3,7 @@ def target_fn(query: str) -> str:
     if "LV-426" in query:
         return {"response": "There is nothing good there."}
     if "central heating" in query:
-        return {
-            "response": "There is no central heating on the streets today, but it will be, I promise."
-        }
+        return {"response": "There is no central heating on the streets today, but it will be, I promise."}
     if "strange" in query:
         return {"response": "The life is strange..."}
 
@@ -30,9 +28,7 @@ def target_multimodal_fn1(conversation) -> str:
                 "content": [
                     {
                         "type": "image_url",
-                        "image_url": {
-                            "url": "https://cdn.britannica.com/68/178268-050-5B4E7FB6/Tom-Cruise-2013.jpg"
-                        },
+                        "image_url": {"url": "https://cdn.britannica.com/68/178268-050-5B4E7FB6/Tom-Cruise-2013.jpg"},
                     }
                 ],
             }

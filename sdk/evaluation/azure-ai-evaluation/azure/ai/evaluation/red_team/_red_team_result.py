@@ -325,10 +325,7 @@ class RedTeamResult:
                     user_msg = messages[i]
                     assistant_msg = messages[i + 1]
 
-                    if (
-                        user_msg.get("role") == "user"
-                        and assistant_msg.get("role") == "assistant"
-                    ):
+                    if user_msg.get("role") == "user" and assistant_msg.get("role") == "assistant":
                         # Create the base query-response pair
                         qr_pair = {
                             "query": user_msg.get("content", ""),
@@ -343,14 +340,10 @@ class RedTeamResult:
                             qr_pair["attack_success"] = str(attack_success).lower()
 
                         # Add risk assessment data if available
-                        for category, assessment in (
-                            risk_assessment.items() if risk_assessment else {}
-                        ):
+                        for category, assessment in risk_assessment.items() if risk_assessment else {}:
                             if assessment and assessment.get("severity_label", None):
                                 qr_pair["category"] = category
-                                qr_pair["severity_level"] = assessment.get(
-                                    "severity_label", ""
-                                ).lower()
+                                qr_pair["severity_level"] = assessment.get("severity_label", "").lower()
                                 # Add threshold if available in the future
 
                         result_lines.append(json.dumps(qr_pair))
@@ -386,30 +379,19 @@ class RedTeamResult:
                     user_msg = messages[i]
                     assistant_msg = messages[i + 1]
 
-                    if (
-                        user_msg.get("role") == "user"
-                        and assistant_msg.get("role") == "assistant"
-                    ):
+                    if user_msg.get("role") == "user" and assistant_msg.get("role") == "assistant":
                         result_lines.append(f"User: {user_msg.get('content', '')}")
-                        result_lines.append(
-                            f"Assistant: {assistant_msg.get('content', '')}"
-                        )
+                        result_lines.append(f"Assistant: {assistant_msg.get('content', '')}")
                         result_lines.append("")
 
             if attack_success is not None:
-                result_lines.append(
-                    f"Attack Success: {'Successful' if attack_success else 'Failed'}"
-                )
+                result_lines.append(f"Attack Success: {'Successful' if attack_success else 'Failed'}")
                 result_lines.append("")
 
-            for category, assessment in (
-                risk_assessment.items() if risk_assessment else {}
-            ):
+            for category, assessment in risk_assessment.items() if risk_assessment else {}:
                 if assessment and assessment.get("severity_label", None):
                     result_lines.append(f"Category: {category}")
-                    result_lines.append(
-                        f"Severity Level: {assessment.get('severity_label', '')}"
-                    )
+                    result_lines.append(f"Severity Level: {assessment.get('severity_label', '')}")
                     result_lines.append("")
 
         return "\n".join(result_lines)

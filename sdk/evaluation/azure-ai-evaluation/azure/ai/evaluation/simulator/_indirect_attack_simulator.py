@@ -78,9 +78,7 @@ class IndirectAttackSimulator(AdversarialSimulator):
                 logger=logging.getLogger("AdversarialSimulator"),
                 credential=self.credential,
             )
-            self.rai_client = AIProjectClient(
-                endpoint=azure_ai_project, credential=credential
-            )
+            self.rai_client = AIProjectClient(endpoint=azure_ai_project, credential=credential)
             self.adversarial_template_handler = AdversarialTemplateHandler(
                 azure_ai_project=self.azure_ai_project, rai_client=self.rai_client
             )
@@ -102,9 +100,7 @@ class IndirectAttackSimulator(AdversarialSimulator):
                 logger=logging.getLogger("AdversarialSimulator"),
                 credential=self.credential,
             )
-            self.rai_client = RAIClient(
-                azure_ai_project=self.azure_ai_project, token_manager=self.token_manager
-            )
+            self.rai_client = RAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager)
             self.adversarial_template_handler = AdversarialTemplateHandler(
                 azure_ai_project=self.azure_ai_project, rai_client=self.rai_client
             )
@@ -198,9 +194,7 @@ class IndirectAttackSimulator(AdversarialSimulator):
         max_conversation_turns = 2
         language = SupportedLanguages.English
         self._ensure_service_dependencies()
-        templates = await self.adversarial_template_handler._get_content_harm_template_collections(
-            scenario.value
-        )
+        templates = await self.adversarial_template_handler._get_content_harm_template_collections(scenario.value)
         concurrent_async_task = min(concurrent_async_task, 1000)
         semaphore = asyncio.Semaphore(concurrent_async_task)
         sim_results = []

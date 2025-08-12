@@ -49,9 +49,7 @@ class TestAOAIPagination:
         # Mock the wait_for_run_conclusion response
         mock_run_results = Mock()
         mock_run_results.status = "completed"
-        mock_run_results.per_testing_criteria_results = [
-            Mock(testing_criteria="grader-1", passed=8, failed=2)
-        ]
+        mock_run_results.per_testing_criteria_results = [Mock(testing_criteria="grader-1", passed=8, failed=2)]
 
         # Mock single page of results
         mock_output_items = [
@@ -101,9 +99,7 @@ class TestAOAIPagination:
         # Mock run results
         mock_run_results = Mock()
         mock_run_results.status = "completed"
-        mock_run_results.per_testing_criteria_results = [
-            Mock(testing_criteria="grader-1", passed=80, failed=20)
-        ]
+        mock_run_results.per_testing_criteria_results = [Mock(testing_criteria="grader-1", passed=80, failed=20)]
 
         # Create 3 pages of results
         page1_items = [
@@ -195,9 +191,7 @@ class TestAOAIPagination:
 
         mock_run_results = Mock()
         mock_run_results.status = "completed"
-        mock_run_results.per_testing_criteria_results = [
-            Mock(testing_criteria="grader-1", passed=5, failed=0)
-        ]
+        mock_run_results.per_testing_criteria_results = [Mock(testing_criteria="grader-1", passed=5, failed=0)]
 
         # First page has data, second page is empty but has_more=True, third page breaks loop
         responses = [
@@ -239,9 +233,7 @@ class TestAOAIPagination:
 
         mock_run_results = Mock()
         mock_run_results.status = "completed"
-        mock_run_results.per_testing_criteria_results = [
-            Mock(testing_criteria="grader-1", passed=20, failed=0)
-        ]
+        mock_run_results.per_testing_criteria_results = [Mock(testing_criteria="grader-1", passed=20, failed=0)]
 
         # Create results in non-sequential order across pages
         page1_items = [

@@ -39,9 +39,7 @@ except ImportError:
             init: Optional[dict] = None,
             **kwargs,
         ) -> Run:
-            raise MissingRequiredPackage(
-                "Please install 'promptflow' package to use PFClient"
-            )
+            raise MissingRequiredPackage("Please install 'promptflow' package to use PFClient")
 
         def get_details(
             self,

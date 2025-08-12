@@ -28,9 +28,7 @@ class AsyncAzureTokenProvider(AsyncContextManager["AsyncAzureTokenProvider"]):
     def __init__(self, *, base_url: Optional[str] = None, **kwargs: Any) -> None:
         """Initialize the AsyncAzureTokenProvider."""
         self._credential: Optional[TokenCredential] = None
-        self._env_client: Optional[AzureEnvironmentClient] = AzureEnvironmentClient(
-            base_url=base_url, **kwargs
-        )
+        self._env_client: Optional[AzureEnvironmentClient] = AzureEnvironmentClient(base_url=base_url, **kwargs)
 
     async def close(self) -> None:
         if self._env_client:
@@ -58,9 +56,7 @@ class AsyncAzureTokenProvider(AsyncContextManager["AsyncAzureTokenProvider"]):
                 blame=ErrorBlame.SYSTEM_ERROR,
             )
 
-        return self._credential.get_token(
-            *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
-        )
+        return self._credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs)
 
     async def __aenter__(self) -> "AsyncAzureTokenProvider":
         self._credential = await self._initialize_async(self._env_client)
@@ -102,9 +98,7 @@ class AsyncAzureTokenProvider(AsyncContextManager["AsyncAzureTokenProvider"]):
                 )
 
             authority = metadata.get("active_directory_endpoint")
-            return DefaultAzureCredential(
-                authority=authority, exclude_shared_token_cache_credential=True
-            )
+            return DefaultAzureCredential(authority=authority, exclude_shared_token_cache_credential=True)
         elif os.getenv("AZUREML_OBO_ENABLED"):
             # using Azure on behalf of credentials requires the use of the azure-ai-ml package
             try:

@@ -53,9 +53,7 @@ _BUILT_IN_DESCRIPTIONS = {
 _BUILT_IN_PARAMS = {
     _CODE_INTERPRETER: {
         "type": "object",
-        "properties": {
-            "input": {"type": "string", "description": "Generated code to be executed."}
-        },
+        "properties": {"input": {"type": "string", "description": "Generated code to be executed."}},
     },
     _BING_GROUNDING: {
         "type": "object",
@@ -87,15 +85,11 @@ _BUILT_IN_PARAMS = {
     },
     _AZURE_AI_SEARCH: {
         "type": "object",
-        "properties": {
-            "input": {"type": "string", "description": "Search terms to use."}
-        },
+        "properties": {"input": {"type": "string", "description": "Search terms to use."}},
     },
     _FABRIC_DATAAGENT: {
         "type": "object",
-        "properties": {
-            "input": {"type": "string", "description": "Search terms to use."}
-        },
+        "properties": {"input": {"type": "string", "description": "Search terms to use."}},
     },
 }
 
@@ -115,9 +109,7 @@ class Message(BaseModel):
     :type content: Union[str, List[dict]]
     """
 
-    createdAt: Optional[Union[datetime.datetime, int]] = (
-        None  # SystemMessage wouldn't have this
-    )
+    createdAt: Optional[Union[datetime.datetime, int]] = None  # SystemMessage wouldn't have this
     run_id: Optional[str] = None
     tool_call_id: Optional[str] = None  # see ToolMessage
     role: str
@@ -317,9 +309,7 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
         if tool_call.details["type"] == "code_interpreter":
             arguments = {"input": tool_call.details.code_interpreter.input}
         elif tool_call.details["type"] == "bing_grounding":
-            arguments = {
-                "requesturl": tool_call.details["bing_grounding"]["requesturl"]
-            }
+            arguments = {"requesturl": tool_call.details["bing_grounding"]["requesturl"]}
         elif tool_call.details["type"] == "file_search":
             options = tool_call.details["file_search"]["ranking_options"]
             arguments = {
@@ -365,16 +355,11 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
             # Try to retrieve it, but if we don't find anything, skip adding the message
             # Just manually converting to dicts for easy serialization for now rather than custom serializers
             if tool_call.details.type == _CODE_INTERPRETER:
-                output = [
-                    result.as_dict()
-                    for result in tool_call.details.code_interpreter.outputs
-                ]
+                output = [result.as_dict() for result in tool_call.details.code_interpreter.outputs]
             elif tool_call.details.type == _BING_GROUNDING:
                 return messages  # not supported yet from bing grounding tool
             elif tool_call.details.type == _FILE_SEARCH:
-                output = [
-                    result.as_dict() for result in tool_call.details.file_search.results
-                ]
+                output = [result.as_dict() for result in tool_call.details.file_search.results]
             elif tool_call.details.type == _AZURE_AI_SEARCH:
                 output = tool_call.details.azure_ai_search["output"]
             elif tool_call.details.type == _FABRIC_DATAAGENT:

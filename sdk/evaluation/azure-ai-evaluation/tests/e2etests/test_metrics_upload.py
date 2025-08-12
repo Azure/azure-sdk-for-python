@@ -34,17 +34,10 @@ def questions_file():
 
 
 def _get_tracking_uri(azure_ml_client: LiteMLClient, project_scope: dict) -> str:
-    return (
-        azure_ml_client.workspace_get_info(
-            project_scope["project_name"]
-        ).ml_flow_tracking_uri
-        or ""
-    )
+    return azure_ml_client.workspace_get_info(project_scope["project_name"]).ml_flow_tracking_uri or ""
 
 
-@pytest.mark.usefixtures(
-    "model_config", "recording_injection", "project_scope", "recorded_test"
-)
+@pytest.mark.usefixtures("model_config", "recording_injection", "project_scope", "recorded_test")
 class TestMetricsUpload(object):
     """End to end tests to check how the metrics were uploaded to cloud."""
 
@@ -65,9 +58,7 @@ class TestMetricsUpload(object):
             assert not error_messages, "\n".join(error_messages)
 
     @pytest.mark.azuretest
-    def test_writing_to_run_history(
-        self, caplog, project_scope, azure_ml_client: LiteMLClient
-    ):
+    def test_writing_to_run_history(self, caplog, project_scope, azure_ml_client: LiteMLClient):
         """Test logging data to RunHistory service."""
         logger = logging.getLogger(EvalRun.__module__)
         # All loggers, having promptflow. prefix will have "promptflow" logger
@@ -189,9 +180,7 @@ class TestMetricsUpload(object):
         in_ci(),
         reason="There is some weird JSON serialiazation issue that only appears in CI where a \n becomes a \r\n",
     )
-    def test_e2e_run_target_fn(
-        self, caplog, project_scope, questions_answers_file, monkeypatch, azure_cred
-    ):
+    def test_e2e_run_target_fn(self, caplog, project_scope, questions_answers_file, monkeypatch, azure_cred):
         """Test evaluation run logging."""
         # Afer re-recording this test, please make sure, that the cassette contains the POST
         # request ending by 00000/rundata and it has status 200.
@@ -230,18 +219,14 @@ class TestMetricsUpload(object):
             azure_ai_project=project_scope,
             credential=azure_cred,
         )
-        self._assert_no_errors_for_module(
-            caplog.records, (ev_utils.__name__, EvalRun.__module__)
-        )
+        self._assert_no_errors_for_module(caplog.records, (ev_utils.__name__, EvalRun.__module__))
 
     @pytest.mark.performance_test
     @pytest.mark.skipif(
         in_ci(),
         reason="There is some weird JSON serialiazation issue that only appears in CI where a \n becomes a \r\n",
     )
-    def test_e2e_run(
-        self, caplog, project_scope, questions_answers_file, monkeypatch, azure_cred
-    ):
+    def test_e2e_run(self, caplog, project_scope, questions_answers_file, monkeypatch, azure_cred):
         """Test evaluation run logging."""
         # Afer re-recording this test, please make sure, that the cassette contains the POST
         # request ending by /BulkRuns/create.
@@ -271,6 +256,4 @@ class TestMetricsUpload(object):
             azure_ai_project=project_scope,
             credential=azure_cred,
         )
-        self._assert_no_errors_for_module(
-            caplog.records, (ev_utils.__name__, EvalRun.__module__)
-        )
+        self._assert_no_errors_for_module(caplog.records, (ev_utils.__name__, EvalRun.__module__))

@@ -129,19 +129,11 @@ def _aggregate_other_metrics(df: pd.DataFrame) -> Tuple[List[str], Dict[str, flo
         metric_name = col.split(".")[1]
         if metric_name in METRIC_COLUMN_NAME_REPLACEMENTS:
             renamed_cols.append(col)
-            new_col_name = (
-                metric_prefix + "." + METRIC_COLUMN_NAME_REPLACEMENTS[metric_name]
-            )
-            col_with_numeric_values = cast(
-                List[float], pd.to_numeric(df[col], errors="coerce")
-            )
+            new_col_name = metric_prefix + "." + METRIC_COLUMN_NAME_REPLACEMENTS[metric_name]
+            col_with_numeric_values = cast(List[float], pd.to_numeric(df[col], errors="coerce"))
             try:
-                metric_columns[new_col_name] = round(
-                    list_mean_nan_safe(col_with_numeric_values), 2
-                )
-            except (
-                EvaluationException
-            ):  # only exception that can be cause is all NaN values
+                metric_columns[new_col_name] = round(list_mean_nan_safe(col_with_numeric_values), 2)
+            except EvaluationException:  # only exception that can be cause is all NaN values
                 msg = f"All score evaluations are NaN/None for column {col}. No aggregation can be performed."
                 LOGGER.warning(msg)
 
@@ -188,20 +180,14 @@ def _aggregate_content_safety_metrics(
     defect_rates = {}
     for col in content_safety_df.columns:
         defect_rate_name = col.replace("_score", "_defect_rate")
-        col_with_numeric_values = cast(
-            List[float], pd.to_numeric(content_safety_df[col], errors="coerce")
-        )
+        col_with_numeric_values = cast(List[float], pd.to_numeric(content_safety_df[col], errors="coerce"))
         try:
             col_with_boolean_values = apply_transform_nan_safe(
                 col_with_numeric_values,
                 lambda x: 1 if x >= CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT else 0,
             )
-            defect_rates[defect_rate_name] = round(
-                list_mean_nan_safe(col_with_boolean_values), 2
-            )
-        except (
-            EvaluationException
-        ):  # only exception that can be cause is all NaN values
+            defect_rates[defect_rate_name] = round(list_mean_nan_safe(col_with_boolean_values), 2)
+        except EvaluationException:  # only exception that can be cause is all NaN values
             msg = f"All score evaluations are NaN/None for column {col}. No aggregation can be performed."
             LOGGER.warning(msg)
 
@@ -234,31 +220,19 @@ def _aggregate_label_defect_metrics(
     details_cols = []
     for col in df.columns:
         metric_name = col.split(".")[1]
-        if (
-            metric_name.endswith("_label")
-            and metric_name.replace("_label", "").lower() in handled_metrics
-        ):
+        if metric_name.endswith("_label") and metric_name.replace("_label", "").lower() in handled_metrics:
             label_cols.append(col)
-        if (
-            metric_name.endswith("_details")
-            and metric_name.replace("_details", "").lower() in handled_metrics
-        ):
+        if metric_name.endswith("_details") and metric_name.replace("_details", "").lower() in handled_metrics:
             details_cols = col
 
     label_df = df[label_cols]
     defect_rates = {}
     for col in label_df.columns:
         defect_rate_name = col.replace("_label", "_defect_rate")
-        col_with_boolean_values = cast(
-            List[float], pd.to_numeric(label_df[col], errors="coerce")
-        )
+        col_with_boolean_values = cast(List[float], pd.to_numeric(label_df[col], errors="coerce"))
         try:
-            defect_rates[defect_rate_name] = round(
-                list_mean_nan_safe(col_with_boolean_values), 2
-            )
-        except (
-            EvaluationException
-        ):  # only exception that can be cause is all NaN values
+            defect_rates[defect_rate_name] = round(list_mean_nan_safe(col_with_boolean_values), 2)
+        except EvaluationException:  # only exception that can be cause is all NaN values
             msg = f"All score evaluations are NaN/None for column {col}. No aggregation can be performed."
             LOGGER.warning(msg)
 
@@ -275,9 +249,7 @@ def _aggregate_label_defect_metrics(
                 defect_rates[f"{details_cols}.{key}_defect_rate"] = round(
                     list_mean_nan_safe(col_with_boolean_values), 2
                 )
-            except (
-                EvaluationException
-            ):  # only exception that can be cause is all NaN values
+            except EvaluationException:  # only exception that can be cause is all NaN values
                 msg = f"All score evaluations are NaN/None for column {key}. No aggregation can be performed."
                 LOGGER.warning(msg)
 
@@ -306,11 +278,7 @@ def _aggregation_binary_output(df: pd.DataFrame) -> Dict[str, float]:
     results = {}
 
     # Find all columns that end with "_result"
-    result_columns = [
-        col
-        for col in df.columns
-        if col.startswith("outputs.") and col.endswith("_result")
-    ]
+    result_columns = [col for col in df.columns if col.startswith("outputs.") and col.endswith("_result")]
 
     for col in result_columns:
         # Extract the evaluator name from the column name
@@ -341,9 +309,7 @@ def _aggregation_binary_output(df: pd.DataFrame) -> Dict[str, float]:
     return results
 
 
-def _aggregate_metrics(
-    df: pd.DataFrame, evaluators: Dict[str, Callable]
-) -> Dict[str, float]:
+def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dict[str, float]:
     """Aggregate metrics from the evaluation results.
     On top of naively calculating the mean of most metrics, this function also identifies certain columns
     that represent defect rates and renames them accordingly. Other columns in the dataframe are dropped.
@@ -358,17 +324,13 @@ def _aggregate_metrics(
     """
     binary_metrics = _aggregation_binary_output(df)
 
-    df.rename(
-        columns={col: col.replace("outputs.", "") for col in df.columns}, inplace=True
-    )
+    df.rename(columns={col: col.replace("outputs.", "") for col in df.columns}, inplace=True)
 
     handled_columns = []
     defect_rates = {}
     # Rename certain columns as defect rates if we know that's what their aggregates represent
     # Content safety metrics
-    content_safety_cols, cs_defect_rates = _aggregate_content_safety_metrics(
-        df, evaluators
-    )
+    content_safety_cols, cs_defect_rates = _aggregate_content_safety_metrics(df, evaluators)
     other_renamed_cols, renamed_cols = _aggregate_other_metrics(df)
     handled_columns.extend(content_safety_cols)
     handled_columns.extend(other_renamed_cols)
@@ -410,10 +372,7 @@ def _validate_columns_for_target(
     :raises EvaluationException: If the column starts with "__outputs." or if the input data contains missing fields.
     """
     if any(c.startswith(Prefixes.TSG_OUTPUTS) for c in df.columns):
-        msg = (
-            "The column cannot start from "
-            f'"{Prefixes.TSG_OUTPUTS}" if target was defined.'
-        )
+        msg = "The column cannot start from " f'"{Prefixes.TSG_OUTPUTS}" if target was defined.'
         raise EvaluationException(
             message=msg,
             internal_message=msg,
@@ -428,8 +387,7 @@ def _validate_columns_for_target(
     required_inputs = [
         param.name
         for param in inspect.signature(target).parameters.values()
-        if param.default == inspect.Parameter.empty
-        and param.name not in ["kwargs", "args", "self"]
+        if param.default == inspect.Parameter.empty and param.name not in ["kwargs", "args", "self"]
     ]
 
     missing_inputs = [col for col in required_inputs if col not in df.columns]
@@ -469,9 +427,7 @@ def _validate_columns_for_evaluators(
 
     for evaluator_name, evaluator in evaluators.items():
         # Apply column mapping
-        mapping_config = column_mapping.get(
-            evaluator_name, column_mapping.get("default", None)
-        )
+        mapping_config = column_mapping.get(evaluator_name, column_mapping.get("default", None))
         new_df = _apply_column_mapping(df, mapping_config)
 
         # Validate input data for evaluator
@@ -490,36 +446,26 @@ def _validate_columns_for_evaluators(
                 missing_inputs = []
             else:
                 optional_params = (
-                    cast(
-                        Any, evaluator
-                    )._OPTIONAL_PARAMS  # pylint: disable=protected-access
+                    cast(Any, evaluator)._OPTIONAL_PARAMS  # pylint: disable=protected-access
                     if hasattr(evaluator, "_OPTIONAL_PARAMS")
                     else []
                 )
                 excluded_params = set(new_df.columns).union(optional_params)
-                missing_inputs = [
-                    col for col in evaluator_params if col not in excluded_params
-                ]
+                missing_inputs = [col for col in evaluator_params if col not in excluded_params]
 
                 # If "conversation" is the only parameter and it is missing, keep it in the missing inputs
                 # Otherwise, remove it from the missing inputs
                 if "conversation" in missing_inputs:
-                    if not (
-                        evaluator_params == ["conversation"]
-                        and missing_inputs == ["conversation"]
-                    ):
+                    if not (evaluator_params == ["conversation"] and missing_inputs == ["conversation"]):
                         missing_inputs.remove("conversation")
         else:
             evaluator_params = [
                 param.name
                 for param in inspect.signature(evaluator).parameters.values()
-                if param.default == inspect.Parameter.empty
-                and param.name not in ["kwargs", "args", "self"]
+                if param.default == inspect.Parameter.empty and param.name not in ["kwargs", "args", "self"]
             ]
 
-            missing_inputs = [
-                col for col in evaluator_params if col not in new_df.columns
-            ]
+            missing_inputs = [col for col in evaluator_params if col not in new_df.columns]
 
         if missing_inputs:
             missing_inputs_per_evaluator[evaluator_name] = missing_inputs
@@ -545,9 +491,7 @@ def _validate_columns_for_evaluators(
         )
 
 
-def _validate_and_load_data(
-    target, data, evaluators, output_path, azure_ai_project, evaluation_name, tags
-):
+def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_project, evaluation_name, tags):
     if data is None:
         msg = "The 'data' parameter is required for evaluation."
         raise EvaluationException(
@@ -610,9 +554,7 @@ def _validate_and_load_data(
                 blame=ErrorBlame.USER_ERROR,
             )
 
-        output_dir = (
-            output_path if os.path.isdir(output_path) else os.path.dirname(output_path)
-        )
+        output_dir = output_path if os.path.isdir(output_path) else os.path.dirname(output_path)
         if output_dir and not os.path.exists(output_dir):
             msg = f"The output directory '{output_dir}' does not exist. Please create the directory manually."
             raise EvaluationException(
@@ -712,9 +654,7 @@ def _apply_target_to_data(
 
     # Remove input and output prefix
     generated_columns = {
-        col[len(Prefixes.OUTPUTS) :]
-        for col in target_output.columns
-        if col.startswith(Prefixes.OUTPUTS)
+        col[len(Prefixes.OUTPUTS) :] for col in target_output.columns if col.startswith(Prefixes.OUTPUTS)
     }
     # Sort output by line numbers
     target_output.set_index(f"inputs.{LINE_NUMBER}", inplace=True)
@@ -732,10 +672,7 @@ def _apply_target_to_data(
     drop_columns = list(filter(lambda x: x.startswith("inputs"), target_output.columns))
     target_output.drop(drop_columns, inplace=True, axis=1)
     # Rename outputs columns to __outputs
-    rename_dict = {
-        col: col.replace(Prefixes.OUTPUTS, Prefixes.TSG_OUTPUTS)
-        for col in target_output.columns
-    }
+    rename_dict = {col: col.replace(Prefixes.OUTPUTS, Prefixes.TSG_OUTPUTS) for col in target_output.columns}
     target_output.rename(columns=rename_dict, inplace=True)
     # Concatenate output to input - now both dataframes have the same number of rows
     target_output = pd.concat([initial_data, target_output], axis=1)
@@ -756,9 +693,7 @@ def _process_column_mappings(
 
     processed_config: Dict[str, Dict[str, str]] = {}
 
-    expected_references = re.compile(
-        r"^\$\{(target|data)\.([a-zA-Z0-9_]+(?:\.[a-zA-Z0-9_]+)*)\}$"
-    )
+    expected_references = re.compile(r"^\$\{(target|data)\.([a-zA-Z0-9_]+(?:\.[a-zA-Z0-9_]+)*)\}$")
 
     if column_mapping:
         for evaluator, mapping_config in column_mapping.items():
@@ -778,9 +713,7 @@ def _process_column_mappings(
                         )
 
                     # Replace ${target.} with ${run.outputs.}
-                    processed_config[evaluator][map_to_key] = map_value.replace(
-                        "${target.", "${run.outputs."
-                    )
+                    processed_config[evaluator][map_to_key] = map_value.replace("${target.", "${run.outputs.")
 
     return processed_config
 
@@ -882,11 +815,7 @@ def evaluate(
     """
     try:
         user_agent: Optional[str] = kwargs.get("user_agent")
-        with (
-            UserAgentSingleton().add_useragent_product(user_agent)
-            if user_agent
-            else contextlib.nullcontext()
-        ):
+        with UserAgentSingleton().add_useragent_product(user_agent) if user_agent else contextlib.nullcontext():
             return _evaluate(
                 evaluation_name=evaluation_name,
                 target=target,
@@ -936,9 +865,7 @@ def evaluate(
 def _print_summary(per_evaluator_results: Dict[str, Any]) -> None:
     # Extract evaluators with a non-empty "run_summary"
     output_dict = {
-        name: result["run_summary"]
-        for name, result in per_evaluator_results.items()
-        if result.get("run_summary")
+        name: result["run_summary"] for name, result in per_evaluator_results.items() if result.get("run_summary")
     }
 
     if output_dict:
@@ -1005,9 +932,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     if need_oai_run:
         try:
             aoi_name = evaluation_name if evaluation_name else DEFAULT_OAI_EVAL_RUN_NAME
-            eval_run_info_list = _begin_aoai_evaluation(
-                graders, column_mapping, input_data_df, aoi_name
-            )
+            eval_run_info_list = _begin_aoai_evaluation(graders, column_mapping, input_data_df, aoi_name)
             need_get_oai_results = len(eval_run_info_list) > 0
         except EvaluationException as e:
             if need_local_run:
@@ -1024,11 +949,9 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     # Evaluate 'normal' evaluators. This includes built-in evaluators and any user-supplied callables.
     if need_local_run:
         try:
-            eval_result_df, eval_metrics, per_evaluator_results = (
-                _run_callable_evaluators(
-                    validated_data=validated_data,
-                    fail_on_evaluator_errors=fail_on_evaluator_errors,
-                )
+            eval_result_df, eval_metrics, per_evaluator_results = _run_callable_evaluators(
+                validated_data=validated_data,
+                fail_on_evaluator_errors=fail_on_evaluator_errors,
             )
             results_df = eval_result_df
             metrics = eval_metrics
@@ -1038,9 +961,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
         except EvaluationException as e:
             if need_get_oai_results:
                 # If there are OAI graders, we only print a warning on local failures.
-                LOGGER.warning(
-                    "Local evaluations failed. Will still attempt to retrieve online grader results."
-                )
+                LOGGER.warning("Local evaluations failed. Will still attempt to retrieve online grader results.")
                 LOGGER.warning(e)
             else:
                 raise e
@@ -1062,9 +983,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
         except EvaluationException as e:
             if got_local_results:
                 # If there are local eval results, we only print a warning on OAI failure.
-                LOGGER.warning(
-                    "Remote Azure Open AI grader evaluations failed. Still returning local results."
-                )
+                LOGGER.warning("Remote Azure Open AI grader evaluations failed. Still returning local results.")
                 LOGGER.warning(e)
             else:
                 raise e
@@ -1083,11 +1002,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
         )
     else:
         # Since tracing is disabled, pass None for target_run so a dummy evaluation run will be created each time.
-        trace_destination = (
-            _trace_destination_from_project_scope(azure_ai_project)
-            if azure_ai_project
-            else None
-        )
+        trace_destination = _trace_destination_from_project_scope(azure_ai_project) if azure_ai_project else None
         studio_url = None
         if trace_destination:
             studio_url = _log_metrics_and_instance_results(
@@ -1159,13 +1074,9 @@ def _preprocess_data(
     batch_run_client: BatchClient
     batch_run_data: Union[str, os.PathLike, pd.DataFrame] = data
 
-    def get_client_type(
-        evaluate_kwargs: Dict[str, Any]
-    ) -> Literal["run_submitter", "pf_client", "code_client"]:
+    def get_client_type(evaluate_kwargs: Dict[str, Any]) -> Literal["run_submitter", "pf_client", "code_client"]:
         """Determines the BatchClient to use from provided kwargs (_use_run_submitter_client and _use_pf_client)"""
-        _use_run_submitter_client = cast(
-            Optional[bool], kwargs.pop("_use_run_submitter_client", None)
-        )
+        _use_run_submitter_client = cast(Optional[bool], kwargs.pop("_use_run_submitter_client", None))
         _use_pf_client = cast(Optional[bool], kwargs.pop("_use_pf_client", None))
 
         if _use_run_submitter_client is None and _use_pf_client is None:
@@ -1195,9 +1106,7 @@ def _preprocess_data(
 
         assert False, "This should be impossible"
 
-    client_type: Literal["run_submitter", "pf_client", "code_client"] = get_client_type(
-        kwargs
-    )
+    client_type: Literal["run_submitter", "pf_client", "code_client"] = get_client_type(kwargs)
 
     if client_type == "run_submitter":
         batch_run_client = RunSubmitterClient(raise_on_errors=fail_on_evaluator_errors)
@@ -1226,9 +1135,7 @@ def _preprocess_data(
         # This ensures that evaluators get all rows (including failed ones with NaN values)
         if isinstance(batch_run_client, ProxyClient):
             # Create a temporary JSONL file with the complete dataframe
-            temp_file = tempfile.NamedTemporaryFile(
-                mode="w", suffix=".jsonl", delete=False
-            )
+            temp_file = tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False)
             try:
                 for _, row in input_data_df.iterrows():
                     row_dict = row.to_dict()
@@ -1244,10 +1151,7 @@ def _preprocess_data(
                         target_reference = f"${{data.{Prefixes.TSG_OUTPUTS}{col}}}"
 
                         # We will add our mapping only if customer did not map target output.
-                        if (
-                            col not in mapping
-                            and target_reference not in mapped_to_values
-                        ):
+                        if col not in mapping and target_reference not in mapped_to_values:
                             column_mapping[evaluator_name][col] = target_reference
 
                 # Don't pass the target_run since we're now using the complete dataframe
@@ -1273,9 +1177,7 @@ def _preprocess_data(
                         column_mapping[evaluator_name][col] = target_reference
 
     # After we have generated all columns, we can check if we have everything we need for evaluators.
-    _validate_columns_for_evaluators(
-        input_data_df, evaluators, target, target_generated_columns, column_mapping
-    )
+    _validate_columns_for_evaluators(input_data_df, evaluators, target, target_generated_columns, column_mapping)
 
     # Apply 1-1 mapping from input data to evaluator inputs, excluding values already assigned
     # via target mapping.
@@ -1285,10 +1187,7 @@ def _preprocess_data(
         for col in input_data_df.columns:
             # Ignore columns added by target mapping. These are formatted as "__outputs.<column_name>"
             # Also ignore columns that are already in config, since they've been covered by target mapping.
-            if (
-                not col.startswith(Prefixes.TSG_OUTPUTS)
-                and col not in column_mapping["default"].keys()
-            ):
+            if not col.startswith(Prefixes.TSG_OUTPUTS) and col not in column_mapping["default"].keys():
                 column_mapping["default"][col] = f"${{data.{col}}}"
 
     return __ValidatedData(
@@ -1335,9 +1234,7 @@ def _run_callable_evaluators(
                     # Don't pass target_run when using complete dataframe
                     run=target_run,
                     evaluator_name=evaluator_name,
-                    column_mapping=column_mapping.get(
-                        evaluator_name, column_mapping.get("default", None)
-                    ),
+                    column_mapping=column_mapping.get(evaluator_name, column_mapping.get("default", None)),
                     stream=True,
                     name=kwargs.get("_run_name"),
                 )
@@ -1359,31 +1256,20 @@ def _run_callable_evaluators(
             try:
                 os.unlink(temp_file_to_cleanup)
             except Exception as e:
-                LOGGER.warning(
-                    f"Failed to clean up temporary file {temp_file_to_cleanup}: {e}"
-                )
+                LOGGER.warning(f"Failed to clean up temporary file {temp_file_to_cleanup}: {e}")
     # Concatenate all results
     evaluators_result_df = pd.DataFrame()
     evaluators_metric = {}
     for evaluator_name, evaluator_result in per_evaluator_results.items():
-        if (
-            fail_on_evaluator_errors
-            and evaluator_result["run_summary"]["failed_lines"] > 0
-        ):
+        if fail_on_evaluator_errors and evaluator_result["run_summary"]["failed_lines"] > 0:
             _print_summary(per_evaluator_results)
-            _turn_error_logs_into_exception(
-                evaluator_result["run_summary"]["log_path"] + "/error.json"
-            )
+            _turn_error_logs_into_exception(evaluator_result["run_summary"]["log_path"] + "/error.json")
 
         evaluator_result_df = evaluator_result["result"]
 
         # drop input columns
         evaluator_result_df = evaluator_result_df.drop(
-            columns=[
-                col
-                for col in evaluator_result_df.columns
-                if str(col).startswith(Prefixes.INPUTS)
-            ]
+            columns=[col for col in evaluator_result_df.columns if str(col).startswith(Prefixes.INPUTS)]
         )
 
         # rename output columns
@@ -1406,18 +1292,14 @@ def _run_callable_evaluators(
             else evaluator_result_df
         )
 
-        evaluators_metric.update(
-            {f"{evaluator_name}.{k}": v for k, v in evaluator_result["metrics"].items()}
-        )
+        evaluators_metric.update({f"{evaluator_name}.{k}": v for k, v in evaluator_result["metrics"].items()})
 
     # Rename columns, generated by target function to outputs instead of inputs.
     # If target generates columns, already present in the input data, these columns
     # will be marked as outputs already so we do not need to rename them.
 
     input_data_df = _rename_columns_conditionally(validated_data["input_data_df"])
-    eval_result_df = pd.concat(
-        [input_data_df, evaluators_result_df], axis=1, verify_integrity=True
-    )
+    eval_result_df = pd.concat([input_data_df, evaluators_result_df], axis=1, verify_integrity=True)
     eval_metrics = _aggregate_metrics(evaluators_result_df, evaluators)
     eval_metrics.update(evaluators_metric)
 

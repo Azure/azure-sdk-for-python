@@ -45,16 +45,12 @@ class TestRunIdsFromConversation(unittest.TestCase):
             ]
         }
         expected_run_ids = ["run1", "run2", "run3"]
-        self.assertEqual(
-            AIAgentConverter._run_ids_from_conversation(conversation), expected_run_ids
-        )
+        self.assertEqual(AIAgentConverter._run_ids_from_conversation(conversation), expected_run_ids)
 
     def test_run_ids_from_conversation_empty(self):
         conversation = {"messages": []}
         expected_run_ids = []
-        self.assertEqual(
-            AIAgentConverter._run_ids_from_conversation(conversation), expected_run_ids
-        )
+        self.assertEqual(AIAgentConverter._run_ids_from_conversation(conversation), expected_run_ids)
 
     def test_run_ids_from_conversation_no_run_id(self):
         conversation = {
@@ -72,9 +68,7 @@ class TestRunIdsFromConversation(unittest.TestCase):
             ]
         }
         expected_run_ids = []
-        self.assertEqual(
-            AIAgentConverter._run_ids_from_conversation(conversation), expected_run_ids
-        )
+        self.assertEqual(AIAgentConverter._run_ids_from_conversation(conversation), expected_run_ids)
 
 
 if __name__ == "__main__":

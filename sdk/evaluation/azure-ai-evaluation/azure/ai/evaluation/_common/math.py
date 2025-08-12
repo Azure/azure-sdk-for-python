@@ -58,9 +58,7 @@ def list_mean_nan_safe(lst: List[float]) -> float:
     return list_mean([l for l in lst if not is_none_or_nan(l)])
 
 
-def apply_transform_nan_safe(
-    lst: List[float], transform_fn: Callable[[float], Any]
-) -> List[Any]:
+def apply_transform_nan_safe(lst: List[float], transform_fn: Callable[[float], Any]) -> List[Any]:
     """Given a list of floats, remove all nan values, then apply the inputted transform function
     to the remaining values, and return the resulting list of outputted values.
 

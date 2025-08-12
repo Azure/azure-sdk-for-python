@@ -70,9 +70,7 @@ class EvalRunContext:
 
             # For dealing with the timeout issue of OpenTelemetry exporter when multiple evaluators are running
             if os.environ.get(OTEL_EXPORTER_OTLP_TRACES_TIMEOUT) is None:
-                os.environ[OTEL_EXPORTER_OTLP_TRACES_TIMEOUT] = str(
-                    OTEL_EXPORTER_OTLP_TRACES_TIMEOUT_DEFAULT
-                )
+                os.environ[OTEL_EXPORTER_OTLP_TRACES_TIMEOUT] = str(OTEL_EXPORTER_OTLP_TRACES_TIMEOUT_DEFAULT)
                 self._is_otel_timeout_set_by_system = True
 
             # For addressing the issue of asyncio event loop closed on Windows

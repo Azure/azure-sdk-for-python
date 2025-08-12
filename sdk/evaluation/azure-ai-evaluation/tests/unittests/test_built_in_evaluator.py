@@ -58,8 +58,7 @@ class TestBuiltInEvaluators:
             fluency_eval(response=None)
 
         assert (
-            "FluencyEvaluator: Either 'conversation' or individual inputs must be provided."
-            in exc_info.value.args[0]
+            "FluencyEvaluator: Either 'conversation' or individual inputs must be provided." in exc_info.value.args[0]
         )
 
     def test_similarity_evaluator_keys(self, mock_model_config):
@@ -138,21 +137,14 @@ class TestBuiltInEvaluators:
         quality_eval._flow = MagicMock(return_value=quality_response_async_mock())
 
         with pytest.raises(EvaluationException) as exc_info:
-            quality_eval(
-                response="The capital of Japan is Tokyo."
-            )  # Retrieval requires query and context
+            quality_eval(response="The capital of Japan is Tokyo.")  # Retrieval requires query and context
 
         assert (
-            "RetrievalEvaluator: Either 'conversation' or individual inputs must be provided."
-            in exc_info.value.args[0]
+            "RetrievalEvaluator: Either 'conversation' or individual inputs must be provided." in exc_info.value.args[0]
         )
 
-    @patch(
-        "azure.ai.evaluation._evaluators._groundedness._groundedness.AsyncPrompty.load"
-    )
-    def test_groundedness_evaluator_with_agent_response(
-        self, mock_async_prompty, mock_model_config
-    ):
+    @patch("azure.ai.evaluation._evaluators._groundedness._groundedness.AsyncPrompty.load")
+    def test_groundedness_evaluator_with_agent_response(self, mock_async_prompty, mock_model_config):
         """Test GroundednessEvaluator with query, response, and tool_definitions"""
         groundedness_eval = GroundednessEvaluator(model_config=mock_model_config)
         mock_async_prompty.return_value = quality_response_async_mock
@@ -276,9 +268,7 @@ class TestBuiltInEvaluators:
         with pytest.raises(EvaluationException) as exc_info:
             groundedness_eval(
                 query="What is the capital of Japan?",
-                response=[
-                    {"role": "assistant", "content": "The capital of Japan is Tokyo."}
-                ],
+                response=[{"role": "assistant", "content": "The capital of Japan is Tokyo."}],
                 # Missing tool_definitions
             )
 

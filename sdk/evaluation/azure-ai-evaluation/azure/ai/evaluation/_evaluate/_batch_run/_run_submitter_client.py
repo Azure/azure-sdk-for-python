@@ -110,17 +110,13 @@ class RunSubmitterClient:
 
         return run_future
 
-    def get_details(
-        self, client_run: BatchClientRun, all_results: bool = False
-    ) -> pd.DataFrame:
+    def get_details(self, client_run: BatchClientRun, all_results: bool = False) -> pd.DataFrame:
         run = self._get_run(client_run)
 
         def concat(*dataframes: pd.DataFrame) -> pd.DataFrame:
             return pd.concat(dataframes, axis=1, verify_integrity=True)
 
-        def to_dataframe(
-            items: Sequence[Mapping[str, Any]], *, max_length: Optional[int] = None
-        ) -> pd.DataFrame:
+        def to_dataframe(items: Sequence[Mapping[str, Any]], *, max_length: Optional[int] = None) -> pd.DataFrame:
             """Convert a sequence of dictionaries to a DataFrame.
 
             :param items: Sequence of dictionaries to convert.
@@ -131,9 +127,7 @@ class RunSubmitterClient:
             :rtype: pd.DataFrame
             """
             max_length = None if all_results else self._config.default_num_results
-            return pd.DataFrame(
-                data=items if all_results else itertools.islice(items, max_length)
-            )
+            return pd.DataFrame(data=items if all_results else itertools.islice(items, max_length))
 
         inputs = concat(
             to_dataframe(run.inputs),
@@ -157,17 +151,13 @@ class RunSubmitterClient:
                 if len(result_df.columns) == 1 and result_df.columns[0] == "output":
                     aggregate_input = result_df["output"].tolist()
                 else:
-                    aggregate_input = [
-                        AttrDict(item) for item in result_df.to_dict("records")
-                    ]
+                    aggregate_input = [AttrDict(item) for item in result_df.to_dict("records")]
 
                 aggr_func = getattr(run.dynamic_callable, "__aggregate__")
                 aggregated_metrics = aggr_func(aggregate_input)
 
         except Exception as ex:  # pylint: disable=broad-exception-caught
-            LOGGER.warning(
-                "Error calculating aggregations for evaluator, failed with error %s", ex
-            )
+            LOGGER.warning("Error calculating aggregations for evaluator, failed with error %s", ex)
 
         if not isinstance(aggregated_metrics, dict):
             LOGGER.warning(

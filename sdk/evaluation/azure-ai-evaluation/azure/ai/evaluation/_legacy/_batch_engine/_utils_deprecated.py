@@ -102,9 +102,7 @@ def async_run_allowing_running_loop(async_func, *args, **kwargs):
         #              this odd logic as is, and in phase 2 of the migration, this will be
         #              refactored to be more idiomatic asyncio code.
         with ThreadPoolExecutorWithContext() as executor:
-            return executor.submit(
-                lambda: asyncio.run(async_func(*args, **kwargs))
-            ).result()
+            return executor.submit(lambda: asyncio.run(async_func(*args, **kwargs))).result()
     else:
         return asyncio.run(async_func(*args, **kwargs))
 
@@ -116,10 +114,7 @@ async def stringify_output_async(output: Any) -> str:
         return await stringify_output_async([v for v in output])
     if isinstance(output, Mapping):
         return ", ".join(
-            [
-                f"{await stringify_output_async(k)}:{await stringify_output_async(v)}"
-                for k, v in output.items()
-            ]
+            [f"{await stringify_output_async(k)}:{await stringify_output_async(v)}" for k, v in output.items()]
         )
     if isinstance(output, Sequence):
         return "".join([await stringify_output_async(v) for v in output])

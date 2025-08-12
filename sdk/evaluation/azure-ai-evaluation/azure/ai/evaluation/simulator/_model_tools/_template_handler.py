@@ -162,23 +162,17 @@ class AdversarialTemplateHandler:
         rai_client: Union[RAIClient, AIProjectClient],
     ) -> None:
         self.azure_ai_project = azure_ai_project
-        self.categorized_ch_parameters: Optional[Dict[str, _CategorizedParameter]] = (
-            None
-        )
+        self.categorized_ch_parameters: Optional[Dict[str, _CategorizedParameter]] = None
         self.rai_client = rai_client
 
-    async def _get_content_harm_template_collections(
-        self, collection_key: str
-    ) -> List[AdversarialTemplate]:
+    async def _get_content_harm_template_collections(self, collection_key: str) -> List[AdversarialTemplate]:
         if self.categorized_ch_parameters is None:
             categorized_parameters: Dict[str, _CategorizedParameter] = {}
             util = ContentHarmTemplatesUtils
             if isinstance(self.rai_client, RAIClient):
                 parameters = await self.rai_client.get_contentharm_parameters()
             elif isinstance(self.rai_client, AIProjectClient):
-                parameters = literal_eval(
-                    self.rai_client.red_teams.get_template_parameters()
-                )
+                parameters = literal_eval(self.rai_client.red_teams.get_template_parameters())
 
             for k in parameters.keys():
                 template_key = util.get_template_key(k)
@@ -200,16 +194,10 @@ class AdversarialTemplateHandler:
 
         for key, value in plist.items():
             # Skip enterprise templates for ADVERSARIAL_QA
-            if (
-                collection_key == AdversarialScenario.ADVERSARIAL_QA.value
-                and "enterprise" in key
-            ):
+            if collection_key == AdversarialScenario.ADVERSARIAL_QA.value and "enterprise" in key:
                 continue
             # Skip non-enterprise templates for ADVERSARIAL_QA_DOCUMENTS
-            if (
-                collection_key == AdversarialScenario.ADVERSARIAL_QA_DOCUMENTS.value
-                and "enterprise" not in key
-            ):
+            if collection_key == AdversarialScenario.ADVERSARIAL_QA_DOCUMENTS.value and "enterprise" not in key:
                 continue
 
             if value["category"] == template_category:

@@ -62,9 +62,7 @@ class SimulationRequestDTO:
         toReturn = self.__dict__.copy()
 
         if toReturn["templateParameters"] is not None:
-            toReturn["templateParameters"] = {
-                str(k): str(v) for k, v in toReturn["templateParameters"].items()
-            }
+            toReturn["templateParameters"] = {str(k): str(v) for k, v in toReturn["templateParameters"].items()}
 
         return toReturn
 
@@ -209,9 +207,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
                 template_key=self.tkey,
                 template_parameters=self.tparam,
             )
-            response_data = session.red_teams.submit_simulation(
-                sim_request_dto, headers=headers, params=params
-            )
+            response_data = session.red_teams.submit_simulation(sim_request_dto, headers=headers, params=params)
             operation_id = response_data["location"].split("/")[-1]
 
             request_count = 0
@@ -224,9 +220,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
                         SimpleNamespace,
                     )  # pylint: disable=forgotten-debug-statement
 
-                    response = SimpleNamespace(
-                        status_code=202, text=str(e), json=lambda: {"error": str(e)}
-                    )
+                    response = SimpleNamespace(status_code=202, text=str(e), json=lambda: {"error": str(e)})
                 if isinstance(response, dict):
                     response_data = response
                     flag = False
@@ -250,9 +244,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
             )
 
             response = None
-            async with get_async_http_client().with_policies(
-                retry_policy=service_call_retry_policy
-            ) as retry_client:
+            async with get_async_http_client().with_policies(retry_policy=service_call_retry_policy) as retry_client:
                 try:
                     response = await retry_client.post(
                         url=self.endpoint_url,
@@ -289,9 +281,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
             await asyncio.sleep(15)
             time.sleep(15)
 
-            async with get_async_http_client().with_policies(
-                retry_policy=retry_policy
-            ) as exp_retry_client:
+            async with get_async_http_client().with_policies(retry_policy=retry_policy) as exp_retry_client:
                 token = await self.token_manager.get_token_async()
                 proxy_headers = {
                     "Authorization": f"Bearer {token}",

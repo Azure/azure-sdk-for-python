@@ -108,9 +108,7 @@ def nltk_tokenize(text: str) -> List[str]:
 
 
 def _is_aoi_model_config(val: object) -> TypeGuard[AzureOpenAIModelConfiguration]:
-    return isinstance(val, dict) and all(
-        isinstance(val.get(k), str) for k in ("azure_endpoint", "azure_deployment")
-    )
+    return isinstance(val, dict) and all(isinstance(val.get(k), str) for k in ("azure_endpoint", "azure_deployment"))
 
 
 def _is_openai_model_config(val: object) -> TypeGuard[OpenAIModelConfiguration]:
@@ -134,9 +132,7 @@ def construct_prompty_model_config(
     parse_model_config_type(model_config)
 
     if _is_aoi_model_config(model_config):
-        model_config["api_version"] = model_config.get(
-            "api_version", default_api_version
-        )
+        model_config["api_version"] = model_config.get("api_version", default_api_version)
 
     prompty_model_config: dict = {
         "configuration": model_config,
@@ -148,16 +144,12 @@ def construct_prompty_model_config(
     prompty_model_config["parameters"]["extra_headers"].update({"Connection": "close"})
 
     if _is_aoi_model_config(model_config) and user_agent:
-        prompty_model_config["parameters"]["extra_headers"].update(
-            {"x-ms-useragent": user_agent}
-        )
+        prompty_model_config["parameters"]["extra_headers"].update({"x-ms-useragent": user_agent})
 
     return prompty_model_config
 
 
-def is_onedp_project(
-    azure_ai_project: Optional[Union[str, AzureAIProject]]
-) -> TypeIs[str]:
+def is_onedp_project(azure_ai_project: Optional[Union[str, AzureAIProject]]) -> TypeIs[str]:
     """Check if the Azure AI project is an OneDP project.
 
     :param azure_ai_project: The scope of the Azure AI project.
@@ -275,18 +267,14 @@ def _validate_typed_dict(o: object, t: Type[T_TypedDict]) -> T_TypedDict:
 
     def validate_annotation(v: object, annotation: Union[str, type, object]) -> bool:
         if isinstance(annotation, str):
-            raise NotImplementedError(
-                "Missing support for validating against stringized annotations."
-            )
+            raise NotImplementedError("Missing support for validating against stringized annotations.")
 
         if (origin := get_origin(annotation)) is not None:
             if origin is tuple:
                 validate_annotation(v, tuple)
                 tuple_args = get_args(annotation)
                 if len(cast(tuple, v)) != len(tuple_args):
-                    raise TypeError(
-                        f"Expected a {len(tuple_args)}-tuple, got a {len(cast(tuple, v))}-tuple."
-                    )
+                    raise TypeError(f"Expected a {len(tuple_args)}-tuple, got a {len(cast(tuple, v))}-tuple.")
                 for tuple_val, tuple_args in zip(cast(tuple, v), tuple_args):
                     validate_annotation(tuple_val, tuple_args)
             elif origin is dict:
@@ -307,36 +295,23 @@ def _validate_typed_dict(o: object, t: Type[T_TypedDict]) -> T_TypedDict:
                         return True
                     except TypeError:
                         pass
-                    raise TypeError(
-                        f"Expected value to have type {annotation}. Received type {type(v)}"
-                    )
+                    raise TypeError(f"Expected value to have type {annotation}. Received type {type(v)}")
             elif origin is Literal:
                 literal_args = get_args(annotation)
-                if not any(
-                    type(literal) is type(v) and literal == v
-                    for literal in literal_args
-                ):
-                    raise TypeError(
-                        f"Expected value to be one of {list(literal_args)!r}. Received type {type(v)}"
-                    )
+                if not any(type(literal) is type(v) and literal == v for literal in literal_args):
+                    raise TypeError(f"Expected value to be one of {list(literal_args)!r}. Received type {type(v)}")
             elif any(origin is g for g in (NotRequired, Required)):
                 validate_annotation(v, get_args(annotation)[0])
             else:
-                raise NotImplementedError(
-                    f"Validation not implemented for generic {origin}."
-                )
+                raise NotImplementedError(f"Validation not implemented for generic {origin}.")
             return True
 
         if isinstance(annotation, type):
             if not isinstance(v, annotation):
-                raise TypeError(
-                    f"Expected value to have type {annotation}. Received type {type(v)}."
-                )
+                raise TypeError(f"Expected value to have type {annotation}. Received type {type(v)}.")
             return True
 
-        raise ValueError(
-            "Annotation to validate against should be a str, type, or generic."
-        )
+        raise ValueError("Annotation to validate against should be a str, type, or generic.")
 
     for k, v in o.items():
         validate_annotation(v, annotations[k])
@@ -364,9 +339,7 @@ def check_score_is_valid(score: Union[str, float], min_score=1, max_score=5) -> 
     return min_score <= numeric_score <= max_score
 
 
-def parse_quality_evaluator_reason_score(
-    llm_output: str, valid_score_range: str = "[1-5]"
-) -> Tuple[float, str]:
+def parse_quality_evaluator_reason_score(llm_output: str, valid_score_range: str = "[1-5]") -> Tuple[float, str]:
     """Parse the output of prompt-based quality evaluators that return a score and reason.
 
     Current supported evaluators:
@@ -513,10 +486,7 @@ def validate_conversation(conversation):
                 ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
             )
         if isinstance(content, list):
-            if any(
-                item.get("type") == "image_url" and "url" in item.get("image_url", {})
-                for item in content
-            ):
+            if any(item.get("type") == "image_url" and "url" in item.get("image_url", {}) for item in content):
                 image_found = True
     if not image_found:
         raise_exception(
@@ -597,10 +567,7 @@ def _get_conversation_history(query, include_system_messages=False):
 def _pretty_format_conversation_history(conversation_history):
     """Formats the conversation history for better readability."""
     formatted_history = ""
-    if (
-        "system_message" in conversation_history
-        and conversation_history["system_message"] is not None
-    ):
+    if "system_message" in conversation_history and conversation_history["system_message"] is not None:
         formatted_history += "SYSTEM_PROMPT:\n"
         formatted_history += "  " + conversation_history["system_message"] + "\n\n"
     for i, (user_query, agent_response) in enumerate(
@@ -624,9 +591,7 @@ def _pretty_format_conversation_history(conversation_history):
 def reformat_conversation_history(query, logger=None, include_system_messages=False):
     """Reformats the conversation history to a more compact representation."""
     try:
-        conversation_history = _get_conversation_history(
-            query, include_system_messages=include_system_messages
-        )
+        conversation_history = _get_conversation_history(query, include_system_messages=include_system_messages)
         return _pretty_format_conversation_history(conversation_history)
     except:
         # If the conversation history cannot be parsed for whatever reason (e.g. the converter format changed), the original query is returned
@@ -637,9 +602,7 @@ def reformat_conversation_history(query, logger=None, include_system_messages=Fa
         #   Lower percentage of mode in Likert scale (73.4% vs 75.4%)
         #   Lower pairwise agreement between LLMs (85% vs 90% at the pass/fail level with threshold of 3)
         if logger:
-            logger.warning(
-                f"Conversation history could not be parsed, falling back to original query: {query}"
-            )
+            logger.warning(f"Conversation history could not be parsed, falling back to original query: {query}")
         return query
 
 
@@ -667,9 +630,7 @@ def _get_agent_response(agent_response_msgs, include_tool_messages=False):
                 for content in msg.get("content", []):
                     # Todo: Verify if this is the correct way to handle tool calls
                     if content.get("type") == "tool_call":
-                        if "tool_call" in content and "function" in content.get(
-                            "tool_call", {}
-                        ):
+                        if "tool_call" in content and "function" in content.get("tool_call", {}):
                             tc = content.get("tool_call", {})
                             func_name = tc.get("function", {}).get("name", "")
                             args = tc.get("function", {}).get("arguments", {})
@@ -691,9 +652,7 @@ def reformat_agent_response(response, logger=None, include_tool_messages=False):
     try:
         if response is None or response == []:
             return ""
-        agent_response = _get_agent_response(
-            response, include_tool_messages=include_tool_messages
-        )
+        agent_response = _get_agent_response(response, include_tool_messages=include_tool_messages)
         if agent_response == []:
             # If no message could be extracted, likely the format changed, fallback to the original response in that case
             if logger:
@@ -706,9 +665,7 @@ def reformat_agent_response(response, logger=None, include_tool_messages=False):
         # If the agent response cannot be parsed for whatever reason (e.g. the converter format changed), the original response is returned
         # This is a fallback to ensure that the evaluation can still proceed. See comments on reformat_conversation_history for more details.
         if logger:
-            logger.warning(
-                f"Agent response could not be parsed, falling back to original response: {response}"
-            )
+            logger.warning(f"Agent response could not be parsed, falling back to original response: {response}")
         return response
 
 

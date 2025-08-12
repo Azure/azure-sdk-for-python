@@ -77,9 +77,7 @@ class TestConversationBot:
         assert isinstance(bot.conversation_template, jinja2.Template)
 
     @pytest.mark.asyncio
-    async def test_conversation_bot_initialization_user_invalid_jinja(
-        self, bot_invalid_jinja_params
-    ):
+    async def test_conversation_bot_initialization_user_invalid_jinja(self, bot_invalid_jinja_params):
         bot = ConversationBot(**bot_invalid_jinja_params)
 
         assert bot.role == ConversationRole.USER
@@ -97,26 +95,20 @@ class TestConversationBot:
         )
 
         async with client:
-            parsed_response, req, time_taken, full_response = (
-                await bot.generate_response(
-                    session=client,
-                    conversation_history=[],
-                    max_history=0,
-                    turn_number=0,
-                )
+            parsed_response, req, time_taken, full_response = await bot.generate_response(
+                session=client,
+                conversation_history=[],
+                max_history=0,
+                turn_number=0,
             )
 
         assert (
             parsed_response["samples"][0]
-            == bot_invalid_jinja_params["instantiation_parameters"][
-                "conversation_starter"
-            ]
+            == bot_invalid_jinja_params["instantiation_parameters"]["conversation_starter"]
         )
 
     @pytest.mark.asyncio
-    async def test_conversation_bot_initialization_assistant(
-        self, bot_assistant_params
-    ):
+    async def test_conversation_bot_initialization_assistant(self, bot_assistant_params):
         bot = ConversationBot(**bot_assistant_params)
         assert bot.role == ConversationRole.ASSISTANT
         assert bot.name == "TestBot"
@@ -126,9 +118,7 @@ class TestConversationBot:
     async def test_generate_response_first_turn_with_starter(self, bot_user_params):
         bot = ConversationBot(**bot_user_params)
         session = AsyncMock()
-        response, request, time_taken, full_response = await bot.generate_response(
-            session, [], 0, 0
-        )
+        response, request, time_taken, full_response = await bot.generate_response(session, [], 0, 0)
         assert response["samples"][0] == "Hello, world!"
         assert time_taken == 0
 
@@ -136,9 +126,7 @@ class TestConversationBot:
     async def test_generate_response_with_history_and_role(self, bot_assistant_params):
         bot = ConversationBot(**bot_assistant_params)
         session = AsyncMock()
-        conversation_history = [
-            ConversationTurn(role=ConversationRole.USER, message="Hi!")
-        ]
+        conversation_history = [ConversationTurn(role=ConversationRole.USER, message="Hi!")]
         with patch.object(
             MockOpenAIChatCompletionsModel,
             "get_conversation_completion",
@@ -150,8 +138,6 @@ class TestConversationBot:
                 "time_taken": 0,
                 "full_response": {},
             }
-            response, request, time_taken, full_response = await bot.generate_response(
-                session, conversation_history, 1
-            )
+            response, request, time_taken, full_response = await bot.generate_response(session, conversation_history, 1)
             mocked_method.assert_called_once()
             assert "Hi!" in mocked_method.call_args[1]["messages"][1]["content"]

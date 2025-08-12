@@ -72,9 +72,7 @@ class DirectAttackSimulator:
                 logger=logging.getLogger("AdversarialSimulator"),
                 credential=self.credential,
             )
-            self.rai_client = AIProjectClient(
-                endpoint=azure_ai_project, credential=credential
-            )
+            self.rai_client = AIProjectClient(endpoint=azure_ai_project, credential=credential)
         else:
             try:
                 self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
@@ -92,9 +90,7 @@ class DirectAttackSimulator:
                 logger=logging.getLogger("AdversarialSimulator"),
                 credential=self.credential,
             )
-            self.rai_client = RAIClient(
-                azure_ai_project=self.azure_ai_project, token_manager=self.token_manager
-            )
+            self.rai_client = RAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager)
 
         self.adversarial_template_handler = AdversarialTemplateHandler(
             azure_ai_project=self.azure_ai_project, rai_client=self.rai_client
@@ -222,9 +218,7 @@ class DirectAttackSimulator:
         if not randomization_seed:
             randomization_seed = randint(0, 1000000)
 
-        regular_sim = AdversarialSimulator(
-            azure_ai_project=self.azure_ai_project, credential=self.credential
-        )
+        regular_sim = AdversarialSimulator(azure_ai_project=self.azure_ai_project, credential=self.credential)
         regular_sim_results = await regular_sim(
             scenario=scenario,
             target=target,
@@ -237,9 +231,7 @@ class DirectAttackSimulator:
             randomize_order=False,
             randomization_seed=randomization_seed,
         )
-        jb_sim = AdversarialSimulator(
-            azure_ai_project=self.azure_ai_project, credential=self.credential
-        )
+        jb_sim = AdversarialSimulator(azure_ai_project=self.azure_ai_project, credential=self.credential)
         jb_sim_results = await jb_sim(
             scenario=scenario,
             target=target,

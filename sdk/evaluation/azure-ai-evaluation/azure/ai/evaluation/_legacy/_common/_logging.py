@@ -54,11 +54,7 @@ def _get_format_for_logger(
         or default_log_format
         or "%(asctime)s %(thread)7d %(name)-18s %(levelname)-8s %(message)s"
     )
-    datetime_format = (
-        os.environ.get("PF_LOG_DATETIME_FORMAT")
-        or default_date_format
-        or "%Y-%m-%d %H:%M:%S %z"
-    )
+    datetime_format = os.environ.get("PF_LOG_DATETIME_FORMAT") or default_date_format or "%Y-%m-%d %H:%M:%S %z"
     return log_format, datetime_format
 
 
@@ -137,9 +133,7 @@ def log_progress(
     if current_count > 0:
         delta = datetime.now(timezone.utc).timestamp() - run_start_time.timestamp()
         average_execution_time = round(delta / current_count, 2)
-        estimated_execution_time = round(
-            average_execution_time * (total_count - current_count), 2
-        )
+        estimated_execution_time = round(average_execution_time * (total_count - current_count), 2)
         logger.info(formatter.format(count=current_count, total_count=total_count))
         logger.info(
             f"Average execution time for completed lines: {average_execution_time} seconds. "
@@ -231,9 +225,7 @@ class NodeLogWriter(TextIOBase):
         is_stderr: bool = False,
     ):
         self.run_id_to_stdout: Dict[str, StringIO] = {}
-        self._context: ContextVar[Optional[NodeInfo]] = ContextVar(
-            "run_log_info", default=None
-        )
+        self._context: ContextVar[Optional[NodeInfo]] = ContextVar("run_log_info", default=None)
         self._prev_out: Union[TextIOBase, Any] = prev_stdout
         self._record_datetime: bool = record_datetime
         self._is_stderr: bool = is_stderr
@@ -284,9 +276,7 @@ class NodeLogWriter(TextIOBase):
             # thread because it's a thread-local variable. Therefore, we need to check if StringIO is None here.
             if stdout is None:
                 return 0
-            if (
-                self._record_datetime and s != "\n"
-            ):  # For line breaker, do not add datetime prefix.
+            if self._record_datetime and s != "\n":  # For line breaker, do not add datetime prefix.
                 s = f"[{datetime.now(timezone.utc).strftime(self.DATETIME_FORMAT)}] {s}"
             return stdout.write(s)
 

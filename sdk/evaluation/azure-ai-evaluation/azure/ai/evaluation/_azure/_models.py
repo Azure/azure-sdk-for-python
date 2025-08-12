@@ -41,9 +41,7 @@ class WorkspaceHubConfig(Model):
         **kwargs
     ):
         super(WorkspaceHubConfig, self).__init__(**kwargs)
-        self.additional_workspace_storage_accounts = (
-            additional_workspace_storage_accounts
-        )
+        self.additional_workspace_storage_accounts = additional_workspace_storage_accounts
         self.default_workspace_resource_group = default_workspace_resource_group
 
 
