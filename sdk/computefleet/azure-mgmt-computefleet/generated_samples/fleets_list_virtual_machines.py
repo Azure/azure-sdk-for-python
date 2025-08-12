@@ -15,7 +15,7 @@ from azure.mgmt.computefleet import ComputeFleetMgmtClient
     pip install azure-identity
     pip install azure-mgmt-computefleet
 # USAGE
-    python fleets_list_by_subscription.py
+    python fleets_list_virtual_machines.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,11 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.fleets.list_by_subscription()
+    response = client.fleets.list_virtual_machines(
+        resource_group_name="rgazurefleet",
+        name="myFleet",
+    )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: 2025-07-01-preview/Fleets_ListBySubscription.json
+# x-ms-original-file: 2025-07-01-preview/Fleets_ListVirtualMachines.json
 if __name__ == "__main__":
     main()
