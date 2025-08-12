@@ -212,13 +212,13 @@ class BaseExporter:
                     elif result_from_storage_put == StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED:
                         # If data has to be dropped due to persistent storage being full, track dropped items
                         _track_dropped_items(self._customer_statsbeat_metrics, envelopes, DropCode.CLIENT_PERSISTENCE_CAPACITY)
-                    elif isinstance(result_from_storage_put, str):
-                        # For any exceptions occurred in put method of either LocalFileStorage or LocalFileBlob, track dropped item with reason
-                        _track_dropped_items(self._customer_statsbeat_metrics, envelopes, DropCode.CLIENT_EXCEPTION, result_from_storage_put)
                     elif get_local_storage_state_exception() != "":
                         # For exceptions caught in _check_and_set_folder_permissions during storage setup
                         _track_dropped_items(self._customer_statsbeat_metrics, envelopes, DropCode.CLIENT_EXCEPTION, result_from_storage_put)
                         set_local_storage_state_exception("")
+                    elif isinstance(result_from_storage_put, str):
+                        # For any exceptions occurred in put method of either LocalFileStorage or LocalFileBlob, track dropped item with reason
+                        _track_dropped_items(self._customer_statsbeat_metrics, envelopes, DropCode.CLIENT_EXCEPTION, result_from_storage_put)
                     else:
                         # LocalFileBlob.put returns either an exception(failure, handled above) or the file path(success), eventually that will be removed since this value is not being utilized elsewhere
                         pass

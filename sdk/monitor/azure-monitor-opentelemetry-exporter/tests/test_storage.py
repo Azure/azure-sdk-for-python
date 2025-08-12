@@ -467,12 +467,12 @@ class TestLocalFileStorage(unittest.TestCase):
         # Clear any existing states (set to empty string, not None)
         set_local_storage_state_exception("")
         
-        # Create an OSError with errno.EROFS (Read-only file system)
+        # Create an OSError with Read-only file system
         import errno
         readonly_error = OSError("Read-only file system")
-        readonly_error.errno = errno.EROFS
+        readonly_error.errno = errno.EROFS   # cspell:disable-line
         
-        # Mock os.makedirs to raise EROFS error
+        # Mock os.makedirs to raise READONLY error
         with mock.patch("os.makedirs", side_effect=readonly_error):
             stor = LocalFileStorage(os.path.join(TEST_FOLDER, "readonly_fs_test"))
             
