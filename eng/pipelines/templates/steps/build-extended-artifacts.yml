@@ -56,7 +56,8 @@ steps:
   - template: /eng/pipelines/templates/steps/use-venv.yml
 
   - script: |
-      python -m pip install -r eng/ci_tools.txt
+      which python
+      uv pip install -r eng/ci_tools.txt
     displayName: 'Prep Environment'
 
   - template: set-dev-build.yml

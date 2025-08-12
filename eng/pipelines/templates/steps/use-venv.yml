@@ -10,6 +10,8 @@ parameters:
     default: succeeded()
 
 steps:
+  - template: install-uv.yml
+
   - pwsh: |
       $(Build.SourcesDirectory)/eng/scripts/create-venv.ps1 `
         -VenvName "${{ parameters.VirtualEnvironmentName }}" `

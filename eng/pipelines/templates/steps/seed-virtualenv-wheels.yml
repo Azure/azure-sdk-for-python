@@ -5,7 +5,7 @@ parameters:
 
 steps:
   - pwsh: |
-      python -m pip install virtualenv
+      uv pip install virtualenv
     displayName: Ensure virtualenv installed
 
   - pwsh: |

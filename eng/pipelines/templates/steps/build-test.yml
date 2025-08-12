@@ -26,23 +26,15 @@ steps:
       versionSpec: '${{ parameters.PythonVersion }}'
 
   - template: /eng/pipelines/templates/steps/use-venv.yml
-    parameters:
-      Activate: false
 
   - template: set-dev-build.yml
 
   - pwsh: |
-      if ($IsWindows) {
-        . $(VENV_LOCATION)/Scripts/Activate.ps1
-      }
-      else {
-        . $(VENV_LOCATION)/bin/activate.ps1
-      }
+      Write-Host (Get-Command python).Source
       $ErrorActionPreference = 'Stop'
       $PSNativeCommandUseErrorActionPreference = $true
-      python -m pip install --force -r eng/ci_tools.txt
-      python -m pip freeze --all
-      Write-Host (Get-Command python).Source
+      uv pip install --force -r eng/ci_tools.txt
+      uv pip freeze
     displayName: 'Prep Environment'
 
   - template: /eng/common/testproxy/test-proxy-tool.yml
@@ -75,12 +67,6 @@ steps:
           $env:AZURESUBSCRIPTION_CLIENT_ID = $account.Id;
           $env:AZURESUBSCRIPTION_TENANT_ID = $account.Tenants;
 
-          if ($IsWindows) {
-            . $(VENV_LOCATION)/Scripts/Activate.ps1
-          }
-          else {
-            . $(VENV_LOCATION)/bin/activate.ps1
-          }
           Write-Host (Get-Command python).Source
 
           if ($env:TESTMARKARGUMENT) {
@@ -104,12 +90,6 @@ steps:
 
   - ${{ else }}:
     - pwsh: |
-        if ($IsWindows) {
-          . $(VENV_LOCATION)/Scripts/Activate.ps1
-        }
-        else {
-          . $(VENV_LOCATION)/bin/activate.ps1
-        }
         Write-Host (Get-Command python).Source
 
         if ($env:TESTMARKARGUMENT) {
