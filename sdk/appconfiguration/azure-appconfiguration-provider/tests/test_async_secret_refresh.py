@@ -7,6 +7,7 @@ import time
 import asyncio
 import unittest
 from unittest.mock import Mock, patch
+from devtools_testutils.aio import recorded_by_proxy_async
 from azure.appconfiguration import SecretReferenceConfigurationSetting
 from azure.appconfiguration.provider import SettingSelector, WatchKey
 from devtools_testutils import recorded_by_proxy
@@ -15,8 +16,9 @@ from asynctestcase import AppConfigTestCase
 
 
 class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
-    @recorded_by_proxy
+
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def testsecret_refresh_timer(
         self,
         appconfiguration_endpoint_string,
@@ -63,8 +65,8 @@ class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
             # Should have been called at least twice now
             assert mock_refresh.call_count >= 2
 
-    @recorded_by_proxy
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_secret_refresh_with_updated_values(
         self,
         appconfiguration_endpoint_string,
@@ -111,8 +113,8 @@ class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
         assert client["secret"] == "Very secret value 2"
         assert mock_callback.call_count >= 1
 
-    @recorded_by_proxy
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_no_secret_refresh_without_timer(
         self,
         appconfiguration_endpoint_string,
@@ -156,8 +158,8 @@ class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
             # but there should be no automatic refresh caused by the secret timer
             assert mock_time.call_count == 2
 
-    @recorded_by_proxy
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_secret_refresh_timer_triggers_refresh(
         self,
         appconfiguration_endpoint_string,
@@ -196,8 +198,8 @@ class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
                 # Verify refresh was called
                 assert mock_refresh.call_count > 0
 
-    @recorded_by_proxy
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_secret_refresh_interval_parameter(
         self,
         appconfiguration_endpoint_string,
