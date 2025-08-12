@@ -34,7 +34,6 @@ steps:
   - template: /eng/pipelines/templates/steps/use-venv.yml
     parameters:
       VirtualEnvironmentName: "venv"
-      Condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
 
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml@self
     parameters:
