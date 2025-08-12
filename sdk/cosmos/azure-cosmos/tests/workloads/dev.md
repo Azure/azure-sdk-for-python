@@ -30,7 +30,7 @@ file when run. These logs are named in this format `<file name>-<process id>-<da
 1. Install envoy proxy https://www.envoyproxy.io/docs/envoy/latest/start/install
 1. Go to envoy folder and generate envoy configuration file using template. Template files are in `envoy/templates` directory. `<account_name>` is your Cosmos DB account name.
     - `cd envoy`
-    - `./generate_envoy_config.sh <template_file_path> <output_envoy_config_file> <account_name>`
+    - `./generate_envoy_config.sh <template_file_path> <output_envoy_config_file> <account_name> <write_region> <read_region>`
 1. Start envoy using the generated configuration file
     - `mkdir logs`
     - `envoy -c <envoy_config_file>.yaml --log-level debug --log-path logs/debug.txt`
@@ -45,6 +45,6 @@ file when run. These logs are named in this format `<file name>-<process id>-<da
 
 ### Close Workloads
 - If you want to keep the logs and stop the scripts,  
-   `./shutdown_workloads.sh --no-remove-logs` 
+   `./shutdown_workloads.sh --do-not-remove-logs` 
 - If you want to remove the logs and stop the scripts,        
    `./shutdown_workloads.sh`

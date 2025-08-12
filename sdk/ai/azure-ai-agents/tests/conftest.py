@@ -147,6 +147,25 @@ def add_sanitizers(test_proxy, mock_project_scope, mock_dataset_name, mock_vecto
         value="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/someindex",
     )
 
+    # Sanitize the plain bing grounding.
+    add_body_key_sanitizer(
+        json_path="tools[*].bing_grounding.search_configurations[*].connection_id",
+        value="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.CognitiveServices/accounts/00000/projects/00000/connections/00000",
+    )
+
+    # Sanitize deep research tool bing connection ID
+    add_body_key_sanitizer(
+        json_path="tools[*].deep_research.bing_grounding_connections[*].connection_id",
+        value="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.CognitiveServices/accounts/00000/projects/00000/connections/00000",
+    )
+
+    # Sanitize Browser Automation tool's Playwright Workspace connection ID
+    add_body_key_sanitizer(
+        json_path="tools[*].browser_automation.connection.id",
+        value="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.CognitiveServices/accounts/00000/projects/00000/connections/00000",
+    )
+
+
     # Sanitize API key from service response (/tests/connections)
     add_body_key_sanitizer(json_path="properties.credentials.key", value="Sanitized")
 

@@ -65,7 +65,7 @@ class SelfHarmEvaluator(RaiServiceEvaluatorBase[Union[str, float]]):
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}.
     """
 
-    id = "azureml://registries/azureml/models/Self-Harm-Related-Content-Evaluator/versions/3"
+    id = "azureai://built-in/evaluators/self_harm"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
     _OPTIONAL_PARAMS = ["query"]
 

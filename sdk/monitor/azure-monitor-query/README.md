@@ -4,6 +4,8 @@ The Azure Monitor Query client library is used to execute read-only queries agai
 
 - [Logs](https://learn.microsoft.com/azure/azure-monitor/logs/data-platform-logs) - Collects and organizes log and performance data from monitored resources. Data from different sources such as platform logs from Azure services, log and performance data from virtual machines agents, and usage and performance data from apps can be consolidated into a single [Azure Log Analytics workspace](https://learn.microsoft.com/azure/azure-monitor/logs/data-platform-logs#log-analytics-and-workspaces). The various data types can be analyzed together using the [Kusto Query Language][kusto_query_language].
 
+> **Important**: As of version 2.0.0, `MetricsClient` and `MetricsQueryClient` have been removed from the `azure-monitor-query` package. For metrics querying capabilities, please use the separate [`azure-monitor-querymetrics`](https://pypi.org/project/azure-monitor-querymetrics/) package which provides `MetricsClient`, or the [`azure-mgmt-monitor`](https://pypi.org/project/azure-mgmt-monitor/) package. For more details, see the [migration guide](https://aka.ms/azsdk/python/monitor/query/migration).
+
 **Resources:**
 
 - [Source code][source]

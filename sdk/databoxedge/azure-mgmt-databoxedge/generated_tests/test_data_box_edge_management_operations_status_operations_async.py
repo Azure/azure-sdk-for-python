@@ -26,7 +26,7 @@ class TestDataBoxEdgeManagementOperationsStatusOperationsAsync(AzureMgmtRecorded
             device_name="str",
             name="str",
             resource_group_name=resource_group.name,
-            api_version="2019-08-01",
+            api_version="2021-02-01-preview",
         )
 
         # please add some check logic here by yourself

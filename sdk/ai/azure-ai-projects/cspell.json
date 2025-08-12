@@ -1,7 +1,6 @@
 {
     "ignoreWords": [
         "aiproject",
-        "Prompty",
         "azureopenai",
         "GLEU",
         "aiservices",

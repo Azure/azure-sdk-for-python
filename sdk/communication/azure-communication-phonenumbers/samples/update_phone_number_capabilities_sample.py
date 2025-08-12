@@ -21,8 +21,8 @@ USAGE:
 import os
 from azure.communication.phonenumbers import PhoneNumbersClient, PhoneNumberCapabilityType
 
-connection_str = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
-phone_number_to_update = os.getenv("AZURE_PHONE_NUMBER")  # e.g. "+15551234567"
+connection_str = os.environ["COMMUNICATION_SAMPLES_CONNECTION_STRING"]
+phone_number_to_update = os.environ["AZURE_PHONE_NUMBER"]  # e.g. "+15551234567"
 phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
 
 
