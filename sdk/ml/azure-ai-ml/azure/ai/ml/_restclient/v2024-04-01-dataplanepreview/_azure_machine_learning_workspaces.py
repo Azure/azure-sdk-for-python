@@ -45,7 +45,7 @@ class AzureMachineLearningWorkspaces(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        _base_url = '{endpoint}/genericasset/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}'
+        _base_url = '{endpoint}/genericasset/v2.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices'
         self._config = AzureMachineLearningWorkspacesConfiguration(credential=credential, **kwargs)
         self._client = ARMPipelineClient(base_url=_base_url, config=self._config, **kwargs)
 

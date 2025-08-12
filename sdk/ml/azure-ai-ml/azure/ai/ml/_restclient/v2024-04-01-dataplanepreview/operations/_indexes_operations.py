@@ -32,7 +32,7 @@ _SERIALIZER.client_side_validation = False
 # fmt: off
 
 def build_list_latest_request(
-    workspace_name1,  # type: str
+    workspace_name,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -45,7 +45,7 @@ def build_list_latest_request(
     # Construct URL
     _url = kwargs.pop("template_url", "/workspaces/{workspaceName}/indexes")
     path_format_arguments = {
-        "workspaceName": _SERIALIZER.url("workspace_name1", workspace_name1, 'str'),
+        "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -74,7 +74,7 @@ def build_list_latest_request(
 
 
 def build_get_latest_request(
-    workspace_name1,  # type: str
+    workspace_name,  # type: str
     name,  # type: str
     **kwargs  # type: Any
 ):
@@ -85,7 +85,7 @@ def build_get_latest_request(
     # Construct URL
     _url = kwargs.pop("template_url", "/workspaces/{workspaceName}/indexes/{name}")
     path_format_arguments = {
-        "workspaceName": _SERIALIZER.url("workspace_name1", workspace_name1, 'str'),
+        "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, 'str'),
         "name": _SERIALIZER.url("name", name, 'str', max_length=254, min_length=0, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9-_]*$'),
     }
 
@@ -109,7 +109,7 @@ def build_get_latest_request(
 
 
 def build_get_next_version_request(
-    workspace_name1,  # type: str
+    workspace_name,  # type: str
     name,  # type: str
     **kwargs  # type: Any
 ):
@@ -120,7 +120,7 @@ def build_get_next_version_request(
     # Construct URL
     _url = kwargs.pop("template_url", "/workspaces/{workspaceName}/indexes/{name}:getNextVersion")
     path_format_arguments = {
-        "workspaceName": _SERIALIZER.url("workspace_name1", workspace_name1, 'str'),
+        "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, 'str'),
         "name": _SERIALIZER.url("name", name, 'str', max_length=254, min_length=0, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9-_]*$'),
     }
 
@@ -144,7 +144,7 @@ def build_get_next_version_request(
 
 
 def build_list_request(
-    workspace_name1,  # type: str
+    workspace_name,  # type: str
     name,  # type: str
     **kwargs  # type: Any
 ):
@@ -161,7 +161,7 @@ def build_list_request(
     # Construct URL
     _url = kwargs.pop("template_url", "/workspaces/{workspaceName}/indexes/{name}/versions")
     path_format_arguments = {
-        "workspaceName": _SERIALIZER.url("workspace_name1", workspace_name1, 'str'),
+        "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, 'str'),
         "name": _SERIALIZER.url("name", name, 'str', max_length=254, min_length=0, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9-_]*$'),
     }
 
@@ -196,7 +196,7 @@ def build_list_request(
 
 
 def build_get_request(
-    workspace_name1,  # type: str
+    workspace_name,  # type: str
     name,  # type: str
     version,  # type: str
     **kwargs  # type: Any
@@ -208,7 +208,7 @@ def build_get_request(
     # Construct URL
     _url = kwargs.pop("template_url", "/workspaces/{workspaceName}/indexes/{name}/versions/{version}")
     path_format_arguments = {
-        "workspaceName": _SERIALIZER.url("workspace_name1", workspace_name1, 'str'),
+        "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, 'str'),
         "name": _SERIALIZER.url("name", name, 'str', max_length=254, min_length=0, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9-_]*$'),
         "version": _SERIALIZER.url("version", version, 'str'),
     }
@@ -233,7 +233,7 @@ def build_get_request(
 
 
 def build_create_or_update_request(
-    workspace_name1,  # type: str
+    workspace_name,  # type: str
     name,  # type: str
     version,  # type: str
     **kwargs  # type: Any
@@ -246,7 +246,7 @@ def build_create_or_update_request(
     # Construct URL
     _url = kwargs.pop("template_url", "/workspaces/{workspaceName}/indexes/{name}/versions/{version}")
     path_format_arguments = {
-        "workspaceName": _SERIALIZER.url("workspace_name1", workspace_name1, 'str'),
+        "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, 'str'),
         "name": _SERIALIZER.url("name", name, 'str', max_length=254, min_length=0, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9-_]*$'),
         "version": _SERIALIZER.url("version", version, 'str'),
     }
@@ -301,7 +301,6 @@ class IndexesOperations(object):
         subscription_id,  # type: str
         resource_group_name,  # type: str
         workspace_name,  # type: str
-        workspace_name1,  # type: str
         top=None,  # type: Optional[int]
         skip=0,  # type: Optional[int]
         maxpagesize=None,  # type: Optional[int]
@@ -318,8 +317,6 @@ class IndexesOperations(object):
         :type resource_group_name: str
         :param workspace_name: The name of the AzureML workspace or AI project.
         :type workspace_name: str
-        :param workspace_name1: The name of the AzureML workspace or AI project.
-        :type workspace_name1: str
         :param top: The number of result items to return.
         :type top: int
         :param skip: The number of result items to skip.
@@ -342,7 +339,7 @@ class IndexesOperations(object):
             if not next_link:
                 
                 request = build_list_latest_request(
-                    workspace_name1=workspace_name1,
+                    workspace_name=workspace_name,
                     api_version=api_version,
                     top=top,
                     skip=skip,
@@ -354,14 +351,13 @@ class IndexesOperations(object):
                     "endpoint": self._serialize.url("endpoint", endpoint, 'str', skip_quote=True),
                     "subscriptionId": self._serialize.url("subscription_id", subscription_id, 'str'),
                     "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    "workspaceName": self._serialize.url("workspace_name", workspace_name, 'str'),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
                 
                 request = build_list_latest_request(
-                    workspace_name1=workspace_name1,
+                    workspace_name=workspace_name,
                     api_version=api_version,
                     top=top,
                     skip=skip,
@@ -373,7 +369,6 @@ class IndexesOperations(object):
                     "endpoint": self._serialize.url("endpoint", endpoint, 'str', skip_quote=True),
                     "subscriptionId": self._serialize.url("subscription_id", subscription_id, 'str'),
                     "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    "workspaceName": self._serialize.url("workspace_name", workspace_name, 'str'),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
@@ -381,7 +376,6 @@ class IndexesOperations(object):
                     "endpoint": self._serialize.url("endpoint", endpoint, 'str', skip_quote=True),
                     "subscriptionId": self._serialize.url("subscription_id", subscription_id, 'str'),
                     "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    "workspaceName": self._serialize.url("workspace_name", workspace_name, 'str'),
                 }
                 request.method = "GET"
             return request
@@ -423,7 +417,6 @@ class IndexesOperations(object):
         subscription_id,  # type: str
         resource_group_name,  # type: str
         workspace_name,  # type: str
-        workspace_name1,  # type: str
         name,  # type: str
         **kwargs  # type: Any
     ):
@@ -438,8 +431,6 @@ class IndexesOperations(object):
         :type resource_group_name: str
         :param workspace_name: The name of the AzureML workspace or AI project.
         :type workspace_name: str
-        :param workspace_name1: The name of the AzureML workspace or AI project.
-        :type workspace_name1: str
         :param name: Name of the index.
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -457,7 +448,7 @@ class IndexesOperations(object):
 
         
         request = build_get_latest_request(
-            workspace_name1=workspace_name1,
+            workspace_name=workspace_name,
             name=name,
             api_version=api_version,
             template_url=self.get_latest.metadata['url'],
@@ -467,7 +458,6 @@ class IndexesOperations(object):
             "endpoint": self._serialize.url("endpoint", endpoint, 'str', skip_quote=True),
             "subscriptionId": self._serialize.url("subscription_id", subscription_id, 'str'),
             "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            "workspaceName": self._serialize.url("workspace_name", workspace_name, 'str'),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
@@ -500,7 +490,6 @@ class IndexesOperations(object):
         subscription_id,  # type: str
         resource_group_name,  # type: str
         workspace_name,  # type: str
-        workspace_name1,  # type: str
         name,  # type: str
         **kwargs  # type: Any
     ):
@@ -518,8 +507,6 @@ class IndexesOperations(object):
         :type resource_group_name: str
         :param workspace_name: The name of the AzureML workspace or AI project.
         :type workspace_name: str
-        :param workspace_name1: The name of the AzureML workspace or AI project.
-        :type workspace_name1: str
         :param name: Name of the index.
         :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -537,7 +524,7 @@ class IndexesOperations(object):
 
         
         request = build_get_next_version_request(
-            workspace_name1=workspace_name1,
+            workspace_name=workspace_name,
             name=name,
             api_version=api_version,
             template_url=self.get_next_version.metadata['url'],
@@ -547,7 +534,6 @@ class IndexesOperations(object):
             "endpoint": self._serialize.url("endpoint", endpoint, 'str', skip_quote=True),
             "subscriptionId": self._serialize.url("subscription_id", subscription_id, 'str'),
             "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            "workspaceName": self._serialize.url("workspace_name", workspace_name, 'str'),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
@@ -580,7 +566,6 @@ class IndexesOperations(object):
         subscription_id,  # type: str
         resource_group_name,  # type: str
         workspace_name,  # type: str
-        workspace_name1,  # type: str
         name,  # type: str
         list_view_type="ActiveOnly",  # type: str
         order_by=None,  # type: Optional[str]
@@ -601,8 +586,6 @@ class IndexesOperations(object):
         :type resource_group_name: str
         :param workspace_name: The name of the AzureML workspace or AI project.
         :type workspace_name: str
-        :param workspace_name1: The name of the AzureML workspace or AI project.
-        :type workspace_name1: str
         :param name: Name of the index.
         :type name: str
         :param list_view_type: View type for including/excluding (for example) archived entities.
@@ -635,7 +618,7 @@ class IndexesOperations(object):
             if not next_link:
                 
                 request = build_list_request(
-                    workspace_name1=workspace_name1,
+                    workspace_name=workspace_name,
                     name=name,
                     api_version=api_version,
                     list_view_type=list_view_type,
@@ -651,14 +634,13 @@ class IndexesOperations(object):
                     "endpoint": self._serialize.url("endpoint", endpoint, 'str', skip_quote=True),
                     "subscriptionId": self._serialize.url("subscription_id", subscription_id, 'str'),
                     "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    "workspaceName": self._serialize.url("workspace_name", workspace_name, 'str'),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
                 
                 request = build_list_request(
-                    workspace_name1=workspace_name1,
+                    workspace_name=workspace_name,
                     name=name,
                     api_version=api_version,
                     list_view_type=list_view_type,
@@ -674,7 +656,6 @@ class IndexesOperations(object):
                     "endpoint": self._serialize.url("endpoint", endpoint, 'str', skip_quote=True),
                     "subscriptionId": self._serialize.url("subscription_id", subscription_id, 'str'),
                     "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    "workspaceName": self._serialize.url("workspace_name", workspace_name, 'str'),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
@@ -682,7 +663,6 @@ class IndexesOperations(object):
                     "endpoint": self._serialize.url("endpoint", endpoint, 'str', skip_quote=True),
                     "subscriptionId": self._serialize.url("subscription_id", subscription_id, 'str'),
                     "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    "workspaceName": self._serialize.url("workspace_name", workspace_name, 'str'),
                 }
                 request.method = "GET"
             return request
@@ -724,7 +704,6 @@ class IndexesOperations(object):
         subscription_id,  # type: str
         resource_group_name,  # type: str
         workspace_name,  # type: str
-        workspace_name1,  # type: str
         name,  # type: str
         version,  # type: str
         **kwargs  # type: Any
@@ -740,8 +719,6 @@ class IndexesOperations(object):
         :type resource_group_name: str
         :param workspace_name: The name of the AzureML workspace or AI project.
         :type workspace_name: str
-        :param workspace_name1: The name of the AzureML workspace or AI project.
-        :type workspace_name1: str
         :param name: Name of the index.
         :type name: str
         :param version: Version of the index.
@@ -761,7 +738,7 @@ class IndexesOperations(object):
 
         
         request = build_get_request(
-            workspace_name1=workspace_name1,
+            workspace_name=workspace_name,
             name=name,
             version=version,
             api_version=api_version,
@@ -772,7 +749,6 @@ class IndexesOperations(object):
             "endpoint": self._serialize.url("endpoint", endpoint, 'str', skip_quote=True),
             "subscriptionId": self._serialize.url("subscription_id", subscription_id, 'str'),
             "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            "workspaceName": self._serialize.url("workspace_name", workspace_name, 'str'),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
@@ -805,7 +781,6 @@ class IndexesOperations(object):
         subscription_id,  # type: str
         resource_group_name,  # type: str
         workspace_name,  # type: str
-        workspace_name1,  # type: str
         name,  # type: str
         version,  # type: str
         body,  # type: "_models.Index"
@@ -822,8 +797,6 @@ class IndexesOperations(object):
         :type resource_group_name: str
         :param workspace_name: The name of the AzureML workspace or AI project.
         :type workspace_name: str
-        :param workspace_name1: The name of the AzureML workspace or AI project.
-        :type workspace_name1: str
         :param name: Name of the index.
         :type name: str
         :param version: Version of the index.
@@ -847,7 +820,7 @@ class IndexesOperations(object):
         _json = self._serialize.body(body, 'Index')
 
         request = build_create_or_update_request(
-            workspace_name1=workspace_name1,
+            workspace_name=workspace_name,
             name=name,
             version=version,
             api_version=api_version,
@@ -860,7 +833,6 @@ class IndexesOperations(object):
             "endpoint": self._serialize.url("endpoint", endpoint, 'str', skip_quote=True),
             "subscriptionId": self._serialize.url("subscription_id", subscription_id, 'str'),
             "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            "workspaceName": self._serialize.url("workspace_name", workspace_name, 'str'),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
