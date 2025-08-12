@@ -25,8 +25,8 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         ~azure.ai.evaluation.OpenAIModelConfiguration]
     :param threshold: The threshold for the coherence evaluator. Default is 3.
     :type threshold: int
-    :keyword is_reasoning_model: (Preview) Adjusts prompty config
-        for reasoning models when True.
+    :keyword is_reasoning_model: (Preview) config for chat completions is
+        updated to use reasoning models
     :type is_reasoning_model: bool
 
     .. admonition:: Example:
@@ -71,7 +71,7 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _RESULT_KEY = "coherence"
 
     id = "azureai://built-in/evaluators/coherence"
-    """Evaluator identifier for cloud evaluation."""
+    """Evaluator identifier, experimental to be used only with cloud evaluation"""
 
     @override
     def __init__(self, model_config, *, threshold=3, **kwargs):

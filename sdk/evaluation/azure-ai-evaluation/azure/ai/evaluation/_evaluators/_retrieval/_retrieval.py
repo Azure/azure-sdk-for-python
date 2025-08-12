@@ -35,9 +35,9 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         ~azure.ai.evaluation.OpenAIModelConfiguration]
     :param threshold: The threshold for the evaluation. Default is 3.
     :type threshold: float
-    :keyword is_reasoning_model: (Preview) Adjusts prompty config
-        for reasoning models when True.
-    :paramtype is_reasoning_model: bool
+    :keyword is_reasoning_model: (Preview) config for chat completions is
+        updated to use reasoning models
+    :type is_reasoning_model: bool
     :return: A function that evaluates and generates metrics for "chat" scenario.
     :rtype: Callable
 

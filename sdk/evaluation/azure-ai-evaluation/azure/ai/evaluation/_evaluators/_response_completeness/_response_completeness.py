@@ -42,9 +42,9 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
-    :keyword is_reasoning_model: (Preview) Adjusts prompty config
-        for reasoning models when True.
-    :paramtype is_reasoning_model: bool
+    :keyword is_reasoning_model: (Preview) config for chat completions is
+        updated to use reasoning models
+    :type is_reasoning_model: bool
 
     .. admonition:: Example:
 

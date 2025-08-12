@@ -35,10 +35,9 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
     :type similarity_threshold: int
     :param f1_score_threshold: The threshold for F1 score evaluation. Default is 0.5.
     :type f1_score_threshold: float
-    :keyword is_reasoning_model: (Preview) Adjusts prompty config for
-        reasoning models when True. Passed through to prompty-based child
-        evaluators.
-    :paramtype is_reasoning_model: bool
+    :keyword is_reasoning_model: (Preview) config for chat completions is
+        updated to use reasoning models
+    :type is_reasoning_model: bool
     :return: A callable class that evaluates and generates metrics for "question-answering" scenario.
     :param kwargs: Additional arguments to pass to the evaluator.
     :type kwargs: Any
