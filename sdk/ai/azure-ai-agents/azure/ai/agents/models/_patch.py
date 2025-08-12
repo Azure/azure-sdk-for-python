@@ -53,6 +53,8 @@ from ._models import (
     CodeInterpreterToolResource,
     ConnectedAgentToolDefinition,
     ConnectedAgentDetails,
+    ComputerUseToolDefinition,
+    ComputerUseToolParameters,
     FileSearchToolDefinition,
     FileSearchToolResource,
     FunctionDefinition,
@@ -1164,6 +1166,45 @@ class BrowserAutomationTool(Tool[BrowserAutomationToolDefinition]):
         pass
 
 
+class ComputerUseTool(Tool[ComputerUseToolDefinition]):
+    """
+    A tool that enables the agent to perform computer use actions (preview).
+
+    :param display_width: The display width for the computer use tool.
+    :type display_width: int
+    :param display_height: The display height for the computer use tool.
+    :type display_height: int
+    :param environment: The target environment for computer use, e.g. "browser", "windows", "mac", or "linux".
+    :type environment: str
+    """
+
+    def __init__(self, display_width: int, display_height: int, environment: str):
+        self._params = ComputerUseToolParameters(
+            display_width=display_width, display_height=display_height, environment=environment
+        )
+
+    @property
+    def definitions(self) -> List[ComputerUseToolDefinition]:
+        """
+        Get the Computer Use tool definitions.
+
+        :rtype: List[ToolDefinition]
+        """
+        return [ComputerUseToolDefinition(computer_use_preview=self._params)]
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the tool resources.
+
+        :rtype: ToolResources
+        """
+        return ToolResources()
+
+    def execute(self, tool_call: Any) -> Any:  # noqa: D401 - client-side execution not applicable
+        pass
+
+
 class BingGroundingTool(Tool[BingGroundingToolDefinition]):
     """
     A tool that searches for information using Bing.
@@ -2155,6 +2196,7 @@ __all__: List[str] = [
     "BaseAsyncAgentEventHandler",
     "BaseAgentEventHandler",
     "BrowserAutomationTool",
+    "ComputerUseTool",
     "CodeInterpreterTool",
     "ConnectedAgentTool",
     "DeepResearchTool",
