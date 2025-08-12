@@ -6,10 +6,18 @@ import logging
 import os
 from typing import List, Any, Optional, cast
 
-from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions, SupportsTokenInfo, TokenCredential
+from azure.core.credentials import (
+    AccessToken,
+    AccessTokenInfo,
+    TokenRequestOptions,
+    SupportsTokenInfo,
+    TokenCredential,
+)
+from .. import CredentialUnavailableError
 from .._constants import EnvironmentVariables
-from .._internal import get_default_authority, normalize_authority, within_dac, process_credential_exclusions
+from .._internal.utils import get_default_authority, normalize_authority, within_dac, process_credential_exclusions
 from .azure_powershell import AzurePowerShellCredential
+from .broker import BrokerCredential
 from .browser import InteractiveBrowserCredential
 from .chained import ChainedTokenCredential
 from .environment import EnvironmentCredential
@@ -21,6 +29,32 @@ from .vscode import VisualStudioCodeCredential
 from .workload_identity import WorkloadIdentityCredential
 
 _LOGGER = logging.getLogger(__name__)
+
+
+class FailedDACCredential:
+    """This acts as a substitute for a credential that has failed to initialize in the DAC chain.
+
+    This allows instantiation errors to be reported in ChainTokenCredential if all token requests fail.
+    """
+
+    def __init__(self, credential_name: str, error: str) -> None:
+        self._error = error
+        self._credential_name = credential_name
+
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+        raise CredentialUnavailableError(self._error)
+
+    def get_token_info(self, *scopes, options: Optional[TokenRequestOptions] = None, **kwargs: Any) -> AccessTokenInfo:
+        raise CredentialUnavailableError(self._error)
+
+    def __enter__(self) -> "FailedDACCredential":
+        return self
+
+    def __exit__(self, *args: Any) -> None:
+        pass
+
+    def close(self) -> None:
+        pass
 
 
 class DefaultAzureCredential(ChainedTokenCredential):
@@ -42,6 +76,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
     5. The identity currently logged in to the Azure CLI.
     6. The identity currently logged in to Azure PowerShell.
     7. The identity currently logged in to the Azure Developer CLI.
+    8. Brokered authentication. On Windows and WSL only, this uses the default account logged in via
+       Web Account Manager (WAM) if the `azure-identity-broker` package is installed.
 
     This default behavior is configurable with keyword arguments.
 
@@ -64,9 +100,13 @@ class DefaultAzureCredential(ChainedTokenCredential):
         **False**.
     :keyword bool exclude_interactive_browser_credential: Whether to exclude interactive browser authentication (see
         :class:`~azure.identity.InteractiveBrowserCredential`). Defaults to **True**.
+    :keyword bool exclude_broker_credential: Whether to exclude the broker credential from the credential chain.
+        Defaults to **False**.
     :keyword str interactive_browser_tenant_id: Tenant ID to use when authenticating a user through
         :class:`~azure.identity.InteractiveBrowserCredential`. Defaults to the value of environment variable
         AZURE_TENANT_ID, if any. If unspecified, users will authenticate in their home tenants.
+    :keyword str broker_tenant_id: The tenant ID to use when using brokered authentication. Defaults to the value of
+        environment variable AZURE_TENANT_ID, if any. If unspecified, users will authenticate in their home tenants.
     :keyword str managed_identity_client_id: The client ID of a user-assigned managed identity. Defaults to the value
         of the environment variable AZURE_CLIENT_ID, if any. If not specified, a system-assigned identity will be used.
     :keyword str workload_identity_client_id: The client ID of an identity assigned to the pod. Defaults to the value
@@ -75,14 +115,15 @@ class DefaultAzureCredential(ChainedTokenCredential):
         Defaults to the value of environment variable AZURE_TENANT_ID, if any.
     :keyword str interactive_browser_client_id: The client ID to be used in interactive browser credential. If not
         specified, users will authenticate to an Azure development application.
+    :keyword str broker_client_id: The client ID to be used in brokered authentication. If not specified, users will
+        authenticate to an Azure development application.
     :keyword str shared_cache_username: Preferred username for :class:`~azure.identity.SharedTokenCacheCredential`.
         Defaults to the value of environment variable AZURE_USERNAME, if any.
     :keyword str shared_cache_tenant_id: Preferred tenant for :class:`~azure.identity.SharedTokenCacheCredential`.
         Defaults to the value of environment variable AZURE_TENANT_ID, if any.
     :keyword str visual_studio_code_tenant_id: Tenant ID to use when authenticating with
-        :class:`~azure.identity.VisualStudioCodeCredential`. Defaults to the "Azure: Tenant" setting in VS Code's user
-        settings or, when that setting has no value, the "organizations" tenant, which supports only Azure Active
-        Directory work or school accounts.
+        :class:`~azure.identity.VisualStudioCodeCredential`. Defaults to the tenant specified in the authentication
+        record file used by the Azure Resources extension.
     :keyword int process_timeout: The timeout in seconds to use for developer credentials that run
         subprocesses (e.g. AzureCliCredential, AzurePowerShellCredential). Defaults to **10** seconds.
 
@@ -101,17 +142,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
             raise TypeError("'tenant_id' is not supported in DefaultAzureCredential.")
 
         authority = kwargs.pop("authority", None)
-
-        vscode_tenant_id = kwargs.pop(
-            "visual_studio_code_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
-        )
-        vscode_args = dict(kwargs)
-        if authority:
-            vscode_args["authority"] = authority
-        if vscode_tenant_id:
-            vscode_args["tenant_id"] = vscode_tenant_id
-
         authority = normalize_authority(authority) if authority else get_default_authority()
+
+        vscode_tenant_id = kwargs.pop("visual_studio_code_tenant_id", None)
 
         interactive_browser_tenant_id = kwargs.pop(
             "interactive_browser_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
@@ -125,6 +158,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
             "workload_identity_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
         )
         interactive_browser_client_id = kwargs.pop("interactive_browser_client_id", None)
+
+        broker_tenant_id = kwargs.pop("broker_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID))
+        broker_client_id = kwargs.pop("broker_client_id", None)
 
         shared_cache_username = kwargs.pop("shared_cache_username", os.environ.get(EnvironmentVariables.AZURE_USERNAME))
         shared_cache_tenant_id = kwargs.pop(
@@ -156,7 +192,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
             },
             "visual_studio_code": {
                 "exclude_param": "exclude_visual_studio_code_credential",
-                "default_exclude": True,
+                "env_name": "visualstudiocodecredential",
+                "default_exclude": False,
             },
             "cli": {
                 "exclude_param": "exclude_cli_credential",
@@ -177,6 +214,10 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 "exclude_param": "exclude_interactive_browser_credential",
                 "env_name": "interactivebrowsercredential",
                 "default_exclude": True,
+            },
+            "broker": {
+                "exclude_param": "exclude_broker_credential",
+                "default_exclude": False,
             },
         }
 
@@ -201,22 +242,24 @@ class DefaultAzureCredential(ChainedTokenCredential):
         exclude_developer_cli_credential = exclude_flags["developer_cli"]
         exclude_powershell_credential = exclude_flags["powershell"]
         exclude_interactive_browser_credential = exclude_flags["interactive_browser"]
+        exclude_broker_credential = exclude_flags["broker"]
 
         credentials: List[SupportsTokenInfo] = []
         within_dac.set(True)
         if not exclude_environment_credential:
             credentials.append(EnvironmentCredential(authority=authority, _within_dac=True, **kwargs))
         if not exclude_workload_identity_credential:
-            if all(os.environ.get(var) for var in EnvironmentVariables.WORKLOAD_IDENTITY_VARS):
-                client_id = workload_identity_client_id
+            try:
                 credentials.append(
                     WorkloadIdentityCredential(
-                        client_id=cast(str, client_id),
+                        client_id=cast(str, workload_identity_client_id),
                         tenant_id=workload_identity_tenant_id,
-                        token_file_path=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
+                        token_file_path=os.environ.get(EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE),
                         **kwargs,
                     )
                 )
+            except ValueError as ex:
+                credentials.append(FailedDACCredential("WorkloadIdentityCredential", error=str(ex)))
         if not exclude_managed_identity_credential:
             credentials.append(
                 ManagedIdentityCredential(
@@ -235,7 +278,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
             except Exception as ex:  # pylint:disable=broad-except
                 _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
         if not exclude_visual_studio_code_credential:
-            credentials.append(VisualStudioCodeCredential(**vscode_args))
+            credentials.append(VisualStudioCodeCredential(tenant_id=vscode_tenant_id))
         if not exclude_cli_credential:
             credentials.append(AzureCliCredential(process_timeout=process_timeout))
         if not exclude_powershell_credential:
@@ -251,6 +294,12 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 )
             else:
                 credentials.append(InteractiveBrowserCredential(tenant_id=interactive_browser_tenant_id, **kwargs))
+        if not exclude_broker_credential:
+            broker_credential_args = {"tenant_id": broker_tenant_id, **kwargs}
+            if broker_client_id:
+                broker_credential_args["client_id"] = broker_client_id
+            credentials.append(BrokerCredential(**broker_credential_args))
+
         within_dac.set(False)
         super(DefaultAzureCredential, self).__init__(*credentials)
 
@@ -283,8 +332,10 @@ class DefaultAzureCredential(ChainedTokenCredential):
             )
             return token
         within_dac.set(True)
-        token = super().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
-        within_dac.set(False)
+        try:
+            token = super().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+        finally:
+            within_dac.set(False)
         return token
 
     def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
@@ -312,6 +363,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
             return token_info
 
         within_dac.set(True)
-        token_info = cast(SupportsTokenInfo, super()).get_token_info(*scopes, options=options)
-        within_dac.set(False)
+        try:
+            token_info = cast(SupportsTokenInfo, super()).get_token_info(*scopes, options=options)
+        finally:
+            within_dac.set(False)
         return token_info

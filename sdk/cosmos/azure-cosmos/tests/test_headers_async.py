@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
+from unittest.mock import MagicMock
 
 import pytest
 import uuid
@@ -9,7 +10,6 @@ import uuid
 
 import test_config
 from azure.cosmos import http_constants
-import azure.cosmos.exceptions as exceptions
 from azure.cosmos.aio import CosmosClient, _retry_utility_async, DatabaseProxy
 from azure.cosmos.partition_key import PartitionKey
 
@@ -22,6 +22,12 @@ async def client_raw_response_hook(response):
 async def request_raw_response_hook(response):
     assert (response.http_request.headers[http_constants.HttpHeaders.ThroughputBucket]
             == str(request_throughput_bucket_number))
+
+
+class ClientIDVerificationError(Exception):
+    """Custom exception for client ID verification errors."""
+    pass
+
 
 @pytest.mark.cosmosEmulator
 class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
@@ -205,6 +211,25 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
             assert e.status_code == 400
             assert "specified for the header 'x-ms-cosmos-throughput-bucket' is invalid." in e.http_error_message
     """
+
+    async def side_effect_client_id(self, *args, **kwargs):
+        # This is a side effect to verify that the client ID is sent in the request headers
+        assert args[2].get(http_constants.HttpHeaders.ClientId) is not None
+        raise ClientIDVerificationError("Client ID verification complete")
+
+    async def test_client_id(self):
+        # Client ID should be sent on every request, Verify it is sent on a read_item request
+        cosmos_client_connection = self.container.client_connection
+        original_connection_get = cosmos_client_connection._CosmosClientConnection__Get
+        cosmos_client_connection._CosmosClientConnection__Get = MagicMock(
+            side_effect=self.side_effect_client_id)
+        try:
+            await self.container.read_item(item="id-1", partition_key="pk-1")
+        except ClientIDVerificationError:
+            pass
+        finally:
+            cosmos_client_connection._CosmosClientConnection__Get = original_connection_get
+
 
 if __name__ == "__main__":
     unittest.main()

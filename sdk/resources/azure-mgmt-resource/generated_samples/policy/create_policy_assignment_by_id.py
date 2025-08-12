@@ -35,6 +35,7 @@ def main():
         policy_assignment_id="providers/Microsoft.Management/managementGroups/MyManagementGroup/providers/Microsoft.Authorization/policyAssignments/LowCostStorage",
         parameters={
             "properties": {
+                "definitionVersion": "1.*.*",
                 "description": "Allow only storage accounts of SKU Standard_GRS or Standard_LRS to be created",
                 "displayName": "Enforce storage account SKU",
                 "enforcementMode": "Default",
@@ -47,6 +48,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/resources/resource-manager/Microsoft.Authorization/stable/2022-06-01/examples/createPolicyAssignmentById.json
+# x-ms-original-file: specification/resources/resource-manager/Microsoft.Authorization/stable/2023-04-01/examples/createPolicyAssignmentById.json
 if __name__ == "__main__":
     main()

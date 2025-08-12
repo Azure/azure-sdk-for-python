@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
+import platform
 import logging
 from contextvars import ContextVar
 from string import ascii_letters, digits
@@ -160,7 +161,7 @@ def process_credential_exclusions(credential_config: dict, exclude_flags: dict, 
 
     if token_credentials_env == "dev":
         # In dev mode, use only developer credentials
-        dev_credentials = {"cli", "developer_cli", "powershell", "shared_token_cache"}
+        dev_credentials = {"visual_studio_code", "cli", "developer_cli", "powershell", "shared_token_cache"}
         for cred_key in credential_config:
             exclude_flags[cred_key] = cred_key not in dev_credentials
     elif token_credentials_env == "prod":
@@ -195,3 +196,25 @@ def process_credential_exclusions(credential_config: dict, exclude_flags: dict, 
             exclude_flags[cred_key] = user_value
 
     return exclude_flags
+
+
+def get_broker_credential() -> Optional[type]:
+    """Return the InteractiveBrowserBrokerCredential class if available, otherwise None.
+
+    :return: InteractiveBrowserBrokerCredential class or None
+    :rtype: Optional[type]
+    """
+    try:
+        from azure.identity.broker import InteractiveBrowserBrokerCredential
+
+        return InteractiveBrowserBrokerCredential
+    except ImportError:
+        return None
+
+
+def is_wsl() -> bool:
+    # This is how MSAL checks for WSL.
+    uname = platform.uname()
+    platform_name = getattr(uname, "system", uname[0]).lower()
+    release = getattr(uname, "release", uname[2]).lower()
+    return platform_name == "linux" and "microsoft" in release

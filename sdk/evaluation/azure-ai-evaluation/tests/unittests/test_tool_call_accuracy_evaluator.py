@@ -5,14 +5,68 @@ from azure.ai.evaluation import ToolCallAccuracyEvaluator
 from azure.ai.evaluation._exceptions import EvaluationException
 
 
-# Use tool_call_id convenience to specify whether eval result is good, bad, or invalid
+# This mock should return a dictionary that mimics the output of the prompty (the _flow call),
+# which is then processed by the _do_eval method.
 async def flow_side_effect(timeout, **kwargs):
-    if "good" in kwargs.get("tool_call").get("tool_call_id"):
-        return """<S0>Let's think step by step. You're totally right!</S0> <S1>Tool is the best ever.</S1> <S2>1</S2>"""
-    elif "bad" in kwargs.get("tool_call").get("tool_call_id"):
-        return """<S0>Let's think step by step. You're wrong!</S0> <S1>Tool is not good.</S1> <S2>0</S2>"""
-    else:
-        return """<S0>Let's think </S0>Or not.</S0> <S1>Tool is...who knows.</S1> <S2>hello</S2>"""
+    tool_calls = kwargs.get("tool_calls", [])
+    query = kwargs.get("query", "")
+
+    # Handle built-in tool calls first - count them as relevant
+    builtin_calls = 0
+    custom_function_calls = []
+
+    for tc in tool_calls:
+        tool_type = tc.get("type", "")
+        tool_name = tc.get("name", "")
+
+        # Only support converter format: {type: "tool_call", name: "tool_name", arguments: {...}}
+        if tool_type == "tool_call":
+            if tool_name in [
+                "bing_custom_search",
+                "bing_grounding",
+                "file_search",
+                "azure_ai_search",
+                "fabric_dataagent",
+                "code_interpreter",
+                "sharepoint_grounding",
+                "openapi",
+            ]:
+                builtin_calls += 1
+            else:
+                # custom function tool call
+                custom_function_calls.append(tc)
+
+    # Handle traditional function tool calls with tool_call_id only for non-built-in tools
+    good_calls = sum(1 for tc in custom_function_calls if "good" in tc.get("tool_call_id", ""))
+    bad_calls = sum(1 for tc in custom_function_calls if "bad" in tc.get("tool_call_id", ""))
+    invalid_calls = sum(1 for tc in custom_function_calls if "invalid" in tc.get("tool_call_id", ""))
+
+    total_calls = len(tool_calls)
+    total_good_calls = good_calls + builtin_calls
+
+    if invalid_calls > 0:
+        # Return a non-numeric score to trigger an exception in the evaluator's check_score_is_valid
+        return {
+            "chain_of_thought": "The tool calls were very correct that I returned a huge number!",
+            "tool_calls_success_level": 25,
+            "additional_details": {},
+        }
+
+    score = 1  # Default score for "all bad"
+    if total_calls > 0:
+        if total_good_calls == total_calls:
+            score = 5  # All good
+        elif total_good_calls > 0:
+            score = 3  # Mixed good and bad
+
+    return {
+        "chain_of_thought": f"Evaluated {total_calls} tool calls with {total_good_calls} correct calls.",
+        "tool_calls_success_level": score,
+        "additional_details": {
+            "tool_calls_made_by_agent": total_calls,
+            "correct_tool_calls_made_by_agent": total_good_calls,
+        },
+    }
 
 
 @pytest.mark.usefixtures("mock_model_config")
@@ -22,15 +76,14 @@ class TestToolCallAccuracyEvaluator:
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
         evaluator._flow = MagicMock(side_effect=flow_side_effect)
 
-        # Test evaluation with valid input, one good tool call and one bad
+        # Test evaluation with one good and one bad tool call
         query = "Where is the Eiffel Tower?"
-        response = "The Eiffel Tower is in Paris."
         tool_calls = [
             {
                 "type": "tool_call",
                 "tool_call_id": "call_good",
                 "name": "fetch_weather",
-                "arguments": {"location": "Tokyo"},
+                "arguments": {"location": "Paris"},
             },
             {
                 "type": "tool_call",
@@ -46,7 +99,12 @@ class TestToolCallAccuracyEvaluator:
                 "description": "Fetches the weather information for the specified location.",
                 "parameters": {
                     "type": "object",
-                    "properties": {"location": {"type": "string", "description": "The location to fetch weather for."}},
+                    "properties": {
+                        "location": {
+                            "type": "string",
+                            "description": "The location to fetch weather for.",
+                        }
+                    },
                 },
             },
             {
@@ -55,40 +113,33 @@ class TestToolCallAccuracyEvaluator:
                 "description": "Buy a jacket of the given type.",
                 "parameters": {
                     "type": "object",
-                    "properties": {"type": {"type": "string", "description": "The type of jacket to buy."}},
+                    "properties": {
+                        "type": {
+                            "type": "string",
+                            "description": "The type of jacket to buy.",
+                        }
+                    },
                 },
             },
         ]
-        result = evaluator(query=query, response=response, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._AGGREGATE_RESULT_KEY
+        key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
         assert key in result and f"{key}_result" in result and f"{key}_threshold" in result
-        assert result[key] == 0.5
-        assert result[f"{key}_result"] == "fail"
+        assert result[key] == 3.0  # Mixed good/bad gets score 3
+        assert result[f"{key}_result"] == "pass"
         assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
-        assert "per_tool_call_details" in result
-        assert len(result["per_tool_call_details"]) == 2
-        for tool_call in result["per_tool_call_details"]:
-            assert "tool_call_accurate" in tool_call
-            assert "tool_call_accurate_reason" in tool_call
-            assert "tool_call_id" in tool_call
-            if tool_call["tool_call_id"] == "call_good":
-                assert tool_call["tool_call_accurate"] is True
-                assert len(tool_call["tool_call_accurate_reason"]) > 0
-            elif tool_call["tool_call_id"] == "call_bad":
-                assert tool_call["tool_call_accurate"] is False
-                assert len(tool_call["tool_call_accurate_reason"]) > 0
-            else:
-                pytest.fail()
+        assert f"{key}_reason" in result
+        assert result[f"{key}_reason"] == "Evaluated 2 tool calls with 1 correct calls."
+        assert "details" in result
 
     def test_evaluate_tools_valid2(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
         evaluator._flow = MagicMock(side_effect=flow_side_effect)
 
-        # Test evaluation with valid input, one good tool call and one bad
+        # Test evaluation with two bad tool calls
         query = "Where is the Eiffel Tower?"
-        response = "The Eiffel Tower is in Paris."
         tool_calls = [
             {
                 "type": "tool_call",
@@ -110,7 +161,12 @@ class TestToolCallAccuracyEvaluator:
                 "description": "Fetches the weather information for the specified location.",
                 "parameters": {
                     "type": "object",
-                    "properties": {"location": {"type": "string", "description": "The location to fetch weather for."}},
+                    "properties": {
+                        "location": {
+                            "type": "string",
+                            "description": "The location to fetch weather for.",
+                        }
+                    },
                 },
             },
             {
@@ -119,52 +175,45 @@ class TestToolCallAccuracyEvaluator:
                 "description": "Buy a jacket of the given type.",
                 "parameters": {
                     "type": "object",
-                    "properties": {"type": {"type": "string", "description": "The type of jacket to buy."}},
+                    "properties": {
+                        "type": {
+                            "type": "string",
+                            "description": "The type of jacket to buy.",
+                        }
+                    },
                 },
             },
         ]
-        result = evaluator(query=query, response=response, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._AGGREGATE_RESULT_KEY
+        key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
         assert key in result and f"{key}_result" in result and f"{key}_threshold" in result
-        assert result[key] == 0.0
+        assert result[key] == 1.0  # All bad gets score 1
         assert result[f"{key}_result"] == "fail"
         assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
-        assert "per_tool_call_details" in result
-        assert len(result["per_tool_call_details"]) == 2
-        for tool_call in result["per_tool_call_details"]:
-            assert "tool_call_accurate" in tool_call
-            assert "tool_call_accurate_reason" in tool_call
-            assert "tool_call_id" in tool_call
-            if tool_call["tool_call_id"] == "call_good":
-                assert tool_call["tool_call_accurate"] is False
-                assert len(tool_call["tool_call_accurate_reason"]) > 0
-            elif tool_call["tool_call_id"] == "call_bad":
-                assert tool_call["tool_call_accurate"] is False
-                assert len(tool_call["tool_call_accurate_reason"]) > 0
-            else:
-                pytest.fail()
+        assert f"{key}_reason" in result
+        assert result[f"{key}_reason"] == "Evaluated 2 tool calls with 0 correct calls."
+        assert "details" in result
 
     def test_evaluate_tools_valid3(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
         evaluator._flow = MagicMock(side_effect=flow_side_effect)
 
-        # Test evaluation with valid input, one good tool call and one bad
+        # Test evaluation with two good tool calls
         query = "Where is the Eiffel Tower?"
-        response = "The Eiffel Tower is in Paris."
         tool_calls = [
             {
                 "type": "tool_call",
                 "tool_call_id": "call_good",
                 "name": "fetch_weather",
-                "arguments": {"location": "Tokyo"},
+                "arguments": {"location": "Paris"},
             },
             {
                 "type": "tool_call",
                 "tool_call_id": "call_good",
                 "name": "buy_jacket",
-                "arguments": {"type": "raincoat"},
+                "arguments": {"type": "jacket"},
             },
         ]
         tool_definitions = [
@@ -174,7 +223,12 @@ class TestToolCallAccuracyEvaluator:
                 "description": "Fetches the weather information for the specified location.",
                 "parameters": {
                     "type": "object",
-                    "properties": {"location": {"type": "string", "description": "The location to fetch weather for."}},
+                    "properties": {
+                        "location": {
+                            "type": "string",
+                            "description": "The location to fetch weather for.",
+                        }
+                    },
                 },
             },
             {
@@ -183,54 +237,40 @@ class TestToolCallAccuracyEvaluator:
                 "description": "Buy a jacket of the given type.",
                 "parameters": {
                     "type": "object",
-                    "properties": {"type": {"type": "string", "description": "The type of jacket to buy."}},
+                    "properties": {
+                        "type": {
+                            "type": "string",
+                            "description": "The type of jacket to buy.",
+                        }
+                    },
                 },
             },
         ]
-        result = evaluator(query=query, response=response, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._AGGREGATE_RESULT_KEY
+        key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
         assert key in result and f"{key}_result" in result and f"{key}_threshold" in result
-        assert result[key] == 1.0
+        assert result[key] == 5.0  # All good gets score 5
         assert result[f"{key}_result"] == "pass"
         assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
-        assert "per_tool_call_details" in result
-        assert len(result["per_tool_call_details"]) == 2
-        for tool_call in result["per_tool_call_details"]:
-            assert "tool_call_accurate" in tool_call
-            assert "tool_call_accurate_reason" in tool_call
-            assert "tool_call_id" in tool_call
-            if tool_call["tool_call_id"] == "call_good":
-                assert tool_call["tool_call_accurate"] is True
-                assert len(tool_call["tool_call_accurate_reason"]) > 0
-            elif tool_call["tool_call_id"] == "call_bad":
-                assert tool_call["tool_call_accurate"] is True
-                assert len(tool_call["tool_call_accurate_reason"]) > 0
-            else:
-                pytest.fail()
+        assert f"{key}_reason" in result
+        assert result[f"{key}_reason"] == "Evaluated 2 tool calls with 2 correct calls."
+        assert "details" in result
 
     def test_evaluate_tools_one_eval_fails(self, mock_model_config):
         with pytest.raises(EvaluationException) as exc_info:
-
             evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
             evaluator._flow = MagicMock(side_effect=flow_side_effect)
 
-            # Test evaluation with valid input, one good tool call and one bad
+            # Test evaluation with an invalid tool call ID to trigger failure
             query = "Where is the Eiffel Tower?"
-            response = "The Eiffel Tower is in Paris."
             tool_calls = [
                 {
                     "type": "tool_call",
-                    "tool_call_id": "call_good",
+                    "tool_call_id": "call_invalid",
                     "name": "fetch_weather",
                     "arguments": {"location": "Tokyo"},
-                },
-                {
-                    "type": "tool_call",
-                    "tool_call_id": "call_invalid",
-                    "name": "buy_jacket",
-                    "arguments": {"type": "raincoat"},
                 },
             ]
             tool_definitions = [
@@ -241,31 +281,24 @@ class TestToolCallAccuracyEvaluator:
                     "parameters": {
                         "type": "object",
                         "properties": {
-                            "location": {"type": "string", "description": "The location to fetch weather for."}
+                            "location": {
+                                "type": "string",
+                                "description": "The location to fetch weather for.",
+                            }
                         },
                     },
                 },
-                {
-                    "name": "buy_jacket",
-                    "type": "function",
-                    "description": "Buy a jacket of the given type.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {"type": {"type": "string", "description": "The type of jacket to buy."}},
-                    },
-                },
             ]
-            result = evaluator(query=query, response=response, tool_calls=tool_calls, tool_definitions=tool_definitions)
-        # if one tool call evaluation fails, we'll fail the whole thing
-        assert "Tool call accuracy evaluator" in str(exc_info.value)
+            evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+
+        assert "Invalid score value" in str(exc_info.value)
 
     def test_evaluate_tools_some_not_applicable(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
         evaluator._flow = MagicMock(side_effect=flow_side_effect)
 
-        # Test evaluation with valid input, one good tool call and one bad
+        # Test with one function tool and one non-function tool
         query = "Where is the Eiffel Tower?"
-        response = "The Eiffel Tower is in Paris."
         tool_calls = [
             {
                 "type": "tool_call",
@@ -287,49 +320,45 @@ class TestToolCallAccuracyEvaluator:
                 "description": "Fetches the weather information for the specified location.",
                 "parameters": {
                     "type": "object",
-                    "properties": {"location": {"type": "string", "description": "The location to fetch weather for."}},
+                    "properties": {
+                        "location": {
+                            "type": "string",
+                            "description": "The location to fetch weather for.",
+                        }
+                    },
                 },
             },
             {
                 "name": "buy_jacket",
-                "type": "another_built_in",
+                "type": "another_built_in",  # This tool will be filtered out
                 "description": "Buy a jacket of the given type.",
                 "parameters": {
                     "type": "object",
-                    "properties": {"type": {"type": "string", "description": "The type of jacket to buy."}},
+                    "properties": {
+                        "type": {
+                            "type": "string",
+                            "description": "The type of jacket to buy.",
+                        }
+                    },
                 },
             },
         ]
-        result = evaluator(query=query, response=response, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._AGGREGATE_RESULT_KEY
+        key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
-        assert key in result and f"{key}_result" in result and f"{key}_threshold" in result
-        assert result[key] == 1.0
+        assert result[key] == ToolCallAccuracyEvaluator._NOT_APPLICABLE_RESULT
         assert result[f"{key}_result"] == "pass"
         assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
-        assert "per_tool_call_details" in result
-        assert len(result["per_tool_call_details"]) == 2
-        for tool_call in result["per_tool_call_details"]:
-            assert "tool_call_accurate" in tool_call
-            assert "tool_call_accurate_reason" in tool_call
-            assert "tool_call_id" in tool_call
-            if tool_call["tool_call_id"] == "call_good":
-                assert tool_call["tool_call_accurate"] is True
-                assert len(tool_call["tool_call_accurate_reason"]) > 0
-            elif tool_call["tool_call_id"] == "call_bad":
-                assert tool_call["tool_call_accurate"] == "not applicable"
-                assert tool_call["tool_call_accurate_reason"] == "Tool call not supported for evaluation"
-            else:
-                pytest.fail()
+        assert result[f"{key}_reason"] == ToolCallAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE
+        assert result["details"] == {}
 
     def test_evaluate_tools_all_not_applicable(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
         evaluator._flow = MagicMock(side_effect=flow_side_effect)
 
-        # Test evaluation with valid input, one good tool call and one bad
+        # Test with only non-function tools
         query = "Where is the Eiffel Tower?"
-        response = "The Eiffel Tower is in Paris."
         tool_calls = [
             {
                 "type": "tool_call",
@@ -337,52 +366,39 @@ class TestToolCallAccuracyEvaluator:
                 "name": "fetch_weather",
                 "arguments": {"location": "Tokyo"},
             },
-            {
-                "type": "tool_call",
-                "tool_call_id": "call_good",
-                "name": "buy_jacket",
-                "arguments": {"type": "raincoat"},
-            },
         ]
         tool_definitions = [
             {
                 "name": "fetch_weather",
-                "type": "some_built_in",
+                "type": "some_built_in",  # Not a 'function' type
                 "description": "Fetches the weather information for the specified location.",
                 "parameters": {
                     "type": "object",
-                    "properties": {"location": {"type": "string", "description": "The location to fetch weather for."}},
-                },
-            },
-            {
-                "name": "buy_jacket",
-                "type": "another_built_in",
-                "description": "Buy a jacket of the given type.",
-                "parameters": {
-                    "type": "object",
-                    "properties": {"type": {"type": "string", "description": "The type of jacket to buy."}},
+                    "properties": {
+                        "location": {
+                            "type": "string",
+                            "description": "The location to fetch weather for.",
+                        }
+                    },
                 },
             },
         ]
-        result = evaluator(query=query, response=response, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._AGGREGATE_RESULT_KEY
+        key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
-        assert key in result and f"{key}_result" in result and f"{key}_threshold" in result
-        assert result[key] == "not applicable"
-        assert result[f"{key}_result"] == "not applicable"
+        assert result[key] == ToolCallAccuracyEvaluator._NOT_APPLICABLE_RESULT
+        assert result[f"{key}_result"] == "pass"
         assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
-        assert "per_tool_call_details" in result
-        assert len(result["per_tool_call_details"]) == 0
-        assert result[f"{key}_reason"] == "Tool call accuracy evaluation is not yet supported for the invoked tools."
+        assert result[f"{key}_reason"] == ToolCallAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE
+        assert result["details"] == {}
 
     def test_evaluate_tools_no_tools(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
         evaluator._flow = MagicMock(side_effect=flow_side_effect)
 
-        # Test evaluation with valid input, one good tool call and one bad
+        # Test with no tool calls provided
         query = "Where is the Eiffel Tower?"
-        response = "The Eiffel Tower is in Paris."
         tool_calls = []
         tool_definitions = [
             {
@@ -391,27 +407,203 @@ class TestToolCallAccuracyEvaluator:
                 "description": "Fetches the weather information for the specified location.",
                 "parameters": {
                     "type": "object",
-                    "properties": {"location": {"type": "string", "description": "The location to fetch weather for."}},
-                },
-            },
-            {
-                "name": "buy_jacket",
-                "type": "another_built_in",
-                "description": "Buy a jacket of the given type.",
-                "parameters": {
-                    "type": "object",
-                    "properties": {"type": {"type": "string", "description": "The type of jacket to buy."}},
+                    "properties": {
+                        "location": {
+                            "type": "string",
+                            "description": "The location to fetch weather for.",
+                        }
+                    },
                 },
             },
         ]
-        result = evaluator(query=query, response=response, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._AGGREGATE_RESULT_KEY
+        key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
-        assert key in result and f"{key}_result" in result and f"{key}_threshold" in result
-        assert result[key] == "not applicable"
-        assert result[f"{key}_result"] == "not applicable"
+        assert result[key] == ToolCallAccuracyEvaluator._NOT_APPLICABLE_RESULT
+        assert result[f"{key}_result"] == "pass"
         assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
-        assert "per_tool_call_details" in result
-        assert len(result["per_tool_call_details"]) == 0
-        assert result[f"{key}_reason"] == "No tool calls were made."
+        assert result[f"{key}_reason"] == ToolCallAccuracyEvaluator._NO_TOOL_CALLS_MESSAGE
+        assert result["details"] == {}
+
+    def test_evaluate_bing_custom_search(self, mock_model_config):
+        evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock(side_effect=flow_side_effect)
+
+        # Test relevant bing custom search - converter format
+        query = "Find medical pillows prices on Amazon Egypt"
+        tool_calls = [
+            {
+                "type": "tool_call",
+                "tool_call_id": "call_builtin_good",
+                "name": "bing_custom_search",
+                "arguments": {
+                    "requesturl": "https://api.bing.microsoft.com/v7.0/search?q=medical pillows prices site=amazon.eg"
+                },
+            },
+        ]
+        tool_definitions = []
+        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+
+        key = ToolCallAccuracyEvaluator._RESULT_KEY
+        assert result is not None
+        assert result[key] == 5.0
+        assert result[f"{key}_result"] == "pass"
+
+    def test_evaluate_bing_grounding(self, mock_model_config):
+        evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock(side_effect=flow_side_effect)
+
+        # Test relevant bing grounding for house prices - converter format
+        query = "What is the average price for a house with a pool in Los Angeles in 2025?"
+        tool_calls = [
+            {
+                "type": "tool_call",
+                "tool_call_id": "call_builtin_good",
+                "name": "bing_grounding",
+                "arguments": {
+                    "requesturl": "https://api.bing.microsoft.com/v7.0/search?q=average price for a house with a pool in Los Angeles 2025"
+                },
+            },
+        ]
+        tool_definitions = []
+        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+
+        key = ToolCallAccuracyEvaluator._RESULT_KEY
+        assert result is not None
+        assert result[key] == 5.0
+        assert result[f"{key}_result"] == "pass"
+
+    def test_evaluate_file_search(self, mock_model_config):
+        evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock(side_effect=flow_side_effect)
+
+        # Test file search for credit card statement - converter format
+        query = "Find information in my credit card statement"
+        tool_calls = [
+            {
+                "type": "tool_call",
+                "tool_call_id": "call_builtin_good",
+                "name": "file_search",
+                "arguments": {"ranking_options": {"ranker": "default_2024_08_21", "score_threshold": 0.0}},
+            },
+        ]
+        tool_definitions = []
+        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+
+        key = ToolCallAccuracyEvaluator._RESULT_KEY
+        assert result is not None
+        assert result[key] == 5.0
+        assert result[f"{key}_result"] == "pass"
+
+    def test_evaluate_azure_ai_search(self, mock_model_config):
+        evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock(side_effect=flow_side_effect)
+
+        # Test Azure AI Search for real estate - converter format
+        query = "Find a 3-bedroom apartment with garage"
+        tool_calls = [
+            {
+                "type": "tool_call",
+                "tool_call_id": "call_builtin_good",
+                "name": "azure_ai_search",
+                "arguments": {"input": "3-bedroom apartment with garage"},
+            },
+        ]
+        tool_definitions = []
+        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+
+        key = ToolCallAccuracyEvaluator._RESULT_KEY
+        assert result is not None
+        assert result[key] == 5.0
+        assert result[f"{key}_result"] == "pass"
+
+    def test_evaluate_fabric_dataagent(self, mock_model_config):
+        evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock(side_effect=flow_side_effect)
+
+        # Test Fabric Data Agent for financial analysis - converter format
+        query = "Are there any unusual patterns in financial data?"
+        tool_calls = [
+            {
+                "type": "tool_call",
+                "tool_call_id": "call_builtin_good",
+                "name": "fabric_dataagent",
+                "arguments": {"input": "unusual patterns in financial data"},
+            },
+        ]
+        tool_definitions = []
+        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+
+        key = ToolCallAccuracyEvaluator._RESULT_KEY
+        assert result is not None
+        assert result[key] == 5.0
+        assert result[f"{key}_result"] == "pass"
+
+    def test_evaluate_code_interpreter(self, mock_model_config):
+        evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock(side_effect=flow_side_effect)
+
+        # Test code interpreter for statistical analysis - converter format
+        query = "Find outliers in transaction amounts"
+        tool_calls = [
+            {
+                "type": "tool_call",
+                "tool_call_id": "call_builtin_good",
+                "name": "code_interpreter",
+                "arguments": {
+                    "input": "import numpy as np\n\n# Calculate basic statistics\namounts = df['amount']\nmean = amounts.mean()\nstd = amounts.std()\n\n# Define outliers as transactions that are more than 2 standard deviations from the mean\noutlier_mask = (amounts < mean - 2*std) | (amounts > mean + 2*std)\noutliers = df[outlier_mask]\n\noutliers, mean, std"
+                },
+            },
+        ]
+        tool_definitions = []
+        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+
+        key = ToolCallAccuracyEvaluator._RESULT_KEY
+        assert result is not None
+        assert result[key] == 5.0
+        assert result[f"{key}_result"] == "pass"
+
+    def test_evaluate_sharepoint_grounding(self, mock_model_config):
+        evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock(side_effect=flow_side_effect)
+
+        # Test SharePoint grounding for document search - converter format
+        query = "Find information about monthly saving rules"
+        tool_calls = [
+            {
+                "type": "tool_call",
+                "tool_call_id": "call_builtin_good",
+                "name": "sharepoint_grounding",
+                "arguments": {"input": "monthly saving rules"},
+            },
+        ]
+        tool_definitions = []
+        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+
+        key = ToolCallAccuracyEvaluator._RESULT_KEY
+        assert result is not None
+        assert result[key] == 5.0
+        assert result[f"{key}_result"] == "pass"
+
+    def test_evaluate_open_api(self, mock_model_config):
+        evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock(side_effect=flow_side_effect)
+
+        # Test OpenAPI function call for exchange rates - converter format
+        query = "What is the exchange rate from GBP to EUR?"
+        tool_calls = [
+            {
+                "type": "tool_call",
+                "tool_call_id": "call_builtin_good",
+                "name": "openapi",
+                "arguments": {"name": "exchange_rates_getExchangeRates", "arguments": '{"base":"GBP","symbols":"EUR"}'},
+            },
+        ]
+        tool_definitions = []
+        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+
+        key = ToolCallAccuracyEvaluator._RESULT_KEY
+        assert result is not None
+        assert result[key] == 5.0
+        assert result[f"{key}_result"] == "pass"

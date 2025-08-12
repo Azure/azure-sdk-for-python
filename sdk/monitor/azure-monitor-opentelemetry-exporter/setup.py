@@ -59,7 +59,6 @@ setup(
         "Development Status :: 4 - Beta",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
@@ -87,8 +86,8 @@ setup(
         "azure-identity~=1.17",
         "fixedint==0.1.6",
         "msrest>=0.6.10",
-        "opentelemetry-api~=1.26",
-        "opentelemetry-sdk~=1.26",
+        "opentelemetry-api~=1.35",
+        "opentelemetry-sdk~=1.35",
         "psutil>=5.9,<8",
     ],
     entry_points={
