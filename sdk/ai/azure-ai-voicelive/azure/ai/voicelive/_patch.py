@@ -138,7 +138,7 @@ class SessionResource:
         """
         self._connection = connection
 
-    def update(self, *, session: Mapping[str, Any] | RequestSession, event_id: Optional[str] = None) -> None:
+    def update(self, *, session: Union[Mapping[str, Any], "RequestSession"], event_id: Optional[str] = None) -> None:
         """Update the session configuration.
 
         :param session: Session configuration parameters.

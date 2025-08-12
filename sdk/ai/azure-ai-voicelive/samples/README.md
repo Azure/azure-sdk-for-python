@@ -48,7 +48,7 @@ This sample demonstrates:
 - Full duplex audio streaming
 - Robust error handling and reconnection
 
-See [BASIC_VOICE_ASSISTANT.md](BASIC_VOICE_ASSISTANT.md) for complete documentation.
+See "BASIC_VOICE_ASSISTANT.md" for complete documentation.
 
 ### Using Visual Studio Code
 

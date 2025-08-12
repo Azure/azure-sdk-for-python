@@ -233,3 +233,21 @@ additional questions or comments.
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 [pip]: https://pypi.org/project/pip/
 [azure_sub]: https://azure.microsoft.com/free/
+
+## Troubleshooting
+
+If you encounter issues:
+
+- **Authentication**: Ensure your API key is valid and matches your Azure AI VoiceLive resource.  
+- **Connection errors**: Verify that your `endpoint` is correct and that your network allows WebSocket connections.  
+- **Package installation**: Make sure all required extras (e.g., `websockets`) are installed.  
+- **Python version**: Confirm you are using Python 3.10 or later.
+
+If problems persist, please open an issue at:  
+https://github.com/Azure/azure-sdk-for-python/issues
+
+## Next steps
+
+- Explore more samples in the [samples folder](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-voicelive/samples).  
+- Review the [Azure AI VoiceLive documentation](https://learn.microsoft.com/azure/) for detailed guidance.  
+- Contribute to the project following our [contribution guidelines](https://github.com/Azure/azure-sdk-for-python/blob/main/CONTRIBUTING.md).

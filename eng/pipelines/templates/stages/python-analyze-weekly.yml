@@ -1,4 +1,4 @@
-parameters:
+parameters: 
   - name: ServiceDirectory
     type: string
     default: ''
@@ -29,9 +29,26 @@ stages:
             displayName: 'Use Python 3.9'
             inputs:
               versionSpec: '3.9'
+
+          # Prep Environment (Unix) — PortAudio + ci_tools
+          - script: |
+              if [[ "$AGENT_OS" == "Linux" ]]; then
+                sudo apt-get update
+                sudo apt-get install -y portaudio19-dev libasound2-dev
+              elif [[ "$AGENT_OS" == "Darwin" ]]; then
+                brew update
+                brew install portaudio
+              fi
+              python -m pip install -r eng/ci_tools.txt
+            displayName: 'Prep Environment (Unix)'
+            condition: ne(variables['Agent.OS'], 'Windows_NT')
+
+          # Prep Environment (Windows) — ci_tools only
           - script: |
               python -m pip install -r eng/ci_tools.txt
-            displayName: 'Prep Environment'
+            displayName: 'Prep Environment (Windows)'
+            condition: eq(variables['Agent.OS'], 'Windows_NT')
+
           - task: PythonScript@0
             displayName: 'Run Pylint Next'
             continueOnError: true
@@ -85,10 +102,12 @@ stages:
             env:
               GH_TOKEN: $(azuresdk-github-pat)
 
+          # Not a "Prep Environment" step: separate tool installs
           - script: |
-              python -m pip install PyGithub>=1.59.0
-              python -m pip install requests>=2.0
-            displayName: 'Prep Environment'
+              python -m pip install "PyGithub>=1.59.0"
+              python -m pip install "requests>=2.0"
+            displayName: 'Install GitHub Tools'
+          
           - task: PythonScript@0
             displayName: 'Update vNext Issues with build errors'
             continueOnError: true
@@ -107,9 +126,24 @@ stages:
             inputs:
               versionSpec: '3.13'
 
+          # Prep Environment (Unix) — PortAudio + ci_tools (again after Python switch)
+          - script: |
+              if [[ "$AGENT_OS" == "Linux" ]]; then
+                sudo apt-get update
+                sudo apt-get install -y portaudio19-dev libasound2-dev
+              elif [[ "$AGENT_OS" == "Darwin" ]]; then
+                brew update
+                brew install portaudio
+              fi
+              python -m pip install -r eng/ci_tools.txt
+            displayName: 'Prep Environment (Unix)'
+            condition: ne(variables['Agent.OS'], 'Windows_NT')
+
+          # Prep Environment (Windows) — ci_tools only (again after Python switch)
           - script: |
               python -m pip install -r eng/ci_tools.txt
-            displayName: 'Prep Environment'
+            displayName: 'Prep Environment (Windows)'
+            condition: eq(variables['Agent.OS'], 'Windows_NT')
 
           - task: PythonScript@0
             displayName: 'Generate Docs Next'
