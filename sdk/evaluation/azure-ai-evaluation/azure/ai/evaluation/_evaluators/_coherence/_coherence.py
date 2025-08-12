@@ -27,7 +27,7 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     :type threshold: int
     :keyword is_reasoning_model: (Preview) Adjusts prompty config
         for reasoning models when True.
-    :paramtype is_reasoning_model: bool
+    :type is_reasoning_model: bool
 
     .. admonition:: Example:
 
