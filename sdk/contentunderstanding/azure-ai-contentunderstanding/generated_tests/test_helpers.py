@@ -28,21 +28,21 @@ class PollerType(Enum):
 
 def generate_analyzer_id_sync(client, test_name: str) -> str:
     """Generate a unique analyzer ID with current date, time, and GUID."""
-    analyzer_id = f"python-sdk-test-analyzer-{test_name}"
+    analyzer_id = f"python-sdk-test-analyzer-sync-{test_name}"
     if is_live():
         client.content_analyzers.delete(analyzer_id=analyzer_id)
     return analyzer_id
 
 async def generate_analyzer_id_async(client, test_name: str) -> str:
     """Generate a unique analyzer ID with current date, time, and GUID."""
-    analyzer_id = f"python-sdk-test-analyzer-{test_name}"
+    analyzer_id = f"python-sdk-test-analyzer-async-{test_name}"
     if is_live():
         await client.content_analyzers.delete(analyzer_id=analyzer_id)
     return analyzer_id
 
 def generate_classifier_id_sync(client, test_name: str) -> str:
     """Generate a unique classifier ID with current date, time, and GUID (sync version)."""
-    classifier_id = f"python-sdk-test-classifier-{test_name}"
+    classifier_id = f"python-sdk-test-classifier-sync-{test_name}"
     if is_live():
         # Ensure to clean up any left-over resources from any failed tests
         client.content_classifiers.delete(classifier_id=classifier_id)
@@ -51,7 +51,7 @@ def generate_classifier_id_sync(client, test_name: str) -> str:
 
 async def generate_classifier_id_async(client, test_name: str) -> str:
     """Generate a unique classifier ID with current date, time, and GUID (async version)."""
-    classifier_id = f"python-sdk-test-classifier-{test_name}"
+    classifier_id = f"python-sdk-test-classifier-async-{test_name}"
     if is_live():
         # Ensure to clean up any left-over resources from any failed tests
         await client.content_classifiers.delete(classifier_id=classifier_id)
@@ -480,7 +480,7 @@ def save_keyframe_image_to_file(
 # Person Directory Helper Functions
 def generate_person_directory_id_sync(client, test_name: str) -> str:
     """Generate a unique person directory ID with current date, time, and GUID (sync version)."""
-    person_directory_id = f"python-sdk-test-{test_name}"
+    person_directory_id = f"python-sdk-test-pd-sync-{test_name}"
     if is_live_and_not_recording():
         # Ensure to clean up any left-over resources from any failed tests
         try:
@@ -493,7 +493,7 @@ def generate_person_directory_id_sync(client, test_name: str) -> str:
 
 async def generate_person_directory_id_async(client, test_name: str) -> str:
     """Generate a unique person directory ID with current date, time, and GUID (async version)."""
-    person_directory_id = f"python-sdk-test-{test_name}"
+    person_directory_id = f"python-sdk-test-pd-async-{test_name}"
     if is_live_and_not_recording():
         # Ensure to clean up any left-over resources from any failed tests
         try:
