@@ -1,5 +1,12 @@
 # Release History
 
+## 1.1.0b1 (2025-08-05)
+
+### Features Added
+
+- Added `SURROGATE_ONLY` operation type in `DeidentificationOperationType`, which returns output text where user-defined PHI entities are replaced with realistic replacement values.
+- Added `input_locale` parameter to `DeidentificationCustomizationOptions` to allow for specifying the locale of the input text for `TAG` and `REDACT` operations.
+
 ## 1.0.0 (2025-05-19)
 
 ### Features Added

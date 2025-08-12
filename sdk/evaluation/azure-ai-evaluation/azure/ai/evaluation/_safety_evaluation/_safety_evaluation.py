@@ -903,6 +903,7 @@ class _SafetyEvaluation:
                     evaluation_name=evaluation_name,
                     output_path=output_path if output_path else f"{output_prefix}{strategy}{RESULTS_EXT}",
                     _use_pf_client=False,  # TODO: Remove this once eval logic for red team agent is moved to red team agent
+                    _use_run_submitter_client=False,  # TODO: Remove this once eval logic for red team agent is moved to red team agent
                 )
                 evaluation_results[strategy] = evaluate_outputs
             return evaluation_results

@@ -67,6 +67,13 @@ class EvaluationEvaluateSamples(object):
                     },
                 },
             },
+            # Example of using tags for "Foundry Projects"
+            tags={
+                "compliance": "fdp_compliant",
+                "data_classification": "restricted",
+                "governance": "enterprise_policy",
+                "environment": "secure_evaluation",
+            },
         )
 
         # [END evaluate_method]

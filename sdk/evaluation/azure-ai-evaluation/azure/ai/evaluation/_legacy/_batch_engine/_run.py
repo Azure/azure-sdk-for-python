@@ -58,7 +58,7 @@ class Run:
         dynamic_callable: Callable,
         name_prefix: Optional[str],
         inputs: Sequence[Mapping[str, Any]],
-        column_mapping: Mapping[str, str],
+        column_mapping: Optional[Mapping[str, str]] = None,
         created_on: Optional[datetime] = None,
         run: Optional["Run"] = None,
     ):
@@ -70,7 +70,7 @@ class Run:
         self.dynamic_callable = dynamic_callable
         self.name = self._generate_run_name(name_prefix, self._created_on)
         self.inputs = inputs
-        self.column_mapping = column_mapping
+        self.column_mapping: Optional[Mapping[str, str]] = column_mapping
         self.result: Optional[BatchResult] = None
         self.metrics: Mapping[str, Any] = {}
         self._run = run
