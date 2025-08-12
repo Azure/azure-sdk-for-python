@@ -503,6 +503,61 @@ class RedTeamSamples(object):
         # [END red_team_pyrit_target]
         return results
 
+    async def custom_objectives_with_context_example(self):
+        """
+        This example demonstrates how to use custom attack objectives with context information.
+        Context provides additional information about the purpose and setting of prompts,
+        enabling more accurate evaluation in educational and professional scenarios.
+        """
+        # [START red_team_context_objectives]
+        import os
+        from azure.ai.evaluation.red_team import RedTeam, AttackStrategy, RiskCategory
+        from azure.identity import DefaultAzureCredential
+
+        # Initialize Red Team
+        azure_ai_project = {
+            "subscription_id": os.environ.get("AZURE_SUBSCRIPTION_ID"),
+            "resource_group_name": os.environ.get("AZURE_RESOURCE_GROUP_NAME"),
+            "project_name": os.environ.get("AZURE_PROJECT_NAME"),
+        }
+        credential = DefaultAzureCredential()
+
+        # Path to custom objectives file with context
+        custom_objectives_path = "samples/data/custom_objectives_with_context_example.json"
+
+        agent = RedTeam(
+            azure_ai_project=azure_ai_project,
+            credential=credential,
+            risk_categories=[RiskCategory.Violence, RiskCategory.HateUnfairness],
+            num_objectives=2,
+            custom_attack_seed_prompts=custom_objectives_path,
+        )
+
+        # Define an educational AI assistant
+        def educational_ai_assistant(query: str) -> str:
+            # Educational AI system that provides informative responses
+            if "conflict" in query.lower():
+                return "Historical conflicts often arise from resource competition and cultural tensions. Understanding root causes helps develop peaceful solutions."
+            elif "cultural" in query.lower():
+                return "Cultural differences enrich workplaces through diverse perspectives. Effective communication bridges these differences."
+            else:
+                return "I provide educational information while following ethical guidelines."
+
+        # Run the scan with context-aware objectives
+        results = await agent.scan(
+            target=educational_ai_assistant,
+            scan_name="Context-Aware-Educational-Test",
+            attack_strategies=[AttackStrategy.Baseline, AttackStrategy.Base64],
+            application_scenario="Educational AI assistant for academic and training purposes",
+        )
+
+        print(
+            f"Context-aware scan completed with {len(results.scan_result) if results.scan_result else 0} conversations"
+        )
+        print("Context information was used during evaluation for better accuracy")
+        # [END red_team_context_objectives]
+        return results
+
 
 async def run_samples():
     """Run all Red Team samples."""
@@ -521,6 +576,7 @@ async def run_samples():
         # samples.output_path_example(),
         # samples.custom_application_example(),
         # samples.pyrit_prompt_chat_target_example(),
+        # samples.custom_objectives_with_context_example(),
     ]
 
     # Run the selected samples

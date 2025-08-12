@@ -26,7 +26,7 @@ class TestSqlManagementDatabaseAdvisorsOperationsAsync(AzureMgmtRecordedTestCase
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestSqlManagementDatabaseAdvisorsOperationsAsync(AzureMgmtRecordedTestCase
             server_name="str",
             database_name="str",
             advisor_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -66,7 +66,7 @@ class TestSqlManagementDatabaseAdvisorsOperationsAsync(AzureMgmtRecordedTestCase
                 "recommendationsStatus": "str",
                 "recommendedActions": [
                     {
-                        "details": {"str": {}},
+                        "details": {"str": "str"},
                         "errorDetails": {"errorCode": "str", "isRetryable": "str"},
                         "estimatedImpact": [
                             {
@@ -126,7 +126,7 @@ class TestSqlManagementDatabaseAdvisorsOperationsAsync(AzureMgmtRecordedTestCase
                 ],
                 "type": "str",
             },
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself

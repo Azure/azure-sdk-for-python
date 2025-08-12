@@ -170,15 +170,15 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
 
     # ~~~ METHODS THAT MIGHT NEED TO BE OVERRIDDEN BY CHILDREN~~~
 
-    def _derive_singleton_inputs(self) -> List[str]:
+    def _derive_singleton_inputs(self) -> List[List[str]]:
         """Inspect the evaluator's __call__ function to determine what singleton inputs are expected
         when the evaluator is being used in a non-conversation context.
         By default, it's assumed that any input that is NOT kwargs or a conversation are singleton inputs.
         Thankfully this works the way you'd hope, with the call_signature being based on the child
         function's signature, not the parent's.
 
-        :return: A list of strings representing the names of singleton inputs.
-        :rtype: List[str]
+        :return: A list of lists, where each inner list represents the singleton inputs for each overload.
+        :rtype: List[List[str]]
         """
 
         overloads = get_overloads(self.__call__)
@@ -186,15 +186,66 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
             call_signatures = [inspect.signature(self.__call__)]
         else:
             call_signatures = [inspect.signature(overload) for overload in overloads]
-        call_signature = inspect.signature(self.__call__)
-        singletons = []
+
+        overload_inputs = []
         for call_signature in call_signatures:
             params = call_signature.parameters
             if any(not_singleton_input in params for not_singleton_input in self._not_singleton_inputs):
                 continue
             # exclude self since it is not a singleton input
-            singletons.extend([p for p in params if p != "self"])
-        return singletons
+            overload_inputs.append([p for p in params if p != "self"])
+        return overload_inputs
+
+    def _get_matching_overload_inputs(self, **kwargs) -> List[str]:
+        """Find the overload that matches the provided kwargs and return its input parameters.
+
+        :keyword kwargs: The keyword arguments to match against overloads.
+        :type kwargs: Dict
+        :return: List of input parameter names for the matching overload.
+        :rtype: List[str]
+        """
+        overload_inputs = self._singleton_inputs
+        provided_keys = set(key for key, value in kwargs.items() if value is not None)
+
+        # Find the overload that best matches the provided parameters
+        best_match = None
+        best_score = -1
+
+        for inputs in overload_inputs:
+            input_set = set(inputs)
+
+            # Calculate match score: how many of the overload's params are provided
+            if input_set.issubset(provided_keys):
+                score = len(input_set)
+                if score > best_score:
+                    best_score = score
+                    best_match = inputs
+
+        # If exact match found, return it
+        if best_match is not None:
+            return best_match
+
+        # If no exact match, find the overload with the most overlap
+        for inputs in overload_inputs:
+            input_set = set(inputs)
+            overlap = len(input_set.intersection(provided_keys))
+            if overlap > best_score:
+                best_score = overlap
+                best_match = inputs
+
+        # Return the best match or the first overload as fallback
+        return best_match if best_match is not None else (overload_inputs[0] if overload_inputs else [])
+
+    def _get_all_singleton_inputs(self) -> List[str]:
+        """Get a flattened list of all possible singleton inputs across all overloads.
+
+        :return: Flattened list of all singleton input names.
+        :rtype: List[str]
+        """
+        all_inputs = set()
+        for inputs in self._singleton_inputs:
+            all_inputs.update(inputs)
+        return list(all_inputs)
 
     def _derive_conversation_converter(
         self,
@@ -206,10 +257,11 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         :return: The function that will be used to convert conversations to evaluable inputs.
         :rtype: Callable
         """
-        include_context = "context" in self._singleton_inputs
-        include_query = "query" in self._singleton_inputs
-        include_response = "response" in self._singleton_inputs
-        include_ground_truth = "ground_truth" in self._singleton_inputs
+        all_singleton_inputs = self._get_all_singleton_inputs()
+        include_context = "context" in all_singleton_inputs
+        include_query = "query" in all_singleton_inputs
+        include_response = "response" in all_singleton_inputs
+        include_ground_truth = "ground_truth" in all_singleton_inputs
 
         def converter(conversation: Dict) -> List[DerivedEvalInput]:
             messages = cast(List[Dict[str, Any]], conversation["messages"])
@@ -319,9 +371,9 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         (like a query and response), or they receive conversation that iss a list of dictionary
         values.
 
-        The self._singleton_inputs list assigned during initialization is used to find and extract
-        singleton keywords, and self._allow_conversation_input is used to determine if a conversation
-        is a valid input.
+        The self._singleton_inputs list (containing overload signatures) assigned during initialization
+        is used to find and extract singleton keywords, and determine which overload matches the
+        provided arguments.
 
         If both conversations and singletons are allowed, the function will raise an exception if both
         are inputted.
@@ -339,7 +391,10 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         conversation = kwargs.get("conversation", None)
         singletons = {}
         if len(self._singleton_inputs) > 0:
-            singletons = {key: kwargs.get(key, None) for key in self._singleton_inputs}
+            # Get all possible singleton inputs and check what's provided
+            all_singleton_inputs = self._get_all_singleton_inputs()
+            singletons = {key: kwargs.get(key, None) for key in all_singleton_inputs}
+
         # Check that both conversation and other inputs aren't set
         if conversation is not None and any(singletons.values()):
             msg = f"{type(self).__name__}: Cannot provide both 'conversation' and individual inputs at the same time."
@@ -354,10 +409,16 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
             if self._is_multi_modal_conversation(conversation):
                 return self._derive_multi_modal_conversation_converter()(conversation)
             return self._derive_conversation_converter()(conversation)
-        # Handle Singletons
-        required_singletons = remove_optional_singletons(self, singletons)
-        if all(value is not None for value in required_singletons.values()):
-            return [singletons]
+
+        # Handle Singletons - find matching overload
+        matching_inputs = self._get_matching_overload_inputs(**kwargs)
+        if matching_inputs:
+            # Check if all required inputs for this overload are provided
+            required_singletons = {key: kwargs.get(key, None) for key in matching_inputs}
+            required_singletons = remove_optional_singletons(self, required_singletons)
+            if all(value is not None for value in required_singletons.values()):
+                return [singletons]
+
         # Missing input
         msg = f"{type(self).__name__}: Either 'conversation' or individual inputs must be provided."
         raise EvaluationException(
@@ -415,6 +476,39 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         # Slap the per-turn results back in.
         aggregated["evaluation_per_turn"] = evaluation_per_turn
         return aggregated
+
+    def _parse_tools_from_response(self, response):
+        """Parse the response to extract tool calls and results.
+        :param response: The response to parse.
+        :type response: Union[str, List[dict]]
+        :return: List of tool calls extracted from the response.
+        :rtype: List[dict]
+        """
+        tool_calls = []
+        tool_results_map = {}
+        if isinstance(response, list):
+            for message in response:
+                # Extract tool calls from assistant messages
+                if message.get("role") == "assistant" and isinstance(message.get("content"), list):
+                    for content_item in message.get("content"):
+                        if isinstance(content_item, dict) and content_item.get("type") == "tool_call":
+                            tool_calls.append(content_item)
+
+                # Extract tool results from tool messages
+                elif message.get("role") == "tool" and message.get("tool_call_id"):
+                    tool_call_id = message.get("tool_call_id")
+                    if isinstance(message.get("content"), list) and len(message.get("content")) > 0:
+                        result_content = message.get("content")[0]
+                        if isinstance(result_content, dict) and result_content.get("type") == "tool_result":
+                            tool_results_map[tool_call_id] = result_content
+
+        # Attach results to their corresponding calls
+        for tool_call in tool_calls:
+            tool_call_id = tool_call.get("tool_call_id")
+            if tool_call_id in tool_results_map:
+                tool_call["tool_result"] = tool_results_map[tool_call_id]["tool_result"]
+
+        return tool_calls
 
     async def _real_call(self, **kwargs) -> Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]:
         """The asynchronous call where real end-to-end evaluation logic is performed.

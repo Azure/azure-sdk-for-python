@@ -45,12 +45,10 @@ class AIProjectClient:
     :ivar red_teams: RedTeamsOperations operations
     :vartype red_teams: azure.ai.projects.aio.operations.RedTeamsOperations
     :param endpoint: Project endpoint. In the form
-     "https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/_project"
+     "https://your-ai-services-account-name.services.ai.azure.com/api/projects/_project"
      if your Foundry Hub has only one Project, or to use the default Project in your Hub. Or in the
-     form
-     "https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/<your-project-name>"
-     if you want to explicitly
-     specify the Foundry Project name. Required.
+     form "https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name"
+     if you want to explicitly specify the Foundry Project name. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
