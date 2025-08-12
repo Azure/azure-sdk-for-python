@@ -337,7 +337,7 @@ resource kubernetesCluster 'Microsoft.ContainerService/managedClusters@2023-06-0
   }
 }
 
-resource publicIP 'Microsoft.Network/publicIPAddresses@2023-05-01' = {
+resource publicIP 'Microsoft.Network/publicIPAddresses@2023-05-01' = if (provisionLiveResources) {
   name: '${baseName}PublicIP'
   location: location
   sku: {
