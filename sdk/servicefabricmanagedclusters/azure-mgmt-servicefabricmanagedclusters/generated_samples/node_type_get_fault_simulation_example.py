@@ -15,7 +15,7 @@ from azure.mgmt.servicefabricmanagedclusters import ServiceFabricManagedClusters
     pip install azure-identity
     pip install azure-mgmt-servicefabricmanagedclusters
 # USAGE
-    python application_type_name_put_operation_example.py
+    python node_type_get_fault_simulation_example.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,15 +30,15 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.application_types.create_or_update(
+    response = client.node_types.get_fault_simulation(
         resource_group_name="resRg",
         cluster_name="myCluster",
-        application_type_name="myAppType",
-        parameters={"location": "eastus"},
+        node_type_name="BE",
+        parameters={"simulationId": "aec13cc2-1d39-4ba6-a1a8-2fc35b00643c"},
     )
     print(response)
 
 
-# x-ms-original-file: 2025-06-01-preview/ApplicationTypeNamePutOperation_example.json
+# x-ms-original-file: 2025-06-01-preview/faultSimulation/NodeTypeGetFaultSimulation_example.json
 if __name__ == "__main__":
     main()
