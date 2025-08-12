@@ -5,6 +5,10 @@
 ### Features Added
 - Stable release of features from 12.27.0b1
 
+### Other Changes
+- Migrated any previously documented `kwarg` arguments to be named keywords. 
+Some public types may have been adjusted if they were previously erroneous or incomplete.
+
 ## 12.26.0 (2025-07-16)
 
 ### Features Added
