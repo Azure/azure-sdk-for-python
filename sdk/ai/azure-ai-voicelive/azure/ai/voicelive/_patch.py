@@ -478,11 +478,12 @@ class VoiceLiveConnection:
         Send an event to the server over the active WebSocket connection.
 
         Accepts either:
+
         - A mapping-like object (e.g., dict, MappingProxyType). It will be copied
-            to a plain dict and JSON-encoded. Any nested SDK models are handled
-            by a fallback serializer.
+        to a plain dict and JSON-encoded. Any nested SDK models are handled
+        by a fallback serializer.
         - A structured ClientEvent model. If the object (or its class) exposes a
-            `serialize()` method, that is used to produce the wire format.
+        `serialize()` method, that is used to produce the wire format.
 
         :param event: The event to send.
         :type event: Union[Mapping[str, Any], ~azure.ai.voicelive.models.ClientEvent]
@@ -613,6 +614,7 @@ def connect(
     Create and manage a synchronous WebSocket connection to the Azure Voice Live API.
 
     This helper returns a standard context manager that:
+
     - Authenticates with the service using an API key or Azure Active Directory token.
     - Builds the correct WebSocket URL and query parameters.
     - Establishes the connection and yields a :class:`~azure.ai.voicelive.VoiceLiveConnection`
@@ -620,8 +622,9 @@ def connect(
     - Automatically closes the connection on context exit.
 
     **Supported credentials**
-      - :class:`~azure.core.credentials.AzureKeyCredential` (API key).
-      - :class:`~azure.core.credentials.TokenCredential` (AAD), e.g. :class:`azure.identity.DefaultAzureCredential`.
+
+    - :class:`~azure.core.credentials.AzureKeyCredential` (API key).
+    - :class:`~azure.core.credentials.TokenCredential` (AAD), e.g., :class:`azure.identity.DefaultAzureCredential`.
 
     :param endpoint: Service endpoint, e.g., ``https://<region>.api.cognitive.microsoft.com``.
     :type endpoint: str

@@ -1238,9 +1238,9 @@ class ConversationItemWithReference(_Model):
     :ivar content: The content of the message, applicable for ``message`` items.
 
      * Message items of role `system` support only `input_text` content
-     * Message items of role `user` support `input_text` and `input_audio`
-     content
+     * Message items of role `user` support `input_text` and `input_audio` content
      * Message items of role `assistant` support `text` content.
+
     :vartype content: list[~azure.ai.voicelive.models.ConversationItemWithReferenceContent]
     :ivar call_id: The ID of the function call (for ``function_call`` and
      ``function_call_output`` items). If passed on a ``function_call_output``
@@ -1288,11 +1288,12 @@ class ConversationItemWithReference(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The content of the message, applicable for ``message`` items.
-     
-     * Message items of role `system` support only `input_text` content
-     * Message items of role `user` support `input_text` and `input_audio`
-     content
-     * Message items of role `assistant` support `text` content."""
+
+    * Message items of role `system` support only `input_text` content
+    * Message items of role `user` support `input_text` and `input_audio` content
+    * Message items of role `assistant` support `text` content.
+
+    """
     call_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the function call (for ``function_call`` and
      ``function_call_output`` items). If passed on a ``function_call_output``
@@ -3070,20 +3071,20 @@ class ServerEventConversationItemCreated(ServerEvent, discriminator="conversatio
     event:
 
     * The server is generating a Response, which if successful will produce
-    either one or two Items, which will be of type `message`
-    (role `assistant`) or type `function_call`.
+      either one or two Items, which will be of type `message`
+      (role `assistant`) or type `function_call`.
     * The input audio buffer has been committed, either by the client or the
-    server (in `server_vad` mode). The server will take the content of the
-    input audio buffer and add it to a new user message Item.
+      server (in `server_vad` mode). The server will take the content of the
+      input audio buffer and add it to a new user message Item.
     * The client has sent a `conversation.item.create` event to add a new Item
-    to the Conversation.
+      to the Conversation.
 
     :ivar event_id:
     :vartype event_id: str
     :ivar type: The event type, must be ``conversation.item.created``. Required.
     :vartype type: str or ~azure.ai.voicelive.models.CONVERSATION_ITEM_CREATED
     :ivar previous_item_id: The ID of the preceding item in the Conversation context, allows the
-     client to understand the order of the conversation. Required.
+      client to understand the order of the conversation. Required.
     :vartype previous_item_id: str
     :ivar item:
     :vartype item: ~azure.ai.voicelive.models.ConversationItemWithReference
