@@ -10,7 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import json
 import logging
 from contextlib import AbstractContextManager
-from typing import Any, Dict, Iterator, List, NotRequired, Optional, Sequence, Tuple, Union, Mapping
+from typing import Any, Dict, Iterator, List, Optional, Sequence, Tuple, Union, Mapping
 from typing_extensions import TypedDict
 from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
@@ -30,6 +30,10 @@ from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.exceptions import AzureError
 
 from .models import ClientEvent, RequestSession, ServerEvent
+try:  # Python 3.11+
+    from typing import NotRequired, Required  # type: ignore[attr-defined]
+except Exception:  # Python <=3.10
+    from typing_extensions import NotRequired, Required
 
 __all__: List[str] = [
     "connect",
@@ -48,6 +52,20 @@ __all__: List[str] = [
 
 log = logging.getLogger(__name__)
 
+def _json_default(o: Any) -> Any:
+        """Fallback JSON serializer for generated SDK models."""
+        for attr in ("serialize", "as_dict", "to_dict"):
+            fn = getattr(o, attr, None)
+            if callable(fn):
+                try:
+                    return fn()
+                except TypeError:
+                    # some generators expose class/static serialize(obj)
+                    return getattr(o.__class__, attr)(o)
+        if hasattr(o, "__dict__"):
+            # strip private attrs
+            return {k: v for k, v in vars(o).items() if not k.startswith("_")}
+        raise TypeError(f"{type(o).__name__} is not JSON serializable")
 
 class WebsocketConnectionOptions(TypedDict, total=False):
     """
@@ -455,15 +473,31 @@ class VoiceLiveConnection:
             reason = str(e)
             raise ConnectionClosed(code, reason) from e
 
-    def send(self, event: Union[Dict[str, Any], ClientEvent]) -> None:
-        """Send an event to the server.
+    def send(self, event: Union[Mapping[str, Any], ClientEvent]) -> None:
+        """
+        Send an event to the server over the active WebSocket connection.
 
-        :param event: The event to send, either as a dictionary or a ClientEvent.
-        :type event: Union[dict[str, Any], ~azure.ai.voicelive.models.ClientEvent]
-        :raises ConnectionError: If the event cannot be sent.
+        Accepts either:
+        - A mapping-like object (e.g., dict, MappingProxyType). It will be copied
+            to a plain dict and JSON-encoded. Any nested SDK models are handled
+            by a fallback serializer.
+        - A structured ClientEvent model. If the object (or its class) exposes a
+            `serialize()` method, that is used to produce the wire format.
+
+        :param event: The event to send.
+        :type event: Union[Mapping[str, Any], ~azure.ai.voicelive.models.ClientEvent]
+        :raises ConnectionError: If serialization or the WebSocket send fails.
         """
         try:
-            data = json.dumps(event) if isinstance(event, dict) else ClientEvent.serialize(event)
+            # Prefer model-provided serialization if available
+            if callable(getattr(event, "serialize", None)):
+                data = event.serialize()  # instance serializer
+            elif callable(getattr(event.__class__, "serialize", None)):
+                data = event.__class__.serialize(event)  # class/static serializer
+            elif isinstance(event, Mapping):
+                data = json.dumps(dict(event), default=_json_default)
+            else:
+                data = json.dumps(event, default=_json_default)
             self._connection.send(data)
         except Exception as e:
             log.error(f"Failed to send event: {e}")

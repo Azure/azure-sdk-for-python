@@ -11,7 +11,7 @@ import aiohttp
 import json
 import logging
 from contextlib import AbstractAsyncContextManager
-from typing import Any, Dict, List, Mapping, NotRequired, Optional, Union, AsyncIterator
+from typing import Any, Dict, List, Mapping, Optional, Union, AsyncIterator
 from typing_extensions import TypedDict
 from urllib.parse import urlparse, urlunparse, urlencode, parse_qs
 
@@ -32,6 +32,10 @@ from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline import policies
 from ..models import ClientEvent, ServerEvent, RequestSession
 from .._patch import ConnectionError, ConnectionClosed
+try:  # Python 3.11+
+    from typing import NotRequired, Required  # type: ignore[attr-defined]
+except Exception:  # Python <=3.10
+    from typing_extensions import NotRequired, Required
 
 
 __all__: List[str] = [
@@ -49,6 +53,21 @@ __all__: List[str] = [
 
 log = logging.getLogger(__name__)
 
+
+def _json_default(o: Any) -> Any:
+    """Fallback JSON serializer for generated SDK models."""
+    for attr in ("serialize", "as_dict", "to_dict"):
+        fn = getattr(o, attr, None)
+        if callable(fn):
+            try:
+                return fn()
+            except TypeError:
+                # some generators expose class/static serialize(obj)
+                return getattr(o.__class__, attr)(o)
+    if hasattr(o, "__dict__"):
+        # strip private attrs
+        return {k: v for k, v in vars(o).items() if not k.startswith("_")}
+    raise TypeError(f"{type(o).__name__} is not JSON serializable")
 
 class SessionResource:
     """Resource for session management."""
@@ -413,13 +432,33 @@ class VoiceLiveConnection:
             reason = str(e)
             raise ConnectionClosed(code, reason) from e
 
-    async def send(self, event: Union[Dict[str, Any], ClientEvent]) -> None:
-        """Send an event to the server."""
+    async def send(self, event: Union[Mapping[str, Any], ClientEvent]) -> None:
+        """
+        Send an event to the server over the active WebSocket connection (async).
+
+        Accepts either:
+        - A mapping-like object (e.g., dict, MappingProxyType). It will be copied
+            to a plain dict and JSON-encoded. Any nested SDK models are handled
+            by a fallback serializer.
+        - A structured ClientEvent model. If the object (or its class) exposes a
+            `serialize()` method, that is used to produce the wire format.
+
+        :param event: The event to send.
+        :type event: Union[Mapping[str, Any], ~azure.ai.voicelive.models.ClientEvent]
+        :raises ConnectionError: If serialization or the WebSocket send fails.
+        """
         try:
-            if isinstance(event, dict):
-                data = json.dumps(event)
+            # Prefer model-provided serialization if available
+            if callable(getattr(event, "serialize", None)):
+                data = event.serialize()  # instance serializer
+            elif callable(getattr(event.__class__, "serialize", None)):
+                data = event.__class__.serialize(event)  # class/static serializer
+            elif isinstance(event, Mapping):
+                data = json.dumps(dict(event), default=_json_default)
             else:
-                data = ClientEvent.serialize(event)
+                data = json.dumps(event, default=_json_default)
+
+            # aiohttp-style websocket
             await self._connection.send_str(data)
         except Exception as e:
             log.error(f"Failed to send event: {e}")
