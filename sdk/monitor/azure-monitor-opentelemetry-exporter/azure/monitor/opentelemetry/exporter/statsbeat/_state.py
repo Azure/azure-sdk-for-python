@@ -83,16 +83,16 @@ def set_statsbeat_live_metrics_feature_set():
 def get_customer_statsbeat_shutdown():
     return _CUSTOMER_STATSBEAT_STATE["SHUTDOWN"]
 
-def get_local_storage_state_readonly():
+def get_local_storage_setup_state_readonly():
     return _LOCAL_STORAGE_SETUP_STATE["READONLY"]
 
-def set_local_storage_state_readonly():
+def set_local_storage_setup_state_readonly():
     with _LOCAL_STORAGE_SETUP_STATE_LOCK:
         _LOCAL_STORAGE_SETUP_STATE["READONLY"] = True
 
-def get_local_storage_state_exception():
+def get_local_storage_setup_state_exception():
     return _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"]
 
-def set_local_storage_state_exception(value):
+def set_local_storage_setup_state_exception(value):
     with _LOCAL_STORAGE_SETUP_STATE_LOCK:
         _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"] = value

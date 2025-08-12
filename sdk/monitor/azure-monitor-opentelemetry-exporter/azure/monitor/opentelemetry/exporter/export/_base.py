@@ -56,8 +56,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     increment_and_check_statsbeat_failure_count,
     is_statsbeat_enabled,
     set_statsbeat_initial_success,
-    set_local_storage_state_exception,
-    get_local_storage_state_exception,
+    get_local_storage_setup_state_exception,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
     _update_requests_map,
@@ -212,10 +211,9 @@ class BaseExporter:
                     elif result_from_storage_put == StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED:
                         # If data has to be dropped due to persistent storage being full, track dropped items
                         _track_dropped_items(self._customer_statsbeat_metrics, envelopes, DropCode.CLIENT_PERSISTENCE_CAPACITY)
-                    elif get_local_storage_state_exception() != "":
+                    elif get_local_storage_setup_state_exception() != "":
                         # For exceptions caught in _check_and_set_folder_permissions during storage setup
                         _track_dropped_items(self._customer_statsbeat_metrics, envelopes, DropCode.CLIENT_EXCEPTION, result_from_storage_put)
-                        set_local_storage_state_exception("")
                     elif isinstance(result_from_storage_put, str):
                         # For any exceptions occurred in put method of either LocalFileStorage or LocalFileBlob, track dropped item with reason
                         _track_dropped_items(self._customer_statsbeat_metrics, envelopes, DropCode.CLIENT_EXCEPTION, result_from_storage_put)

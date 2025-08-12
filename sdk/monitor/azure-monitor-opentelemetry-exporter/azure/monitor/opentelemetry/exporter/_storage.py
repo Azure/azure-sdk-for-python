@@ -8,17 +8,15 @@ import os
 import random
 import subprocess
 import errno
-from typing import Union
 from enum import Enum
-from typing_extensions import Self
 
 from azure.monitor.opentelemetry.exporter._utils import PeriodicTask
 
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
-    get_local_storage_state_exception,
-    get_local_storage_state_readonly,
-    set_local_storage_state_exception,
-    set_local_storage_state_readonly,
+    get_local_storage_setup_state_exception,
+    get_local_storage_setup_state_readonly,
+    set_local_storage_setup_state_exception,
+    set_local_storage_setup_state_readonly,
 )
 
 logger = logging.getLogger(__name__)
@@ -62,8 +60,9 @@ class LocalFileBlob:
             pass  # keep silent
         return None
 
-    def put(self, data, lease_period=0) -> Union[Self, str]:
-        #TODO: Modify method to remove the return of self as it is not being used anywhere
+    def put(self, data, lease_period=0):
+        #TODO: Modify method to remove the return of self as it is not being used anywhere.
+        # Add typing to method
         try:
             fullpath = self.fullpath + ".tmp"
             with open(fullpath, "w", encoding="utf-8") as file:
@@ -195,16 +194,17 @@ class LocalFileStorage:
             pass
         return None
 
-    def put(self, data, lease_period=None) -> Union[LocalFileBlob, StorageExportResult, str]:
+    def put(self, data, lease_period=None):
         # TODO: Remove the blob.put result as we are not using it anywhere and use StorageExportResult instead,
         # Should still capture exceptions returned from LocalFileBlob.put
+        # Add typing for method
         try:
             if not self._enabled:
-                if get_local_storage_state_readonly():
+                if get_local_storage_setup_state_readonly():
                     return StorageExportResult.CLIENT_READONLY
-                if get_local_storage_state_exception() != "":
+                if get_local_storage_setup_state_exception() != "":
                     # Type conversion has been done to match the return type of this function
-                    return str(get_local_storage_state_exception())
+                    return str(get_local_storage_setup_state_exception())
                 return StorageExportResult.CLIENT_STORAGE_DISABLED
             if not self._check_storage_size():
                 return StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED
@@ -262,11 +262,11 @@ class LocalFileStorage:
                 return True
         except OSError as error:
             if getattr(error, 'errno', None) == errno.EROFS:  # cspell:disable-line
-                set_local_storage_state_readonly()
+                set_local_storage_setup_state_readonly()
             else:
-                set_local_storage_state_exception(str(error))
+                set_local_storage_setup_state_exception(str(error))
         except Exception as ex:
-            set_local_storage_state_exception(str(ex))
+            set_local_storage_setup_state_exception(str(ex))
         return False
 
     def _check_storage_size(self):
