@@ -12,7 +12,7 @@ Prerequisites:
 
 Environment variables:
     AZURE_CONTENT_UNDERSTANDING_ENDPOINT   (required)
-    AZURE_CONTENT_UNDERSTANDING_KEY        (optional – falls back to DefaultAzureCredential)
+    AZURE_CONTENT_UNDERSTANDING_KEY        (optional - falls back to DefaultAzureCredential)
 
 Run:
     python content_analyzers_delete_analyzer.py

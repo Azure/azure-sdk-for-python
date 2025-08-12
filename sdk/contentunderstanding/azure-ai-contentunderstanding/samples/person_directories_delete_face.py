@@ -9,7 +9,7 @@ Async sample: delete a face from a person directory using the delete_face API.
 The sample performs the following high-level steps:
 1. Authenticate with Azure AI Content Understanding
 2. Create a temporary person directory and add one person
-3. (Optionally) add a face to that person – obtaining a face_id
+3. (Optionally) add a face to that person - obtaining a face_id
 4. Delete that face using delete_face
 5. Clean up the directory
 
@@ -18,7 +18,7 @@ Dependencies:
 
 Environment variables expected:
     AZURE_CONTENT_UNDERSTANDING_ENDPOINT   (required)
-    AZURE_CONTENT_UNDERSTANDING_KEY        (optional – falls back to DefaultAzureCredential)
+    AZURE_CONTENT_UNDERSTANDING_KEY        (optional - falls back to DefaultAzureCredential)
 """
 
 from __future__ import annotations
@@ -65,7 +65,7 @@ async def main():
             body={"tags": {"name": "Demo User"}},
         )
         person_id = person_response.person_id
-        print(f"👤 Person created (id={person_id}) – adding face…")
+        print(f"👤 Person created (id={person_id}) - adding face…")
 
         # Load image and convert to base64 (same pattern used in tests)
         sample_file_dir = os.path.dirname(os.path.abspath(__file__))
@@ -80,18 +80,18 @@ async def main():
             },
         )
         face_id = face_add_response.face_id
-        print(f"😀 Face added (id={face_id}) – deleting now…")
+        print(f"😀 Face added (id={face_id}) - deleting now…")
 
         # Delete the face
         await client.person_directories.delete_face(
             person_directory_id=directory_id,
             face_id=face_id,
         )
-        print("✅ Face deleted – cleaning up directory")
+        print("✅ Face deleted - cleaning up directory")
 
         # Clean up the created directory (demo cleanup)
         await client.person_directories.delete(person_directory_id=directory_id)
-        print("✅ Directory deleted – sample complete")
+        print("✅ Directory deleted - sample complete")
 
 if __name__ == "__main__":
     asyncio.run(main())

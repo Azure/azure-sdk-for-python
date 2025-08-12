@@ -112,7 +112,7 @@ async def main():
         # Clean up the created directory (demo cleanup)
         print(f"🗑️  Deleting directory '{directory_id}' (demo cleanup)...")
         await client.person_directories.delete(person_directory_id=directory_id)
-        print("✅ Directory deleted – sample complete")
+        print("✅ Directory deleted - sample complete")
 
 # x-ms-original-file: 2025-05-01-preview/PersonDirectories_UpdatePerson.json
 if __name__ == "__main__":

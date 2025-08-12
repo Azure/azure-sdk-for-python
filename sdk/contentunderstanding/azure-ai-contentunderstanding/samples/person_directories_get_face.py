@@ -54,7 +54,7 @@ async def main():
             body={"tags": {"name": "Demo User"}},
         )
         person_id = person_response.person_id
-        print(f"👤 Person created (id={person_id}) – adding face…")
+        print(f"👤 Person created (id={person_id}) - adding face…")
 
         # Load image and convert to base64
         sample_file_dir = os.path.dirname(os.path.abspath(__file__))
@@ -69,7 +69,7 @@ async def main():
             },
         )
         face_id = face_add_response.face_id
-        print(f"😀 Face added (id={face_id}) – retrieving face details…")
+        print(f"😀 Face added (id={face_id}) - retrieving face details…")
 
         # Get the face details
         response = await client.person_directories.get_face(
@@ -86,7 +86,7 @@ async def main():
         # Clean up the created directory (demo cleanup)
         print(f"🗑️  Deleting directory '{directory_id}' (demo cleanup)...")
         await client.person_directories.delete(person_directory_id=directory_id)
-        print("✅ Directory deleted – sample complete")
+        print("✅ Directory deleted - sample complete")
 
 # x-ms-original-file: 2025-05-01-preview/PersonDirectories_GetFace.json
 if __name__ == "__main__":

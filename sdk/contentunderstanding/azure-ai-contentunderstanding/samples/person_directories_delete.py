@@ -16,7 +16,7 @@ Dependencies:
 
 Environment variables expected:
     AZURE_CONTENT_UNDERSTANDING_ENDPOINT   (required)
-    AZURE_CONTENT_UNDERSTANDING_KEY        (optional – falls back to DefaultAzureCredential)
+    AZURE_CONTENT_UNDERSTANDING_KEY        (optional - falls back to DefaultAzureCredential)
 """
 
 from __future__ import annotations
@@ -35,7 +35,7 @@ from sample_helper import get_credential, generate_person_directory_id
 # Load environment variables from .env file, if present
 load_dotenv()
 
-async def main() -> None:  # noqa: D401 – simple function signature is fine for sample
+async def main() -> None:  # noqa: D401 - simple function signature is fine for sample
     """Run the delete person directory sample."""
     endpoint: str = os.environ["AZURE_CONTENT_UNDERSTANDING_ENDPOINT"]
     credential = get_credential()
@@ -48,7 +48,7 @@ async def main() -> None:  # noqa: D401 – simple function signature is fine fo
             person_directory_id=directory_id,
             resource=PersonDirectory(description="Temporary directory for delete demo"),
         )
-        print("✅ Directory created – proceeding to delete")
+        print("✅ Directory created - proceeding to delete")
 
         # Delete the directory
         print(f"🗑️  Deleting directory '{directory_id}'...")
