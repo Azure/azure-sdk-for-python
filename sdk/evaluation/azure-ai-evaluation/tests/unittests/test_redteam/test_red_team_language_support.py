@@ -1,7 +1,6 @@
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
-from azure.ai.evaluation.red_team._red_team import RedTeam, RiskCategory
-from azure.ai.evaluation.simulator._constants import SupportedLanguages
+from azure.ai.evaluation.red_team._red_team import RedTeam, RiskCategory, SupportedLanguages
 from azure.core.credentials import TokenCredential
 
 

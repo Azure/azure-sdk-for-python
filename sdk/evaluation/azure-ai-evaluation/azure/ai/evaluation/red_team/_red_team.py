@@ -16,7 +16,6 @@ from tqdm import tqdm
 
 # Azure AI Evaluation imports
 from azure.ai.evaluation._constants import TokenScope
-from azure.ai.evaluation.simulator._constants import SupportedLanguages
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._model_configurations import EvaluationResult
 from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenManager
@@ -46,6 +45,7 @@ from ._red_team_result import RedTeamResult
 from ._attack_strategy import AttackStrategy
 from ._attack_objective_generator import (
     RiskCategory,
+    SupportedLanguages,
     _AttackObjectiveGenerator,
 )
 
