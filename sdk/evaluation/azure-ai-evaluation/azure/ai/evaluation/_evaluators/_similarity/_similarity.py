@@ -106,9 +106,7 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
     # consistency across evals, and avoids parsing issues with non-overloaded
     # syntax.
     @overload  # type: ignore
-    def __call__(
-        self, *, query: str, response: str, ground_truth: str
-    ) -> Dict[str, float]:
+    def __call__(self, *, query: str, response: str, ground_truth: str) -> Dict[str, float]:
         """
         Evaluate similarity.
 

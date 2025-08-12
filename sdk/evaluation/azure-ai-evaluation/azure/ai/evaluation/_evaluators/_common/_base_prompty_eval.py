@@ -87,9 +87,7 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         )
 
         subclass_name = self.__class__.__name__
-        user_agent = (
-            f"{UserAgentSingleton().value} (type=evaluator subtype={subclass_name})"
-        )
+        user_agent = f"{UserAgentSingleton().value} (type=evaluator subtype={subclass_name})"
         prompty_model_config = construct_prompty_model_config(
             validate_model_config(model_config),
             self._DEFAULT_OPEN_API_VERSION,
