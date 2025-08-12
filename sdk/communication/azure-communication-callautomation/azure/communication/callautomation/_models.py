@@ -494,7 +494,7 @@ class TranscriptionOptions:
         self.pii_redaction_options=pii_redaction
         self.enable_sentiment_analysis=enable_sentiment_analysis
         self.locales=locales
-        self.summarization_options=summarization
+        self.summarization=summarization
 
     def _to_generated(self):
         return WebSocketTranscriptionOptionsRest(
@@ -867,7 +867,7 @@ class RemoveParticipantResult:
         return cls(operation_context=remove_participant_result_generated.operation_context)
 
 
-class MoveParticipantsResult:
+class toMoveParticipantsResult:
     """The response payload for moving participants to the call.
     :keyword participants: List of current participants in the call.
     :paramtype participants: list[~azure.communication.callautomation.CallParticipant]

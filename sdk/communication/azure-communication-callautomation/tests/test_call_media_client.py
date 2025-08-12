@@ -623,7 +623,7 @@ class TestCallMediaClient(unittest.TestCase):
         self.call_connection_client.summarize_call(
             operation_context=self.operation_context,
             operation_callback_url=self.operation_callback_url,
-            summarization_options=summarization_options
+            summarization=summarization_options
             )
 
         expected_summarize_call_request = SummarizeCallRequest(

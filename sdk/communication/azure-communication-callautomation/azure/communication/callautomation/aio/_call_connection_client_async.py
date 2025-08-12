@@ -1087,7 +1087,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         *,
         operation_context: Optional[str] = None,
         operation_callback_url: Optional[str] = None,
-        summarization_options: Optional[SummarizationOptions] = None,
+        summarization: Optional[SummarizationOptions] = None,
         **kwargs
     ) -> None:
         """ Summary details of call.
@@ -1099,8 +1099,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
          This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
         :paramtype operation_callback_url: str or None
-        :keyword summarization_options: Summarization configuration options.
-        :paramtype summarization_options: ~azure.communication.callautomation.models.SummarizationOptions
+        :keyword summarization: Summarization configuration options.
+        :paramtype summarization: ~azure.communication.callautomation.models.SummarizationOptions
         :type locale: str
         :return: None
         :rtype: None
@@ -1110,7 +1110,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         summarize_call_request = SummarizeCallRequest(
             operation_context=operation_context,
             operation_callback_uri=operation_callback_url,
-            summarization_options=summarization_options._to_generated() if summarization_options else None,  # pylint:disable=protected-access
+            summarization_options=summarization._to_generated() if summarization else None,  # pylint:disable=protected-access
             **kwargs
         )
 
