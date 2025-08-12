@@ -775,7 +775,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):  # pylint: disable=too-many-
         self._settled = receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
         self._delivery_tag = self._amqp_transport.get_message_delivery_tag(message, frame)
         self._delivery_id = self._amqp_transport.get_message_delivery_id(message, frame)  # only used by pyamqp
-        self._received_lock_token = kwargs.pop("lock_token", None)
+        self._received_lock_token = kwargs.get("lock_token", None)
         self._received_timestamp_utc = utc_now()
         self._is_deferred_message = kwargs.get("is_deferred_message", False)
         self._is_peeked_message = kwargs.get("is_peeked_message", False)
