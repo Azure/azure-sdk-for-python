@@ -23,6 +23,7 @@ class RiskCategory(str, Enum):
     UngroundedAttributes = "ungrounded_attributes"
     XPIA = "xpia"
 
+
 @experimental
 class SupportedLanguages(Enum):
     """Supported languages for attack objectives, using ISO standard language codes."""
