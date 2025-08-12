@@ -2,7 +2,7 @@
 """
 Azure AI Content Understanding SDK - Sample Test Runner
 
-This script runs all samples in the generated_samples directory and reports success/failure status.
+This script runs all samples in the samples directory and reports success/failure status.
 Useful for validation, testing, and ensuring all samples work correctly.
 
 Prerequisites:
@@ -11,7 +11,7 @@ Prerequisites:
 - All required dependencies installed
 
 Usage:
-    cd sdk/contentunderstanding/azure-ai-contentunderstanding/generated_samples
+    cd sdk/contentunderstanding/azure-ai-contentunderstanding/samples
     python run_all_samples.py
 """
 
@@ -97,7 +97,7 @@ class SampleRunner:
         
         # Check if we're in the right directory
         if not Path("sample_helper.py").exists():
-            print("❌ Error: sample_helper.py not found. Please run from generated_samples directory.")
+            print("❌ Error: sample_helper.py not found. Please run from samples directory.")
             return False
             
         # Check environment configuration
@@ -211,7 +211,7 @@ class SampleRunner:
             print("💡 TROUBLESHOOTING TIPS:")
             print("   • Check your Azure AI Content Understanding endpoint and authentication")
             print("   • Ensure you have sufficient quota and permissions")
-            print("   • Verify test data files exist in ../generated_tests/test_data/")
+            print("   • Verify test data files exist in ../samples/test_data/")
             print("   • Check for network connectivity issues")
             print("   • Review individual sample error messages above")
             
