@@ -256,7 +256,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Clean up the created person directory
         """
         self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_directories_create")
+        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_create")
         created_directory = False
 
         try:
@@ -285,7 +285,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Clean up created person directory
         """
         self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_directories_update")
+        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_update")
         created_directory = False
 
         try:
@@ -357,7 +357,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Clean up created person directory
         """
         self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_directories_get")
+        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_get")
         created_directory = False
 
         try:
@@ -405,7 +405,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Verify person directory no longer exists after deletion
         """
         self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_directories_delete")
+        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_delete")
         created_directory = False
 
         try:
@@ -449,7 +449,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Clean up created person directory
         """
         self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_directories_list")
+        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_list")
         created_directory = False
 
         try:
@@ -505,7 +505,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Clean up created person directory
         """
         self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_directories_add_person")
+        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_add_person")
         created_directory = False
 
         try:
@@ -572,7 +572,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Clean up created person directory
         """
         self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_directories_update_person")
+        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_update_person")
         created_directory = False
 
         try:
@@ -655,7 +655,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Clean up created person directory
         """
         self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_directories_get_person")
+        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_get_person")
         created_directory = False
 
         try:
@@ -722,7 +722,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Clean up created person directory
         """
         self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_directories_delete_person")
+        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_delete_person")
         created_directory = False
 
         try:
@@ -794,7 +794,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Clean up created person directory
         """
         self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_directories_list_persons")
+        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_list_persons")
         created_directory = False
 
         try:
@@ -871,7 +871,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Clean up created person directory
         """
         self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_directories_add_face")
+        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_add_face")
         created_directory = False
 
         try:
@@ -953,7 +953,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Clean up created person directory
         """
         self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_directories_update_face")
+        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_update_face")
         created_directory = False
 
         try:
@@ -1058,7 +1058,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Clean up created person directory
         """
         self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_directories_get_face")
+        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_get_face")
         created_directory = False
 
         try:
@@ -1140,7 +1140,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Clean up created person directory
         """
         self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_directories_delete_face")
+        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_delete_face")
         created_directory = False
 
         try:
@@ -1232,7 +1232,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Clean up created person directory
         """
         self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_directories_list_faces")
+        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_list_faces")
         created_directory = False
 
         try:
@@ -1321,7 +1321,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Clean up created person directory
         """
         self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_directories_identify_person")
+        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_identify_person")
         created_directory = False
 
         try:
@@ -1398,7 +1398,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Clean up created person directory
         """
         self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_directories_find_similar_faces")
+        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_find_similar_faces")
         created_directory = False
 
         try:
@@ -1538,7 +1538,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Clean up created person directory
         """
         self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_directories_verify_person")
+        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_verify_person")
         created_directory = False
 
         try:
@@ -1616,7 +1616,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_person_directories_comprehensive_workflow(self, contentunderstanding_endpoint):
+    async def test_person_directories_workflow(self, contentunderstanding_endpoint):
         """
         Test Summary:
         - Create a person directory
@@ -1629,7 +1629,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Clean up created person directory
         """
         self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_directories_comprehensive_workflow")
+        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_workflow")
         created_directory = False
 
         try:
