@@ -25,7 +25,7 @@ from ._operations import AzureFirewallsOperations  # type: ignore
 from ._operations import AzureFirewallFqdnTagsOperations  # type: ignore
 from ._operations import WebCategoriesOperations  # type: ignore
 from ._operations import BastionHostsOperations  # type: ignore
-from ._operations import NetworkManagementClientOperationsMixin  # type: ignore
+from ._operations import _NetworkManagementClientOperationsMixin  # type: ignore # pylint: disable=unused-import
 from ._operations import NetworkInterfacesOperations  # type: ignore
 from ._operations import PublicIPAddressesOperations  # type: ignore
 from ._operations import VipSwapOperations  # type: ignore
@@ -102,6 +102,7 @@ from ._operations import NetworkSecurityPerimeterLinksOperations  # type: ignore
 from ._operations import NetworkSecurityPerimeterLinkReferencesOperations  # type: ignore
 from ._operations import NetworkSecurityPerimeterLoggingConfigurationsOperations  # type: ignore
 from ._operations import NetworkSecurityPerimeterOperationStatusesOperations  # type: ignore
+from ._operations import NetworkSecurityPerimeterServiceTagsOperations  # type: ignore
 from ._operations import ReachabilityAnalysisIntentsOperations  # type: ignore
 from ._operations import ReachabilityAnalysisRunsOperations  # type: ignore
 from ._operations import VerifierWorkspacesOperations  # type: ignore
@@ -187,7 +188,6 @@ __all__ = [
     "AzureFirewallFqdnTagsOperations",
     "WebCategoriesOperations",
     "BastionHostsOperations",
-    "NetworkManagementClientOperationsMixin",
     "NetworkInterfacesOperations",
     "PublicIPAddressesOperations",
     "VipSwapOperations",
@@ -264,6 +264,7 @@ __all__ = [
     "NetworkSecurityPerimeterLinkReferencesOperations",
     "NetworkSecurityPerimeterLoggingConfigurationsOperations",
     "NetworkSecurityPerimeterOperationStatusesOperations",
+    "NetworkSecurityPerimeterServiceTagsOperations",
     "ReachabilityAnalysisIntentsOperations",
     "ReachabilityAnalysisRunsOperations",
     "VerifierWorkspacesOperations",
