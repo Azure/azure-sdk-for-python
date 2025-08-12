@@ -5,16 +5,18 @@
 ### Breaking Changes
 
 ### Features Added
+
 - Added support for user-supplied tags in the `evaluate` function. Tags are key-value pairs that can be used for experiment tracking, A/B testing, filtering, and organizing evaluation runs. The function accepts a `tags` parameter.
 - Enhanced `GroundednessEvaluator` to support AI agent evaluation with tool calls. The evaluator now accepts agent response data containing tool calls and can extract context from `file_search` tool results for groundedness assessment. This enables evaluation of AI agents that use tools to retrieve information and generate responses. Note: Agent groundedness evaluation is currently supported only when the `file_search` tool is used.
-- Preview: Added `is_reasoning_model` keyword parameter to all prompty-based evaluators
+
+### Bugs Fixed
+
+- [Bug](https://github.com/Azure/azure-sdk-for-python/issues/39909): Added `is_reasoning_model` keyword parameter to all evaluators
     (`SimilarityEvaluator`, `RelevanceEvaluator`, `CoherenceEvaluator`, `FluencyEvaluator`,
     `RetrievalEvaluator`, `GroundednessEvaluator`, `IntentResolutionEvaluator`,
     `ResponseCompletenessEvaluator`, `TaskAdherenceEvaluator`, `ToolCallAccuracyEvaluator`).
-    When set, evaluator prompty configuration is adjusted appropriately for reasoning models.
-    `QAEvaluator` now propagates this parameter to its prompty-based child evaluators.
-
-### Bugs Fixed
+    When set, evaluator configuration is adjusted appropriately for reasoning models.
+    `QAEvaluator` now propagates this parameter to its child evaluators.
 
 ### Other Changes
 
