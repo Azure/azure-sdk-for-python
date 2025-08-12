@@ -43,9 +43,6 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
-    :keyword is_reasoning_model: (Preview) Adjusts prompty config
-        for reasoning models when True.
-    :paramtype is_reasoning_model: bool
 
     .. admonition:: Example:
 
@@ -82,9 +79,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     _NO_TOOL_CALLS_MESSAGE = "No tool calls found in response or provided tool_calls."
     _NO_TOOL_DEFINITIONS_MESSAGE = "Tool definitions must be provided."
-    _TOOL_DEFINITIONS_MISSING_MESSAGE = (
-        "Tool definitions for all tool calls must be provided."
-    )
+    _TOOL_DEFINITIONS_MISSING_MESSAGE = "Tool definitions for all tool calls must be provided."
     _INVALID_SCORE_MESSAGE = "Tool call accuracy score must be between 1 and 5."
 
     _LLM_SCORE_KEY = "tool_calls_success_level"
@@ -93,9 +88,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(
-        self, model_config, *, threshold=_DEFAULT_TOOL_CALL_ACCURACY_SCORE, **kwargs
-    ):
+    def __init__(self, model_config, *, threshold=_DEFAULT_TOOL_CALL_ACCURACY_SCORE, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold
@@ -181,9 +174,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             tool_definitions = [tool_definitions]
 
         try:
-            needed_tool_definitions = self._extract_needed_tool_definitions(
-                tool_calls, tool_definitions
-            )
+            needed_tool_definitions = self._extract_needed_tool_definitions(tool_calls, tool_definitions)
         except EvaluationException as e:
             return {"error_message": self._TOOL_DEFINITIONS_MISSING_MESSAGE}
         if len(needed_tool_definitions) == 0:
@@ -293,8 +284,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 tool_definition = [
                     tool
                     for tool in tool_definitions
-                    if tool.get("name") == tool_name
-                    and tool.get("type", "function") == "function"
+                    if tool.get("name") == tool_name and tool.get("type", "function") == "function"
                 ]
                 if len(tool_definition) > 0:
                     needed_tool_definitions.extend(tool_definition)

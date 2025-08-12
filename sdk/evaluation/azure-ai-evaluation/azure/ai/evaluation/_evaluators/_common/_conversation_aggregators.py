@@ -4,12 +4,7 @@
 
 from typing import Callable, List
 from azure.ai.evaluation._common.math import list_mean
-from azure.ai.evaluation._exceptions import (
-    ErrorBlame,
-    ErrorCategory,
-    ErrorTarget,
-    EvaluationException,
-)
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._constants import _AggregationType
 
 
