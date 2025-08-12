@@ -15,22 +15,23 @@ from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import DeidentificationClientConfiguration
-from ._operations import DeidentificationClientOperationsMixin
-from ._serialization import Deserializer, Serializer
+from ._operations import _DeidentificationClientOperationsMixin
+from ._utils.serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class DeidentificationClient(DeidentificationClientOperationsMixin):
+class DeidentificationClient(_DeidentificationClientOperationsMixin):
     """DeidentificationClient.
 
     :param endpoint: Url of your De-identification Service. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is "2024-11-15".
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Default value is
+     "2025-07-15-preview". Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.

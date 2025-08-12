@@ -72,14 +72,14 @@ def inject_custom_reqs(file, injected_packages, package_dir):
                     parsed_req = Requirement(line.strip())
                 except Exception as e:
                     logging.error(e)
-                    parsed_req = [None]
+                    parsed_req = None
                 req_lines.append((line, parsed_req))
 
         if req_lines:
             all_adjustments = injected_packages + [
                 line_tuple[0].strip()
                 for line_tuple in req_lines
-                if line_tuple[0].strip() and not compare_req_to_injected_reqs(line_tuple[1][0], injected_packages)
+                if line_tuple[0].strip() and not compare_req_to_injected_reqs(line_tuple[1], injected_packages)
             ]
         else:
             all_adjustments = injected_packages

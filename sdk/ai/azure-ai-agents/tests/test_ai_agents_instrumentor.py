@@ -9,7 +9,7 @@ import os
 import json
 import time
 import functools
-from typing import Set, Callable, Any
+from typing import Set, Callable, Any, Optional
 from azure.ai.agents.models import (
     AgentsResponseFormatMode,
     AgentsResponseFormat,
@@ -41,14 +41,14 @@ from devtools_testutils import (
 agentClientPreparer = functools.partial(
     EnvironmentVariableLoader,
     "azure_ai_agents",
-    # TODO: uncomment this endpoint when re running with 1DP
-    # azure_ai_agents_tests_project_endpoint="https://aiservices-id.services.ai.azure.com/api/projects/project-name",
-    # TODO: remove this endpoint when re running with 1DP
-    azure_ai_agents_tests_project_endpoint="https://Sanitized.api.azureml.ms/agents/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/",
+    # TODO: remove this endpoint when not running with 1DP
+    azure_ai_agents_tests_project_endpoint="https://Sanitized.services.ai.azure.com/api/projects/00000",
+    # TODO: uncomment this endpoint when not running with 1DP
+    # azure_ai_agents_tests_project_endpoint="https://Sanitized.api.azureml.ms/agents/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/",
     azure_ai_agents_tests_data_path="azureml://subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-resour-cegr-oupfoo1/workspaces/abcd-abcdabcdabcda-abcdefghijklm/datastores/workspaceblobstore/paths/LocalUpload/000000000000/product_info_1.md",
 )
 
-CONTENT_TRACING_ENV_VARIABLE = "AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED"
+CONTENT_TRACING_ENV_VARIABLE = "OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT"
 settings.tracing_implementation = "OpenTelemetry"
 _utils._span_impl_type = settings.tracing_implementation()
 
@@ -169,6 +169,58 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
             print(e)
         assert exception_caught == False
 
+    @pytest.mark.parametrize(
+        "env1, env2, expected",
+        [
+            (None, None, False),
+            (None, False, False),
+            (None, True, True),
+            (False, None, False),
+            (False, False, False),
+            (False, True, False),
+            (True, None, True),
+            (True, False, False),
+            (True, True, True),
+        ],
+    )
+    def test_content_recording_enabled_with_old_and_new_environment_variables(
+        self, env1: Optional[bool], env2: Optional[bool], expected: bool
+    ):
+        """
+        Test content recording enablement with both old and new environment variables.
+        This test verifies the behavior of content recording when both the current
+        and legacy environment variables are set to different combinations of values.
+        The method tests all possible combinations of None, True, and False for both
+        environment variables to ensure backward compatibility and proper precedence.
+        Args:
+            env1: Value for the current content tracing environment variable.
+                  Can be None (unset), True, or False.
+            env2: Value for the old/legacy content tracing environment variable.
+                  Can be None (unset), True, or False.
+            expected: The expected result of is_content_recording_enabled() given
+                      the environment variable combination.
+        The test ensures that only if one or both of the environment variables are
+        defined and set to "true" content recording is enabled.
+        """
+
+        OLD_CONTENT_TRACING_ENV_VARIABLE = "AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED"  # Deprecated, undocumented.
+
+        def set_env_var(var_name, value):
+            if value is None:
+                os.environ.pop(var_name, None)
+            else:
+                os.environ[var_name] = "true" if value else "false"
+
+        set_env_var(CONTENT_TRACING_ENV_VARIABLE, env1)
+        set_env_var(OLD_CONTENT_TRACING_ENV_VARIABLE, env2)
+
+        self.setup_telemetry()
+        try:
+            assert AIAgentsInstrumentor().is_content_recording_enabled() == expected
+        finally:
+            self.cleanup()  # This also undefines CONTENT_TRACING_ENV_VARIABLE
+            os.environ.pop(OLD_CONTENT_TRACING_ENV_VARIABLE, None)
+
     @pytest.mark.usefixtures("instrument_with_content")
     @agentClientPreparer()
     @recorded_by_proxy
@@ -177,7 +229,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         assert True == AIAgentsInstrumentor().is_instrumented()
 
         client = self.create_client(**kwargs)
-        agent = client.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+        agent = client.create_agent(model="gpt-4o-mini", name="my-agent", instructions="You are helpful agent")
         thread = client.threads.create()
         message = client.messages.create(thread_id=thread.id, role="user", content="Hello, tell me a joke")
         run = client.runs.create(thread_id=thread.id, agent_id=agent.id)
@@ -204,7 +256,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
             ("gen_ai.system", "az.ai.agents"),
             ("gen_ai.operation.name", "create_agent"),
             ("server.address", ""),
-            ("gen_ai.request.model", "gpt-4o"),
+            ("gen_ai.request.model", "gpt-4o-mini"),
             ("gen_ai.agent.name", "my-agent"),
             ("gen_ai.agent.id", ""),
         ]
@@ -273,7 +325,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
             ("gen_ai.agent.id", ""),
             ("gen_ai.thread.run.id", ""),
             ("gen_ai.thread.run.status", "queued"),
-            ("gen_ai.response.model", "gpt-4o"),
+            ("gen_ai.response.model", "gpt-4o-mini"),
         ]
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
@@ -289,7 +341,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
             ("gen_ai.thread.run.id", ""),
             ("gen_ai.agent.id", ""),
             ("gen_ai.thread.run.status", "completed"),
-            ("gen_ai.response.model", "gpt-4o"),
+            ("gen_ai.response.model", "gpt-4o-mini"),
             ("gen_ai.usage.input_tokens", "+"),
             ("gen_ai.usage.output_tokens", "+"),
         ]
@@ -297,7 +349,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         assert attributes_match == True
 
         spans = self.exporter.get_spans_by_name("list_messages")
-        assert len(spans) == 1
+        assert len(spans) == 2
         span = spans[0]
         expected_attributes = [
             ("gen_ai.system", "az.ai.agents"),
@@ -307,7 +359,6 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         ]
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
-
         expected_events = [
             {
                 "name": "gen_ai.assistant.message",
@@ -322,6 +373,14 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
                     "gen_ai.event.content": '{"content": {"text": {"value": "*"}}, "role": "assistant"}',
                 },
             },
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+        assert events_match == True
+
+        span = spans[1]
+        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
+        assert attributes_match == True
+        expected_events = [
             {
                 "name": "gen_ai.user.message",
                 "attributes": {
@@ -342,7 +401,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         assert False == AIAgentsInstrumentor().is_content_recording_enabled()
 
         client = self.create_client(**kwargs)
-        agent = client.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
+        agent = client.create_agent(model="gpt-4o-mini", name="my-agent", instructions="You are helpful agent")
         thread = client.threads.create()
         message = client.messages.create(thread_id=thread.id, role="user", content="Hello, tell me a joke")
         run = client.runs.create(thread_id=thread.id, agent_id=agent.id)
@@ -369,7 +428,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
             ("gen_ai.system", "az.ai.agents"),
             ("gen_ai.operation.name", "create_agent"),
             ("server.address", ""),
-            ("gen_ai.request.model", "gpt-4o"),
+            ("gen_ai.request.model", "gpt-4o-mini"),
             ("gen_ai.agent.name", "my-agent"),
             ("gen_ai.agent.id", ""),
         ]
@@ -438,13 +497,13 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
             ("gen_ai.agent.id", ""),
             ("gen_ai.thread.run.id", ""),
             ("gen_ai.thread.run.status", "queued"),
-            ("gen_ai.response.model", "gpt-4o"),
+            ("gen_ai.response.model", "gpt-4o-mini"),
         ]
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
 
         spans = self.exporter.get_spans_by_name("list_messages")
-        assert len(spans) == 1
+        assert len(spans) == 2
         span = spans[0]
         expected_attributes = [
             ("gen_ai.system", "az.ai.agents"),
@@ -454,7 +513,6 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         ]
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
-
         expected_events = [
             {
                 "name": "gen_ai.assistant.message",
@@ -468,6 +526,12 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
                     "gen_ai.event.content": '{"role": "assistant"}',
                 },
             },
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+        assert events_match == True
+
+        span = spans[1]
+        expected_events = [
             {
                 "name": "gen_ai.user.message",
                 "attributes": {
@@ -478,6 +542,8 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
                 },
             },
         ]
+        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
+        assert attributes_match == True
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
 
@@ -510,7 +576,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
 
         client = self.create_client(**kwargs)
         agent = client.create_agent(
-            model="gpt-4o", name="my-agent", instructions="You are helpful agent", toolset=toolset
+            model="gpt-4o-mini", name="my-agent", instructions="You are helpful agent", toolset=toolset
         )
 
         # workaround for https://github.com/Azure/azure-sdk-for-python/issues/40086
@@ -537,7 +603,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
             ("gen_ai.system", "az.ai.agents"),
             ("gen_ai.operation.name", "create_agent"),
             ("server.address", ""),
-            ("gen_ai.request.model", "gpt-4o"),
+            ("gen_ai.request.model", "gpt-4o-mini"),
             ("gen_ai.agent.name", "my-agent"),
             ("gen_ai.agent.id", ""),
         ]
@@ -619,7 +685,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
             ("gen_ai.thread.run.id", ""),
             ("gen_ai.message.id", ""),
             ("gen_ai.thread.run.status", "completed"),
-            ("gen_ai.response.model", "gpt-4o"),
+            ("gen_ai.response.model", "gpt-4o-mini"),
             ("gen_ai.usage.input_tokens", "+"),
             ("gen_ai.usage.output_tokens", "+"),
         ]
@@ -665,7 +731,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         assert events_match == True
 
         spans = self.exporter.get_spans_by_name("list_messages")
-        assert len(spans) == 1
+        assert len(spans) == 2
         span = spans[0]
         expected_attributes = [
             ("gen_ai.system", "az.ai.agents"),
@@ -675,7 +741,6 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         ]
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
-
         expected_events = [
             {
                 "name": "gen_ai.assistant.message",
@@ -689,6 +754,14 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
                     "gen_ai.event.content": '{"content": {"text": {"value": "*"}}, "role": "assistant"}',
                 },
             },
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+        assert events_match == True
+
+        span = spans[1]
+        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
+        assert attributes_match == True
+        expected_events = [
             {
                 "name": "gen_ai.user.message",
                 "attributes": {
@@ -731,7 +804,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
 
         client = self.create_client(**kwargs)
         agent = client.create_agent(
-            model="gpt-4o",
+            model="gpt-4o-mini",
             name="my-agent",
             instructions="You are helpful agent. Translate user message to English before executing tools.",
             toolset=toolset,
@@ -846,7 +919,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         client.enable_auto_function_calls(toolset)
 
         agent = client.create_agent(
-            model="gpt-4o", name="my-agent", instructions="You are helpful agent", toolset=toolset
+            model="gpt-4o-mini", name="my-agent", instructions="You are helpful agent", toolset=toolset
         )
 
         # workaround for https://github.com/Azure/azure-sdk-for-python/issues/40086
@@ -872,7 +945,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
             ("gen_ai.system", "az.ai.agents"),
             ("gen_ai.operation.name", "create_agent"),
             ("server.address", ""),
-            ("gen_ai.request.model", "gpt-4o"),
+            ("gen_ai.request.model", "gpt-4o-mini"),
             ("gen_ai.agent.name", "my-agent"),
             ("gen_ai.agent.id", ""),
         ]
@@ -954,7 +1027,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
             ("gen_ai.thread.run.id", ""),
             ("gen_ai.message.id", ""),
             ("gen_ai.thread.run.status", "completed"),
-            ("gen_ai.response.model", "gpt-4o"),
+            ("gen_ai.response.model", "gpt-4o-mini"),
             ("gen_ai.usage.input_tokens", "+"),
             ("gen_ai.usage.output_tokens", "+"),
         ]
@@ -1000,7 +1073,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         assert events_match == True
 
         spans = self.exporter.get_spans_by_name("list_messages")
-        assert len(spans) == 1
+        assert len(spans) == 2
         span = spans[0]
         expected_attributes = [
             ("gen_ai.system", "az.ai.agents"),
@@ -1010,7 +1083,6 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         ]
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
-
         expected_events = [
             {
                 "name": "gen_ai.assistant.message",
@@ -1025,6 +1097,14 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
                     "gen_ai.event.content": '{"role": "assistant"}',
                 },
             },
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+        assert events_match == True
+
+        span = spans[1]
+        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
+        assert attributes_match == True
+        expected_events = [
             {
                 "name": "gen_ai.user.message",
                 "attributes": {
@@ -1068,7 +1148,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
 
         client = self.create_client(**kwargs)
         agent = client.create_agent(
-            model="gpt-4o", name="my-agent", instructions="You are helpful agent", toolset=toolset
+            model="gpt-4o-mini", name="my-agent", instructions="You are helpful agent", toolset=toolset
         )
 
         # workaround for https://github.com/Azure/azure-sdk-for-python/issues/40086
@@ -1092,7 +1172,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
 
         self.exporter.force_flush()
         spans = self.exporter.get_spans_by_name("list_run_steps")
-        assert len(spans) == 1
+        assert len(spans) == 2
         span = spans[0]
         expected_attributes = [
             ("gen_ai.system", "az.ai.agents"),
@@ -1103,7 +1183,6 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         ]
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
-
         expected_events = [
             {
                 "name": "gen_ai.run_step.message_creation",
@@ -1120,6 +1199,14 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
                     "gen_ai.usage.output_tokens": "+",
                 },
             },
+        ]
+        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+        assert events_match == True
+
+        span = spans[1]
+        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
+        assert attributes_match == True
+        expected_events = [
             {
                 "name": "gen_ai.run_step.tool_calls",
                 "attributes": {

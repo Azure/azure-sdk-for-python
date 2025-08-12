@@ -56,6 +56,11 @@ class TestHeaders(unittest.TestCase):
         assert args[3]["x-ms-cosmos-correlated-activityid"]  # cspell:disable-line
         raise StopIteration
 
+    def side_effect_client_id(self, *args, **kwargs):
+        # Extract request headers from args
+        assert args[2][http_constants.HttpHeaders.ClientId]
+        raise StopIteration
+
     def test_correlated_activity_id(self):
         query = 'SELECT * from c ORDER BY c._ts'
 
@@ -97,6 +102,20 @@ class TestHeaders(unittest.TestCase):
                                      max_integrated_cache_staleness_in_ms=self.dedicated_gateway_max_age_negative)
         except Exception as exception:
             assert isinstance(exception, ValueError)
+
+    def test_client_id(self):
+        # Client ID should be sent on every request, Verify it is sent on a read_item request
+        cosmos_client_connection = self.container.client_connection
+        original_connection_get = cosmos_client_connection._CosmosClientConnection__Get
+        cosmos_client_connection._CosmosClientConnection__Get = MagicMock(
+            side_effect=self.side_effect_client_id)
+        try:
+            self.container.read_item(item="id-1", partition_key="pk-1")
+        except StopIteration:
+            pass
+        finally:
+            cosmos_client_connection._CosmosClientConnection__Get = original_connection_get
+
 
     def test_client_level_throughput_bucket(self):
         cosmos_client.CosmosClient(self.host, self.masterKey,

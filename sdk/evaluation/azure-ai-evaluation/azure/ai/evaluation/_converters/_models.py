@@ -20,6 +20,7 @@ _SYSTEM = "system"
 _USER = "user"
 _AGENT = "assistant"
 _TOOL = "tool"
+_DEVELOPER = "developer"  # part of the semantic kernel
 
 # Constant definitions for what tool details include.
 _TOOL_CALL = "tool_call"
@@ -32,9 +33,12 @@ _TOOL_CALLS = "tool_calls"
 # Constants to only be used internally in this file for the built-in tools.
 _CODE_INTERPRETER = "code_interpreter"
 _BING_GROUNDING = "bing_grounding"
+_BING_CUSTOM_SEARCH = "bing_custom_search"
 _FILE_SEARCH = "file_search"
 _AZURE_AI_SEARCH = "azure_ai_search"
+_SHAREPOINT_GROUNDING = "sharepoint_grounding"
 _FABRIC_DATAAGENT = "fabric_dataagent"
+_OPENAPI = "openapi"
 
 # Built-in tool descriptions and parameters are hidden, but we include basic descriptions
 # for evaluation purposes.
@@ -43,9 +47,12 @@ _BUILT_IN_DESCRIPTIONS = {
     + "generate code, and create graphs and charts using your data. Supports "
     + "up to 20 files.",
     _BING_GROUNDING: "Enhance model output with web data.",
-    _FILE_SEARCH: "Search for data across uploaded files.",
+    _BING_CUSTOM_SEARCH: "Enables agents to retrieve content from a curated subset of websites, enhancing relevance and reducing noise from public web searches.",
+    _FILE_SEARCH: "Search for data across uploaded files. A single call can return multiple results/files in the 'results' field.",
     _AZURE_AI_SEARCH: "Search an Azure AI Search index for relevant data.",
+    _SHAREPOINT_GROUNDING: "Allows agents to access and retrieve relevant content from Microsoft SharePoint document libraries, grounding responses in organizational knowledge.",
     _FABRIC_DATAAGENT: "Connect to Microsoft Fabric data agents to retrieve data across different data sources.",
+    _OPENAPI: "Connects agents to external RESTful APIs using OpenAPI 3.0 specifications, enabling seamless access to third-party services.",
 }
 
 # Built-in tool parameters are hidden, but we include basic parameters for evaluation purposes.
@@ -57,6 +64,15 @@ _BUILT_IN_PARAMS = {
     _BING_GROUNDING: {
         "type": "object",
         "properties": {"requesturl": {"type": "string", "description": "URL used in Bing Search API."}},
+    },
+    _BING_CUSTOM_SEARCH: {
+        "type": "object",
+        "properties": {
+            "requesturl": {
+                "type": "string",
+                "description": "Search queries, along with pre-configured site restrictions or domain filters.",
+            }
+        },
     },
     _FILE_SEARCH: {
         "type": "object",
@@ -75,9 +91,22 @@ _BUILT_IN_PARAMS = {
         "type": "object",
         "properties": {"input": {"type": "string", "description": "Search terms to use."}},
     },
+    _SHAREPOINT_GROUNDING: {
+        "type": "object",
+        "properties": {
+            "input": {"type": "string", "description": "A natural language query to search SharePoint content."}
+        },
+    },
     _FABRIC_DATAAGENT: {
         "type": "object",
         "properties": {"input": {"type": "string", "description": "Search terms to use."}},
+    },
+    _OPENAPI: {
+        "type": "object",
+        "properties": {
+            "name": {"type": "string", "description": "The name of the function to call."},
+            "arguments": {"type": "string", "description": "JSON string of the arguments to pass to the function."},
+        },
     },
 }
 
@@ -124,6 +153,17 @@ class UserMessage(Message):
     role: str = _USER
 
 
+class SKDeveloperMessage(Message):
+    """Represents a developer message in a conversation with agents, assistants, and tools.
+    This is used in the context of Semantic Kernel (SK) agents.
+
+    :param role: The role of the message sender, which is always 'developer'.
+    :type role: str
+    """
+
+    role: str = _DEVELOPER
+
+
 class ToolMessage(Message):
     """Represents a tool message in a conversation with agents, assistants, and tools.
 
@@ -140,6 +180,19 @@ class ToolMessage(Message):
     tool_call_id: Optional[str] = None
 
 
+class SKToolMessage(Message):
+    """Represents a tool message in the context of a Semantic Kernel (SK) agent.
+
+    :param role: The role of the message sender, which is always 'tool'.
+    :type role: str
+    :param tool_call_id: The ID of the tool call associated with the message. Optional.
+    :type tool_call_id: Optional[str]
+    """
+
+    role: str = _TOOL
+    tool_call_id: Optional[str] = None
+
+
 class AssistantMessage(Message):
     """Represents an assistant message.
 
@@ -150,6 +203,26 @@ class AssistantMessage(Message):
     """
 
     run_id: str
+    role: str = _AGENT
+
+
+class SKAssistantMessage(Message):
+    """Represents an assistant message in the context of a Semantic Kernel (SK) agent.
+
+    :param role: The role of the message sender, which is always 'assistant'.
+    :type role: str
+    """
+
+    role: str = _AGENT
+
+
+class SKAssistantMessage(Message):
+    """Represents an assistant message in the context of a Semantic Kernel (SK) agent.
+
+    :param role: The role of the message sender, which is always 'assistant'.
+    :type role: str
+    """
+
     role: str = _AGENT
 
 
@@ -285,19 +358,11 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
             # Try to retrieve it, but if we don't find anything, skip adding the message
             # Just manually converting to dicts for easy serialization for now rather than custom serializers
             if tool_call.details.type == _CODE_INTERPRETER:
-                output = tool_call.details.code_interpreter.outputs
+                output = [result.as_dict() for result in tool_call.details.code_interpreter.outputs]
             elif tool_call.details.type == _BING_GROUNDING:
                 return messages  # not supported yet from bing grounding tool
             elif tool_call.details.type == _FILE_SEARCH:
-                output = [
-                    {
-                        "file_id": result.file_id,
-                        "file_name": result.file_name,
-                        "score": result.score,
-                        "content": result.content,
-                    }
-                    for result in tool_call.details.file_search.results
-                ]
+                output = [result.as_dict() for result in tool_call.details.file_search.results]
             elif tool_call.details.type == _AZURE_AI_SEARCH:
                 output = tool_call.details.azure_ai_search["output"]
             elif tool_call.details.type == _FABRIC_DATAAGENT:

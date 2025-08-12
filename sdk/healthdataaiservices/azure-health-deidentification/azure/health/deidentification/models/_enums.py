@@ -20,6 +20,8 @@ class DeidentificationOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta
     TAG = "Tag"
     """Tag Operation will detect all entities of PHI, their type, and return their locations in the
     document."""
+    SURROGATE_ONLY = "SurrogateOnly"
+    """SurrogateOnly Operation will replace only specified entities of PHI with surrogate values."""
 
 
 class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -98,3 +100,14 @@ class PhiCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Vehicle IDs, eg. license plate or VIN number."""
     ZIP = "Zip"
     """Zip Code."""
+
+
+class TextEncodingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Encoding type for text offset and length calculations."""
+
+    UTF8 = "Utf8"
+    """UTF-8 encoding."""
+    UTF16 = "Utf16"
+    """UTF-16 encoding. Primary encoding used by .NET, Java, and JavaScript."""
+    CODE_POINT = "CodePoint"
+    """CodePoint encoding. Primary encoding used by Python."""

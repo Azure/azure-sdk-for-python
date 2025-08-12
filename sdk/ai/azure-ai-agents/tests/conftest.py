@@ -97,6 +97,12 @@ def add_sanitizers(test_proxy, mock_project_scope, mock_dataset_name, mock_vecto
             group_for_replace="1",
         )
 
+        add_general_regex_sanitizer(
+            regex=r"api/projects/([-\w\._\(\)]+)",
+            value=mock_project_scope["project_name"],
+            group_for_replace="1",
+        )
+
     azure_workspace_triad_sanitizer()
 
     add_general_regex_sanitizer(regex=r"/runs/([-\w\._\(\)]+)", value="Sanitized", group_for_replace="1")
@@ -140,6 +146,25 @@ def add_sanitizers(test_proxy, mock_project_scope, mock_dataset_name, mock_vecto
         json_path="tool_resources.azure_ai_search.indexes[*].index_connection_id",
         value="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/someindex",
     )
+
+    # Sanitize the plain bing grounding.
+    add_body_key_sanitizer(
+        json_path="tools[*].bing_grounding.search_configurations[*].connection_id",
+        value="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.CognitiveServices/accounts/00000/projects/00000/connections/00000",
+    )
+
+    # Sanitize deep research tool bing connection ID
+    add_body_key_sanitizer(
+        json_path="tools[*].deep_research.bing_grounding_connections[*].connection_id",
+        value="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.CognitiveServices/accounts/00000/projects/00000/connections/00000",
+    )
+
+    # Sanitize Browser Automation tool's Playwright Workspace connection ID
+    add_body_key_sanitizer(
+        json_path="tools[*].browser_automation.connection.id",
+        value="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.CognitiveServices/accounts/00000/projects/00000/connections/00000",
+    )
+
 
     # Sanitize API key from service response (/tests/connections)
     add_body_key_sanitizer(json_path="properties.credentials.key", value="Sanitized")

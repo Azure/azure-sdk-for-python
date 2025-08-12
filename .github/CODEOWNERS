@@ -93,7 +93,7 @@
 
 # ServiceLabel: %Communication - Call Automation
 # PRLabel: %Communication - Call Automation
-/sdk/communication/azure-communication-callautomation/               @minwoolee-msft
+/sdk/communication/azure-communication-callautomation/               @minwoolee-msft @fhaghbin-msft @juntuchen-msft @v-dharmarajv
 
 # ServiceLabel: %Communication - Chat
 # PRLabel: %Communication - Chat
@@ -157,12 +157,12 @@
 # PRLabel: %Cognitive - Health Insights
 /sdk/healthinsights/                                                 @tomsft @koen-mertens
 
-# AzureSdkOwners: @mccoyp
+# AzureSdkOwners: @mccoyp @Azure/azure-sdk-write-keyvault
 # ServiceLabel: %KeyVault
-# ServiceOwners:                                                     @cheathamb36 @chen-karen @lgonsoulin
+# ServiceOwners:                                                     @cheathamb36 @chen-karen @Azure/azure-sdk-write-keyvault
 
 # PRLabel: %KeyVault
-/sdk/keyvault/                                                       @mccoyp
+/sdk/keyvault/                                                       @mccoyp @Azure/azure-sdk-write-keyvault
 
 # PRLabel: %Load Test Service
 /sdk/loadtesting/azure-developer-loadtesting/                        @prativen @mitsha-microsoft @ninallam
@@ -180,6 +180,9 @@
 
 # PRLabel: %Monitor
 /sdk/monitor/azure-monitor-query/                                    @pvaneck @Azure/azure-sdk-write-monitor-data-plane
+
+# PRLabel: %Monitor
+/sdk/monitor/azure-monitor-querymetrics/                             @Azure/azure-sdk-write-monitor-query-metrics
 
 # PRLabel: %Monitor
 /sdk/monitor/*                                                       @pvaneck
@@ -236,10 +239,10 @@
 # ServiceLabel: %Durable Task Scheduler %Service Attention
 /sdk/durabletask/                                                    @berndverst @kaibocai @torosent @RyanLettieri @philliphoff @cgillum
 
-# AzureSdkOwners: @kashifkhan
+# AzureSdkOwners: @shankarsama @rajeshka
 # ServiceLabel: %Event Grid
 # PRLabel: %Event Grid
-/sdk/eventgrid/                                                      @kashifkhan @l0lawrence
+/sdk/eventgrid/                                                      @shankarsama @rajeshka
 
 # PRLabel: %Image Analysis
 # ServiceLabel: %Image Analysis %Service Attention
@@ -255,7 +258,7 @@
 
 # PRLabel: %AI Projects
 # ServiceLabel: %AI Projects %Service Attention
-/sdk/ai/azure-ai-projects/                                           @dargilco @jhakulin
+/sdk/ai/azure-ai-projects/                                           @dargilco @jhakulin @trangevi @glharper @nick863 @howieleung
 
 
 # PRLabel: %HDInsight
@@ -381,19 +384,19 @@
 # PRLabel: %Health Deidentification
 /sdk/healthdataaiservices/                                           @alexathomases @Azure/healthdatadeidentification
 
-# AzureSdkOwners: @bojunehsu @vkurpad
+# AzureSdkOwners: @yungshinlintw @vkurpad
 # ServiceLabel: %Cognitive - Form Recognizer
-# ServiceOwners: @bojunehsu @vkurpad
+# ServiceOwners: @yungshinlintw @vkurpad
 
 # PRLabel: %Cognitive - Form Recognizer
-/sdk/formrecognizer/                                                 @bojunehsu @vkurpad
+/sdk/formrecognizer/                                                 @yungshinlintw @vkurpad
 
-# AzureSdkOwners: @bojunehsu @vkurpad
+# AzureSdkOwners: @yungshinlintw @vkurpad
 # ServiceLabel: %Document Intelligence
-# ServiceOwners: @bojunehsu @vkurpad
+# ServiceOwners: @yungshinlintw @vkurpad
 
 # PRLabel: %Document Intelligence
-/sdk/documentintelligence/                                           @bojunehsu @vkurpad
+/sdk/documentintelligence/                                           @yungshinlintw @vkurpad
 
 # AzureSdkOwners: @xiangyan99
 # ServiceLabel: %Cognitive - Metrics Advisor

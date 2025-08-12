@@ -11,11 +11,16 @@ import asyncio
 import re
 from typing import Dict, Optional, Any, Tuple, List
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
-from azure.ai.evaluation.simulator._model_tools._generated_rai_client import GeneratedRAIClient
+from azure.ai.evaluation.simulator._model_tools._generated_rai_client import (
+    GeneratedRAIClient,
+)
 from pyrit.models import PromptRequestResponse, construct_response_from_request
 from pyrit.prompt_target import PromptChatTarget
-from .constants import USER_AGENT
-from .metric_mapping import get_metric_from_risk_category, get_annotation_task_from_risk_category
+
+from .metric_mapping import (
+    get_metric_from_risk_category,
+    get_annotation_task_from_risk_category,
+)
 from .._attack_objective_generator import RiskCategory
 
 
@@ -29,6 +34,7 @@ class RAIServiceEvalChatTarget(PromptChatTarget):
         risk_category: RiskCategory,
         logger: Optional[logging.Logger] = None,
         evaluator_name: Optional[str] = None,
+        context: Optional[str] = None,
     ) -> None:
         """Initialize the RAIServiceEvalChatTarget.
 
@@ -43,6 +49,7 @@ class RAIServiceEvalChatTarget(PromptChatTarget):
         self.evaluator_name = evaluator_name
         self.credential = credential
         self.azure_ai_project = azure_ai_project
+        self.context = context
 
     async def send_prompt_async(
         self, *, prompt_request: PromptRequestResponse, objective: str = ""
@@ -52,7 +59,7 @@ class RAIServiceEvalChatTarget(PromptChatTarget):
 
         thing_to_eval = prompt_request.request_pieces[0].to_dict()["original_value"]
 
-        thing_to_eval_qr = {"query": "query", "response": thing_to_eval}
+        thing_to_eval_qr = {"query": "query", "response": thing_to_eval, "context": self.context}
 
         metric_name = get_metric_from_risk_category(self.risk_category)
         annotation_task = get_annotation_task_from_risk_category(self.risk_category)

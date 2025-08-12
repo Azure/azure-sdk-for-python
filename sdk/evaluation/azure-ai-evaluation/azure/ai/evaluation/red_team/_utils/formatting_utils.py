@@ -3,27 +3,29 @@ Utility functions for formatting, conversion, and processing in Red Team Agent.
 """
 
 import json
-import pandas as pd
 import math
-from datetime import datetime
-from typing import Dict, List, Union, Any, Optional, cast
+import itertools
+import os
+import logging
+from typing import Dict, List, Union, Any
+from pathlib import Path
+from pyrit.models import ChatMessage
+from pyrit.memory import CentralMemory
 from .._attack_strategy import AttackStrategy
 from .._red_team_result import RedTeamResult
-from pyrit.models import ChatMessage
 
 
-def message_to_dict(message: ChatMessage) -> Dict[str, str]:
-    """Convert a ChatMessage to dictionary format.
+def message_to_dict(message: ChatMessage, context: str = None) -> Dict[str, str]:
+    """Convert a ChatMessage and context to dictionary format.
 
     :param message: The chat message to convert
     :type message: ChatMessage
+    :param context: Additional context to include in the dictionary
+    :type context: str
     :return: Dictionary representation with role and content
     :rtype: Dict[str, str]
     """
-    return {
-        "role": message.role,
-        "content": message.content,
-    }
+    return {"role": message.role, "content": message.content, "context": context}
 
 
 def get_strategy_name(attack_strategy: Union[AttackStrategy, List[AttackStrategy]]) -> str:
@@ -89,7 +91,7 @@ def get_attack_success(result: str) -> bool:
     """
     Based on EVALUATION_PASS_FAIL_MAPPING, returns True denoting attack success if result matches the value of the EVALUATION_PASS_FAIL_MAPPING key False.
     """
-    from .._red_team import EVALUATION_PASS_FAIL_MAPPING
+    from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 
     return result == EVALUATION_PASS_FAIL_MAPPING.get(False, "true")
 
@@ -117,7 +119,7 @@ def format_scorecard(redteam_result: RedTeamResult) -> str:
     separator = "-" * 132
     output.append(separator)
     output.append(
-        f"{'Risk Category':<18}| {'Baseline ASR':<14} | {'Easy-Complexity Attacks ASR':<28} | {'Moderate-Complexity Attacks ASR':<30} | {'Difficult-Complexity Attacks ASR':<30}"
+        f"{'Risk Category':<21}| {'Baseline ASR':<14} | {'Easy-Complexity Attacks ASR':<28} | {'Moderate-Complexity Attacks ASR':<30} | {'Difficult-Complexity Attacks ASR':<30}"
     )
     output.append(separator)
 
@@ -134,7 +136,7 @@ def format_scorecard(redteam_result: RedTeamResult) -> str:
         moderate = "N/A" if is_none_or_nan(moderate_val) else f"{moderate_val}%"
         difficult = "N/A" if is_none_or_nan(difficult_val) else f"{difficult_val}%"
 
-        output.append(f"{risk_category:<18}| {baseline:<14} | {easy:<28} | {moderate:<31} | {difficult:<30}")
+        output.append(f"{risk_category:<21}| {baseline:<14} | {easy:<28} | {moderate:<31} | {difficult:<30}")
 
     return "\n".join(output)
 
@@ -160,3 +162,103 @@ def list_mean_nan_safe(data_list: List[Any]) -> float:
     if not filtered_list:
         return 0.0
     return sum(filtered_list) / len(filtered_list)
+
+
+def write_pyrit_outputs_to_file(
+    *,
+    output_path: str,
+    logger: logging.Logger,
+    prompt_to_context: Dict[str, str],
+) -> str:
+    """Write PyRIT outputs to a file with a name based on orchestrator, strategy, and risk category.
+
+    :param output_path: Path to write the output file
+    :type output_path: str
+    :param logger: Logger instance for logging
+    :type logger: logging.Logger
+    :param prompt_to_context: Mapping of prompts to their context
+    :type prompt_to_context: Dict[str, str]
+    :return: Path to the output file
+    :rtype: str
+    :raises IOError: If the output file cannot be read or written
+    :raises PermissionError: If there are insufficient permissions to access the output file
+    :raises Exception: For other unexpected errors during file operations or memory retrieval
+    """
+
+    logger.debug(f"Writing PyRIT outputs to file: {output_path}")
+    memory = CentralMemory.get_memory_instance()
+
+    memory_label = {"risk_strategy_path": output_path}
+
+    prompts_request_pieces = memory.get_prompt_request_pieces(labels=memory_label)
+
+    conversations = [
+        [
+            (item.to_chat_message(), prompt_to_context.get(item.original_value, "") or item.labels.get("context", ""))
+            for item in group
+        ]
+        for conv_id, group in itertools.groupby(prompts_request_pieces, key=lambda x: x.conversation_id)
+    ]
+
+    # Check if we should overwrite existing file with more conversations
+    if os.path.exists(output_path):
+        existing_line_count = 0
+        try:
+            with open(output_path, "r") as existing_file:
+                existing_line_count = sum(1 for _ in existing_file)
+
+            if len(conversations) > existing_line_count:
+                logger.debug(
+                    f"Found more prompts ({len(conversations)}) than existing file lines ({existing_line_count}). Replacing content."
+                )
+                # Convert to json lines
+                json_lines = ""
+                for conversation in conversations:
+                    if conversation[0][0].role == "system":
+                        # Skip system messages in the output
+                        continue
+                    json_lines += (
+                        json.dumps(
+                            {
+                                "conversation": {
+                                    "messages": [message_to_dict(message[0], message[1]) for message in conversation]
+                                }
+                            }
+                        )
+                        + "\n"
+                    )
+                with Path(output_path).open("w") as f:
+                    f.writelines(json_lines)
+                logger.debug(
+                    f"Successfully wrote {len(conversations)-existing_line_count} new conversation(s) to {output_path}"
+                )
+            else:
+                logger.debug(
+                    f"Existing file has {existing_line_count} lines, new data has {len(conversations)} prompts. Keeping existing file."
+                )
+                return output_path
+        except Exception as e:
+            logger.warning(f"Failed to read existing file {output_path}: {str(e)}")
+    else:
+        logger.debug(f"Creating new file: {output_path}")
+        # Convert to json lines
+        json_lines = ""
+
+        for conversation in conversations:
+            if conversation[0][0].role == "system":
+                # Skip system messages in the output
+                continue
+            json_lines += (
+                json.dumps(
+                    {
+                        "conversation": {
+                            "messages": [message_to_dict(message[0], message[1]) for message in conversation]
+                        }
+                    }
+                )
+                + "\n"
+            )
+        with Path(output_path).open("w") as f:
+            f.writelines(json_lines)
+        logger.debug(f"Successfully wrote {len(conversations)} conversations to {output_path}")
+    return str(output_path)

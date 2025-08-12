@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.compute import ComputeManagementClient
+from azure.mgmt.compute.v2024_11_01 import ComputeManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -17,20 +17,6 @@ AZURE_LOCATION = "eastus"
 class TestComputeManagementVirtualMachineExtensionImagesOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(ComputeManagementClient)
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_virtual_machine_extension_images_get(self, resource_group):
-        response = self.client.virtual_machine_extension_images.get(
-            location="str",
-            publisher_name="str",
-            type="str",
-            version="str",
-            api_version="2024-11-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
@@ -51,6 +37,20 @@ class TestComputeManagementVirtualMachineExtensionImagesOperations(AzureMgmtReco
             location="str",
             publisher_name="str",
             type="str",
+            api_version="2024-11-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_virtual_machine_extension_images_get(self, resource_group):
+        response = self.client.virtual_machine_extension_images.get(
+            location="str",
+            publisher_name="str",
+            type="str",
+            version="str",
             api_version="2024-11-01",
         )
 

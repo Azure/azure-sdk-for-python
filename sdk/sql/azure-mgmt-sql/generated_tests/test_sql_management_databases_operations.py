@@ -24,7 +24,7 @@ class TestSqlManagementDatabasesOperations(AzureMgmtRecordedTestCase):
         response = self.client.databases.list_by_server(
             resource_group_name=resource_group.name,
             server_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestSqlManagementDatabasesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -82,6 +82,7 @@ class TestSqlManagementDatabasesOperations(AzureMgmtRecordedTestCase):
                 "keys": {
                     "str": {
                         "creationDate": "2020-02-20 00:00:00",
+                        "keyVersion": "str",
                         "subregion": "str",
                         "thumbprint": "str",
                         "type": "str",
@@ -120,7 +121,7 @@ class TestSqlManagementDatabasesOperations(AzureMgmtRecordedTestCase):
                 "useFreeLimit": bool,
                 "zoneRedundant": bool,
             },
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -133,7 +134,7 @@ class TestSqlManagementDatabasesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -175,6 +176,7 @@ class TestSqlManagementDatabasesOperations(AzureMgmtRecordedTestCase):
                 "keys": {
                     "str": {
                         "creationDate": "2020-02-20 00:00:00",
+                        "keyVersion": "str",
                         "subregion": "str",
                         "thumbprint": "str",
                         "type": "str",
@@ -208,7 +210,7 @@ class TestSqlManagementDatabasesOperations(AzureMgmtRecordedTestCase):
                 "useFreeLimit": bool,
                 "zoneRedundant": bool,
             },
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -230,7 +232,7 @@ class TestSqlManagementDatabasesOperations(AzureMgmtRecordedTestCase):
                 "authenticationType": "str",
                 "networkIsolation": {"sqlServerResourceId": "str", "storageAccountResourceId": "str"},
             },
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -243,7 +245,7 @@ class TestSqlManagementDatabasesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -265,7 +267,7 @@ class TestSqlManagementDatabasesOperations(AzureMgmtRecordedTestCase):
                 "authenticationType": "str",
                 "networkIsolation": {"sqlServerResourceId": "str", "storageAccountResourceId": "str"},
             },
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -279,7 +281,7 @@ class TestSqlManagementDatabasesOperations(AzureMgmtRecordedTestCase):
             server_name="str",
             database_name="str",
             parameters={"id": "str"},
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -292,7 +294,7 @@ class TestSqlManagementDatabasesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -305,7 +307,7 @@ class TestSqlManagementDatabasesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -318,7 +320,7 @@ class TestSqlManagementDatabasesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -331,7 +333,7 @@ class TestSqlManagementDatabasesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             elastic_pool_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -343,7 +345,7 @@ class TestSqlManagementDatabasesOperations(AzureMgmtRecordedTestCase):
         response = self.client.databases.list_inaccessible_by_server(
             resource_group_name=resource_group.name,
             server_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

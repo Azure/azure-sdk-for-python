@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.servicebus.v2021_11_01 import ServiceBusManagementClient
+from azure.mgmt.servicebus import ServiceBusManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -24,7 +24,7 @@ class TestServiceBusManagementMigrationConfigsOperations(AzureMgmtRecordedTestCa
         response = self.client.migration_configs.list(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -56,7 +56,7 @@ class TestServiceBusManagementMigrationConfigsOperations(AzureMgmtRecordedTestCa
                 "targetNamespace": "str",
                 "type": "str",
             },
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -69,7 +69,7 @@ class TestServiceBusManagementMigrationConfigsOperations(AzureMgmtRecordedTestCa
             resource_group_name=resource_group.name,
             namespace_name="str",
             config_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -82,7 +82,7 @@ class TestServiceBusManagementMigrationConfigsOperations(AzureMgmtRecordedTestCa
             resource_group_name=resource_group.name,
             namespace_name="str",
             config_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -95,7 +95,7 @@ class TestServiceBusManagementMigrationConfigsOperations(AzureMgmtRecordedTestCa
             resource_group_name=resource_group.name,
             namespace_name="str",
             config_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -108,7 +108,7 @@ class TestServiceBusManagementMigrationConfigsOperations(AzureMgmtRecordedTestCa
             resource_group_name=resource_group.name,
             namespace_name="str",
             config_name="str",
-            api_version="2021-11-01",
+            api_version="2022-10-01-preview",
         )
 
         # please add some check logic here by yourself

@@ -8,16 +8,18 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING
+from typing import Any, Awaitable, Optional, TYPE_CHECKING, cast
 from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.settings import settings
 from azure.mgmt.core import AsyncARMPipelineClient
 from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPolicy
+from azure.mgmt.core.tools import get_arm_endpoints
 
 from .. import models as _models
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 from ._configuration import SqlManagementClientConfiguration
 from .operations import (
     BackupShortTermRetentionPoliciesOperations,
@@ -197,13 +199,6 @@ class SqlManagementClient:  # pylint: disable=too-many-instance-attributes
      operations
     :vartype extended_server_blob_auditing_policies:
      azure.mgmt.sql.aio.operations.ExtendedServerBlobAuditingPoliciesOperations
-    :ivar data_masking_policies: DataMaskingPoliciesOperations operations
-    :vartype data_masking_policies: azure.mgmt.sql.aio.operations.DataMaskingPoliciesOperations
-    :ivar data_masking_rules: DataMaskingRulesOperations operations
-    :vartype data_masking_rules: azure.mgmt.sql.aio.operations.DataMaskingRulesOperations
-    :ivar data_warehouse_user_activities: DataWarehouseUserActivitiesOperations operations
-    :vartype data_warehouse_user_activities:
-     azure.mgmt.sql.aio.operations.DataWarehouseUserActivitiesOperations
     :ivar database_advanced_threat_protection_settings:
      DatabaseAdvancedThreatProtectionSettingsOperations operations
     :vartype database_advanced_threat_protection_settings:
@@ -225,6 +220,8 @@ class SqlManagementClient:  # pylint: disable=too-many-instance-attributes
     :ivar database_recommended_actions: DatabaseRecommendedActionsOperations operations
     :vartype database_recommended_actions:
      azure.mgmt.sql.aio.operations.DatabaseRecommendedActionsOperations
+    :ivar databases: DatabasesOperations operations
+    :vartype databases: azure.mgmt.sql.aio.operations.DatabasesOperations
     :ivar database_schemas: DatabaseSchemasOperations operations
     :vartype database_schemas: azure.mgmt.sql.aio.operations.DatabaseSchemasOperations
     :ivar database_security_alert_policies: DatabaseSecurityAlertPoliciesOperations operations
@@ -262,15 +259,20 @@ class SqlManagementClient:  # pylint: disable=too-many-instance-attributes
      DatabaseVulnerabilityAssessmentRuleBaselinesOperations operations
     :vartype database_vulnerability_assessment_rule_baselines:
      azure.mgmt.sql.aio.operations.DatabaseVulnerabilityAssessmentRuleBaselinesOperations
+    :ivar database_vulnerability_assessments: DatabaseVulnerabilityAssessmentsOperations operations
+    :vartype database_vulnerability_assessments:
+     azure.mgmt.sql.aio.operations.DatabaseVulnerabilityAssessmentsOperations
     :ivar database_vulnerability_assessment_scans: DatabaseVulnerabilityAssessmentScansOperations
      operations
     :vartype database_vulnerability_assessment_scans:
      azure.mgmt.sql.aio.operations.DatabaseVulnerabilityAssessmentScansOperations
-    :ivar database_vulnerability_assessments: DatabaseVulnerabilityAssessmentsOperations operations
-    :vartype database_vulnerability_assessments:
-     azure.mgmt.sql.aio.operations.DatabaseVulnerabilityAssessmentsOperations
-    :ivar databases: DatabasesOperations operations
-    :vartype databases: azure.mgmt.sql.aio.operations.DatabasesOperations
+    :ivar data_masking_policies: DataMaskingPoliciesOperations operations
+    :vartype data_masking_policies: azure.mgmt.sql.aio.operations.DataMaskingPoliciesOperations
+    :ivar data_masking_rules: DataMaskingRulesOperations operations
+    :vartype data_masking_rules: azure.mgmt.sql.aio.operations.DataMaskingRulesOperations
+    :ivar data_warehouse_user_activities: DataWarehouseUserActivitiesOperations operations
+    :vartype data_warehouse_user_activities:
+     azure.mgmt.sql.aio.operations.DataWarehouseUserActivitiesOperations
     :ivar deleted_servers: DeletedServersOperations operations
     :vartype deleted_servers: azure.mgmt.sql.aio.operations.DeletedServersOperations
     :ivar distributed_availability_groups: DistributedAvailabilityGroupsOperations operations
@@ -290,16 +292,16 @@ class SqlManagementClient:  # pylint: disable=too-many-instance-attributes
     :vartype firewall_rules: azure.mgmt.sql.aio.operations.FirewallRulesOperations
     :ivar geo_backup_policies: GeoBackupPoliciesOperations operations
     :vartype geo_backup_policies: azure.mgmt.sql.aio.operations.GeoBackupPoliciesOperations
-    :ivar ipv6_firewall_rules: IPv6FirewallRulesOperations operations
-    :vartype ipv6_firewall_rules: azure.mgmt.sql.aio.operations.IPv6FirewallRulesOperations
     :ivar instance_failover_groups: InstanceFailoverGroupsOperations operations
     :vartype instance_failover_groups:
      azure.mgmt.sql.aio.operations.InstanceFailoverGroupsOperations
-    :ivar instance_pools: InstancePoolsOperations operations
-    :vartype instance_pools: azure.mgmt.sql.aio.operations.InstancePoolsOperations
     :ivar instance_pool_operations: InstancePoolOperationsOperations operations
     :vartype instance_pool_operations:
      azure.mgmt.sql.aio.operations.InstancePoolOperationsOperations
+    :ivar instance_pools: InstancePoolsOperations operations
+    :vartype instance_pools: azure.mgmt.sql.aio.operations.InstancePoolsOperations
+    :ivar ipv6_firewall_rules: IPv6FirewallRulesOperations operations
+    :vartype ipv6_firewall_rules: azure.mgmt.sql.aio.operations.IPv6FirewallRulesOperations
     :ivar job_agents: JobAgentsOperations operations
     :vartype job_agents: azure.mgmt.sql.aio.operations.JobAgentsOperations
     :ivar job_credentials: JobCredentialsOperations operations
@@ -308,6 +310,8 @@ class SqlManagementClient:  # pylint: disable=too-many-instance-attributes
     :vartype job_executions: azure.mgmt.sql.aio.operations.JobExecutionsOperations
     :ivar job_private_endpoints: JobPrivateEndpointsOperations operations
     :vartype job_private_endpoints: azure.mgmt.sql.aio.operations.JobPrivateEndpointsOperations
+    :ivar jobs: JobsOperations operations
+    :vartype jobs: azure.mgmt.sql.aio.operations.JobsOperations
     :ivar job_step_executions: JobStepExecutionsOperations operations
     :vartype job_step_executions: azure.mgmt.sql.aio.operations.JobStepExecutionsOperations
     :ivar job_steps: JobStepsOperations operations
@@ -318,8 +322,6 @@ class SqlManagementClient:  # pylint: disable=too-many-instance-attributes
     :vartype job_target_groups: azure.mgmt.sql.aio.operations.JobTargetGroupsOperations
     :ivar job_versions: JobVersionsOperations operations
     :vartype job_versions: azure.mgmt.sql.aio.operations.JobVersionsOperations
-    :ivar jobs: JobsOperations operations
-    :vartype jobs: azure.mgmt.sql.aio.operations.JobsOperations
     :ivar ledger_digest_uploads: LedgerDigestUploadsOperations operations
     :vartype ledger_digest_uploads: azure.mgmt.sql.aio.operations.LedgerDigestUploadsOperations
     :ivar capabilities: CapabilitiesOperations operations
@@ -359,6 +361,8 @@ class SqlManagementClient:  # pylint: disable=too-many-instance-attributes
     :ivar managed_database_restore_details: ManagedDatabaseRestoreDetailsOperations operations
     :vartype managed_database_restore_details:
      azure.mgmt.sql.aio.operations.ManagedDatabaseRestoreDetailsOperations
+    :ivar managed_databases: ManagedDatabasesOperations operations
+    :vartype managed_databases: azure.mgmt.sql.aio.operations.ManagedDatabasesOperations
     :ivar managed_database_schemas: ManagedDatabaseSchemasOperations operations
     :vartype managed_database_schemas:
      azure.mgmt.sql.aio.operations.ManagedDatabaseSchemasOperations
@@ -387,16 +391,14 @@ class SqlManagementClient:  # pylint: disable=too-many-instance-attributes
      ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations operations
     :vartype managed_database_vulnerability_assessment_rule_baselines:
      azure.mgmt.sql.aio.operations.ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations
-    :ivar managed_database_vulnerability_assessment_scans:
-     ManagedDatabaseVulnerabilityAssessmentScansOperations operations
-    :vartype managed_database_vulnerability_assessment_scans:
-     azure.mgmt.sql.aio.operations.ManagedDatabaseVulnerabilityAssessmentScansOperations
     :ivar managed_database_vulnerability_assessments:
      ManagedDatabaseVulnerabilityAssessmentsOperations operations
     :vartype managed_database_vulnerability_assessments:
      azure.mgmt.sql.aio.operations.ManagedDatabaseVulnerabilityAssessmentsOperations
-    :ivar managed_databases: ManagedDatabasesOperations operations
-    :vartype managed_databases: azure.mgmt.sql.aio.operations.ManagedDatabasesOperations
+    :ivar managed_database_vulnerability_assessment_scans:
+     ManagedDatabaseVulnerabilityAssessmentScansOperations operations
+    :vartype managed_database_vulnerability_assessment_scans:
+     azure.mgmt.sql.aio.operations.ManagedDatabaseVulnerabilityAssessmentScansOperations
     :ivar managed_instance_administrators: ManagedInstanceAdministratorsOperations operations
     :vartype managed_instance_administrators:
      azure.mgmt.sql.aio.operations.ManagedInstanceAdministratorsOperations
@@ -431,6 +433,8 @@ class SqlManagementClient:  # pylint: disable=too-many-instance-attributes
      operations
     :vartype managed_instance_private_link_resources:
      azure.mgmt.sql.aio.operations.ManagedInstancePrivateLinkResourcesOperations
+    :ivar managed_instances: ManagedInstancesOperations operations
+    :vartype managed_instances: azure.mgmt.sql.aio.operations.ManagedInstancesOperations
     :ivar managed_instance_tde_certificates: ManagedInstanceTdeCertificatesOperations operations
     :vartype managed_instance_tde_certificates:
      azure.mgmt.sql.aio.operations.ManagedInstanceTdeCertificatesOperations
@@ -438,8 +442,6 @@ class SqlManagementClient:  # pylint: disable=too-many-instance-attributes
      ManagedInstanceVulnerabilityAssessmentsOperations operations
     :vartype managed_instance_vulnerability_assessments:
      azure.mgmt.sql.aio.operations.ManagedInstanceVulnerabilityAssessmentsOperations
-    :ivar managed_instances: ManagedInstancesOperations operations
-    :vartype managed_instances: azure.mgmt.sql.aio.operations.ManagedInstancesOperations
     :ivar managed_ledger_digest_uploads: ManagedLedgerDigestUploadsOperations operations
     :vartype managed_ledger_digest_uploads:
      azure.mgmt.sql.aio.operations.ManagedLedgerDigestUploadsOperations
@@ -518,6 +520,8 @@ class SqlManagementClient:  # pylint: disable=too-many-instance-attributes
     :vartype server_keys: azure.mgmt.sql.aio.operations.ServerKeysOperations
     :ivar server_operations: ServerOperationsOperations operations
     :vartype server_operations: azure.mgmt.sql.aio.operations.ServerOperationsOperations
+    :ivar servers: ServersOperations operations
+    :vartype servers: azure.mgmt.sql.aio.operations.ServersOperations
     :ivar server_security_alert_policies: ServerSecurityAlertPoliciesOperations operations
     :vartype server_security_alert_policies:
      azure.mgmt.sql.aio.operations.ServerSecurityAlertPoliciesOperations
@@ -531,8 +535,6 @@ class SqlManagementClient:  # pylint: disable=too-many-instance-attributes
     :ivar server_vulnerability_assessments: ServerVulnerabilityAssessmentsOperations operations
     :vartype server_vulnerability_assessments:
      azure.mgmt.sql.aio.operations.ServerVulnerabilityAssessmentsOperations
-    :ivar servers: ServersOperations operations
-    :vartype servers: azure.mgmt.sql.aio.operations.ServersOperations
     :ivar sql_agent: SqlAgentOperations operations
     :vartype sql_agent: azure.mgmt.sql.aio.operations.SqlAgentOperations
     :ivar sql_vulnerability_assessment_baseline: SqlVulnerabilityAssessmentBaselineOperations
@@ -604,9 +606,9 @@ class SqlManagementClient:  # pylint: disable=too-many-instance-attributes
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The subscription ID that identifies an Azure subscription. Required.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :param base_url: Service URL. Default value is None.
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2024-05-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2024-11-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -614,15 +616,17 @@ class SqlManagementClient:  # pylint: disable=too-many-instance-attributes
     """
 
     def __init__(
-        self,
-        credential: "AsyncTokenCredential",
-        subscription_id: str,
-        base_url: str = "https://management.azure.com",
-        **kwargs: Any
+        self, credential: "AsyncTokenCredential", subscription_id: str, base_url: Optional[str] = None, **kwargs: Any
     ) -> None:
+        _cloud = kwargs.pop("cloud_setting", None) or settings.current.azure_cloud  # type: ignore
+        _endpoints = get_arm_endpoints(_cloud)
+        if not base_url:
+            base_url = _endpoints["resource_manager"]
+        credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
         self._config = SqlManagementClientConfiguration(
-            credential=credential, subscription_id=subscription_id, **kwargs
+            credential=credential, subscription_id=subscription_id, credential_scopes=credential_scopes, **kwargs
         )
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -641,7 +645,9 @@ class SqlManagementClient:  # pylint: disable=too-many-instance-attributes
                 policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
                 self._config.http_logging_policy,
             ]
-        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(
+            base_url=cast(str, base_url), policies=_policies, **kwargs
+        )
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -660,15 +666,6 @@ class SqlManagementClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.extended_server_blob_auditing_policies = ExtendedServerBlobAuditingPoliciesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.data_masking_policies = DataMaskingPoliciesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.data_masking_rules = DataMaskingRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.data_warehouse_user_activities = DataWarehouseUserActivitiesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.database_advanced_threat_protection_settings = DatabaseAdvancedThreatProtectionSettingsOperations(
@@ -695,6 +692,7 @@ class SqlManagementClient:  # pylint: disable=too-many-instance-attributes
         self.database_recommended_actions = DatabaseRecommendedActionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.databases = DatabasesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.database_schemas = DatabaseSchemasOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -728,13 +726,21 @@ class SqlManagementClient:  # pylint: disable=too-many-instance-attributes
         self.database_vulnerability_assessment_rule_baselines = DatabaseVulnerabilityAssessmentRuleBaselinesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.database_vulnerability_assessment_scans = DatabaseVulnerabilityAssessmentScansOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.database_vulnerability_assessments = DatabaseVulnerabilityAssessmentsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.databases = DatabasesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.database_vulnerability_assessment_scans = DatabaseVulnerabilityAssessmentScansOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.data_masking_policies = DataMaskingPoliciesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.data_masking_rules = DataMaskingRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.data_warehouse_user_activities = DataWarehouseUserActivitiesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.deleted_servers = DeletedServersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.distributed_availability_groups = DistributedAvailabilityGroupsOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -754,14 +760,14 @@ class SqlManagementClient:  # pylint: disable=too-many-instance-attributes
         self.geo_backup_policies = GeoBackupPoliciesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.ipv6_firewall_rules = IPv6FirewallRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.instance_failover_groups = InstanceFailoverGroupsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.instance_pools = InstancePoolsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.instance_pool_operations = InstancePoolOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.instance_pools = InstancePoolsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.ipv6_firewall_rules = IPv6FirewallRulesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.job_agents = JobAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -770,6 +776,7 @@ class SqlManagementClient:  # pylint: disable=too-many-instance-attributes
         self.job_private_endpoints = JobPrivateEndpointsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.jobs = JobsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.job_step_executions = JobStepExecutionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -781,7 +788,6 @@ class SqlManagementClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.job_versions = JobVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.jobs = JobsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.ledger_digest_uploads = LedgerDigestUploadsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -821,6 +827,9 @@ class SqlManagementClient:  # pylint: disable=too-many-instance-attributes
         self.managed_database_restore_details = ManagedDatabaseRestoreDetailsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.managed_databases = ManagedDatabasesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.managed_database_schemas = ManagedDatabaseSchemasOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -847,13 +856,10 @@ class SqlManagementClient:  # pylint: disable=too-many-instance-attributes
                 self._client, self._config, self._serialize, self._deserialize
             )
         )
-        self.managed_database_vulnerability_assessment_scans = ManagedDatabaseVulnerabilityAssessmentScansOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.managed_database_vulnerability_assessments = ManagedDatabaseVulnerabilityAssessmentsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.managed_databases = ManagedDatabasesOperations(
+        self.managed_database_vulnerability_assessment_scans = ManagedDatabaseVulnerabilityAssessmentScansOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.managed_instance_administrators = ManagedInstanceAdministratorsOperations(
@@ -888,13 +894,13 @@ class SqlManagementClient:  # pylint: disable=too-many-instance-attributes
         self.managed_instance_private_link_resources = ManagedInstancePrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.managed_instances = ManagedInstancesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.managed_instance_tde_certificates = ManagedInstanceTdeCertificatesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.managed_instance_vulnerability_assessments = ManagedInstanceVulnerabilityAssessmentsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.managed_instances = ManagedInstancesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.managed_ledger_digest_uploads = ManagedLedgerDigestUploadsOperations(
@@ -975,6 +981,7 @@ class SqlManagementClient:  # pylint: disable=too-many-instance-attributes
         self.server_operations = ServerOperationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.servers = ServersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.server_security_alert_policies = ServerSecurityAlertPoliciesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -988,7 +995,6 @@ class SqlManagementClient:  # pylint: disable=too-many-instance-attributes
         self.server_vulnerability_assessments = ServerVulnerabilityAssessmentsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.servers = ServersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.sql_agent = SqlAgentOperations(self._client, self._config, self._serialize, self._deserialize)
         self.sql_vulnerability_assessment_baseline = SqlVulnerabilityAssessmentBaselineOperations(
             self._client, self._config, self._serialize, self._deserialize
