@@ -4,6 +4,12 @@
 ## Key concepts
 Content Understanding is a solution that analyzes and comprehends various media content—such as documents, images, audio, and video—transforming it into structured, organized, and searchable data.
 
+This table shows the relationship between SDK versions and supported API service versions:
+
+| SDK version | Supported API service version |
+| ----------- | ----------------------------- |
+| 1.0.0b1     | 2025-05-31                    |
+
 ## Getting started
 
 ### Azure Content Understanding Resource
@@ -25,11 +31,11 @@ python -m pip install azure-ai-contentunderstanding
 
 ## Examples
 
-### 📁 Comprehensive API Samples
+### Comprehensive API Samples
 
 This SDK includes comprehensive samples that demonstrate API-level usage of all Azure AI Content Understanding capabilities. These samples show you exactly how to call each API endpoint with proper authentication, error handling, and resource management.
 
-## 📁 Sample Categories
+## Sample Categories
 
 ### Content Analyzers
 Analyze documents and extract structured information:
@@ -82,10 +88,10 @@ Comprehensive face recognition capabilities:
 - **`person_directories_delete_face.py`** - Delete faces
 
 #### **Face Recognition**
-- **`person_directories_find_similar_faces.py`** - Find similar faces (⭐ **Enhanced Demo**)
+- **`person_directories_find_similar_faces.py`** - Find similar faces (Enhanced Demo)
 - **`faces_detect.py`** - Detect faces in images
 
-#### **🎯 Enhanced Face Similarity Demo**
+#### **Enhanced Face Similarity Demo**
 `person_directories_find_similar_faces.py` provides a comprehensive demonstration:
 
 - **Test 1 (Positive Case)**: Enrolls Dad1 & Dad2 faces, queries with Dad3 → should find matches
@@ -93,7 +99,7 @@ Comprehensive face recognition capabilities:
 - **Educational Output**: Clear explanations of expected results and confidence scores
 - **Real-world Scenarios**: Demonstrates both successful and failed face matching
 
-## 🚀 **Quick Start with Samples**
+## **Quick Start with Samples**
 
 1. **Set up authentication**:
    ```bash
@@ -110,7 +116,7 @@ Comprehensive face recognition capabilities:
    az login
    ```
    
-   **⚠️ Security Note**: Only set `AZURE_CONTENT_UNDERSTANDING_KEY` if you need key-based authentication for testing. **Key-based authentication is not secure** and should not be used in production. Always prefer Azure CLI (`az login`) or DefaultAzureCredential for secure authentication.
+   **Security Note**: Only set `AZURE_CONTENT_UNDERSTANDING_KEY` if you need key-based authentication for testing. **Azure CLI (`az login`) or DefaultAzureCredential is recommended** as it eliminates the need to manage secrets, reduces the risk of credential leaks, and enables secure, auditable, and least-privilege access to resources through Azure AD.
 
 2. **Install dependencies**:
    ```bash
@@ -119,7 +125,6 @@ Comprehensive face recognition capabilities:
 
 3. **Run any sample**:
    ```bash
-   cd samples
    python content_analyzers_analyze_binary.py       # Analyze binary files (PDFs, images, documents)
    python content_analyzers_create_or_replace.py    # Create custom analyzer using begin_create_or_replace API
    ```
@@ -128,7 +133,7 @@ Comprehensive face recognition capabilities:
 
 ### Azure AI Foundry Resource and Regional Support
 
-Azure AI Content Understanding requires an **Azure AI Foundry resource** (not a regular Azure AI Services resource) and is only available in certain supported regions. Make sure to:
+Azure AI Content Understanding requires an [Azure AI Foundry resource](https://portal.azure.com/#create/Microsoft.CognitiveServicesAIFoundry) and is only available in certain [supported regions](https://learn.microsoft.com/azure/ai-services/content-understanding/language-region-support). Make sure to:
 
 - Create an Azure AI Foundry resource in the Azure portal under **AI Foundry** > **AI Foundry**
 - Select a supported region when creating the resource
