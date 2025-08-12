@@ -33,11 +33,17 @@ echo "[Step 4] Install the current azure-cosmos package: completed."
 
 # 5. Install Envoy proxy
 echo "[Step 5] Install Envoy proxy: started."
-wget -O- https://apt.envoyproxy.io/signing.key | sudo gpg --dearmor -o /etc/apt/keyrings/envoy-keyring.gpg
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/envoy-keyring.gpg] https://apt.envoyproxy.io focal main" | sudo tee /etc/apt/sources.list.d/envoy.list
-sudo apt-get update
-sudo apt-get install -y envoy
-envoy --version
+
+if command -v envoy &> /dev/null; then
+    echo "Envoy proxy is already installed. Version: $(envoy --version)"
+else
+    wget -O- https://apt.envoyproxy.io/signing.key | sudo gpg --dearmor -o /etc/apt/keyrings/envoy-keyring.gpg
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/envoy-keyring.gpg] https://apt.envoyproxy.io focal main" | sudo tee /etc/apt/sources.list.d/envoy.list
+    sudo apt-get update
+    sudo apt-get install -y envoy
+    envoy --version
+fi
+
 echo "[Step 5] Install Envoy proxy: completed."
 
 # 6. Manual steps
