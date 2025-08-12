@@ -262,7 +262,6 @@ class LocalFileStorage:
                 return True
         except OSError as error:
             if getattr(error, 'errno', None) == errno.EROFS:  # cspell:disable-line
-                #self.filesystem_is_readonly = True
                 set_local_storage_state_readonly()
             else:
                 set_local_storage_state_exception(str(error))
