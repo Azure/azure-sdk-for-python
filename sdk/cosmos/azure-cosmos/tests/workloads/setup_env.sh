@@ -22,13 +22,13 @@ echo "[Step 3] Install Python requirements: started."
 pip install --upgrade pip
 cd ../../
 pip install -r dev_requirements.txt
-cd tests/workloads
 pip install azure-monitor-opentelemetry
 echo "[Step 3] Install Python requirements: completed."
 
 # 4. Install the current azure-cosmos package
 echo "[Step 4] Install the current azure-cosmos package: started."
 pip install .
+cd tests/workloads
 echo "[Step 4] Install the current azure-cosmos package: completed."
 
 # 5. Install Envoy proxy
