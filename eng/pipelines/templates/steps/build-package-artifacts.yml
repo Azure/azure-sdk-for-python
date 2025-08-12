@@ -122,12 +122,10 @@ steps:
 
   - pwsh: |
       which python
-      sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --inactive
-    displayName: 'Generate Packages'
-    condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
-    timeoutInMinutes: 80
-    env:
-      CIBW_BUILD_VERBOSITY: 3
+      twine check $(Build.ArtifactStagingDirectory)/**/*.whl
+      twine check $(Build.ArtifactStagingDirectory)/**/*.tar.gz
+    displayName: 'Verify Readme'
+    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Linux'))
 
   - ${{ parameters.BeforePublishSteps }}
 
