@@ -9,7 +9,6 @@ from datetime import datetime, timedelta, timezone
 from enum import Enum
 from time import sleep
 
-from azure.core import MatchConditions
 from azure.core.exceptions import ResourceExistsError, ResourceModifiedError, HttpResponseError
 from azure.storage.blob import (
     AccountSasPermissions,
@@ -536,18 +535,15 @@ class TestStorageBlobTags(StorageRecordedTestCase):
 
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        blob.upload_blob(b"", overwrite=True)
+        blob.upload_blob(b"abc123", overwrite=True)
         early = self.get_datetime_variable(
             variables, 'expiry_time', datetime.utcnow()
         )
         first_tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
         second_tags = {"tag4": "fourthtag", "tag5": "fifthtag", "tag6": "sixthtag"}
 
-        try:
-            resp = blob.set_blob_tags(first_tags, if_modified_since=early)
-            assert resp is not None
-        except Exception as e:
-            pass
+        with pytest.raises(ResourceModifiedError):
+            blob.set_blob_tags(first_tags, if_modified_since=early)
 
         return variables
 

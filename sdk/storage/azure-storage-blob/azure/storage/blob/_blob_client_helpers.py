@@ -859,8 +859,13 @@ def _set_blob_tags_options(
         'tags': serialized_tags,
         'lease_access_conditions': access_conditions,
         'modified_access_conditions': mod_conditions,
+        'if_modified_since': mod_conditions.if_modified_since,
+        'if_unmodified_since': mod_conditions.if_unmodified_since,
+        'if_match': mod_conditions.if_match,
+        'if_none_match': mod_conditions.if_none_match,
         'version_id': version_id,
-        'cls': return_response_headers}
+        'cls': return_response_headers
+    }
     options.update(kwargs)
     return options
 
@@ -873,8 +878,13 @@ def _get_blob_tags_options(version_id: Optional[str], snapshot: Optional[str], *
         'snapshot': snapshot,
         'lease_access_conditions': access_conditions,
         'modified_access_conditions': mod_conditions,
+        'if_modified_since': mod_conditions.if_modified_since,
+        'if_unmodified_since': mod_conditions.if_unmodified_since,
+        'if_match': mod_conditions.if_match,
+        'if_none_match': mod_conditions.if_none_match,
         'timeout': kwargs.pop('timeout', None),
-        'cls': return_headers_and_deserialized}
+        'cls': return_headers_and_deserialized
+    }
     return options
 
 def _get_page_ranges_options(
