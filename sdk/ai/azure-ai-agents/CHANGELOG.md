@@ -1,6 +1,12 @@
 
 # Release History
 
+## 1.2.0b3 (Unreleased)
+
+### Features Added
+
+- Add `RunStepDetailsActivity`, describing MCP function parameters.
+
 ## 1.2.0b2 (2025-08-12)
 
 ### Features Added
