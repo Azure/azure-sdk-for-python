@@ -35,8 +35,8 @@ class AgentBlueprint(_Model):
     :vartype display_name: str
     :ivar system_data: System related metadata.
     :vartype system_data: ~azure.ai.projects.models.SystemData
-    :ivar catalog_info: Catalog information for the blueprint. Required.
-    :vartype catalog_info: ~azure.ai.projects.models.AgentBlueprintCatalogInformation
+    :ivar catalog_data: Catalog data for the blueprint. Required.
+    :vartype catalog_data: ~azure.ai.projects.models.AgentBlueprintCatalogData
     :ivar implementation: Instructions for deploying an agent using this blueprint. Required.
     :vartype implementation: ~azure.ai.projects.models.AgentImplementationDetails
     :ivar dependencies: Dependencies that need to be specified to create an agent instance from
@@ -61,10 +61,10 @@ class AgentBlueprint(_Model):
     """display name of the blueprint. Required."""
     system_data: Optional["_models.SystemData"] = rest_field(name="SystemData", visibility=["read"])
     """System related metadata."""
-    catalog_info: "_models.AgentBlueprintCatalogInformation" = rest_field(
-        name="catalogInfo", visibility=["read", "create", "update", "delete", "query"]
+    catalog_data: "_models.AgentBlueprintCatalogData" = rest_field(
+        name="catalogData", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Catalog information for the blueprint. Required."""
+    """Catalog data for the blueprint. Required."""
     implementation: "_models.AgentImplementationDetails" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -83,7 +83,7 @@ class AgentBlueprint(_Model):
         self,
         *,
         display_name: str,
-        catalog_info: "_models.AgentBlueprintCatalogInformation",
+        catalog_data: "_models.AgentBlueprintCatalogData",
         implementation: "_models.AgentImplementationDetails",
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
@@ -102,8 +102,8 @@ class AgentBlueprint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentBlueprintCatalogInformation(_Model):
-    """Catalog information for the agent blueprint.
+class AgentBlueprintCatalogData(_Model):
+    """Catalog data for the agent blueprint.
 
     :ivar publisher_id: The id of the publisher of the asset. Required.
     :vartype publisher_id: str
@@ -2159,15 +2159,15 @@ class ToolDependency(BaseAgentDependency, discriminator="tool"):
 
     :ivar type: type of dependency. Required. Default value is "tool".
     :vartype type: str
-    :ivar asset_id: identifier for the tool. Required.
-    :vartype asset_id: dict[str, str]
+    :ivar id: identifier for the tool. Required.
+    :vartype id: str
     :ivar description: optional description of how the blueprint will use the tool.
     :vartype description: str
     """
 
     type: Literal["tool"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """type of dependency. Required. Default value is \"tool\"."""
-    asset_id: Dict[str, str] = rest_field(name="assetId", visibility=["read", "create", "update", "delete", "query"])
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """identifier for the tool. Required."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """optional description of how the blueprint will use the tool."""
@@ -2176,7 +2176,7 @@ class ToolDependency(BaseAgentDependency, discriminator="tool"):
     def __init__(
         self,
         *,
-        asset_id: Dict[str, str],
+        id: str,  # pylint: disable=redefined-builtin
         description: Optional[str] = None,
     ) -> None: ...
 

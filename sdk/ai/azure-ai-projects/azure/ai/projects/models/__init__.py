@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 from ._models import (  # type: ignore
     AgentBlueprint,
-    AgentBlueprintCatalogInformation,
+    AgentBlueprintCatalogData,
     AgentEvaluation,
     AgentEvaluationRedactionConfiguration,
     AgentEvaluationRequest,
@@ -83,7 +83,7 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "AgentBlueprint",
-    "AgentBlueprintCatalogInformation",
+    "AgentBlueprintCatalogData",
     "AgentEvaluation",
     "AgentEvaluationRedactionConfiguration",
     "AgentEvaluationRequest",
