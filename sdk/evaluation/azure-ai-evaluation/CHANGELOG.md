@@ -11,6 +11,7 @@
 ### Bugs Fixed
 
 ### Other Changes
+- Deprecating `AdversarialSimulator` in favor of the [AI Red Teaming Agent](https://aka.ms/airedteamingagent-sample). `AdversarialSimulator` will be removed in the next minor release. 
 
 ## 1.10.0 (2025-07-31)
 
