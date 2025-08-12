@@ -1,5 +1,17 @@
 # Release History
 
+## 1.11.0 (Unreleased)
+
+### Breaking Changes
+
+### Features Added
+- Added support for user-supplied tags in the `evaluate` function. Tags are key-value pairs that can be used for experiment tracking, A/B testing, filtering, and organizing evaluation runs. The function accepts a `tags` parameter.
+- Enhanced `GroundednessEvaluator` to support AI agent evaluation with tool calls. The evaluator now accepts agent response data containing tool calls and can extract context from `file_search` tool results for groundedness assessment. This enables evaluation of AI agents that use tools to retrieve information and generate responses. Note: Agent groundedness evaluation is currently supported only when the `file_search` tool is used.
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.10.0 (2025-07-31)
 
 ### Breaking Changes

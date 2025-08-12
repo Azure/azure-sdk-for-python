@@ -43,7 +43,7 @@ To use this package, you must have:
 * Azure subscription - [Create a free account][azure_sub]
 * Azure Monitor - [How to use application insights][application_insights_namespace]
 * Opentelemetry SDK - [Opentelemetry SDK for Python][ot_sdk_python]
-* Python 3.8 or later - [Install Python][python]
+* Python 3.9 or later - [Install Python][python]
 
 ### Install the package
 

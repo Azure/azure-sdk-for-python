@@ -11,7 +11,11 @@
       "VELRAIL",
       "AEROJET",
       "OCEACARGO",
-      "GENAI"
+      "GENAI",
+      "cegr",
+      "oupfoo",
+      "abcdabcdabcda",
+      "abcdefghijklm",
     ],
     "ignorePaths": [
       "*.csv",

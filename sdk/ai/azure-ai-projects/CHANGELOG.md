@@ -1,12 +1,34 @@
 # Release History
 
+## 1.1.0b3 (Unreleased)
+
+### Features added
+
+* File `setup.py` was updated to indicate the dependency `azure-ai-agents>=1.2.0b1`
+instead of `azure-ai-agents>=1.0.0`. This means that in a clean environment installing
+this version of `azure-ai-projects` will install latest beta version of `azure-ai-agents`
+(which has lots of features in preview) instead of latest stable version (which does
+not include preview features).
+
+### Breaking changes
+
+### Bugs Fixed
+
+### Sample updates
+
+## 1.1.0b2 (2025-08-05)
+
+### Bugs Fixed
+
+Fix regression in Red-Team operations, in the definition of the class `AzureOpenAIModelConfiguration`.
+
 ## 1.1.0b1 (2025-08-01)
 
 First beta version following the 1.0.0 stable release. It brings back the Evaluation and Red-Team operations which are still in preview.
 
 ### Features added
 
-* Added methods `cancel` and `delete` to Evaluations.
+* Evaluation and Red-Team operations (in preview) were restored.
 
 ## 1.0.0 (2025-07-31)
 

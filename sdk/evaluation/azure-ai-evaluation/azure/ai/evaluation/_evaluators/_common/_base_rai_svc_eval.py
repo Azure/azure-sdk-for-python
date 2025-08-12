@@ -153,7 +153,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         if query is not None and self._evaluate_query:
             input_data["query"] = str(query)
 
-        if "context" in self._singleton_inputs:
+        if "context" in self._get_all_singleton_inputs():
             context = eval_input.get("context", None)
             if context is None:
                 raise EvaluationException(
