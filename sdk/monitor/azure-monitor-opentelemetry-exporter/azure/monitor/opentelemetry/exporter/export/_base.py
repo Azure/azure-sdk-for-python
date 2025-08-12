@@ -56,9 +56,8 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     increment_and_check_statsbeat_failure_count,
     is_statsbeat_enabled,
     set_statsbeat_initial_success,
-    _LOCAL_FILE_STORAGE_STATE,
-    _LOCAL_FILE_STORAGE_STATE_LOCK,
     set_local_storage_state_exception,
+    get_local_storage_state_exception,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
     _update_requests_map,
@@ -205,20 +204,24 @@ class BaseExporter:
                 result_from_storage_put = self.storage.put(envelopes_to_store)
                 if self._customer_statsbeat_metrics and self._should_collect_customer_statsbeat():
                     if result_from_storage_put == StorageExportResult.CLIENT_STORAGE_DISABLED:
-                    # Track items that would have been retried but are dropped since client has local storage disabled
+                        # Track items that would have been retried but are dropped since client has local storage disabled
                         _track_dropped_items(self._customer_statsbeat_metrics, envelopes, DropCode.CLIENT_STORAGE_DISABLED)
                     elif result_from_storage_put == StorageExportResult.CLIENT_READONLY:
                         # If filesystem is readonly, track dropped items in customer statsbeat
                         _track_dropped_items(self._customer_statsbeat_metrics, envelopes, DropCode.CLIENT_READONLY)
-                        with _LOCAL_FILE_STORAGE_STATE_LOCK:
-                            _LOCAL_FILE_STORAGE_STATE["READONLY"] = False
                     elif result_from_storage_put == StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED:
                         # If data has to be dropped due to persistent storage being full, track dropped items
                         _track_dropped_items(self._customer_statsbeat_metrics, envelopes, DropCode.CLIENT_PERSISTENCE_CAPACITY)
-                    else:
-                        # For any exceptions occurred, track dropped item with reason
+                    elif isinstance(result_from_storage_put, str):
+                        # For any exceptions occurred in put method of either LocalFileStorage or LocalFileBlob, track dropped item with reason
                         _track_dropped_items(self._customer_statsbeat_metrics, envelopes, DropCode.CLIENT_EXCEPTION, result_from_storage_put)
-                        set_local_storage_state_exception(None)
+                    elif get_local_storage_state_exception() != "":
+                        # For exceptions caught in _check_and_set_folder_permissions during storage setup
+                        _track_dropped_items(self._customer_statsbeat_metrics, envelopes, DropCode.CLIENT_EXCEPTION, result_from_storage_put)
+                        set_local_storage_state_exception("")
+                    else:
+                        # LocalFileBlob.put returns either an exception(failure, handled above) or the file path(success), eventually that will be removed since this value is not being utilized elsewhere
+                        pass
             elif result == ExportResult.SUCCESS:
                 # Try to send any cached events
                 self._transmit_from_storage()
