@@ -29,7 +29,14 @@ USAGE:
 import os, time
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.agents.models import McpTool, RequiredMcpToolCall, SubmitToolApprovalAction, ToolApproval
+from azure.ai.agents.models import (
+    ListSortOrder,
+    McpTool,
+    RequiredMcpToolCall,
+    RunStepActivityDetails,
+    SubmitToolApprovalAction,
+    ToolApproval,
+)
 
 # Get MCP server configuration from environment variables
 mcp_server_url = os.environ.get("MCP_SERVER_URL", "https://gitmcp.io/Azure/azure-rest-api-specs")
@@ -86,7 +93,9 @@ with project_client:
     # Create and process agent run in thread with MCP tools
     mcp_tool.update_headers("SuperSecret", "123456")
     # mcp_tool.set_approval_mode("never")  # Uncomment to disable approval requirement
-    run = agents_client.runs.create(thread_id=thread.id, agent_id=agent.id, tool_resources=mcp_tool.resources)
+    run = agents_client.runs.create(
+        thread_id=thread.id, agent_id=agent.id, tool_resources=mcp_tool.resources
+    )
     print(f"Created run, ID: {run.id}")
 
     while run.status in ["queued", "in_progress", "requires_action"]:
@@ -145,10 +154,25 @@ with project_client:
                 print(f"    Tool Call ID: {call.get('id')}")
                 print(f"    Type: {call.get('type')}")
 
+        if isinstance(step_details, RunStepActivityDetails):
+            for activity in step_details.activities:
+                for function_name, function_definition in activity.tools.items():
+                    print(
+                        f'  The function {function_name} with description "{function_definition.description}" will be called.:'
+                    )
+                    if len(function_definition.parameters) > 0:
+                        print("  Function parameters:")
+                        for argument, func_argument in function_definition.parameters.properties.items():
+                            print(f"      {argument}")
+                            print(f"      Type: {func_argument.type}")
+                            print(f"      Description: {func_argument.description}")
+                    else:
+                        print("This function has no parameters")
+
         print()  # add an extra newline between steps
 
     # Fetch and log all messages
-    messages = agents_client.messages.list(thread_id=thread.id)
+    messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
     print("\nConversation:")
     print("-" * 50)
     for msg in messages:
