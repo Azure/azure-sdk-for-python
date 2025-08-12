@@ -63,7 +63,7 @@ def build_confidential_ledger_certificate_get_ledger_identity_request(  # pylint
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class ConfidentialLedgerCertificateClientOperationsMixin(  # pylint: disable=name-too-long
+class _ConfidentialLedgerCertificateClientOperationsMixin(
     ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], ConfidentialLedgerCertificateClientConfiguration]
 ):
 
@@ -120,7 +120,7 @@ class ConfidentialLedgerCertificateClientOperationsMixin(  # pylint: disable=nam
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
+            error = _failsafe_deserialize(_models2.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:

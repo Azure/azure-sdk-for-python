@@ -327,12 +327,9 @@ def build_confidential_ledger_list_ledger_users_request(**kwargs: Any) -> HttpRe
 def build_confidential_ledger_delete_user_request(  # pylint: disable=name-too-long
     user_id: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/app/users/{userId}"
     path_format_arguments = {
@@ -344,10 +341,7 @@ def build_confidential_ledger_delete_user_request(  # pylint: disable=name-too-l
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_confidential_ledger_get_user_request(  # pylint: disable=name-too-long
@@ -408,12 +402,9 @@ def build_confidential_ledger_create_or_update_user_request(  # pylint: disable=
 def build_confidential_ledger_delete_ledger_user_request(  # pylint: disable=name-too-long
     user_id: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/app/ledgerUsers/{userId}"
     path_format_arguments = {
@@ -425,10 +416,7 @@ def build_confidential_ledger_delete_ledger_user_request(  # pylint: disable=nam
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_confidential_ledger_get_ledger_user_request(  # pylint: disable=name-too-long
@@ -515,8 +503,6 @@ def build_confidential_ledger_create_user_defined_endpoint_request(  # pylint: d
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/app/userDefinedEndpoints"
 
@@ -526,7 +512,6 @@ def build_confidential_ledger_create_user_defined_endpoint_request(  # pylint: d
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -622,12 +607,9 @@ def build_confidential_ledger_list_user_defined_functions_request(  # pylint: di
 def build_confidential_ledger_delete_user_defined_function_request(  # pylint: disable=name-too-long
     function_id: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/app/userDefinedFunctions/{functionId}"
     path_format_arguments = {
@@ -639,10 +621,7 @@ def build_confidential_ledger_delete_user_defined_function_request(  # pylint: d
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_confidential_ledger_get_user_defined_function_request(  # pylint: disable=name-too-long
@@ -759,8 +738,6 @@ def build_confidential_ledger_create_user_defined_role_request(  # pylint: disab
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/app/roles"
 
@@ -770,7 +747,6 @@ def build_confidential_ledger_create_user_defined_role_request(  # pylint: disab
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -783,8 +759,6 @@ def build_confidential_ledger_update_user_defined_role_request(  # pylint: disab
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/app/roles"
 
@@ -794,7 +768,6 @@ def build_confidential_ledger_update_user_defined_role_request(  # pylint: disab
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -802,12 +775,9 @@ def build_confidential_ledger_update_user_defined_role_request(  # pylint: disab
 def build_confidential_ledger_delete_user_defined_role_request(  # pylint: disable=name-too-long
     *, role_name: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-09-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/app/roles"
 
@@ -815,13 +785,10 @@ def build_confidential_ledger_delete_user_defined_role_request(  # pylint: disab
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     _params["roleName"] = _SERIALIZER.query("role_name", role_name, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-public-methods
+class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-public-methods
     ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], ConfidentialLedgerClientConfiguration]
 ):
 
@@ -875,7 +842,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
+            error = _failsafe_deserialize(_models1.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -966,7 +933,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
+                error = _failsafe_deserialize(_models1.ConfidentialLedgerError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -1024,7 +991,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
+            error = _failsafe_deserialize(_models1.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -1115,7 +1082,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
+                error = _failsafe_deserialize(_models1.ConfidentialLedgerError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -1222,7 +1189,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
+                error = _failsafe_deserialize(_models1.ConfidentialLedgerError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -1388,7 +1355,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
+            error = _failsafe_deserialize(_models1.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1468,7 +1435,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
+            error = _failsafe_deserialize(_models1.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -1533,7 +1500,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
+            error = _failsafe_deserialize(_models1.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -1598,7 +1565,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
+            error = _failsafe_deserialize(_models1.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -1663,7 +1630,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
+            error = _failsafe_deserialize(_models1.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -1754,7 +1721,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
+                error = _failsafe_deserialize(_models1.ConfidentialLedgerError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -1839,7 +1806,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
+                error = _failsafe_deserialize(_models1.ConfidentialLedgerError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -1893,7 +1860,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
+            error = _failsafe_deserialize(_models1.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -1951,7 +1918,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
+            error = _failsafe_deserialize(_models1.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -2101,7 +2068,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
+            error = _failsafe_deserialize(_models1.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -2161,7 +2128,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
+            error = _failsafe_deserialize(_models1.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -2219,7 +2186,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
+            error = _failsafe_deserialize(_models1.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -2378,7 +2345,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
+            error = _failsafe_deserialize(_models1.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -2440,7 +2407,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
+            error = _failsafe_deserialize(_models1.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -2566,7 +2533,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
+            error = _failsafe_deserialize(_models1.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -2621,7 +2588,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
+            error = _failsafe_deserialize(_models1.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -2753,7 +2720,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
+            error = _failsafe_deserialize(_models1.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -2818,7 +2785,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
+            error = _failsafe_deserialize(_models1.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -2909,7 +2876,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
+                error = _failsafe_deserialize(_models1.ConfidentialLedgerError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -2965,7 +2932,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
+            error = _failsafe_deserialize(_models1.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -3023,7 +2990,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
+            error = _failsafe_deserialize(_models1.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -3180,7 +3147,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
+            error = _failsafe_deserialize(_models1.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -3358,7 +3325,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
+            error = _failsafe_deserialize(_models1.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -3423,7 +3390,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
+            error = _failsafe_deserialize(_models1.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -3530,7 +3497,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
+            error = _failsafe_deserialize(_models1.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -3633,7 +3600,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
+            error = _failsafe_deserialize(_models1.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -3689,7 +3656,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
+            error = _failsafe_deserialize(_models1.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:

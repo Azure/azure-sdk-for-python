@@ -34,7 +34,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class ConfidentialLedgerCertificateClientOperationsMixin(  # pylint: disable=name-too-long
+class _ConfidentialLedgerCertificateClientOperationsMixin(
     ClientMixinABC[
         AsyncPipelineClient[HttpRequest, AsyncHttpResponse], ConfidentialLedgerCertificateClientConfiguration
     ]
@@ -93,7 +93,7 @@ class ConfidentialLedgerCertificateClientOperationsMixin(  # pylint: disable=nam
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ConfidentialLedgerError, response.json())
+            error = _failsafe_deserialize(_models3.ConfidentialLedgerError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:

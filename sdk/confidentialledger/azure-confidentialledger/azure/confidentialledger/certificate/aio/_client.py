@@ -16,10 +16,10 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from ..._utils.serialization import Deserializer, Serializer
 from ._configuration import ConfidentialLedgerCertificateClientConfiguration
-from ._operations import ConfidentialLedgerCertificateClientOperationsMixin
+from ._operations import _ConfidentialLedgerCertificateClientOperationsMixin
 
 
-class ConfidentialLedgerCertificateClient(ConfidentialLedgerCertificateClientOperationsMixin):
+class ConfidentialLedgerCertificateClient(_ConfidentialLedgerCertificateClientOperationsMixin):
     """ConfidentialLedgerCertificateClient.
 
     :keyword certificate_endpoint: Default value is

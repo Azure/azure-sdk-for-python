@@ -16,10 +16,10 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import ConfidentialLedgerClientConfiguration
-from ._operations import ConfidentialLedgerClientOperationsMixin
+from ._operations import _ConfidentialLedgerClientOperationsMixin
 
 
-class ConfidentialLedgerClient(ConfidentialLedgerClientOperationsMixin):
+class ConfidentialLedgerClient(_ConfidentialLedgerClientOperationsMixin):
     """ConfidentialLedgerClient.
 
     :param ledger_endpoint: Required.
