@@ -1670,7 +1670,7 @@ class TestBaseExporter(unittest.TestCase):
         original_exception_state = _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"]
         
         try:
-            # Simulate OSError during folder permissions check (not EROFS)
+            # Simulate OSError during folder permissions check
             os_error_message = "[Errno 13] Permission denied: '/restricted/path'"
             _LOCAL_STORAGE_SETUP_STATE["READONLY"] = False
             _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"] = os_error_message
@@ -1716,14 +1716,14 @@ class TestBaseExporter(unittest.TestCase):
         },
     )
     @mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items')
-    def test_handle_transmit_from_storage_localfilestorage_erofs_simulation(self, mock_track_dropped):
-        """Test LocalFileStorage EROFS (read-only filesystem) simulation during _check_and_set_folder_permissions"""
+    def test_handle_transmit_from_storage_localfilestorage_readonly_simulation(self, mock_track_dropped):
+        """Test LocalFileStorage(read-only filesystem) simulation during _check_and_set_folder_permissions"""
         # Save original state
         original_readonly_state = _LOCAL_STORAGE_SETUP_STATE["READONLY"]
         original_exception_state = _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"]
         
         try:
-            # Simulate EROFS (Read-only file system) during folder permissions check
+            # Simulate (Read-only file system) during folder permissions check
             _LOCAL_STORAGE_SETUP_STATE["READONLY"] = True
             _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"] = ""
             
