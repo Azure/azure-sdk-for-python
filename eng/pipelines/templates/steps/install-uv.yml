@@ -22,5 +22,5 @@ steps:
       targetType: inline
       script: |
         iex (irm https://astral.sh/uv/install.ps1)
-        Write-Host "##vso[task.prependpath]C:\Users\cloudtest\.local\bin"
+        Write-Host "##vso[task.prependpath]$env:USERPROFILE\.local\bin"
     condition: eq(variables['Agent.OS'], 'Windows_NT')
