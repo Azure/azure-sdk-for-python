@@ -1003,14 +1003,52 @@ def _preprocess_data(
     input_data_df = _validate_and_load_data(
         target, data, evaluators_and_graders, output_path, azure_ai_project, evaluation_name, tags
     )
+    # Allow pre-target column mapping via evaluator_config["target"].
+    # Lets users map dataset columns to target params without renaming data.
+    if target is not None and "target" in evaluator_config:
+        raw_target_cfg = cast(
+            Dict[str, Any], evaluator_config.get("target") or {}
+        )
+        target_mapping = cast(
+            Dict[str, str], raw_target_cfg.get("column_mapping", raw_target_cfg)
+        )
+        if isinstance(target_mapping, dict) and len(target_mapping) > 0:
+            # Only allow ${data.*} references here
+            _data_ref = r"^\$\{data\.[a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)*\}$"
+            invalid = [
+                v
+                for v in target_mapping.values()
+                if not (isinstance(v, str) and re.match(_data_ref, v))
+            ]
+            if invalid:
+                msg = (
+                    "Only ${data.*} references are allowed in target "
+                    "column_mapping."
+                )
+                raise EvaluationException(
+                    message=msg,
+                    internal_message=msg,
+                    target=ErrorTarget.EVALUATE,
+                    category=ErrorCategory.INVALID_VALUE,
+                    blame=ErrorBlame.USER_ERROR,
+                )
+            input_data_df = _apply_column_mapping(
+                input_data_df, target_mapping
+            )
     if target is not None:
         _validate_columns_for_target(input_data_df, target)
 
-    # extract column mapping dicts into dictionary mapping evaluator name to column mapping
+    # Extract evaluator name to column mapping (exclude special "target")
     column_mapping = _process_column_mappings(
         {
-            evaluator_name: evaluator_configuration.get("column_mapping", None)
-            for evaluator_name, evaluator_configuration in evaluator_config.items()
+            evaluator_name: evaluator_configuration.get(
+                "column_mapping", None
+            )
+            for (
+                evaluator_name,
+                evaluator_configuration,
+            ) in evaluator_config.items()
+            if evaluator_name != "target"
         }
     )
 
@@ -1020,63 +1058,85 @@ def _preprocess_data(
     column_mapping.setdefault("default", {})
 
     # Split normal evaluators and OAI graders
-    evaluators, graders = _split_evaluators_and_grader_configs(evaluators_and_graders)
+    evaluators, graders = _split_evaluators_and_grader_configs(
+        evaluators_and_graders
+    )
 
     target_run: Optional[BatchClientRun] = None
     target_generated_columns: Set[str] = set()
     batch_run_client: BatchClient
     batch_run_data: Union[str, os.PathLike, pd.DataFrame] = data
 
-    def get_client_type(evaluate_kwargs: Dict[str, Any]) -> Literal["run_submitter", "pf_client", "code_client"]:
-        """Determines the BatchClient to use from provided kwargs (_use_run_submitter_client and _use_pf_client)"""
-        _use_run_submitter_client = cast(Optional[bool], kwargs.pop("_use_run_submitter_client", None))
-        _use_pf_client = cast(Optional[bool], kwargs.pop("_use_pf_client", None))
+    def get_client_type(
+        evaluate_kwargs: Dict[str, Any]
+    ) -> Literal["run_submitter", "pf_client", "code_client"]:
+        """
+        Determine which BatchClient to use from kwargs
+        (_use_run_submitter_client and _use_pf_client)
+        """
+        use_submitter = cast(
+            Optional[bool], kwargs.pop("_use_run_submitter_client", None)
+        )
+        use_pf = cast(Optional[bool], kwargs.pop("_use_pf_client", None))
 
-        if _use_run_submitter_client is None and _use_pf_client is None:
+        if use_submitter is None and use_pf is None:
             # If both are unset, return default
             return "run_submitter"
 
-        if _use_run_submitter_client and _use_pf_client:
+        if use_submitter and use_pf:
             raise EvaluationException(
-                message="Only one of _use_pf_client and _use_run_submitter_client should be set to True.",
+                message=(
+                    "Only one of _use_pf_client and _use_run_submitter_client "
+                    "should be set to True."
+                ),
                 target=ErrorTarget.EVALUATE,
                 category=ErrorCategory.INVALID_VALUE,
                 blame=ErrorBlame.USER_ERROR,
             )
 
-        if _use_run_submitter_client == False and _use_pf_client == False:
+        if (use_submitter is False) and (use_pf is False):
             return "code_client"
 
-        if _use_run_submitter_client:
+        if use_submitter:
             return "run_submitter"
-        if _use_pf_client:
+        if use_pf:
             return "pf_client"
 
-        if _use_run_submitter_client is None and _use_pf_client == False:
+        if use_submitter is None and (use_pf is False):
             return "run_submitter"
-        if _use_run_submitter_client == False and _use_pf_client is None:
+        if (use_submitter is False) and use_pf is None:
             return "pf_client"
 
         assert False, "This should be impossible"
 
-    client_type: Literal["run_submitter", "pf_client", "code_client"] = get_client_type(kwargs)
+    client_type: Literal[
+        "run_submitter", "pf_client", "code_client"
+    ] = get_client_type(kwargs)
 
     if client_type == "run_submitter":
-        batch_run_client = RunSubmitterClient(raise_on_errors=fail_on_evaluator_errors)
+        batch_run_client = RunSubmitterClient(
+            raise_on_errors=fail_on_evaluator_errors
+        )
         batch_run_data = input_data_df
     elif client_type == "pf_client":
         batch_run_client = ProxyClient(user_agent=UserAgentSingleton().value)
-        # Ensure the absolute path is passed to pf.run, as relative path doesn't work with
-        # multiple evaluators. If the path is already absolute, abspath will return the original path.
+        # Ensure the absolute path is passed to pf.run, as relative path
+        # doesn't work with multiple evaluators. If the path is already
+        # absolute, abspath will return the original path.
         batch_run_data = os.path.abspath(data)
     elif client_type == "code_client":
         batch_run_client = CodeClient()
         batch_run_data = input_data_df
 
-    # If target is set, apply 1-1 column mapping from target outputs to evaluator inputs
+    # If target is set, map target outputs to evaluator inputs (1-1)
     if data is not None and target is not None:
         input_data_df, target_generated_columns, target_run = _apply_target_to_data(
-            target, batch_run_data, batch_run_client, input_data_df, evaluation_name, **kwargs
+            target,
+            batch_run_data,
+            batch_run_client,
+            input_data_df,
+            evaluation_name,
+            **kwargs,
         )
 
         # IMPORTANT FIX: For ProxyClient, create a temporary file with the complete dataframe
@@ -1099,7 +1159,12 @@ def _preprocess_data(
                         target_reference = f"${{data.{Prefixes.TSG_OUTPUTS}{col}}}"
 
                         # We will add our mapping only if customer did not map target output.
-                        if col not in mapping and target_reference not in mapped_to_values:
+                        run_outputs_reference = f"${{run.outputs.{col}}}"
+                        if (
+                            col not in mapping
+                            and target_reference not in mapped_to_values
+                            and run_outputs_reference not in mapped_to_values
+                        ):
                             column_mapping[evaluator_name][col] = target_reference
 
                 # Don't pass the target_run since we're now using the complete dataframe
@@ -1121,7 +1186,12 @@ def _preprocess_data(
                     target_reference = f"${{data.{Prefixes.TSG_OUTPUTS}{col}}}"
 
                     # We will add our mapping only if customer did not map target output.
-                    if col not in mapping and target_reference not in mapped_to_values:
+                    run_outputs_reference = f"${{run.outputs.{col}}}"
+                    if (
+                        col not in mapping
+                        and target_reference not in mapped_to_values
+                        and run_outputs_reference not in mapped_to_values
+                    ):
                         column_mapping[evaluator_name][col] = target_reference
 
     # After we have generated all columns, we can check if we have everything we need for evaluators.
