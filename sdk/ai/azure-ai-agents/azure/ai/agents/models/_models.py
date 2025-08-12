@@ -236,7 +236,7 @@ class AgentsNamedToolChoice(_Model):
     :ivar type: the type of tool. If type is ``function``, the function name must be set. Required.
      Known values are: "function", "code_interpreter", "file_search", "bing_grounding",
      "fabric_dataagent", "sharepoint_grounding", "azure_ai_search", "bing_custom_search",
-     "connected_agent", "deep_research", and "mcp".
+     "connected_agent", "deep_research", "mcp", and "computer_use_preview".
     :vartype type: str or ~azure.ai.agents.models.AgentsNamedToolChoiceType
     :ivar function: The name of the function to call.
     :vartype function: ~azure.ai.agents.models.FunctionName
@@ -248,7 +248,7 @@ class AgentsNamedToolChoice(_Model):
     """the type of tool. If type is ``function``, the function name must be set. Required. Known
      values are: \"function\", \"code_interpreter\", \"file_search\", \"bing_grounding\",
      \"fabric_dataagent\", \"sharepoint_grounding\", \"azure_ai_search\", \"bing_custom_search\",
-     \"connected_agent\", \"deep_research\", and \"mcp\"."""
+     \"connected_agent\", \"deep_research\", \"mcp\", and \"computer_use_preview\"."""
     function: Optional["_models.FunctionName"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the function to call."""
 
@@ -512,9 +512,9 @@ class ToolDefinition(_Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureAISearchToolDefinition, AzureFunctionToolDefinition, BingCustomSearchToolDefinition,
     BingGroundingToolDefinition, BrowserAutomationToolDefinition, CodeInterpreterToolDefinition,
-    ConnectedAgentToolDefinition, DeepResearchToolDefinition, MicrosoftFabricToolDefinition,
-    FileSearchToolDefinition, FunctionToolDefinition, MCPToolDefinition, OpenApiToolDefinition,
-    SharepointToolDefinition
+    ComputerUseToolDefinition, ConnectedAgentToolDefinition, DeepResearchToolDefinition,
+    MicrosoftFabricToolDefinition, FileSearchToolDefinition, FunctionToolDefinition,
+    MCPToolDefinition, OpenApiToolDefinition, SharepointToolDefinition
 
     :ivar type: The object type. Required. Default value is None.
     :vartype type: str
@@ -1179,6 +1179,85 @@ class BrowserAutomationToolParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ComputerUseAction(_Model):
+    """An abstract representation of a computer use action.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ClickAction, DoubleClickAction, DragAction, KeyPressAction, MoveAction, ScreenshotAction,
+    ScrollAction, TypeAction, WaitAction
+
+    :ivar type: The type of computer use action. Required. Default value is None.
+    :vartype type: str
+    """
+
+    __mapping__: Dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """The type of computer use action. Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ClickAction(ComputerUseAction, discriminator="click"):
+    """A click action.
+
+    :ivar type: Specifies the event type. For a click action, this property is always set to click.
+     Required. Default value is "click".
+    :vartype type: str
+    :ivar x: The x-coordinate where the click occurred. Required.
+    :vartype x: int
+    :ivar y: The y-coordinate where the click occurred. Required.
+    :vartype y: int
+    :ivar button: Indicates which mouse button was pressed during the click. Required. Known values
+     are: "left", "right", "wheel", "back", and "forward".
+    :vartype button: str or ~azure.ai.agents.models.MouseButton
+    """
+
+    type: Literal["click"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Specifies the event type. For a click action, this property is always set to click. Required.
+     Default value is \"click\"."""
+    x: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The x-coordinate where the click occurred. Required."""
+    y: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The y-coordinate where the click occurred. Required."""
+    button: Union[str, "_models.MouseButton"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Indicates which mouse button was pressed during the click. Required. Known values are:
+     \"left\", \"right\", \"wheel\", \"back\", and \"forward\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        x: int,
+        y: int,
+        button: Union[str, "_models.MouseButton"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="click", **kwargs)
+
+
 class CodeInterpreterToolDefinition(ToolDefinition, discriminator="code_interpreter"):
     """The input definition information for a code interpreter tool as used to configure an agent.
 
@@ -1234,6 +1313,209 @@ class CodeInterpreterToolResource(_Model):
         *,
         file_ids: Optional[List[str]] = None,
         data_sources: Optional[List["_models.VectorStoreDataSource"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ComputerScreenshot(_Model):
+    """The output from a computer use tool representing a screenshot.
+
+    :ivar type: Specifies the event type. For a computer screenshot, this property is always set to
+     computer_screenshot. Required. Default value is "computer_screenshot".
+    :vartype type: str
+    :ivar file_id: The identifier of an uploaded file that contains the screenshot.
+    :vartype file_id: str
+    :ivar image_url: The URL of the screenshot image.
+    :vartype image_url: str
+    """
+
+    type: Literal["computer_screenshot"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Specifies the event type. For a computer screenshot, this property is always set to
+     computer_screenshot. Required. Default value is \"computer_screenshot\"."""
+    file_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The identifier of an uploaded file that contains the screenshot."""
+    image_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The URL of the screenshot image."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        file_id: Optional[str] = None,
+        image_url: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["computer_screenshot"] = "computer_screenshot"
+
+
+class ToolOutput(_Model):
+    """The data provided during a tool outputs submission to resolve pending tool calls and allow the
+    model to continue.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ComputerToolOutput, FunctionToolOutput
+
+    :ivar type: The object type for the tool output. Required. Default value is None.
+    :vartype type: str
+    :ivar tool_call_id: The ID of the tool call being resolved, as provided in the tool calls of a
+     required action from a run. Required.
+    :vartype tool_call_id: str
+    """
+
+    __mapping__: Dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """The object type for the tool output. Required. Default value is None."""
+    tool_call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the tool call being resolved, as provided in the tool calls of a required action from
+     a run. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+        tool_call_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ComputerToolOutput(ToolOutput, discriminator="computer_call_output"):
+    """The output from a computer use tool to be submitted.
+
+    :ivar tool_call_id: The ID of the tool call being resolved, as provided in the tool calls of a
+     required action from a run. Required.
+    :vartype tool_call_id: str
+    :ivar type: The object type, which is always 'computer_call_output'. Required. Default value is
+     "computer_call_output".
+    :vartype type: str
+    :ivar output: The output from the computer use tool. Required.
+    :vartype output: ~azure.ai.agents.models.ComputerScreenshot
+    :ivar acknowledged_safety_checks: Safety checks that have been acknowledged by the developer.
+    :vartype acknowledged_safety_checks: list[~azure.ai.agents.models.SafetyCheck]
+    """
+
+    type: Literal["computer_call_output"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'computer_call_output'. Required. Default value is
+     \"computer_call_output\"."""
+    output: "_models.ComputerScreenshot" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The output from the computer use tool. Required."""
+    acknowledged_safety_checks: Optional[List["_models.SafetyCheck"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Safety checks that have been acknowledged by the developer."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tool_call_id: str,
+        output: "_models.ComputerScreenshot",
+        acknowledged_safety_checks: Optional[List["_models.SafetyCheck"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="computer_call_output", **kwargs)
+
+
+class ComputerUseToolDefinition(ToolDefinition, discriminator="computer_use_preview"):
+    """The input definition information for a Computer Use tool as used to configure an agent.
+
+    :ivar type: The object type, which is always 'computer_use_preview'. Required. Default value is
+     "computer_use_preview".
+    :vartype type: str
+    :ivar computer_use_preview: The computer use tool parameters. Required.
+    :vartype computer_use_preview: ~azure.ai.agents.models.ComputerUseToolParameters
+    """
+
+    type: Literal["computer_use_preview"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'computer_use_preview'. Required. Default value is
+     \"computer_use_preview\"."""
+    computer_use_preview: "_models.ComputerUseToolParameters" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The computer use tool parameters. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        computer_use_preview: "_models.ComputerUseToolParameters",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="computer_use_preview", **kwargs)
+
+
+class ComputerUseToolParameters(_Model):
+    """The computer use tool parameters.
+
+    :ivar display_width: The display width for the computer use tool. Required.
+    :vartype display_width: int
+    :ivar display_height: The display height for the computer use tool. Required.
+    :vartype display_height: int
+    :ivar environment: The environment for the computer use tool. Required. Known values are:
+     "windows", "mac", "linux", and "browser".
+    :vartype environment: str or ~azure.ai.agents.models.ComputerUseEnvironment
+    """
+
+    display_width: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The display width for the computer use tool. Required."""
+    display_height: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The display height for the computer use tool. Required."""
+    environment: Union[str, "_models.ComputerUseEnvironment"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The environment for the computer use tool. Required. Known values are: \"windows\", \"mac\",
+     \"linux\", and \"browser\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        display_width: int,
+        display_height: int,
+        environment: Union[str, "_models.ComputerUseEnvironment"],
     ) -> None: ...
 
     @overload
@@ -1322,6 +1604,39 @@ class ConnectedAgentToolDefinition(ToolDefinition, discriminator="connected_agen
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, type="connected_agent", **kwargs)
+
+
+class CoordinatePoint(_Model):
+    """A coordinate point with x and y values.
+
+    :ivar x: The x-coordinate. Required.
+    :vartype x: int
+    :ivar y: The y-coordinate. Required.
+    :vartype y: int
+    """
+
+    x: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The x-coordinate. Required."""
+    y: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The y-coordinate. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        x: int,
+        y: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class DeepResearchBingGroundingConnection(_Model):
@@ -1423,6 +1738,79 @@ class DeepResearchToolDefinition(ToolDefinition, discriminator="deep_research"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, type="deep_research", **kwargs)
+
+
+class DoubleClickAction(ComputerUseAction, discriminator="double_click"):
+    """A double click action.
+
+    :ivar type: Specifies the event type. For a double click action, this property is always set to
+     double_click. Required. Default value is "double_click".
+    :vartype type: str
+    :ivar x: The x-coordinate where the double click occurred. Required.
+    :vartype x: int
+    :ivar y: The y-coordinate where the double click occurred. Required.
+    :vartype y: int
+    """
+
+    type: Literal["double_click"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Specifies the event type. For a double click action, this property is always set to
+     double_click. Required. Default value is \"double_click\"."""
+    x: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The x-coordinate where the double click occurred. Required."""
+    y: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The y-coordinate where the double click occurred. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        x: int,
+        y: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="double_click", **kwargs)
+
+
+class DragAction(ComputerUseAction, discriminator="drag"):
+    """A drag action.
+
+    :ivar type: Specifies the event type. For a drag action, this property is always set to drag.
+     Required. Default value is "drag".
+    :vartype type: str
+    :ivar path: An array of coordinates representing the path of the drag action. Required.
+    :vartype path: list[~azure.ai.agents.models.CoordinatePoint]
+    """
+
+    type: Literal["drag"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Specifies the event type. For a drag action, this property is always set to drag. Required.
+     Default value is \"drag\"."""
+    path: List["_models.CoordinatePoint"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An array of coordinates representing the path of the drag action. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        path: List["_models.CoordinatePoint"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="drag", **kwargs)
 
 
 class FabricDataAgentToolParameters(_Model):
@@ -1893,6 +2281,44 @@ class FunctionToolDefinition(ToolDefinition, discriminator="function"):
         super().__init__(*args, type="function", **kwargs)
 
 
+class FunctionToolOutput(ToolOutput, discriminator="function_call_output"):
+    """The output from a function tool to be submitted.
+
+    :ivar tool_call_id: The ID of the tool call being resolved, as provided in the tool calls of a
+     required action from a run. Required.
+    :vartype tool_call_id: str
+    :ivar type: The object type, which is always 'function_call_output'. Required. Default value is
+     "function_call_output".
+    :vartype type: str
+    :ivar output: The output from the function tool to be submitted. Required.
+    :vartype output: str
+    """
+
+    type: Literal["function_call_output"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'function_call_output'. Required. Default value is
+     \"function_call_output\"."""
+    output: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The output from the function tool to be submitted. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tool_call_id: str,
+        output: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="function_call_output", **kwargs)
+
+
 class IncompleteRunDetails(_Model):
     """Details on why the run is incomplete. Will be ``null`` if the run is not incomplete.
 
@@ -1925,6 +2351,42 @@ class IncompleteRunDetails(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class KeyPressAction(ComputerUseAction, discriminator="keypress"):
+    """A collection of keypresses the model would like to perform.
+
+    :ivar type: Specifies the event type. For a keypress action, this property is always set to
+     keypress. Required. Default value is "keypress".
+    :vartype type: str
+    :ivar keys_property: The combination of keys the model is requesting to be pressed. This is an
+     array of strings, each representing a key. Required.
+    :vartype keys_property: list[str]
+    """
+
+    type: Literal["keypress"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Specifies the event type. For a keypress action, this property is always set to keypress.
+     Required. Default value is \"keypress\"."""
+    keys_property: List[str] = rest_field(name="keys", visibility=["read", "create", "update", "delete", "query"])
+    """The combination of keys the model is requesting to be pressed. This is an array of strings,
+     each representing a key. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        keys_property: List[str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="keypress", **kwargs)
 
 
 class MCPApprovalPerTool(_Model):
@@ -3390,6 +3852,45 @@ class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="fabric_dataag
         super().__init__(*args, type="fabric_dataagent", **kwargs)
 
 
+class MoveAction(ComputerUseAction, discriminator="move"):
+    """A mouse move action.
+
+    :ivar type: Specifies the event type. For a move action, this property is always set to move.
+     Required. Default value is "move".
+    :vartype type: str
+    :ivar x: The x-coordinate to move to. Required.
+    :vartype x: int
+    :ivar y: The y-coordinate to move to. Required.
+    :vartype y: int
+    """
+
+    type: Literal["move"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Specifies the event type. For a move action, this property is always set to move. Required.
+     Default value is \"move\"."""
+    x: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The x-coordinate to move to. Required."""
+    y: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The y-coordinate to move to. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        x: int,
+        y: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="move", **kwargs)
+
+
 class OpenApiAuthDetails(_Model):
     """authentication details for OpenApiFunctionDefinition.
 
@@ -3698,7 +4199,7 @@ class RequiredToolCall(_Model):
     """An abstract representation of a tool invocation needed by the model to continue a run.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    RequiredFunctionToolCall, RequiredMcpToolCall
+    RequiredComputerUseToolCall, RequiredFunctionToolCall, RequiredMcpToolCall
 
     :ivar type: The object type for the required tool call. Required. Default value is None.
     :vartype type: str
@@ -3730,6 +4231,91 @@ class RequiredToolCall(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class RequiredComputerUseToolCall(RequiredToolCall, discriminator="computer_use_preview"):
+    """A representation of a requested call to a Computer Use tool, needed by the model to continue
+    evaluation of a run.
+
+    :ivar id: The ID of the tool call. This ID must be referenced when submitting tool outputs.
+     Required.
+    :vartype id: str
+    :ivar type: The object type of the required tool call. Always 'computer_use_preview' for
+     Computer Use tools. Required. Default value is "computer_use_preview".
+    :vartype type: str
+    :ivar computer_use_preview: Detailed information about the computer use action to be executed.
+     Required.
+    :vartype computer_use_preview: ~azure.ai.agents.models.RequiredComputerUseToolCallDetails
+    """
+
+    type: Literal["computer_use_preview"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type of the required tool call. Always 'computer_use_preview' for Computer Use
+     tools. Required. Default value is \"computer_use_preview\"."""
+    computer_use_preview: "_models.RequiredComputerUseToolCallDetails" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Detailed information about the computer use action to be executed. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        computer_use_preview: "_models.RequiredComputerUseToolCallDetails",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="computer_use_preview", **kwargs)
+
+
+class RequiredComputerUseToolCallDetails(_Model):
+    """The detailed information for a computer use tool invocation.
+
+    :ivar action: The action to be performed by the computer use tool. Required.
+    :vartype action: ~azure.ai.agents.models.ComputerUseAction
+    :ivar pending_safety_checks: Safety checks that are pending acknowledgment by the developer.
+     Required.
+    :vartype pending_safety_checks: list[~azure.ai.agents.models.SafetyCheck]
+    :ivar type: The type of the computer call. Always 'computer_call'. Required. Default value is
+     "computer_call".
+    :vartype type: str
+    """
+
+    action: "_models.ComputerUseAction" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The action to be performed by the computer use tool. Required."""
+    pending_safety_checks: List["_models.SafetyCheck"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Safety checks that are pending acknowledgment by the developer. Required."""
+    type: Literal["computer_call"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The type of the computer call. Always 'computer_call'. Required. Default value is
+     \"computer_call\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        action: "_models.ComputerUseAction",
+        pending_safety_checks: List["_models.SafetyCheck"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["computer_call"] = "computer_call"
 
 
 class RequiredFunctionToolCall(RequiredToolCall, discriminator="function"):
@@ -4149,7 +4735,7 @@ class RunStepToolCall(_Model):
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     RunStepAzureAISearchToolCall, RunStepBingCustomSearchToolCall, RunStepBingGroundingToolCall,
-    RunStepBrowserAutomationToolCall, RunStepCodeInterpreterToolCall,
+    RunStepBrowserAutomationToolCall, RunStepCodeInterpreterToolCall, RunStepComputerUseToolCall,
     RunStepConnectedAgentToolCall, RunStepDeepResearchToolCall, RunStepMicrosoftFabricToolCall,
     RunStepFileSearchToolCall, RunStepFunctionToolCall, RunStepMcpToolCall, RunStepOpenAPIToolCall,
     RunStepSharepointToolCall
@@ -4590,6 +5176,104 @@ class RunStepCompletionUsage(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class RunStepComputerUseToolCall(RunStepToolCall, discriminator="computer_use_preview"):
+    """A record of a call to a Computer Use tool, issued by the model in evaluation of a defined tool,
+    that represents
+    executed computer automation actions.
+
+    :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
+     Required.
+    :vartype id: str
+    :ivar type: The object type, which is always 'computer_use_preview'. Required. Default value is
+     "computer_use_preview".
+    :vartype type: str
+    :ivar computer_use_preview: The detailed information about the computer use tool call.
+     Required.
+    :vartype computer_use_preview: ~azure.ai.agents.models.RunStepComputerUseToolCallDetails
+    :ivar output: The output from the computer use tool. Required.
+    :vartype output: ~azure.ai.agents.models.ComputerScreenshot
+    :ivar acknowledged_safety_checks: Safety checks that have been acknowledged by the developer.
+    :vartype acknowledged_safety_checks: list[~azure.ai.agents.models.SafetyCheck]
+    """
+
+    type: Literal["computer_use_preview"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'computer_use_preview'. Required. Default value is
+     \"computer_use_preview\"."""
+    computer_use_preview: "_models.RunStepComputerUseToolCallDetails" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The detailed information about the computer use tool call. Required."""
+    output: "_models.ComputerScreenshot" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The output from the computer use tool. Required."""
+    acknowledged_safety_checks: Optional[List["_models.SafetyCheck"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Safety checks that have been acknowledged by the developer."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        computer_use_preview: "_models.RunStepComputerUseToolCallDetails",
+        output: "_models.ComputerScreenshot",
+        acknowledged_safety_checks: Optional[List["_models.SafetyCheck"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="computer_use_preview", **kwargs)
+
+
+class RunStepComputerUseToolCallDetails(_Model):
+    """The detailed information about a computer use tool call.
+
+    :ivar action: The action to be performed by the computer use tool. Required.
+    :vartype action: ~azure.ai.agents.models.ComputerUseAction
+    :ivar pending_safety_checks: Safety checks that are pending acknowledgment by the developer.
+     Required.
+    :vartype pending_safety_checks: list[~azure.ai.agents.models.SafetyCheck]
+    :ivar type: The type of the computer call. Always 'computer_call'. Required. Default value is
+     "computer_call".
+    :vartype type: str
+    """
+
+    action: "_models.ComputerUseAction" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The action to be performed by the computer use tool. Required."""
+    pending_safety_checks: List["_models.SafetyCheck"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Safety checks that are pending acknowledgment by the developer. Required."""
+    type: Literal["computer_call"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The type of the computer call. Always 'computer_call'. Required. Default value is
+     \"computer_call\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        action: "_models.ComputerUseAction",
+        pending_safety_checks: List["_models.SafetyCheck"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["computer_call"] = "computer_call"
 
 
 class RunStepConnectedAgent(_Model):
@@ -6213,6 +6897,121 @@ class RunStepToolCallDetails(RunStepDetails, discriminator="tool_calls"):
         super().__init__(*args, type=RunStepType.TOOL_CALLS, **kwargs)
 
 
+class SafetyCheck(_Model):
+    """Safety check that has been acknowledged by the developer.
+
+    :ivar id: The ID of the pending safety check. Required.
+    :vartype id: str
+    :ivar code: The type of the pending safety check.
+    :vartype code: str
+    :ivar message: Details about the pending safety check.
+    :vartype message: str
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the pending safety check. Required."""
+    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The type of the pending safety check."""
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Details about the pending safety check."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        code: Optional[str] = None,
+        message: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ScreenshotAction(ComputerUseAction, discriminator="screenshot"):
+    """A screenshot action.
+
+    :ivar type: Specifies the event type. For a screenshot action, this property is always set to
+     screenshot. Required. Default value is "screenshot".
+    :vartype type: str
+    """
+
+    type: Literal["screenshot"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Specifies the event type. For a screenshot action, this property is always set to screenshot.
+     Required. Default value is \"screenshot\"."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="screenshot", **kwargs)
+
+
+class ScrollAction(ComputerUseAction, discriminator="scroll"):
+    """A scroll action.
+
+    :ivar type: Specifies the event type. For a scroll action, this property is always set to
+     scroll. Required. Default value is "scroll".
+    :vartype type: str
+    :ivar x: The x-coordinate where the scroll occurred. Required.
+    :vartype x: int
+    :ivar y: The y-coordinate where the scroll occurred. Required.
+    :vartype y: int
+    :ivar scroll_x: The horizontal scroll distance. Required.
+    :vartype scroll_x: int
+    :ivar scroll_y: The vertical scroll distance. Required.
+    :vartype scroll_y: int
+    """
+
+    type: Literal["scroll"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Specifies the event type. For a scroll action, this property is always set to scroll. Required.
+     Default value is \"scroll\"."""
+    x: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The x-coordinate where the scroll occurred. Required."""
+    y: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The y-coordinate where the scroll occurred. Required."""
+    scroll_x: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The horizontal scroll distance. Required."""
+    scroll_y: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The vertical scroll distance. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        x: int,
+        y: int,
+        scroll_x: int,
+        scroll_y: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="scroll", **kwargs)
+
+
 class SharepointGroundingToolParameters(_Model):
     """The sharepoint grounding tool parameters.
 
@@ -6934,42 +7733,6 @@ class ToolConnection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ToolOutput(_Model):
-    """The data provided during a tool outputs submission to resolve pending tool calls and allow the
-    model to continue.
-
-    :ivar tool_call_id: The ID of the tool call being resolved, as provided in the tool calls of a
-     required action from a run.
-    :vartype tool_call_id: str
-    :ivar output: The output from the tool to be submitted.
-    :vartype output: str
-    """
-
-    tool_call_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The ID of the tool call being resolved, as provided in the tool calls of a required action from
-     a run."""
-    output: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The output from the tool to be submitted."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        tool_call_id: Optional[str] = None,
-        output: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class ToolResources(_Model):
     """A set of resources that are used by the agent's tools. The resources are specific to the type
     of
@@ -7073,6 +7836,40 @@ class TruncationObject(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class TypeAction(ComputerUseAction, discriminator="type"):
+    """An action to type in text.
+
+    :ivar type: Specifies the event type. For a type action, this property is always set to type.
+     Required. Default value is "type".
+    :vartype type: str
+    :ivar text: The text to type. Required.
+    :vartype text: str
+    """
+
+    type: Literal["type"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Specifies the event type. For a type action, this property is always set to type. Required.
+     Default value is \"type\"."""
+    text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The text to type. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        text: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="type", **kwargs)
 
 
 class UploadFileRequest(_Model):
@@ -7900,3 +8697,31 @@ class VectorStoreStaticChunkingStrategyResponse(
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, type=VectorStoreChunkingStrategyResponseType.STATIC, **kwargs)
+
+
+class WaitAction(ComputerUseAction, discriminator="wait"):
+    """A wait action.
+
+    :ivar type: Specifies the event type. For a wait action, this property is always set to wait.
+     Required. Default value is "wait".
+    :vartype type: str
+    """
+
+    type: Literal["wait"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Specifies the event type. For a wait action, this property is always set to wait. Required.
+     Default value is \"wait\"."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="wait", **kwargs)
