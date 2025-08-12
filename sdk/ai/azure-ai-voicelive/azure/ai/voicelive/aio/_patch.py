@@ -439,10 +439,10 @@ class VoiceLiveConnection:
         Accepts either:
 
         - A mapping-like object (e.g., dict, MappingProxyType). It will be copied
-        to a plain dict and JSON-encoded. Any nested SDK models are handled
-        by a fallback serializer.
+          to a plain dict and JSON-encoded. Any nested SDK models are handled
+          by a fallback serializer.
         - A structured ClientEvent model. If the object (or its class) exposes a
-        `serialize()` method, that is used to produce the wire format.
+          `serialize()` method, that is used to produce the wire format.
 
         :param event: The event to send.
         :type event: Union[Mapping[str, Any], ~azure.ai.voicelive.models.ClientEvent]

@@ -206,7 +206,7 @@ with client.connect(model="gpt-4o-realtime-preview") as connection:
                 connection.send({"type": "input_audio_buffer.commit"})
 ```
 
-More examples can be found in the [samples](samples/) directory.
+More examples can be found in the "samples" folder.
 
 ## Contributing
 
