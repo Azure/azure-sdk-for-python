@@ -1,6 +1,6 @@
 # Release History
 
-## 1.6.14 (Unreleased)
+## 1.7.0 (Unreleased)
 
 ### Features Added
 - Added configuration changes for RateLimited Sampler.
