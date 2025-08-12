@@ -36,7 +36,7 @@ dependencies = [
 dynamic = ["version", "readme"]
 
 [project.urls]
-repository = "https://github.com/Azure/azure-sdk-for-python/"
+repository = "https://github.com/Azure/azure-sdk-for-python"
 
 [tool.setuptools.dynamic]
 version = {attr = "azure.cosmos._version.VERSION"}
@@ -47,7 +47,6 @@ exclude = ["samples*", "tests*", "doc*", "azure"]
 
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]
-"azure" = ["__init__.py"]
 
 [tool.azure-sdk-build]
 mypy = true
