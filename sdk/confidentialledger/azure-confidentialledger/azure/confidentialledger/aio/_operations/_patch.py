@@ -16,7 +16,7 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 
 from azure.confidentialledger.aio._operations._operations import (
-    ConfidentialLedgerClientOperationsMixin as GeneratedOperationsMixin,
+    _ConfidentialLedgerClientOperationsMixin as GeneratedOperationsMixin,
 )
 from azure.confidentialledger.aio._operations._operations import ClsType, JSON
 from azure.confidentialledger._operations._patch import BaseStatePollingMethod
