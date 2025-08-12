@@ -98,7 +98,7 @@ Comprehensive face recognition capabilities:
 1. **Set up authentication**:
    ```bash
    # Copy sample environment file
-   cd generated_samples
+   cd samples
    cp env.sample .env
    
    # Edit .env with your endpoint (required)
@@ -119,7 +119,7 @@ Comprehensive face recognition capabilities:
 
 3. **Run any sample**:
    ```bash
-   cd generated_samples
+   cd samples
    python content_analyzers_analyze_binary.py       # Analyze binary files (PDFs, images, documents)
    python content_analyzers_create_or_replace.py    # Create custom analyzer using begin_create_or_replace API
    ```
