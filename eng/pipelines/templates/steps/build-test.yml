@@ -18,6 +18,8 @@ parameters:
   UseFederatedAuth: false
   ServiceConnection: ''
 
+
+# Please use `$(TargetingString)` to refer to the python packages glob string. This variable is set from resolve-package-targeting.yml.
 steps:
   - template: /eng/pipelines/templates/steps/use-python-version.yml
     parameters:
@@ -29,26 +31,23 @@ steps:
 
   - template: set-dev-build.yml
 
-  # --- NEW: system deps for PyAudio (only when needed) ---
-  - script: |
-      sudo apt-get update
-      sudo apt-get install -y portaudio19-dev libasound2-dev
-    displayName: Install PortAudio (Linux)
-    condition: eq(variables['Agent.OS'], 'Linux')
-
-  - script: |
-      brew update
-      brew install portaudio
-    displayName: Install PortAudio (macOS)
-    condition: eq(variables['Agent.OS'], 'Darwin')
-  # -------------------------------------------------------
-
   - pwsh: |
-      if ($IsWindows) {
-        . "$(VENV_LOCATION)/Scripts/Activate.ps1"
-      } else {
-        . "$(VENV_LOCATION)/bin/Activate.ps1"
+      # Install PortAudio system deps for PyAudio (non-Windows)
+      if ($IsLinux) {
+        sudo apt-get update
+        sudo apt-get install -y portaudio19-dev libasound2-dev
+      } elseif ($IsMacOS) {
+        brew update
+        brew install portaudio
       }
+      
+      if ($IsWindows) {
+        . $(VENV_LOCATION)/Scripts/Activate.ps1
+      }
+      else {
+        . $(VENV_LOCATION)/bin/activate.ps1
+      }
+      
       $ErrorActionPreference = 'Stop'
       $PSNativeCommandUseErrorActionPreference = $true
       python -m pip install --force -r eng/ci_tools.txt
@@ -87,13 +86,19 @@ steps:
           $env:AZURESUBSCRIPTION_TENANT_ID = $account.Tenants;
 
           if ($IsWindows) {
-            . "$(VENV_LOCATION)/Scripts/Activate.ps1"
-          } else {
-            . "$(VENV_LOCATION)/bin/Activate.ps1"
+            . $(VENV_LOCATION)/Scripts/Activate.ps1
+          }
+          else {
+            . $(VENV_LOCATION)/bin/activate.ps1
           }
           Write-Host (Get-Command python).Source
 
-          if ($env:TESTMARKARGUMENT) { $markArg = $env:TESTMARKARGUMENT } else { $markArg = "${{ parameters.TestMarkArgument }}" }
+          if ($env:TESTMARKARGUMENT) {
+            $markArg = $env:TESTMARKARGUMENT
+          }
+          else {
+            $markArg = "${{ parameters.TestMarkArgument }}"
+          }
 
           python scripts/devops_tasks/dispatch_tox.py
           "$(TargetingString)"
@@ -110,13 +115,19 @@ steps:
   - ${{ else }}:
     - pwsh: |
         if ($IsWindows) {
-          . "$(VENV_LOCATION)/Scripts/Activate.ps1"
-        } else {
-          . "$(VENV_LOCATION)/bin/Activate.ps1"
+          . $(VENV_LOCATION)/Scripts/Activate.ps1
+        }
+        else {
+          . $(VENV_LOCATION)/bin/activate.ps1
         }
         Write-Host (Get-Command python).Source
 
-        if ($env:TESTMARKARGUMENT) { $markArg = $env:TESTMARKARGUMENT } else { $markArg = "${{ parameters.TestMarkArgument }}" }
+        if ($env:TESTMARKARGUMENT) {
+          $markArg = $env:TESTMARKARGUMENT
+        }
+        else {
+          $markArg = "${{ parameters.TestMarkArgument }}"
+        }
 
         python scripts/devops_tasks/dispatch_tox.py "$(TargetingString)" `
           ${{ parameters.AdditionalTestArgs }} `
@@ -145,11 +156,13 @@ steps:
 
   - pwsh: |
       if ($IsWindows) {
-        . "$(VENV_LOCATION)/Scripts/Activate.ps1"
-      } else {
-        . "$(VENV_LOCATION)/bin/Activate.ps1"
+        . $(VENV_LOCATION)/Scripts/Activate.ps1
+      }
+      else {
+        . $(VENV_LOCATION)/bin/activate.ps1
       }
       Write-Host (Get-Command python).Source
+
       python scripts/devops_tasks/create_coverage.py
     displayName: Report Coverage
     condition: and(succeeded(), ${{ parameters.RunCoverage }})
@@ -160,6 +173,7 @@ steps:
       condition: and(succeeded(), eq(variables['TestSamples'], 'true'))
       env:
         SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+        # Enable samples tests that use DefaultAzureCredential to load the federated pipeline credential
         AZURE_POD_IDENTITY_AUTHORITY_HOST: 'https://FakeAuthorityHost'
         ${{ insert }}: ${{ parameters.EnvVars }}
       inputs:
@@ -173,9 +187,10 @@ steps:
           $env:AZURESUBSCRIPTION_TENANT_ID = $account.Tenants;
 
           if ($IsWindows) {
-            . "$(VENV_LOCATION)/Scripts/Activate.ps1"
-          } else {
-            . "$(VENV_LOCATION)/bin/Activate.ps1"
+            . $(VENV_LOCATION)/Scripts/Activate.ps1
+          }
+          else {
+            . $(VENV_LOCATION)/bin/activate.ps1
           }
           Write-Host (Get-Command python).Source
 
@@ -188,9 +203,10 @@ steps:
   - ${{ else }}:
     - pwsh: |
         if ($IsWindows) {
-          . "$(VENV_LOCATION)/Scripts/Activate.ps1"
-        } else {
-          . "$(VENV_LOCATION)/bin/Activate.ps1"
+          . $(VENV_LOCATION)/Scripts/Activate.ps1
+        }
+        else {
+          . $(VENV_LOCATION)/bin/activate.ps1
         }
         Write-Host (Get-Command python).Source
         python scripts/devops_tasks/dispatch_tox.py "$(TargetingString)" `
