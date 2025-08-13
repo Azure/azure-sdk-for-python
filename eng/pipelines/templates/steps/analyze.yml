@@ -10,8 +10,6 @@ parameters:
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This variable is set from resolve-package-targeting.yml.
 steps:
-  - template: /eng/pipelines/templates/steps/use-venv.yml
-
   - template: /eng/pipelines/templates/steps/analyze_dependency.yml
     parameters:
       ScanPath: $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}
@@ -50,7 +48,7 @@ steps:
             Condition: succeededOrFailed()
 
   - script: |
-      uv pip install "./tools/azure-sdk-tools[build]"
+      $(PIP_EXE) install "./tools/azure-sdk-tools[build]"
       sdk_find_invalid_versions --always-succeed --service=${{parameters.ServiceDirectory}}
     displayName: Find Invalid Versions
     condition: succeededOrFailed()

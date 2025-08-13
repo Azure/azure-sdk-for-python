@@ -32,8 +32,6 @@ steps:
       versionSpec: $(PythonVersion)
 
   - template: /eng/pipelines/templates/steps/use-venv.yml
-    parameters:
-      VirtualEnvironmentName: "venv"
 
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml@self
     parameters:
@@ -93,13 +91,13 @@ steps:
       $ErrorActionPreference = 'Stop'
       $PSNativeCommandUseErrorActionPreference = $true
       which python
-      uv pip install -r eng/ci_tools.txt
+      $(PIP_EXE) install -r eng/ci_tools.txt
 
       if ($env:AGENT_OS -eq "Linux") {
         Write-Host "Installing release reqs"
-        uv pip install -r eng/release_requirements.txt
+        $(PIP_EXE) install -r eng/release_requirements.txt
       }
-      uv pip freeze
+      $(PIP_EXE) freeze
     displayName: 'Prep Environment'
     condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
 

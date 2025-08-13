@@ -9,8 +9,8 @@ steps:
       Write-Host (Get-Command python).Source
       $ErrorActionPreference = 'Stop'
       $PSNativeCommandUseErrorActionPreference = $true
-      uv pip install -r $(Build.SourcesDirectory)/eng/ci_tools.txt
-      uv pip freeze
+      $(PIP_EXE) install -r $(Build.SourcesDirectory)/eng/ci_tools.txt
+      $(PIP_EXE) freeze
     displayName: 'Install Dependencies'
 
   - template: /eng/common/testproxy/test-proxy-tool.yml
