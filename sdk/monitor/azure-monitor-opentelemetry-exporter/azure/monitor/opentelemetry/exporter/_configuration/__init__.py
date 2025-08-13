@@ -58,8 +58,8 @@ class _ConfigurationManager:
         from azure.monitor.opentelemetry.exporter._configuration._worker import _ConfigurationWorker
         
         # Get initial refresh interval from state
-        with self._state_lock:
-            initial_refresh_interval = self._current_state.refresh_interval
+        with _ConfigurationManager._state_lock:
+            initial_refresh_interval = _ConfigurationManager._current_state.refresh_interval
             
         self._configuration_worker = _ConfigurationWorker(initial_refresh_interval)
 
@@ -122,8 +122,8 @@ class _ConfigurationManager:
         headers = {}
 
         # Read current state atomically
-        with self._state_lock:
-            current_state = self._current_state
+        with _ConfigurationManager._state_lock:
+            current_state = _ConfigurationManager._current_state
             if current_state.etag:
                 headers["If-None-Match"] = current_state.etag
             if current_state.refresh_interval:
@@ -145,8 +145,8 @@ class _ConfigurationManager:
         # Handle version and settings updates
         elif response.settings and response.version is not None:
             needs_config_fetch = False
-            with self._state_lock:
-                current_state = self._current_state
+            with _ConfigurationManager._state_lock:
+                current_state = _ConfigurationManager._current_state
                 
                 if response.version > current_state.version_cache:
                     # Version increase: new config available
@@ -182,28 +182,29 @@ class _ConfigurationManager:
             logger.warning("No settings or version provided in config response. Config not updated.")
 
         # Atomic state update
-        with self._state_lock:
-            latest_state = self._current_state  # Always use latest state
-            self._current_state = latest_state.with_updates(**new_state_updates)
-            return self._current_state.refresh_interval
+        with _ConfigurationManager._state_lock:
+            latest_state = _ConfigurationManager._current_state  # Always use latest state
+            _ConfigurationManager._current_state = latest_state.with_updates(**new_state_updates)
+            return _ConfigurationManager._current_state.refresh_interval
 
     def get_settings(self) -> Dict[str, str]:
         """Get current settings cache."""
-        with self._state_lock:
-            return self._current_state.settings_cache.copy()
+        with _ConfigurationManager._state_lock:
+            return _ConfigurationManager._current_state.settings_cache.copy()
 
     def get_current_version(self) -> int:
         """Get current version."""
-        with self._state_lock:
-            return self._current_state.version_cache
+        with _ConfigurationManager._state_lock:
+            return _ConfigurationManager._current_state.version_cache
 
     def shutdown(self) -> None:
         """Shutdown the configuration worker."""
-        with self._instance_lock:
+        with _ConfigurationManager._instance_lock:
             if self._configuration_worker:
                 self._configuration_worker.shutdown()
                 self._configuration_worker = None
-            self._instance = None
+            if _ConfigurationManager._instance:
+                _ConfigurationManager._instance = None
 
 
 def _update_configuration_and_get_refresh_interval() -> int:
