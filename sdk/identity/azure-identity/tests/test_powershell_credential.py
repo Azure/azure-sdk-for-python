@@ -399,7 +399,7 @@ def test_claims_challenge_error(get_token_method):
         # Test claims parameter in get_token method
         with pytest.raises(CredentialUnavailableError) as exc_info:
             getattr(AzurePowerShellCredential(), get_token_method)("scope", claims="some-claims")
-        assert "Failed to get token. Run Connect-AzAccount --ClaimsChallenge some-claims" in str(exc_info.value)
+        assert "Failed to get token. Run Connect-AzAccount -ClaimsChallenge some-claims" in str(exc_info.value)
     else:
         # Test claims in options for get_token_info method
         with pytest.raises(CredentialUnavailableError) as exc_info:
