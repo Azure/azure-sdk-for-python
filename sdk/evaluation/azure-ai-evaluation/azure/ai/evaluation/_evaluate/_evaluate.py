@@ -1006,25 +1006,14 @@ def _preprocess_data(
     # Allow pre-target column mapping via evaluator_config["target"].
     # Lets users map dataset columns to target params without renaming data.
     if target is not None and "target" in evaluator_config:
-        raw_target_cfg = cast(
-            Dict[str, Any], evaluator_config.get("target") or {}
-        )
-        target_mapping = cast(
-            Dict[str, str], raw_target_cfg.get("column_mapping", raw_target_cfg)
-        )
+        raw_target_cfg = cast(Dict[str, Any], evaluator_config.get("target") or {})
+        target_mapping = cast(Dict[str, str], raw_target_cfg.get("column_mapping", raw_target_cfg))
         if isinstance(target_mapping, dict) and len(target_mapping) > 0:
             # Only allow ${data.*} references here
             _data_ref = r"^\$\{data\.[a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)*\}$"
-            invalid = [
-                v
-                for v in target_mapping.values()
-                if not (isinstance(v, str) and re.match(_data_ref, v))
-            ]
+            invalid = [v for v in target_mapping.values() if not (isinstance(v, str) and re.match(_data_ref, v))]
             if invalid:
-                msg = (
-                    "Only ${data.*} references are allowed in target "
-                    "column_mapping."
-                )
+                msg = "Only ${data.*} references are allowed in target " "column_mapping."
                 raise EvaluationException(
                     message=msg,
                     internal_message=msg,
@@ -1032,18 +1021,14 @@ def _preprocess_data(
                     category=ErrorCategory.INVALID_VALUE,
                     blame=ErrorBlame.USER_ERROR,
                 )
-            input_data_df = _apply_column_mapping(
-                input_data_df, target_mapping
-            )
+            input_data_df = _apply_column_mapping(input_data_df, target_mapping)
     if target is not None:
         _validate_columns_for_target(input_data_df, target)
 
     # Extract evaluator name to column mapping (exclude special "target")
     column_mapping = _process_column_mappings(
         {
-            evaluator_name: evaluator_configuration.get(
-                "column_mapping", None
-            )
+            evaluator_name: evaluator_configuration.get("column_mapping", None)
             for (
                 evaluator_name,
                 evaluator_configuration,
@@ -1058,25 +1043,19 @@ def _preprocess_data(
     column_mapping.setdefault("default", {})
 
     # Split normal evaluators and OAI graders
-    evaluators, graders = _split_evaluators_and_grader_configs(
-        evaluators_and_graders
-    )
+    evaluators, graders = _split_evaluators_and_grader_configs(evaluators_and_graders)
 
     target_run: Optional[BatchClientRun] = None
     target_generated_columns: Set[str] = set()
     batch_run_client: BatchClient
     batch_run_data: Union[str, os.PathLike, pd.DataFrame] = data
 
-    def get_client_type(
-        evaluate_kwargs: Dict[str, Any]
-    ) -> Literal["run_submitter", "pf_client", "code_client"]:
+    def get_client_type(evaluate_kwargs: Dict[str, Any]) -> Literal["run_submitter", "pf_client", "code_client"]:
         """
         Determine which BatchClient to use from kwargs
         (_use_run_submitter_client and _use_pf_client)
         """
-        use_submitter = cast(
-            Optional[bool], kwargs.pop("_use_run_submitter_client", None)
-        )
+        use_submitter = cast(Optional[bool], kwargs.pop("_use_run_submitter_client", None))
         use_pf = cast(Optional[bool], kwargs.pop("_use_pf_client", None))
 
         if use_submitter is None and use_pf is None:
@@ -1085,10 +1064,7 @@ def _preprocess_data(
 
         if use_submitter and use_pf:
             raise EvaluationException(
-                message=(
-                    "Only one of _use_pf_client and _use_run_submitter_client "
-                    "should be set to True."
-                ),
+                message=("Only one of _use_pf_client and _use_run_submitter_client " "should be set to True."),
                 target=ErrorTarget.EVALUATE,
                 category=ErrorCategory.INVALID_VALUE,
                 blame=ErrorBlame.USER_ERROR,
@@ -1109,14 +1085,10 @@ def _preprocess_data(
 
         assert False, "This should be impossible"
 
-    client_type: Literal[
-        "run_submitter", "pf_client", "code_client"
-    ] = get_client_type(kwargs)
+    client_type: Literal["run_submitter", "pf_client", "code_client"] = get_client_type(kwargs)
 
     if client_type == "run_submitter":
-        batch_run_client = RunSubmitterClient(
-            raise_on_errors=fail_on_evaluator_errors
-        )
+        batch_run_client = RunSubmitterClient(raise_on_errors=fail_on_evaluator_errors)
         batch_run_data = input_data_df
     elif client_type == "pf_client":
         batch_run_client = ProxyClient(user_agent=UserAgentSingleton().value)
