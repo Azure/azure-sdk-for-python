@@ -146,7 +146,6 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
             # when atm is available, L: 145, 146 should be removed as the global endpoint shouldn't be used
             # for dataplane operations anymore
             self.mark_endpoint_unavailable_for_read(self.DefaultEndpoint, False)
-            self.mark_endpoint_unavailable_for_write(self.DefaultEndpoint, False)
             for location_name in self.PreferredLocations:
                 locational_endpoint = LocationCache.GetLocationalEndpoint(self.DefaultEndpoint, location_name)
                 try:
@@ -156,7 +155,6 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     return database_account, locational_endpoint
                 except (exceptions.CosmosHttpResponseError, AzureError):
                     self.mark_endpoint_unavailable_for_read(locational_endpoint, False)
-                    self.mark_endpoint_unavailable_for_write(locational_endpoint, False)
             raise
 
     def _endpoints_health_check(self, **kwargs):
@@ -192,7 +190,6 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     self.location_cache.mark_endpoint_available(endpoint)
                 except (exceptions.CosmosHttpResponseError, AzureError):
                     self.mark_endpoint_unavailable_for_read(endpoint, False)
-                    self.mark_endpoint_unavailable_for_write(endpoint, False)
                 finally:
                     # after the health check for that endpoint setting the timeouts back to their original values
                     self.client.connection_policy.override_dba_timeouts(previous_dba_read_timeout,

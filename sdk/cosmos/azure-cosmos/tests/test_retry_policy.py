@@ -11,8 +11,12 @@ import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 import test_config
 from azure.cosmos import _retry_utility, PartitionKey, documents
-from azure.cosmos.http_constants import HttpHeaders, StatusCodes
+from azure.cosmos.http_constants import HttpHeaders, StatusCodes, ResourceType
 from _fault_injection_transport import FaultInjectionTransport
+import os
+from unittest.mock import patch
+from azure.cosmos._database_account_retry_policy import DatabaseAccountRetryPolicy
+from azure.cosmos._constants import _Constants
 
 
 def setup_method_with_custom_transport(
@@ -483,6 +487,52 @@ class TestRetryPolicy(unittest.TestCase):
             container.replace_item(item=doc['id'], body=doc)
         assert connection_retry_policy.counter == 0
 
+    @patch.dict(os.environ, {
+        'AZURE_COSMOS_DB_ACCOUNT_MAX_RETRIES': '5',
+        'AZURE_COSMOS_DB_ACCOUNT_RETRY_AFTER_MS': '100'
+    })
+    def test_database_account_read_retry_policy(self):
+        max_retries = int(os.environ['AZURE_COSMOS_DB_ACCOUNT_MAX_RETRIES'])
+        retry_after_ms = int(os.environ['AZURE_COSMOS_DB_ACCOUNT_RETRY_AFTER_MS'])
+        self.original_execute_function = _retry_utility.ExecuteFunction
+        mock_execute = self.MockExecuteFunctionDBA(self.original_execute_function)
+        _retry_utility.ExecuteFunction = mock_execute
+
+        try:
+            with self.assertRaises(exceptions.CosmosHttpResponseError) as context:
+                cosmos_client.CosmosClient(self.host, self.masterKey)
+                # Client initialization triggers database account read
+
+            self.assertEqual(context.exception.status_code, 503)
+            self.assertEqual(mock_execute.counter, max_retries + 1)
+            policy = DatabaseAccountRetryPolicy(self.connectionPolicy)
+            self.assertEqual(policy.retry_after_in_milliseconds, retry_after_ms)
+        finally:
+            _retry_utility.ExecuteFunction = self.original_execute_function
+
+    def test_database_account_read_retry_policy_defaults(self):
+        self.original_execute_function = _retry_utility.ExecuteFunction
+        mock_execute = self.MockExecuteFunctionDBA(self.original_execute_function)
+        _retry_utility.ExecuteFunction = mock_execute
+
+        try:
+            with self.assertRaises(exceptions.CosmosHttpResponseError) as context:
+                cosmos_client.CosmosClient(self.host, self.masterKey)
+                # Triggers database account read
+
+            self.assertEqual(context.exception.status_code, 503)
+            self.assertEqual(
+                mock_execute.counter,
+                _Constants.DB_ACCOUNT_RETRY_ATTEMPTS_CONFIG_DEFAULT + 1
+            )
+            policy = DatabaseAccountRetryPolicy(self.connectionPolicy)
+            self.assertEqual(
+                policy.retry_after_in_milliseconds,
+                _Constants.DB_ACCOUNT_RETRY_AFTER_MS_CONFIG_DEFAULT
+            )
+        finally:
+            _retry_utility.ExecuteFunction = self.original_execute_function
+
     def _MockExecuteFunction(self, function, *args, **kwargs):
         response = test_config.FakeResponse({HttpHeaders.RetryAfterInMilliseconds: self.retry_after_in_milliseconds})
         raise exceptions.CosmosHttpResponseError(
@@ -515,6 +565,22 @@ class TestRetryPolicy(unittest.TestCase):
                     status_code=10054,
                     message="Connection was reset",
                     response=test_config.FakeResponse({}))
+
+    class MockExecuteFunctionDBA(object):
+        def __init__(self, org_func):
+            self.org_func = org_func
+            self.counter = 0
+
+        def __call__(self, func, *args, **kwargs):
+            request_object = args[1]
+            if (request_object.operation_type == documents._OperationType.Read and
+                    request_object.resource_type == ResourceType.DatabaseAccount):
+                self.counter += 1
+                raise exceptions.CosmosHttpResponseError(
+                    status_code=503,
+                    message="Service Unavailable.")
+            return self.org_func(func, *args, **kwargs)
+
 
 if __name__ == '__main__':
     unittest.main()
