@@ -1050,7 +1050,7 @@ class AttestationClientConfiguration(Configuration):
 __all__: List[str] = [
     "AttestationClient",
     "AttestationAdministrationClient",
-    "AttestationSigner"
+    "AttestationSigner",
     "AttestationType",
     "AttestationToken",
     "AttestationTokenValidationException",
