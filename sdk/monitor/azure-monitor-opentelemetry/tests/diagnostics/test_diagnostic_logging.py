@@ -61,7 +61,7 @@ def set_up(
     is_diagnostics_enabled,
     subscription_id_env_var=TEST_SUBSCRIPTION_ID_PLUS,
 ) -> None:
-    diagnostic_logger._logger.handlers.clear()
+    diagnostic_logger._diagnostic_file_logger.handlers.clear()
     patch.dict(
         "os.environ",
         {
@@ -169,52 +169,60 @@ class TestDiagnosticLogger:
     def test_initialize_file_handler_exception(self, temp_file_path):
         """Test that initialization fails gracefully when FileHandler creation raises an exception."""
         set_up(temp_file_path, is_diagnostics_enabled=True)
-        
         # Mock FileHandler to raise an exception
-        with patch("azure.monitor.opentelemetry._diagnostics.diagnostic_logging.logging.FileHandler") as mock_file_handler:
+        with patch("azure.monitor.opentelemetry._diagnostics.diagnostic_logging.logging.FileHandler") as mock_file_handler, \
+             patch("azure.monitor.opentelemetry._diagnostics.diagnostic_logging._logger") as mock_logger:
             mock_file_handler.side_effect = OSError("Permission denied")
             # Attempt to log, which will trigger initialization
             diagnostic_logger.AzureDiagnosticLogging.info(MESSAGE1, "4200")
             # Verify that initialization failed
             assert diagnostic_logger.AzureDiagnosticLogging._initialized is False
             check_file_is_empty(temp_file_path)
+            # Verify that the error was logged
+            mock_logger.error.assert_called_once()
 
     def test_initialize_makedirs_exception_not_file_exists(self, temp_file_path):
         """Test that initialization fails gracefully when makedirs raises a non-FileExistsError exception."""
         set_up(temp_file_path, is_diagnostics_enabled=True)
-        
         # Mock makedirs to raise a PermissionError
         with patch("azure.monitor.opentelemetry._diagnostics.diagnostic_logging.makedirs") as mock_makedirs, \
-             patch("azure.monitor.opentelemetry._diagnostics.diagnostic_logging.exists", return_value=False):
+             patch("azure.monitor.opentelemetry._diagnostics.diagnostic_logging.exists", return_value=False), \
+             patch("azure.monitor.opentelemetry._diagnostics.diagnostic_logging._logger") as mock_logger:
             mock_makedirs.side_effect = PermissionError("Permission denied")
             # Attempt to log, which will trigger initialization
             diagnostic_logger.AzureDiagnosticLogging.info(MESSAGE1, "4200")
             # Verify that initialization failed
             assert diagnostic_logger.AzureDiagnosticLogging._initialized is False
             check_file_is_empty(temp_file_path)
+            # Verify that the error was logged
+            mock_logger.error.assert_called_once()
 
     def test_initialize_makedirs_file_exists_error_handled(self, temp_file_path):
         """Test that FileExistsError from makedirs is handled gracefully and initialization continues."""
         set_up(temp_file_path, is_diagnostics_enabled=True)
-        
         # Mock makedirs to raise FileExistsError (this should be handled gracefully)
         with patch("azure.monitor.opentelemetry._diagnostics.diagnostic_logging.makedirs") as mock_makedirs, \
-             patch("azure.monitor.opentelemetry._diagnostics.diagnostic_logging.exists", return_value=False):
+             patch("azure.monitor.opentelemetry._diagnostics.diagnostic_logging.exists", return_value=False), \
+             patch("azure.monitor.opentelemetry._diagnostics.diagnostic_logging._logger") as mock_logger:
             mock_makedirs.side_effect = FileExistsError("Directory already exists")
             # Attempt to log, which will trigger initialization
             diagnostic_logger.AzureDiagnosticLogging.info(MESSAGE1, "4200")
             # Verify that initialization succeeded despite FileExistsError
             assert diagnostic_logger.AzureDiagnosticLogging._initialized is True
             check_file_for_messages(temp_file_path, "INFO", ((MESSAGE1, "4200"),))
+            # Verify that the FileExistsError was logged as info
+            mock_logger.info.assert_called_once()
 
     def test_initialize_formatter_exception(self, temp_file_path):
         """Test that initialization fails gracefully when Formatter creation raises an exception."""
         set_up(temp_file_path, is_diagnostics_enabled=True)
-        
         # Mock Formatter to raise an exception
-        with patch("azure.monitor.opentelemetry._diagnostics.diagnostic_logging.logging.Formatter") as mock_formatter:
+        with patch("azure.monitor.opentelemetry._diagnostics.diagnostic_logging.logging.Formatter") as mock_formatter, \
+             patch("azure.monitor.opentelemetry._diagnostics.diagnostic_logging._logger") as mock_logger:
             mock_formatter.side_effect = ValueError("Invalid format string")
             # Attempt to log, which will trigger initialization
             diagnostic_logger.AzureDiagnosticLogging.info(MESSAGE1, "4200")
             # Verify that initialization failed
             assert diagnostic_logger.AzureDiagnosticLogging._initialized is False
+            # Verify that the error was logged
+            mock_logger.error.assert_called_once()

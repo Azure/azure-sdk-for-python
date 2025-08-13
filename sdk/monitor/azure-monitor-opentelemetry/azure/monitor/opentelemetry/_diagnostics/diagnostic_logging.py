@@ -18,13 +18,17 @@ from azure.monitor.opentelemetry._utils import (
 )
 from azure.monitor.opentelemetry._version import VERSION
 
+# This logger is used for logging messages about the setup of AzureDiagnosticLogging
+_logger = logging.getLogger("azure.monitor.opentelemetry._diagnostics")
+
 _DIAGNOSTIC_LOGGER_FILE_NAME = "applicationinsights-extension.log"
 _SITE_NAME = _env_var_or_default("WEBSITE_SITE_NAME")
 _SUBSCRIPTION_ID_ENV_VAR = _env_var_or_default("WEBSITE_OWNER_NAME")
 _SUBSCRIPTION_ID = _SUBSCRIPTION_ID_ENV_VAR.split("+")[0] if _SUBSCRIPTION_ID_ENV_VAR else None
-_logger = logging.getLogger(__name__)
-_logger.propagate = False
-_logger.setLevel(logging.DEBUG)
+# This logger is used for logging the diagnostic logs themselves to a log file
+_diagnostic_file_logger = logging.getLogger(__name__)
+_diagnostic_file_logger.propagate = False
+_diagnostic_file_logger.setLevel(logging.DEBUG)
 _DIAGNOSTIC_LOG_PATH = _get_log_path()
 
 _DISTRO_DETECTS_ATTACH = "4100"
@@ -80,7 +84,7 @@ class AzureDiagnosticLogging:
                         f_handler = logging.FileHandler(join(_DIAGNOSTIC_LOG_PATH, _DIAGNOSTIC_LOGGER_FILE_NAME))
                         formatter = logging.Formatter(fmt=log_format, datefmt="%Y-%m-%dT%H:%M:%S")
                         f_handler.setFormatter(formatter)
-                        _logger.addHandler(f_handler)
+                        _diagnostic_file_logger.addHandler(f_handler)
                         AzureDiagnosticLogging._initialized = True
                     except Exception as e:
                         _logger.error("Failed to initialize Azure Monitor diagnostic logging: %s", e)
@@ -90,22 +94,22 @@ class AzureDiagnosticLogging:
     def debug(cls, message: str, message_id: str):
         AzureDiagnosticLogging._initialize()
         if AzureDiagnosticLogging._initialized:
-            _logger.debug(message, extra={"msgId": message_id})
+            _diagnostic_file_logger.debug(message, extra={"msgId": message_id})
 
     @classmethod
     def info(cls, message: str, message_id: str):
         AzureDiagnosticLogging._initialize()
         if AzureDiagnosticLogging._initialized:
-            _logger.info(message, extra={"msgId": message_id})
+            _diagnostic_file_logger.info(message, extra={"msgId": message_id})
 
     @classmethod
     def warning(cls, message: str, message_id: str):
         AzureDiagnosticLogging._initialize()
         if AzureDiagnosticLogging._initialized:
-            _logger.warning(message, extra={"msgId": message_id})
+            _diagnostic_file_logger.warning(message, extra={"msgId": message_id})
 
     @classmethod
     def error(cls, message: str, message_id: str):
         AzureDiagnosticLogging._initialize()
         if AzureDiagnosticLogging._initialized:
-            _logger.error(message, extra={"msgId": message_id})
+            _diagnostic_file_logger.error(message, extra={"msgId": message_id})
