@@ -526,6 +526,7 @@
     "logprobs",
     "pyaudio",
     "PyAudio",
+	"libasound",
     "ingraph"
   ],
   "overrides": [
@@ -2059,7 +2060,7 @@
     },
     {
       "filename": "sdk/ai/azure-ai-voicelive/**",
-      "words": ["viseme","VISEME","ulaw","ULAW","logprobs","pyaudio","PyAudio"]
+      "words": ["viseme","VISEME","ulaw","ULAW","logprobs","pyaudio","PyAudio","libasound"]
     }
   ],
   "allowCompoundWords": true

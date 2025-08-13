@@ -15,18 +15,30 @@ PACKAGE_NAME = "azure-ai-voicelive"
 PACKAGE_PPRINT_NAME = "Azure Ai Voicelive"
 PACKAGE_NAMESPACE = "azure.ai.voicelive"
 
-ROOT = Path(__file__).parent
 package_folder_path = PACKAGE_NAMESPACE.replace(".", "/")
 
-# Read version (UTF-8)
-version_file = ROOT / package_folder_path / "_version.py"
-version_text = version_file.read_text(encoding="utf-8")
-version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', version_text, re.MULTILINE).group(1)
-if not version:
-    raise RuntimeError("Cannot find version information")
+# Be robust when tools exec() this file without __file__
+try:
+    ROOT = Path(__file__).parent.resolve()
+except NameError:  # e.g., CI parsers that exec() the code object
+    ROOT = Path.cwd().resolve()
 
-# Read README (UTF-8)
-long_description = (ROOT / "README.md").read_text(encoding="utf-8")
+# Read version (best-effort)
+version = "0.0.0"
+try:
+    version_text = (ROOT / package_folder_path / "_version.py").read_text(encoding="utf-8")
+    m = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', version_text, re.MULTILINE)
+    if m:
+        version = m.group(1)
+except Exception:
+    # Leave default; dependency analyzer only needs metadata, not a real build
+    pass
+
+# Read README (best-effort)
+try:
+    long_description = (ROOT / "README.md").read_text(encoding="utf-8")
+except Exception:
+    long_description = ""
 
 setup(
     name=PACKAGE_NAME,
@@ -43,7 +55,6 @@ setup(
         "Development Status :: 4 - Beta",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
-        "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
@@ -52,13 +63,7 @@ setup(
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
-    packages=find_packages(
-        exclude=[
-            "tests",
-            "azure",       # covered by PEP 420
-            "azure.ai",
-        ]
-    ),
+    packages=find_packages(exclude=["tests", "azure", "azure.ai"]),
     include_package_data=True,
     package_data={"azure.ai.voicelive": ["py.typed"]},
     install_requires=[

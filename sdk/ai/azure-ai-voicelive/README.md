@@ -120,7 +120,7 @@ You can also rely on defaults set via environment variables:
 - **PyAudio / PortAudio build errors**
   - Linux: `sudo apt-get install -y portaudio19-dev libasound2-dev`
   - macOS: `brew install portaudio`
-  - Windows: try `pip install pyaudio`; if it fails, install latest MSVC Build Tools or use Conda.
+  - Windows: try `pip install pyaudio`
 
 - **No input/output devices**  
   Ensure your OS sees a microphone and speakers. On headless CI, you typically cannot run this sample.
