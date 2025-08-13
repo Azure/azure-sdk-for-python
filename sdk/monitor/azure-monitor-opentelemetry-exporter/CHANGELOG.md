@@ -3,6 +3,8 @@
 ## 1.0.0b42 (Unreleased)
 
 ### Features Added
+- Customer Facing Statsbeat: Added remaining drop codes to base
+  ([#42382](https://github.com/Azure/azure-sdk-for-python/pull/42382))
 
 ### Breaking Changes
 
@@ -14,6 +16,8 @@
 
 ### Features Added
 
+- Configuration manager/worker fetch via OneSettings part 1
+  ([#42360] https://github.com/Azure/azure-sdk-for-python/pull/42360)
 - Added RateLimited Sampler 
   ([#41954](https://github.com/Azure/azure-sdk-for-python/pull/41954))
 - Refactored Application Insights Sampler Code

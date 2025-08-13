@@ -32,7 +32,11 @@ from azure.ai.evaluation._evaluate._utils import _write_output
 from ._attack_strategy import AttackStrategy
 from ._attack_objective_generator import RiskCategory
 from ._utils.constants import RESULTS_EXT, TASK_STATUS
-from ._utils.metric_mapping import get_annotation_task_from_risk_category, get_metric_from_risk_category
+from ._utils.metric_mapping import (
+    get_annotation_task_from_risk_category,
+    get_metric_from_risk_category,
+    get_attack_objective_from_risk_category,
+)
 from ._utils.logging_utils import log_error
 from ._utils.formatting_utils import get_strategy_name
 
@@ -97,12 +101,19 @@ class EvaluationProcessor:
         # Extract all assistant messages for evaluation
         assistant_messages = [msg["content"] for msg in messages if msg.get("role") == "assistant"]
 
+        context = [msg["context"] for msg in messages if msg.get("role") == "user"]
+
         if assistant_messages:
             # Create query-response pair with empty query and all assistant messages
             query_response = {
                 "query": "query",
                 "response": " ".join(assistant_messages),
             }
+
+            # Add context to query_response if found
+            if context[0] is not None:
+                query_response["context"] = context[0]
+
             try:
                 self.logger.debug(f"Evaluating conversation {idx+1} for {risk_category.value}/{strategy_name}")
 
