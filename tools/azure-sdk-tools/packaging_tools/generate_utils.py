@@ -113,7 +113,7 @@ def call_build_config(package_name: str, folder_name: str):
         os.environ.get("GH_TOKEN", None),
         packages=[package_name],
         build_conf=True,
-        template_names=["README.md"],
+        template_names=["README.md", "__init__.py"],
     )
     # Replace this check_call by in process equivalent call, for better debugging
     # check_call(

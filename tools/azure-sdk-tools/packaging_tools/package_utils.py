@@ -252,7 +252,7 @@ class CheckFile:
             output_folder=".",
             packages=[self.whole_package_name],
             build_conf=True,
-            template_names=["README.md"],
+            template_names=["README.md", "__init__.py"],
         )
         _LOGGER.info("packaging_tools --build-conf successfully")
 
