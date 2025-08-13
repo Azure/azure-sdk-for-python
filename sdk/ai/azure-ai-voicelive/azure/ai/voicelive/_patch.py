@@ -11,9 +11,19 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import json
 import logging
 from contextlib import AbstractContextManager
-from typing_extensions import TypedDict
 from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
+try:  # Python 3.11+
+    from typing import NotRequired  # type: ignore[attr-defined]
+except Exception:  # Python <=3.10
+    from typing_extensions import NotRequired
 
+from typing import TYPE_CHECKING, Optional, Mapping, Sequence, Tuple, Union, Iterator, Any, Dict, List, cast
+try:
+    from typing import TypeAlias
+except Exception:  # pragma: no cover
+    from typing_extensions import TypeAlias  # type: ignore[assignment]
+
+from typing_extensions import TypedDict
 from azure.ai.voicelive.models._models import (
     ClientEventConversationItemCreate,
     ClientEventConversationItemDelete,
@@ -30,24 +40,14 @@ from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.exceptions import AzureError
 from .models import ClientEvent, RequestSession, ServerEvent
 
-try:  # Python 3.11+
-    from typing import NotRequired, Required  # type: ignore[attr-defined]
-except Exception:  # Python <=3.10
-    from typing_extensions import NotRequired, Required
-
-from typing import TYPE_CHECKING, Optional, Mapping, Sequence, Tuple, Union, Iterator, Any, Dict, List, cast
-
-# Subprotocol typing that doesn't reassign to a type alias
 if TYPE_CHECKING:
-    try:
-        from websockets.typing import Subprotocol  # type: ignore[missing-import]
-    except Exception:
-        class Subprotocol(str):  # fallback for type checkers if websockets isn't available
-            ...
+    from websockets.typing import Subprotocol as WSSubprotocol  # exact type for checkers
 else:
-    # Runtime placeholder; str subclass keeps runtime behavior simple
-    class Subprotocol(str):
-        pass
+    try:
+        from websockets.typing import Subprotocol as WSSubprotocol  # runtime if available
+    except Exception:
+        class WSSubprotocol(str):  # fallback, keeps runtime simple
+            pass
 
 __all__: List[str] = [
     "connect",
@@ -109,7 +109,7 @@ class WebsocketConnectionOptions(TypedDict, total=False):
 
     :keyword subprotocols: A list of subprotocols to negotiate during the
         WebSocket handshake.
-    :type subprotocols: Sequence[Subprotocol]
+    :type subprotocols: Sequence[WSSubprotocol]
 
     :keyword compression: Name of the compression method to use, or a
         compression configuration object.
@@ -134,7 +134,7 @@ class WebsocketConnectionOptions(TypedDict, total=False):
     """
 
     extensions: NotRequired[Sequence[Any]]
-    subprotocols: NotRequired[Sequence[Subprotocol]]
+    subprotocols: NotRequired[Sequence[WSSubprotocol]]
     compression: NotRequired[str]
     max_size: NotRequired[int]
     max_queue: NotRequired[Union[int, Tuple[Optional[int], Optional[int]]]]
@@ -168,10 +168,12 @@ class SessionResource:
     def update(self, *, session: Union[Mapping[str, Any], "RequestSession"], event_id: Optional[str] = None) -> None:
         """Update the session configuration.
 
-        :param session: Session configuration parameters.
-        :type session: Mapping[str, Any] or ~azure.ai.voicelive.models.RequestSession
-        :param event_id: Optional ID for the event.
-        :type event_id: str
+        :keyword session: Session configuration parameters.
+        :keyword type session: Mapping[str, Any] or ~azure.ai.voicelive.models.RequestSession
+        :keyword event_id: Optional ID for the event.
+        :keyword type event_id: str
+        :return: None
+        :rtype: None
         """
         if isinstance(session, RequestSession):
             # keyword overload: requires a typed RequestSession
@@ -197,15 +199,14 @@ class ResponseResource:
         self._connection = connection
 
     def create(self, *, response: Optional[Mapping[str, Any]] = None, event_id: Optional[str] = None) -> None:
-        """Create a response from the model.
+        """Create a new response.
 
-        Triggers model inference. In Server VAD mode, the server may create
-        responses automatically.
-
-        :param response: Optional response configuration.
-        :type response: Mapping[str, Any] or None
-        :param event_id: Optional ID for the event.
-        :type event_id: str
+        :keyword response: Optional mapping of response parameters to send.
+        :keyword type response: Mapping[str, Any] or None
+        :keyword event_id: Optional ID for the event.
+        :keyword type event_id: str or None
+        :return: None
+        :rtype: None
         """
         event = ClientEventResponseCreate()
         if response:
@@ -217,10 +218,12 @@ class ResponseResource:
     def cancel(self, *, response_id: Optional[str] = None, event_id: Optional[str] = None) -> None:
         """Cancel an in-progress response.
 
-        :param response_id: Optional ID of the response to cancel.
-        :type response_id: str
-        :param event_id: Optional ID for the event.
-        :type event_id: str
+        :keyword response_id: Optional ID of the response to cancel.
+        :keyword type response_id: str or None
+        :keyword event_id: Optional ID for the event.
+        :keyword type event_id: str or None
+        :return: None
+        :rtype: None
         """
         event = ClientEventResponseCancel()
         if response_id:
@@ -244,10 +247,12 @@ class InputAudioBufferResource:
     def append(self, *, audio: str, event_id: Optional[str] = None) -> None:
         """Append audio to the input buffer.
 
-        :param audio: Base64-encoded audio data. Must match the session's ``input_audio_format``.
-        :type audio: str
-        :param event_id: Optional ID for the event.
-        :type event_id: str
+        :keyword audio: Base64-encoded audio data. Must match the session's ``input_audio_format``.
+        :keyword type audio: str
+        :keyword event_id: Optional ID for the event.
+        :keyword type event_id: str or None
+        :return: None
+        :rtype: None
         """
         event = ClientEventInputAudioBufferAppend(audio=audio)
         if event_id:
@@ -257,10 +262,10 @@ class InputAudioBufferResource:
     def commit(self, *, event_id: Optional[str] = None) -> None:
         """Commit the input audio buffer to create a user message item.
 
-        In Server VAD mode, the server commits automatically.
-
-        :param event_id: Optional ID for the event.
-        :type event_id: str
+        :keyword event_id: Optional ID for the event.
+        :keyword type event_id: str or None
+        :return: None
+        :rtype: None
         """
         event = ClientEventInputAudioBufferCommit()
         if event_id:
@@ -270,8 +275,10 @@ class InputAudioBufferResource:
     def clear(self, *, event_id: Optional[str] = None) -> None:
         """Clear the input audio buffer.
 
-        :param event_id: Optional ID for the event.
-        :type event_id: str
+        :keyword event_id: Optional ID for the event.
+        :keyword type event_id: str or None
+        :return: None
+        :rtype: None
         """
         event = ClientEventInputAudioBufferClear()
         if event_id:
@@ -293,8 +300,10 @@ class OutputAudioBufferResource:
     def clear(self, *, event_id: Optional[str] = None) -> None:
         """Clear the output audio buffer and stop generation.
 
-        :param event_id: Optional ID for the event.
-        :type event_id: str
+        :keyword event_id: Optional ID for the event.
+        :keyword type event_id: str or None
+        :return: None
+        :rtype: None
         """
         event: Dict[str, Any] = {"type": "output_audio_buffer.clear"}
         if event_id:
@@ -318,12 +327,14 @@ class ConversationItemResource:
     ) -> None:
         """Create a new conversation item.
 
-        :param item: The item to create (message, function call, etc.).
-        :type item: Mapping[str, Any]
-        :param previous_item_id: Insert after this item, if provided.
-        :type previous_item_id: str
-        :param event_id: Optional ID for the event.
-        :type event_id: str
+        :keyword item: The item to create (message, function call, etc.).
+        :keyword type item: Mapping[str, Any]
+        :keyword previous_item_id: Insert after this item, if provided.
+        :keyword type previous_item_id: str or None
+        :keyword event_id: Optional ID for the event.
+        :keyword type event_id: str or None
+        :return: None
+        :rtype: None
         """
         event = ClientEventConversationItemCreate({"item": dict(item)})
         if previous_item_id:
@@ -335,10 +346,12 @@ class ConversationItemResource:
     def delete(self, *, item_id: str, event_id: Optional[str] = None) -> None:
         """Delete a conversation item.
 
-        :param item_id: ID of the item to delete.
-        :type item_id: str
-        :param event_id: Optional ID for the event.
-        :type event_id: str
+        :keyword item_id: ID of the item to delete.
+        :keyword type item_id: str
+        :keyword event_id: Optional ID for the event.
+        :keyword type event_id: str or None
+        :return: None
+        :rtype: None
         """
         event = ClientEventConversationItemDelete(item_id=item_id)
         if event_id:
@@ -348,10 +361,12 @@ class ConversationItemResource:
     def retrieve(self, *, item_id: str, event_id: Optional[str] = None) -> None:
         """Retrieve a conversation item.
 
-        :param item_id: ID of the item to retrieve.
-        :type item_id: str
-        :param event_id: Optional ID for the event.
-        :type event_id: str
+        :keyword item_id: ID of the item to retrieve.
+        :keyword type item_id: str
+        :keyword event_id: Optional ID for the event.
+        :keyword type event_id: str or None
+        :return: None
+        :rtype: None
         """
         event = ClientEventConversationItemRetrieve(item_id=item_id)
         if event_id:
@@ -361,14 +376,16 @@ class ConversationItemResource:
     def truncate(self, *, item_id: str, audio_end_ms: int, content_index: int, event_id: Optional[str] = None) -> None:
         """Truncate a prior assistant item's audio (e.g., on user interruption).
 
-        :param item_id: ID of the item to truncate.
-        :type item_id: str
-        :param audio_end_ms: Millisecond offset to cut at.
-        :type audio_end_ms: int
-        :param content_index: Content index within the item.
-        :type content_index: int
-        :param event_id: Optional ID for the event.
-        :type event_id: str
+        :keyword item_id: ID of the item to truncate.
+        :keyword type item_id: str
+        :keyword audio_end_ms: Millisecond offset to cut at.
+        :keyword type audio_end_ms: int
+        :keyword content_index: Content index within the item.
+        :keyword type content_index: int
+        :keyword event_id: Optional ID for the event.
+        :keyword type event_id: str or None
+        :return: None
+        :rtype: None
         """
         event = ClientEventConversationItemTruncate(
             item_id=item_id, audio_end_ms=audio_end_ms, content_index=content_index
@@ -412,10 +429,12 @@ class TranscriptionSessionResource:
     def update(self, *, session: Mapping[str, Any], event_id: Optional[str] = None) -> None:
         """Update the transcription session.
 
-        :param session: Transcription session configuration.
-        :type session: Mapping[str, Any]
-        :param event_id: Optional ID for the event.
-        :type event_id: str
+        :keyword session: Transcription session configuration.
+        :keyword type session: Mapping[str, Any]
+        :keyword event_id: Optional ID for the event.
+        :keyword type event_id: str or None
+        :return: None
+        :rtype: None
         """
         event: Dict[str, Any] = {"type": "transcription_session.update", "session": dict(session)}
         if event_id:
@@ -476,7 +495,7 @@ class VoiceLiveConnection:
             while True:
                 yield self.recv()
         except Exception as e:
-            log.debug(f"Connection closed: {e}")
+            log.debug("Connection closed: %s", e)
             return
 
     def recv(self) -> ServerEvent:
@@ -489,7 +508,7 @@ class VoiceLiveConnection:
         try:
             return ServerEvent.deserialize(self.recv_bytes())
         except Exception as e:
-            log.error(f"Error parsing message: {e}")
+            log.error("Error parsing message: %s", e)
             raise ConnectionError(f"Failed to parse message: {e}") from e
 
     def recv_bytes(self) -> bytes:
@@ -540,7 +559,7 @@ class VoiceLiveConnection:
 
             self._connection.send(data)
         except Exception as e:
-            log.error(f"Failed to send event: {e}")
+            log.error("Failed to send event: %s", e)
             raise ConnectionError(f"Failed to send event: {e}") from e
 
     def close(self, *, code: int = 1000, reason: str = "") -> None:
@@ -549,16 +568,18 @@ class VoiceLiveConnection:
         Gracefully terminates the connection to the Voice Live service and
         releases the underlying socket resources.
 
-        :param code: WebSocket close code to send to the server. Defaults to ``1000`` (Normal Closure).
-        :type code: int
-        :param reason: Optional reason string to include in the close frame.
-        :type reason: str
+        :keyword code: WebSocket close code to send to the server. Defaults to ``1000`` (Normal Closure).
+        :keyword type code: int
+        :keyword reason: Optional reason string to include in the close frame.
+        :keyword type reason: str
+        :return: None
+        :rtype: None
         """
         try:
             # websockets.sync expects `close(code=..., reason=...)`
             self._connection.close(code=code, reason=reason)
         except Exception as e:
-            log.warning(f"Error closing connection: {e}")
+            log.warning("Error closing connection: %s", e)
 
 
 class _VoiceLiveConnectionManager(AbstractContextManager["VoiceLiveConnection"]):
@@ -604,32 +625,46 @@ class _VoiceLiveConnectionManager(AbstractContextManager["VoiceLiveConnection"])
             headers = {**self._get_auth_headers(), **dict(self.__extra_headers)}
             ws_kwargs: Dict[str, Any] = dict(self.__connection_options)
             subprotocols_opt = ws_kwargs.pop("subprotocols", None)
-            subprotocols = (
-                None
-                if subprotocols_opt is None
-                else cast(Sequence[Subprotocol], subprotocols_opt)
+            subprotocols_typed: Optional[Sequence[WSSubprotocol]] = cast(
+                Optional[Sequence[WSSubprotocol]], subprotocols_opt
             )
 
-            ws = ws_connect(url, additional_headers=headers, subprotocols=subprotocols, **ws_kwargs)
+            if subprotocols_typed is not None:
+                ws = ws_connect(url, additional_headers=headers, subprotocols=subprotocols_typed, **ws_kwargs)
+            else:
+                ws = ws_connect(url, additional_headers=headers, **ws_kwargs)
             self.__connection = VoiceLiveConnection(ws)
             return self.__connection
         except WebSocketException as e:
             raise ConnectionError(f"Failed to establish WebSocket connection: {e}") from e
 
     def __exit__(self, exc_type, exc, exc_tb) -> None:
-        """Close the connection when exiting the context."""
+        """Close the connection when exiting the context.
+
+        :param exc_type: Exception type if raised, else None.
+        :param exc: Exception instance if raised, else None.
+        :param exc_tb: Traceback if an exception occurred, else None.
+        """
         if self.__connection is not None:
             self.__connection.close()
 
     def _get_auth_headers(self) -> Dict[str, str]:
-        """Get authentication headers for WebSocket connection."""
+        """Get authentication headers for WebSocket connection.
+        
+        :return: A dictionary containing authentication headers.
+        :rtype: dict[str, str]
+        """
         if isinstance(self._credential, AzureKeyCredential):
             return {"api-key": self._credential.key}
         token = self._credential.get_token(self.__credential_scopes)
         return {"Authorization": f"Bearer {token.token}"}
 
     def _prepare_url(self) -> str:
-        """Prepare the WebSocket URL."""
+        """Prepare the WebSocket URL.
+        
+        :return: The prepared WebSocket URL.
+        :rtype: str
+        """
         parsed = urlparse(self._endpoint)
         scheme = "wss" if parsed.scheme == "https" else ("ws" if parsed.scheme == "http" else parsed.scheme)
 
@@ -654,7 +689,7 @@ def connect(
     api_version: str = "2025-05-01-preview",
     query: Optional[Mapping[str, Any]] = None,
     headers: Optional[Mapping[str, Any]] = None,
-    connection_options: WebsocketConnectionOptions = {},
+    connection_options: Optional[WebsocketConnectionOptions] = None,
     **kwargs: Any,
 ) -> AbstractContextManager["VoiceLiveConnection"]:
     """
@@ -673,22 +708,22 @@ def connect(
     - :class:`~azure.core.credentials.AzureKeyCredential` (API key).
     - :class:`~azure.core.credentials.TokenCredential` (AAD), e.g., :class:`azure.identity.DefaultAzureCredential`.
 
-    :param endpoint: Service endpoint, e.g., ``https://<region>.api.cognitive.microsoft.com``.
-    :type endpoint: str
-    :param credential: Credential used to authenticate the WebSocket connection.
-    :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
-    :param model: Model identifier to use for the session.
-    :type model: str
-    :param api_version: API version to use. Defaults to ``"2025-05-01-preview"``.
-    :type api_version: str
-    :param query: Optional query parameters to include in the WebSocket URL.
-    :type query: Mapping[str, Any] or None
-    :param headers: Optional headers to include in the WebSocket handshake.
-    :type headers: Mapping[str, Any] or None
-    :param connection_options: Advanced WebSocket options passed to :func:`websockets.sync.client.connect`.
-    :type connection_options: ~azure.ai.voicelive.WebsocketConnectionOptions
-    :param kwargs: Additional keyword arguments reserved for future use.
-    :type kwargs: Any
+    :keyword endpoint: Service endpoint, e.g., ``https://<region>.api.cognitive.microsoft.com``.
+    :keyword type endpoint: str
+    :keyword credential: Credential used to authenticate the WebSocket connection.
+    :keyword type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
+    :keyword model: Model identifier to use for the session.
+    :keyword type model: str
+    :keyword api_version: API version to use. Defaults to ``"2025-05-01-preview"``.
+    :keyword type api_version: str
+    :keyword query: Optional query parameters to include in the WebSocket URL.
+    :keyword type query: Mapping[str, Any] or None
+    :keyword headers: Optional headers to include in the WebSocket handshake.
+    :keyword type headers: Mapping[str, Any] or None
+    :keyword connection_options: Advanced WebSocket options passed to :func:`websockets.sync.client.connect`.
+    :keyword type connection_options: ~azure.ai.voicelive.WebsocketConnectionOptions
+    :keyword kwargs: Additional keyword arguments reserved for future use.
+    :keyword type kwargs: Any
     :return: A context manager that yields a connected :class:`~azure.ai.voicelive.VoiceLiveConnection`.
     :rtype: contextlib.AbstractContextManager[~azure.ai.voicelive.VoiceLiveConnection]
     """

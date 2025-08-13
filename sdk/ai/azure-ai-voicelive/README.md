@@ -36,8 +36,8 @@ You can authenticate with an **API key** or an **Azure Active Directory (AAD) to
 Set environment variables (you can use a `.env` file):
 
 ```bash
-AZURE_VOICELIVE_API_KEY="<your-api-key>"
-AZURE_VOICELIVE_ENDPOINT="wss://<host>/openai/realtime"
+export AZURE_VOICELIVE_API_KEY="<your-api-key>"
+export AZURE_VOICELIVE_ENDPOINT="wss://<host>/openai/realtime"
 ```
 
 **AAD (token credential):**
@@ -100,7 +100,7 @@ async def main():
         # Consume a few events
         async for evt in conn:
             print("event:", evt.type)
-            if evt.type.endswith("done"):
+            if evt.type == ServerEventType.RESPONSE_DONE:
                 break
 
 asyncio.run(main())
@@ -128,12 +128,54 @@ with connect(endpoint=ENDPOINT, credential=AzureKeyCredential(API_KEY), model=MO
 
     for evt in conn:
         print("event:", evt.type)
-        if evt.type.endswith("done"):
+        if evt.type == ServerEventType.RESPONSE_DONE:
             break
 ```
 
 > See the full-featured sample in `samples/basic_voice_assistant_async.py` for
 > microphone capture, streaming, and audio playback with interruption handling.
+
+---
+
+Troubleshooting
+---------------
+
+- **WebSocket connection errors (1006/timeout):**  
+  Verify `AZURE_VOICELIVE_ENDPOINT`, network rules, and that your credential has access.
+
+- **Auth failures:**  
+  For API key, double-check `AZURE_VOICELIVE_API_KEY`. For AAD, ensure the identity is authorized.
+
+- **Audio device issues (samples):**  
+  Ensure a microphone/speaker is available and enabled. On Linux/macOS you may need PortAudio:
+  ```bash
+  # Debian/Ubuntu
+  sudo apt-get update && sudo apt-get install -y portaudio19-dev libasound2-dev
+  # macOS (Homebrew)
+  brew install portaudio
+  ```
+
+- **ImportError: websockets / aiohttp:**  
+  Install the optional dependency set:  
+  ```bash
+  python -m pip install 'azure-ai-voicelive[websockets]'
+  ```
+
+If problems persist, run with verbose logging and include logs when filing an issue:
+```python
+import logging
+logging.basicConfig(level=logging.DEBUG)
+```
+
+---
+
+Next steps
+----------
+
+- Explore the **samples** directory, especially `basic_voice_assistant_async.py`.  
+- Try adding **function calls** and **tool results** to your conversation items.  
+- Integrate with your app’s audio capture/playback pipeline.  
+- Follow Azure SDK guidelines when contributing.
 
 ---
 

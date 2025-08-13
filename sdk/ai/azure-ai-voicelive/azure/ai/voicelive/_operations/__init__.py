@@ -7,7 +7,4 @@
 # --------------------------------------------------------------------------
 # pylint: disable=wrong-import-position
 
-from typing import TYPE_CHECKING
-
 __all__ = []
-__all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore

@@ -11,11 +11,12 @@ import aiohttp
 import json
 import logging
 from contextlib import AbstractAsyncContextManager
-from typing import Any, Dict, List, Mapping, Optional, Union, AsyncIterator, cast
-from typing_extensions import TypedDict
+from typing import Any, Dict, List, Mapping, Optional, Union, AsyncIterator
 from urllib.parse import urlparse, urlunparse, urlencode, parse_qs
 
-from azure.ai.voicelive.models._enums import ClientEventType
+import aiohttp
+from typing_extensions import TypedDict
+
 from azure.ai.voicelive.models._models import (
     ClientEventConversationItemCreate,
     ClientEventConversationItemDelete,
@@ -33,9 +34,9 @@ from azure.core.pipeline import policies
 from ..models import ClientEvent, ServerEvent, RequestSession
 from .._patch import ConnectionError, ConnectionClosed
 try:  # Python 3.11+
-    from typing import NotRequired, Required  # type: ignore[attr-defined]
-except Exception:  # Python <=3.10
-    from typing_extensions import NotRequired, Required
+    from typing import NotRequired  # type: ignore[attr-defined]
+except ImportError:  # Python <=3.10
+    from typing_extensions import NotRequired
 
 
 __all__: List[str] = [
@@ -55,7 +56,14 @@ log = logging.getLogger(__name__)
 
 
 def _json_default(o: Any) -> Any:
-    """Fallback JSON serializer for generated SDK models."""
+    """
+    Fallback JSON serializer for generated SDK models.
+
+    :param o: The object to serialize.
+    :type o: Any
+    :return: A JSON-serializable representation of ``o``.
+    :rtype: Any
++   """
     for attr in ("serialize", "as_dict", "to_dict"):
         fn = getattr(o, attr, None)
         if callable(fn):
@@ -81,12 +89,13 @@ class SessionResource:
         self._connection = connection
 
     async def update(self, *, session: Union[Mapping[str, Any], "RequestSession"], event_id: Optional[str] = None) -> None:
-        """Update the session configuration.
+        """
+        Update the session configuration.
 
-        :param session: Session configuration parameters.
-        :type session: Mapping[str, Any] or ~azure.ai.voicelive.models.RequestSession
-        :param event_id: Optional ID for the event.
-        :type event_id: Optional[str]
+        :keyword Mapping[str, Any] or ~azure.ai.voicelive.models.RequestSession session:
+            Session configuration parameters.
+        :keyword str event_id: Optional ID for the event.
+        :rtype: None
         """
         if isinstance(session, RequestSession):
             # overload: keyword form requires a typed RequestSession
@@ -117,10 +126,9 @@ class ResponseResource:
         This event instructs the server to create a Response (triggering model inference).
         When in Server VAD mode, the server may create responses automatically.
 
-        :param response: Optional response configuration.
-        :type response: Mapping[str, Any] or None
-        :param event_id: Optional ID for the event.
-        :type event_id: Optional[str]
+        :keyword Mapping[str, Any] response: Optional response configuration.
+        :keyword str event_id: Optional ID for the event.
+        :rtype: None
         """
         event = ClientEventResponseCreate()
         if response is not None:
@@ -136,10 +144,9 @@ class ResponseResource:
         The server will respond with a `response.cancelled` event or an error if
         there is no response to cancel.
 
-        :param response_id: Optional ID of the response to cancel.
-        :type response_id: Optional[str]
-        :param event_id: Optional ID for the event.
-        :type event_id: Optional[str]
+        :keyword str response_id: Optional ID of the response to cancel.
+        :keyword str event_id: Optional ID for the event.
+        :rtype: None
         """
         event = ClientEventResponseCancel()
         if response_id:
@@ -164,10 +171,9 @@ class InputAudioBufferResource:
     async def append(self, *, audio: str, event_id: Optional[str] = None) -> None:
         """Append audio to the input buffer.
 
-        :param audio: Base64-encoded audio data in the format declared by the session config.
-        :type audio: str
-        :param event_id: Optional ID for the event.
-        :type event_id: Optional[str]
+        :keyword str audio: Base64-encoded audio data in the format declared by the session config.
+        :keyword str event_id: Optional ID for the event.
+        :rtype: None
         """
         event = ClientEventInputAudioBufferAppend(audio=audio)
         if event_id:
@@ -179,8 +185,8 @@ class InputAudioBufferResource:
 
         Creates a new user message item in the conversation.
 
-        :param event_id: Optional ID for the event.
-        :type event_id: Optional[str]
+        :keyword str event_id: Optional ID for the event.
+        :rtype: None
         """
         event = ClientEventInputAudioBufferCommit()
         if event_id:
@@ -190,8 +196,8 @@ class InputAudioBufferResource:
     async def clear(self, *, event_id: Optional[str] = None) -> None:
         """Clear the input audio buffer.
 
-        :param event_id: Optional ID for the event.
-        :type event_id: Optional[str]
+        :keyword str event_id: Optional ID for the event.
+        :rtype: None
         """
         event = ClientEventInputAudioBufferClear()
         if event_id:
@@ -213,8 +219,8 @@ class OutputAudioBufferResource:
     async def clear(self, *, event_id: Optional[str] = None) -> None:
         """Clear the output audio buffer.
 
-        :param event_id: Optional ID for the event.
-        :type event_id: Optional[str]
+        :keyword str event_id: Optional ID for the event.
+        :rtype: None
         """
         event: Dict[str, Any] = {"type": "output_audio_buffer.clear"}
         if event_id:
@@ -238,12 +244,10 @@ class ConversationItemResource:
     ) -> None:
         """Create a new conversation item.
 
-        :param item: The item to create (message/functions/etc.).
-        :type item: Mapping[str, Any]
-        :param previous_item_id: Optional ID of the item after which to insert this item.
-        :type previous_item_id: Optional[str]
-        :param event_id: Optional ID for the event.
-        :type event_id: Optional[str]
+        :keyword Mapping[str, Any] item: The item to create (message/functions/etc.).
+        :keyword str previous_item_id: Optional ID of the item after which to insert this item.
+        :keyword str event_id: Optional ID for the event.
+        :rtype: None
         """
         event = ClientEventConversationItemCreate({"item": dict(item)})
         if previous_item_id:
@@ -255,10 +259,9 @@ class ConversationItemResource:
     async def delete(self, *, item_id: str, event_id: Optional[str] = None) -> None:
         """Delete a conversation item.
 
-        :param item_id: ID of the item to delete.
-        :type item_id: str
-        :param event_id: Optional ID for the event.
-        :type event_id: Optional[str]
+        :keyword str item_id: ID of the item to delete.
+        :keyword str event_id: Optional ID for the event.
+        :rtype: None
         """
         event = ClientEventConversationItemDelete(item_id=item_id)
         if event_id:
@@ -268,10 +271,9 @@ class ConversationItemResource:
     async def retrieve(self, *, item_id: str, event_id: Optional[str] = None) -> None:
         """Retrieve a conversation item.
 
-        :param item_id: ID of the item to retrieve.
-        :type item_id: str
-        :param event_id: Optional ID for the event.
-        :type event_id: Optional[str]
+        :keyword str item_id: ID of the item to retrieve.
+        :keyword str event_id: Optional ID for the event.
+        :rtype: None
         """
         event = ClientEventConversationItemRetrieve(item_id=item_id)
         if event_id:
@@ -283,14 +285,11 @@ class ConversationItemResource:
     ) -> None:
         """Truncate a conversation item's audio.
 
-        :param item_id: ID of the item to truncate.
-        :type item_id: str
-        :param audio_end_ms: Time in milliseconds where to truncate the audio.
-        :type audio_end_ms: int
-        :param content_index: Index of the content to truncate.
-        :type content_index: int
-        :param event_id: Optional ID for the event.
-        :type event_id: Optional[str]
+        :keyword str item_id: ID of the item to truncate.
+        :keyword int audio_end_ms: Time in milliseconds where to truncate the audio.
+        :keyword int content_index: Index of the content to truncate.
+        :keyword str event_id: Optional ID for the event.
+        :rtype: None
         """
         event = ClientEventConversationItemTruncate(
             item_id=item_id, audio_end_ms=audio_end_ms, content_index=content_index
@@ -334,10 +333,9 @@ class TranscriptionSessionResource:
     async def update(self, *, session: Mapping[str, Any], event_id: Optional[str] = None) -> None:
         """Update the transcription session.
 
-        :param session: Transcription session configuration.
-        :type session: Mapping[str, Any]
-        :param event_id: Optional ID for the event.
-        :type event_id: Optional[str]
+        :keyword Mapping[str, Any] session: Transcription session configuration.
+        :keyword str event_id: Optional ID for the event.
+        :rtype: None
         """
         event: Dict[str, Any] = {"type": "transcription_session.update", "session": dict(session)}
         if event_id:
@@ -393,47 +391,62 @@ class VoiceLiveConnection:
         self.transcription_session = TranscriptionSessionResource(self)
 
     async def __aiter__(self) -> AsyncIterator[ServerEvent]:
-        """Yield typed events until the connection is closed."""
+        """
+        Yield typed events until the connection is closed.
+
+        :return: An async iterator over typed server events.
+        :rtype: typing.AsyncIterator[~azure.ai.voicelive.models.ServerEvent]
+        """
         try:
             while True:
                 yield await self.recv()
-        except Exception as e:
-            log.debug(f"Connection closed: {e}")
+        except (aiohttp.ClientError, ConnectionClosed, RuntimeError) as e:
+            log.debug("Connection closed: %s", e)
             return
 
     async def recv(self) -> ServerEvent:
-        """Receive and parse the next message as a typed event."""
+        """
+        Receive and parse the next message as a typed event.
+
+        :return: The next typed server event.
+        :rtype: ~azure.ai.voicelive.models.ServerEvent
+        """
         try:
             return ServerEvent.deserialize(await self.recv_bytes())
-        except Exception as e:
-            log.error(f"Error parsing message: {e}")
+        except (ValueError, TypeError) as e:
+            log.error("Error parsing message: %s", e)
             raise ConnectionError(f"Failed to parse message: {e}") from e
 
     async def recv_bytes(self) -> bytes:
-        """Receive raw bytes from the connection."""
+        """
+        Receive raw bytes from the connection.
+
+        :return: The raw WebSocket message payload as bytes.
+        :rtype: bytes
+        """
         try:
             msg = await self._connection.receive()
 
             if msg.type == aiohttp.WSMsgType.TEXT:
                 log.debug("Received websocket text message: %s", msg.data)
                 return msg.data.encode("utf-8")
-            elif msg.type == aiohttp.WSMsgType.BINARY:
+            if msg.type == aiohttp.WSMsgType.BINARY:
                 log.debug("Received websocket binary message: %s", msg.data)
                 return msg.data
-            elif msg.type == aiohttp.WSMsgType.CLOSE:
+            if msg.type == aiohttp.WSMsgType.CLOSE:
                 code = self._connection.close_code or 1000
                 reason = ""
-                log.debug(f"WebSocket connection closed with code {code}: {reason}")
+                log.debug("WebSocket connection closed with code %s: %s", code, reason)
                 raise ConnectionClosed(code, reason)
-            elif msg.type == aiohttp.WSMsgType.ERROR:
+            if msg.type == aiohttp.WSMsgType.ERROR:
                 log.error("WebSocket connection error: %s", self._connection.exception())
                 raise ConnectionClosed(1006, str(self._connection.exception()))
-            elif msg.type == aiohttp.WSMsgType.CLOSED:
+            if msg.type == aiohttp.WSMsgType.CLOSED:
                 log.debug("WebSocket connection already closed")
                 raise ConnectionClosed(1000, "Connection closed")
-            else:
-                log.warning("Unexpected WebSocket message type: %s", msg.type)
-                return b""
+            
+            log.warning("Unexpected WebSocket message type: %s", msg.type)
+            return b""
         except aiohttp.ClientError as e:
             code = getattr(e, "code", 1006)
             reason = str(e)
@@ -470,11 +483,13 @@ class VoiceLiveConnection:
                 payload = json.dumps(event, default=_json_default)
 
             # Ensure we pass a str to send_str
-            data: str = payload if isinstance(payload, str) else json.dumps(payload, default=_json_default)
+            data: str = (
+                payload if isinstance(payload, str) else json.dumps(payload, default=_json_default)
+            )
 
             await self._connection.send_str(data)
-        except Exception as e:
-            log.error(f"Failed to send event: {e}")
+        except (TypeError, ValueError, aiohttp.ClientError, RuntimeError) as e:
+            log.error("Failed to send event: %s", e)
             raise ConnectionError(f"Failed to send event: {e}") from e
 
     async def close(self, *, code: int = 1000, reason: str = "") -> None:
@@ -483,19 +498,18 @@ class VoiceLiveConnection:
         This will gracefully terminate the connection to the Voice Live service and
         release any network resources.
 
-        :param code: WebSocket close code to send to the server. Defaults to ``1000`` (Normal Closure).
-        :type code: int
-        :param reason: Optional reason string to include in the close frame.
-        :type reason: str
+        :keyword int code: WebSocket close code to send to the server. Defaults to ``1000`` (Normal Closure).
+        :keyword str reason: Optional reason string to include in the close frame.
+        :rtype: None
         """
         try:
             await self._connection.close(code=code, message=reason.encode("utf-8"))
-        except Exception as e:
-            log.warning(f"Error closing connection: {e}")
+        except (aiohttp.ClientError, RuntimeError) as e:
+            log.warning("Error closing connection: %s", e)
         try:
             await self._client_session.close()
-        except Exception as e:
-            log.warning(f"Error closing session: {e}")
+        except (aiohttp.ClientError, RuntimeError) as e:
+            log.warning("Error closing session: %s", e)
 
 
 class WebsocketConnectionOptions(TypedDict, total=False):
@@ -555,7 +569,7 @@ class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnecti
         api_version: str = "2025-05-01-preview",
         extra_query: Mapping[str, Any],
         extra_headers: Mapping[str, Any],
-        connection_options: WebsocketConnectionOptions = {},
+        connection_options: Optional[WebsocketConnectionOptions] = None,
         **kwargs: Any,
     ) -> None:
         self._credential = credential
@@ -564,15 +578,20 @@ class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnecti
         self.__model = model
         self.__api_version = api_version
         self.__connection: Optional[VoiceLiveConnection] = None
-        self.__session: Optional[aiohttp.ClientSession] = None
-        self.__connection_obj: Optional[aiohttp.ClientWebSocketResponse] = None
         self.__extra_query = extra_query
         self.__extra_headers = extra_headers
-        self.__connection_options = self._map_websocket_options(connection_options)
+        self.__connection_options = self._map_websocket_options(connection_options or {})
         self.__proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
 
     def _map_websocket_options(self, options: WebsocketConnectionOptions) -> Dict[str, Any]:
-        """Map user options to aiohttp ws_connect kwargs (accept both TypedDict keys and common aliases)."""
+        """
+        Map user options to :mod:`aiohttp` ``ws_connect`` kwargs (accept both TypedDict keys and common aliases).
+
+        :param options: The user-provided WebSocket options.
+        :type options: ~azure.ai.voicelive.aio.WebsocketConnectionOptions
+        :return: Mapped options suitable for ``aiohttp.ClientSession.ws_connect``.
+        :rtype: Dict[str, Any]
+        """
         # copy to a plain dict so we can safely check/pop alias keys without mypy complaints
         src: Dict[str, Any] = dict(options)
         mapped: Dict[str, Any] = {}
@@ -592,7 +611,12 @@ class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnecti
         return mapped
 
     async def __aenter__(self) -> VoiceLiveConnection:
-        """Create and return an async WebSocket connection."""
+        """
+        Create and return an async WebSocket connection.
+
+        :return: An established VoiceLiveConnection.
+        :rtype: ~azure.ai.voicelive.aio.VoiceLiveConnection
+        """
         try:
             url = self._prepare_url()
             log.debug("Connecting to %s", url)
@@ -601,36 +625,51 @@ class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnecti
             self.__connection_options.setdefault("heartbeat", 30)
 
             if self.__proxy_policy:
-                self.__proxy_policy.proxies = {"http": "http://localhost:8888", "https": "http://localhost:8888"}
+                self.__proxy_policy.proxies = {
+                    "http": "http://localhost:8888",
+                    "https": "http://localhost:8888",
+                }
 
             auth_headers = self._get_auth_headers()
             headers = {**auth_headers, **dict(self.__extra_headers)}
 
             session = aiohttp.ClientSession()
-            self.__session = session
             try:
-                connection_obj = await session.ws_connect(str(url), headers=headers, **self.__connection_options)
-                self.__connection_obj = connection_obj
+                connection_obj = await session.ws_connect(
+                    str(url), headers=headers, **self.__connection_options
+                )
                 self.__connection = VoiceLiveConnection(session, connection_obj)
                 return self.__connection
             except aiohttp.ClientError as e:
                 await session.close()
                 raise ConnectionError(f"Failed to establish WebSocket connection: {e}") from e
-        except Exception as e:
+        except (aiohttp.ClientError, ValueError) as e:
             raise ConnectionError(f"Failed to establish WebSocket connection: {e}") from e
 
     def _get_auth_headers(self) -> Dict[str, str]:
-        """Get authentication headers for WebSocket connection."""
+        """
+        Get authentication headers for WebSocket connection.
+
+        :return: A dict of HTTP headers for authentication.
+        :rtype: Dict[str, str]
+        """
         if isinstance(self._credential, AzureKeyCredential):
             return {"api-key": self._credential.key}
         token = self._credential.get_token(self.__credential_scopes)
         return {"Authorization": f"Bearer {token.token}"}
 
     def _prepare_url(self) -> str:
-        """Prepare the WebSocket URL."""
+        """
+        Prepare the WebSocket URL.
+
+        :return: The WebSocket URL as a string.
+        :rtype: str
+        """
         parsed = urlparse(self._endpoint)
-        scheme = "wss" if parsed.scheme.startswith("http") and parsed.scheme == "https" else (
-            "ws" if parsed.scheme.startswith("http") else parsed.scheme
+        scheme = (
+            "wss"
+            if parsed.scheme.startswith("http") and parsed.scheme == "https"
+            else ("ws" if parsed.scheme.startswith("http") else parsed.scheme)
         )
 
         params: Dict[str, Any] = {"model": self.__model, "api-version": self.__api_version}
@@ -646,7 +685,17 @@ class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnecti
         return url
 
     async def __aexit__(self, exc_type, exc, exc_tb) -> None:
-        """Clean up the connection when exiting context."""
+        """
+        Clean up the connection when exiting context.
+
+        :param exc_type: Exception type if an error occurred.
+        :type exc_type: type | None
+        :param exc: Exception instance if an error occurred.
+        :type exc: BaseException | None
+        :param exc_tb: Exception traceback if an error occurred.
+        :type exc_tb: types.TracebackType | None
+        :rtype: None
+        """
         if self.__connection is not None:
             await self.__connection.close()
 
@@ -659,7 +708,7 @@ def connect(
     api_version: str = "2025-05-01-preview",
     query: Optional[Mapping[str, Any]] = None,
     headers: Optional[Mapping[str, Any]] = None,
-    connection_options: WebsocketConnectionOptions = {},
+    connection_options: Optional[WebsocketConnectionOptions] = None,
     **kwargs: Any,
 ) -> AbstractAsyncContextManager["VoiceLiveConnection"]:
     """
@@ -671,22 +720,16 @@ def connect(
     - Establishes the connection and yields a :class:`~azure.ai.voicelive.aio.VoiceLiveConnection`.
     - Automatically cleans up the connection when the context exits.
 
-    :param credential: The credential used to authenticate with the service.
-    :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
-    :param endpoint: The service endpoint (e.g., ``https://<region>.api.cognitive.microsoft.com``).
-    :type endpoint: str
-    :param model: The model identifier to use for the session.
-    :type model: str
-    :param api_version: The API version to use (default: ``"2025-05-01-preview"``).
-    :type api_version: str
-    :param query: Optional query parameters to include in the WebSocket URL.
-    :type query: Mapping[str, Any] or None
-    :param headers: Optional HTTP headers to include in the WebSocket handshake.
-    :type headers: Mapping[str, Any] or None
-    :param connection_options: Optional advanced WebSocket options compatible with :mod:`aiohttp`.
-    :type connection_options: ~azure.ai.voicelive.aio.WebsocketConnectionOptions
-    :param kwargs: Additional keyword arguments for advanced configuration.
-    :type kwargs: Any
+    :keyword ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential credential:
+        The credential used to authenticate with the service.
+    :keyword str endpoint: The service endpoint (e.g., ``https://<region>.api.cognitive.microsoft.com``).
+    :keyword str model: The model identifier to use for the session.
+    :keyword str api_version: The API version to use (default: ``"2025-05-01-preview"``).
+    :keyword Mapping[str, Any] query: Optional query parameters to include in the WebSocket URL.
+    :keyword Mapping[str, Any] headers: Optional HTTP headers to include in the WebSocket handshake.
+    :keyword ~azure.ai.voicelive.aio.WebsocketConnectionOptions connection_options:
+        Optional advanced WebSocket options compatible with :mod:`aiohttp`.
+    :keyword Any kwargs: Additional keyword arguments for advanced configuration.
 
     :return: An async context manager yielding a connected :class:`~azure.ai.voicelive.aio.VoiceLiveConnection`.
     :rtype: collections.abc.AsyncContextManager[~azure.ai.voicelive.aio.VoiceLiveConnection]
@@ -698,7 +741,7 @@ def connect(
         api_version=api_version,
         extra_query=query or {},
         extra_headers=headers or {},
-        connection_options=connection_options,
+        connection_options=connection_options or {},
         **kwargs,
     )
 
