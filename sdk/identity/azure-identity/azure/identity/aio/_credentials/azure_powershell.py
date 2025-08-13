@@ -84,7 +84,7 @@ class AzurePowerShellCredential(AsyncContextManager):
         # Check if claims challenge is provided
         if claims:
             raise CredentialUnavailableError(
-                message=f"Failed to get token. Run Connect-AzAccount --ClaimsChallenge {claims}"
+                message=f"Failed to get token. Run Connect-AzAccount -ClaimsChallenge {claims}"
             )
 
         # only ProactorEventLoop supports subprocesses on Windows (and it isn't the default loop on Python < 3.8)
