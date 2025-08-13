@@ -253,7 +253,12 @@ def sanitize_output(output: str) -> str:
 
 
 def extract_cli_error_message(output: str) -> Optional[str]:
-    """Extract a single, user-friendly message from azd consoleMessage JSON output.
+    """
+    Extract a single, user-friendly message from azd consoleMessage JSON output.
+
+    :param str output: The output from the Azure Developer CLI command.
+    :return: A user-friendly error message if found, otherwise None.
+    :rtype: Optional[str]
 
     Preference order:
     1) A message containing "Suggestion" (case-insensitive)
@@ -268,7 +273,7 @@ def extract_cli_error_message(output: str) -> Optional[str]:
             continue
         try:
             obj = json.loads(line)
-        except Exception:  # not JSON -> ignore
+        except json.JSONDecodeError:  # not JSON -> ignore
             continue
         if isinstance(obj, dict):
             data = obj.get("data")
