@@ -11,7 +11,7 @@ import json
 import logging
 from contextlib import AbstractContextManager
 from multiprocessing.dummy import connection
-from typing import Any, Dict, Iterator, List, Optional, Sequence, Tuple, Union, Mapping
+from typing import Any, Dict, Iterator, List, Optional, Sequence, Tuple, Union, Mapping, cast
 from typing_extensions import TypedDict
 from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
@@ -36,6 +36,18 @@ try:  # Python 3.11+
 except Exception:  # Python <=3.10
     from typing_extensions import NotRequired, Required
 
+from typing import TYPE_CHECKING, Optional, Mapping, Sequence, Tuple, Union, Iterator, Any, Dict, List  # keep your existing ones
+
+if TYPE_CHECKING:
+    try:
+        from websockets.typing import Subprotocol as _WSSubprotocol
+    except Exception:  # typing-only fallback
+        _WSSubprotocol = str  # type: ignore[assignment]
+else:
+    _WSSubprotocol = str  # runtime-safe alias
+
+Subprotocol = _WSSubprotocol
+
 __all__: List[str] = [
     "connect",
     "WebsocketConnectionOptions",
@@ -54,19 +66,19 @@ __all__: List[str] = [
 log = logging.getLogger(__name__)
 
 def _json_default(o: Any) -> Any:
-        """Fallback JSON serializer for generated SDK models."""
-        for attr in ("serialize", "as_dict", "to_dict"):
-            fn = getattr(o, attr, None)
-            if callable(fn):
-                try:
-                    return fn()
-                except TypeError:
-                    # some generators expose class/static serialize(obj)
-                    return getattr(o.__class__, attr)(o)
-        if hasattr(o, "__dict__"):
-            # strip private attrs
-            return {k: v for k, v in vars(o).items() if not k.startswith("_")}
-        raise TypeError(f"{type(o).__name__} is not JSON serializable")
+    """Fallback JSON serializer for generated SDK models."""
+    for attr in ("serialize", "as_dict", "to_dict"):
+        fn = getattr(o, attr, None)
+        if callable(fn):
+            try:
+                return fn()
+            except TypeError:
+                # some generators expose class/static serialize(obj)
+                return getattr(o.__class__, attr)(o)
+    if hasattr(o, "__dict__"):
+        # strip private attrs
+        return {k: v for k, v in vars(o).items() if not k.startswith("_")}
+    raise TypeError(f"{type(o).__name__} is not JSON serializable")
 
 class WebsocketConnectionOptions(TypedDict, total=False):
     """
@@ -83,7 +95,7 @@ class WebsocketConnectionOptions(TypedDict, total=False):
 
     :keyword subprotocols: A list of subprotocols to negotiate during the
         WebSocket handshake.
-    :type subprotocols: Sequence[str]
+    :type subprotocols: Sequence[Subprotocol]
 
     :keyword compression: Name of the compression method to use, or a
         compression configuration object.
@@ -108,7 +120,7 @@ class WebsocketConnectionOptions(TypedDict, total=False):
     """
 
     extensions: NotRequired[Sequence[Any]]
-    subprotocols: NotRequired[Sequence[str]]
+    subprotocols: NotRequired[Sequence[Subprotocol]]
     compression: NotRequired[str]
     max_size: NotRequired[int]
     max_queue: NotRequired[Union[int, Tuple[Optional[int], Optional[int]]]]
@@ -500,17 +512,18 @@ class VoiceLiveConnection:
         """
         try:
             if isinstance(event, ClientEvent):
-                # Prefer model-provided serialization if available
-                if callable(getattr(event, "serialize", None)):
-                    data = event.serialize()
-                elif callable(getattr(type(event), "serialize", None)):
-                    data = type(event).serialize(event)
+                # Use classmethod signature: serialize(event: ClientEvent) -> str
+                serialize_fn = getattr(type(event), "serialize", None)
+                if callable(serialize_fn):
+                    data = serialize_fn(event)
                 else:
-                    # Fallback: go through our default JSON encoder on the event’s dict-like view
+                    # Fallback to JSON encoder (will use _json_default)
                     data = json.dumps(event, default=_json_default)
-            else:
-                # Mapping path
+            elif isinstance(event, Mapping):
                 data = json.dumps(dict(event), default=_json_default)
+            else:
+                data = json.dumps(event, default=_json_default)
+
             self._connection.send(data)
         except Exception as e:
             log.error(f"Failed to send event: {e}")
@@ -575,7 +588,15 @@ class _VoiceLiveConnectionManager(AbstractContextManager["VoiceLiveConnection"])
                 log.debug("Connection options: %s", self.__connection_options)
 
             headers = {**self._get_auth_headers(), **dict(self.__extra_headers)}
-            ws = ws_connect(url, additional_headers=headers, **self.__connection_options)
+            ws_kwargs: Dict[str, Any] = dict(self.__connection_options)
+            subprotocols_opt = ws_kwargs.pop("subprotocols", None)
+            subprotocols = (
+                None
+                if subprotocols_opt is None
+                else cast(Sequence[Subprotocol], subprotocols_opt)
+            )
+
+            ws = ws_connect(url, additional_headers=headers, subprotocols=subprotocols, **ws_kwargs)
             self.__connection = VoiceLiveConnection(ws)
             return self.__connection
         except WebSocketException as e:

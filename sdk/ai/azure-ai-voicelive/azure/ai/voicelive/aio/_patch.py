@@ -456,20 +456,19 @@ class VoiceLiveConnection:
         :raises ConnectionError: If serialization or the WebSocket send fails.
         """
         try:
-            # Prefer model-provided serialization if available
             if isinstance(event, ClientEvent):
-                if callable(getattr(event, "serialize", None)):
-                    data = event.serialize()  # instance serializer
-                elif callable(getattr(type(event), "serialize", None)):
-                    data = type(event).serialize(event)  # class/static serializer
+                # Use classmethod signature: serialize(event: ClientEvent) -> str
+                serialize_fn = getattr(type(event), "serialize", None)
+                if callable(serialize_fn):
+                    data = serialize_fn(event)
                 else:
+                    # Fallback to JSON encoding with our default encoder
                     data = json.dumps(event, default=_json_default)
             elif isinstance(event, Mapping):
                 data = json.dumps(dict(event), default=_json_default)
             else:
                 data = json.dumps(event, default=_json_default)
 
-            # aiohttp-style websocket
             await self._connection.send_str(data)
         except Exception as e:
             log.error(f"Failed to send event: {e}")

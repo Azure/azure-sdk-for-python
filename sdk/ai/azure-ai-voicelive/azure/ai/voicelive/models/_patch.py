@@ -176,32 +176,27 @@ class ServerEvent(ServerEventGenerated):
             ServerEventType.RESPONSE_AUDIO_DONE: ServerEventResponseAudioDone,
         }
 
-        # Get the appropriate class or default to base class
-        event_class = event_class_map.get(event_type, cls)
+        if event_type is None:
+            event_class = cls
+        else:
+            event_class = event_class_map.get(event_type, cls)
 
-        # Special handling for certain event types
-        if event_type in [ServerEventType.SESSION_CREATED, ServerEventType.SESSION_UPDATED]:
-            # Extract session data for special handling
+         # Special handling for certain event types
+        if event_type is not None and event_type in (ServerEventType.SESSION_CREATED, ServerEventType.SESSION_UPDATED):
             session_data = data.get("session", {})
-
-            # Convert session data to ResponseSession object if not already
             if isinstance(session_data, dict):
                 session = ResponseSession(**session_data)
                 data["session"] = session
 
         # Create and return the event instance
         try:
-            # Make a copy of the data and remove 'type' to avoid duplicate parameter
             event_data = data.copy()
-            if event_type in event_class_map:
-                # Remove 'type' for subclasses that already set it via discriminator
+            # Only pop 'type' when we know it's one of the mapped subclasses
+            if event_type is not None and event_type in event_class_map:
                 event_data.pop("type", None)
-
             return event_class(**event_data)
         except TypeError as e:
             log.warning(f"Could not create {event_class.__name__} from data: {e}. Falling back to base class.")
-            # Fallback to base class with minimal fields
-            # Pass a string to base class ctor (mypy: 'str' not Optional/Any)
             type_str: str = (
                 raw_type if isinstance(raw_type, str)
                 else (raw_type.value if isinstance(raw_type, ServerEventType) else "")

@@ -615,11 +615,13 @@ if __name__ == "__main__":
         p = pyaudio.PyAudio()
         # Check for input devices
         input_devices = [
-            i for i in range(p.get_device_count()) if p.get_device_info_by_index(i)["maxInputChannels"] > 0
+            i for i in range(p.get_device_count())
+            if float(p.get_device_info_by_index(i).get("maxInputChannels", 0) or 0) > 0.0
         ]
         # Check for output devices
         output_devices = [
-            i for i in range(p.get_device_count()) if p.get_device_info_by_index(i)["maxOutputChannels"] > 0
+            i for i in range(p.get_device_count())
+            if float(p.get_device_info_by_index(i).get("maxOutputChannels", 0) or 0) > 0.0
         ]
         p.terminate()
 
