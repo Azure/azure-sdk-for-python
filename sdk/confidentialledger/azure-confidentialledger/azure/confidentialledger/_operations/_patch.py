@@ -20,9 +20,7 @@ from azure.confidentialledger._operations._operations import (
 from azure.confidentialledger._operations._operations import ClsType, JSON
 import azure.confidentialledger.models as _models
 
-__all__: List[str] = [
-    "ConfidentialLedgerClientOperationsMixin"
-]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
@@ -119,7 +117,7 @@ class StatePollingMethod(BaseStatePollingMethod, PollingMethod):
             raise
 
 
-class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
+class _ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
     def begin_get_ledger_entry(
         self, transaction_id: str, *, collection_id: Optional[str] = None, **kwargs: Any
     ) -> LROPoller[_models.LedgerQueryResult]:

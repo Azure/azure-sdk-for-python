@@ -22,9 +22,7 @@ from azure.confidentialledger.aio._operations._operations import ClsType, JSON
 from azure.confidentialledger._operations._patch import BaseStatePollingMethod
 import azure.confidentialledger.models as _models
 
-__all__: List[str] = [
-    "ConfidentialLedgerClientOperationsMixin"
-]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
