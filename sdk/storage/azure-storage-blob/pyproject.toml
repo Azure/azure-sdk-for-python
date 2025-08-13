@@ -42,7 +42,7 @@ version = {attr = "azure.storage.blob._version.VERSION"}
 readme = {file = ["README.md"], content-type = "text/markdown"}
 
 [tool.setuptools.packages.find]
-exclude = ["azure", "azure.storage", "tests", "tests.blob", "tests.common"]
+exclude = ["tests*", "samples*", "azure", "azure.storage"]
 
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]

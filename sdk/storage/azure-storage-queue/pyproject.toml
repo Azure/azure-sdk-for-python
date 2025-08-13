@@ -42,7 +42,7 @@ version = {attr = "azure.storage.queue._version.VERSION"}
 readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
 
 [tool.setuptools.packages.find]
-exclude = ["azure", "azure.storage", "tests", "tests.queue", "tests.common"]
+exclude = ["tests*", "samples*", "azure", "azure.storage"]
 
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]
