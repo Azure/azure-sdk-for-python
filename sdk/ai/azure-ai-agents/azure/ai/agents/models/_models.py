@@ -5648,7 +5648,7 @@ class RunStepDeltaMCPObject(RunStepDeltaDetail, discriminator="mcp"):
 
 
 class RunStepDeltaMcpToolCall(RunStepDeltaToolCall, discriminator="mcp"):
-    """Represents the function data in a streaming run step MCP call.*.
+    """Represents the function data in a streaming run step MCP call.
 
     :ivar id: The ID of the tool call, used when submitting outputs to the run. Required.
     :vartype id: str
