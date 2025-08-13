@@ -34,15 +34,6 @@ steps:
       ServiceDirectory: "template"
       TestPipeline: ${{ parameters.TestPipeline }}
 
-  - task: PythonScript@0
-    displayName: 'Set Tox Environment'
-    inputs:
-      scriptPath: 'scripts/devops_tasks/set_tox_environment.py'
-      arguments: >-
-        --unsupported="$(UnsupportedToxEnvironments)"
-        --override="$(Run.ToxCustomEnvs)"
-        --team-project="$(System.TeamProject)"
-
   - template: set-dev-build.yml
 
   - pwsh: |
@@ -52,6 +43,15 @@ steps:
       $(PIP_EXE) install -r eng/ci_tools.txt
       $(PIP_EXE) freeze
     displayName: 'Prep Environment'
+
+  - task: PythonScript@0
+    displayName: 'Set Tox Environment'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/set_tox_environment.py'
+      arguments: >-
+        --unsupported="$(UnsupportedToxEnvironments)"
+        --override="$(Run.ToxCustomEnvs)"
+        --team-project="$(System.TeamProject)"
 
   - template: /eng/common/testproxy/test-proxy-tool.yml
     parameters:
