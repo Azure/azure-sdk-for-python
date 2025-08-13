@@ -81,7 +81,123 @@ class _Constants:
     }
 
     class Kwargs:
-        """Keyword arguments used in the azure-cosmos package"""
+        """Keyword arguments used in the azure-cosmos package
+        
+        These constants should be used instead of hardcoded strings for request options
+        to improve maintainability, reduce errors, and provide better IDE support.
+        
+        Best practices:
+        - Always use these constants instead of hardcoded strings
+        - Follow the naming convention: UPPER_SNAKE_CASE for constant names
+        - Use Literal types for type safety
+        - Document the purpose of each constant
+        """
+
+        # Request option keys used in build_options and GetHeaders functions
+        ACCESS_CONDITION: Literal["accessCondition"] = "accessCondition"
+        """Access condition option for conditional operations (IfMatch, IfNoneMatch)."""
+        
+        AUTO_UPGRADE_POLICY: Literal["autoUpgradePolicy"] = "autoUpgradePolicy"
+        """Auto-upgrade policy for autoscale settings."""
+        
+        CONSISTENCY_LEVEL: Literal["consistencyLevel"] = "consistencyLevel"
+        """Consistency level override for the request."""
+        
+        CONTAINER_RID: Literal["containerRID"] = "containerRID"
+        """Container resource ID for request routing."""
+        
+        CONTENT_TYPE: Literal["contentType"] = "contentType"
+        """Content type for the request."""
+        
+        CONTINUATION: Literal["continuation"] = "continuation"
+        """Continuation token for paginated queries."""
+        
+        CORRELATED_ACTIVITY_ID: Literal["correlatedActivityId"] = "correlatedActivityId"
+        """Correlated activity ID for tracing and diagnostics."""
+        
+        DISABLE_RU_PER_MINUTE_USAGE: Literal["disableRUPerMinuteUsage"] = "disableRUPerMinuteUsage"
+        """Whether to disable RU per minute usage."""
+        
+        ENABLE_CROSS_PARTITION_QUERY: Literal["enableCrossPartitionQuery"] = "enableCrossPartitionQuery"
+        """Whether to enable cross-partition queries."""
+        
+        ENABLE_SCAN_IN_QUERY: Literal["enableScanInQuery"] = "enableScanInQuery"
+        """Whether to enable scan in query operations."""
+        
+        ENABLE_SCRIPT_LOGGING: Literal["enableScriptLogging"] = "enableScriptLogging"
+        """Whether to enable script logging for stored procedures."""
+        
+        EXCLUDED_LOCATIONS: Literal["excludedLocations"] = "excludedLocations"
+        """List of locations to exclude for this request."""
+        
+        INDEXING_DIRECTIVE: Literal["indexingDirective"] = "indexingDirective"
+        """Indexing directive for the operation."""
+        
+        INITIAL_HEADERS: Literal["initialHeaders"] = "initialHeaders"
+        """Initial headers to include in the request."""
+        
+        IS_QUERY_PLAN_REQUEST: Literal["isQueryPlanRequest"] = "isQueryPlanRequest"
+        """Whether this is a query plan request."""
+        
+        MAX_INTEGRATED_CACHE_STALENESS: Literal["maxIntegratedCacheStaleness"] = "maxIntegratedCacheStaleness"
+        """Maximum integrated cache staleness in milliseconds."""
+        
+        MAX_ITEM_COUNT: Literal["maxItemCount"] = "maxItemCount"
+        """Maximum number of items to return in the response."""
+        
+        OFFER_ENABLE_RU_PER_MINUTE_THROUGHPUT: Literal["offerEnableRUPerMinuteThroughput"] = "offerEnableRUPerMinuteThroughput"
+        """Whether to enable RU per minute throughput for the offer."""
+        
+        OFFER_THROUGHPUT: Literal["offerThroughput"] = "offerThroughput"
+        """Throughput value for the offer."""
+        
+        OFFER_TYPE: Literal["offerType"] = "offerType"
+        """Type of the offer (S1, S2, S3, etc.)."""
+        
+        PARTITION_KEY: Literal["partitionKey"] = "partitionKey"
+        """Partition key value for the request."""
+        
+        POPULATE_INDEX_METRICS: Literal["populateIndexMetrics"] = "populateIndexMetrics"
+        """Whether to populate index metrics in the response."""
+        
+        POPULATE_PARTITION_KEY_RANGE_STATISTICS: Literal["populatePartitionKeyRangeStatistics"] = "populatePartitionKeyRangeStatistics"
+        """Whether to populate partition key range statistics."""
+        
+        POPULATE_QUERY_METRICS: Literal["populateQueryMetrics"] = "populateQueryMetrics"
+        """Whether to populate query metrics in the response."""
+        
+        POPULATE_QUOTA_INFO: Literal["populateQuotaInfo"] = "populateQuotaInfo"
+        """Whether to populate quota information in the response."""
+        
+        POST_TRIGGER_INCLUDE: Literal["postTriggerInclude"] = "postTriggerInclude"
+        """Post-trigger scripts to include in the operation."""
+        
+        PRE_TRIGGER_INCLUDE: Literal["preTriggerInclude"] = "preTriggerInclude"
+        """Pre-trigger scripts to include in the operation."""
+        
+        PRIORITY_LEVEL: Literal["priorityLevel"] = "priorityLevel"
+        """Priority level for the request (High, Low)."""
+        
+        QUERY_VERSION: Literal["queryVersion"] = "queryVersion"
+        """Query version for the request."""
+        
+        RESOURCE_TOKEN_EXPIRY_SECONDS: Literal["resourceTokenExpirySeconds"] = "resourceTokenExpirySeconds"
+        """Resource token expiry time in seconds."""
+        
+        RESPONSE_CONTINUATION_TOKEN_LIMIT_IN_KB: Literal["responseContinuationTokenLimitInKb"] = "responseContinuationTokenLimitInKb"
+        """Continuation token size limit in KB."""
+        
+        RESPONSE_PAYLOAD_ON_WRITE_DISABLED: Literal["responsePayloadOnWriteDisabled"] = "responsePayloadOnWriteDisabled"
+        """Whether to disable response payload on write operations."""
 
         RETRY_WRITE: Literal["retry_write"] = "retry_write"
         """Whether to retry write operations if they fail. Used either at client level or request level."""
+        
+        SESSION_TOKEN: Literal["sessionToken"] = "sessionToken"
+        """Session token for session consistency."""
+        
+        SUPPORTED_QUERY_FEATURES: Literal["supportedQueryFeatures"] = "supportedQueryFeatures"
+        """Supported query features for the request."""
+        
+        THROUGHPUT_BUCKET: Literal["throughputBucket"] = "throughputBucket"
+        """Throughput bucket for the request."""
