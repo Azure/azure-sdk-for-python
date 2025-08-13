@@ -71,7 +71,7 @@ class AsyncStatePollingMethod(BaseStatePollingMethod, AsyncPollingMethod):
             raise
 
 
-class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
+class _ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
     async def begin_get_ledger_entry(
         self, transaction_id: str, *, collection_id: Optional[str] = None, **kwargs: Any
     ) -> AsyncLROPoller[_models.LedgerQueryResult]:
