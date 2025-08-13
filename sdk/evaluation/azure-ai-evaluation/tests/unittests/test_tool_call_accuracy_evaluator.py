@@ -608,7 +608,7 @@ class TestToolCallAccuracyEvaluator:
         assert result[key] == "not applicable"
         assert result[f"{key}_result"] == "pass"
 
-    def test_evaluate_open_api_with_tool_defintion(self, mock_model_config):
+    def test_evaluate_open_api_with_tool_definition(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
         evaluator._flow = MagicMock(side_effect=flow_side_effect)
 
