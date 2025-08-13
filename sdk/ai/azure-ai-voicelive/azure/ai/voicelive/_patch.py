@@ -1,3 +1,4 @@
+# pylint: disable=broad-exception-caught, useless-suppression, unused-import
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation.
@@ -10,8 +11,6 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import json
 import logging
 from contextlib import AbstractContextManager
-from multiprocessing.dummy import connection
-from typing import Any, Dict, Iterator, List, Optional, Sequence, Tuple, Union, Mapping, cast
 from typing_extensions import TypedDict
 from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
@@ -29,24 +28,26 @@ from azure.ai.voicelive.models._models import (
 )
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.exceptions import AzureError
-
 from .models import ClientEvent, RequestSession, ServerEvent
+
 try:  # Python 3.11+
     from typing import NotRequired, Required  # type: ignore[attr-defined]
 except Exception:  # Python <=3.10
     from typing_extensions import NotRequired, Required
 
-from typing import TYPE_CHECKING, Optional, Mapping, Sequence, Tuple, Union, Iterator, Any, Dict, List  # keep your existing ones
+from typing import TYPE_CHECKING, Optional, Mapping, Sequence, Tuple, Union, Iterator, Any, Dict, List, cast
 
+# Subprotocol typing that doesn't reassign to a type alias
 if TYPE_CHECKING:
     try:
-        from websockets.typing import Subprotocol as _WSSubprotocol
-    except Exception:  # typing-only fallback
-        _WSSubprotocol = str  # type: ignore[assignment]
+        from websockets.typing import Subprotocol  # type: ignore[missing-import]
+    except Exception:
+        class Subprotocol(str):  # fallback for type checkers if websockets isn't available
+            ...
 else:
-    _WSSubprotocol = str  # runtime-safe alias
-
-Subprotocol = _WSSubprotocol
+    # Runtime placeholder; str subclass keeps runtime behavior simple
+    class Subprotocol(str):
+        pass
 
 __all__: List[str] = [
     "connect",
@@ -66,7 +67,20 @@ __all__: List[str] = [
 log = logging.getLogger(__name__)
 
 def _json_default(o: Any) -> Any:
-    """Fallback JSON serializer for generated SDK models."""
+    """Fallback JSON serializer for generated SDK models.
+
+    This function turns SDK model instances (and other objects) into values that
+    the JSON encoder can handle.
+
+    :param o: Object to serialize. If the object exposes ``serialize()``,
+        ``as_dict()``, or ``to_dict()``, that will be used. Otherwise, public
+        attributes are returned when available.
+    :type o: Any
+    :return: A JSON-serializable representation (e.g., ``dict``, ``list``,
+        ``str``, etc.).
+    :rtype: Any
+    :raises TypeError: If *o* cannot be converted to a JSON-serializable form.
+    """
     for attr in ("serialize", "as_dict", "to_dict"):
         fn = getattr(o, attr, None)
         if callable(fn):

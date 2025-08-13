@@ -11,7 +11,7 @@ import aiohttp
 import json
 import logging
 from contextlib import AbstractAsyncContextManager
-from typing import Any, Dict, List, Mapping, Optional, Union, AsyncIterator
+from typing import Any, Dict, List, Mapping, Optional, Union, AsyncIterator, cast
 from typing_extensions import TypedDict
 from urllib.parse import urlparse, urlunparse, urlencode, parse_qs
 
@@ -456,18 +456,21 @@ class VoiceLiveConnection:
         :raises ConnectionError: If serialization or the WebSocket send fails.
         """
         try:
+            # Build a JSON-ready object or string first
+            payload: object
             if isinstance(event, ClientEvent):
-                # Use classmethod signature: serialize(event: ClientEvent) -> str
                 serialize_fn = getattr(type(event), "serialize", None)
                 if callable(serialize_fn):
-                    data = serialize_fn(event)
+                    payload = serialize_fn(event)  # may be str or object (type checker: object | str)
                 else:
-                    # Fallback to JSON encoding with our default encoder
-                    data = json.dumps(event, default=_json_default)
+                    payload = json.dumps(event, default=_json_default)
             elif isinstance(event, Mapping):
-                data = json.dumps(dict(event), default=_json_default)
+                payload = json.dumps(dict(event), default=_json_default)
             else:
-                data = json.dumps(event, default=_json_default)
+                payload = json.dumps(event, default=_json_default)
+
+            # Ensure we pass a str to send_str
+            data: str = payload if isinstance(payload, str) else json.dumps(payload, default=_json_default)
 
             await self._connection.send_str(data)
         except Exception as e:

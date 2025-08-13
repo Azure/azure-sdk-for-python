@@ -11,15 +11,16 @@ This directory contains sample applications demonstrating various capabilities o
 ## Setup
 
 1. **Install dependencies**:
+
    ```bash
    pip install -r ../dev_requirements.txt
    ```
 
 2. **Configure environment variables**:
-   
+
    Create a `.env` file at the root of the azure-ai-voicelive directory or in the samples directory with the following variables:
 
-   ```
+   ```ini
    AZURE_VOICELIVE_KEY=your-voicelive-api-key
    AZURE_VOICELIVE_ENDPOINT=wss://api.voicelive.com/v1
    VOICELIVE_MODEL=gpt-4o-realtime-preview
@@ -28,6 +29,7 @@ This directory contains sample applications demonstrating various capabilities o
    ```
 
    You can copy the `.env.template` file and fill in your values:
+
    ```bash
    cp ../.env.template ./.env
    ```
@@ -43,6 +45,7 @@ python basic_voice_assistant.py
 ```
 
 This sample demonstrates:
+
 - Real-time voice conversation with AI
 - Automatic turn detection and interruption handling  
 - Full duplex audio streaming
@@ -88,3 +91,27 @@ python sample_voicelive_async.py --help
 - **typed_event_handling_sample.py**: Demonstrates handling typed events from the VoiceLive API.
 - **websocket_connection_sample.py**: Shows low-level WebSocket connection handling.
 - **sample_complete_resources.py**: Comprehensive example showing various features of the SDK.
+
+## Troubleshooting
+
+- **PyAudio / PortAudio build errors**
+  - Linux: `sudo apt-get install -y portaudio19-dev libasound2-dev`
+  - macOS: `brew install portaudio`
+  - Windows: try `pip install pyaudio`
+
+- **No input/output devices**  
+  Ensure your OS sees a microphone and speakers. On headless CI, you typically cannot run audio samples.
+
+- **WebSocket connection issues (1006/timeout)**
+  - Recheck `AZURE_VOICELIVE_ENDPOINT`
+  - Confirm your network allows WSS to the service
+
+- **Auth errors**
+  - For API key: confirm `AZURE_VOICELIVE_KEY`
+  - For AAD: ensure your identity has access to the resource
+
+## Next steps
+
+- Try the **Basic Voice Assistant** sample first, then explore the others for specific scenarios.
+- Integrate the SDK into your own app by copying pieces from the samples (e.g., audio capture/playback or event handling loops).
+- Visit the Azure SDK repo to see additional guidance, issues, and contributions.

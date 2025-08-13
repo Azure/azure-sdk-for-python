@@ -8,7 +8,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, Dict, List, Optional, Type, Union
+from typing import Any, Dict, List, Optional, Type, Union, cast
 import json
 import logging
 
@@ -147,7 +147,7 @@ class ServerEvent(ServerEventGenerated):
         event_type = cls._normalize_event_type(raw_type)
 
         # Map event type to appropriate class
-        event_class_map = {
+        event_class_map: Dict[ServerEventType, Type[Any]] = {
             ServerEventType.SESSION_CREATED: ServerEventSessionCreated,
             ServerEventType.SESSION_UPDATED: ServerEventSessionUpdated,
             ServerEventType.ERROR: ServerEventError,
@@ -177,9 +177,9 @@ class ServerEvent(ServerEventGenerated):
         }
 
         if event_type is None:
-            event_class = cls
+            event_class: Type[Any] = cls
         else:
-            event_class = event_class_map.get(event_type, cls)
+            event_class = cast(Type[Any], event_class_map.get(event_type, cls))
 
          # Special handling for certain event types
         if event_type is not None and event_type in (ServerEventType.SESSION_CREATED, ServerEventType.SESSION_UPDATED):
