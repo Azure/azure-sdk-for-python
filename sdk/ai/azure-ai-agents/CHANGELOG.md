@@ -3,9 +3,15 @@
 
 ## 1.2.0b3 (Unreleased)
 
+### Breaking Changes
+
 ### Features Added
 
 - Add `RunStepDetailsActivity`, describing MCP function parameters.
+
+### Bugs Fixed
+
+### Sample updates
 
 ## 1.2.0b2 (2025-08-12)
 
