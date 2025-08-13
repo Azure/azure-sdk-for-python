@@ -20,9 +20,9 @@ class TestComputeManagementResourceSkusOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_resource_skus_list(self, resource_group):
         response = self.client.resource_skus.list(
-            api_version="2017-03-30",
+            api_version="2021-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
