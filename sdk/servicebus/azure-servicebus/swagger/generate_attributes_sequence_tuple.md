@@ -1,3 +1,4 @@
+```py
 # --------------------------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -31,3 +32,4 @@ if __name__ == "__main__":
     print("from azure.servicebus.management._generated.models import", ", ".join(class_names))
     print("\n")
     print(model_class_attributes_string)
+```

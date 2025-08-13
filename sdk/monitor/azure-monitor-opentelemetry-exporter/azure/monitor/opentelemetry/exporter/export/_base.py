@@ -46,7 +46,10 @@ from azure.monitor.opentelemetry.exporter._constants import (
 )
 # from azure.monitor.opentelemetry.exporter._configuration import _ConfigurationManager
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
-from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage
+from azure.monitor.opentelemetry.exporter._storage import (
+    LocalFileStorage,
+    StorageExportResult,
+)
 from azure.monitor.opentelemetry.exporter._utils import _get_auth_policy
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     get_statsbeat_initial_success,
@@ -54,6 +57,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     increment_and_check_statsbeat_failure_count,
     is_statsbeat_enabled,
     set_statsbeat_initial_success,
+    get_local_storage_setup_state_exception,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
     _update_requests_map,
@@ -196,14 +200,35 @@ class BaseExporter:
                 else:
                     blob.delete()
 
+
     def _handle_transmit_from_storage(self, envelopes: List[TelemetryItem], result: ExportResult) -> None:
         if self.storage:
             if result == ExportResult.FAILED_RETRYABLE:
                 envelopes_to_store = [x.as_dict() for x in envelopes]
-                self.storage.put(envelopes_to_store)
+                result_from_storage_put = self.storage.put(envelopes_to_store)
+                if self._customer_statsbeat_metrics and self._should_collect_customer_statsbeat():
+                    if result_from_storage_put == StorageExportResult.CLIENT_STORAGE_DISABLED:
+                        # Track items that would have been retried but are dropped since client has local storage disabled
+                        _track_dropped_items(self._customer_statsbeat_metrics, envelopes, DropCode.CLIENT_STORAGE_DISABLED)
+                    elif result_from_storage_put == StorageExportResult.CLIENT_READONLY:
+                        # If filesystem is readonly, track dropped items in customer statsbeat
+                        _track_dropped_items(self._customer_statsbeat_metrics, envelopes, DropCode.CLIENT_READONLY)
+                    elif result_from_storage_put == StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED:
+                        # If data has to be dropped due to persistent storage being full, track dropped items
+                        _track_dropped_items(self._customer_statsbeat_metrics, envelopes, DropCode.CLIENT_PERSISTENCE_CAPACITY)
+                    elif get_local_storage_setup_state_exception() != "":
+                        # For exceptions caught in _check_and_set_folder_permissions during storage setup
+                        _track_dropped_items(self._customer_statsbeat_metrics, envelopes, DropCode.CLIENT_EXCEPTION, result_from_storage_put)
+                    elif isinstance(result_from_storage_put, str):
+                        # For any exceptions occurred in put method of either LocalFileStorage or LocalFileBlob, track dropped item with reason
+                        _track_dropped_items(self._customer_statsbeat_metrics, envelopes, DropCode.CLIENT_EXCEPTION, result_from_storage_put)
+                    else:
+                        # LocalFileBlob.put returns either an exception(failure, handled above) or the file path(success), eventually that will be removed since this value is not being utilized elsewhere
+                        pass
             elif result == ExportResult.SUCCESS:
                 # Try to send any cached events
                 self._transmit_from_storage()
+
         else:
             # Track items that would have been retried but are dropped since client has local storage disabled
             if self._customer_statsbeat_metrics and self._should_collect_customer_statsbeat():
@@ -453,7 +478,7 @@ class BaseExporter:
     # check to see whether its the case of customer stats collection
     def _should_collect_customer_statsbeat(self):
         # Import here to avoid circular dependencies
-        from azure.monitor.opentelemetry.exporter.statsbeat._customer_statsbeat import get_customer_statsbeat_shutdown
+        from azure.monitor.opentelemetry.exporter.statsbeat._state import get_customer_statsbeat_shutdown
 
         env_value = os.environ.get("APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW", "")
         is_customer_statsbeat_enabled = env_value.lower() == "true"

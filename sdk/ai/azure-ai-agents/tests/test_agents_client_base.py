@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 import sys
 import logging
 import functools
@@ -79,11 +80,7 @@ class TestAgentClientBase(AzureRecordedTestCase):
         return sleep if is_live() else 0
 
     @classmethod
-    def _has_url_annotation(
-        cls,
-        message: ThreadMessage,
-        uri_annotation: MessageTextUrlCitationDetails
-    ) -> bool:
+    def _has_url_annotation(cls, message: ThreadMessage, uri_annotation: MessageTextUrlCitationDetails) -> bool:
         """
         Return True if the message contains required URL annotation.
 
@@ -95,17 +92,17 @@ class TestAgentClientBase(AzureRecordedTestCase):
         url_annotations = message.url_citation_annotations
         if url_annotations:
             for url in url_annotations:
-                if ((uri_annotation.url == '*' and url.url_citation.url) or url.url_citation.url == uri_annotation.url) and\
-                  ((uri_annotation.title == '*' and url.url_citation.title) or url.url_citation.title == uri_annotation.title):
+                if (
+                    (uri_annotation.url == "*" and url.url_citation.url) or url.url_citation.url == uri_annotation.url
+                ) and (
+                    (uri_annotation.title == "*" and url.url_citation.title)
+                    or url.url_citation.title == uri_annotation.title
+                ):
                     return True
         return False
 
     @classmethod
-    def _has_file_annotation(
-        cls,
-        message: ThreadMessage,
-        file_annotation: MessageTextFileCitationDetails 
-    ) -> bool:
+    def _has_file_annotation(cls, message: ThreadMessage, file_annotation: MessageTextFileCitationDetails) -> bool:
         """
         Return True if the message contains required file annotation
 
