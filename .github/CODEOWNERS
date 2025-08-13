@@ -25,9 +25,9 @@
 /sdk/core/azure-core-tracing-opencensus/                             @pvaneck
 /sdk/core/azure-core-tracing-opentelemetry/                          @pvaneck
 
-####
-# Service team
-####
+####################
+# Client Libraries
+####################
 
 # ServiceOwners: @luigiw @needuv @paulshealy1 @singankit
 # ServiceLabel: %AI
@@ -828,7 +828,10 @@
 # ServiceLabel: %Cost Management - RIandShowBack %Service Attention
 #/<NotInRepo>/          @ccmshowbackdevs
 
-# Management Plane
+####################
+# Management Libraries
+####################
+
 /**/*mgmt*/                                                          @ChenxiJiang333 @msyyc
 
 ###########
