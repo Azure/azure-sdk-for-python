@@ -78,7 +78,7 @@ class AzureDiagnosticLogging:
                         if not exists(_DIAGNOSTIC_LOG_PATH):
                             try:
                                 makedirs(_DIAGNOSTIC_LOG_PATH)
-                            # Multi-thread can creare a race condition for creating the log file
+                            # Multi-thread can create a race condition for creating the log file
                             except FileExistsError as e:
                                 _logger.info("Azure Monitor diagnostic log file already exists: %s", e)
                         f_handler = logging.FileHandler(join(_DIAGNOSTIC_LOG_PATH, _DIAGNOSTIC_LOGGER_FILE_NAME))
