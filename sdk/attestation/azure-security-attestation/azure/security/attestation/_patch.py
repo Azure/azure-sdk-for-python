@@ -93,7 +93,7 @@ class AttestationClient:
         if not credential:
             raise ValueError("Missing credential.")
         self._config = AttestationClientConfiguration(**kwargs)
-        self._client = AzureAttestationRestClient(credential, endpoint, **kwargs)
+        self._client = AzureAttestationRestClient(endpoint, credential, **kwargs)
         self._statelock = Lock()
         self._signing_certificates = None
 
@@ -472,7 +472,7 @@ class AttestationAdministrationClient:
         if not credential:
             raise ValueError("Missing credential.")
         self._config = AttestationClientConfiguration(**kwargs)
-        self._client = AzureAttestationRestClient(credential, endpoint, **kwargs)
+        self._client = AzureAttestationRestClient(endpoint, credential, **kwargs)
         self._statelock = Lock()
         self._signing_certificates = None
 
