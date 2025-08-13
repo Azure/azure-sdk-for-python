@@ -7,7 +7,7 @@ import time
 from ci_tools.variables import in_ci
 
 # import SlowEvaluator from test evals
-from test_evaluators.slow_eval import SlowEvaluator
+from .test_evaluators.slow_eval import SlowEvaluator
 
 from azure.ai.evaluation import (
     F1ScoreEvaluator,
