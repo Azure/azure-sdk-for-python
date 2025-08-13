@@ -134,7 +134,7 @@ class AIAgentConverter:
                 )
             elif tool.type == _OPENAPI:
                 openapi_tool = tool.openapi
-                tool_defintion = OpenAPIToolDefinition(
+                tool_definition = OpenAPIToolDefinition(
                     name=openapi_tool.name,
                     description=openapi_tool.description,
                     type=_OPENAPI,
