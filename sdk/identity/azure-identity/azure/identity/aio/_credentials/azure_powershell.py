@@ -124,7 +124,7 @@ class AzurePowerShellCredential(AsyncContextManager):
         if options and options.get("claims"):
             claims_value = options.get("claims")
             raise CredentialUnavailableError(
-                message=f"Failed to get token. Run Connect-AzAccount --ClaimsChallenge {claims_value}"
+                message=f"Failed to get token. Run Connect-AzAccount -ClaimsChallenge {claims_value}"
             )
 
         if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
