@@ -1396,10 +1396,10 @@ def build_get_tags_request(
     version_id: Optional[str] = None,
     if_tags: Optional[str] = None,
     lease_id: Optional[str] = None,
-    if_modified_since: Optional[datetime.datetime] = None,
-    if_unmodified_since: Optional[datetime.datetime] = None,
-    if_match: Optional[str] = None,
-    if_none_match: Optional[str] = None,
+    if_blob_modified_since: Optional[datetime.datetime] = None,
+    if_blob_unmodified_since: Optional[datetime.datetime] = None,
+    if_blob_match: Optional[str] = None,
+    if_blob_none_match: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1434,16 +1434,18 @@ def build_get_tags_request(
         _headers["x-ms-if-tags"] = _SERIALIZER.header("if_tags", if_tags, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
-    if if_modified_since is not None:
-        _headers["x-ms-blob-if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
-    if if_unmodified_since is not None:
-        _headers["x-ms-blob-if-unmodified-since"] = _SERIALIZER.header(
-            "if_unmodified_since", if_unmodified_since, "rfc-1123"
+    if if_blob_modified_since is not None:
+        _headers["x-ms-blob-if-modified-since"] = _SERIALIZER.header(
+            "if_blob_modified_since", if_blob_modified_since, "rfc-1123"
         )
-    if if_match is not None:
-        _headers["x-ms-blob-if-match"] = _SERIALIZER.header("if_match", if_match, "str")
-    if if_none_match is not None:
-        _headers["x-ms-blob-if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+    if if_blob_unmodified_since is not None:
+        _headers["x-ms-blob-if-unmodified-since"] = _SERIALIZER.header(
+            "if_blob_unmodified_since", if_blob_unmodified_since, "rfc-1123"
+        )
+    if if_blob_match is not None:
+        _headers["x-ms-blob-if-match"] = _SERIALIZER.header("if_blob_match", if_blob_match, "str")
+    if if_blob_none_match is not None:
+        _headers["x-ms-blob-if-none-match"] = _SERIALIZER.header("if_blob_none_match", if_blob_none_match, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -1459,10 +1461,10 @@ def build_set_tags_request(
     request_id_parameter: Optional[str] = None,
     if_tags: Optional[str] = None,
     lease_id: Optional[str] = None,
-    if_modified_since: Optional[datetime.datetime] = None,
-    if_unmodified_since: Optional[datetime.datetime] = None,
-    if_match: Optional[str] = None,
-    if_none_match: Optional[str] = None,
+    if_blob_modified_since: Optional[datetime.datetime] = None,
+    if_blob_unmodified_since: Optional[datetime.datetime] = None,
+    if_blob_match: Optional[str] = None,
+    if_blob_none_match: Optional[str] = None,
     content: Any = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -1505,16 +1507,18 @@ def build_set_tags_request(
         _headers["x-ms-if-tags"] = _SERIALIZER.header("if_tags", if_tags, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
-    if if_modified_since is not None:
-        _headers["x-ms-blob-if-modified-since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
-    if if_unmodified_since is not None:
-        _headers["x-ms-blob-if-unmodified-since"] = _SERIALIZER.header(
-            "if_unmodified_since", if_unmodified_since, "rfc-1123"
+    if if_blob_modified_since is not None:
+        _headers["x-ms-blob-if-modified-since"] = _SERIALIZER.header(
+            "if_blob_modified_since", if_blob_modified_since, "rfc-1123"
         )
-    if if_match is not None:
-        _headers["x-ms-blob-if-match"] = _SERIALIZER.header("if_match", if_match, "str")
-    if if_none_match is not None:
-        _headers["x-ms-blob-if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+    if if_blob_unmodified_since is not None:
+        _headers["x-ms-blob-if-unmodified-since"] = _SERIALIZER.header(
+            "if_blob_unmodified_since", if_blob_unmodified_since, "rfc-1123"
+        )
+    if if_blob_match is not None:
+        _headers["x-ms-blob-if-match"] = _SERIALIZER.header("if_blob_match", if_blob_match, "str")
+    if if_blob_none_match is not None:
+        _headers["x-ms-blob-if-none-match"] = _SERIALIZER.header("if_blob_none_match", if_blob_none_match, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -4441,10 +4445,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         request_id_parameter: Optional[str] = None,
         snapshot: Optional[str] = None,
         version_id: Optional[str] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
-        if_match: Optional[str] = None,
-        if_none_match: Optional[str] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
@@ -4470,18 +4470,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          specifies the version of the blob to operate on. It's for service version 2019-10-10 and newer.
          Default value is None.
         :type version_id: str
-        :param if_modified_since: Specify this header value to operate only on a blob if it has been
-         modified since the specified date/time. Default value is None.
-        :type if_modified_since: ~datetime.datetime
-        :param if_unmodified_since: Specify this header value to operate only on a blob if it has not
-         been modified since the specified date/time. Default value is None.
-        :type if_unmodified_since: ~datetime.datetime
-        :param if_match: Specify an ETag value to operate only on blobs with a matching value. Default
-         value is None.
-        :type if_match: str
-        :param if_none_match: Specify an ETag value to operate only on blobs without a matching value.
-         Default value is None.
-        :type if_none_match: str
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -4506,7 +4494,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _if_tags = None
         _lease_id = None
+        _if_blob_modified_since = None
+        _if_blob_unmodified_since = None
+        _if_blob_match = None
+        _if_blob_none_match = None
         if modified_access_conditions is not None:
+            _if_blob_match = modified_access_conditions.if_blob_match
+            _if_blob_modified_since = modified_access_conditions.if_blob_modified_since
+            _if_blob_none_match = modified_access_conditions.if_blob_none_match
+            _if_blob_unmodified_since = modified_access_conditions.if_blob_unmodified_since
             _if_tags = modified_access_conditions.if_tags
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
@@ -4519,10 +4515,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             version_id=version_id,
             if_tags=_if_tags,
             lease_id=_lease_id,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            if_match=if_match,
-            if_none_match=if_none_match,
+            if_blob_modified_since=_if_blob_modified_since,
+            if_blob_unmodified_since=_if_blob_unmodified_since,
+            if_blob_match=_if_blob_match,
+            if_blob_none_match=_if_blob_none_match,
             comp=comp,
             version=self._config.version,
             headers=_headers,
@@ -4565,10 +4561,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         transactional_content_md5: Optional[bytes] = None,
         transactional_content_crc64: Optional[bytes] = None,
         request_id_parameter: Optional[str] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
-        if_match: Optional[str] = None,
-        if_none_match: Optional[str] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         tags: Optional[_models.BlobTags] = None,
@@ -4595,18 +4587,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
-        :param if_modified_since: Specify this header value to operate only on a blob if it has been
-         modified since the specified date/time. Default value is None.
-        :type if_modified_since: ~datetime.datetime
-        :param if_unmodified_since: Specify this header value to operate only on a blob if it has not
-         been modified since the specified date/time. Default value is None.
-        :type if_unmodified_since: ~datetime.datetime
-        :param if_match: Specify an ETag value to operate only on blobs with a matching value. Default
-         value is None.
-        :type if_match: str
-        :param if_none_match: Specify an ETag value to operate only on blobs without a matching value.
-         Default value is None.
-        :type if_none_match: str
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -4634,7 +4614,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _if_tags = None
         _lease_id = None
+        _if_blob_modified_since = None
+        _if_blob_unmodified_since = None
+        _if_blob_match = None
+        _if_blob_none_match = None
         if modified_access_conditions is not None:
+            _if_blob_match = modified_access_conditions.if_blob_match
+            _if_blob_modified_since = modified_access_conditions.if_blob_modified_since
+            _if_blob_none_match = modified_access_conditions.if_blob_none_match
+            _if_blob_unmodified_since = modified_access_conditions.if_blob_unmodified_since
             _if_tags = modified_access_conditions.if_tags
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
@@ -4652,10 +4640,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             request_id_parameter=request_id_parameter,
             if_tags=_if_tags,
             lease_id=_lease_id,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            if_match=if_match,
-            if_none_match=if_none_match,
+            if_blob_modified_since=_if_blob_modified_since,
+            if_blob_unmodified_since=_if_blob_unmodified_since,
+            if_blob_match=_if_blob_match,
+            if_blob_none_match=_if_blob_none_match,
             comp=comp,
             content_type=content_type,
             version=self._config.version,
