@@ -24,12 +24,12 @@ class _ConfigurationState:
     refresh_interval: int = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
     version_cache: int = -1
     settings_cache: Dict[str, str] = field(default_factory=dict)
-    
-    def with_updates(self, **kwargs) -> '_ConfigurationState':
+
+    def with_updates(self, **kwargs) -> '_ConfigurationState':  # pylint: disable=C4741,C4742
         """Create a new state object with updated values."""
         return _ConfigurationState(
             etag=kwargs.get('etag', self.etag),
-            refresh_interval=kwargs.get('refresh_interval', self.refresh_interval), 
+            refresh_interval=kwargs.get('refresh_interval', self.refresh_interval),
             version_cache=kwargs.get('version_cache', self.version_cache),
             settings_cache=kwargs.get('settings_cache', self.settings_cache.copy())
         )
@@ -56,11 +56,11 @@ class _ConfigurationManager:
         """Initialize the ConfigurationManager and start the configuration worker."""
         # Lazy import to avoid circular import
         from azure.monitor.opentelemetry.exporter._configuration._worker import _ConfigurationWorker
-        
+
         # Get initial refresh interval from state
         with _ConfigurationManager._state_lock:
             initial_refresh_interval = _ConfigurationManager._current_state.refresh_interval
-            
+
         self._configuration_worker = _ConfigurationWorker(initial_refresh_interval)
 
     def get_configuration_and_refresh_interval(self, query_dict: Optional[Dict[str, str]] = None) -> int:
@@ -137,7 +137,7 @@ class _ConfigurationManager:
         if response.etag is not None:
             new_state_updates['etag'] = response.etag
         if response.refresh_interval and response.refresh_interval > 0:
-            new_state_updates['refresh_interval'] = response.refresh_interval
+            new_state_updates['refresh_interval'] = response.refresh_interval  # type: ignore
 
         if response.status_code == 304:
             # Not modified: Only update etag and refresh interval below
@@ -147,7 +147,7 @@ class _ConfigurationManager:
             needs_config_fetch = False
             with _ConfigurationManager._state_lock:
                 current_state = _ConfigurationManager._current_state
-                
+
                 if response.version > current_state.version_cache:
                     # Version increase: new config available
                     needs_config_fetch = True
@@ -158,7 +158,7 @@ class _ConfigurationManager:
                 else:
                     # Version unchanged: No new config
                     needs_config_fetch = False
-            
+
             # Fetch config
             if needs_config_fetch:
                 config_response = make_onesettings_request(_ONE_SETTINGS_CONFIG_URL, query_dict)
@@ -166,11 +166,12 @@ class _ConfigurationManager:
                     # Validate that the versions from change and config match
                     if config_response.version == response.version:
                         new_state_updates.update({
-                            'version_cache': response.version,
-                            'settings_cache': config_response.settings
+                            'version_cache': response.version,  # type: ignore
+                            'settings_cache': config_response.settings  # type: ignore
                         })
                     else:
-                        logger.warning("Version mismatch between change and config responses. No configurations updated.")
+                        logger.warning("Version mismatch between change and config responses." \
+                        "No configurations updated.")
                         # We do not update etag to allow retry on next call
                         new_state_updates.pop('etag', None)
                 else:
@@ -187,12 +188,12 @@ class _ConfigurationManager:
             _ConfigurationManager._current_state = latest_state.with_updates(**new_state_updates)
             return _ConfigurationManager._current_state.refresh_interval
 
-    def get_settings(self) -> Dict[str, str]:
+    def get_settings(self) -> Dict[str, str]:  # pylint: disable=C4741,C4742
         """Get current settings cache."""
         with _ConfigurationManager._state_lock:
             return _ConfigurationManager._current_state.settings_cache.copy()
 
-    def get_current_version(self) -> int:
+    def get_current_version(self) -> int:  # pylint: disable=C4741,C4742
         """Get current version."""
         with _ConfigurationManager._state_lock:
             return _ConfigurationManager._current_state.version_cache
