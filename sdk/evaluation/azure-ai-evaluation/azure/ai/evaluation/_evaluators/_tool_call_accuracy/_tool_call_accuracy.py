@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+from itertools import chain
 import math
 import os
 import logging
@@ -315,6 +316,12 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         built_in_definitions = _get_needed_built_in_definitions(tool_calls)
         needed_tool_definitions.extend(built_in_definitions)
 
+        # OpenAPI tool is a collection of functions, so we need to expand it
+        tool_definitions_expanded = list(chain.from_iterable(
+            tool.get("functions", []) if tool.get("type") == "openapi" else [tool] 
+            for tool in needed_tool_definitions
+        ))
+
         # Validate that all tool calls have corresponding definitions
         for tool_call in tool_calls:
             if isinstance(tool_call, dict):
@@ -329,7 +336,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                         # This is a regular function tool from converter
                         tool_definition_exists = any(
                             tool.get("name") == tool_name and tool.get("type", "function") == "function"
-                            for tool in tool_definitions
+                            for tool in tool_definitions_expanded
                         )
                         if not tool_definition_exists:
                             raise EvaluationException(
