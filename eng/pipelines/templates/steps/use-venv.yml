@@ -17,7 +17,7 @@ steps:
     - template: install-uv.yml
 
     - pwsh: |
-        if (Get-Command 'uv' -ErrorAction=SilentlyContinue)
+        if (Get-Command 'uv' -ErrorAction=SilentlyContinue) {
           Write-Host "##vso[task.setvariable variable=PIP_EXE]uv pip"
         } else {
           Write-Error "Expected 'uv' command to be available, but it was not. Exiting with error."
