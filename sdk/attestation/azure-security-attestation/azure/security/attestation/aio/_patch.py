@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -136,7 +137,7 @@ class AttestationClient:
         inittime_data: bytes = None,
         runtime_json: bytes = None,
         runtime_data: bytes = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Tuple[AttestationResult, AttestationToken]:
         """Attests the validity of an SGX quote.
 
@@ -253,7 +254,7 @@ class AttestationClient:
         inittime_data: bytes = None,
         runtime_json: bytes = None,
         runtime_data: bytes = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Tuple[AttestationResult, AttestationToken]:
         """Attests the validity of an Open Enclave report.
 
@@ -406,6 +407,7 @@ class AttestationClient:
 
     async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)
+
 
 class AttestationAdministrationClient:
     # pylint: disable=line-too-long, protected-access
@@ -1012,7 +1014,10 @@ class AttestationAdministrationClient:
         await self._client.__aexit__(*exc_details)
 
 
-__all__: List[str] = ["AttestationClient", "AttestationAdministrationClient"]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = [
+    "AttestationClient",
+    "AttestationAdministrationClient",
+]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
