@@ -17,6 +17,7 @@ parameters:
   TestProxy: false
   UseFederatedAuth: false
   ServiceConnection: ''
+  TestPipeline: false
 
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This variable is set from resolve-package-targeting.yml.
@@ -26,6 +27,21 @@ steps:
       versionSpec: '${{ parameters.PythonVersion }}'
 
   - template: /eng/pipelines/templates/steps/use-venv.yml
+
+  - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
+    parameters:
+      PackageName: "azure-template"
+      ServiceDirectory: "template"
+      TestPipeline: ${{ parameters.TestPipeline }}
+
+  - task: PythonScript@0
+    displayName: 'Set Tox Environment'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/set_tox_environment.py'
+      arguments: >-
+        --unsupported="$(UnsupportedToxEnvironments)"
+        --override="$(Run.ToxCustomEnvs)"
+        --team-project="$(System.TeamProject)"
 
   - template: set-dev-build.yml
 
