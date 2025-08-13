@@ -317,10 +317,12 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         needed_tool_definitions.extend(built_in_definitions)
 
         # OpenAPI tool is a collection of functions, so we need to expand it
-        tool_definitions_expanded = list(chain.from_iterable(
-            tool.get("functions", []) if tool.get("type") == "openapi" else [tool] 
-            for tool in needed_tool_definitions
-        ))
+        tool_definitions_expanded = list(
+            chain.from_iterable(
+                tool.get("functions", []) if tool.get("type") == "openapi" else [tool]
+                for tool in needed_tool_definitions
+            )
+        )
 
         # Validate that all tool calls have corresponding definitions
         for tool_call in tool_calls:

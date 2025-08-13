@@ -236,6 +236,7 @@ class ToolDefinition(BaseModel):
     description: Optional[str] = None
     parameters: dict
 
+
 class OpenAPIToolDefinition(BaseModel):
     """Represents OpenAPI tool definition that will be used in the agent.
     :param name: The name of the tool.
@@ -324,7 +325,9 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
             "type": _TOOL_CALL,
             "tool_call_id": tool_call_id,
             "name": tool_call.details.get(_FUNCTION).get("name") if tool_call.details.get(_FUNCTION) else None,
-            "arguments": safe_loads(tool_call.details.get(_FUNCTION).get("arguments") if tool_call.details.get(_FUNCTION) else None) ,
+            "arguments": safe_loads(
+                tool_call.details.get(_FUNCTION).get("arguments") if tool_call.details.get(_FUNCTION) else None
+            ),
         }
     else:
         # Treat built-in tools separately.  Object models may be unique so handle each case separately

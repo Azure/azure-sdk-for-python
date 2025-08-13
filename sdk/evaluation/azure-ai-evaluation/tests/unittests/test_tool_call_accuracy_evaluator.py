@@ -608,7 +608,6 @@ class TestToolCallAccuracyEvaluator:
         assert result[key] == "not applicable"
         assert result[f"{key}_result"] == "pass"
 
-    
     def test_evaluate_open_api_with_tool_defintion(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
         evaluator._flow = MagicMock(side_effect=flow_side_effect)
@@ -625,81 +624,59 @@ class TestToolCallAccuracyEvaluator:
         ]
         tool_definitions = [
             {
-            "name": "get_countries",
-            "type": "openapi",
-            "description": "Retrieve a list of countries",
-            "spec": {
-                "openapi": "3.1.0",
-                "info": {
-                "title": "RestCountries.NET API",
-                "description": "Web API version 3.1 for managing country items, based on previous implementations from restcountries.eu and restcountries.com.",
-                "version": "v3.1"
-                },
-                "servers": [
-                {
-                    "url": "https://restcountries.net"
-                }
-                ],
-                "auth": [],
-                "paths": {
-                "/v3.1/currency": {
-                    "get": {
-                    "description": "Search by currency.",
-                    "operationId": "LookupCountryByCurrency",
-                    "parameters": [
-                        {
-                        "name": "currency",
-                        "in": "query",
-                        "description": "The currency to search for.",
-                        "required": "true",
-                        "schema": {
-                            "type": "string"
-                        }
-                        }
-                    ],
-                    "responses": {
-                        "200": {
-                        "description": "Success",
-                        "content": {
-                            "text/plain": {
-                            "schema": {
-                                "type": "string"
-                            }
+                "name": "get_countries",
+                "type": "openapi",
+                "description": "Retrieve a list of countries",
+                "spec": {
+                    "openapi": "3.1.0",
+                    "info": {
+                        "title": "RestCountries.NET API",
+                        "description": "Web API version 3.1 for managing country items, based on previous implementations from restcountries.eu and restcountries.com.",
+                        "version": "v3.1",
+                    },
+                    "servers": [{"url": "https://restcountries.net"}],
+                    "auth": [],
+                    "paths": {
+                        "/v3.1/currency": {
+                            "get": {
+                                "description": "Search by currency.",
+                                "operationId": "LookupCountryByCurrency",
+                                "parameters": [
+                                    {
+                                        "name": "currency",
+                                        "in": "query",
+                                        "description": "The currency to search for.",
+                                        "required": "true",
+                                        "schema": {"type": "string"},
+                                    }
+                                ],
+                                "responses": {
+                                    "200": {
+                                        "description": "Success",
+                                        "content": {"text/plain": {"schema": {"type": "string"}}},
+                                    }
+                                },
                             }
                         }
-                        }
-                    }
-                    }
-                }
+                    },
+                    "components": {"schemes": {}},
                 },
-                "components": {
-                "schemes": {}
-                }
-            },
-            "auth": {
-                "type": "anonymous",
-                "security_scheme": {}
-            },
-            "functions": [
-                {
-                    "name": "get_countries_LookupCountryByCurrency",
-                    "type": "function",
-                    "description": "Search by currency.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                        "currency": {
-                            "type": "string",
-                            "description": "The currency to search for."
-                        }
+                "auth": {"type": "anonymous", "security_scheme": {}},
+                "functions": [
+                    {
+                        "name": "get_countries_LookupCountryByCurrency",
+                        "type": "function",
+                        "description": "Search by currency.",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "currency": {"type": "string", "description": "The currency to search for."}
+                            },
+                            "required": ["currency"],
                         },
-                        "required": [
-                        "currency"
-                        ]
                     }
-                }
-            ]
-        }
+                ],
+            }
         ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
@@ -707,5 +684,3 @@ class TestToolCallAccuracyEvaluator:
         assert result is not None
         assert result[key] == 5.0
         assert result[f"{key}_result"] == "pass"
-
-    

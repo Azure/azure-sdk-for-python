@@ -11,7 +11,18 @@ from azure.ai.evaluation._common._experimental import experimental
 from packaging.version import Version
 
 # Constants.
-from ._models import _USER, _AGENT, _TOOL, _TOOL_CALL, _TOOL_CALLS, _FUNCTION, _BUILT_IN_DESCRIPTIONS, _BUILT_IN_PARAMS, _OPENAPI, OpenAPIToolDefinition
+from ._models import (
+    _USER,
+    _AGENT,
+    _TOOL,
+    _TOOL_CALL,
+    _TOOL_CALLS,
+    _FUNCTION,
+    _BUILT_IN_DESCRIPTIONS,
+    _BUILT_IN_PARAMS,
+    _OPENAPI,
+    OpenAPIToolDefinition,
+)
 
 # Message instances.
 from ._models import Message, SystemMessage, UserMessage, AssistantMessage, ToolCall
@@ -130,13 +141,15 @@ class AIAgentConverter:
                     spec=openapi_tool.spec,
                     auth=openapi_tool.auth.as_dict(),
                     default_params=openapi_tool.default_params.as_dict() if openapi_tool.default_params else None,
-                    functions=[ToolDefinition(
-                        name=func.get("name"),
-                        description=func.get("description"),
-                        parameters=func.get("parameters"),
-                        type="function",
-                    )
-                    for func in openapi_tool.get("functions")]
+                    functions=[
+                        ToolDefinition(
+                            name=func.get("name"),
+                            description=func.get("description"),
+                            parameters=func.get("parameters"),
+                            type="function",
+                        )
+                        for func in openapi_tool.get("functions")
+                    ],
                 )
                 final_tools.append(tool_defintion)
             else:
