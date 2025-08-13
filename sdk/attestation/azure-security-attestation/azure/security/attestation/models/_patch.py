@@ -910,9 +910,9 @@ class TpmAttestationResult:
 
 
 __all__: List[str] = [
+    "AttestationSigner",
     "AttestationType",
     "AttestationToken",
-    "AttestationSigner",
     "AttestationPolicyResult",
     "AttestationPolicyCertificateResult",
     "AttestationResult",
