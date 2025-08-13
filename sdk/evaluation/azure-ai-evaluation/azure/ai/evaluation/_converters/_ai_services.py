@@ -151,7 +151,7 @@ class AIAgentConverter:
                         for func in openapi_tool.get("functions")
                     ],
                 )
-                final_tools.append(tool_defintion)
+                final_tools.append(tool_definition)
             else:
                 # Add limited support for built-in tools. Descriptions and parameters
                 # are not published, but we'll include placeholders.
