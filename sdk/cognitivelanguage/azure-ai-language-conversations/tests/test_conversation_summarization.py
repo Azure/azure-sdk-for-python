@@ -84,42 +84,55 @@ class TestConversationsCase(TestConversations):
             conversation_input=conversation_input, actions=cast(List[AnalyzeConversationOperationAction], actions)
         )
 
-        # Call the API
-        response = conversation_client.begin_analyze_conversation_job(body=operation_input).result()
+        # ---- CHANGED: begin_* now returns a custom poller -> result() yields ItemPaged[ConversationActions]
+        poller = conversation_client.begin_analyze_conversation_job(body=operation_input)
 
-        # Validate response and print results
-        print(f"Job ID: {response.job_id}")
-        print(f"Status: {response.status}")
-        print(f"Created: {response.created_date_time}")
-        print(f"Last Updated: {response.last_updated_date_time}")
-        if response.expiration_date_time:
-            print(f"Expires: {response.expiration_date_time}")
-        if response.display_name:
-            print(f"Display Name: {response.display_name}")
+        # You can read operation id immediately (from initial response headers)
+        print(f"Operation ID: {poller.details.get('operation_id')}")
 
-        for action_result in response.actions.task_results or []:
-            print(f"\nAction Name: {action_result.name}")
-            print(f"Action Status: {action_result.status}")
-            print(f"Kind: {action_result.kind}")
+        paged_actions = poller.result()  # ItemPaged[ConversationActions]
 
-            # Safely check if this is a summarization result
-            if isinstance(action_result, SummarizationOperationResult):
-                for conversation in action_result.results.conversations:
-                    print(f"  Conversation ID: {conversation.id}")
-                    print("  Summaries:")
-                    for summary in conversation.summaries:
-                        print(f"    Aspect: {summary.aspect}")
-                        print(f"    Text: {summary.text}")
+        # Final-state metadata is available after completion via poller.details
+        d = poller.details
+        print(f"Job ID: {d.get('job_id')}")
+        print(f"Status: {d.get('status')}")
+        print(f"Created: {d.get('created_date_time')}")
+        print(f"Last Updated: {d.get('last_updated_date_time')}")
+        if d.get("expiration_date_time"):
+            print(f"Expires: {d.get('expiration_date_time')}")
+        if d.get("display_name"):
+            print(f"Display Name: {d.get('display_name')}")
 
-                    if conversation.warnings:
-                        print("  Warnings:")
-                        for warning in conversation.warnings:
-                            print(f"    Code: {warning.code}, Message: {warning.message}")
-            else:
-                print("  [No supported results to display for this action type]")
+        # Iterate pages/items; each item is a ConversationActions
+        for actions_page in paged_actions:
+            print(
+                f"Completed: {actions_page.completed}, "
+                f"In Progress: {actions_page.in_progress}, "
+                f"Failed: {actions_page.failed}, "
+                f"Total: {actions_page.total}"
+            )
 
-        # Print errors, if any
-        if response.errors:
+            for action_result in actions_page.task_results or []:
+                print(f"\nAction Name: {getattr(action_result, 'name', None)}")
+                print(f"Action Status: {getattr(action_result, 'status', None)}")
+                print(f"Kind: {getattr(action_result, 'kind', None)}")
+
+                if isinstance(action_result, SummarizationOperationResult):
+                    for conversation in action_result.results.conversations:
+                        print(f"  Conversation ID: {conversation.id}")
+                        print("  Summaries:")
+                        for summary in conversation.summaries:
+                            print(f"    Aspect: {summary.aspect}")
+                            print(f"    Text: {summary.text}")
+                        if conversation.warnings:
+                            print("  Warnings:")
+                            for warning in conversation.warnings:
+                                print(f"    Code: {warning.code}, Message: {warning.message}")
+                else:
+                    print("  [No supported results to display for this action type]")
+
+        # Print errors (now exposed via poller.details from the final state)
+        if d.get("errors"):
             print("\nErrors:")
-            for error in response.errors:
+            for error in d["errors"]:
                 print(f"  Code: {error.code} - {error.message}")
