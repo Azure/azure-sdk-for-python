@@ -26,7 +26,7 @@ cd ../../
 pip install -r dev_requirements.txt
 pip install azure-monitor-opentelemetry
 # azure core needs to be reinstalled to avoid cannot find Spanning Error from open telemetry
-# pip install -e ../../../../core/azure-core
+pip install ../../core/azure-core
 echo "[Step 3] Install Python requirements: completed."
 
 # 4. Install the current azure-cosmos package
@@ -47,6 +47,10 @@ else
     sudo apt-get install -y envoy
     envoy --version
 fi
+# create logs directory for envoy
+cd envoy
+mkdir logs
+cd ..
 
 echo "[Step 5] Install Envoy proxy: completed."
 
@@ -61,7 +65,6 @@ Manual steps remaining:
    cd envoy
    ./generate_envoy_config.sh <template_file_path> <output_envoy_config_file> <account_name> <write_region> <read_region>
 3. Start Envoy:
-   mkdir -p logs
    envoy -c <envoy_config_file>.yaml --log-level debug --log-path logs/debug.txt
 4. Run initial setup workload:
    cd ../tests/workloads
