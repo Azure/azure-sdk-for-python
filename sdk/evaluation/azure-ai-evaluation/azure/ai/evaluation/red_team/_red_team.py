@@ -45,6 +45,7 @@ from ._red_team_result import RedTeamResult
 from ._attack_strategy import AttackStrategy
 from ._attack_objective_generator import (
     RiskCategory,
+    SupportedLanguages,
     _AttackObjectiveGenerator,
 )
 
@@ -95,6 +96,8 @@ class RedTeam:
     :type application_scenario: Optional[str]
     :param custom_attack_seed_prompts: Path to a JSON file containing custom attack seed prompts (can be absolute or relative path)
     :type custom_attack_seed_prompts: Optional[str]
+    :param language: Language to use for attack objectives generation. Defaults to English.
+    :type language: SupportedLanguages
     :param output_dir: Directory to save output files (optional)
     :type output_dir: Optional[str]
     :param attack_success_thresholds: Threshold configuration for determining attack success.
@@ -113,6 +116,7 @@ class RedTeam:
         num_objectives: int = 10,
         application_scenario: Optional[str] = None,
         custom_attack_seed_prompts: Optional[str] = None,
+        language: SupportedLanguages = SupportedLanguages.English,
         output_dir=".",
         attack_success_thresholds: Optional[Dict[RiskCategory, int]] = None,
     ):
@@ -135,6 +139,8 @@ class RedTeam:
         :type application_scenario: Optional[str]
         :param custom_attack_seed_prompts: Path to a JSON file with custom attack prompts
         :type custom_attack_seed_prompts: Optional[str]
+        :param language: Language to use for attack objectives generation. Defaults to English.
+        :type language: SupportedLanguages
         :param output_dir: Directory to save evaluation outputs and logs. Defaults to current working directory.
         :type output_dir: str
         :param attack_success_thresholds: Threshold configuration for determining attack success.
@@ -147,6 +153,7 @@ class RedTeam:
         self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self.credential = credential
         self.output_dir = output_dir
+        self.language = language
         self._one_dp_project = is_onedp_project(azure_ai_project)
 
         # Configure attack success thresholds
@@ -434,6 +441,7 @@ class RedTeam:
                     risk_category=other_risk,
                     application_scenario=application_scenario or "",
                     strategy="tense",
+                    language=self.language.value,
                     scan_session_id=self.scan_session_id,
                 )
             else:
@@ -442,6 +450,7 @@ class RedTeam:
                     risk_category=other_risk,
                     application_scenario=application_scenario or "",
                     strategy=None,
+                    language=self.language.value,
                     scan_session_id=self.scan_session_id,
                 )
 
