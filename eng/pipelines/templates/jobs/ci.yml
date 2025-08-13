@@ -71,6 +71,17 @@ jobs:
       image: $(LINUXVMIMAGE)
       os: linux
 
+    # Only run CG and codeql on internal build job
+    ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+      templateContext:
+        sdl:
+          componentgovernance:
+            enabled: true
+          codeql:
+            binaryLanguages: python # Need to specify the language because we clone after the codeql initialize step
+            compiled:
+              enabled: true
+
     steps:
     - template: /eng/pipelines/templates/steps/build-package-artifacts.yml
       parameters:

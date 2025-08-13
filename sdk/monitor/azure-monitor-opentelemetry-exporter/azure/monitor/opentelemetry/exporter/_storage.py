@@ -7,8 +7,17 @@ import logging
 import os
 import random
 import subprocess
+import errno
+from enum import Enum
 
 from azure.monitor.opentelemetry.exporter._utils import PeriodicTask
+
+from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+    get_local_storage_setup_state_exception,
+    get_local_storage_setup_state_readonly,
+    set_local_storage_setup_state_exception,
+    set_local_storage_setup_state_readonly,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +36,10 @@ def _now():
 def _seconds(seconds):
     return datetime.timedelta(seconds=seconds)
 
+class StorageExportResult(Enum):
+    CLIENT_STORAGE_DISABLED = 1
+    CLIENT_PERSISTENCE_CAPACITY_REACHED = 2
+    CLIENT_READONLY = 3
 
 # pylint: disable=broad-except
 class LocalFileBlob:
@@ -48,6 +61,8 @@ class LocalFileBlob:
         return None
 
     def put(self, data, lease_period=0):
+        #TODO: Modify method to remove the return of self as it is not being used anywhere.
+        # Add typing to method
         try:
             fullpath = self.fullpath + ".tmp"
             with open(fullpath, "w", encoding="utf-8") as file:
@@ -62,9 +77,8 @@ class LocalFileBlob:
                 self.fullpath += "@{}.lock".format(_fmt(timestamp))
             os.rename(fullpath, self.fullpath)
             return self
-        except Exception:
-            pass  # keep silent
-        return None
+        except Exception as ex:
+            return str(ex)
 
     def lease(self, period):
         timestamp = _now() + _seconds(period)
@@ -96,7 +110,6 @@ class LocalFileStorage:
         self._max_size = max_size
         self._retention_period = retention_period
         self._write_timeout = write_timeout
-
         self._enabled = self._check_and_set_folder_permissions()
         if self._enabled:
             self._maintenance_routine()
@@ -182,22 +195,34 @@ class LocalFileStorage:
         return None
 
     def put(self, data, lease_period=None):
-        if not self._enabled:
-            return None
-        if not self._check_storage_size():
-            return None
-        blob = LocalFileBlob(
-            os.path.join(
-                self._path,
-                "{}-{}.blob".format(
-                    _fmt(_now()),
-                    "{:08x}".format(random.getrandbits(32)),  # thread-safe random
-                ),
+        # TODO: Remove the blob.put result as we are not using it anywhere and use StorageExportResult instead,
+        # Should still capture exceptions returned from LocalFileBlob.put
+        # Add typing for method
+        try:
+            if not self._enabled:
+                if get_local_storage_setup_state_readonly():
+                    return StorageExportResult.CLIENT_READONLY
+                if get_local_storage_setup_state_exception() != "":
+                    # Type conversion has been done to match the return type of this function
+                    return str(get_local_storage_setup_state_exception())
+                return StorageExportResult.CLIENT_STORAGE_DISABLED
+            if not self._check_storage_size():
+                return StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED
+            blob = LocalFileBlob(
+                os.path.join(
+                    self._path,
+                    "{}-{}.blob".format(
+                        _fmt(_now()),
+                        "{:08x}".format(random.getrandbits(32)),  # thread-safe random
+                    ),
+                )
             )
-        )
-        if lease_period is None:
-            lease_period = self._lease_period
-        return blob.put(data, lease_period=lease_period)
+            if lease_period is None:
+                lease_period = self._lease_period
+            return blob.put(data, lease_period=lease_period)
+        except Exception as ex:
+            return str(ex)
+
 
     def _check_and_set_folder_permissions(self):
         """
@@ -235,8 +260,13 @@ class LocalFileStorage:
             else:
                 os.chmod(self._path, 0o700)
                 return True
-        except Exception:
-            pass  # keep silent
+        except OSError as error:
+            if getattr(error, 'errno', None) == errno.EROFS:  # cspell:disable-line
+                set_local_storage_setup_state_readonly()
+            else:
+                set_local_storage_setup_state_exception(str(error))
+        except Exception as ex:
+            set_local_storage_setup_state_exception(str(ex))
         return False
 
     def _check_storage_size(self):

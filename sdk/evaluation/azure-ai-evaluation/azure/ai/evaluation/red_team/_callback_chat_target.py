@@ -19,6 +19,7 @@ class _CallbackChatTarget(PromptChatTarget):
         *,
         callback: Callable[[List[Dict], bool, Optional[str], Optional[Dict[str, Any]]], Dict],
         stream: bool = False,
+        prompt_to_context: Optional[Dict[str, str]] = None,
     ) -> None:
         """
         Initializes an instance of the _CallbackChatTarget class.
@@ -32,10 +33,12 @@ class _CallbackChatTarget(PromptChatTarget):
         Args:
             callback (Callable): The callback function that sends a prompt to a target and receives a response.
             stream (bool, optional): Indicates whether the target supports streaming. Defaults to False.
+            prompt_to_context (Optional[Dict[str, str]], optional): Mapping from prompt content to context. Defaults to None.
         """
         PromptChatTarget.__init__(self)
         self._callback = callback
         self._stream = stream
+        self._prompt_to_context = prompt_to_context or {}
 
     async def send_prompt_async(self, *, prompt_request: PromptRequestResponse) -> PromptRequestResponse:
 
@@ -48,8 +51,18 @@ class _CallbackChatTarget(PromptChatTarget):
 
         logger.info(f"Sending the following prompt to the prompt target: {request}")
 
+        # Get context for the current prompt if available
+        current_prompt_content = request.converted_value
+        context_data = self._prompt_to_context.get(current_prompt_content, "")
+        context_dict = {"context": context_data} if context_data else {}
+
+        # If context is not available via prompt_to_context, it can be fetched from the memory
+        if not context_dict:
+            memory_label_context = request.labels.get("context", None)
+            context_dict = {"context": memory_label_context} if memory_label_context else {}
+
         # response_context contains "messages", "stream", "session_state, "context"
-        response_context = await self._callback(messages=messages, stream=self._stream, session_state=None, context=None)  # type: ignore
+        response_context = await self._callback(messages=messages, stream=self._stream, session_state=None, context=context_dict)  # type: ignore
 
         response_text = response_context["messages"][-1]["content"]
         response_entry = construct_response_from_request(request=request, response_text_pieces=[response_text])
