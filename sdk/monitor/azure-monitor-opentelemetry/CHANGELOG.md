@@ -14,7 +14,7 @@
   ([#42342](https://github.com/Azure/azure-sdk-for-python/pull/42342))
 
 - Add error handling for diagnostic logging setup
-  ([#xxxxx](https://github.com/Azure/azure-sdk-for-python/pull/xxxxx))
+  ([#42505](https://github.com/Azure/azure-sdk-for-python/pull/42505))
 
 ### Other Changes
 
