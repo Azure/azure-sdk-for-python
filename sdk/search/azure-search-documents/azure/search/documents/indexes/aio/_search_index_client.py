@@ -795,7 +795,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: The knowledge source created or updated
-        :rtype: ~azure.search.documents.indexes.models.KnowledgeSource     
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeSource
         :raises ~azure.core.exceptions.ResourceNotFoundError: If the index doesn't exist.
         :raises ~azure.core.exceptions.ResourceModifiedError: If the index has been modified in the server.
         :raises ~azure.core.exceptions.ResourceNotModifiedError: If the index hasn't been modified in the server.
@@ -806,7 +806,11 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         error_map, access_condition = get_access_conditions(knowledge_source, match_condition)
         kwargs.update(access_condition)
         result = await self._client.knowledge_sources.create_or_update(
-            knowledge_source=knowledge_source, prefer="return=representation", error_map=error_map, **kwargs
+            source_name=knowledge_source.name,
+            knowledge_source=knowledge_source,
+            prefer="return=representation",
+            error_map=error_map,
+            **kwargs
         )
         return result
 
