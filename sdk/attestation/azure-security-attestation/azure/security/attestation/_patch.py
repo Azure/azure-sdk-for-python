@@ -393,7 +393,7 @@ class AttestationClient:
             if not self._signing_certificates:
                 signing_certificates = self._client.signing_certificates.get(**kwargs)
                 self._signing_certificates = []
-                for key in signing_certificates.keys:
+                for key in signing_certificates.keys():
                     # Convert the returned certificate chain into an array of X.509 Certificates.
                     self._signing_certificates.append(AttestationSigner._from_generated(key))
             signers = self._signing_certificates
@@ -1000,7 +1000,7 @@ class AttestationAdministrationClient:
             if not self._signing_certificates:
                 signing_certificates = self._client.signing_certificates.get(**kwargs)
                 self._signing_certificates = []
-                for key in signing_certificates.keys:
+                for key in signing_certificates.keys():
                     # Convert the returned certificate chain into an array of X.509 Certificates.
                     self._signing_certificates.append(AttestationSigner._from_generated(key))
             signers = self._signing_certificates
