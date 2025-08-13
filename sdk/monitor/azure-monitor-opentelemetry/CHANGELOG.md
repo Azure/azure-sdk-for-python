@@ -1,6 +1,6 @@
 # Release History
 
-## 1.7.0 (Unreleased)
+## 1.6.14 (Unreleased)
 
 ### Features Added
 - Updated README to specify the python version supported by the distro.
