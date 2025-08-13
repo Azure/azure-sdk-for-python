@@ -149,6 +149,8 @@ class PathPropertiesPaged(AsyncPageIterator):
     upn: Optional[str]
     """If True, the user identity values will be returned as User Principal names.
         If False, the user identity values will be returned as Azure Active Directory Object IDs."""
+    begin_from: Optional[str]
+    """The path to begin listing from."""
     current_page: Optional[List[PathProperties]]
     """The current page of listed results."""
     path_list: Optional[List[Path]]
@@ -160,7 +162,8 @@ class PathPropertiesPaged(AsyncPageIterator):
         path: Optional[str] = None,
         max_results: Optional[int] = None,
         continuation_token: Optional[str] = None,
-        upn: Optional[str] = None
+        upn: Optional[str] = None,
+        begin_from: Optional[str] = None
     ) -> None:
         super(PathPropertiesPaged, self).__init__(
             get_next=self._get_next_cb,
@@ -172,6 +175,7 @@ class PathPropertiesPaged(AsyncPageIterator):
         self.results_per_page = max_results
         self.path = path
         self.upn = upn
+        self.begin_from = begin_from
         self.current_page = None
         self.path_list = None
 
@@ -183,6 +187,7 @@ class PathPropertiesPaged(AsyncPageIterator):
                 path=self.path,
                 max_results=self.results_per_page,
                 upn=self.upn,
+                begin_from=self.begin_from,
                 cls=return_headers_and_deserialized_path_list
             )
         except HttpResponseError as error:

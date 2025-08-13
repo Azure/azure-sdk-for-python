@@ -707,6 +707,7 @@ class DataLakeDirectoryClient(PathClient):
         command = functools.partial(
             client.file_system.list_paths,
             path=self.path_name,
+            begin_from=begin_from,
             timeout=timeout,
             **kwargs
         )
