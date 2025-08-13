@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -410,6 +411,7 @@ class AttestationClient:
     def __exit__(self, *exc_details):
         # type: (Any) -> None
         self._client.__exit__(*exc_details)
+
 
 class AttestationAdministrationClient:
     # pylint: disable = line-too-long, protected-access
@@ -1017,6 +1019,7 @@ class AttestationAdministrationClient:
         # type: (Any) -> None
         self._client.__exit__(*exc_details)
 
+
 class AttestationClientConfiguration(Configuration):
     """Configuration for AttestationClient.
 
@@ -1039,17 +1042,15 @@ class AttestationClientConfiguration(Configuration):
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
-        super(  # pylint: disable=super-with-arguments
-            AttestationClientConfiguration, self
-        ).__init__(**kwargs)
+        super(AttestationClientConfiguration, self).__init__(**kwargs)  # pylint: disable=super-with-arguments
 
         self._kwargs = kwargs.copy()
-
 
 
 __all__: List[str] = [
     "AttestationClient",
     "AttestationAdministrationClient",
+    "AttestationSigner"
     "AttestationType",
     "AttestationToken",
     "AttestationTokenValidationException",
