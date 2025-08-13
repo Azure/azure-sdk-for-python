@@ -25,7 +25,7 @@ class TestConfigurationState(unittest.TestCase):
         state = _ConfigurationState()
         
         self.assertEqual(state.etag, "")
-        self.assertEqual(state.refresh_interval, 30)
+        self.assertEqual(state.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(state.version_cache, -1)
         self.assertEqual(state.settings_cache, {})
 
@@ -39,7 +39,7 @@ class TestConfigurationState(unittest.TestCase):
         # New state has updated value
         self.assertEqual(updated_state.etag, "new-etag")
         # Other fields preserved
-        self.assertEqual(updated_state.refresh_interval, 30)
+        self.assertEqual(updated_state.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(updated_state.version_cache, -1)
 
     def test_with_updates_multiple_fields(self):
@@ -54,7 +54,7 @@ class TestConfigurationState(unittest.TestCase):
         
         # Original state unchanged
         self.assertEqual(original_state.etag, "")
-        self.assertEqual(original_state.refresh_interval, 30)
+        self.assertEqual(original_state.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(original_state.version_cache, -1)
         self.assertEqual(original_state.settings_cache, {})
         
@@ -120,7 +120,7 @@ class TestConfigurationManager(unittest.TestCase):
         manager = _ConfigurationManager()
         
         # Verify worker was created with correct refresh interval (default 30)
-        mock_worker_class.assert_called_once_with(30)
+        mock_worker_class.assert_called_once_with(_ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(manager._configuration_worker, mock_worker_instance)
 
     @patch('azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request')
