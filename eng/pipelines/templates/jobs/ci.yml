@@ -213,7 +213,7 @@ jobs:
       displayName: 'Use Python $(PythonVersion)'
       condition: succeededOrFailed()
       inputs:
-      versionSpec: '$(PythonVersion)'
+        versionSpec: '$(PythonVersion)'
 
     - template: /eng/pipelines/templates/steps/use-venv.yml
 
