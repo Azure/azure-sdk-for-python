@@ -124,7 +124,7 @@ class AttestationClient:
         """
         signing_certificates = await self._client.signing_certificates.get(**kwargs)
         signers = []
-        for key in signing_certificates.keys():
+        for key in signing_certificates['keys']:
             signers.append(AttestationSigner._from_generated(key))
         return signers
 
@@ -393,7 +393,7 @@ class AttestationClient:
             if not self._signing_certificates:
                 signing_certificates = await self._client.signing_certificates.get(**kwargs)
                 self._signing_certificates = []
-                for key in signing_certificates.keys():
+                for key in signing_certificates['keys']:
                     self._signing_certificates.append(AttestationSigner._from_generated(key))
             signers = self._signing_certificates
         return signers
@@ -772,7 +772,7 @@ class AttestationAdministrationClient:
 
         cert_list = token._get_body()
 
-        for key in cert_list.policy_certificates.keys:
+        for key in cert_list.policy_certificates['keys']:
             key_certs = [pem_from_base64(cert, "CERTIFICATE") for cert in key.x5_c]
             certificates.append(key_certs)
         return certificates, token
@@ -995,7 +995,7 @@ class AttestationAdministrationClient:
             if not self._signing_certificates:
                 signing_certificates = await self._client.signing_certificates.get(**kwargs)
                 self._signing_certificates = []
-                for key in signing_certificates.keys():
+                for key in signing_certificates['keys']:
                     self._signing_certificates.append(AttestationSigner._from_generated(key))
             signers = self._signing_certificates
         return signers
