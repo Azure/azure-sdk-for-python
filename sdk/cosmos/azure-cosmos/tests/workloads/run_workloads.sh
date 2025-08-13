@@ -18,6 +18,8 @@ echo "[Info] azure-cosmos installed successfully."
 for file in ./*_workload.py; do
     for (( i=0; i<num_runs; i++ )); do
         python3 "$file" &
+        # slow start up
+        sleep 1
     done
 done
 

@@ -26,7 +26,7 @@ cd ../../
 pip install -r dev_requirements.txt
 pip install azure-monitor-opentelemetry
 # azure core needs to be reinstalled to avoid cannot find Spanning Error from open telemetry
-pip install ../../../../core/azure-core
+pip install -e ../../../../core/azure-core
 echo "[Step 3] Install Python requirements: completed."
 
 # 4. Install the current azure-cosmos package
