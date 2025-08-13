@@ -186,7 +186,7 @@ class AzurePowerShellCredential:
         if options and options.get("claims"):
             claims_value = options.get("claims")
             raise CredentialUnavailableError(
-                message=f"Failed to get token. Run Connect-AzAccount --ClaimsChallenge {claims_value}"
+                message=f"Failed to get token. Run Connect-AzAccount -ClaimsChallenge {claims_value}"
             )
 
         tenant_id = options.get("tenant_id") if options else None
