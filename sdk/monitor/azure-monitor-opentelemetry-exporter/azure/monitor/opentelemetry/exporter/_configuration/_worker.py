@@ -3,6 +3,7 @@
 
 import logging
 import threading
+import random
 from azure.monitor.opentelemetry.exporter._configuration import _update_configuration_and_get_refresh_interval
 
 logger = logging.getLogger(__name__)
@@ -31,15 +32,17 @@ class _ConfigurationWorker:
         """Initialize and start the configuration worker thread.
 
         Creates and starts a background daemon thread that will periodically refresh
-        configuration from OneSettings. The thread starts immediately upon initialization.
+        configuration from OneSettings. The thread starts immediately upon initialization
+        with a random startup delay to prevent thundering herd issues.
 
         Args:
             refresh_interval (Optional[int]): Initial refresh interval in seconds.
                 If None, defaults to 3600 seconds (1 hour).
 
         Note:
-            The background thread is created as a daemon thread, which means it will
-            not prevent the main program from exiting.
+            The background thread is created as a daemon thread and includes a random
+            0-15 second startup delay to stagger configuration requests across multiple
+            SDK instances during startup or recovery from outages.
         """
         self._default_refresh_interval = 3600  # Default to 60 minutes in seconds
         self._interval_lock = threading.Lock()
@@ -100,14 +103,14 @@ class _ConfigurationWorker:
         """Main configuration refresh loop executed in the background thread.
 
         This method implements the core logic of the configuration worker:
-        1. Continuously loops until shutdown is requested
-        2. Calls the configuration update function to fetch new settings
-        3. Updates the refresh interval based on the server response
-        4. Waits for the next refresh cycle or shutdown signal
+        1. Applies random startup delay (0-15 seconds) to stagger requests
+        2. Continuously loops until shutdown is requested
+        3. Calls the configuration update function to fetch new settings
+        4. Updates the refresh interval based on the server response
+        5. Waits for the next refresh cycle or shutdown signal
 
-        The loop handles exceptions gracefully by logging warnings and continuing
-        operation. The wait operation uses the shutdown event to enable immediate
-        response to shutdown requests even during long wait periods.
+        The initial random delay helps prevent thundering herd problems when many
+        SDK instances start up simultaneously after service outages or deployments.
 
         Error Handling:
             - All exceptions are caught and logged as warnings
@@ -119,6 +122,14 @@ class _ConfigurationWorker:
             - Uses _shutdown_event.wait() for interruptible sleep periods
             - Exits cleanly when shutdown is requested
         """
+        # Add random startup delay (0-15 seconds) to stagger configuration requests
+        # This prevents thundering herd when many SDKs start simultaneously
+        startup_delay = random.uniform(0.0, 15.0)
+        
+        if self._shutdown_event.wait(startup_delay):
+            # Shutdown requested during startup delay
+            return
+
         while not self._shutdown_event.is_set():
             try:
                 # Perform the refresh operation

@@ -136,7 +136,8 @@ def _parse_onesettings_response(response: requests.Response) -> OneSettingsRespo
         etag = response.headers.get("ETag")
         refresh_interval_header = response.headers.get("x-ms-onesetinterval")
         try:
-            refresh_interval = int(refresh_interval_header) if refresh_interval_header else refresh_interval
+            # Note: OneSettings refresh interval is in minutes, convert to seconds
+            refresh_interval = int(refresh_interval_header) * 60 if refresh_interval_header else refresh_interval
         except (ValueError, TypeError):
             logger.warning("Invalid refresh interval format: %s", refresh_interval_header)
             refresh_interval = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
