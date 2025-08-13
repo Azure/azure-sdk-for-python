@@ -98,6 +98,18 @@ class ClientEvent(ClientEventGenerated):
 class ServerEvent(ServerEventGenerated):
     """Extended ServerEvent with deserialization."""
 
+    @staticmethod
+    def _normalize_event_type(raw: Any) -> Optional[ServerEventType]:
+        """Convert an incoming 'type' (str/enum/other) to ServerEventType or None."""
+        if isinstance(raw, ServerEventType):
+            return raw
+        if isinstance(raw, str):
+            try:
+                return ServerEventType(raw)
+            except ValueError:
+                return None
+        return None
+
     @classmethod
     def deserialize(cls, data: Union[str, bytes]) -> "ServerEvent":
         """Deserialize a JSON string or bytes to a ServerEvent.
@@ -130,8 +142,9 @@ class ServerEvent(ServerEventGenerated):
         :return: A ServerEvent instance.
         :rtype: ~azure.ai.voicelive.models.ServerEvent
         """
-        # Determine the event type
-        event_type = data.get("type")
+        # Determine and normalize the event type
+        raw_type: Any = data.get("type")
+        event_type = cls._normalize_event_type(raw_type)
 
         # Map event type to appropriate class
         event_class_map = {
@@ -188,7 +201,12 @@ class ServerEvent(ServerEventGenerated):
         except TypeError as e:
             log.warning(f"Could not create {event_class.__name__} from data: {e}. Falling back to base class.")
             # Fallback to base class with minimal fields
-            return cls(type=event_type, event_id=data.get("event_id"))
+            # Pass a string to base class ctor (mypy: 'str' not Optional/Any)
+            type_str: str = (
+                raw_type if isinstance(raw_type, str)
+                else (raw_type.value if isinstance(raw_type, ServerEventType) else "")
+            )
+            return cls(type=type_str, event_id=data.get("event_id"))
 
 
 def patch_sdk():

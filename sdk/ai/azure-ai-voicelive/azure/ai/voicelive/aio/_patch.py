@@ -89,11 +89,11 @@ class SessionResource:
         :type event_id: Optional[str]
         """
         if isinstance(session, RequestSession):
-            payload = session.as_dict()
+            # overload: keyword form requires a typed RequestSession
+            event = ClientEventSessionUpdate(session=session)
         else:
-            payload = dict(session)
-
-        event = ClientEventSessionUpdate(session=payload)
+            # overload: mapping form takes a single Mapping argument
+            event = ClientEventSessionUpdate({"session": dict(session)})
         if event_id:
             event["event_id"] = event_id
 
@@ -245,7 +245,7 @@ class ConversationItemResource:
         :param event_id: Optional ID for the event.
         :type event_id: Optional[str]
         """
-        event = ClientEventConversationItemCreate(item=dict(item))
+        event = ClientEventConversationItemCreate({"item": dict(item)})
         if previous_item_id:
             event["previous_item_id"] = previous_item_id
         if event_id:
@@ -301,7 +301,14 @@ class ConversationItemResource:
 
 
 class ConversationResource:
-    """Resource for conversation management."""
+    """Resource for conversation management.
+
+    Exposes helpers for manipulating items in the active conversation.
+
+    :ivar item: Resource for per-item operations (create, delete, retrieve, truncate)
+        within the conversation.
+    :vartype item: ~azure.ai.voicelive.aio.ConversationItemResource
+    """
 
     def __init__(self, connection: "VoiceLiveConnection") -> None:
         """Initialize a conversation resource.
@@ -310,7 +317,7 @@ class ConversationResource:
         :type connection: ~azure.ai.voicelive.aio.VoiceLiveConnection
         """
         self._connection = connection
-        self.item = ConversationItemResource(connection)
+        self.item: ConversationItemResource = ConversationItemResource(connection)
 
 
 class TranscriptionSessionResource:
@@ -374,8 +381,8 @@ class VoiceLiveConnection:
         :param ws: The established WebSocket connection to the Voice Live service.
         :type ws: aiohttp.ClientWebSocketResponse
         """
-        self.session = client_session
-        self._connection = ws
+        self._client_session: aiohttp.ClientSession = client_session
+        self._connection: aiohttp.ClientWebSocketResponse = ws
 
         # Add all resource attributes
         self.session = SessionResource(self)
@@ -450,10 +457,13 @@ class VoiceLiveConnection:
         """
         try:
             # Prefer model-provided serialization if available
-            if callable(getattr(event, "serialize", None)):
-                data = event.serialize()  # instance serializer
-            elif callable(getattr(event.__class__, "serialize", None)):
-                data = event.__class__.serialize(event)  # class/static serializer
+            if isinstance(event, ClientEvent):
+                if callable(getattr(event, "serialize", None)):
+                    data = event.serialize()  # instance serializer
+                elif callable(getattr(type(event), "serialize", None)):
+                    data = type(event).serialize(event)  # class/static serializer
+                else:
+                    data = json.dumps(event, default=_json_default)
             elif isinstance(event, Mapping):
                 data = json.dumps(dict(event), default=_json_default)
             else:
@@ -551,28 +561,33 @@ class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnecti
         self.__credential_scopes = kwargs.pop("credential_scopes", "https://cognitiveservices.azure.com/.default")
         self.__model = model
         self.__api_version = api_version
-        self.__connection = None
-        self.__session = None
+        self.__connection: Optional[VoiceLiveConnection] = None
+        self.__session: Optional[aiohttp.ClientSession] = None
+        self.__connection_obj: Optional[aiohttp.ClientWebSocketResponse] = None
         self.__extra_query = extra_query
         self.__extra_headers = extra_headers
         self.__connection_options = self._map_websocket_options(connection_options)
         self.__proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
 
     def _map_websocket_options(self, options: WebsocketConnectionOptions) -> Dict[str, Any]:
-        """Map websockets options to aiohttp options."""
-        mapped_options: Dict[str, Any] = {}
-        if "max_size" in options:
-            mapped_options["max_msg_size"] = options.pop("max_size")  # type: ignore[arg-type]
-        if "close_timeout" in options:
-            mapped_options["timeout"] = options.pop("close_timeout")  # type: ignore[arg-type]
-        if "ping_interval" in options:
-            mapped_options["heartbeat"] = options.pop("ping_interval")  # type: ignore[arg-type]
-        if "compression" in options:
-            mapped_options["compress"] = options.pop("compression")  # type: ignore[arg-type]
-        for key, value in options.items():
-            if key not in ("ping_timeout", "open_timeout", "max_queue"):
-                mapped_options[key] = value
-        return mapped_options
+        """Map user options to aiohttp ws_connect kwargs (accept both TypedDict keys and common aliases)."""
+        # copy to a plain dict so we can safely check/pop alias keys without mypy complaints
+        src: Dict[str, Any] = dict(options)
+        mapped: Dict[str, Any] = {}
+        # aliases commonly used by other libs
+        if "max_size" in src:
+            mapped["max_msg_size"] = src.pop("max_size")
+        if "close_timeout" in src:
+            mapped["timeout"] = src.pop("close_timeout")
+        if "ping_interval" in src:
+            mapped["heartbeat"] = src.pop("ping_interval")
+        if "compression" in src:
+            mapped["compress"] = src.pop("compression")
+        # pass through supported aiohttp-style keys from our TypedDict
+        for key in ("max_msg_size", "timeout", "heartbeat", "autoclose", "autoping"):
+            if key in src:
+                mapped[key] = src[key]
+        return mapped
 
     async def __aenter__(self) -> VoiceLiveConnection:
         """Create and return an async WebSocket connection."""
@@ -589,15 +604,15 @@ class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnecti
             auth_headers = self._get_auth_headers()
             headers = {**auth_headers, **dict(self.__extra_headers)}
 
-            self.__session = aiohttp.ClientSession()
+            session = aiohttp.ClientSession()
+            self.__session = session
             try:
-                self.__connection_obj = await self.__session.ws_connect(
-                    str(url), headers=headers, **self.__connection_options
-                )
-                self.__connection = VoiceLiveConnection(self.__session, self.__connection_obj)
+                connection_obj = await session.ws_connect(str(url), headers=headers, **self.__connection_options)
+                self.__connection_obj = connection_obj
+                self.__connection = VoiceLiveConnection(session, connection_obj)
                 return self.__connection
             except aiohttp.ClientError as e:
-                await self.__session.close()
+                await session.close()
                 raise ConnectionError(f"Failed to establish WebSocket connection: {e}") from e
         except Exception as e:
             raise ConnectionError(f"Failed to establish WebSocket connection: {e}") from e

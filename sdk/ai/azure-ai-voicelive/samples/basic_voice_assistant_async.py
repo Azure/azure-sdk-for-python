@@ -39,7 +39,7 @@ import signal
 import threading
 import queue
 from azure.ai.voicelive.models import ServerEventType
-from typing import Union
+from typing import Union, Optional, TYPE_CHECKING
 from concurrent.futures import ThreadPoolExecutor
 import logging
 
@@ -63,6 +63,10 @@ from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.identity import DefaultAzureCredential, InteractiveBrowserCredential
 
 from azure.ai.voicelive.aio import connect
+if TYPE_CHECKING:
+    # Only needed for type checking; avoids runtime import issues
+    from azure.ai.voicelive.aio import VoiceLiveConnection
+
 from azure.ai.voicelive.models import (
     RequestSession,
     ServerVad,
@@ -104,13 +108,13 @@ class AudioProcessor:
         self.output_stream = None
 
         # Audio queues and threading
-        self.audio_queue = queue.Queue()
-        self.audio_send_queue = queue.Queue()  # Queue for audio data to send
+        self.audio_queue: "queue.Queue[bytes]" = queue.Queue()
+        self.audio_send_queue: "queue.Queue[str]" = queue.Queue()  # base64 audio to send
         self.executor = ThreadPoolExecutor(max_workers=3)
-        self.capture_thread = None
-        self.playback_thread = None
-        self.send_thread = None
-        self.loop = None  # Store the event loop
+        self.capture_thread: Optional[threading.Thread] = None
+        self.playback_thread: Optional[threading.Thread] = None
+        self.send_thread: Optional[threading.Thread] = None
+        self.loop: Optional[asyncio.AbstractEventLoop] = None  # Store the event loop
 
         logger.info("AudioProcessor initialized with 24kHz PCM16 mono audio")
 
@@ -321,8 +325,8 @@ class BasicVoiceAssistant:
         self.model = model
         self.voice = voice
         self.instructions = instructions
-        self.connection = None
-        self.audio_processor = None
+        self.connection: Optional["VoiceLiveConnection"] = None
+        self.audio_processor: Optional[AudioProcessor] = None
         self.session_ready = False
         self.conversation_started = False
 
@@ -337,21 +341,23 @@ class BasicVoiceAssistant:
                 credential=self.credential,
                 model=self.model,
                 connection_options={
-                    "max_size": 10 * 1024 * 1024,  # 10 MB
-                    "ping_interval": 20,  # 20 seconds
-                    "ping_timeout": 20,  # 20 seconds
+                    "max_msg_size": 10 * 1024 * 1024,
+                    "heartbeat": 20,
+                    "timeout": 20,
                 },
             ) as connection:
-                self.connection = connection
+                conn = connection
+                self.connection = conn
 
                 # Initialize audio processor
-                self.audio_processor = AudioProcessor(connection)
+                ap = AudioProcessor(conn)
+                self.audio_processor = ap
 
                 # Configure session for voice conversation
                 await self._setup_session()
 
                 # Start audio systems
-                await self.audio_processor.start_playback()
+                await ap.start_playback()
 
                 logger.info("Voice assistant ready! Start speaking...")
                 print("\n" + "=" * 60)
@@ -379,6 +385,7 @@ class BasicVoiceAssistant:
         logger.info("Setting up voice conversation session...")
 
         # Create strongly typed voice configuration
+        voice_config: Union[AzureStandardVoice, str]
         if self.voice.startswith("en-US-") or self.voice.startswith("en-CA-") or "-" in self.voice:
             # Azure voice
             voice_config = AzureStandardVoice(name=self.voice, type="azure-standard")
@@ -399,14 +406,18 @@ class BasicVoiceAssistant:
             turn_detection=turn_detection_config,
         )
 
-        await self.connection.session.update(session=session_config)
+        conn = self.connection
+        assert conn is not None, "Connection must be established before setting up session"
+        await conn.session.update(session=session_config)
 
         logger.info("Session configuration sent")
 
     async def _process_events(self):
         """Process events from the VoiceLive connection."""
         try:
-            async for event in self.connection:
+            conn = self.connection
+            assert conn is not None, "Connection must be established before processing events"
+            async for event in conn:
                 await self._handle_event(event)
 
         except KeyboardInterrupt:
@@ -418,24 +429,28 @@ class BasicVoiceAssistant:
     async def _handle_event(self, event):
         """Handle different types of events from VoiceLive."""
         logger.debug(f"Received event: {event.type}")
+        ap = self.audio_processor
+        conn = self.connection
+        assert ap is not None, "AudioProcessor must be initialized"
+        assert conn is not None, "Connection must be established"
 
         if event.type == ServerEventType.SESSION_UPDATED:
             logger.info(f"Session ready: {event.session.id}")
             self.session_ready = True
 
             # Start audio capture once session is ready
-            await self.audio_processor.start_capture()
+            await ap.start_capture()
 
         elif event.type == ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STARTED:
             logger.info("🎤 User started speaking - stopping playback")
             print("🎤 Listening...")
 
             # Stop current assistant audio playback (interruption handling)
-            await self.audio_processor.stop_playback()
+            await ap.stop_playback()
 
             # Cancel any ongoing response
             try:
-                await self.connection.response.cancel()
+                await conn.response.cancel()
             except Exception as e:
                 logger.debug(f"No response to cancel: {e}")
 
@@ -444,7 +459,7 @@ class BasicVoiceAssistant:
             print("🤔 Processing...")
 
             # Restart playback system for response
-            await self.audio_processor.start_playback()
+            await ap.start_playback()
 
         elif event.type == ServerEventType.RESPONSE_CREATED:
             logger.info("🤖 Assistant response created")
@@ -452,7 +467,7 @@ class BasicVoiceAssistant:
         elif event.type == ServerEventType.RESPONSE_AUDIO_DELTA:
             # Stream audio response to speakers
             logger.debug("Received audio delta")
-            await self.audio_processor.queue_audio(event.delta)
+            await ap.queue_audio(event.delta)
 
         elif event.type == ServerEventType.RESPONSE_AUDIO_DONE:
             logger.info("🤖 Assistant finished speaking")
@@ -555,6 +570,7 @@ async def main():
 
     try:
         # Create client with appropriate credential
+        credential: Union[AzureKeyCredential, TokenCredential]
         if args.use_token_credential:
             credential = InteractiveBrowserCredential()  # or DefaultAzureCredential() if needed
             logger.info("Using Azure token credential")

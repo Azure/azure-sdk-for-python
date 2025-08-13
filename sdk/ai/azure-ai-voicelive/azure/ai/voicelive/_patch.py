@@ -10,6 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import json
 import logging
 from contextlib import AbstractContextManager
+from multiprocessing.dummy import connection
 from typing import Any, Dict, Iterator, List, Optional, Sequence, Tuple, Union, Mapping
 from typing_extensions import TypedDict
 from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
@@ -147,11 +148,12 @@ class SessionResource:
         :type event_id: str
         """
         if isinstance(session, RequestSession):
-            payload = session.as_dict()
+            # keyword overload: requires a typed RequestSession
+            event = ClientEventSessionUpdate(session=session)
         else:
-            payload = dict(session)
+            # mapping overload: pass a single positional Mapping
+            event = ClientEventSessionUpdate({"session": dict(session)})
 
-        event = ClientEventSessionUpdate(session=payload)
         if event_id:
             event["event_id"] = event_id
         self._connection.send(event)
@@ -297,7 +299,7 @@ class ConversationItemResource:
         :param event_id: Optional ID for the event.
         :type event_id: str
         """
-        event = ClientEventConversationItemCreate(item=dict(item))
+        event = ClientEventConversationItemCreate({"item": dict(item)})
         if previous_item_id:
             event["previous_item_id"] = previous_item_id
         if event_id:
@@ -351,7 +353,14 @@ class ConversationItemResource:
 
 
 class ConversationResource:
-    """Resource for conversation management."""
+    """Resource for conversation management.
+
+    Exposes helpers for manipulating items within the active conversation.
+
+    :ivar item: Resource for creating, retrieving, truncating, and deleting
+        conversation items (messages, function calls, etc.).
+    :vartype item: ~azure.ai.voicelive.ConversationItemResource
+    """
 
     def __init__(self, connection: "VoiceLiveConnection") -> None:
         """Initialize a conversation resource.
@@ -360,7 +369,7 @@ class ConversationResource:
         :type connection: ~azure.ai.voicelive.VoiceLiveConnection
         """
         self._connection = connection
-        self.item = ConversationItemResource(connection)
+        self.item: ConversationItemResource = ConversationItemResource(connection)
 
 
 class TranscriptionSessionResource:
@@ -490,15 +499,18 @@ class VoiceLiveConnection:
         :raises ConnectionError: If serialization or the WebSocket send fails.
         """
         try:
-            # Prefer model-provided serialization if available
-            if callable(getattr(event, "serialize", None)):
-                data = event.serialize()  # instance serializer
-            elif callable(getattr(event.__class__, "serialize", None)):
-                data = event.__class__.serialize(event)  # class/static serializer
-            elif isinstance(event, Mapping):
-                data = json.dumps(dict(event), default=_json_default)
+            if isinstance(event, ClientEvent):
+                # Prefer model-provided serialization if available
+                if callable(getattr(event, "serialize", None)):
+                    data = event.serialize()
+                elif callable(getattr(type(event), "serialize", None)):
+                    data = type(event).serialize(event)
+                else:
+                    # Fallback: go through our default JSON encoder on the event’s dict-like view
+                    data = json.dumps(event, default=_json_default)
             else:
-                data = json.dumps(event, default=_json_default)
+                # Mapping path
+                data = json.dumps(dict(event), default=_json_default)
             self._connection.send(data)
         except Exception as e:
             log.error(f"Failed to send event: {e}")

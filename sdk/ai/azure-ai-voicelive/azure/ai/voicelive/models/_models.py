@@ -1453,7 +1453,7 @@ class ConversationResponseItem(_Model):
         self,
         *,
         object: Optional[Literal["realtime.item"]] = None,
-        type: str = None,
+        type: Optional[str] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
     ) -> None: ...
 

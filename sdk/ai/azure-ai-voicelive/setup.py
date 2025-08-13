@@ -7,31 +7,32 @@
 # --------------------------------------------------------------------------
 
 
-import os
 import re
+from pathlib import Path
 from setuptools import setup, find_packages
-
 
 PACKAGE_NAME = "azure-ai-voicelive"
 PACKAGE_PPRINT_NAME = "Azure Ai Voicelive"
 PACKAGE_NAMESPACE = "azure.ai.voicelive"
 
-# a.b.c => a/b/c
+ROOT = Path(__file__).parent
 package_folder_path = PACKAGE_NAMESPACE.replace(".", "/")
 
-# Version extraction inspired from 'requests'
-with open(os.path.join(package_folder_path, "_version.py"), "r") as fd:
-    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE).group(1)
-
+# Read version (UTF-8)
+version_file = ROOT / package_folder_path / "_version.py"
+version_text = version_file.read_text(encoding="utf-8")
+version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', version_text, re.MULTILINE).group(1)
 if not version:
     raise RuntimeError("Cannot find version information")
 
+# Read README (UTF-8)
+long_description = (ROOT / "README.md").read_text(encoding="utf-8")
 
 setup(
     name=PACKAGE_NAME,
     version=version,
-    description="Microsoft Corporation {} Client Library for Python".format(PACKAGE_PPRINT_NAME),
-    long_description=open("README.md", "r").read(),
+    description=f"Microsoft Corporation {PACKAGE_PPRINT_NAME} Client Library for Python",
+    long_description=long_description,
     long_description_content_type="text/markdown",
     license="MIT License",
     author="Microsoft Corporation",
@@ -47,21 +48,19 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
     packages=find_packages(
         exclude=[
             "tests",
-            # Exclude packages that will be covered by PEP420 or nspkg
-            "azure",
+            "azure",       # covered by PEP 420
             "azure.ai",
         ]
     ),
     include_package_data=True,
-    package_data={
-        "azure.ai.voicelive": ["py.typed"],
-    },
+    package_data={"azure.ai.voicelive": ["py.typed"]},
     install_requires=[
         "isodate>=0.6.1",
         "azure-core>=1.30.0",
