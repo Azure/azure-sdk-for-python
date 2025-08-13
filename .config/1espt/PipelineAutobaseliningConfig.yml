@@ -152,3 +152,10 @@ pipelines:
           lastModifiedDate: 2025-08-12
         spotbugs:
           lastModifiedDate: 2025-08-12
+      source:
+        credscan:
+          lastModifiedDate: 2025-08-13
+        psscriptanalyzer:
+          lastModifiedDate: 2025-08-13
+        armory:
+          lastModifiedDate: 2025-08-13
