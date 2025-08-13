@@ -9,8 +9,12 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+
 - Fixed issue #42337, removes warning messages for instrumentations that target multiple packages. The logic for dependency conflict detection has been enhanced by adding "instruments-any" feature. This feature is used when an instrumentation requires any of a set of dependencies rather than all. Follows upstream dependency conflict detection logic - https://github.com/open-telemetry/opentelemetry-python-contrib/blob/main/opentelemetry-instrumentation/src/opentelemetry/instrumentation/dependencies.py
   ([#42342](https://github.com/Azure/azure-sdk-for-python/pull/42342))
+
+- Add error handling for diagnostic logging setup
+  ([#xxxxx](https://github.com/Azure/azure-sdk-for-python/pull/xxxxx))
 
 ### Other Changes
 
