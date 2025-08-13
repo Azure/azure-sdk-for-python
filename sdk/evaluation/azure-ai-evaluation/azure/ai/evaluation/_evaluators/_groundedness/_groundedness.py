@@ -1,7 +1,9 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import os, logging
+import os
+import logging
+from inspect import signature
 from typing import Dict, List, Optional, Union
 
 from typing_extensions import overload, override
@@ -49,6 +51,9 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         ~azure.ai.evaluation.OpenAIModelConfiguration]
     :param threshold: The threshold for the groundedness evaluator. Default is 3.
     :type threshold: int
+    :keyword is_reasoning_model: (Preview) config for chat completions is
+        updated to use reasoning models
+    :type is_reasoning_model: bool
 
     .. admonition:: Example:
 
@@ -105,10 +110,16 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             result_key=self._RESULT_KEY,
             threshold=threshold,
             _higher_is_better=self._higher_is_better,
+            **kwargs,
         )
         self._model_config = model_config
         self.threshold = threshold
-        # Needs to be set because it's used in call method to re-validate prompt if `query` is provided
+
+        # Cache whether AsyncPrompty.load supports the is_reasoning_model parameter.
+        try:
+            self._has_is_reasoning_model_param: bool = "is_reasoning_model" in signature(AsyncPrompty.load).parameters
+        except Exception:  # Very defensive: if inspect fails, assume not supported
+            self._has_is_reasoning_model_param = False
 
     @overload
     def __call__(
@@ -202,7 +213,18 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 self._DEFAULT_OPEN_API_VERSION,
                 UserAgentSingleton().value,
             )
-            self._flow = AsyncPrompty.load(source=self._prompty_file, model=prompty_model_config)
+
+            if self._has_is_reasoning_model_param:
+                self._flow = AsyncPrompty.load(
+                    source=self._prompty_file,
+                    model=prompty_model_config,
+                    is_reasoning_model=self._is_reasoning_model,
+                )
+            else:
+                self._flow = AsyncPrompty.load(
+                    source=self._prompty_file,
+                    model=prompty_model_config,
+                )
 
         return super().__call__(*args, **kwargs)
 
@@ -282,4 +304,4 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             logger.debug(f"Error extracting context from agent response : {str(ex)}")
             context = ""
 
-        return context if context else None
+        return context
