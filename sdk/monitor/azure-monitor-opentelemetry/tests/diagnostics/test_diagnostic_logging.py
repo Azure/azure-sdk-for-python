@@ -165,3 +165,74 @@ class TestDiagnosticLogger:
         diagnostic_logger.AzureDiagnosticLogging.info(MESSAGE1, "4200")
         diagnostic_logger.AzureDiagnosticLogging.info(MESSAGE2, "4301")
         check_file_for_messages(temp_file_path, "INFO", ((MESSAGE1, "4200"), (MESSAGE2, "4301")))
+
+    def test_initialize_file_handler_exception(self, temp_file_path):
+        """Test that initialization fails gracefully when FileHandler creation raises an exception."""
+        set_up(temp_file_path, is_diagnostics_enabled=True)
+        
+        # Mock FileHandler to raise an exception
+        with patch("azure.monitor.opentelemetry._diagnostics.diagnostic_logging.logging.FileHandler") as mock_file_handler:
+            mock_file_handler.side_effect = OSError("Permission denied")
+            
+            # Reset the initialized state to test initialization
+            diagnostic_logger.AzureDiagnosticLogging._initialized = False
+            
+            # Attempt to log, which will trigger initialization
+            diagnostic_logger.AzureDiagnosticLogging.info(MESSAGE1, "4200")
+            
+            # Verify that initialization failed
+            assert diagnostic_logger.AzureDiagnosticLogging._initialized is False
+
+    def test_initialize_makedirs_exception_not_file_exists(self, temp_file_path):
+        """Test that initialization fails gracefully when makedirs raises a non-FileExistsError exception."""
+        set_up(temp_file_path, is_diagnostics_enabled=True)
+        
+        # Mock makedirs to raise a PermissionError
+        with patch("azure.monitor.opentelemetry._diagnostics.diagnostic_logging.makedirs") as mock_makedirs, \
+             patch("azure.monitor.opentelemetry._diagnostics.diagnostic_logging.exists", return_value=False):
+            mock_makedirs.side_effect = PermissionError("Permission denied")
+            
+            # Reset the initialized state to test initialization
+            diagnostic_logger.AzureDiagnosticLogging._initialized = False
+            
+            # Attempt to log, which will trigger initialization
+            diagnostic_logger.AzureDiagnosticLogging.info(MESSAGE1, "4200")
+            
+            # Verify that initialization failed
+            assert diagnostic_logger.AzureDiagnosticLogging._initialized is False
+
+    def test_initialize_makedirs_file_exists_error_handled(self, temp_file_path):
+        """Test that FileExistsError from makedirs is handled gracefully and initialization continues."""
+        set_up(temp_file_path, is_diagnostics_enabled=True)
+        
+        # Mock makedirs to raise FileExistsError (this should be handled gracefully)
+        with patch("azure.monitor.opentelemetry._diagnostics.diagnostic_logging.makedirs") as mock_makedirs, \
+             patch("azure.monitor.opentelemetry._diagnostics.diagnostic_logging.exists", return_value=False):
+            mock_makedirs.side_effect = FileExistsError("Directory already exists")
+            
+            # Reset the initialized state to test initialization
+            diagnostic_logger.AzureDiagnosticLogging._initialized = False
+            
+            # Attempt to log, which will trigger initialization
+            diagnostic_logger.AzureDiagnosticLogging.info(MESSAGE1, "4200")
+            
+            # Verify that initialization succeeded despite FileExistsError
+            assert diagnostic_logger.AzureDiagnosticLogging._initialized is True
+            check_file_for_messages(temp_file_path, "INFO", ((MESSAGE1, "4200"),))
+
+    def test_initialize_formatter_exception(self, temp_file_path):
+        """Test that initialization fails gracefully when Formatter creation raises an exception."""
+        set_up(temp_file_path, is_diagnostics_enabled=True)
+        
+        # Mock Formatter to raise an exception
+        with patch("azure.monitor.opentelemetry._diagnostics.diagnostic_logging.logging.Formatter") as mock_formatter:
+            mock_formatter.side_effect = ValueError("Invalid format string")
+            
+            # Reset the initialized state to test initialization
+            diagnostic_logger.AzureDiagnosticLogging._initialized = False
+            
+            # Attempt to log, which will trigger initialization
+            diagnostic_logger.AzureDiagnosticLogging.info(MESSAGE1, "4200")
+            
+            # Verify that initialization failed
+            assert diagnostic_logger.AzureDiagnosticLogging._initialized is False

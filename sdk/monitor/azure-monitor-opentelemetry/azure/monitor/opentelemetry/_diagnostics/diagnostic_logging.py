@@ -70,30 +70,42 @@ class AzureDiagnosticLogging:
                         + "}"
                         + "}"
                     )
-                    if not exists(_DIAGNOSTIC_LOG_PATH):
-                        makedirs(_DIAGNOSTIC_LOG_PATH)
-                    f_handler = logging.FileHandler(join(_DIAGNOSTIC_LOG_PATH, _DIAGNOSTIC_LOGGER_FILE_NAME))
-                    formatter = logging.Formatter(fmt=log_format, datefmt="%Y-%m-%dT%H:%M:%S")
-                    f_handler.setFormatter(formatter)
-                    _logger.addHandler(f_handler)
-                    AzureDiagnosticLogging._initialized = True
+                    try:
+                        if not exists(_DIAGNOSTIC_LOG_PATH):
+                            try:
+                                makedirs(_DIAGNOSTIC_LOG_PATH)
+                            # Multi-thread can creare a race condition for creating the log file
+                            except FileExistsError as e:
+                                _logger.info("Azure Monitor diagnostic log file already exists: %s", e)
+                        f_handler = logging.FileHandler(join(_DIAGNOSTIC_LOG_PATH, _DIAGNOSTIC_LOGGER_FILE_NAME))
+                        formatter = logging.Formatter(fmt=log_format, datefmt="%Y-%m-%dT%H:%M:%S")
+                        f_handler.setFormatter(formatter)
+                        _logger.addHandler(f_handler)
+                        AzureDiagnosticLogging._initialized = True
+                    except Exception as e:
+                        _logger.error("Failed to initialize Azure Monitor diagnostic logging: %s", e)
+                        AzureDiagnosticLogging._initialized = False
 
     @classmethod
     def debug(cls, message: str, message_id: str):
         AzureDiagnosticLogging._initialize()
-        _logger.debug(message, extra={"msgId": message_id})
+        if AzureDiagnosticLogging._initialized:
+            _logger.debug(message, extra={"msgId": message_id})
 
     @classmethod
     def info(cls, message: str, message_id: str):
         AzureDiagnosticLogging._initialize()
-        _logger.info(message, extra={"msgId": message_id})
+        if AzureDiagnosticLogging._initialized:
+            _logger.info(message, extra={"msgId": message_id})
 
     @classmethod
     def warning(cls, message: str, message_id: str):
         AzureDiagnosticLogging._initialize()
-        _logger.warning(message, extra={"msgId": message_id})
+        if AzureDiagnosticLogging._initialized:
+            _logger.warning(message, extra={"msgId": message_id})
 
     @classmethod
     def error(cls, message: str, message_id: str):
         AzureDiagnosticLogging._initialize()
-        _logger.error(message, extra={"msgId": message_id})
+        if AzureDiagnosticLogging._initialized:
+            _logger.error(message, extra={"msgId": message_id})
