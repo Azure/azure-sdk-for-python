@@ -5857,7 +5857,7 @@ class RunStepDeltaToolCallObject(RunStepDeltaDetail, discriminator="tool_calls")
 
 
 class RunStepDetailsActivity(_Model):
-    """Represents the list of activities, associated with the given step.*.
+    """Represents the list of activities, associated with the given step.
 
     :ivar type: The activity type, which is always 'mcp_list_tools'. Required. Default value is
      "mcp_list_tools".
