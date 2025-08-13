@@ -29,7 +29,7 @@ dependencies = [
 dynamic = ["version", "readme"]
 
 [project.urls]
-repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity-broker"
+repository = "https://github.com/Azure/azure-sdk-for-python"
 
 [tool.setuptools.dynamic]
 version = {attr = "azure.identity.broker._version.VERSION"}

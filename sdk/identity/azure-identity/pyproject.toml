@@ -32,14 +32,14 @@ dependencies = [
 dynamic = ["version", "readme"]
 
 [project.urls]
-repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity"
+repository = "https://github.com/Azure/azure-sdk-for-python"
 
 [tool.setuptools.dynamic]
 version = {attr = "azure.identity._version.VERSION"}
 readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
 
 [tool.setuptools.packages.find]
-exclude = ["tests*", "azure"]
+exclude = ["tests*", "samples*", "azure"]
 
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]
