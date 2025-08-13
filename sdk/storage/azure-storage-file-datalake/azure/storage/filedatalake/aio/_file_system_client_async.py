@@ -597,6 +597,12 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
             :class:`~azure.storage.filedatalake.PathProperties`. If False, the values will be returned
             as Azure Active Directory Object IDs. The default value is False. Note that group and application
             Object IDs are not translate because they do not have unique friendly names.
+        :keyword Optional[str] begin_from: A relative path within the specified directory where the listing
+            will start from. For example, a recursive listing under directory folder1/folder2 with
+            beginFrom as folder3/readmefile.txt will start listing from folder1/folder2/folder3/readmefile.txt.
+            Multiple entity levels are supported for recursive listing.
+            Non-recursive listing supports only one entity level.
+            An error will appear if multiple entity levels are specified for non-recursive listing.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
