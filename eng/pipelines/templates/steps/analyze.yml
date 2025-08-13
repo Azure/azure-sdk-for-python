@@ -10,6 +10,8 @@ parameters:
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This variable is set from resolve-package-targeting.yml.
 steps:
+  - template: /eng/pipelines/templates/steps/use-venv.yml
+
   - template: /eng/pipelines/templates/steps/analyze_dependency.yml
     parameters:
       ScanPath: $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}

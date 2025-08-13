@@ -28,6 +28,8 @@ steps:
     inputs:
       versionSpec: '3.13'
 
+  - template: /eng/pipelines/templates/steps/use-venv.yml
+
   - pwsh: |
       if ("${{ parameters.ServiceDirectory }}" -ne "auto")
       {
@@ -52,8 +54,6 @@ steps:
       echo "##vso[build.addbuildtag]Scheduled"
     displayName: 'Tag scheduled builds'
     condition: and(eq(variables['Build.SourceBranchName'], variables['DefaultBranch']), eq(variables['Build.Reason'],'Schedule'))
-
-  - template: /eng/pipelines/templates/steps/use-venv.yml
 
   - script: |
       which python
