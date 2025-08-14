@@ -7,31 +7,273 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import datetime
-from typing import Any, Deque, List, MutableMapping, Optional, Iterable, Iterator, overload
+import time
+import json
+from typing import Any, Callable, Deque, List, MutableMapping, Optional, Iterable, Iterator, overload
 import collections
 import logging
 import threading
 
 from azure.core import MatchConditions
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import (
+    HttpResponseError, 
+    ResourceNotFoundError,
+    ClientAuthenticationError,
+    ResourceExistsError,
+    ResourceNotModifiedError,
+    ResourceModifiedError,
+    map_error,
+)
 from azure.core.polling import LROPoller
-from azure.core.rest import HttpResponse
+from azure.core.rest import HttpResponse, HttpRequest
+from azure.core.pipeline import PipelineResponse
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
+from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ._operations import (
     BatchClientOperationsMixin as BatchClientOperationsMixinGenerated,
+    build_batch_delete_job_request,
+    build_batch_remove_nodes_request,
 )
+
+# Type definitions
+from typing import Dict, TypeVar
+T = TypeVar("T")
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 MAX_TASKS_PER_REQUEST = 100
 _LOGGER = logging.getLogger(__name__)
 
 __all__: List[str] = [
-    "BatchClientOperationsMixin"
+    "BatchClientOperationsMixin",
+    "JobDeletePollingMethod"
 ]  # Add all objects you want publicly available to users at this package level
+
+class JobDeletePollingMethod:
+    """Polling method for job delete operation.
+
+    This class is used to poll the status of a job deletion operation.
+    It checks the status of the job until it is deleted or an error occurs.
+    """
+
+    def __init__(self, job_id: str, polling_interval: int = 5):
+        # remove client to keep in initialize
+        self._job_id = job_id
+        self._polling_interval = polling_interval
+
+    def initialize(
+        self, 
+        client: Any, 
+        initial_response: PipelineResponse, 
+        deserialization_callback: Optional[Callable]
+    ) -> None:
+        """Set the initial status of this LRO, verify that we can poll, and
+        initialize anything necessary for polling.
+
+        :param client: An instance of a client. In this example, the generated client.
+        :param initial_response: In this example, the PipelineResponse returned from the initial call.
+        :param deserialization_callback: A callable to transform the final result before returning to the end user.
+        """
+
+        # double checking the 202 (server accepted)
+
+        self._client = client
+        self._initial_response = initial_response
+        self._deserialization_callback = deserialization_callback
+        self._status = "InProgress"
+        self._finished = False
+
+    def status(self) -> str:
+        """Should return the current status as a string. The initial status is set by
+        the polling strategy with set_initial_status() and then subsequently set by
+        each call to get_status().
+
+        This is what is returned to the user when status() is called on the LROPoller.
+
+        :rtype: str
+        """
+        return self._status
+
+    def finished(self) -> bool:
+        """Is this polling finished?
+        Controls whether the polling loop should continue to poll.
+
+        :returns: Return True if the operation has reached a terminal state
+            or False if polling should continue.
+        :rtype: bool
+        """
+        return self._finished
+
+    def resource(self) -> Optional[Any]:
+        """Return the built resource.
+        This is what is returned when to the user when result() is called on the LROPoller.
+
+        This might include a deserialization callback (passed in initialize())
+        to transform or customize the final result, if necessary.
+        """
+        if self._deserialization_callback and self._finished:
+            return self._deserialization_callback()
+        return None
+
+    def run(self) -> None:
+        """The polling loop.
+
+        The polling should call the status monitor, evaluate and set the current status,
+        insert delay between polls, and continue polling until a terminal state is reached.
+        """
+        while not self.finished():
+            self.update_status()
+            if not self.finished():
+                # add a delay if not done
+                time.sleep(self._polling_interval)
+
+    def update_status(self):
+        """Update the current status of the LRO by calling the status monitor
+        and then using the polling strategy's get_status() to set the status."""
+        try:
+            job = self._client.get_job(self._job_id)
+
+            # check job state is DELETING state (if not in deleting state then it's succeeded)
+            if job.state != _models.BatchJobState.DELETING:
+                self._status = "Succeeded"
+                self._finished = True
+            
+        # testing an invalid job_id will throw a JobNotFound error before actually building the poller
+        # probably don't need this?
+
+        except ResourceNotFoundError: 
+            # Job no longer exists, deletion is complete
+            self._status = "Succeeded"
+            self._finished = True
+        except Exception:
+            # Some other error occurred, continue polling
+            self._status = "InProgress"
+            self._finished = False
 
 class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
     """Customize generated code"""
+
+    @distributed_trace
+    def delete_job_LRO(
+        self,
+        job_id: str,
+        *,
+        timeout: Optional[int] = None,
+        ocpdate: Optional[datetime.datetime] = None,
+        if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        force: Optional[bool] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        polling_interval: int = 5,
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Deletes a Job with Long Running Operation support.
+
+        Deleting a Job also deletes all Tasks that are part of that Job, and all Job
+        statistics. This also overrides the retention period for Task data; that is, if
+        the Job contains Tasks which are still retained on Compute Nodes, the Batch
+        services deletes those Tasks' working directories and all their contents.  When
+        a Delete Job request is received, the Batch service sets the Job to the
+        deleting state. All update operations on a Job that is in deleting state will
+        fail with status code 409 (Conflict), with additional information indicating
+        that the Job is being deleted.
+
+        :param job_id: The ID of the Job to delete. Required.
+        :type job_id: str
+        :keyword timeout: The maximum time that the server can spend processing the request, in
+         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
+         instead. Default value is None.
+        :paramtype timeout: int
+        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API
+         directly. Default value is None.
+        :paramtype ocpdate: ~datetime.datetime
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the client. The operation will be performed only if the resource on the service has
+         been modified since the specified time. Default value is None.
+        :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
+         known to the client. The operation will be performed only if the resource on the service has
+         not been modified since the specified time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword force: If true, the server will delete the Job even if the corresponding nodes have
+         not fully processed the deletion. The default value is false. Default value is None.
+        :paramtype force: bool
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword polling_interval: The interval in seconds between polling attempts. Default value is 30.
+        :paramtype polling_interval: int
+        :return: An LROPoller that can be used to wait for the job deletion to complete
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        # call the operations delete_job instead of copy pasting
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_batch_delete_job_request(
+            job_id=job_id,
+            timeout=timeout,
+            ocpdate=ocpdate,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            force=force,
+            etag=etag,
+            match_condition=match_condition,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+
+        if cls:
+            cls(pipeline_response, None, response_headers)
+
+        polling_method = JobDeletePollingMethod(job_id, polling_interval)
+        return LROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
 
     # @distributed_trace
     # def remove_nodes_LRO(
@@ -597,10 +839,6 @@ class _TaskWorkflowManager:
             # Unknown State - don't know if tasks failed to add or were successful
             self.errors.appendleft(e)
         else:
-            try:
-                create_task_collection_response = create_task_collection_response.output 
-            except AttributeError:
-                pass
             if create_task_collection_response.values_property:
                 for task_result in create_task_collection_response.values_property:  # pylint: disable=no-member
                     if task_result.status == _models.BatchTaskAddStatus.SERVER_ERROR:
