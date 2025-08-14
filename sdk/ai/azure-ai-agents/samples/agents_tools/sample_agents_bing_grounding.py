@@ -21,8 +21,8 @@ USAGE:
                           page of your Azure AI Foundry portal.
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
-    3) AZURE_BING_CONNECTION_ID - The ID of the Bing connection, in the format of:
-       /subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace-name}/connections/{connection-name}
+    3) BING_CONNECTION_NAME - The name of a connection to the Bing resource as it is
+       listed in Azure AI Foundry connected resources.
 """
 
 import os
@@ -37,7 +37,7 @@ project_client = AIProjectClient(
 )
 
 # [START create_agent_with_bing_grounding_tool]
-conn_id = os.environ["AZURE_BING_CONNECTION_ID"]
+conn_id = project_client.connections.get(os.environ["BING_CONNECTION_NAME"]).id
 
 # Initialize agent bing tool and add the connection id
 bing = BingGroundingTool(connection_id=conn_id)
@@ -100,7 +100,12 @@ with project_client:
     # Print the Agent's response message with optional citation
     response_message = agents_client.messages.get_last_message_by_role(thread_id=thread.id, role=MessageRole.AGENT)
     if response_message:
+        responses = []
         for text_message in response_message.text_messages:
-            print(f"Agent response: {text_message.text.value}")
+            responses.append(text_message.text.value)
+        message = " ".join(responses)
         for annotation in response_message.url_citation_annotations:
-            print(f"URL Citation: [{annotation.url_citation.title}]({annotation.url_citation.url})")
+            message = message.replace(
+                annotation.text, f" [{annotation.url_citation.title}]({annotation.url_citation.url})"
+            )
+        print(f"Agent response: {message}")
