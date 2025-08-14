@@ -55,18 +55,6 @@ class CosmosHttpResponseError(HttpResponseError):
 
 class CosmosResourceNotFoundError(ResourceNotFoundError, CosmosHttpResponseError):
     """An HTTP error response with status code 404."""
-    def __init__(self, status_code=None, message=None, response=None, sub_status_code=None, **kwargs):
-        """
-        :param int sub_status_code: HTTP response sub code.
-        """
-        if sub_status_code and not response:
-            self.http_error_message = message
-            self.sub_status = sub_status_code
-            formatted_message = "Status code: %d Sub-status: %d\n%s" % (status_code, self.sub_status, str(message))
-            super(CosmosHttpResponseError, self).__init__(message=formatted_message, response=response, **kwargs)
-            self.status_code = status_code
-        else:
-            super(CosmosResourceNotFoundError, self).__init__(status_code, message, response, **kwargs)
 
 
 class CosmosResourceExistsError(ResourceExistsError, CosmosHttpResponseError):
@@ -135,12 +123,17 @@ class CosmosClientTimeoutError(AzureError):
         self.history = None
         super(CosmosClientTimeoutError, self).__init__(message, **kwargs)
 
+class InternalException:
+    def __init__(self, status_code, headers, reason=None):
+        self.status_code = status_code
+        self.headers = headers
+        self.reason = reason
+
 def _partition_range_is_gone(e):
     if (e.status_code == _StatusCode.GONE
             and e.sub_status == _SubStatusCodes.PARTITION_KEY_RANGE_GONE):
         return True
     return False
-
 
 def _container_recreate_exception(e) -> bool:
     is_bad_request = e.status_code == _StatusCode.BAD_REQUEST
@@ -150,7 +143,6 @@ def _container_recreate_exception(e) -> bool:
     is_throughput_not_found = e.sub_status == _SubStatusCodes.THROUGHPUT_OFFER_NOT_FOUND
 
     return (is_bad_request and is_collection_rid_mismatch) or (is_not_found and is_throughput_not_found)
-
 
 def _is_partition_split_or_merge(e):
     return e.status_code == _StatusCode.GONE and e.sub_status == _SubStatusCodes.COMPLETING_SPLIT

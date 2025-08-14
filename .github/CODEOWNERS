@@ -157,12 +157,12 @@
 # PRLabel: %Cognitive - Health Insights
 /sdk/healthinsights/                                                 @tomsft @koen-mertens
 
-# AzureSdkOwners: @mccoyp
+# AzureSdkOwners: @mccoyp @Azure/azure-sdk-write-keyvault
 # ServiceLabel: %KeyVault
-# ServiceOwners:                                                     @cheathamb36 @chen-karen @lgonsoulin
+# ServiceOwners:                                                     @cheathamb36 @chen-karen @Azure/azure-sdk-write-keyvault
 
 # PRLabel: %KeyVault
-/sdk/keyvault/                                                       @mccoyp
+/sdk/keyvault/                                                       @mccoyp @Azure/azure-sdk-write-keyvault
 
 # PRLabel: %Load Test Service
 /sdk/loadtesting/azure-developer-loadtesting/                        @prativen @mitsha-microsoft @ninallam
@@ -179,7 +179,10 @@
 /sdk/monitor/azure-monitor-ingestion/                                @pvaneck @Azure/azure-sdk-write-monitor-data-plane
 
 # PRLabel: %Monitor
-/sdk/monitor/azure-monitor-query/                                    @pvaneck @Azure/azure-sdk-write-monitor-data-plane
+/sdk/monitor/azure-monitor-query/                                    @Azure/azure-sdk-write-monitor-query-logs
+
+# PRLabel: %Monitor
+/sdk/monitor/azure-monitor-querymetrics/                             @Azure/azure-sdk-write-monitor-query-metrics
 
 # PRLabel: %Monitor
 /sdk/monitor/*                                                       @pvaneck

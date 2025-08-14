@@ -26,7 +26,7 @@ from .swaggertosdk.SwaggerToSdkCore import (
 from .generate_sdk import generate
 from .generate_utils import (
     get_package_names,
-    init_new_service,
+    generate_packaging_files,
     update_servicemetadata,
     judge_tag_preview,
     format_samples_and_tests,
@@ -309,11 +309,11 @@ def main(generate_input, generate_output):
                 _LOGGER.error(f"Fail to process package {package_name} in {readme_or_tsp}: {str(e)}")
                 continue
 
-            # Generate some necessary file for new service
+            # Generate packaging files
             try:
-                init_new_service(package_name, folder_name)
+                generate_packaging_files(package_name, folder_name)
             except Exception as e:
-                _LOGGER.warning(f"Fail to init new service {package_name} in {readme_or_tsp}: {str(e)}")
+                _LOGGER.warning(f"Fail to generate packaging files for {package_name} in {readme_or_tsp}: {str(e)}")
 
             # format samples and tests
             try:
@@ -368,7 +368,10 @@ def main(generate_input, generate_output):
 
                 changelog_generation_start_time = time.time()
                 try:
-                    md_output = execute_func_with_timeout(change_log_func)
+                    if data.get("enableChangelog", True):
+                        md_output = execute_func_with_timeout(change_log_func)
+                    else:
+                        md_output = "skip changelog generation"
                 except multiprocessing.TimeoutError:
                     md_output = "change log generation was timeout!!! You need to write it manually!!!"
                 except:
@@ -413,7 +416,11 @@ def main(generate_input, generate_output):
                         cwd=package_path,
                         timeout=600,
                     )
-                    check_call(["apistubgen", "--pkg-path", "."], cwd=package_path, timeout=600)
+                    cmds = ["apistubgen", "--pkg-path", "."]
+                    cross_language_mapping_path = Path(package_path, "apiview-properties.json")
+                    if cross_language_mapping_path.exists():
+                        cmds.extend(["--mapping-path", str(cross_language_mapping_path)])
+                    check_call(cmds, cwd=package_path, timeout=600)
                     for file in os.listdir(package_path):
                         if "_python.json" in file and package_name in file:
                             result[package_name]["apiViewArtifact"] = str(Path(package_path, file))

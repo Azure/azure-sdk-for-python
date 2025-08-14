@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 # cspell:ignore xtitle, ytitle, ymax
@@ -20,7 +21,7 @@ USAGE:
 
     The "plotly" library can also be installed with `pip install plotly`.
 
-This example uses DefaultAzureCredential, which requests a token from Azure Active Directory.
+This example uses DefaultAzureCredential, which requests a token from Microsoft Entra ID.
 For more information on DefaultAzureCredential, see https://learn.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
 """
 import asyncio
