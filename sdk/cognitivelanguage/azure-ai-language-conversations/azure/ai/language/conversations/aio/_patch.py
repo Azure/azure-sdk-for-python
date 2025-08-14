@@ -145,7 +145,7 @@ class ConversationAnalysisClient(AnalysisClientGenerated):
             state: AnalyzeConversationOperationState,
         ) -> AsyncItemPaged[ConversationActions]:
             # Convert a state into (next_link, items)
-            def extract_data(s: AnalyzeConversationOperationState):
+            async def extract_data(s: AnalyzeConversationOperationState):
                 next_link = s.next_link
                 actions: ConversationActions = s.actions
                 return next_link, [actions]
