@@ -39,7 +39,8 @@ async def delete_person_directory_and_assert(client, person_directory_id: str, c
             assert not await person_directory_exists_async(client, person_directory_id), f"Deleted person directory with ID '{person_directory_id}' was found"
             print(f"Person directory {person_directory_id} is deleted successfully")
         except Exception as e:
-            print(f"Warning: Failed to delete person directory {person_directory_id}: {e}")
+            # If deletion fails, the test should fail
+            raise AssertionError(f"Failed to delete person directory {person_directory_id}: {e}") from e
     else:
         print(f"Person directory {person_directory_id} was not created, no cleanup needed")
 

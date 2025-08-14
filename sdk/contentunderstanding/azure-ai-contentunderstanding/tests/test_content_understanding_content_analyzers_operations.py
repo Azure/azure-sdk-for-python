@@ -134,7 +134,8 @@ def delete_analyzer_and_assert_sync(client, analyzer_id: str, created_analyzer: 
             assert not analyzer_in_list_sync(client, analyzer_id), f"Deleted analyzer with ID '{analyzer_id}' was found in the list"
             print(f"Analyzer {analyzer_id} is deleted successfully")
         except Exception as e:
-            print(f"Warning: Failed to delete analyzer {analyzer_id}: {e}")
+            # If deletion fails, the test should fail
+            raise AssertionError(f"Failed to delete analyzer {analyzer_id}: {e}") from e
     else:
         print(f"Analyzer {analyzer_id} was not created, no cleanup needed")
 
@@ -503,7 +504,8 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
                     assert not analyzer_in_list_sync(client, analyzer_id), f"Failed to delete analyzer {analyzer_id} during cleanup"
                     print(f"Analyzer {analyzer_id} is deleted successfully during cleanup")
                 except Exception as e:
-                    print(f"Warning: Failed to delete analyzer {analyzer_id} during cleanup: {e}")
+                    # If cleanup fails, the test should fail
+                    raise AssertionError(f"Failed to delete analyzer {analyzer_id} during cleanup: {e}") from e
             elif not created_analyzer:
                 print(f"Analyzer {analyzer_id} was not created, no cleanup needed")
 

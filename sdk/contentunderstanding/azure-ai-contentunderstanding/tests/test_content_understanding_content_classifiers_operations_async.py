@@ -128,7 +128,8 @@ async def delete_classifier_and_assert(client, classifier_id: str, created_class
             assert not await classifier_in_list_async(client, classifier_id), f"Deleted classifier with ID '{classifier_id}' was found in the list"
             print(f"Classifier {classifier_id} is deleted successfully")
         except Exception as e:
-            print(f"Warning: Failed to delete classifier {classifier_id}: {e}")
+            # If deletion fails, the test should fail
+            raise AssertionError(f"Failed to delete classifier {classifier_id}: {e}") from e
     else:
         print(f"Classifier {classifier_id} was not created, no cleanup needed")
 
@@ -386,7 +387,8 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
                     assert not await classifier_in_list_async(client, classifier_id), f"Failed to delete classifier {classifier_id} during cleanup"
                     print(f"Classifier {classifier_id} is deleted successfully during cleanup")
                 except Exception as e:
-                    print(f"Warning: Failed to delete classifier {classifier_id} during cleanup: {e}")
+                    # If cleanup fails, the test should fail
+                    raise AssertionError(f"Failed to delete classifier {classifier_id} during cleanup: {e}") from e
             elif not created_classifier:
                 print(f"Classifier {classifier_id} was not created, no cleanup needed")
 
@@ -452,7 +454,8 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
                     assert not await classifier_in_list_async(client, classifier_id), f"Deleted classifier with ID '{classifier_id}' was found in the list"
                     print(f"Classifier {classifier_id} is deleted successfully")
                 except Exception as e:
-                    print(f"Warning: Failed to delete classifier {classifier_id}: {e}")
+                    # If deletion fails, the test should fail
+                    raise AssertionError(f"Failed to delete classifier {classifier_id}: {e}") from e
             else:
                 print(f"Classifier {classifier_id} was not created, no cleanup needed")
 
