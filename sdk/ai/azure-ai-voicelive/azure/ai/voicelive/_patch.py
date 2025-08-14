@@ -506,7 +506,7 @@ class VoiceLiveConnection:
                 raise ConnectionClosed(1006, "Empty WebSocket frame")
 
             payload = json.loads(raw.decode("utf-8"))
-            event = cast("ServerEvent", ServerEvent._deserialize(payload, []))
+            event = cast("ServerEvent", ServerEvent.deserialize(payload))
             return event
         except Exception as e:
             log.error("Error parsing message: %s", e)
@@ -532,15 +532,15 @@ class VoiceLiveConnection:
         """
         Send an event to the server over the active WebSocket connection.
 
-        Accepts either:
+        Supported input types:
 
-        - A structured ClientEvent model, which will be converted to a dictionary
-        using its `as_dict()` method and then JSON-encoded.
-        - A mapping-like object (e.g., dict, MappingProxyType), which will be copied
-        to a plain dict and JSON-encoded. Any nested SDK models are serialized using
-        the `_json_default` fallback.
-        - Any other JSON-serializable object, which will be encoded directly with the
-        `_json_default` fallback.
+        * **Mapping-like object** (e.g., ``dict``, ``MappingProxyType``) — converted to
+            a plain ``dict`` and then JSON-encoded. Any nested SDK models are serialized
+            using the fallback serializer ``_json_default()``.
+        * **ClientEvent model instance** — converted to a plain dictionary via
+            ``as_dict()`` (preserving REST field names and discriminators), then JSON-encoded.
+        * **Other objects** — directly passed to ``json.dumps()`` with ``_json_default()``
+            handling non-JSON-native values.
 
         :param event: The event to send.
         :type event: Union[Mapping[str, Any], ~azure.ai.voicelive.models.ClientEvent]
