@@ -55,6 +55,8 @@ from ..models import (
     EvalSummary,
     StringIndexType,
     UtteranceEvaluationResult,
+    ExportedProjectFormat,
+    State,
 )
 from azure.core.paging import ItemPaged
 from collections.abc import MutableMapping
@@ -107,22 +109,83 @@ class ProjectOperations(ProjectOperationsGenerated):
         return super().begin_train(project_name=self._project_name, body=body, content_type=content_type, **kwargs)
 
     @distributed_trace
-    def begin_export(  # type: ignore[override]
+    def begin_export(
         self,
+        project_name: str,
         *,
-        asset_kind: Optional[str] = _Unset,
-        exported_project_format: Optional[Union[str, Any]] = _Unset,
-        string_index_type: Union[str, Any] = _Unset,
-        trained_model_label: Optional[str] = _Unset,
+        string_index_type: Union[str, StringIndexType],
+        exported_project_format: Optional[Union[str, ExportedProjectFormat]] = None,
+        asset_kind: Optional[str] = None,
+        trained_model_label: Optional[str] = None,
         **kwargs: Any
-    ) -> LROPoller[None]:
-        return super().begin_export(
-            project_name=self._project_name,
-            asset_kind=asset_kind,
-            exported_project_format=exported_project_format,
-            string_index_type=string_index_type,
-            trained_model_label=trained_model_label,
-            **kwargs,
+    ) -> LROPoller[State]:  # CHANGED: result type
+        """Triggers a job to export a project's data.
+
+        :return: An instance of LROPoller that returns AnalyzeConversationAuthoringJobState
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.language.conversations.authoring.models.AnalyzeConversationAuthoringJobState]
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        # CHANGED: cls type now returns the model
+        cls: ClsType[_models.AnalyzeConversationAuthoringJobState] = kwargs.pop("cls", None)  # type: ignore
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+
+        if cont_token is None:
+            raw_result = self._export_initial(
+                project_name=project_name,
+                string_index_type=string_index_type,
+                exported_project_format=exported_project_format,
+                asset_kind=asset_kind,
+                trained_model_label=trained_model_label,
+                # keep passthrough for the initial call
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+
+        kwargs.pop("error_map", None)
+
+        # CHANGED: deserialize the FINAL polling response into your model
+        def get_long_running_output(pipeline_response):
+            # use the generated deserializer to map the final 200 body → model
+            result = self._deserialize(  # type: ignore[attr-defined]
+                "AnalyzeConversationAuthoringJobState",
+                pipeline_response
+            )
+            return cls(pipeline_response, result, {}) if cls else result  # type: ignore
+
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+
+        if cont_token:
+            return LROPoller[_models.AnalyzeConversationAuthoringJobState].from_continuation_token(  # ★ CHANGED generic
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+
+        # CHANGED generic
+        return LROPoller[_models.AnalyzeConversationAuthoringJobState](  # type: ignore
+            self._client,
+            raw_result,
+            get_long_running_output,
+            polling_method
         )
 
     @distributed_trace
