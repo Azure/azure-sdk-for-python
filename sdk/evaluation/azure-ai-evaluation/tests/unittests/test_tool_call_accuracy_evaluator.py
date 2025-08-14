@@ -605,5 +605,82 @@ class TestToolCallAccuracyEvaluator:
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
+        assert result[key] == "not applicable"
+        assert result[f"{key}_result"] == "pass"
+
+    def test_evaluate_open_api_with_tool_definition(self, mock_model_config):
+        evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock(side_effect=flow_side_effect)
+
+        # Test OpenAPI function call for exchange rates - converter format
+        query = "What is the exchange rate from GBP to EUR?"
+        tool_calls = [
+            {
+                "type": "tool_call",
+                "tool_call_id": "call_builtin_good",
+                "name": "get_countries_LookupCountryByCurrency",
+                "arguments": {"currency": "GBP"},
+            },
+        ]
+        tool_definitions = [
+            {
+                "name": "get_countries",
+                "type": "openapi",
+                "description": "Retrieve a list of countries",
+                "spec": {
+                    "openapi": "3.1.0",
+                    "info": {
+                        "title": "RestCountries.NET API",
+                        "description": "Web API version 3.1 for managing country items, based on previous implementations from restcountries.eu and restcountries.com.",
+                        "version": "v3.1",
+                    },
+                    "servers": [{"url": "https://restcountries.net"}],
+                    "auth": [],
+                    "paths": {
+                        "/v3.1/currency": {
+                            "get": {
+                                "description": "Search by currency.",
+                                "operationId": "LookupCountryByCurrency",
+                                "parameters": [
+                                    {
+                                        "name": "currency",
+                                        "in": "query",
+                                        "description": "The currency to search for.",
+                                        "required": "true",
+                                        "schema": {"type": "string"},
+                                    }
+                                ],
+                                "responses": {
+                                    "200": {
+                                        "description": "Success",
+                                        "content": {"text/plain": {"schema": {"type": "string"}}},
+                                    }
+                                },
+                            }
+                        }
+                    },
+                    "components": {"schemes": {}},
+                },
+                "auth": {"type": "anonymous", "security_scheme": {}},
+                "functions": [
+                    {
+                        "name": "get_countries_LookupCountryByCurrency",
+                        "type": "function",
+                        "description": "Search by currency.",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "currency": {"type": "string", "description": "The currency to search for."}
+                            },
+                            "required": ["currency"],
+                        },
+                    }
+                ],
+            }
+        ]
+        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+
+        key = ToolCallAccuracyEvaluator._RESULT_KEY
+        assert result is not None
         assert result[key] == 5.0
         assert result[f"{key}_result"] == "pass"

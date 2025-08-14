@@ -7,6 +7,8 @@
 
 ### Features Added
 
+- Add `RunStepDetailsActivity`, describing MCP function parameters.
+
 ### Bugs Fixed
 
 ### Sample updates

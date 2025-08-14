@@ -474,7 +474,9 @@ The tool approval flow looks like this:
 # Create and process agent run in thread with MCP tools
 mcp_tool.update_headers("SuperSecret", "123456")
 # mcp_tool.set_approval_mode("never")  # Uncomment to disable approval requirement
-run = agents_client.runs.create(thread_id=thread.id, agent_id=agent.id, tool_resources=mcp_tool.resources)
+run = agents_client.runs.create(
+    thread_id=thread.id, agent_id=agent.id, tool_resources=mcp_tool.resources
+)
 print(f"Created run, ID: {run.id}")
 
 while run.status in ["queued", "in_progress", "requires_action"]:
@@ -1083,8 +1085,7 @@ for run_step in agents_client.run_steps.list(thread_id=thread.id, run_id=run.id,
         for tool_call in run_step.step_details.tool_calls:
             if isinstance(tool_call, RunStepConnectedAgentToolCall):
                 print(
-                    f"\tAgent: {tool_call.connected_agent.name} "
-                    f"query: {tool_call.connected_agent.arguments} ",
+                    f"\tAgent: {tool_call.connected_agent.name} " f"query: {tool_call.connected_agent.arguments} ",
                     f"output: {tool_call.connected_agent.output}",
                 )
 ```

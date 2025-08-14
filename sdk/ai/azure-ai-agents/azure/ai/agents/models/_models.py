@@ -25,6 +25,91 @@ if TYPE_CHECKING:
     from .. import _types, models as _models
 
 
+class ActivityFunctionDefinition(_Model):
+    """The activity definition information for a function.
+
+    :ivar description: A description of what the function does, used by the model to choose when
+     and how to call the function.
+    :vartype description: str
+    :ivar parameters: The parameters the functions accepts, described as a JSON Schema object.
+     Required.
+    :vartype parameters: ~azure.ai.agents.models.ActivityFunctionParameters
+    """
+
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A description of what the function does, used by the model to choose when and how to call the
+     function."""
+    parameters: "_models.ActivityFunctionParameters" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The parameters the functions accepts, described as a JSON Schema object. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        parameters: "_models.ActivityFunctionParameters",
+        description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ActivityFunctionParameters(_Model):
+    """The parameters used for activity function definition.
+
+    :ivar type: The parameter type, it is always object. Required. Default value is "object".
+    :vartype type: str
+    :ivar properties: The dictionary of function arguments. Required.
+    :vartype properties: dict[str, ~azure.ai.agents.models.FunctionArgument]
+    :ivar required: The list of the required parameters. Required.
+    :vartype required: list[str]
+    :ivar additional_properties: If true the function has additional parameters.
+    :vartype additional_properties: bool
+    """
+
+    type: Literal["object"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The parameter type, it is always object. Required. Default value is \"object\"."""
+    properties: Dict[str, "_models.FunctionArgument"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The dictionary of function arguments. Required."""
+    required: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The list of the required parameters. Required."""
+    additional_properties: Optional[bool] = rest_field(
+        name="additionalProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """If true the function has additional parameters."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Dict[str, "_models.FunctionArgument"],
+        required: List[str],
+        additional_properties: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["object"] = "object"
+
+
 class Agent(_Model):
     """Represents an agent that can call the model and use tools.
 
@@ -1778,6 +1863,39 @@ class FileSearchToolResource(_Model):
         *,
         vector_store_ids: Optional[List[str]] = None,
         vector_stores: Optional[List["_models.VectorStoreConfigurations"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FunctionArgument(_Model):
+    """The function argument and description.
+
+    :ivar type: The type of an argument, for example 'string' or 'number'. Required.
+    :vartype type: str
+    :ivar description: The argument description.
+    :vartype description: str
+    """
+
+    type: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The type of an argument, for example 'string' or 'number'. Required."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The argument description."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+        description: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -4021,7 +4139,7 @@ class RunStep(_Model):
      "thread.run.step".
     :vartype object: str
     :ivar type: The type of run step, which can be either message_creation or tool_calls. Required.
-     Known values are: "message_creation" and "tool_calls".
+     Known values are: "message_creation", "tool_calls", and "activities".
     :vartype type: str or ~azure.ai.agents.models.RunStepType
     :ivar agent_id: The ID of the agent associated with the run step. Required.
     :vartype agent_id: str
@@ -4066,7 +4184,7 @@ class RunStep(_Model):
      \"thread.run.step\"."""
     type: Union[str, "_models.RunStepType"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The type of run step, which can be either message_creation or tool_calls. Required. Known
-     values are: \"message_creation\" and \"tool_calls\"."""
+     values are: \"message_creation\", \"tool_calls\", and \"activities\"."""
     agent_id: str = rest_field(name="assistant_id", visibility=["read", "create", "update", "delete", "query"])
     """The ID of the agent associated with the run step. Required."""
     thread_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -4141,6 +4259,76 @@ class RunStep(_Model):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.object: Literal["thread.run.step"] = "thread.run.step"
+
+
+class RunStepDetails(_Model):
+    """An abstract representation of the details for a run step.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    RunStepActivityDetails, RunStepMessageCreationDetails, RunStepToolCallDetails
+
+    :ivar type: The object type. Required. Known values are: "message_creation", "tool_calls", and
+     "activities".
+    :vartype type: str or ~azure.ai.agents.models.RunStepType
+    """
+
+    __mapping__: Dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """The object type. Required. Known values are: \"message_creation\", \"tool_calls\", and
+     \"activities\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RunStepActivityDetails(RunStepDetails, discriminator="activities"):
+    """The detailed information associated with a run step activities.
+
+    :ivar type: The object type, which is always 'activities'. Required. Represents a run step with
+     activities information.
+    :vartype type: str or ~azure.ai.agents.models.ACTIVITIES
+    :ivar activities: A list of activities for this run step. Required.
+    :vartype activities: list[~azure.ai.agents.models.RunStepDetailsActivity]
+    """
+
+    type: Literal[RunStepType.ACTIVITIES] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'activities'. Required. Represents a run step with activities
+     information."""
+    activities: List["_models.RunStepDetailsActivity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A list of activities for this run step. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        activities: List["_models.RunStepDetailsActivity"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type=RunStepType.ACTIVITIES, **kwargs)
 
 
 class RunStepToolCall(_Model):
@@ -5460,7 +5648,7 @@ class RunStepDeltaMCPObject(RunStepDeltaDetail, discriminator="mcp"):
 
 
 class RunStepDeltaMcpToolCall(RunStepDeltaToolCall, discriminator="mcp"):
-    """Represents the function data in a streaming run step MCP call.*.
+    """Represents the function data in a streaming run step MCP call.
 
     :ivar id: The ID of the tool call, used when submitting outputs to the run. Required.
     :vartype id: str
@@ -5668,25 +5856,39 @@ class RunStepDeltaToolCallObject(RunStepDeltaDetail, discriminator="tool_calls")
         super().__init__(*args, type="tool_calls", **kwargs)
 
 
-class RunStepDetails(_Model):
-    """An abstract representation of the details for a run step.
+class RunStepDetailsActivity(_Model):
+    """Represents the list of activities, associated with the given step.
 
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    RunStepMessageCreationDetails, RunStepToolCallDetails
-
-    :ivar type: The object type. Required. Known values are: "message_creation" and "tool_calls".
-    :vartype type: str or ~azure.ai.agents.models.RunStepType
+    :ivar type: The activity type, which is always 'mcp_list_tools'. Required. Default value is
+     "mcp_list_tools".
+    :vartype type: str
+    :ivar id: The activity ID. Required.
+    :vartype id: str
+    :ivar server_label: Server label. Required.
+    :vartype server_label: str
+    :ivar tools: The supported function list. Required.
+    :vartype tools: dict[str, ~azure.ai.agents.models.ActivityFunctionDefinition]
     """
 
-    __mapping__: Dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """The object type. Required. Known values are: \"message_creation\" and \"tool_calls\"."""
+    type: Literal["mcp_list_tools"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The activity type, which is always 'mcp_list_tools'. Required. Default value is
+     \"mcp_list_tools\"."""
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The activity ID. Required."""
+    server_label: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Server label. Required."""
+    tools: Dict[str, "_models.ActivityFunctionDefinition"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The supported function list. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        type: str,
+        id: str,  # pylint: disable=redefined-builtin
+        server_label: str,
+        tools: Dict[str, "_models.ActivityFunctionDefinition"],
     ) -> None: ...
 
     @overload
@@ -5698,6 +5900,7 @@ class RunStepDetails(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+        self.type: Literal["mcp_list_tools"] = "mcp_list_tools"
 
 
 class RunStepError(_Model):
