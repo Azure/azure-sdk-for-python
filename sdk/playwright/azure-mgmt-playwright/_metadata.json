@@ -1,7 +1,7 @@
 {
-  "apiVersion": "2025-07-01-preview",
-  "commit": "6c7bb299b1fb029d5f2c8d2c255cd517bc9ac58c",
+  "apiVersion": "2025-09-01",
+  "commit": "1bdafdbace5d4cc7eb461433adac4a45af87c186",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/loadtestservice/Playwright.Management",
-  "emitterVersion": "0.45.1"
+  "emitterVersion": "0.48.2"
 }

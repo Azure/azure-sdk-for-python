@@ -150,7 +150,7 @@ class Operations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -230,7 +230,7 @@ class PlaywrightWorkspacesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -299,7 +299,7 @@ class PlaywrightWorkspacesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -485,7 +485,7 @@ class PlaywrightWorkspacesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.PlaywrightWorkspace:
-        """Update a PlaywrightWorkspace.
+        """Updates a Playwright workspace resource synchronously.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -512,7 +512,7 @@ class PlaywrightWorkspacesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.PlaywrightWorkspace:
-        """Update a PlaywrightWorkspace.
+        """Updates a Playwright workspace resource synchronously.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -539,7 +539,7 @@ class PlaywrightWorkspacesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.PlaywrightWorkspace:
-        """Update a PlaywrightWorkspace.
+        """Updates a Playwright workspace resource synchronously.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -564,7 +564,7 @@ class PlaywrightWorkspacesOperations:
         properties: Union[_models.PlaywrightWorkspaceUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.PlaywrightWorkspace:
-        """Update a PlaywrightWorkspace.
+        """Updates a Playwright workspace resource synchronously.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -628,7 +628,7 @@ class PlaywrightWorkspacesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -683,7 +683,7 @@ class PlaywrightWorkspacesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -702,7 +702,7 @@ class PlaywrightWorkspacesOperations:
     async def begin_delete(
         self, resource_group_name: str, playwright_workspace_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Delete a PlaywrightWorkspace.
+        """Deletes a Playwright workspace resource asynchronously.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -841,7 +841,7 @@ class PlaywrightWorkspacesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -926,7 +926,7 @@ class PlaywrightWorkspacesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -937,7 +937,7 @@ class PlaywrightWorkspacesOperations:
     async def check_name_availability(
         self, body: _models.CheckNameAvailabilityRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
-        """Implements global CheckNameAvailability operations.
+        """Checks if a Playwright workspace name is available globally.
 
         :param body: The CheckAvailability request. Required.
         :type body: ~azure.mgmt.playwright.models.CheckNameAvailabilityRequest
@@ -954,7 +954,7 @@ class PlaywrightWorkspacesOperations:
     async def check_name_availability(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
-        """Implements global CheckNameAvailability operations.
+        """Checks if a Playwright workspace name is available globally.
 
         :param body: The CheckAvailability request. Required.
         :type body: JSON
@@ -971,7 +971,7 @@ class PlaywrightWorkspacesOperations:
     async def check_name_availability(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
-        """Implements global CheckNameAvailability operations.
+        """Checks if a Playwright workspace name is available globally.
 
         :param body: The CheckAvailability request. Required.
         :type body: IO[bytes]
@@ -988,7 +988,7 @@ class PlaywrightWorkspacesOperations:
     async def check_name_availability(
         self, body: Union[_models.CheckNameAvailabilityRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
-        """Implements global CheckNameAvailability operations.
+        """Checks if a Playwright workspace name is available globally.
 
         :param body: The CheckAvailability request. Is one of the following types:
          CheckNameAvailabilityRequest, JSON, IO[bytes] Required.
@@ -1046,7 +1046,7 @@ class PlaywrightWorkspacesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1081,7 +1081,7 @@ class PlaywrightQuotasOperations:
     async def get(
         self, location: str, playwright_quota_name: Union[str, _models.QuotaName], **kwargs: Any
     ) -> _models.PlaywrightQuota:
-        """Get subscription-level location-based Playwright quota resource by name.
+        """Gets a subscription-level location-based Playwright quota resource by name.
 
         :param location: The name of the Azure region. Required.
         :type location: str
@@ -1131,7 +1131,7 @@ class PlaywrightQuotasOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1146,7 +1146,7 @@ class PlaywrightQuotasOperations:
 
     @distributed_trace
     def list_by_subscription(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.PlaywrightQuota"]:
-        """List Playwright quota resources for a given subscription Id.
+        """Lists Playwright quota resources for a given subscription ID.
 
         :param location: The name of the Azure region. Required.
         :type location: str
@@ -1224,7 +1224,7 @@ class PlaywrightQuotasOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1257,7 +1257,7 @@ class PlaywrightWorkspaceQuotasOperations:
         quota_name: Union[str, _models.QuotaName],
         **kwargs: Any
     ) -> _models.PlaywrightWorkspaceQuota:
-        """Get Playwright workspace quota resource by name.
+        """Gets a Playwright workspace quota resource by name.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1312,7 +1312,7 @@ class PlaywrightWorkspaceQuotasOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1329,7 +1329,7 @@ class PlaywrightWorkspaceQuotasOperations:
     def list_by_playwright_workspace(
         self, resource_group_name: str, playwright_workspace_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.PlaywrightWorkspaceQuota"]:
-        """List quota resources for a given Playwright workspace resource.
+        """Lists quota resources for a given Playwright workspace.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1412,7 +1412,7 @@ class PlaywrightWorkspaceQuotasOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
