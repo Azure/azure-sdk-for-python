@@ -21,10 +21,15 @@
 
 """Represents a request object.
 """
-from typing import Optional, Mapping, Any, Dict, List
+from types import SimpleNamespace
+from typing import Optional, Mapping, Any, Dict, List, TYPE_CHECKING
+
+from ._constants import _Constants as Constants
 from .documents import _OperationType
 from .http_constants import ResourceType
-from ._constants import _Constants as Constants
+
+if TYPE_CHECKING:
+    pass
 
 class RequestObject(object): # pylint: disable=too-many-instance-attributes
     def __init__(
@@ -39,6 +44,7 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
         self.endpoint_override = endpoint_override
         self.should_clear_session_token_on_session_read_failure: bool = False  # pylint: disable=name-too-long
         self.headers = headers
+        self.availability_strategy: Optional["AvailabilityStrategy"] = None
         self.use_preferred_locations: Optional[bool] = None
         self.location_index_to_route: Optional[int] = None
         self.location_endpoint_to_route: Optional[str] = None
@@ -47,6 +53,8 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
         self.excluded_locations_circuit_breaker: List[str] = []
         self.healthy_tentative_location: Optional[str] = None
         self.retry_write: bool = False
+        self.is_hedging_request: bool = False # Flag to track if this is a hedged request
+        self.completion_status: Optional[SimpleNamespace] = None # Status shared between parallel requests
 
     def route_to_location_with_preferred_location_flag(  # pylint: disable=name-too-long
         self,
@@ -80,6 +88,23 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
 
         return True
 
+    def set_availability_strategy_from_options(
+            self,
+            options: Mapping[str, Any],
+            client_strategy: Optional["AvailabilityStrategy"] = None) -> None:
+        """Sets the availability strategy for this request from options.
+        If not in options, uses the client's default strategy.
+        :param options: The request options that may contain availabilityStrategy
+        :param client_strategy: The client's default availability strategy
+        :return: None
+        """
+        # First try to get from options
+        if options is not None and 'availabilityStrategy' in options and options['availabilityStrategy'] is not None:
+            self.availability_strategy = options['availabilityStrategy']
+        # If not in options, use client default
+        elif client_strategy is not None:
+            self.availability_strategy = client_strategy
+
     def set_excluded_location_from_options(self, options: Mapping[str, Any]) -> None:
         if self._can_set_excluded_location(options):
             self.excluded_locations = options['excludedLocations']
@@ -95,3 +120,41 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
 
     def set_excluded_locations_from_circuit_breaker(self, excluded_locations: List[str]) -> None: # pylint: disable=name-too-long
         self.excluded_locations_circuit_breaker = excluded_locations
+
+    def set_is_hedging_request(self, is_hedging_request: bool) -> None:
+        self.is_hedging_request = is_hedging_request
+
+    def set_completion_status(self, status: SimpleNamespace = None) -> None:
+        """Set the shared completion status between parallel requests
+        
+        :param status: Status object shared between parallel requests. If None, creates new one.
+        :type status: ~types.SimpleNamespace
+        """
+        if status is None:
+            status = SimpleNamespace(is_completed=False)
+        self.completion_status = status
+
+    def get_completion_status(self) -> Optional[SimpleNamespace]:
+        """Get the shared completion status
+        
+        :return: The completion status or None if not set
+        :rtype: Optional[~types.SimpleNamespace]
+        """
+        return self.completion_status
+
+    def is_hedging_request(self) -> bool:
+        """Check if this is a hedged request
+        
+        :return: True if this is a hedged request, False otherwise
+        :rtype: bool
+        """
+        return self.is_hedging_request
+
+    def should_cancel_request(self) -> bool:
+        """Check if this request should be cancelled due to parallel request completion
+        
+        :return: True if request should be cancelled, False otherwise
+        :rtype: bool
+        """
+        status = self.get_completion_status()
+        return status is not None and status.is_completed

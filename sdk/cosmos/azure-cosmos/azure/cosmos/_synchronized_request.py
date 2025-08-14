@@ -24,13 +24,17 @@
 import copy
 import json
 import time
-
+from concurrent.futures import CancelledError
 from urllib.parse import urlparse
+
 from azure.core.exceptions import DecodeError  # type: ignore
 
+from . import _hedging_handler
+from . import _retry_utility
 from . import exceptions
 from . import http_constants
-from . import _retry_utility
+from .documents import _OperationType
+from .http_constants import ResourceType
 
 
 def _is_readable_stream(obj):
@@ -111,6 +115,11 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
             # Circuit breaker is applicable, so we need to use the endpoint from the request
             pk_range_wrapper = global_endpoint_manager.create_pk_range_wrapper(request_params)
         base_url = global_endpoint_manager.resolve_service_endpoint_for_partition(request_params, pk_range_wrapper)
+
+    # For each retry, check if request should be cancelled due to sibling requests already completed - used for when hedging enabled
+    if request_params.should_cancel_request():
+        raise CancelledError("The request has been cancelled")
+
     if not request.url.startswith(base_url):
         request.url = _replace_url_prefix(request.url, base_url)
 
@@ -184,6 +193,21 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
     return result, headers
 
 
+def _is_availability_strategy_applicable(request_params):
+    """Determine if availability strategy should be applied to the request.
+    
+    :param request_params: Request parameters containing operation details
+    :type request_params: ~azure.cosmos._request_object.RequestObject
+    :returns: True if availability strategy should be applied, False otherwise
+    :rtype: bool
+    """
+    return (request_params.availability_strategy and
+            not request_params.is_hedging_request and
+            request_params.resource_type == ResourceType.Document and
+            (not _OperationType.IsWriteOperation(request_params.operation_type) or
+             request_params.retry_write))
+
+
 def _replace_url_prefix(original_url, new_prefix):
     parts = original_url.split('/', 3)
 
@@ -222,11 +246,33 @@ def SynchronizedRequest(
     :return: tuple of (result, headers)
     :rtype: tuple of (dict dict)
     """
-    request.data = _request_body_from_data(request_data)
-    if request.data and isinstance(request.data, str):
-        request.headers[http_constants.HttpHeaders.ContentLength] = len(request.data)
-    elif request.data is None:
-        request.headers[http_constants.HttpHeaders.ContentLength] = 0
+
+    def prepare_request(req, req_data):
+        """Helper to prepare request data and headers"""
+        req.data = _request_body_from_data(req_data)
+        if req.data and isinstance(req.data, str):
+            req.headers[http_constants.HttpHeaders.ContentLength] = len(req.data)
+        elif req.data is None:
+            req.headers[http_constants.HttpHeaders.ContentLength] = 0
+        return req
+        # Prepare the original request
+
+    request = prepare_request(request, request_data)
+
+    # Handle hedging if availability strategy is applicable
+    if _is_availability_strategy_applicable(request_params):
+        return _hedging_handler.execute_with_hedging(
+            client,
+            request_params,
+            global_endpoint_manager,
+            connection_policy,
+            pipeline_client,
+            request,
+            lambda c, g, p, cp, pc, r, **kw: _retry_utility.Execute(
+                c, g, _Request, p, cp, pc, r, **kw
+            ),
+            **kwargs
+        )
 
     # Pass _Request function with its parameters to retry_utility's Execute method that wraps the call with retries
     return _retry_utility.Execute(

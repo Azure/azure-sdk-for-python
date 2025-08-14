@@ -24,6 +24,7 @@
 import copy
 import json
 import time
+from asyncio import CancelledError
 
 from urllib.parse import urlparse
 from azure.core.exceptions import DecodeError  # type: ignore
@@ -32,6 +33,8 @@ from .. import exceptions
 from .. import http_constants
 from . import _retry_utility_async
 from .._synchronized_request import _request_body_from_data, _replace_url_prefix
+from ..documents import _OperationType
+from ..http_constants import ResourceType
 
 
 async def _Request(global_endpoint_manager, request_params, connection_policy, pipeline_client, request, **kwargs): # pylint: disable=too-many-statements
@@ -82,6 +85,10 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
         base_url = global_endpoint_manager.resolve_service_endpoint_for_partition(request_params, pk_range_wrapper)
     if not request.url.startswith(base_url):
         request.url = _replace_url_prefix(request.url, base_url)
+
+    # For each retry, check if request should be cancelled due to sibling requests already completed - used for when hedging enabled
+    if request_params.should_cancel_request():
+        raise CancelledError("The request has been cancelled")
 
     parse_result = urlparse(request.url)
 
@@ -158,6 +165,21 @@ async def _PipelineRunFunction(pipeline_client, request, **kwargs):
 
     return await pipeline_client._pipeline.run(request, **kwargs)
 
+
+def _is_availability_strategy_applicable(request_params):
+    """Determine if availability strategy should be applied to the request.
+
+    :param request_params: Request parameters containing operation details
+    :type request_params: ~azure.cosmos._request_object.RequestObject
+    :returns: True if availability strategy should be applied, False otherwise
+    :rtype: bool
+    """
+    return (request_params.availability_strategy and
+            not request_params.is_hedging_request and
+            request_params.resource_type == ResourceType.Document and
+            (not _OperationType.IsWriteOperation(request_params.operation_type) or
+             request_params.retry_write))
+
 async def AsynchronousRequest(
     client,
     request_params,
@@ -185,6 +207,22 @@ async def AsynchronousRequest(
         request.headers[http_constants.HttpHeaders.ContentLength] = len(request.data)
     elif request.data is None:
         request.headers[http_constants.HttpHeaders.ContentLength] = 0
+
+    # Handle hedging if strategy is configured
+    if _is_availability_strategy_applicable(request_params):
+        from ._asynchronous_hedging_handler import execute_with_hedging
+        return await execute_with_hedging(
+            client,
+            request_params,
+            global_endpoint_manager,
+            connection_policy,
+            pipeline_client,
+            request,
+            lambda c, g, p, cp, pc, r, **kw: _retry_utility_async.ExecuteAsync(
+                c, g, _Request, p, cp, pc, r, **kw
+            ),
+            **kwargs
+        )
 
     # Pass _Request function with its parameters to retry_utility's Execute method that wraps the call with retries
     return await _retry_utility_async.ExecuteAsync(

@@ -85,3 +85,5 @@ class _Constants:
 
         RETRY_WRITE: Literal["retry_write"] = "retry_write"
         """Whether to retry write operations if they fail. Used either at client level or request level."""
+        AVAILABILITY_STRATEGY: Literal["availability_strategy"] = "availability_strategy"
+        """Whether to retry write operations if they fail. Used either at client level or request level."""

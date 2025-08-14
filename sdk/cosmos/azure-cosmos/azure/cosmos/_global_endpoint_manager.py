@@ -24,7 +24,7 @@ database service.
 """
 
 import threading
-from typing import Tuple
+from typing import Tuple, List, Optional
 
 from azure.core.exceptions import AzureError
 
@@ -32,7 +32,7 @@ from . import _constants as constants
 from . import exceptions
 from ._request_object import RequestObject
 from .documents import DatabaseAccount
-from ._location_cache import LocationCache
+from ._location_cache import LocationCache, RegionalRoutingContext
 from ._utils import current_time_millis
 
 
@@ -85,6 +85,30 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
 
     def get_ordered_read_locations(self):
         return self.location_cache.get_ordered_read_locations()
+
+    def get_applicable_read_regional_routing_contexts(self, request: RequestObject) -> List[RegionalRoutingContext]:
+        """Gets the applicable read regional routing contexts.
+        
+        :returns: List of applicable read regional routing contexts.
+        :rtype: list[RegionalRoutingContext]
+        """
+        return self.location_cache.get_applicable_read_regional_routing_contexts(request)
+
+    def get_applicable_write_regional_routing_contexts(self, request: RequestObject) -> List[RegionalRoutingContext]:
+        """Gets the applicable write regional routing contexts.
+        
+        :returns: List of applicable write regional routing contexts.
+        :rtype: list[RegionalRoutingContext]
+        """
+        return self.location_cache.get_applicable_write_regional_routing_contexts(request)
+
+    def get_region_name(self, endpoint, is_write_operation: bool) -> Optional[str]:
+        """Gets the region name for the endpoint.
+
+        :returns: the region name.
+        :rtype: str
+        """
+        return self.location_cache.get_region_name(endpoint, is_write_operation)
 
     def can_use_multiple_write_locations(self, request):
         return self.location_cache.can_use_multiple_write_locations_for_request(request)

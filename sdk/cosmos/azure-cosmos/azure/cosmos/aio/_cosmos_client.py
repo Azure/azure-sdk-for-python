@@ -196,6 +196,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             credential: Union[str, Dict[str, str], AsyncTokenCredential],
             *,
             consistency_level: Optional[str] = None,
+            availability_strategy: Optional['AvailabilityStrategy'] = None,
             **kwargs: Any
     ) -> None:
         """Instantiate a new CosmosClient."""
@@ -206,6 +207,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             auth=auth,
             consistency_level=consistency_level,
             connection_policy=connection_policy,
+            availability_strategy=availability_strategy,
             **kwargs
         )
 
