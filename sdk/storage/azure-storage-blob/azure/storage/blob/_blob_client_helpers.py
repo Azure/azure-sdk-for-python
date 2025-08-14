@@ -22,6 +22,7 @@ from ._generated.models import (
     BlockLookupList,
     CpkInfo,
     DeleteSnapshotsOptionType,
+    ModifiedAccessConditions,
     QueryRequest,
     SequenceNumberAccessConditions
 )
@@ -36,6 +37,7 @@ from ._models import (
 )
 from ._serialize import (
     get_access_conditions,
+    get_blob_modify_conditions,
     get_cpk_scope_info,
     get_modify_conditions,
     get_source_conditions,
@@ -853,16 +855,14 @@ def _set_blob_tags_options(
 )-> Dict[str, Any]:
     serialized_tags = serialize_blob_tags(tags)
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
-    mod_conditions = get_modify_conditions(kwargs)
+    mod_conditions = ModifiedAccessConditions(if_tags=kwargs.pop('if_tags_match_condition', None))
+    blob_mod_conditions = get_blob_modify_conditions(kwargs)
 
     options = {
         'tags': serialized_tags,
         'lease_access_conditions': access_conditions,
         'modified_access_conditions': mod_conditions,
-        'if_modified_since': mod_conditions.if_modified_since,
-        'if_unmodified_since': mod_conditions.if_unmodified_since,
-        'if_match': mod_conditions.if_match,
-        'if_none_match': mod_conditions.if_none_match,
+        'blob_modified_access_conditions': blob_mod_conditions,
         'version_id': version_id,
         'cls': return_response_headers
     }
@@ -871,17 +871,15 @@ def _set_blob_tags_options(
 
 def _get_blob_tags_options(version_id: Optional[str], snapshot: Optional[str], **kwargs: Any) -> Dict[str, Any]:
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
-    mod_conditions = get_modify_conditions(kwargs)
+    mod_conditions = ModifiedAccessConditions(if_tags=kwargs.pop('if_tags_match_condition', None))
+    blob_mod_conditions = get_blob_modify_conditions(kwargs)
 
     options = {
         'version_id': version_id,
         'snapshot': snapshot,
         'lease_access_conditions': access_conditions,
         'modified_access_conditions': mod_conditions,
-        'if_modified_since': mod_conditions.if_modified_since,
-        'if_unmodified_since': mod_conditions.if_unmodified_since,
-        'if_match': mod_conditions.if_match,
-        'if_none_match': mod_conditions.if_none_match,
+        'blob_modified_access_conditions': blob_mod_conditions,
         'timeout': kwargs.pop('timeout', None),
         'cls': return_headers_and_deserialized
     }
