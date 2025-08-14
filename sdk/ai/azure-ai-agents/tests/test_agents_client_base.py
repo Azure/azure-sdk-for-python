@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 import sys
 import logging
 import functools
@@ -8,7 +9,12 @@ from devtools_testutils import (
     EnvironmentVariableLoader,
 )
 from devtools_testutils.azure_testcase import is_live
-from azure.ai.agents.models import RunStepBrowserAutomationToolCall
+from azure.ai.agents.models import (
+    MessageTextFileCitationDetails,
+    MessageTextUrlCitationDetails,
+    RunStepBrowserAutomationToolCall,
+    ThreadMessage,
+)
 
 agentClientPreparer = functools.partial(
     EnvironmentVariableLoader,
@@ -72,6 +78,46 @@ class TestAgentClientBase(AzureRecordedTestCase):
     def _sleep_time(cls, sleep: int = 1) -> int:
         """Return sleep or zero if we are running the recording."""
         return sleep if is_live() else 0
+
+    @classmethod
+    def _has_url_annotation(cls, message: ThreadMessage, uri_annotation: MessageTextUrlCitationDetails) -> bool:
+        """
+        Return True if the message contains required URL annotation.
+
+        :param message: The message to look for annotations.
+        :param uri_annotation: The annotation to look for.
+        :return:  True if the message contains the required URL annotation.
+        :rtype: bool
+        """
+        url_annotations = message.url_citation_annotations
+        if url_annotations:
+            for url in url_annotations:
+                if (
+                    (uri_annotation.url == "*" and url.url_citation.url) or url.url_citation.url == uri_annotation.url
+                ) and (
+                    (uri_annotation.title == "*" and url.url_citation.title)
+                    or url.url_citation.title == uri_annotation.title
+                ):
+                    return True
+        return False
+
+    @classmethod
+    def _has_file_annotation(cls, message: ThreadMessage, file_annotation: MessageTextFileCitationDetails) -> bool:
+        """
+        Return True if the message contains required file annotation
+
+        :param message: The message to look for annotations.
+        :param file_annotation: The annotation to look for.
+        :return: True if the message contains the required file annotation, otherwise False.
+        :rtype: bool
+        """
+        file_annotations = message.file_citation_annotations
+        if file_annotations:
+            for fle in file_annotations:
+                if fle.file_citation:
+                    if fle.file_citation.file_id == file_annotation.file_citation.file_id:
+                        return True
+        return False
 
     @classmethod
     def _validate_run_step_browser_automation_tool_call(cls, tool_call: RunStepBrowserAutomationToolCall):
