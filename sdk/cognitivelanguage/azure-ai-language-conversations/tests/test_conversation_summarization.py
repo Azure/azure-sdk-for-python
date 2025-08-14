@@ -4,6 +4,7 @@ import pytest
 
 from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, recorded_by_proxy
 from azure.ai.language.conversations import ConversationAnalysisClient
+from azure.core.paging import ItemPaged
 from azure.ai.language.conversations.models import (
     MultiLanguageConversationInput,
     TextConversation,
@@ -15,6 +16,8 @@ from azure.ai.language.conversations.models import (
     ParticipantRole,
     AnalyzeConversationOperationAction,
     SummarizationOperationResult,
+    ConversationActions,
+    AnalyzeConversationLROPoller
 )
 from typing import cast, List
 from azure.core.credentials import AzureKeyCredential
@@ -84,13 +87,16 @@ class TestConversationsCase(TestConversations):
             conversation_input=conversation_input, actions=cast(List[AnalyzeConversationOperationAction], actions)
         )
 
-        # ---- CHANGED: begin_* now returns a custom poller -> result() yields ItemPaged[ConversationActions]
-        poller = conversation_client.begin_analyze_conversation_job(body=operation_input)
+        # ---- begin_* now returns AnalyzeConversationLROPoller[ItemPaged[ConversationActions]]
+        poller: AnalyzeConversationLROPoller[ItemPaged[ConversationActions]] = (
+            conversation_client.begin_analyze_conversation_job(body=operation_input)
+        )
 
         # You can read operation id immediately (from initial response headers)
         print(f"Operation ID: {poller.details.get('operation_id')}")
 
-        paged_actions = poller.result()  # ItemPaged[ConversationActions]
+        # Result is an ItemPaged[ConversationActions]
+        paged_actions: ItemPaged[ConversationActions] = poller.result()
 
         # Final-state metadata is available after completion via poller.details
         d = poller.details
@@ -103,7 +109,7 @@ class TestConversationsCase(TestConversations):
         if d.get("display_name"):
             print(f"Display Name: {d.get('display_name')}")
 
-        # Iterate pages/items; each item is a ConversationActions
+        # Iterate items; each iteration yields a ConversationActions (your implementation pages by next_link)
         for actions_page in paged_actions:
             print(
                 f"Completed: {actions_page.completed}, "

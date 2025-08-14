@@ -12,8 +12,7 @@ import json
 from typing import Any, Callable, Dict, IO, Iterator, Optional, TypeVar, Union, cast, overload
 from ._client import ConversationAnalysisClient as AnalysisClientGenerated
 from collections.abc import MutableMapping
-from .models import AnalyzeConversationOperationInput, AnalyzeConversationOperationState, ConversationActions
-from ._operations import AnalyzeConversationLROPoller
+from .models import AnalyzeConversationOperationInput, AnalyzeConversationOperationState, ConversationActions, AnalyzeConversationLROPoller
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -45,7 +44,7 @@ class ConversationAnalysisClient(AnalysisClientGenerated):
     @overload
     def begin_analyze_conversation_job(
         self, body: AnalyzeConversationOperationInput, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AnalyzeConversationLROPoller:
+    ) -> AnalyzeConversationLROPoller[ItemPaged["ConversationActions"]]:
         """Analyzes the input conversation utterance.
 
         :param body: The input for the analyze conversations operation. Required.
@@ -53,15 +52,16 @@ class ConversationAnalysisClient(AnalysisClientGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: A custom poller that yields ItemPaged[ConversationActions] and exposes metadata via `.details`.
-        :rtype: ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[ConversationActions]]
+        :return: A poller whose ``result()`` yields ``ItemPaged[ConversationActions]`` and exposes metadata via ``.details``.
+        :rtype: ~azure.ai.language.conversations.AnalyzeConversationLROPoller[
+                ~azure.core.paging.ItemPaged[~azure.ai.language.conversations.models.ConversationActions]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def begin_analyze_conversation_job(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AnalyzeConversationLROPoller:
+    ) -> AnalyzeConversationLROPoller[ItemPaged["ConversationActions"]]:
         """Analyzes the input conversation utterance.
 
         :param body: The input for the analyze conversations operation. Required.
@@ -69,15 +69,16 @@ class ConversationAnalysisClient(AnalysisClientGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: A custom poller that yields ItemPaged[ConversationActions] and exposes metadata via `.details`.
-        :rtype: ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[ConversationActions]]
+        :return: A poller whose ``result()`` yields ``ItemPaged[ConversationActions]`` and exposes metadata via ``.details``.
+        :rtype: ~azure.ai.language.conversations.AnalyzeConversationLROPoller[
+                ~azure.core.paging.ItemPaged[~azure.ai.language.conversations.models.ConversationActions]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def begin_analyze_conversation_job(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> AnalyzeConversationLROPoller:
+    ) -> AnalyzeConversationLROPoller[ItemPaged["ConversationActions"]]:
         """Analyzes the input conversation utterance.
 
         :param body: The input for the analyze conversations operation. Required.
@@ -85,8 +86,9 @@ class ConversationAnalysisClient(AnalysisClientGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: A custom poller that yields ItemPaged[ConversationActions] and exposes metadata via `.details`.
-        :rtype: ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[ConversationActions]]
+        :return: A poller whose ``result()`` yields ``ItemPaged[ConversationActions]`` and exposes metadata via ``.details``.
+        :rtype: ~azure.ai.language.conversations.AnalyzeConversationLROPoller[
+                ~azure.core.paging.ItemPaged[~azure.ai.language.conversations.models.ConversationActions]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -98,20 +100,21 @@ class ConversationAnalysisClient(AnalysisClientGenerated):
     )
     def begin_analyze_conversation_job(  # type: ignore[override]
         self, body: Union[AnalyzeConversationOperationInput, JSON, IO[bytes]], **kwargs: Any
-    ) -> AnalyzeConversationLROPoller:  # <-- CHANGED: return type
+    ) -> AnalyzeConversationLROPoller[ItemPaged["ConversationActions"]]:
         """Analyzes the input conversation utterance.
 
         :param body: The input for the analyze conversations operation. Required.
         :type body: ~azure.ai.language.conversations.models.AnalyzeConversationOperationInput or JSON or IO[bytes]
-        :return: A custom poller that yields ItemPaged[ConversationActions] and exposes metadata via `.details`.
-        :rtype: ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[ConversationActions]]
+        :return: A poller whose ``result()`` yields ``ItemPaged[ConversationActions]`` and exposes metadata via ``.details``.
+        :rtype: ~azure.ai.language.conversations.AnalyzeConversationLROPoller[
+                ~azure.core.paging.ItemPaged[~azure.ai.language.conversations.models.ConversationActions]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)  # <-- CHANGED: typed PollingMethod
+        polling: Union[bool, PollingMethod[ItemPaged["ConversationActions"]]] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         cls = kwargs.pop("cls", None)  # optional custom deserializer
@@ -121,7 +124,6 @@ class ConversationAnalysisClient(AnalysisClientGenerated):
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
 
-        # ----- CHANGED: paging helpers to turn final state into ItemPaged[ConversationActions]
         def _fetch_state_by_next_link(next_link: str) -> AnalyzeConversationOperationState:
             req = HttpRequest("GET", next_link)
             resp = self._client.send_request(req)  # type: ignore[attr-defined]
@@ -130,10 +132,10 @@ class ConversationAnalysisClient(AnalysisClientGenerated):
             data = json.loads(resp.text())
             return AnalyzeConversationOperationState(data)
 
-        def _build_pager_from_state(state: AnalyzeConversationOperationState) -> ItemPaged[ConversationActions]:
+        def _build_pager_from_state(state: AnalyzeConversationOperationState) -> ItemPaged["ConversationActions"]:
             def extract_data(s: AnalyzeConversationOperationState):
-                next_link = s.next_link  # attribute, not ["nextLink"]
-                actions: ConversationActions = s.actions  # attribute, not ["actions"]
+                next_link = s.next_link
+                actions: ConversationActions = s.actions
                 return next_link, [actions]
 
             def get_next(token: Optional[str]) -> Optional[AnalyzeConversationOperationState]:
@@ -147,10 +149,9 @@ class ConversationAnalysisClient(AnalysisClientGenerated):
 
         # ----- end paging helpers
 
-        # we fill this after creating the poller, then the deserializer closure uses it
-        poller_holder: dict[str, AnalyzeConversationLROPoller] = {}
+        # filled after creating the poller; used inside the deserializer
+        poller_holder: Dict[str, AnalyzeConversationLROPoller[ItemPaged["ConversationActions"]]] = {}
 
-        # ----- CHANGED: deserializer now returns ItemPaged[ConversationActions] and updates poller._last_state
         def get_long_running_output(pipeline_response):
             final_response = pipeline_response.http_response
             if final_response.status_code == 200:
@@ -165,36 +166,29 @@ class ConversationAnalysisClient(AnalysisClientGenerated):
                 return cls(pipeline_response, paged, {}) if cls else paged
             raise HttpResponseError(response=final_response)
 
-        # ----- end deserializer
-
-        # polling method selection (unchanged behavior)
+        # ----- polling method selection
         if polling is True:
-            polling_method: PollingMethod = LROBasePolling(
-                lro_delay, path_format_arguments=path_format_arguments, **kwargs
+            polling_method: PollingMethod[ItemPaged["ConversationActions"]] = cast(
+                PollingMethod[ItemPaged["ConversationActions"]],
+                LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
             )
         elif polling is False:
-            from azure.core.polling import NoPolling
-
-            polling_method = NoPolling()
+            polling_method = cast(PollingMethod[ItemPaged["ConversationActions"]], NoPolling())
         else:
-            polling_method = cast(PollingMethod, polling)
+            polling_method = cast(PollingMethod[ItemPaged["ConversationActions"]], polling)
 
-        # ----- CHANGED: continuation path returns your custom poller subclass
         if cont_token:
-            return AnalyzeConversationLROPoller.from_continuation_token(
+            return AnalyzeConversationLROPoller[ItemPaged["ConversationActions"]].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
-                # NOTE: the polling method reconstructs (client, initial_response, deserializer)
-                # using the token; any `cls` provided here is ignored on resume.
             )
 
-        # Submit the job (unchanged)
+        # Submit the job
         raw_result = self._analyze_conversation_job_initial(
             body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
         )
 
-        # ----- CHANGED: return custom poller subclass and backfill the holder for the closure above
-        lro: AnalyzeConversationLROPoller = AnalyzeConversationLROPoller(
+        lro: AnalyzeConversationLROPoller[ItemPaged["ConversationActions"]] = AnalyzeConversationLROPoller(
             self._client, raw_result, get_long_running_output, polling_method
         )
         poller_holder["poller"] = lro
