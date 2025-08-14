@@ -161,15 +161,16 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
   $allPkgPropLines = $null
   try
   {
+    $pathToBuild = (Join-Path $RepoRoot "tools" "azure-sdk-tools[build]")
     # Use ‘uv pip install’ if uv is on PATH, otherwise fall back to python -m pip
     if (Get-Command uv -ErrorAction SilentlyContinue) {
       Write-Host "Using uv pip install"
-      $null = uv pip install "./tools/azure-sdk-tools[build]"
+      $null = uv pip install "$pathToBuild"
       $freezeOutput = uv pip freeze
       Write-Host "Pip freeze output: $freezeOutput"
     } else {
       Write-Host "Using python -m pip install"
-      $null = python -m pip install "./tools/azure-sdk-tools[build]" -q -I
+      $null = python -m pip install "$pathToBuild" -q -I
     }
 
     Write-Host "Running get_package_properties.py to retrieve package properties"
