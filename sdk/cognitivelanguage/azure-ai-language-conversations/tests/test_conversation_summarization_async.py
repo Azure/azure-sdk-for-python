@@ -27,6 +27,7 @@ ConversationsPreparer = functools.partial(
     authoring_key="fake_key",
 )
 
+
 class TestConversations(AzureRecordedTestCase):
 
     # Start with any helper functions you might need, for example a client creation method:
@@ -47,14 +48,21 @@ class TestConversationsCase(TestConversations):
 
         # Build conversation input (same as sync)
         conversation_items = [
-            TextConversationItem(id="1", participant_id="Agent_1",
-                                 text="Hello, how can I help you?", role=ParticipantRole.AGENT),
-            TextConversationItem(id="2", participant_id="Customer_1",
-                                 text="How to upgrade Office? I am getting error messages the whole day.",
-                                 role=ParticipantRole.CUSTOMER),
-            TextConversationItem(id="3", participant_id="Agent_1",
-                                 text="Press the upgrade button please. Then sign in and follow the instructions.",
-                                 role=ParticipantRole.AGENT),
+            TextConversationItem(
+                id="1", participant_id="Agent_1", text="Hello, how can I help you?", role=ParticipantRole.AGENT
+            ),
+            TextConversationItem(
+                id="2",
+                participant_id="Customer_1",
+                text="How to upgrade Office? I am getting error messages the whole day.",
+                role=ParticipantRole.CUSTOMER,
+            ),
+            TextConversationItem(
+                id="3",
+                participant_id="Agent_1",
+                text="Press the upgrade button please. Then sign in and follow the instructions.",
+                role=ParticipantRole.AGENT,
+            ),
         ]
         conversation_input = MultiLanguageConversationInput(
             conversations=[TextConversation(id="1", language="en", conversation_items=conversation_items)]

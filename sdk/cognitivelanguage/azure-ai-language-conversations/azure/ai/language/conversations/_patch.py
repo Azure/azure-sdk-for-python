@@ -12,14 +12,8 @@ import json
 from typing import Any, Callable, Dict, IO, Iterator, Optional, TypeVar, Union, cast, overload
 from ._client import ConversationAnalysisClient as AnalysisClientGenerated
 from collections.abc import MutableMapping
-from .models import (
-    AnalyzeConversationOperationInput,
-    AnalyzeConversationOperationState,
-    ConversationActions
-)
-from ._operations import (
-    AnalyzeConversationLROPoller
-)
+from .models import AnalyzeConversationOperationInput, AnalyzeConversationOperationState, ConversationActions
+from ._operations import AnalyzeConversationLROPoller
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -104,7 +98,7 @@ class ConversationAnalysisClient(AnalysisClientGenerated):
     )
     def begin_analyze_conversation_job(  # type: ignore[override]
         self, body: Union[AnalyzeConversationOperationInput, JSON, IO[bytes]], **kwargs: Any
-    ) -> AnalyzeConversationLROPoller:                                      # <-- CHANGED: return type
+    ) -> AnalyzeConversationLROPoller:  # <-- CHANGED: return type
         """Analyzes the input conversation utterance.
 
         :param body: The input for the analyze conversations operation. Required.
@@ -117,7 +111,7 @@ class ConversationAnalysisClient(AnalysisClientGenerated):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)   # <-- CHANGED: typed PollingMethod
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)  # <-- CHANGED: typed PollingMethod
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         cls = kwargs.pop("cls", None)  # optional custom deserializer
@@ -138,8 +132,8 @@ class ConversationAnalysisClient(AnalysisClientGenerated):
 
         def _build_pager_from_state(state: AnalyzeConversationOperationState) -> ItemPaged[ConversationActions]:
             def extract_data(s: AnalyzeConversationOperationState):
-                next_link = s.next_link                     # attribute, not ["nextLink"]
-                actions: ConversationActions = s.actions    # attribute, not ["actions"]
+                next_link = s.next_link  # attribute, not ["nextLink"]
+                actions: ConversationActions = s.actions  # attribute, not ["actions"]
                 return next_link, [actions]
 
             def get_next(token: Optional[str]) -> Optional[AnalyzeConversationOperationState]:
@@ -150,6 +144,7 @@ class ConversationAnalysisClient(AnalysisClientGenerated):
                 return _fetch_state_by_next_link(token)
 
             return ItemPaged(get_next, extract_data)
+
         # ----- end paging helpers
 
         # we fill this after creating the poller, then the deserializer closure uses it
@@ -169,13 +164,17 @@ class ConversationAnalysisClient(AnalysisClientGenerated):
                 paged = _build_pager_from_state(op_state)
                 return cls(pipeline_response, paged, {}) if cls else paged
             raise HttpResponseError(response=final_response)
+
         # ----- end deserializer
 
         # polling method selection (unchanged behavior)
         if polling is True:
-            polling_method: PollingMethod = LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            polling_method: PollingMethod = LROBasePolling(
+                lro_delay, path_format_arguments=path_format_arguments, **kwargs
+            )
         elif polling is False:
             from azure.core.polling import NoPolling
+
             polling_method = NoPolling()
         else:
             polling_method = cast(PollingMethod, polling)

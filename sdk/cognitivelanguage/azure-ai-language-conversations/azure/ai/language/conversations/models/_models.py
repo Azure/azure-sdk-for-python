@@ -119,7 +119,7 @@ class AnalysisConfig(_Model):
     services.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ConversationConfig, LuisConfig, QuestionAnsweringConfig
+    ConversationConfig, QuestionAnsweringConfig
 
     :ivar target_project_kind: The type of a target service. Required. Known values are: "Luis",
      "Conversation", "QuestionAnswering", and "NonLinked".
@@ -2406,7 +2406,7 @@ class TargetIntentResult(_Model):
     """This is the base class of an intent prediction.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ConversationTargetIntentResult, LuisTargetIntentResult, NonLinkedTargetIntentResult,
+    ConversationTargetIntentResult, NonLinkedTargetIntentResult,
     QuestionAnsweringTargetIntentResult
 
     :ivar target_project_kind: This is the base class of an intent prediction. Required. Known
@@ -3439,152 +3439,6 @@ class ListKey(ConversationEntityExtraInformation, discriminator="ListKey"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, extra_information_kind=ExtraInformationKind.LIST_KEY, **kwargs)
-
-
-class LuisCallingConfig(_Model):
-    """This customizes how the service calls LUIS Generally Available projects.
-
-    :ivar verbose: Enable verbose response.
-    :vartype verbose: bool
-    :ivar log: Save log to add in training utterances later.
-    :vartype log: bool
-    :ivar show_all_intents: Set true to show all intents.
-    :vartype show_all_intents: bool
-    :ivar timezone_offset: The timezone offset for the location of the request.
-    :vartype timezone_offset: int
-    :ivar spell_check: Enable spell checking.
-    :vartype spell_check: bool
-    :ivar bing_spell_check_subscription_key: The subscription key to use when enabling Bing spell
-     check.
-    :vartype bing_spell_check_subscription_key: str
-    """
-
-    verbose: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Enable verbose response."""
-    log: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Save log to add in training utterances later."""
-    show_all_intents: Optional[bool] = rest_field(
-        name="show-all-intents", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Set true to show all intents."""
-    timezone_offset: Optional[int] = rest_field(
-        name="timezoneOffset", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The timezone offset for the location of the request."""
-    spell_check: Optional[bool] = rest_field(
-        name="spellCheck", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Enable spell checking."""
-    bing_spell_check_subscription_key: Optional[str] = rest_field(
-        name="bing-spell-check-subscription-key", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The subscription key to use when enabling Bing spell check."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        verbose: Optional[bool] = None,
-        log: Optional[bool] = None,
-        show_all_intents: Optional[bool] = None,
-        timezone_offset: Optional[int] = None,
-        spell_check: Optional[bool] = None,
-        bing_spell_check_subscription_key: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class LuisConfig(AnalysisConfig, discriminator="Luis"):
-    """This is a set of request parameters for LUIS Generally Available projects.
-
-    :ivar api_version: The API version to use when call a specific target service.
-    :vartype api_version: str
-    :ivar target_project_kind: The type of a target service. Required. Luis target service type
-    :vartype target_project_kind: str or ~azure.ai.language.conversations.models.LUIS
-    :ivar query: The utterance to predict.
-    :vartype query: str
-    :ivar calling_options: This customizes how the service calls LUIS Generally Available projects.
-    :vartype calling_options: ~azure.ai.language.conversations.models.LuisCallingConfig
-    """
-
-    target_project_kind: Literal[TargetProjectKind.LUIS] = rest_discriminator(name="targetProjectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of a target service. Required. Luis target service type"""
-    query: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The utterance to predict."""
-    calling_options: Optional["_models.LuisCallingConfig"] = rest_field(
-        name="callingOptions", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """This customizes how the service calls LUIS Generally Available projects."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        api_version: Optional[str] = None,
-        query: Optional[str] = None,
-        calling_options: Optional["_models.LuisCallingConfig"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, target_project_kind=TargetProjectKind.LUIS, **kwargs)
-
-
-class LuisResult(_Model):
-    """It is the response from a LUIS Generally Available application."""
-
-
-class LuisTargetIntentResult(TargetIntentResult, discriminator="Luis"):
-    """It is a wrap up of LUIS Generally Available response.
-
-    :ivar api_version: The API version used to call a target service.
-    :vartype api_version: str
-    :ivar confidence: The prediction score and it ranges from 0.0 to 1.0. Required.
-    :vartype confidence: float
-    :ivar target_project_kind: Kind of the project. Required. Luis target service type
-    :vartype target_project_kind: str or ~azure.ai.language.conversations.models.LUIS
-    :ivar result: The actual response from a LUIS Generally Available application.
-    :vartype result: ~azure.ai.language.conversations.models.LuisResult
-    """
-
-    target_project_kind: Literal[TargetProjectKind.LUIS] = rest_discriminator(name="targetProjectKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the project. Required. Luis target service type"""
-    result: Optional["_models.LuisResult"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The actual response from a LUIS Generally Available application."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        confidence: float,
-        api_version: Optional[str] = None,
-        result: Optional["_models.LuisResult"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, target_project_kind=TargetProjectKind.LUIS, **kwargs)
 
 
 class MetadataFilter(_Model):

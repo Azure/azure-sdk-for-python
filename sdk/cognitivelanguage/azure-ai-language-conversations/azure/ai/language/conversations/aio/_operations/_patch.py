@@ -31,6 +31,7 @@ from ...models import (
 # Helpers
 # -------------------------
 
+
 def _parse_operation_id(op_loc: Optional[str]) -> Optional[str]:
     if not op_loc:
         return None
@@ -44,9 +45,8 @@ def _parse_operation_id(op_loc: Optional[str]) -> Optional[str]:
 # Custom ASYNC poller
 # -------------------------
 
-class AnalyzeConversationAsyncLROPoller(
-    AsyncLROPoller[AsyncItemPaged[ConversationActions]]
-):
+
+class AnalyzeConversationAsyncLROPoller(AsyncLROPoller[AsyncItemPaged[ConversationActions]]):
     """Async poller that returns AsyncItemPaged[ConversationActions] and exposes operation metadata."""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
@@ -58,11 +58,7 @@ class AnalyzeConversationAsyncLROPoller(
     def details(self) -> Mapping[str, Any]:
         """Metadata associated with the long-running operation."""
         try:
-            headers = (
-                self.polling_method()
-                ._initial_response  # type: ignore[attr-defined]
-                .http_response.headers
-            )
+            headers = self.polling_method()._initial_response.http_response.headers  # type: ignore[attr-defined]
             op_loc = headers.get("Operation-Location") or headers.get("operation-location")
         except Exception:
             op_loc = None
@@ -96,7 +92,8 @@ class AnalyzeConversationAsyncLROPoller(
             continuation_token, **kwargs
         )
         return cls(client, initial_response, deserialization_callback, polling_method)
-    
+
+
 def patch_sdk():
     """Do not remove from this file.
 
@@ -104,5 +101,6 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+
 
 __all__ = ["AnalyzeConversationAsyncLROPoller"]

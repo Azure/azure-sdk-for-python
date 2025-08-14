@@ -103,8 +103,6 @@ def build_conversation_analysis_analyze_conversation_job_request(  # pylint: dis
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/analyze-conversations/jobs"
 
@@ -114,7 +112,6 @@ def build_conversation_analysis_analyze_conversation_job_request(  # pylint: dis
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -122,12 +119,9 @@ def build_conversation_analysis_analyze_conversation_job_request(  # pylint: dis
 def build_conversation_analysis_cancel_job_request(  # pylint: disable=name-too-long
     job_id: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/analyze-conversations/jobs/{jobId}:cancel"
     path_format_arguments = {
@@ -139,10 +133,7 @@ def build_conversation_analysis_cancel_job_request(  # pylint: disable=name-too-
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
 
 
 class _ConversationAnalysisClientOperationsMixin(
@@ -262,7 +253,7 @@ class _ConversationAnalysisClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -338,7 +329,7 @@ class _ConversationAnalysisClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -353,7 +344,7 @@ class _ConversationAnalysisClientOperationsMixin(
 
     @api_version_validation(
         method_added_on="2023-04-01",
-        params_added_on={"2023-04-01": ["api_version", "content_type", "accept"]},
+        params_added_on={"2023-04-01": ["api_version", "content_type"]},
         api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2024-11-15-preview", "2025-05-15-preview"],
     )
     def _analyze_conversation_job_initial(
@@ -405,7 +396,7 @@ class _ConversationAnalysisClientOperationsMixin(
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -438,7 +429,7 @@ class _ConversationAnalysisClientOperationsMixin(
     @distributed_trace
     @api_version_validation(
         method_added_on="2023-04-01",
-        params_added_on={"2023-04-01": ["api_version", "content_type", "accept"]},
+        params_added_on={"2023-04-01": ["api_version", "content_type"]},
         api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2024-11-15-preview", "2025-05-15-preview"],
     )
     def _begin_analyze_conversation_job(
@@ -496,7 +487,7 @@ class _ConversationAnalysisClientOperationsMixin(
 
     @api_version_validation(
         method_added_on="2023-04-01",
-        params_added_on={"2023-04-01": ["api_version", "job_id", "accept"]},
+        params_added_on={"2023-04-01": ["api_version", "job_id"]},
         api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2024-11-15-preview", "2025-05-15-preview"],
     )
     def _cancel_job_initial(self, job_id: str, **kwargs: Any) -> Iterator[bytes]:
@@ -537,7 +528,7 @@ class _ConversationAnalysisClientOperationsMixin(
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -553,7 +544,7 @@ class _ConversationAnalysisClientOperationsMixin(
     @distributed_trace
     @api_version_validation(
         method_added_on="2023-04-01",
-        params_added_on={"2023-04-01": ["api_version", "job_id", "accept"]},
+        params_added_on={"2023-04-01": ["api_version", "job_id"]},
         api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2024-11-15-preview", "2025-05-15-preview"],
     )
     def begin_cancel_job(self, job_id: str, **kwargs: Any) -> LROPoller[None]:

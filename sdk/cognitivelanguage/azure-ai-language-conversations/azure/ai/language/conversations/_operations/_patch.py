@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -27,6 +28,7 @@ from ..models import (
 # Helpers
 # -------------------------
 
+
 def _parse_operation_id(op_loc: Optional[str]) -> Optional[str]:
     """Extract the final path segment as operation id (service-agnostic)."""
     if not op_loc:
@@ -40,6 +42,7 @@ def _parse_operation_id(op_loc: Optional[str]) -> Optional[str]:
 # -------------------------
 # Custom Poller
 # -------------------------
+
 
 class AnalyzeConversationLROPoller(LROPoller[ItemPaged[ConversationActions]]):
     """Custom poller that returns ItemPaged[ConversationActions] and exposes operation metadata."""
@@ -79,7 +82,7 @@ class AnalyzeConversationLROPoller(LROPoller[ItemPaged[ConversationActions]]):
                 }
             )
         return d
-    
+
     @classmethod
     def from_continuation_token(
         cls,
@@ -92,6 +95,7 @@ class AnalyzeConversationLROPoller(LROPoller[ItemPaged[ConversationActions]]):
         )
         return cls(client, initial_response, deserialization_callback, polling_method)
 
+
 def patch_sdk():
     """Do not remove from this file.
 
@@ -99,5 +103,6 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+
 
 __all__ = ["AnalyzeConversationLROPoller"]

@@ -163,7 +163,7 @@ class _ConversationAnalysisClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -239,7 +239,7 @@ class _ConversationAnalysisClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -254,7 +254,7 @@ class _ConversationAnalysisClientOperationsMixin(
 
     @api_version_validation(
         method_added_on="2023-04-01",
-        params_added_on={"2023-04-01": ["api_version", "content_type", "accept"]},
+        params_added_on={"2023-04-01": ["api_version", "content_type"]},
         api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2024-11-15-preview", "2025-05-15-preview"],
     )
     async def _analyze_conversation_job_initial(
@@ -306,7 +306,7 @@ class _ConversationAnalysisClientOperationsMixin(
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -339,7 +339,7 @@ class _ConversationAnalysisClientOperationsMixin(
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2023-04-01",
-        params_added_on={"2023-04-01": ["api_version", "content_type", "accept"]},
+        params_added_on={"2023-04-01": ["api_version", "content_type"]},
         api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2024-11-15-preview", "2025-05-15-preview"],
     )
     async def _begin_analyze_conversation_job(
@@ -398,7 +398,7 @@ class _ConversationAnalysisClientOperationsMixin(
 
     @api_version_validation(
         method_added_on="2023-04-01",
-        params_added_on={"2023-04-01": ["api_version", "job_id", "accept"]},
+        params_added_on={"2023-04-01": ["api_version", "job_id"]},
         api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2024-11-15-preview", "2025-05-15-preview"],
     )
     async def _cancel_job_initial(self, job_id: str, **kwargs: Any) -> AsyncIterator[bytes]:
@@ -439,7 +439,7 @@ class _ConversationAnalysisClientOperationsMixin(
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -455,7 +455,7 @@ class _ConversationAnalysisClientOperationsMixin(
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2023-04-01",
-        params_added_on={"2023-04-01": ["api_version", "job_id", "accept"]},
+        params_added_on={"2023-04-01": ["api_version", "job_id"]},
         api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2024-11-15-preview", "2025-05-15-preview"],
     )
     async def begin_cancel_job(self, job_id: str, **kwargs: Any) -> AsyncLROPoller[None]:

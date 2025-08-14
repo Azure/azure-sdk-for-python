@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -11,11 +12,7 @@ import json
 from typing import Any, Callable, Dict, IO, Iterator, Optional, TypeVar, Union, cast, overload
 from ._client import ConversationAnalysisClient as AnalysisClientGenerated
 from collections.abc import MutableMapping
-from ..models import (
-    AnalyzeConversationOperationInput,
-    AnalyzeConversationOperationState,
-    ConversationActions
-)
+from ..models import AnalyzeConversationOperationInput, AnalyzeConversationOperationState, ConversationActions
 from azure.core.polling import AsyncNoPolling
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -40,9 +37,7 @@ from .._utils.utils import ClientMixinABC
 from .._validation import api_version_validation
 from ._configuration import ConversationAnalysisClientConfiguration
 
-from ._operations import (
-    AnalyzeConversationAsyncLROPoller
-)
+from ._operations import AnalyzeConversationAsyncLROPoller
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
