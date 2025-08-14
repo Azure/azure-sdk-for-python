@@ -55,16 +55,26 @@ _COMMON_OPTIONS = {
     'post_trigger_include': Constants.Kwargs.POST_TRIGGER_INCLUDE,
     'access_condition': Constants.Kwargs.ACCESS_CONDITION,
     'session_token': Constants.Kwargs.SESSION_TOKEN,
-    'resource_token_expiry_seconds': Constants.Kwargs.RESOURCE_TOKEN_EXPIRY_SECONDS,
-    'offer_enable_ru_per_minute_throughput': Constants.Kwargs.OFFER_ENABLE_RU_PER_MINUTE_THROUGHPUT,
-    'disable_ru_per_minute_usage': Constants.Kwargs.DISABLE_RU_PER_MINUTE_USAGE,
+    'resource_token_expiry_seconds': (
+        Constants.Kwargs.RESOURCE_TOKEN_EXPIRY_SECONDS
+    ),
+    'offer_enable_ru_per_minute_throughput': (
+        Constants.Kwargs.OFFER_ENABLE_RU_PER_MINUTE_THROUGHPUT
+    ),
+    'disable_ru_per_minute_usage': (
+        Constants.Kwargs.DISABLE_RU_PER_MINUTE_USAGE
+    ),
     'continuation': Constants.Kwargs.CONTINUATION,
     'content_type': Constants.Kwargs.CONTENT_TYPE,
     'is_query_plan_request': Constants.Kwargs.IS_QUERY_PLAN_REQUEST,
-    'supported_query_features': Constants.Kwargs.SUPPORTED_QUERY_FEATURES,
+    'supported_query_features': (
+        Constants.Kwargs.SUPPORTED_QUERY_FEATURES
+    ),
     'query_version': Constants.Kwargs.QUERY_VERSION,
     'priority': Constants.Kwargs.PRIORITY_LEVEL,
-    'no_response': Constants.Kwargs.RESPONSE_PAYLOAD_ON_WRITE_DISABLED,
+    'no_response': (
+        Constants.Kwargs.RESPONSE_PAYLOAD_ON_WRITE_DISABLED
+    ),
     'retry_write': Constants.Kwargs.RETRY_WRITE,
     'max_item_count': Constants.Kwargs.MAX_ITEM_COUNT,
     'throughput_bucket': Constants.Kwargs.THROUGHPUT_BUCKET,
@@ -174,17 +184,25 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
             headers[http_constants.HttpHeaders.IfNoneMatch] = access_condition["condition"]
 
     if options.get(Constants.Kwargs.INDEXING_DIRECTIVE):
-        headers[http_constants.HttpHeaders.IndexingDirective] = options[Constants.Kwargs.INDEXING_DIRECTIVE]
+        headers[http_constants.HttpHeaders.IndexingDirective] = options[
+            Constants.Kwargs.INDEXING_DIRECTIVE
+        ]
 
     # set request consistency level - if session consistency, the client should be setting this on its own
     if options.get(Constants.Kwargs.CONSISTENCY_LEVEL):
-        headers[http_constants.HttpHeaders.ConsistencyLevel] = options[Constants.Kwargs.CONSISTENCY_LEVEL]
+        headers[http_constants.HttpHeaders.ConsistencyLevel] = options[
+            Constants.Kwargs.CONSISTENCY_LEVEL
+        ]
 
     if options.get(Constants.Kwargs.ENABLE_SCAN_IN_QUERY):
-        headers[http_constants.HttpHeaders.EnableScanInQuery] = options[Constants.Kwargs.ENABLE_SCAN_IN_QUERY]
+        headers[http_constants.HttpHeaders.EnableScanInQuery] = options[
+            Constants.Kwargs.ENABLE_SCAN_IN_QUERY
+        ]
 
     if options.get(Constants.Kwargs.RESOURCE_TOKEN_EXPIRY_SECONDS):
-        headers[http_constants.HttpHeaders.ResourceTokenExpiry] = options[Constants.Kwargs.RESOURCE_TOKEN_EXPIRY_SECONDS]
+        headers[http_constants.HttpHeaders.ResourceTokenExpiry] = options[
+            Constants.Kwargs.RESOURCE_TOKEN_EXPIRY_SECONDS
+        ]
 
     if options.get(Constants.Kwargs.OFFER_TYPE):
         headers[http_constants.HttpHeaders.OfferType] = options[Constants.Kwargs.OFFER_TYPE]
@@ -196,10 +214,14 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         headers[http_constants.HttpHeaders.ContentType] = options[Constants.Kwargs.CONTENT_TYPE]
 
     if options.get(Constants.Kwargs.IS_QUERY_PLAN_REQUEST):
-        headers[http_constants.HttpHeaders.IsQueryPlanRequest] = options[Constants.Kwargs.IS_QUERY_PLAN_REQUEST]
+        headers[http_constants.HttpHeaders.IsQueryPlanRequest] = options[
+            Constants.Kwargs.IS_QUERY_PLAN_REQUEST
+        ]
 
     if options.get(Constants.Kwargs.SUPPORTED_QUERY_FEATURES):
-        headers[http_constants.HttpHeaders.SupportedQueryFeatures] = options[Constants.Kwargs.SUPPORTED_QUERY_FEATURES]
+        headers[http_constants.HttpHeaders.SupportedQueryFeatures] = options[
+            Constants.Kwargs.SUPPORTED_QUERY_FEATURES
+        ]
 
     if options.get(Constants.Kwargs.QUERY_VERSION):
         headers[http_constants.HttpHeaders.QueryVersion] = options[Constants.Kwargs.QUERY_VERSION]
@@ -214,27 +236,38 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         # else serialize using json dumps method which apart from regular values will serialize None into null
         else:
             # single partitioning uses a string and needs to be turned into a list
-            is_sequence_not_string = (isinstance(options[Constants.Kwargs.PARTITION_KEY], Sequence) and
-                                      not isinstance(options[Constants.Kwargs.PARTITION_KEY], str))
+            is_sequence_not_string = (
+                isinstance(options[Constants.Kwargs.PARTITION_KEY], Sequence) and
+                not isinstance(options[Constants.Kwargs.PARTITION_KEY], str)
+            )
 
             if is_sequence_not_string and options[Constants.Kwargs.PARTITION_KEY]:
-                pk_val = json.dumps(list(options[Constants.Kwargs.PARTITION_KEY]), separators=(',', ':'))
+                pk_val = json.dumps(
+                    list(options[Constants.Kwargs.PARTITION_KEY]), separators=(',', ':')
+                )
             else:
                 pk_val = json.dumps([options[Constants.Kwargs.PARTITION_KEY]])
             headers[http_constants.HttpHeaders.PartitionKey] = pk_val
 
     if options.get(Constants.Kwargs.ENABLE_CROSS_PARTITION_QUERY):
-        headers[http_constants.HttpHeaders.EnableCrossPartitionQuery] = options[Constants.Kwargs.ENABLE_CROSS_PARTITION_QUERY]
+        headers[http_constants.HttpHeaders.EnableCrossPartitionQuery] = options[
+            Constants.Kwargs.ENABLE_CROSS_PARTITION_QUERY
+        ]
 
     if options.get(Constants.Kwargs.POPULATE_QUERY_METRICS):
-        headers[http_constants.HttpHeaders.PopulateQueryMetrics] = options[Constants.Kwargs.POPULATE_QUERY_METRICS]
+        headers[http_constants.HttpHeaders.PopulateQueryMetrics] = options[
+            Constants.Kwargs.POPULATE_QUERY_METRICS
+        ]
 
     if options.get(Constants.Kwargs.POPULATE_INDEX_METRICS):
-        headers[http_constants.HttpHeaders.PopulateIndexMetrics] = options[Constants.Kwargs.POPULATE_INDEX_METRICS]
+        headers[http_constants.HttpHeaders.PopulateIndexMetrics] = options[
+            Constants.Kwargs.POPULATE_INDEX_METRICS
+        ]
 
     if options.get(Constants.Kwargs.RESPONSE_CONTINUATION_TOKEN_LIMIT_IN_KB):
         headers[http_constants.HttpHeaders.ResponseContinuationTokenLimitInKb] = options[
-            Constants.Kwargs.RESPONSE_CONTINUATION_TOKEN_LIMIT_IN_KB]
+            Constants.Kwargs.RESPONSE_CONTINUATION_TOKEN_LIMIT_IN_KB
+        ]
 
     if options.get(Constants.Kwargs.PRIORITY_LEVEL):
         headers[http_constants.HttpHeaders.PriorityLevel] = options[Constants.Kwargs.PRIORITY_LEVEL]
@@ -269,7 +302,9 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         headers[http_constants.HttpHeaders.ClientId] = cosmos_client_connection.client_id
 
     if options.get(Constants.Kwargs.ENABLE_SCRIPT_LOGGING):
-        headers[http_constants.HttpHeaders.EnableScriptLogging] = options[Constants.Kwargs.ENABLE_SCRIPT_LOGGING]
+        headers[http_constants.HttpHeaders.EnableScriptLogging] = options[
+            Constants.Kwargs.ENABLE_SCRIPT_LOGGING
+        ]
 
     if options.get(Constants.Kwargs.OFFER_ENABLE_RU_PER_MINUTE_THROUGHPUT):
         headers[http_constants.HttpHeaders.OfferIsRUPerMinuteThroughputEnabled] = options[
@@ -277,7 +312,9 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         ]
 
     if options.get(Constants.Kwargs.DISABLE_RU_PER_MINUTE_USAGE):
-        headers[http_constants.HttpHeaders.DisableRUPerMinuteUsage] = options[Constants.Kwargs.DISABLE_RU_PER_MINUTE_USAGE]
+        headers[http_constants.HttpHeaders.DisableRUPerMinuteUsage] = options[
+            Constants.Kwargs.DISABLE_RU_PER_MINUTE_USAGE
+        ]
 
     if options.get(Constants.Kwargs.CONTINUATION):
         headers[http_constants.HttpHeaders.Continuation] = options[Constants.Kwargs.CONTINUATION]
@@ -291,22 +328,30 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         headers[http_constants.HttpHeaders.PopulateQuotaInfo] = options[Constants.Kwargs.POPULATE_QUOTA_INFO]
 
     if options.get(Constants.Kwargs.MAX_INTEGRATED_CACHE_STALENESS):
-        headers[http_constants.HttpHeaders.DedicatedGatewayCacheStaleness] = options[Constants.Kwargs.MAX_INTEGRATED_CACHE_STALENESS]
+        headers[http_constants.HttpHeaders.DedicatedGatewayCacheStaleness] = options[
+            Constants.Kwargs.MAX_INTEGRATED_CACHE_STALENESS
+        ]
 
     if options.get(Constants.Kwargs.AUTO_UPGRADE_POLICY):
         headers[http_constants.HttpHeaders.AutoscaleSettings] = options[Constants.Kwargs.AUTO_UPGRADE_POLICY]
 
     if options.get(Constants.Kwargs.CORRELATED_ACTIVITY_ID):
-        headers[http_constants.HttpHeaders.CorrelatedActivityId] = options[Constants.Kwargs.CORRELATED_ACTIVITY_ID]
+        headers[http_constants.HttpHeaders.CorrelatedActivityId] = options[
+            Constants.Kwargs.CORRELATED_ACTIVITY_ID
+        ]
 
     if options.get(Constants.Kwargs.THROUGHPUT_BUCKET):
         headers[http_constants.HttpHeaders.ThroughputBucket] = options[Constants.Kwargs.THROUGHPUT_BUCKET]
 
     if resource_type == "docs" and verb != "get":
         if Constants.Kwargs.RESPONSE_PAYLOAD_ON_WRITE_DISABLED in options:
-            responsePayloadOnWriteDisabled = options[Constants.Kwargs.RESPONSE_PAYLOAD_ON_WRITE_DISABLED]
+            responsePayloadOnWriteDisabled = options[
+                Constants.Kwargs.RESPONSE_PAYLOAD_ON_WRITE_DISABLED
+            ]
         else:
-            responsePayloadOnWriteDisabled = cosmos_client_connection.connection_policy.ResponsePayloadOnWriteDisabled
+            responsePayloadOnWriteDisabled = (
+                cosmos_client_connection.connection_policy.ResponsePayloadOnWriteDisabled
+            )
 
         if responsePayloadOnWriteDisabled:
             headers[http_constants.HttpHeaders.Prefer] = "return=minimal"
@@ -314,7 +359,9 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     # If it is an operation at the container level, verify the rid of the container to see if the cache needs to be
     # refreshed.
     if resource_type != 'dbs' and options.get(Constants.Kwargs.CONTAINER_RID):
-        headers[http_constants.HttpHeaders.IntendedCollectionRID] = options[Constants.Kwargs.CONTAINER_RID]
+        headers[http_constants.HttpHeaders.IntendedCollectionRID] = options[
+            Constants.Kwargs.CONTAINER_RID
+        ]
 
     if resource_type == "":
         resource_type = http_constants.ResourceType.DatabaseAccount
@@ -352,19 +399,22 @@ def set_session_token_header(
     if _is_session_token_request(cosmos_client_connection, headers, request_object):
         # if there is a token set via option, then use it to override default
         if options.get(Constants.Kwargs.SESSION_TOKEN):
-            headers[http_constants.HttpHeaders.SessionToken] = options[Constants.Kwargs.SESSION_TOKEN]
+            headers[http_constants.HttpHeaders.SessionToken] = options[
+                Constants.Kwargs.SESSION_TOKEN
+            ]
         else:
             # check if the client's default consistency is session (and request consistency level is same),
             # then update from session container
             if headers[http_constants.HttpHeaders.ConsistencyLevel] == documents.ConsistencyLevel.Session and \
                     cosmos_client_connection.session:
                 # populate session token from the client's session container
-                session_token = (
-                    cosmos_client_connection.session.get_session_token(path,
-                                                                options.get(Constants.Kwargs.PARTITION_KEY),
-                                                                cosmos_client_connection._container_properties_cache,
-                                                                cosmos_client_connection._routing_map_provider,
-                                                                partition_key_range_id))
+                session_token = cosmos_client_connection.session.get_session_token(
+                    path,
+                    options.get(Constants.Kwargs.PARTITION_KEY),
+                    cosmos_client_connection._container_properties_cache,
+                    cosmos_client_connection._routing_map_provider,
+                    partition_key_range_id
+                )
                 if session_token != "":
                     headers[http_constants.HttpHeaders.SessionToken] = session_token
 
@@ -379,19 +429,22 @@ async def set_session_token_header_async(
     if _is_session_token_request(cosmos_client_connection, headers, request_object):
         # if there is a token set via option, then use it to override default
         if options.get(Constants.Kwargs.SESSION_TOKEN):
-            headers[http_constants.HttpHeaders.SessionToken] = options[Constants.Kwargs.SESSION_TOKEN]
+            headers[http_constants.HttpHeaders.SessionToken] = options[
+                Constants.Kwargs.SESSION_TOKEN
+            ]
         else:
             # check if the client's default consistency is session (and request consistency level is same),
             # then update from session container
             if headers[http_constants.HttpHeaders.ConsistencyLevel] == documents.ConsistencyLevel.Session and \
                     cosmos_client_connection.session:
                 # populate session token from the client's session container
-                session_token = \
-                    await cosmos_client_connection.session.get_session_token_async(path,
-                                                                options.get(Constants.Kwargs.PARTITION_KEY),
-                                                                cosmos_client_connection._container_properties_cache,
-                                                                cosmos_client_connection._routing_map_provider,
-                                                                partition_key_range_id)
+                session_token = await cosmos_client_connection.session.get_session_token_async(
+                    path,
+                    options.get(Constants.Kwargs.PARTITION_KEY),
+                    cosmos_client_connection._container_properties_cache,
+                    cosmos_client_connection._routing_map_provider,
+                    partition_key_range_id
+                )
                 if session_token != "":
                     headers[http_constants.HttpHeaders.SessionToken] = session_token
 

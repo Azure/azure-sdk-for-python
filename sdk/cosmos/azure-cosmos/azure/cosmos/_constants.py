@@ -42,7 +42,9 @@ class _Constants:
     UnavailableEndpointDBATimeouts: int = 1 # seconds
 
     # ServiceDocument Resource
-    EnableMultipleWritableLocations: Literal["enableMultipleWriteLocations"] = "enableMultipleWriteLocations"
+    EnableMultipleWritableLocations: Literal[
+        "enableMultipleWriteLocations"
+    ] = "enableMultipleWriteLocations"
 
     # Environment variables
     NON_STREAMING_ORDER_BY_DISABLED_CONFIG: str = "AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY"
@@ -55,9 +57,13 @@ class _Constants:
     CIRCUIT_BREAKER_ENABLED_CONFIG_DEFAULT: str = "False"
     AAD_SCOPE_OVERRIDE: str = "AZURE_COSMOS_AAD_SCOPE_OVERRIDE"
     # Only applicable when circuit breaker is enabled -------------------------
-    CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ: str = "AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ"
+    CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ: str = (
+        "AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ"
+    )
     CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ_DEFAULT: int = 10
-    CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE: str = "AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE"
+    CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE: str = (
+        "AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE"
+    )
     CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE_DEFAULT: int = 5
     FAILURE_PERCENTAGE_TOLERATED = "AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED"
     FAILURE_PERCENTAGE_TOLERATED_DEFAULT: int = 90
@@ -73,11 +79,17 @@ class _Constants:
         408: "REQUEST_TIMEOUT",
         409: "CONFLICT - Entity with the specified id already exists in the system.",
         410: "GONE",
-        412: "PRECONDITION_FAILED - Operation cannot be performed because one of the specified precondition is not met",
+        412: (
+            "PRECONDITION_FAILED - Operation cannot be performed because one of the "
+            "specified precondition is not met"
+        ),
         413: "REQUEST_ENTITY_TOO_LARGE - Document size exceeds limit.",
         424: "FAILED_DEPENDENCY - There is a failure in the transactional batch.",
         429: "TOO_MANY_REQUESTS",
-        449: "RETRY_WITH - Conflicting request to resource has been attempted. Retry to avoid conflicts."
+        449: (
+            "RETRY_WITH - Conflicting request to resource has been attempted. "
+            "Retry to avoid conflicts."
+        )
     }
 
     class Kwargs:
@@ -115,10 +127,14 @@ class _Constants:
         CORRELATED_ACTIVITY_ID: Literal["correlatedActivityId"] = "correlatedActivityId"
         """Correlated activity ID for tracing and diagnostics."""
         
-        DISABLE_RU_PER_MINUTE_USAGE: Literal["disableRUPerMinuteUsage"] = "disableRUPerMinuteUsage"
+        DISABLE_RU_PER_MINUTE_USAGE: Literal[
+            "disableRUPerMinuteUsage"
+        ] = "disableRUPerMinuteUsage"
         """Whether to disable RU per minute usage."""
         
-        ENABLE_CROSS_PARTITION_QUERY: Literal["enableCrossPartitionQuery"] = "enableCrossPartitionQuery"
+        ENABLE_CROSS_PARTITION_QUERY: Literal[
+            "enableCrossPartitionQuery"
+        ] = "enableCrossPartitionQuery"
         """Whether to enable cross-partition queries."""
         
         ENABLE_SCAN_IN_QUERY: Literal["enableScanInQuery"] = "enableScanInQuery"
@@ -139,13 +155,17 @@ class _Constants:
         IS_QUERY_PLAN_REQUEST: Literal["isQueryPlanRequest"] = "isQueryPlanRequest"
         """Whether this is a query plan request."""
         
-        MAX_INTEGRATED_CACHE_STALENESS: Literal["maxIntegratedCacheStaleness"] = "maxIntegratedCacheStaleness"
+        MAX_INTEGRATED_CACHE_STALENESS: Literal[
+            "maxIntegratedCacheStaleness"
+        ] = "maxIntegratedCacheStaleness"
         """Maximum integrated cache staleness in milliseconds."""
         
         MAX_ITEM_COUNT: Literal["maxItemCount"] = "maxItemCount"
         """Maximum number of items to return in the response."""
         
-        OFFER_ENABLE_RU_PER_MINUTE_THROUGHPUT: Literal["offerEnableRUPerMinuteThroughput"] = "offerEnableRUPerMinuteThroughput"
+        OFFER_ENABLE_RU_PER_MINUTE_THROUGHPUT: Literal[
+            "offerEnableRUPerMinuteThroughput"
+        ] = "offerEnableRUPerMinuteThroughput"
         """Whether to enable RU per minute throughput for the offer."""
         
         OFFER_THROUGHPUT: Literal["offerThroughput"] = "offerThroughput"
@@ -160,7 +180,9 @@ class _Constants:
         POPULATE_INDEX_METRICS: Literal["populateIndexMetrics"] = "populateIndexMetrics"
         """Whether to populate index metrics in the response."""
         
-        POPULATE_PARTITION_KEY_RANGE_STATISTICS: Literal["populatePartitionKeyRangeStatistics"] = "populatePartitionKeyRangeStatistics"
+        POPULATE_PARTITION_KEY_RANGE_STATISTICS: Literal[
+            "populatePartitionKeyRangeStatistics"
+        ] = "populatePartitionKeyRangeStatistics"
         """Whether to populate partition key range statistics."""
         
         POPULATE_QUERY_METRICS: Literal["populateQueryMetrics"] = "populateQueryMetrics"
@@ -181,13 +203,19 @@ class _Constants:
         QUERY_VERSION: Literal["queryVersion"] = "queryVersion"
         """Query version for the request."""
         
-        RESOURCE_TOKEN_EXPIRY_SECONDS: Literal["resourceTokenExpirySeconds"] = "resourceTokenExpirySeconds"
+        RESOURCE_TOKEN_EXPIRY_SECONDS: Literal[
+            "resourceTokenExpirySeconds"
+        ] = "resourceTokenExpirySeconds"
         """Resource token expiry time in seconds."""
         
-        RESPONSE_CONTINUATION_TOKEN_LIMIT_IN_KB: Literal["responseContinuationTokenLimitInKb"] = "responseContinuationTokenLimitInKb"
+        RESPONSE_CONTINUATION_TOKEN_LIMIT_IN_KB: Literal[
+            "responseContinuationTokenLimitInKb"
+        ] = "responseContinuationTokenLimitInKb"
         """Continuation token size limit in KB."""
         
-        RESPONSE_PAYLOAD_ON_WRITE_DISABLED: Literal["responsePayloadOnWriteDisabled"] = "responsePayloadOnWriteDisabled"
+        RESPONSE_PAYLOAD_ON_WRITE_DISABLED: Literal[
+            "responsePayloadOnWriteDisabled"
+        ] = "responsePayloadOnWriteDisabled"
         """Whether to disable response payload on write operations."""
 
         RETRY_WRITE: Literal["retry_write"] = "retry_write"
