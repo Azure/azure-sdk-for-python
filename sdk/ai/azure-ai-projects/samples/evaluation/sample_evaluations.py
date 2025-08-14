@@ -40,15 +40,15 @@ from azure.ai.projects.models import (
     EvaluatorConfiguration,
     EvaluatorIds,
     DatasetVersion,
+    ModelResponseGenerationTarget,
+    SystemMessage,
+    DeveloperMessage,
 )
 
-endpoint = os.environ[
-    "PROJECT_ENDPOINT"
-]  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
-connection_name = os.environ["CONNECTION_NAME"]
-model_endpoint = os.environ["MODEL_ENDPOINT"]  # Sample: https://<account_name>.openai.azure.com.
-model_api_key = os.environ["MODEL_API_KEY"]
-model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]  # Sample : gpt-4o-mini
+endpoint = "https://anksing1rpeastus2.services.ai.azure.com/api/projects/anksing1rpeastus2project"
+model_endpoint = "https://anksing1rpeastus2.cognitiveservices.azure.com/"
+model_api_key = ""
+model_deployment_name = "gpt-4o-mini"
 dataset_name = os.environ.get("DATASET_NAME", "dataset-test")
 dataset_version = os.environ.get("DATASET_VERSION", "1.0")
 
@@ -63,20 +63,31 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
 
         # [START evaluations_sample]
         print("Upload a single file and create a new Dataset to reference the file.")
-        dataset: DatasetVersion = project_client.datasets.upload_file(
-            name=dataset_name,
-            version=dataset_version,
-            file_path=data_file,
-            connection_name=connection_name,
-        )
-        print(dataset)
+        # dataset: DatasetVersion = project_client.datasets.upload_file(
+        #     name=dataset_name,
+        #     version=dataset_version,
+        #     file_path=data_file,
+        #     connection_name=connection_name,
+        # )
+        # print(dataset)
 
         print("Create an evaluation")
         evaluation: Evaluation = Evaluation(
-            display_name="Sample Evaluation Test",
-            description="Sample evaluation for testing",
+            display_name="Sample Evaluation Test 3",
+            description="Sample evaluation for testing 3",
             # Sample Dataset Id : azureai://accounts/<account_name>/projects/<project_name>/data/<dataset_name>/versions/<version>
-            data=InputDataset(id=dataset.id if dataset.id else ""),
+            data=InputDataset(id="azureai://accounts/anksing1rpeastus2/projects/anksing1rpeastus2project/data/dataset-test/versions/1.0"),
+            target=ModelResponseGenerationTarget(
+                base_messages=[
+                    SystemMessage(content= "You are an AI assistant helping users"),
+                    DeveloperMessage(content="Could you please provide answers to my questions")
+                ],
+                model_deployment_name="tiger5/gpt-4o-mini", 
+                model_params={
+                        "max_tokens": 1024,
+                        "temperature": 0.7,
+                    },
+                ),
             evaluators={
                 "relevance": EvaluatorConfiguration(
                     id=EvaluatorIds.RELEVANCE.value,
