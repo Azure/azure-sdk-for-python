@@ -22,13 +22,13 @@ class TestRedTeam:
     def sanitized_model_config(self, model_config: AzureOpenAIModelConfiguration) -> AzureOpenAIModelConfiguration:
         """
         Fixture that sanitizes the Azure OpenAI model configuration for testing.
-        
+
         Returns a sanitized version of the model configuration with updated endpoint
         if the original endpoint matches the sanitized test endpoint.
-        
+
         Args:
             model_config: The original Azure OpenAI model configuration
-            
+
         Returns:
             AzureOpenAIModelConfiguration: Sanitized model configuration for testing
         """
@@ -49,13 +49,13 @@ class TestRedTeam:
     def test_red_team_basic_scan(self, request, proj_scope, cred):
         """
         Test basic red team scan functionality with minimal configuration.
-        
+
         Verifies that the RedTeam can successfully perform a scan with:
         - A simple string-based target function
         - Single risk category (Violence)
         - Base64 attack strategy
         - Single objective
-        
+
         Validates that the scan results contain properly structured attack details
         with required fields like conversation, risk_category, and attack_technique.
         """
@@ -103,11 +103,11 @@ class TestRedTeam:
     def test_red_team_with_azure_openai_target(self, request, proj_scope, cred, sanitized_model_config):
         """
         Test red team scan using Azure OpenAI model as the target.
-        
+
         Validates that the RedTeam can successfully scan an Azure OpenAI model configuration
         target with HateUnfairness risk category. Verifies proper conversation structure
         with user and assistant roles in the attack details.
-        
+
         Uses skip_upload=True to avoid uploading results during testing.
         """
         azure_cred = request.getfixturevalue(cred)
@@ -147,12 +147,12 @@ class TestRedTeam:
     def test_red_team_with_callback_target(self, request, proj_scope, cred):
         """
         Test red team scan using an async callback function as the target.
-        
+
         Validates that the RedTeam can successfully scan an async callback function
         that follows the expected message-based interface. The callback function
         receives messages and returns a properly formatted response with messages,
         stream, session_state, and context fields.
-        
+
         Verifies proper conversation structure in the results.
         """
         azure_cred = request.getfixturevalue(cred)
@@ -210,12 +210,12 @@ class TestRedTeam:
     def test_red_team_multi_turn_attack(self, request, proj_scope, cred):
         """
         Test red team scan using MultiTurn attack strategy.
-        
+
         Validates that the RedTeam can successfully execute multi-turn attacks
         which involve multiple conversation exchanges between the attacker and target.
         Verifies that multi-turn attacks produce conversations with more than 2 messages
         and that the conversation alternates between user and assistant roles properly.
-        
+
         Uses a defensive target that responds with refusal messages.
         """
         azure_cred = request.getfixturevalue(cred)
@@ -264,12 +264,12 @@ class TestRedTeam:
     def test_red_team_crescendo_attack(self, request, proj_scope, cred):
         """
         Test red team scan using Crescendo attack strategy.
-        
+
         Validates that the RedTeam can successfully execute crescendo attacks
         which gradually escalate the conversation to try to elicit harmful responses.
         Verifies that crescendo attacks produce conversations with exactly 20 messages
         (10 turns) and that the conversation alternates between user and assistant roles.
-        
+
         Uses a defensive target that responds with refusal messages.
         """
         azure_cred = request.getfixturevalue(cred)
@@ -318,12 +318,12 @@ class TestRedTeam:
     def test_red_team_ungrounded_attributes(self, request, proj_scope, cred):
         """
         Test red team scan for UngroundedAttributes risk category.
-        
+
         Validates that the RedTeam can successfully scan for ungrounded attributes,
         which involve testing the target's tendency to generate factually incorrect
         or unsupported claims. Uses a callback function target that echoes the input
         and validates the conversation structure.
-        
+
         Uses Baseline attack strategy which represents standard attack techniques
         without special encoding or multi-turn approaches.
         """
