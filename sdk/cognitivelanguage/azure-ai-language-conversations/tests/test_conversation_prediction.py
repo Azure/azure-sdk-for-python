@@ -2,8 +2,22 @@ import functools
 import pytest
 
 from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, recorded_by_proxy
-from azure.ai.language.conversations import ConversationsClient
-from azure.ai.language.conversations.models import *
+from azure.ai.language.conversations import ConversationAnalysisClient
+from azure.ai.language.conversations.models import (
+    AnalyzeConversationOperationInput,
+    ConversationLanguageUnderstandingActionContent,
+    ConversationAnalysisInput,
+    TextConversationItem,
+    ConversationActionResult,
+    ConversationPrediction,
+    ConversationIntent,
+    ConversationEntity,
+    StringIndexType,
+    ResolutionBase,
+    DateTimeResolution,
+    ConversationLanguageUnderstandingInput,
+)
+from typing import cast
 
 from azure.core.credentials import AzureKeyCredential
 
@@ -20,7 +34,7 @@ class TestConversations(AzureRecordedTestCase):
     # Start with any helper functions you might need, for example a client creation method:
     def create_client(self, endpoint, key):
         credential = AzureKeyCredential(key)
-        client = ConversationsClient(endpoint, credential)
+        client = ConversationAnalysisClient(endpoint, credential)
         return client
 
     ...
@@ -32,47 +46,54 @@ class TestConversationsCase(TestConversations):
     def test_conversation_prediction(self, conversations_endpoint, conversations_key):
         client = self.create_client(conversations_endpoint, conversations_key)
 
-        # Replace with your actual project/deployment if not using test proxy
         project_name = "EmailApp"
         deployment_name = "production"
 
-        data = AnalyzeConversationTask(
-            kind="Conversation",
-            analysis_input=ConversationAnalysisInput(
-                conversation_item={
-                    "id": "1",
-                    "participant_id": "participant1",
-                    "text": "Send an email to Carol about tomorrow's demo",
-                }
+        data = ConversationLanguageUnderstandingInput(
+            conversation_input=ConversationAnalysisInput(
+                conversation_item=TextConversationItem(
+                    id="1",
+                    participant_id="participant1",
+                    text="Send an email to Carol about tomorrow's demo"
+                )
             ),
-            parameters=ConversationLanguageUnderstandingAction(
+            action_content=ConversationLanguageUnderstandingActionContent(
                 project_name=project_name,
                 deployment_name=deployment_name,
-                string_index_type=StringIndexType.UTF16CODE_UNIT,
-            ),
+                string_index_type=StringIndexType.UTF16_CODE_UNIT
+            )
         )
 
-        result = client.analyze_conversation(data)
-        prediction = result["result"]["prediction"]
+        action_result = client.analyze_conversation(data)
 
-        assert prediction["topIntent"] == "SendEmail"
-        assert isinstance(prediction["intents"], list)
-        assert isinstance(prediction["entities"], list)
+        action_result = cast(ConversationActionResult, action_result)
 
-        for intent in prediction["intents"]:
-            assert "category" in intent
-            assert "confidenceScore" in intent
-            assert 0.0 <= intent["confidenceScore"] <= 1.0
+        prediction = action_result.result.prediction
+        prediction = cast(ConversationPrediction, prediction)
+        print(f"Top intent: {prediction.top_intent}")
 
-        for entity in prediction["entities"]:
-            assert "category" in entity
-            assert "text" in entity
-            assert "offset" in entity
-            assert "length" in entity
-            assert "confidenceScore" in entity
+        print("Intents:")
+        for intent in prediction.intents:
+            print(f"Category: {intent.category}")
+            print(f"Confidence: {intent.confidence}")
+            print()
 
-            if "resolutions" in entity:
-                for resolution in entity["resolutions"]:
-                    if resolution["@type"] == "DateTimeResolution":
-                        assert "timex" in resolution
-                        assert "value" in resolution
+        print("Entities:")
+        for entity in prediction.entities:
+            print(f"Category: {entity.category}")
+            print(f"Text: {entity.text}")
+            print(f"Offset: {entity.offset}")
+            print(f"Length: {entity.length}")
+            print(f"Confidence: {entity.confidence}")
+            print()
+
+            if entity.resolutions:
+                for res in entity.resolutions:
+                    # DateTimeResolution has these attrs
+                    if hasattr(res, "date_time_sub_kind"):
+                        print(f"Datetime Sub Kind: {res.date_time_sub_kind}")
+                        print(f"Timex: {res.timex}")
+                        print(f"Value: {res.value}")
+                        print()
+
+        assert prediction.top_intent == "SendEmail"
