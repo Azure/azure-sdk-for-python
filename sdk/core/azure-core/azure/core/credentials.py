@@ -3,8 +3,11 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from typing import Any, NamedTuple, Optional, TypedDict, Union, ContextManager
+from typing import Any, NamedTuple, Optional, TypedDict, Union, ContextManager, TYPE_CHECKING
 from typing_extensions import Protocol, runtime_checkable
+
+if TYPE_CHECKING:
+    from azure.core.pipeline import PipelineResponse
 
 
 class AccessToken(NamedTuple):
@@ -66,6 +69,9 @@ class TokenRequestOptions(TypedDict, total=False):
     """The tenant ID to include in the token request."""
     enable_cae: bool
     """Indicates whether to enable Continuous Access Evaluation (CAE) for the requested token."""
+    challenge_response: "PipelineResponse[Any, Any]"
+    """The 401 response that contains the claims challenge. In some cases, this response
+    may be used to obtain additional information about the challenge."""
 
 
 @runtime_checkable
