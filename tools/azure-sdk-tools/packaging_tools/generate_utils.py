@@ -157,10 +157,19 @@ def generate_packaging_files(package_name, folder_name):
             sdk_packaging_toml.rename(pyproject_toml)
 
     if "azure-mgmt-" in package_name:
+        # if codegen generate pyproject.toml instead of setup.py, we delete existing setup.py
+        setup_py = output_path / "setup.py"
+        if setup_py.exists():
+            _LOGGER.info(f"delete {setup_py} since codegen generate pyproject.toml")
+            with open(pyproject_toml, "rb") as f:
+                pyproject_content = toml.load(f)
+            if pyproject_content.get("project"):
+                setup_py.unlink()
+
         call_build_config(package_name, folder_name)
     else:
-        if not (output_path / CONF_NAME).exists():
-            with open(output_path / CONF_NAME, "w") as file_out:
+        if not pyproject_toml.exists():
+            with open(pyproject_toml, "w") as file_out:
                 file_out.write("[packaging]\nauto_update = false")
 
     # add ci.yaml
@@ -463,13 +472,11 @@ def gen_typespec(
             tsp_dir = (Path(spec_folder) / typespec_relative_path).resolve()
             repo_url = rest_repo_url.replace("https://github.com/", "")
             tspconfig = tsp_dir / "tspconfig.yaml"
-            if tspconfig.exists():
+            if tspconfig.exists() and api_version:
                 with open(tspconfig, "r") as file_in:
                     content = yaml.safe_load(file_in)
                     if content.get("options", {}).get("@azure-tools/typespec-python"):
-                        content["options"]["@azure-tools/typespec-python"]["keep-setup-py"] = True
-                        if api_version:
-                            content["options"]["@azure-tools/typespec-python"]["api-version"] = api_version
+                        content["options"]["@azure-tools/typespec-python"]["api-version"] = api_version
                 with open(tspconfig, "w") as file_out:
                     yaml.dump(content, file_out)
             cmd = f"tsp-client init --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {repo_url}"
