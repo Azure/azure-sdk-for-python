@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 #
@@ -35,23 +36,27 @@ logging.basicConfig(level=logging.DEBUG)
 LOG = logging.getLogger()
 
 try:
-    connection_string = os.environ['WEBPUBSUB_CONNECTION_STRING']
+    connection_string = os.environ["WEBPUBSUB_CONNECTION_STRING"]
     reverse_proxy_endpoint = os.environ["WEBPUBSUB_REVERSE_PROXY_ENDPOINT"]
 except KeyError:
-    LOG.error("Missing environment variable 'WEBPUBSUB_CONNECTION_STRING' or 'WEBPUBSUB_REVERSE_PROXY_ENDPOINT' - please set if before running the example")
+    LOG.error(
+        "Missing environment variable 'WEBPUBSUB_CONNECTION_STRING' or 'WEBPUBSUB_REVERSE_PROXY_ENDPOINT' - please set if before running the example"
+    )
     exit()
 
 # Build a client from the connection string. And for this example, we have enabled debug
 # tracing. For production code, this should be turned off.
 # If you want to know more about the effect of `reverse_proxy_endpoint`, please reference: https://github.com/Azure/azure-webpubsub/issues/194
-client = WebPubSubServiceClient.from_connection_string(connection_string, hub='hub', logging_enable=True, reverse_proxy_endpoint=reverse_proxy_endpoint)
+client = WebPubSubServiceClient.from_connection_string(
+    connection_string, hub="hub", logging_enable=True, reverse_proxy_endpoint=reverse_proxy_endpoint
+)
 
 try:
     # Raise an exception if the service rejected the call
-    client.send_to_all(message={'Hello': 'connection_string_reverse_proxy!'})
-    print('Successfully sent a JSON message')
+    client.send_to_all(message={"Hello": "connection_string_reverse_proxy!"})
+    print("Successfully sent a JSON message")
 except HttpResponseError as e:
-    print('Failed to send JSON message: {}'.format(e.response.json()))
+    print("Failed to send JSON message: {}".format(e.response.json()))
 
 # # Send a text message to everybody on the given hub...
 # try:
@@ -69,4 +74,3 @@ except HttpResponseError as e:
 #     print('Successfully sent a JSON message')
 # except HttpResponseError as e:
 #     print('Failed to send JSON message: {}'.format(e.response.json()))
-
