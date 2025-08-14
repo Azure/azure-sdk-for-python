@@ -570,7 +570,6 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_database_account_read_retry_policy_defaults_async(self):
 
-
         self.original_execute_function = _retry_utility.ExecuteFunctionAsync
         mock_execute = self.MockExecuteFunctionDBA(self.original_execute_function)
         _retry_utility.ExecuteFunctionAsync = mock_execute
