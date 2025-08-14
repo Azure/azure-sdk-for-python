@@ -1183,9 +1183,31 @@ class TestBatch(AzureMgmtRecordedTestCase):
         response = await wrap_result(client.terminate_job(job_param.id))
         assert response is None
 
+
+        # Test Delete Job using LRO
+        poller = await wrap_result(client.delete_job_LRO(job_id=job_auto_param.id, polling_interval=5))
+        assert poller is not None
+        
+        # Wait for LRO completion
+        assert poller.result() is None
+        assert poller.done()
+        assert poller.status() == "Succeeded"
+
+        # Test Fake Delete Job
+        try:
+            await wrap_result(client.delete_job_LRO(job_id="potato", polling_interval=5))
+            self.fail("Expected ResourceNotFoundError but no exception was raised")
+        except azure.core.exceptions.ResourceNotFoundError as e:
+            assert e.response is not None
+            assert hasattr(e, 'model')
+            assert '(JobNotFound) The specified job does not exist.' in str(e)
+
+        # introduce artificial states or failures to test more (returning back deleting for 10 calls so make it longer and to test LRO)
+        
+
         # Test Delete Job
-        response = await wrap_result(client.delete_job(job_auto_param.id))
-        assert response is None
+        # response = await wrap_result(client.delete_job(job_auto_param.id))
+        # assert response is None
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
