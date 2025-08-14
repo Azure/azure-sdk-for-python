@@ -23,7 +23,7 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
     def test_storage_accounts_check_name_availability(self, resource_group):
         response = self.client.storage_accounts.check_name_availability(
             account_name={"name": "str", "type": "Microsoft.Storage/storageAccounts"},
-            api_version="2024-01-01",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -47,20 +47,22 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
                 "azureFilesIdentityBasedAuthentication": {
                     "directoryServiceOptions": "str",
                     "activeDirectoryProperties": {
-                        "domainGuid": "str",
-                        "domainName": "str",
                         "accountType": "str",
                         "azureStorageSid": "str",
+                        "domainGuid": "str",
+                        "domainName": "str",
                         "domainSid": "str",
                         "forestName": "str",
                         "netBiosDomainName": "str",
                         "samAccountName": "str",
                     },
                     "defaultSharePermission": "str",
+                    "smbOAuthSettings": {"isSmbOAuthEnabled": bool},
                 },
                 "customDomain": {"name": "str", "useSubDomainName": bool},
                 "defaultToOAuthAuthentication": bool,
                 "dnsEndpointType": "str",
+                "dualStackEndpointPreference": {"publishIpv6Endpoint": bool},
                 "enableExtendedGroups": bool,
                 "encryption": {
                     "identity": {"federatedIdentityClientId": "str", "userAssignedIdentity": "str"},
@@ -107,9 +109,11 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
                     "defaultAction": "Allow",
                     "bypass": "AzureServices",
                     "ipRules": [{"value": "str", "action": "Allow"}],
+                    "ipv6Rules": [{"value": "str", "action": "Allow"}],
                     "resourceAccessRules": [{"resourceId": "str", "tenantId": "str"}],
                     "virtualNetworkRules": [{"id": "str", "action": "Allow", "state": "str"}],
                 },
+                "placement": {"zonePlacementPolicy": "str"},
                 "publicNetworkAccess": "str",
                 "routingPreference": {
                     "publishInternetEndpoints": bool,
@@ -119,8 +123,9 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
                 "sasPolicy": {"expirationAction": "Log", "sasExpirationPeriod": "str"},
                 "supportsHttpsTrafficOnly": bool,
                 "tags": {"str": "str"},
+                "zones": ["str"],
             },
-            api_version="2024-01-01",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -132,7 +137,7 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
         response = self.client.storage_accounts.delete(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-01-01",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -144,7 +149,7 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
         response = self.client.storage_accounts.get_properties(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-01-01",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -165,20 +170,22 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
                 "azureFilesIdentityBasedAuthentication": {
                     "directoryServiceOptions": "str",
                     "activeDirectoryProperties": {
-                        "domainGuid": "str",
-                        "domainName": "str",
                         "accountType": "str",
                         "azureStorageSid": "str",
+                        "domainGuid": "str",
+                        "domainName": "str",
                         "domainSid": "str",
                         "forestName": "str",
                         "netBiosDomainName": "str",
                         "samAccountName": "str",
                     },
                     "defaultSharePermission": "str",
+                    "smbOAuthSettings": {"isSmbOAuthEnabled": bool},
                 },
                 "customDomain": {"name": "str", "useSubDomainName": bool},
                 "defaultToOAuthAuthentication": bool,
                 "dnsEndpointType": "str",
+                "dualStackEndpointPreference": {"publishIpv6Endpoint": bool},
                 "enableExtendedGroups": bool,
                 "encryption": {
                     "identity": {"federatedIdentityClientId": "str", "userAssignedIdentity": "str"},
@@ -223,9 +230,11 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
                     "defaultAction": "Allow",
                     "bypass": "AzureServices",
                     "ipRules": [{"value": "str", "action": "Allow"}],
+                    "ipv6Rules": [{"value": "str", "action": "Allow"}],
                     "resourceAccessRules": [{"resourceId": "str", "tenantId": "str"}],
                     "virtualNetworkRules": [{"id": "str", "action": "Allow", "state": "str"}],
                 },
+                "placement": {"zonePlacementPolicy": "str"},
                 "publicNetworkAccess": "str",
                 "routingPreference": {
                     "publishInternetEndpoints": bool,
@@ -236,8 +245,9 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
                 "sku": {"name": "str", "tier": "str"},
                 "supportsHttpsTrafficOnly": bool,
                 "tags": {"str": "str"},
+                "zones": ["str"],
             },
-            api_version="2024-01-01",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -247,7 +257,7 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_storage_accounts_list(self, resource_group):
         response = self.client.storage_accounts.list(
-            api_version="2024-01-01",
+            api_version="2025-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -258,7 +268,7 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
     def test_storage_accounts_list_by_resource_group(self, resource_group):
         response = self.client.storage_accounts.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-01-01",
+            api_version="2025-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -270,7 +280,7 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
         response = self.client.storage_accounts.list_keys(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-01-01",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -283,7 +293,7 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             account_name="str",
             regenerate_key={"keyName": "str"},
-            api_version="2024-01-01",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -305,7 +315,7 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
                 "signedProtocol": "str",
                 "signedStart": "2020-02-20 00:00:00",
             },
-            api_version="2024-01-01",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -337,7 +347,7 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
                 "startPk": "str",
                 "startRk": "str",
             },
-            api_version="2024-01-01",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -349,7 +359,7 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
         response = self.client.storage_accounts.begin_failover(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-01-01",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -362,7 +372,7 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             account_name="str",
             request_type="str",
-            api_version="2024-01-01",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -374,7 +384,7 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
         response = self.client.storage_accounts.begin_abort_hierarchical_namespace_migration(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-01-01",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -395,7 +405,7 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "type": "str",
             },
-            api_version="2024-01-01",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -408,7 +418,7 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             account_name="str",
             migration_name="str",
-            api_version="2024-01-01",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -424,7 +434,7 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
                 "blobRanges": [{"endRange": "str", "startRange": "str"}],
                 "timeToRestore": "2020-02-20 00:00:00",
             },
-            api_version="2024-01-01",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -436,7 +446,7 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
         response = self.client.storage_accounts.revoke_user_delegation_keys(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-01-01",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
