@@ -212,7 +212,7 @@ class SmbMultichannel(GeneratedSmbMultichannel):
     enabled: Optional[bool]
     """If SMB Multichannel is enabled."""
 
-    def __init__(self, *, enabled: Optional[bool] = None, **kwargs: Any) -> None:
+    def __init__(self, *, enabled: bool, **kwargs: Any) -> None:
         self.enabled = enabled
         if self.enabled is None:
             raise ValueError("The value 'enabled' must be specified.")
@@ -227,7 +227,7 @@ class SmbEncryptionInTransit(GeneratedSmbEncryptionInTransit):
     required: Optional[bool]
     """If encryption in transit is enabled."""
 
-    def __init__(self, *, required: Optional[bool] = None, **kwargs: Any) -> None:
+    def __init__(self, *, required: bool, **kwargs: Any) -> None:
         self.required = required
         if self.required is None:
             raise ValueError("The value 'required' must be specified.")
@@ -267,7 +267,7 @@ class NfsEncryptionInTransit(GeneratedNfsEncryptionInTransit):
     required: Optional[bool]
     """If encryption in transit is enabled."""
 
-    def __init__(self, *, required: Optional[bool] = None, **kwargs: Any) -> None:
+    def __init__(self, *, required: bool, **kwargs: Any) -> None:
         self.required = required
         if self.required is None:
             raise ValueError("The value 'required' must be specified.")
@@ -282,7 +282,7 @@ class ShareNfsSettings(GeneratedShareNfsSettings):
     encryption_in_transit: Optional[NfsEncryptionInTransit]
     """Sets the encryption in transit settings."""
 
-    def __init__(self, *, encryption_in_transit: Optional[NfsEncryptionInTransit] = None, **kwargs: Any) -> None:
+    def __init__(self, *, encryption_in_transit: NfsEncryptionInTransit, **kwargs: Any) -> None:
         self.encryption_in_transit = encryption_in_transit
         if self.encryption_in_transit is None:
             raise ValueError("The value 'encryption_in_transit' must be specified.")
