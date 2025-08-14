@@ -10,6 +10,7 @@
         "azure.storage.blob.models.BlobHTTPHeaders": null,
         "azure.storage.blob.models.BlobItemInternal": null,
         "azure.storage.blob.models.BlobMetadata": null,
+        "azure.storage.blob.models.BlobModifiedAccessConditions": null,
         "azure.storage.blob.models.BlobName": null,
         "azure.storage.blob.models.BlobPrefix": null,
         "azure.storage.blob.models.BlobPropertiesInternal": null,

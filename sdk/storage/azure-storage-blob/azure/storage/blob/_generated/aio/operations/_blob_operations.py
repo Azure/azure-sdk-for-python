@@ -2981,6 +2981,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         version_id: Optional[str] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        blob_modified_access_conditions: Optional[_models.BlobModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> _models.BlobTags:
         """The Get Tags operation enables users to get the tags associated with a blob.
@@ -3008,6 +3009,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
+        :param blob_modified_access_conditions: Parameter group. Default value is None.
+        :type blob_modified_access_conditions: ~azure.storage.blob.models.BlobModifiedAccessConditions
         :return: BlobTags or the result of cls(response)
         :rtype: ~azure.storage.blob.models.BlobTags
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3028,18 +3031,19 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _if_tags = None
         _lease_id = None
-        _if_blob_modified_since = None
-        _if_blob_unmodified_since = None
-        _if_blob_match = None
-        _if_blob_none_match = None
+        _if_modified_since = None
+        _if_unmodified_since = None
+        _if_match = None
+        _if_none_match = None
         if modified_access_conditions is not None:
-            _if_blob_match = modified_access_conditions.if_blob_match
-            _if_blob_modified_since = modified_access_conditions.if_blob_modified_since
-            _if_blob_none_match = modified_access_conditions.if_blob_none_match
-            _if_blob_unmodified_since = modified_access_conditions.if_blob_unmodified_since
             _if_tags = modified_access_conditions.if_tags
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
+        if blob_modified_access_conditions is not None:
+            _if_match = blob_modified_access_conditions.if_match
+            _if_modified_since = blob_modified_access_conditions.if_modified_since
+            _if_none_match = blob_modified_access_conditions.if_none_match
+            _if_unmodified_since = blob_modified_access_conditions.if_unmodified_since
 
         _request = build_get_tags_request(
             url=self._config.url,
@@ -3049,10 +3053,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             version_id=version_id,
             if_tags=_if_tags,
             lease_id=_lease_id,
-            if_blob_modified_since=_if_blob_modified_since,
-            if_blob_unmodified_since=_if_blob_unmodified_since,
-            if_blob_match=_if_blob_match,
-            if_blob_none_match=_if_blob_none_match,
+            if_modified_since=_if_modified_since,
+            if_unmodified_since=_if_unmodified_since,
+            if_match=_if_match,
+            if_none_match=_if_none_match,
             comp=comp,
             version=self._config.version,
             headers=_headers,
@@ -3097,6 +3101,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         request_id_parameter: Optional[str] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        blob_modified_access_conditions: Optional[_models.BlobModifiedAccessConditions] = None,
         tags: Optional[_models.BlobTags] = None,
         **kwargs: Any
     ) -> None:
@@ -3125,6 +3130,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
+        :param blob_modified_access_conditions: Parameter group. Default value is None.
+        :type blob_modified_access_conditions: ~azure.storage.blob.models.BlobModifiedAccessConditions
         :param tags: Blob tags. Default value is None.
         :type tags: ~azure.storage.blob.models.BlobTags
         :return: None or the result of cls(response)
@@ -3148,18 +3155,19 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _if_tags = None
         _lease_id = None
-        _if_blob_modified_since = None
-        _if_blob_unmodified_since = None
-        _if_blob_match = None
-        _if_blob_none_match = None
+        _if_modified_since = None
+        _if_unmodified_since = None
+        _if_match = None
+        _if_none_match = None
         if modified_access_conditions is not None:
-            _if_blob_match = modified_access_conditions.if_blob_match
-            _if_blob_modified_since = modified_access_conditions.if_blob_modified_since
-            _if_blob_none_match = modified_access_conditions.if_blob_none_match
-            _if_blob_unmodified_since = modified_access_conditions.if_blob_unmodified_since
             _if_tags = modified_access_conditions.if_tags
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
+        if blob_modified_access_conditions is not None:
+            _if_match = blob_modified_access_conditions.if_match
+            _if_modified_since = blob_modified_access_conditions.if_modified_since
+            _if_none_match = blob_modified_access_conditions.if_none_match
+            _if_unmodified_since = blob_modified_access_conditions.if_unmodified_since
         if tags is not None:
             _content = self._serialize.body(tags, "BlobTags", is_xml=True)
         else:
@@ -3174,10 +3182,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             request_id_parameter=request_id_parameter,
             if_tags=_if_tags,
             lease_id=_lease_id,
-            if_blob_modified_since=_if_blob_modified_since,
-            if_blob_unmodified_since=_if_blob_unmodified_since,
-            if_blob_match=_if_blob_match,
-            if_blob_none_match=_if_blob_none_match,
+            if_modified_since=_if_modified_since,
+            if_unmodified_since=_if_unmodified_since,
+            if_match=_if_match,
+            if_none_match=_if_none_match,
             comp=comp,
             content_type=content_type,
             version=self._config.version,
