@@ -4,6 +4,7 @@ import pytest
 
 from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
+from azure.core.async_paging import AsyncItemPaged
 from azure.ai.language.conversations.aio import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
     MultiLanguageConversationInput,
@@ -16,6 +17,8 @@ from azure.ai.language.conversations.models import (
     ParticipantRole,
     AnalyzeConversationOperationAction,
     SummarizationOperationResult,
+    AnalyzeConversationAsyncLROPoller,
+    ConversationActions,
 )
 from typing import cast, List
 from azure.core.credentials import AzureKeyCredential
@@ -48,21 +51,14 @@ class TestConversationsCase(TestConversations):
 
         # Build conversation input (same as sync)
         conversation_items = [
-            TextConversationItem(
-                id="1", participant_id="Agent_1", text="Hello, how can I help you?", role=ParticipantRole.AGENT
-            ),
-            TextConversationItem(
-                id="2",
-                participant_id="Customer_1",
-                text="How to upgrade Office? I am getting error messages the whole day.",
-                role=ParticipantRole.CUSTOMER,
-            ),
-            TextConversationItem(
-                id="3",
-                participant_id="Agent_1",
-                text="Press the upgrade button please. Then sign in and follow the instructions.",
-                role=ParticipantRole.AGENT,
-            ),
+            TextConversationItem(id="1", participant_id="Agent_1",
+                                text="Hello, how can I help you?", role=ParticipantRole.AGENT),
+            TextConversationItem(id="2", participant_id="Customer_1",
+                                text="How to upgrade Office? I am getting error messages the whole day.",
+                                role=ParticipantRole.CUSTOMER),
+            TextConversationItem(id="3", participant_id="Agent_1",
+                                text="Press the upgrade button please. Then sign in and follow the instructions.",
+                                role=ParticipantRole.AGENT),
         ]
         conversation_input = MultiLanguageConversationInput(
             conversations=[TextConversation(id="1", language="en", conversation_items=conversation_items)]
@@ -84,16 +80,19 @@ class TestConversationsCase(TestConversations):
             actions=cast(List[AnalyzeConversationOperationAction], actions),
         )
 
-        # ---- begin_* returns AnalyzeConversationAsyncLROPoller
+        # ---- begin_* now returns AnalyzeConversationAsyncLROPoller[AsyncItemPaged[ConversationActions]]
         async with client:
-            poller = await client.begin_analyze_conversation_job(body=operation_input, content_type="application/json")
+            poller: AnalyzeConversationAsyncLROPoller[AsyncItemPaged[ConversationActions]] = (
+                await client.begin_analyze_conversation_job(body=operation_input, content_type="application/json")
+            )
 
             # Operation id is available immediately
             op_id = poller.details.get("operation_id")
             if op_id:
                 print(f"Operation ID: {op_id}")
 
-            paged_actions = await poller.result()  # AsyncItemPaged[ConversationActions]
+            # Result is AsyncItemPaged[ConversationActions]
+            paged_actions: AsyncItemPaged[ConversationActions] = await poller.result()
 
             # Final-state metadata via poller.details
             d = poller.details

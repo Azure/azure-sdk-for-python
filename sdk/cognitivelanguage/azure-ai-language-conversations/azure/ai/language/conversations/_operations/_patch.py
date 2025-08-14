@@ -12,14 +12,7 @@ from typing import Any, Mapping, Optional, Dict, IO, cast, List, TypeVar
 import json
 from urllib.parse import urlparse
 
-# -------------------------
-# Helpers
-# -------------------------
 
-
-# -------------------------
-# Custom Poller
-# -------------------------
 __all__ = []
 
 def patch_sdk():
