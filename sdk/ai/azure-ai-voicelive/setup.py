@@ -9,10 +9,10 @@
 
 import re
 from pathlib import Path
-from setuptools import setup, find_packages
+from setuptools import setup, find_namespace_packages
 
 PACKAGE_NAME = "azure-ai-voicelive"
-PACKAGE_PPRINT_NAME = "Azure Ai Voicelive"
+PACKAGE_PPRINT_NAME = "Azure AI VoiceLive"
 PACKAGE_NAMESPACE = "azure.ai.voicelive"
 
 package_folder_path = PACKAGE_NAMESPACE.replace(".", "/")
@@ -63,13 +63,15 @@ setup(
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
-    packages=find_packages(exclude=["tests", "azure", "azure.ai"]),
+    packages=find_namespace_packages(include=["azure.ai.voicelive", "azure.ai.voicelive.*"]),
     include_package_data=True,
     package_data={"azure.ai.voicelive": ["py.typed"]},
     install_requires=[
         "isodate>=0.6.1",
         "azure-core>=1.30.0",
         "typing-extensions>=4.6.0",
+        "aiohttp>=3.9.0",
+        "websockets>=12.0",
     ],
     python_requires=">=3.9",
 )
