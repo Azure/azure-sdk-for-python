@@ -616,36 +616,35 @@ class _VoiceLiveConnectionManager(AbstractContextManager["VoiceLiveConnection"])
             if self.__connection_options:
                 log.debug("Connection options: %s", self.__connection_options)
 
-            headers = {**self._get_auth_headers(), **dict(self.__extra_headers)}
-            ws_kwargs: Dict[str, Any]
+            # Build headers as str->str and use list of tuples to satisfy HeadersLike
+            extra_headers_map: Mapping[str, Any] = self.__extra_headers or {}
+            merged_headers: Dict[str, str] = {
+                **self._get_auth_headers(),
+                **{str(k): str(v) for k, v in extra_headers_map.items()},
+            }
+            headers_like: List[Tuple[str, str]] = list(merged_headers.items())
+
+            # Build kwargs for websockets; avoid dict(Optional[...])
+            ws_kwargs: Dict[str, Any] = {}
             if self.__connection_options is not None:
-                ws_kwargs = dict(self.__connection_options)
-            else:
-                ws_kwargs = {}
+                ws_kwargs.update(cast(Mapping[str, Any], self.__connection_options))
+
             subprotocols_opt = ws_kwargs.pop("subprotocols", None)
             subprotocols_typed: Optional[Sequence[WSSubprotocol]] = cast(
                 Optional[Sequence[WSSubprotocol]], subprotocols_opt
             )
 
             if subprotocols_typed is not None:
-                ws = ws_connect(url, additional_headers=headers, subprotocols=subprotocols_typed, **ws_kwargs)
+                ws = ws_connect(url, additional_headers=headers_like, subprotocols=subprotocols_typed, **ws_kwargs)
             else:
-                ws = ws_connect(url, additional_headers=headers, **ws_kwargs)
+                ws = ws_connect(url, additional_headers=headers_like, **ws_kwargs)
             self.__connection = VoiceLiveConnection(ws)
             return self.__connection
         except WebSocketException as e:
             raise ConnectionError(f"Failed to establish WebSocket connection: {e}") from e
 
-    def __exit__(self, exc_type, exc, exc_tb) -> None:
-        """Close the connection when exiting the context.
-
-        :param exc_type: Exception type if raised, else None.
-        :paramtype exc_type: type[BaseException] | None
-        :param exc: Exception instance if raised, else None.
-        :paramtype exc: BaseException | None
-        :param exc_tb: Traceback if an exception occurred, else None.
-        :paramtype exc_tb: types.TracebackType | None
-        """
+    def __exit__(self) -> None:
+        """Close the connection when exiting the context."""
         if self.__connection is not None:
             self.__connection.close()
 
@@ -662,15 +661,17 @@ class _VoiceLiveConnectionManager(AbstractContextManager["VoiceLiveConnection"])
 
     def _prepare_url(self) -> str:
         """Prepare the WebSocket URL.
-        
+
         :return: The prepared WebSocket URL.
         :rtype: str
         """
         parsed = urlparse(self._endpoint)
         scheme = "wss" if parsed.scheme == "https" else ("ws" if parsed.scheme == "http" else parsed.scheme)
 
-        params: Dict[str, Any] = {"model": self.__model, "api-version": self.__api_version}
-        params.update(dict(self.__extra_query))
+        params: Dict[str, str] = {"model": self.__model, "api-version": self.__api_version}
+        extra_query: Mapping[str, Any] = self.__extra_query or {}
+        for k, v in extra_query.items():
+            params[str(k)] = str(v)
 
         # Merge existing query params without overriding new ones
         existing_params = parse_qs(parsed.query)
@@ -710,19 +711,19 @@ def connect(
     - :class:`~azure.core.credentials.TokenCredential` (AAD), e.g., :class:`azure.identity.DefaultAzureCredential`.
 
     :keyword endpoint: Service endpoint, e.g., ``https://<region>.api.cognitive.microsoft.com``.
-    :keyword type endpoint: str
+    :paramtype endpoint: str
     :keyword credential: Credential used to authenticate the WebSocket connection.
-    :keyword type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
+    :paramtype credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
     :keyword model: Model identifier to use for the session.
-    :keyword type model: str
+    :paramtype model: str
     :keyword api_version: API version to use. Defaults to ``"2025-05-01-preview"``.
-    :keyword type api_version: str
+    :paramtype api_version: str
     :keyword query: Optional query parameters to include in the WebSocket URL.
-    :keyword type query: Mapping[str, Any] or None
+    :paramtype query: Mapping[str, Any] or None
     :keyword headers: Optional headers to include in the WebSocket handshake.
-    :keyword type headers: Mapping[str, Any] or None
+    :paramtype headers: Mapping[str, Any] or None
     :keyword connection_options: Advanced WebSocket options passed to :func:`websockets.sync.client.connect`.
-    :keyword type connection_options: ~azure.ai.voicelive.WebsocketConnectionOptions or None.
+    :paramtype connection_options: ~azure.ai.voicelive.WebsocketConnectionOptions or None
     :keyword kwargs: Additional keyword arguments passed to the parent class.
     :paramtype kwargs: Any
     :return: A context manager that yields a connected :class:`~azure.ai.voicelive.VoiceLiveConnection`.

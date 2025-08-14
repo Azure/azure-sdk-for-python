@@ -11,14 +11,16 @@ import json
 import logging
 from contextlib import AbstractAsyncContextManager
 from urllib.parse import urlparse, urlunparse, urlencode, parse_qs
+# pylint: disable=ungrouped-imports
 try:  # Python 3.11+
     from typing import NotRequired  # type: ignore[attr-defined]
 except ImportError:  # Python <=3.10
     from typing_extensions import NotRequired
+# pylint: enable=ungrouped-imports
 
-import aiohttp
 from typing import Any, Dict, List, Mapping, Optional, Union, AsyncIterator
 from typing_extensions import TypedDict
+import aiohttp
 from azure.ai.voicelive.models._models import (
     ClientEventConversationItemCreate,
     ClientEventConversationItemDelete,
@@ -446,7 +448,7 @@ class VoiceLiveConnection:
             if msg.type == aiohttp.WSMsgType.CLOSED:
                 log.debug("WebSocket connection already closed")
                 raise ConnectionClosed(1000, "Connection closed")
-            
+
             log.warning("Unexpected WebSocket message type: %s", msg.type)
             return b""
         except aiohttp.ClientError as e:
@@ -723,19 +725,19 @@ def connect(
     - Automatically cleans up the connection when the context exits.
 
     :keyword credential: The credential used to authenticate with the service.
-    :keyword type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
+    :paramtype type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
     :keyword endpoint: Service endpoint, e.g., ``https://<region>.api.cognitive.microsoft.com``.
-    :keyword type endpoint: str
+    :paramtype type endpoint: str
     :keyword model: The model identifier to use for the session.
-    :keyword type model: str
+    :paramtype type model: str
     :keyword api_version: The API version to use. Defaults to ``"2025-05-01-preview"``.
-    :keyword type api_version: str
+    :paramtype type api_version: str
     :keyword query: Optional query parameters to include in the WebSocket URL.
-    :keyword type query: Mapping[str, Any]
+    :paramtype type query: Mapping[str, Any]
     :keyword headers: Optional HTTP headers to include in the WebSocket handshake.
-    :keyword type headers: Mapping[str, Any]
+    :paramtype type headers: Mapping[str, Any]
     :keyword connection_options: Optional advanced WebSocket options compatible with :mod:`aiohttp`.
-    :keyword type connection_options: ~azure.ai.voicelive.aio.WebsocketConnectionOptions
+    :paramtype type connection_options: ~azure.ai.voicelive.aio.WebsocketConnectionOptions
     :keyword kwargs: Additional keyword arguments passed to the parent class.
     :paramtype kwargs: Any
     :return: An async context manager yielding a connected :class:`~azure.ai.voicelive.aio.VoiceLiveConnection`.
