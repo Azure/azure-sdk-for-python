@@ -28,7 +28,12 @@ from azure.cosmos import _constants
 
 
 class DatabaseAccountRetryPolicy(object):
+    """Implements retry logic for database account reads in Azure Cosmos DB."""
+
+    # List of HTTP status codes considered transient errors for retry logic.
     transient_status_codes = [502, 503, 504]
+
+    # Tuple of exception types considered transient errors for retry logic.
     transient_exceptions = (ServiceRequestError, ServiceResponseError)
 
     def __init__(self, connection_policy):
@@ -44,6 +49,14 @@ class DatabaseAccountRetryPolicy(object):
         self.connection_policy = connection_policy
 
     def ShouldRetry(self, exception):
+        """
+        Determines if the given exception is transient and if a retry should be attempted.
+        Args:
+           exception: The exception instance to evaluate.
+        Returns:
+           bool: True if the exception is transient and retry attempts to remain, False otherwise.
+        """
+
         is_transient = False
 
         # Check for transient HTTP status codes
