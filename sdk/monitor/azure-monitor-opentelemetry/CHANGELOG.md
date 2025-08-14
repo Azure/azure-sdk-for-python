@@ -3,6 +3,8 @@
 ## 1.6.14 (Unreleased)
 
 ### Features Added
+- Updated README to specify the python version supported by the distro.
+  ([#42464](https://github.com/Azure/azure-sdk-for-python/pull/42464))
 
 ### Breaking Changes
 
