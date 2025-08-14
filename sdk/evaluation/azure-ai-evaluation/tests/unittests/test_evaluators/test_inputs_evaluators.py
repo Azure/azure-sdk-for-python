@@ -27,7 +27,6 @@ class HalfOptionalEval:
         return {"half_score": 0 if response == "default" else 1}
     
 
-
 class OptionalEval:
     def __init__(self):
         pass
