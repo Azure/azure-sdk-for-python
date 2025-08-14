@@ -7,7 +7,7 @@
 """
 DESCRIPTION:
     This sample demonstrates how to use agent operations with the
-    Model Context Protocol (MCP) tool from the Azure Agents service, and 
+    Model Context Protocol (MCP) tool from the Azure Agents service, and
     iteration in streaming. It uses a synchronous client.
     To learn more about Model Context Protocol, visit https://modelcontextprotocol.io/
 
@@ -16,7 +16,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-ai-agents azure-identity
+    pip install azure-ai-projects azure-ai-agents>=1.2.0b3 azure-identity
 
     Set these environment variables with your own values:
     1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -40,8 +40,9 @@ from azure.ai.agents.models import (
     MessageDeltaTextContent,
     MessageDeltaTextUrlCitationAnnotation,
     RequiredMcpToolCall,
+    RunStepActivityDetails,
     SubmitToolApprovalAction,
-    ToolApproval
+    ToolApproval,
 )
 from azure.identity import DefaultAzureCredential
 
@@ -85,14 +86,16 @@ with project_client:
     message = agents_client.messages.create(
         thread_id=thread.id,
         role=MessageRole.USER,
-        content="Please summarize the Azure REST API specifications Readme"
+        content="Please summarize the Azure REST API specifications Readme",
     )
     print(f"Created message, message ID {message.id}")
 
     # Process Agent run and stream events back to the client. It may take a few minutes for the agent to complete the run.
     mcp_tool.update_headers("SuperSecret", "123456")
     # mcp_tool.set_approval_mode("never")  # Uncomment to disable approval requirement
-    with agents_client.runs.stream(thread_id=thread.id, agent_id=agent.id, tool_resources=mcp_tool.resources) as stream:
+    with agents_client.runs.stream(
+        thread_id=thread.id, agent_id=agent.id, tool_resources=mcp_tool.resources
+    ) as stream:
 
         for event_type, event_data, _ in stream:
 
@@ -148,11 +151,41 @@ with project_client:
                         # Once we receive 'requires_action' status, the next event will be DONE.
                         # Here we associate our existing event handler to the next stream.
                         agents_client.runs.submit_tool_outputs_stream(
-                            thread_id=event_data.thread_id, run_id=event_data.id, tool_approvals=tool_approvals, event_handler=stream
+                            thread_id=event_data.thread_id,
+                            run_id=event_data.id,
+                            tool_approvals=tool_approvals,
+                            event_handler=stream,
                         )
 
             elif isinstance(event_data, RunStep):
                 print(f"RunStep type: {event_data.type}, Status: {event_data.status}")
+
+                # Check if there are tool calls in the step details
+                step_details = event_data.get("step_details", {})
+                tool_calls = step_details.get("tool_calls", [])
+
+                if tool_calls:
+                    print("  MCP Tool calls:")
+                    for call in tool_calls:
+                        print(f"    Tool Call ID: {call.get('id')}")
+                        print(f"    Type: {call.get('type')}")
+
+                if isinstance(step_details, RunStepActivityDetails):
+                    for activity in step_details.activities:
+                        for function_name, function_definition in activity.tools.items():
+                            print(
+                                f'  The function {function_name} with description "{function_definition.description}" will be called.:'
+                            )
+                            if len(function_definition.parameters) > 0:
+                                print("  Function parameters:")
+                                for argument, func_argument in function_definition.parameters.properties.items():
+                                    print(f"      {argument}")
+                                    print(f"      Type: {func_argument.type}")
+                                    print(f"      Description: {func_argument.description}")
+                            else:
+                                print("This function has no parameters")
+
+                print()  # add an extra newline between steps
 
             elif event_type == AgentStreamEvent.ERROR:
                 print(f"An error occurred. Data: {event_data}")
@@ -168,7 +201,9 @@ with project_client:
     agents_client.delete_agent(agent.id)
     print("Deleted agent")
 
-    response_message = agents_client.messages.get_last_message_by_role(thread_id=thread.id, role=MessageRole.AGENT)
+    response_message = agents_client.messages.get_last_message_by_role(
+        thread_id=thread.id, role=MessageRole.AGENT
+    )
     if response_message:
         for text_message in response_message.text_messages:
             print(f"Agent response: {text_message.text.value}")
