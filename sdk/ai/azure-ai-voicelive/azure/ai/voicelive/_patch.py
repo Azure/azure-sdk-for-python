@@ -62,30 +62,30 @@ __all__: List[str] = [
 log = logging.getLogger(__name__)
 
 def _json_default(o: Any) -> Any:
-    """Fallback JSON serializer for generated SDK models.
-
-    This function turns SDK model instances (and other objects) into values that
-    the JSON encoder can handle.
-
-    :param o: Object to serialize. If the object exposes ``serialize()``,
-        ``as_dict()``, or ``to_dict()``, that will be used. Otherwise, public
-        attributes are returned when available.
-    :type o: Any
-    :return: A JSON-serializable representation (e.g., ``dict``, ``list``,
-        ``str``, etc.).
-    :rtype: Any
-    :raises TypeError: If *o* cannot be converted to a JSON-serializable form.
     """
-    for attr in ("serialize", "as_dict", "to_dict"):
+    Fallback JSON serializer for generated SDK models and other custom objects.
+
+    This function is used as the ``default`` parameter to ``json.dumps()`` when
+    serializing SDK models or arbitrary objects that are not natively supported
+    by the JSON encoder.
+
+    :param o: The object to serialize.
+    :type o: Any
+    :return: A JSON-compatible representation of the object (e.g., ``dict``, ``list``,
+             ``str``, etc.).
+    :rtype: Any
+    :raises TypeError: If the object cannot be converted to a JSON-serializable form.
+    """
+    for attr in ("as_dict", "to_dict"):
         fn = getattr(o, attr, None)
         if callable(fn):
             try:
                 return fn()
             except TypeError:
-                # some generators expose class/static serialize(obj)
+                # Some generators expose class/static versions of as_dict/to_dict
                 return getattr(o.__class__, attr)(o)
     if hasattr(o, "__dict__"):
-        # strip private attrs
+        # Strip private attributes
         return {k: v for k, v in vars(o).items() if not k.startswith("_")}
     raise TypeError(f"{type(o).__name__} is not JSON serializable")
 
@@ -500,7 +500,14 @@ class VoiceLiveConnection:
         :raises ConnectionError: If the connection is closed or the message cannot be parsed.
         """
         try:
-            return ServerEvent.deserialize(self.recv_bytes())
+            raw = self.recv_bytes()  # bytes or str
+            if not raw:
+                # Treat empty payload as a closed/errored connection
+                raise ConnectionClosed(1006, "Empty WebSocket frame")
+
+            payload = json.loads(raw.decode("utf-8"))
+            event = cast("ServerEvent", ServerEvent._deserialize(payload, []))
+            return event
         except Exception as e:
             log.error("Error parsing message: %s", e)
             raise ConnectionError(f"Failed to parse message: {e}") from e
@@ -527,11 +534,13 @@ class VoiceLiveConnection:
 
         Accepts either:
 
-        - A mapping-like object (e.g., dict, MappingProxyType). It will be copied
-          to a plain dict and JSON-encoded. Any nested SDK models are handled
-          by a fallback serializer.
-        - A structured ClientEvent model. If the object (or its class) exposes a
-          `serialize()` method, that is used to produce the wire format.
+        - A structured ClientEvent model, which will be converted to a dictionary
+        using its `as_dict()` method and then JSON-encoded.
+        - A mapping-like object (e.g., dict, MappingProxyType), which will be copied
+        to a plain dict and JSON-encoded. Any nested SDK models are serialized using
+        the `_json_default` fallback.
+        - Any other JSON-serializable object, which will be encoded directly with the
+        `_json_default` fallback.
 
         :param event: The event to send.
         :type event: Union[Mapping[str, Any], ~azure.ai.voicelive.models.ClientEvent]
@@ -539,13 +548,7 @@ class VoiceLiveConnection:
         """
         try:
             if isinstance(event, ClientEvent):
-                # Use classmethod signature: serialize(event: ClientEvent) -> str
-                serialize_fn = getattr(type(event), "serialize", None)
-                if callable(serialize_fn):
-                    data = serialize_fn(event)
-                else:
-                    # Fallback to JSON encoder (will use _json_default)
-                    data = json.dumps(event, default=_json_default)
+                data = json.dumps(event.as_dict(), default=_json_default)
             elif isinstance(event, Mapping):
                 data = json.dumps(dict(event), default=_json_default)
             else:

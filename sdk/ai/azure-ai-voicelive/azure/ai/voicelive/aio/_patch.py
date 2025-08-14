@@ -18,7 +18,7 @@ except ImportError:  # Python <=3.10
     from typing_extensions import NotRequired
 # pylint: enable=ungrouped-imports
 
-from typing import Any, Dict, List, Mapping, Optional, Union, AsyncIterator
+from typing import Any, Dict, List, Mapping, Optional, Union, AsyncIterator, cast
 from typing_extensions import TypedDict
 import aiohttp
 from azure.ai.voicelive.models._models import (
@@ -56,23 +56,24 @@ log = logging.getLogger(__name__)
 
 def _json_default(o: Any) -> Any:
     """
-    Fallback JSON serializer for generated SDK models.
+    Fallback JSON serializer for SDK models and other non-JSON-native objects.
 
-    :param o: The object to serialize.
+    :param o: The object to convert to a JSON-compatible form.
     :type o: Any
-    :return: A JSON-serializable representation of ``o``.
+    :return: A JSON-serializable representation (e.g., ``dict``, ``list``, ``str``, etc.).
     :rtype: Any
-+   """
-    for attr in ("serialize", "as_dict", "to_dict"):
+    :raises TypeError: If *o* cannot be converted into a JSON-serializable form.
+    """
+    for attr in ("as_dict", "to_dict"):
         fn = getattr(o, attr, None)
         if callable(fn):
             try:
                 return fn()
             except TypeError:
-                # some generators expose class/static serialize(obj)
+                # Some generators expose class/static serialize(obj)
                 return getattr(o.__class__, attr)(o)
     if hasattr(o, "__dict__"):
-        # strip private attrs
+        # Strip private attributes
         return {k: v for k, v in vars(o).items() if not k.startswith("_")}
     raise TypeError(f"{type(o).__name__} is not JSON serializable")
 
@@ -416,7 +417,14 @@ class VoiceLiveConnection:
         :rtype: ~azure.ai.voicelive.models.ServerEvent
         """
         try:
-            return ServerEvent.deserialize(await self.recv_bytes())
+            raw = await self.recv_bytes()  # bytes or str
+            if not raw:
+                # Treat empty payload as a closed/errored connection
+                raise ConnectionClosed(1006, "Empty WebSocket frame")
+
+            payload = json.loads(raw.decode("utf-8"))
+            event = cast("ServerEvent", ServerEvent._deserialize(payload, []))
+            return event
         except (ValueError, TypeError) as e:
             log.error("Error parsing message: %s", e)
             raise ConnectionError(f"Failed to parse message: {e}") from e
@@ -458,29 +466,27 @@ class VoiceLiveConnection:
 
     async def send(self, event: Union[Mapping[str, Any], ClientEvent]) -> None:
         """
-        Send an event to the server over the active WebSocket connection (async).
+        Send an event to the server over the active WebSocket connection (asynchronously).
 
-        Accepts either:
+        Supported input types:
 
-        - A mapping-like object (e.g., dict, MappingProxyType). It will be copied
-          to a plain dict and JSON-encoded. Any nested SDK models are handled
-          by a fallback serializer.
-        - A structured ClientEvent model. If the object (or its class) exposes a
-          `serialize()` method, that is used to produce the wire format.
+        * **Mapping-like object** (e.g., ``dict``, ``MappingProxyType``) — converted to
+            a plain ``dict`` and then JSON-encoded. Any nested SDK models are serialized
+            using the fallback serializer ``_json_default()``.
+        * **ClientEvent model instance** — converted to a plain dictionary via
+            ``as_dict()`` (preserving REST field names and discriminators), then JSON-encoded.
+        * **Other objects** — directly passed to ``json.dumps()`` with ``_json_default()``
+            handling non-JSON-native values.
 
         :param event: The event to send.
         :type event: Union[Mapping[str, Any], ~azure.ai.voicelive.models.ClientEvent]
-        :raises ConnectionError: If serialization or the WebSocket send fails.
+        :raises ConnectionError: If serialization fails or the WebSocket send raises an error.
         """
         try:
             # Build a JSON-ready object or string first
             payload: object
             if isinstance(event, ClientEvent):
-                serialize_fn = getattr(type(event), "serialize", None)
-                if callable(serialize_fn):
-                    payload = serialize_fn(event)  # may be str or object (type checker: object | str)
-                else:
-                    payload = json.dumps(event, default=_json_default)
+                payload = event.as_dict()
             elif isinstance(event, Mapping):
                 payload = json.dumps(dict(event), default=_json_default)
             else:

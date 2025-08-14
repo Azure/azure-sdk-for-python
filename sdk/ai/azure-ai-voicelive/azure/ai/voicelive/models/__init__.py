@@ -7,12 +7,6 @@
 # --------------------------------------------------------------------------
 # pylint: disable=wrong-import-position
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from ._patch import *  # pylint: disable=unused-wildcard-import
-
-
 from ._models import (  # type: ignore
     AgentConfig,
     Animation,
@@ -130,9 +124,6 @@ from ._enums import (  # type: ignore
     ToolChoiceLiteral,
     ToolType,
 )
-from ._patch import __all__ as _patch_all
-from ._patch import *
-from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "AgentConfig",
@@ -248,5 +239,3 @@ __all__ = [
     "ToolChoiceLiteral",
     "ToolType",
 ]
-__all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
-_patch_sdk()
