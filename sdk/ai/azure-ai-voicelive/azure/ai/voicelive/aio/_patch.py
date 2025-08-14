@@ -10,12 +10,15 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import json
 import logging
 from contextlib import AbstractAsyncContextManager
-from typing import Any, Dict, List, Mapping, Optional, Union, AsyncIterator
 from urllib.parse import urlparse, urlunparse, urlencode, parse_qs
+try:  # Python 3.11+
+    from typing import NotRequired  # type: ignore[attr-defined]
+except ImportError:  # Python <=3.10
+    from typing_extensions import NotRequired
 
 import aiohttp
+from typing import Any, Dict, List, Mapping, Optional, Union, AsyncIterator
 from typing_extensions import TypedDict
-
 from azure.ai.voicelive.models._models import (
     ClientEventConversationItemCreate,
     ClientEventConversationItemDelete,
@@ -32,11 +35,6 @@ from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline import policies
 from ..models import ClientEvent, ServerEvent, RequestSession
 from .._patch import ConnectionError, ConnectionClosed
-
-try:  # Python 3.11+
-    from typing import NotRequired  # type: ignore[attr-defined]
-except ImportError:  # Python <=3.10
-    from typing_extensions import NotRequired
 
 __all__: List[str] = [
     "connect",
@@ -87,7 +85,12 @@ class SessionResource:
         """
         self._connection = connection
 
-    async def update(self, *, session: Union[Mapping[str, Any], "RequestSession"], event_id: Optional[str] = None) -> None:
+    async def update(
+        self,
+        *,
+        session: Union[Mapping[str, Any], "RequestSession"],
+        event_id: Optional[str] = None,
+    ) -> None:
         """
         Update the session configuration.
 
@@ -719,18 +722,22 @@ def connect(
     - Establishes the connection and yields a :class:`~azure.ai.voicelive.aio.VoiceLiveConnection`.
     - Automatically cleans up the connection when the context exits.
 
-    :keyword ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential credential:
-        The credential used to authenticate with the service.
-    :keyword str endpoint: The service endpoint (e.g., ``https://<region>.api.cognitive.microsoft.com``).
-    :keyword str model: The model identifier to use for the session.
-    :keyword str api_version: The API version to use (default: ``"2025-05-01-preview"``).
-    :keyword Mapping[str, Any] query: Optional query parameters to include in the WebSocket URL.
-    :keyword Mapping[str, Any] headers: Optional HTTP headers to include in the WebSocket handshake.
-    :keyword ~azure.ai.voicelive.aio.WebsocketConnectionOptions connection_options:
-        Optional advanced WebSocket options compatible with :mod:`aiohttp`.
-    :keyword Any kwargs: Additional keyword arguments for advanced configuration.
-        Passed through to the underlying WebSocket connection manager.
-
+    :keyword credential: The credential used to authenticate with the service.
+    :keyword type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
+    :keyword endpoint: Service endpoint, e.g., ``https://<region>.api.cognitive.microsoft.com``.
+    :keyword type endpoint: str
+    :keyword model: The model identifier to use for the session.
+    :keyword type model: str
+    :keyword api_version: The API version to use. Defaults to ``"2025-05-01-preview"``.
+    :keyword type api_version: str
+    :keyword query: Optional query parameters to include in the WebSocket URL.
+    :keyword type query: Mapping[str, Any]
+    :keyword headers: Optional HTTP headers to include in the WebSocket handshake.
+    :keyword type headers: Mapping[str, Any]
+    :keyword connection_options: Optional advanced WebSocket options compatible with :mod:`aiohttp`.
+    :keyword type connection_options: ~azure.ai.voicelive.aio.WebsocketConnectionOptions
+    :keyword kwargs: Additional keyword arguments passed to the parent class.
+    :paramtype kwargs: Any
     :return: An async context manager yielding a connected :class:`~azure.ai.voicelive.aio.VoiceLiveConnection`.
     :rtype: collections.abc.AsyncContextManager[~azure.ai.voicelive.aio.VoiceLiveConnection]
     """

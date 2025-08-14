@@ -491,7 +491,6 @@ class VoiceLiveConnection:
                 yield self.recv()
         except Exception as e:
             log.debug("Connection closed: %s", e)
-            return
 
     def recv(self) -> ServerEvent:
         """Receive and parse the next message as a typed event.
@@ -587,8 +586,8 @@ class _VoiceLiveConnectionManager(AbstractContextManager["VoiceLiveConnection"])
         endpoint: str,
         model: str,
         api_version: str,
-        extra_query: Mapping[str, Any],
-        extra_headers: Mapping[str, Any],
+        extra_query: Optional[Mapping[str, Any]] = None,
+        extra_headers: Optional[Mapping[str, Any]] = None,
         connection_options: Optional[WebsocketConnectionOptions] = None,
         **kwargs: Any,
     ) -> None:
@@ -618,7 +617,11 @@ class _VoiceLiveConnectionManager(AbstractContextManager["VoiceLiveConnection"])
                 log.debug("Connection options: %s", self.__connection_options)
 
             headers = {**self._get_auth_headers(), **dict(self.__extra_headers)}
-            ws_kwargs: Dict[str, Any] = dict(self.__connection_options)
+            ws_kwargs: Dict[str, Any]
+            if self.__connection_options is not None:
+                ws_kwargs = dict(self.__connection_options)
+            else:
+                ws_kwargs = {}
             subprotocols_opt = ws_kwargs.pop("subprotocols", None)
             subprotocols_typed: Optional[Sequence[WSSubprotocol]] = cast(
                 Optional[Sequence[WSSubprotocol]], subprotocols_opt
@@ -637,8 +640,11 @@ class _VoiceLiveConnectionManager(AbstractContextManager["VoiceLiveConnection"])
         """Close the connection when exiting the context.
 
         :param exc_type: Exception type if raised, else None.
+        :paramtype exc_type: type[BaseException] | None
         :param exc: Exception instance if raised, else None.
+        :paramtype exc: BaseException | None
         :param exc_tb: Traceback if an exception occurred, else None.
+        :paramtype exc_tb: types.TracebackType | None
         """
         if self.__connection is not None:
             self.__connection.close()
@@ -716,9 +722,9 @@ def connect(
     :keyword headers: Optional headers to include in the WebSocket handshake.
     :keyword type headers: Mapping[str, Any] or None
     :keyword connection_options: Advanced WebSocket options passed to :func:`websockets.sync.client.connect`.
-    :keyword type connection_options: ~azure.ai.voicelive.WebsocketConnectionOptions
-    :keyword kwargs: Additional keyword arguments reserved for future use.
-    :keyword type kwargs: Any
+    :keyword type connection_options: ~azure.ai.voicelive.WebsocketConnectionOptions or None
+    :keyword kwargs: Additional keyword arguments passed to the parent class.
+    :paramtype kwargs: Any
     :return: A context manager that yields a connected :class:`~azure.ai.voicelive.VoiceLiveConnection`.
     :rtype: contextlib.AbstractContextManager[~azure.ai.voicelive.VoiceLiveConnection]
     """

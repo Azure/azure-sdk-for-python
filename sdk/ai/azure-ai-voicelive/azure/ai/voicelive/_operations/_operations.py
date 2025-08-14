@@ -39,4 +39,3 @@ def build_voice_live_force_models_request(**kwargs: Any) -> HttpRequest:
         _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
-
