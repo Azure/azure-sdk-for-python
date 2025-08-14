@@ -10,7 +10,7 @@
 """
 DESCRIPTION:
     These samples demonstrate usage of various classes and methods used to perform evaluation in the azure-ai-evaluation library.
-    
+
 USAGE:
     python evaluation_samples_evaluate_fdp.py
 
@@ -19,11 +19,11 @@ USAGE:
     2) AZURE_OPENAI_API_VERSION
     3) AZURE_OPENAI_DEPLOYMENT
     4) AZURE_AI_PROJECT_URL
-    
+
 DESCRIPTION:
     AZURE_OPENAI_ENDPOINT follows the following format:
     https://<account_name>.services.ai.azure.com
-    
+
     AZURE_AI_PROJECT_URL follows the following format:
     https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
 
@@ -446,7 +446,10 @@ class EvaluationEvaluateSamples(object):
 
         query = [
             {"role": "system", "content": "You are a travel booking assistant. Help users find and book flights."},
-            {"role": "user", "content": [{"type": "text", "text": "I need to book a flight from London to Paris for tomorrow"}]},
+            {
+                "role": "user",
+                "content": [{"type": "text", "text": "I need to book a flight from London to Paris for tomorrow"}],
+            },
         ]
 
         response = [
@@ -459,12 +462,12 @@ class EvaluationEvaluateSamples(object):
                             "id": "search_001",
                             "type": "function",
                             "function": {
-                                "name": "search_flights", 
+                                "name": "search_flights",
                                 "arguments": {
-                                    "origin": "London", 
-                                    "destination": "Paris", 
-                                    "departure_date": "2025-08-13"
-                                }
+                                    "origin": "London",
+                                    "destination": "Paris",
+                                    "departure_date": "2025-08-13",
+                                },
                             },
                         },
                     }
@@ -474,15 +477,18 @@ class EvaluationEvaluateSamples(object):
                 "role": "tool",
                 "tool_call_id": "search_001",
                 "content": [
-                    {"type": "tool_result", "tool_result": '{"flights": [{"flight_id": "BA309", "price": "£89", "departure": "10:30", "arrival": "13:45"}, {"flight_id": "AF1234", "price": "£95", "departure": "14:20", "arrival": "17:35"}]}'}
+                    {
+                        "type": "tool_result",
+                        "tool_result": '{"flights": [{"flight_id": "BA309", "price": "£89", "departure": "10:30", "arrival": "13:45"}, {"flight_id": "AF1234", "price": "£95", "departure": "14:20", "arrival": "17:35"}]}',
+                    }
                 ],
             },
             {
                 "role": "assistant",
                 "content": [
                     {
-                        "type": "text", 
-                        "text": "I found 2 flights from London to Paris for tomorrow:\n\n1. BA309 departing 10:30, arriving 13:45 - £89\n2. AF1234 departing 14:20, arriving 17:35 - £95\n\nWould you like me to book one of these flights for you?"
+                        "type": "text",
+                        "text": "I found 2 flights from London to Paris for tomorrow:\n\n1. BA309 departing 10:30, arriving 13:45 - £89\n2. AF1234 departing 14:20, arriving 17:35 - £95\n\nWould you like me to book one of these flights for you?",
                     }
                 ],
             },
@@ -493,12 +499,12 @@ class EvaluationEvaluateSamples(object):
                 "name": "search_flights",
                 "description": "Search for available flights between two cities.",
                 "parameters": {
-                    "type": "object", 
+                    "type": "object",
                     "properties": {
                         "origin": {"type": "string", "description": "Departure city"},
                         "destination": {"type": "string", "description": "Arrival city"},
-                        "departure_date": {"type": "string", "description": "Departure date in YYYY-MM-DD format"}
-                    }
+                        "departure_date": {"type": "string", "description": "Departure date in YYYY-MM-DD format"},
+                    },
                 },
             }
         ]

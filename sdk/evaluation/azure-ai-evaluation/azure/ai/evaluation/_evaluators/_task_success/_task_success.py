@@ -151,7 +151,6 @@ class TaskSuccessEvaluator(PromptyEvaluatorBase[Union[str, bool]]):
 
             success_result = "pass" if success == True else "fail"
             reason = llm_output.get("explanation", "")
-            print(f"LLM output: {llm_output}")  # Debugging line to check the output structure
             return {
                 f"{self._result_key}": success,
                 f"{self._result_key}_result": success_result,
