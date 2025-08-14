@@ -86,6 +86,7 @@ def evaluate_test_data_alphanumeric():
 def questions_file():
     return _get_file("questions.jsonl")
 
+
 @pytest.fixture
 def questions_wrong_file():
     return _get_file("questions_wrong.jsonl")

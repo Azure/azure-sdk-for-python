@@ -26,6 +26,8 @@ class HalfOptionalEval:
     def __call__(self, query, *, response="default"):
         return {"half_score": 0 if response == "default" else 1}
     
+
+
 class OptionalEval:
     def __init__(self):
         pass
