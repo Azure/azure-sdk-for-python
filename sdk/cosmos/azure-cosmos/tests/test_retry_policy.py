@@ -487,11 +487,10 @@ class TestRetryPolicy(unittest.TestCase):
             container.replace_item(item=doc['id'], body=doc)
         assert connection_retry_policy.counter == 0
 
-    @patch.dict(os.environ, {
-        'AZURE_COSMOS_DB_ACCOUNT_MAX_RETRIES': '5',
-        'AZURE_COSMOS_DB_ACCOUNT_RETRY_AFTER_MS': '100'
-    })
+
     def test_database_account_read_retry_policy(self):
+        os.environ['AZURE_COSMOS_DB_ACCOUNT_MAX_RETRIES'] = '5'
+        os.environ['AZURE_COSMOS_DB_ACCOUNT_RETRY_AFTER_MS'] = '100'
         max_retries = int(os.environ['AZURE_COSMOS_DB_ACCOUNT_MAX_RETRIES'])
         retry_after_ms = int(os.environ['AZURE_COSMOS_DB_ACCOUNT_RETRY_AFTER_MS'])
         self.original_execute_function = _retry_utility.ExecuteFunction
@@ -508,6 +507,8 @@ class TestRetryPolicy(unittest.TestCase):
             policy = DatabaseAccountRetryPolicy(self.connectionPolicy)
             self.assertEqual(policy.retry_after_in_milliseconds, retry_after_ms)
         finally:
+            del os.environ["AZURE_COSMOS_DB_ACCOUNT_MAX_RETRIES"]
+            del os.environ["AZURE_COSMOS_DB_ACCOUNT_RETRY_AFTER_MS"]
             _retry_utility.ExecuteFunction = self.original_execute_function
 
     def test_database_account_read_retry_policy_defaults(self):

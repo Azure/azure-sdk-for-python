@@ -40,21 +40,22 @@ class DatabaseAccountRetryPolicy(object):
         self.retry_count = 0
         self.retry_after_in_milliseconds = int(os.getenv(
             _constants._Constants.DB_ACCOUNT_RETRY_AFTER_MS_CONFIG,
-            _constants._Constants.DB_ACCOUNT_RETRY_AFTER_MS_CONFIG_DEFAULT
+            str(_constants._Constants.DB_ACCOUNT_RETRY_AFTER_MS_CONFIG_DEFAULT)
         ))
         self.max_retry_attempt_count = int(os.getenv(
             _constants._Constants.DB_ACCOUNT_RETRY_ATTEMPTS_CONFIG,
-            _constants._Constants.DB_ACCOUNT_RETRY_ATTEMPTS_CONFIG_DEFAULT
+            str(_constants._Constants.DB_ACCOUNT_RETRY_ATTEMPTS_CONFIG_DEFAULT)
         ))
         self.connection_policy = connection_policy
 
     def ShouldRetry(self, exception):
         """
         Determines if the given exception is transient and if a retry should be attempted.
-        Args:
-           exception: The exception instance to evaluate.
-        Returns:
-           bool: True if the exception is transient and retry attempts to remain, False otherwise.
+
+        :param exception: The exception instance to evaluate.
+        :type exception: Exception
+        :return: True if the exception is transient and retry attempts to remain, False otherwise.
+        :rtype: bool
         """
 
         is_transient = False

@@ -541,11 +541,9 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
         # Cleanup
         await initialized_objects["client"].close()
 
-    @patch.dict(os.environ, {
-        'AZURE_COSMOS_DB_ACCOUNT_MAX_RETRIES': '5',
-        'AZURE_COSMOS_DB_ACCOUNT_RETRY_AFTER_MS': '100'
-    })
     async def test_database_account_read_retry_policy_async(self):
+        os.environ['AZURE_COSMOS_DB_ACCOUNT_MAX_RETRIES'] = '5'
+        os.environ['AZURE_COSMOS_DB_ACCOUNT_RETRY_AFTER_MS'] = '100'
         max_retries = int(os.environ['AZURE_COSMOS_DB_ACCOUNT_MAX_RETRIES'])
         retry_after_ms = int(os.environ['AZURE_COSMOS_DB_ACCOUNT_RETRY_AFTER_MS'])
         self.original_execute_function = _retry_utility.ExecuteFunctionAsync
@@ -566,6 +564,8 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
             policy = DatabaseAccountRetryPolicy(ConnectionPolicy())
             self.assertEqual(policy.retry_after_in_milliseconds, retry_after_ms)
         finally:
+            del os.environ["AZURE_COSMOS_DB_ACCOUNT_MAX_RETRIES"]
+            del os.environ["AZURE_COSMOS_DB_ACCOUNT_RETRY_AFTER_MS"]
             _retry_utility.ExecuteFunctionAsync = self.original_execute_function
 
     async def test_database_account_read_retry_policy_defaults_async(self):
