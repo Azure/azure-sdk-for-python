@@ -369,7 +369,7 @@ Here is an example:
 <!-- SNIPPET:sample_agents_bing_grounding.create_agent_with_bing_grounding_tool -->
 
 ```python
-conn_id = os.environ["AZURE_BING_CONNECTION_ID"]
+conn_id = project_client.connections.get(os.environ["BING_CONNECTION_NAME"]).id
 
 # Initialize agent bing tool and add the connection id
 bing = BingGroundingTool(connection_id=conn_id)
@@ -474,9 +474,7 @@ The tool approval flow looks like this:
 # Create and process agent run in thread with MCP tools
 mcp_tool.update_headers("SuperSecret", "123456")
 # mcp_tool.set_approval_mode("never")  # Uncomment to disable approval requirement
-run = agents_client.runs.create(
-    thread_id=thread.id, agent_id=agent.id, tool_resources=mcp_tool.resources
-)
+run = agents_client.runs.create(thread_id=thread.id, agent_id=agent.id, tool_resources=mcp_tool.resources)
 print(f"Created run, ID: {run.id}")
 
 while run.status in ["queued", "in_progress", "requires_action"]:
