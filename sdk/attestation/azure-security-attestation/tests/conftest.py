@@ -15,4 +15,4 @@ def start_proxy(test_proxy):
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
-    set_custom_default_matcher(ignore_query_ordering=True)
+    set_custom_default_matcher(ignored_query_parameters=["api-version"])
