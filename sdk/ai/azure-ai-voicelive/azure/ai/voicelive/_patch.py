@@ -643,8 +643,19 @@ class _VoiceLiveConnectionManager(AbstractContextManager["VoiceLiveConnection"])
         except WebSocketException as e:
             raise ConnectionError(f"Failed to establish WebSocket connection: {e}") from e
 
-    def __exit__(self) -> None:
-        """Close the connection when exiting the context."""
+    def __exit__(self, exc_type, exc, exc_tb) -> None:
+        """
+        Close the connection when exiting the context.
+        
+        :param exc_type: Exception type if an error occurred.
+        :type exc_type: type | None
+        :param exc: Exception instance if an error occurred.
+        :type exc: BaseException | None
+        :param exc_tb: Exception traceback if an error occurred.
+        :type exc_tb: types.TracebackType | None
+        :rtype: None
+        """
+        
         if self.__connection is not None:
             self.__connection.close()
 
@@ -724,10 +735,11 @@ def connect(
     :paramtype headers: Mapping[str, Any] or None
     :keyword connection_options: Advanced WebSocket options passed to :func:`websockets.sync.client.connect`.
     :paramtype connection_options: ~azure.ai.voicelive.WebsocketConnectionOptions or None
-    :keyword kwargs: Additional keyword arguments passed to the parent class.
-    :paramtype kwargs: Any
     :return: A context manager that yields a connected :class:`~azure.ai.voicelive.VoiceLiveConnection`.
     :rtype: contextlib.AbstractContextManager[~azure.ai.voicelive.VoiceLiveConnection]
+    
+    .. note::
+        Additional keyword arguments can be passed and will be forwarded to the underlying connection.
     """
     return _VoiceLiveConnectionManager(
         credential=credential,

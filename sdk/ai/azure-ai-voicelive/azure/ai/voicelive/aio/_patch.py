@@ -738,10 +738,11 @@ def connect(
     :paramtype type headers: Mapping[str, Any]
     :keyword connection_options: Optional advanced WebSocket options compatible with :mod:`aiohttp`.
     :paramtype type connection_options: ~azure.ai.voicelive.aio.WebsocketConnectionOptions
-    :keyword kwargs: Additional keyword arguments passed to the parent class.
-    :paramtype kwargs: Any
     :return: An async context manager yielding a connected :class:`~azure.ai.voicelive.aio.VoiceLiveConnection`.
     :rtype: collections.abc.AsyncContextManager[~azure.ai.voicelive.aio.VoiceLiveConnection]
+    
+    .. note::
+        Additional keyword arguments can be passed and will be forwarded to the underlying connection.
     """
     return _VoiceLiveConnectionManager(
         credential=credential,
