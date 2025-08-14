@@ -1066,6 +1066,32 @@ class TestBaseExporter(unittest.TestCase):
             ValueError, _get_auth_policy, credential=InvalidTestCredential(), default_auth_policy=TEST_AUTH_POLICY
         )
 
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils._track_dropped_items")
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils._track_dropped_items")
+    def test_handle_transmit_from_storage_success_result(self, mock_track_dropped1, mock_track_dropped2):
+        """Test that when storage.put() returns StorageExportResult.LOCAL_FILE_BLOB_SUCCESS,
+        the method continues without any special handling."""
+        exporter = BaseExporter(disable_offline_storage=False)
+        mock_customer_statsbeat = mock.Mock()
+        exporter._customer_statsbeat_metrics = mock_customer_statsbeat
+        exporter._should_collect_customer_statsbeat = mock.Mock(return_value=True)
+        
+        # Mock storage.put() to return success
+        exporter.storage = mock.Mock()
+        exporter.storage.put.return_value = StorageExportResult.LOCAL_FILE_BLOB_SUCCESS
+        
+        test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
+        serialized_envelopes = [envelope.as_dict() for envelope in test_envelopes]
+        exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+        
+        # Verify storage.put was called with the serialized envelopes
+        exporter.storage.put.assert_called_once_with(serialized_envelopes)
+        # Verify that no dropped items were tracked (since it was a success)
+        mock_track_dropped1.assert_not_called()
+        mock_track_dropped2.assert_not_called()
+        # Verify that the customer statsbeat wasn't invoked
+        mock_customer_statsbeat.assert_not_called()
+
     def test_get_auth_policy_audience(self):
         class TestCredential:
             def get_token():
@@ -2162,6 +2188,36 @@ class TestBaseExporter(unittest.TestCase):
         },
     )
     @mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items')
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+            "APPLICATIONINSIGHTS_STATSBEAT_ENABLED_PREVIEW": "true",
+        },
+    )
+    @mock.patch('azure.monitor.opentelemetry.exporter.export._base._track_dropped_items')
+    def test_handle_transmit_from_storage_unexpected_return_value(self, mock_track_dropped1, mock_track_dropped2):
+        """Test that when storage.put() returns an unexpected value type (not StorageExportResult or str),
+        the method continues without any special handling."""
+        exporter = BaseExporter(disable_offline_storage=False)
+        mock_customer_statsbeat = mock.Mock()
+        exporter._customer_statsbeat_metrics = mock_customer_statsbeat
+        exporter._should_collect_customer_statsbeat = mock.Mock(return_value=True)
+        
+        # Mock storage.put() to return an unexpected value type (int)
+        exporter.storage = mock.Mock()
+        exporter.storage.put.return_value = 42  # Neither StorageExportResult nor str
+        
+        test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
+        exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+        
+        # Verify that no dropped items were tracked (since return value isn't handled)
+        mock_track_dropped1.assert_not_called()
+        mock_track_dropped2.assert_not_called()
+        # Verify that the customer statsbeat wasn't invoked
+        mock_customer_statsbeat.assert_not_called()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base._track_dropped_items")
     def test_handle_transmit_from_storage_string_return_values_trigger_exception_tracking(self, mock_track_dropped):
         """Test that string return values from storage.put() trigger CLIENT_EXCEPTION tracking"""
         # Save original state
