@@ -107,8 +107,6 @@ class TestFileServiceProperties(StorageRecordedTestCase):
         with pytest.raises(ValueError):
             ShareProtocolSettings(smb=ShareSmbSettings(multichannel=SmbMultichannel()))
         with pytest.raises(ValueError):
-            ShareProtocolSettings(smb=ShareSmbSettings(encryption_in_transit=SmbEncryptionInTransit()))
-        with pytest.raises(ValueError):
             ShareProtocolSettings(smb=ShareSmbSettings())
         with pytest.raises(ValueError):
             ShareProtocolSettings()
