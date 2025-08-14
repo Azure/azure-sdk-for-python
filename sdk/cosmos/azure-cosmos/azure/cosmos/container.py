@@ -32,7 +32,6 @@ from azure.core import MatchConditions
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.cosmos._change_feed.change_feed_utils import add_args_to_kwargs, validate_kwargs
-from . import exceptions
 
 from . import _utils as utils
 from ._base import (

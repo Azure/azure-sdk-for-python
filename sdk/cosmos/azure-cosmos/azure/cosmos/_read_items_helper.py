@@ -44,7 +44,7 @@ class ReadItemsHelperSync:
             client: 'CosmosClientConnection',
             collection_link: str,
             items: Sequence[Tuple[str, "_PartitionKeyType"]],
-            options: Optional[Mapping[str, Any]],
+            options: Optional[Dict[str, Any]],
             partition_key_definition: Dict[str, Any],
             *,
             executor: Optional[ThreadPoolExecutor] = None,
@@ -235,7 +235,20 @@ class ReadItemsHelperSync:
             id_to_idx: Dict[str, int],
             request_kwargs: Dict[str, Any]
     ) -> Tuple[List[Tuple[int, Any]], CaseInsensitiveDict]:
-        """Builds and executes a query for a chunk of items."""
+        """
+        Builds and executes a query for a chunk of items.
+
+        :param partition_id: The ID of the partition to query.
+        :type partition_id: str
+        :param items_for_query: List of tuples containing item IDs and partition key values.
+        :type items_for_query: list[tuple[str, _PartitionKeyType]]
+        :param id_to_idx: Mapping from item ID to its original index in the input list.
+        :type id_to_idx: dict[str, int]
+        :param request_kwargs: Additional keyword arguments for the request.
+        :type request_kwargs: dict[str, any]
+        :return: A tuple containing the list of query results with original indices and the request charge headers.
+        :rtype: tuple[list[tuple[int, dict[str, any]]], CaseInsensitiveDict]
+        """
         captured_headers = {}
 
         def local_response_hook(hook_headers, _):
@@ -271,7 +284,18 @@ class ReadItemsHelperSync:
             pk_value: "_PartitionKeyType",
             request_kwargs: Dict[str, Any]
     ) -> Tuple[Optional[Any], CaseInsensitiveDict]:
-        """Executes a point read for a single item."""
+        """
+        Executes a point read for a single item.
+
+        :param item_id: The ID of the item to read.
+        :type item_id: str
+        :param pk_value: The partition key value for the item.
+        :type pk_value: _PartitionKeyType
+        :param request_kwargs: Additional keyword arguments for the request.
+        :type request_kwargs: dict[str, any]
+        :return: A tuple containing the item (or None if not found) and the response headers.
+        :rtype: tuple[Optional[any], CaseInsensitiveDict]
+        """
         doc_link = f"{self.collection_link}/docs/{item_id}"
         point_read_options = self.options.copy()
         point_read_options["partitionKey"] = pk_value

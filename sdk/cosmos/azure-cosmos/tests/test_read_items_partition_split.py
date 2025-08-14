@@ -40,7 +40,7 @@ class TestReadItemsPartitionSplitScenariosSync(unittest.TestCase):
             items_to_read.append((doc_id, doc_id))
 
         # 2. Initial read_items call before the split
-        print("Performing initial read_tems call...")
+        print("Performing initial read_items call...")
         initial_read_items = container.read_items(items=items_to_read)
         self.assertEqual(len(initial_read_items), len(items_to_read))
         print("Initial call successful.")

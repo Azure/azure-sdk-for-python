@@ -21,25 +21,29 @@
 
 import logging
 import asyncio # pylint: disable=C4763  # Used for Semaphore and gather, not for sleep
-from collections.abc import Sequence
 from typing import (
     Dict,
     List,
     Tuple,
     Any,
-    Mapping,
+    Sequence,
     Optional,
-    TYPE_CHECKING
+    TYPE_CHECKING, Union
 )
 
 from azure.cosmos import _base, exceptions
 from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos._query_builder import _QueryBuilder
-from azure.cosmos.partition_key import _get_partition_key_from_partition_key_definition
+from azure.cosmos.partition_key import _get_partition_key_from_partition_key_definition, NonePartitionKeyValue, _Empty, \
+    _Undefined
 from azure.cosmos import CosmosList
 
 if TYPE_CHECKING:
-    from azure.cosmos.aio._cosmos_client_connection_async import PartitionKeyType, CosmosClientConnection
+    from azure.cosmos.aio._cosmos_client_connection_async import CosmosClientConnection
+    PartitionKeyType = Union[
+        bool, float, int, str, type[NonePartitionKeyValue], _Empty, _Undefined, None,
+        Sequence[Union[bool, float, int, str, type[NonePartitionKeyValue], _Empty, _Undefined, None]]
+    ]
 
 class ReadItemsHelperAsync:
     """Helper class for handling read many items operations.
@@ -55,7 +59,7 @@ class ReadItemsHelperAsync:
             client: 'CosmosClientConnection',
             collection_link: str,
             items: Sequence[Tuple[str, "PartitionKeyType"]],
-            options: Optional[Mapping[str, Any]],
+            options: Optional[Dict[str, Any]],
             partition_key_definition: Dict[str, Any],
             max_concurrency: int = 10,
             **kwargs: Any
@@ -97,7 +101,12 @@ class ReadItemsHelperAsync:
 
     async def _partition_items_by_range(self) -> Dict[str, List[Tuple[int, str, "PartitionKeyType"]]]:
         # pylint: disable=protected-access
-        """Groups items by their partition key range ID efficiently while preserving original order."""
+        """
+        Groups items by their partition key range ID efficiently while preserving original order.
+
+        :return: A dictionary mapping partition key range IDs to lists of tuples containing the original index, item ID, and partition key value.
+        :rtype: dict[str, list[tuple[int, str, PartitionKeyType]]]
+        """
         collection_rid = _base.GetResourceIdOrFullNameFromLink(self.collection_link)
         partition_key = _get_partition_key_from_partition_key_definition(self.partition_key_definition)
         items_by_partition: Dict[str, List[Tuple[int, str, "PartitionKeyType"]]] = {}
@@ -127,7 +136,16 @@ class ReadItemsHelperAsync:
             self,
             items_by_partition: Dict[str, List[Tuple[int, str, "PartitionKeyType"]]]
     ) -> List[Dict[str, List[Tuple[int, str, "PartitionKeyType"]]]]:
-        """Create query chunks for concurrency control while preserving original indices."""
+
+        """
+        Create query chunks for concurrency control while preserving original indices.
+
+        :param items_by_partition: A dictionary mapping partition key range IDs to lists of tuples containing the
+                                original index, item ID, and partition key value.
+        :type items_by_partition: dict[str, list[tuple[int, str, PartitionKeyType]]]
+        :return: A list of dictionaries, each mapping a partition ID to a chunk of items.
+        :rtype: list[dict[str, list[tuple[int, str, PartitionKeyType]]]]
+        """
         query_chunks = []
         for partition_id, partition_items in items_by_partition.items():
             for i in range(0, len(partition_items), self.max_items_per_query):
@@ -139,7 +157,14 @@ class ReadItemsHelperAsync:
             self,
             query_chunks: List[Dict[str, List[Tuple[int, str, "PartitionKeyType"]]]],
     ) -> Tuple[List[Tuple[int, Any]], CaseInsensitiveDict]:
-        """Execute query chunks concurrently and return aggregated results with original indices."""
+        """
+        Execute query chunks concurrently and return aggregated results with original indices.
+
+        :param query_chunks: A list of dictionaries, each mapping a partition ID to a chunk of items to query.
+        :type query_chunks: list[dict[str, list[tuple[int, str, PartitionKeyType]]]]
+        :return: A tuple containing a list of results with original indices and the combined response headers.
+        :rtype: tuple[list[tuple[int, any]], CaseInsensitiveDict]
+        """
         if not query_chunks:
             return [], CaseInsensitiveDict()
 
@@ -209,7 +234,18 @@ class ReadItemsHelperAsync:
             pk_value: "PartitionKeyType",
             request_kwargs: Dict[str, Any]
     ) -> Tuple[Optional[Any], CaseInsensitiveDict]:
-        """Executes a point read for a single item."""
+        """
+        Executes a point read for a single item.
+
+        :param item_id: The ID of the item to read.
+        :type item_id: str
+        :param pk_value: The partition key value for the item.
+        :type pk_value: PartitionKeyType
+        :param request_kwargs: Additional keyword arguments for the request.
+        :type request_kwargs: dict[str, any]
+        :return: A tuple containing the item (or None if not found) and the response headers.
+        :rtype: tuple[Optional[any], CaseInsensitiveDict]
+        """
         doc_link = f"{self.collection_link}/docs/{item_id}"
         point_read_options = self.options.copy()
         point_read_options["partitionKey"] = pk_value
@@ -231,11 +267,24 @@ class ReadItemsHelperAsync:
     async def _execute_query(
             self,
             partition_id: str,
-            items_for_query: List[Tuple[str, "PartitionKeyType"]],
+            items_for_query: Sequence[Tuple[str, "PartitionKeyType"]],
             id_to_idx: Dict[str, int],
             request_kwargs: Dict[str, Any]
     ) -> Tuple[List[Tuple[int, Any]], CaseInsensitiveDict]:
-        """Builds and executes a query for a chunk of items."""
+        """
+        Builds and executes a query for a chunk of items.
+
+        :param partition_id: The partition key range ID for the query.
+        :type partition_id: str
+        :param items_for_query: A list of tuples containing item IDs and partition key values to query.
+        :type items_for_query: list[tuple[str, PartitionKeyType]]
+        :param id_to_idx: A mapping from item ID to its original index in the input sequence.
+        :type id_to_idx: dict[str, int]
+        :param request_kwargs: Additional keyword arguments for the request.
+        :type request_kwargs: dict[str, any]
+        :return: A tuple containing a list of results with original indices and the response headers.
+        :rtype: tuple[list[tuple[int, any]], CaseInsensitiveDict]
+        """
         captured_headers = {}
 
         def local_response_hook(hook_headers, _):
