@@ -2640,6 +2640,8 @@ class ResponseSession(_Model):
     :vartype max_response_output_tokens: int or str
     :ivar agent:
     :vartype agent: ~azure.ai.voicelive.models.AgentConfig
+    :ivar reasoning_effort: Controls model reasoning effort; one of "minimal", "low", "medium", "high" or any string.
+    :vartype reasoning_effort: str or Literal["minimal", "low", "medium", "high"]
     """
 
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -2687,7 +2689,9 @@ class ResponseSession(_Model):
     )
     """Is either a int type or a Literal[\"inf\"] type."""
     agent: Optional["_models.AgentConfig"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-
+    reasoning_effort: Optional["_types.ReasoningEffort"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     @overload
     def __init__(
         self,
@@ -2713,6 +2717,7 @@ class ResponseSession(_Model):
         temperature: Optional[float] = None,
         max_response_output_tokens: Optional[Union[int, Literal["inf"]]] = None,
         agent: Optional["_models.AgentConfig"] = None,
+        reasoning_effort: Optional["_types.ReasoningEffort"] = None,
     ) -> None: ...
 
     @overload

@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Literal, Union
 
 if TYPE_CHECKING:
     from . import models as _models
@@ -20,3 +20,4 @@ Voice = Union[
     "_models.Phi4mmVoice",
 ]
 ToolChoice = Union[str, "_models.ToolChoiceLiteral", "_models.ToolChoiceObject"]
+ReasoningEffort = Literal["minimal", "low", "medium", "high"]

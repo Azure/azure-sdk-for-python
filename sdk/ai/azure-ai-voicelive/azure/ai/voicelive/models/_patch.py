@@ -55,30 +55,6 @@ log = logging.getLogger(__name__)
 
 
 class ClientEvent(ClientEventGenerated):
-    """Extended ClientEvent with serialization."""
-
-    @classmethod
-    def to_dict(cls, event: "ClientEvent") -> Dict[str, Any]:
-        """Recursively convert the event to a JSON-serializable dictionary.
-
-        :param event: The ClientEvent instance to convert.
-        :type event: ~azure.ai.voicelive.models.ClientEvent
-        :return: A dictionary representation of the event.
-        :rtype: Dict[str, Any]
-        """
-        result = {"type": event.type}
-
-        if hasattr(event, "event_id") and event.event_id is not None:
-            result["event_id"] = event.event_id
-
-        for attr in dir(event):
-            if attr.startswith("_") or attr in ("type", "event_id") or callable(getattr(event, attr)):
-                continue
-            value = getattr(event, attr)
-            result[attr] = cls._to_jsonable(value)
-
-        return result
-
     @staticmethod
     def _to_jsonable(obj: Any) -> Any:
         """Convert an object to a JSON-serializable format.
@@ -107,7 +83,18 @@ class ClientEvent(ClientEventGenerated):
         :return: A JSON string representation of the event.
         :rtype: str
         """
-        return json.dumps(cls.to_dict(event))
+        result: Dict[str, Any] = {"type": event.type}
+
+        if hasattr(event, "event_id") and event.event_id is not None:
+            result["event_id"] = event.event_id
+
+        for attr in dir(event):
+            if attr.startswith("_") or attr in ("type", "event_id") or callable(getattr(event, attr)):
+                continue
+            value = getattr(event, attr)
+            result[attr] = cls._to_jsonable(value)
+
+        return json.dumps(result)
 
 
 class ServerEvent(ServerEventGenerated):
