@@ -1,4 +1,5 @@
-# Azure AI VoiceLive client library for Python
+Azure AI VoiceLive client library for Python
+============================================
 
 This package provides a **real-time, speech-to-speech** client for Azure AI VoiceLive.
 It opens a WebSocket session to stream microphone audio to the service and receive
@@ -8,7 +9,8 @@ typed server events (including audio) for responsive, interruptible conversation
 
 ---
 
-## Getting started
+Getting started
+---------------
 
 ### Prerequisites
 
@@ -20,7 +22,18 @@ typed server events (including audio) for responsive, interruptible conversation
 ### Install
 
 ```bash
+# Base install (core client only)
 python -m pip install azure-ai-voicelive
+
+# WebSocket streaming + sample helpers
+python -m pip install "azure-ai-voicelive[websocket]" pyaudio python-dotenv
+```
+
+The `[websocket]` extra installs `aiohttp` and `websockets` required for real-time streaming and async samples.  
+If you run streaming code without installing this extra, you'll get a clear error message:  
+    WebSocket streaming features require additional dependencies.  
+    Install them with:  
+        pip install 'azure-ai-voicelive[websocket]'
 
 ### Authenticate
 
@@ -57,10 +70,8 @@ For production applications, AAD authentication is recommended:
 from azure.identity import DefaultAzureCredential
 from azure.ai.voicelive import connect
 
-# Create a token credential
 credential = DefaultAzureCredential()
 
-# Connect with AAD authentication
 connection = connect(
     endpoint="your-endpoint",
     credential=credential,
@@ -70,7 +81,8 @@ connection = connect(
 
 ---
 
-## Key concepts
+Key concepts
+------------
 
 - **VoiceLiveConnection** – Manages an active WebSocket connection to the service
 - **Session Management** – Configure conversation parameters:
@@ -91,7 +103,8 @@ connection = connect(
 
 ---
 
-## Examples
+Examples
+--------
 
 ### Basic Voice Assistant (Featured Sample)
 
@@ -103,7 +116,7 @@ The Basic Voice Assistant sample demonstrates full-featured voice interaction wi
 - High-quality audio processing
 
 ```bash
-# Run the sample
+# Run the sample (requires the websocket extra)
 python samples/basic_voice_assistant.py
 
 # With custom parameters
@@ -130,7 +143,6 @@ async def main():
         credential=AzureKeyCredential(API_KEY),
         model=MODEL,
     ) as conn:
-        # Configure the session with strongly-typed objects
         session = RequestSession(
             modalities=[Modality.TEXT, Modality.AUDIO],
             instructions="You are a helpful assistant.",
@@ -171,7 +183,6 @@ with connect(
     credential=AzureKeyCredential(API_KEY),
     model=MODEL
 ) as conn:
-    # Configure the session with strongly-typed objects
     session = RequestSession(
         modalities=[Modality.TEXT, Modality.AUDIO],
         instructions="You are a helpful assistant.",
@@ -192,7 +203,8 @@ with connect(
             break
 ```
 
-## Available Voice Options
+Available Voice Options
+-----------------------
 
 ### Azure Neural Voices
 
@@ -228,9 +240,8 @@ Available OpenAI voices:
 
 ---
 
-## Handling Events
-
-Process server events with strongly-typed event handling:
+Handling Events
+---------------
 
 ```python
 async for event in connection:
@@ -252,12 +263,20 @@ async for event in connection:
 
 ---
 
-## Troubleshooting
+Troubleshooting
+---------------
 
 ### Connection Issues
 
 - **WebSocket connection errors (1006/timeout):**  
   Verify `AZURE_VOICELIVE_ENDPOINT`, network rules, and that your credential has access.
+
+- **Missing WebSocket dependencies:**  
+  If you see:
+    WebSocket streaming features require additional dependencies.
+    Install them with:
+        pip install 'azure-ai-voicelive[websocket]'
+  you tried to run streaming code without the `[websocket]` extra installed.
 
 - **Auth failures:**  
   For API key, double-check `AZURE_VOICELIVE_API_KEY`. For AAD, ensure the identity is authorized.
@@ -286,7 +305,8 @@ logging.basicConfig(level=logging.DEBUG)
 
 ---
 
-## Next steps
+Next steps
+----------
 
 1. **Run the featured sample:**
    - Try `samples/basic_voice_assistant.py` for a complete voice assistant implementation
@@ -308,7 +328,8 @@ logging.basicConfig(level=logging.DEBUG)
 
 ---
 
-## Contributing
+Contributing
+------------
 
 This project follows the Azure SDK guidelines. If you'd like to contribute:
 
@@ -318,10 +339,14 @@ This project follows the Azure SDK guidelines. If you'd like to contribute:
 
 ---
 
-## Release notes
+Release notes
+-------------
 
 Changelogs are available in the package directory.
 
-## License
+---
+
+License
+-------
 
 This project is released under the **MIT License**.

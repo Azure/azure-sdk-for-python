@@ -70,8 +70,12 @@ setup(
         "isodate>=0.6.1",
         "azure-core>=1.30.0",
         "typing-extensions>=4.6.0",
-        "aiohttp>=3.9.0",
-        "websockets>=12.0",
     ],
+    extras_require={
+        "websocket": [
+            "aiohttp>=3.9.0,<4.0.0",
+            "websockets>=12.0,<14.0",
+        ],
+    },
     python_requires=">=3.9",
 )
