@@ -7,9 +7,9 @@
 from typing import Any, Dict, Optional, Type
 
 import os
+import re
 import json
 import jsonref
-import logging
 import tempfile
 import time
 import pytest
@@ -2793,7 +2793,7 @@ class TestAgentClient(TestAgentClientBase):
                 instructions="You are a helpful agent that can search for information using Azure AI Search.",
                 prompt="What is the temperature rating of the cozynights sleeping bag?",
                 expected_class=RunStepAzureAISearchToolCall,
-                specific_message_text="60",
+                agent_message_regex="60",
                 uri_annotation=MessageTextUrlCitationDetails(
                     url="www.microsoft.com",
                     title="product_info_7.md",
@@ -3117,7 +3117,7 @@ class TestAgentClient(TestAgentClientBase):
                 prompt="What is the most prevalent element in the universe? What would foo say?",
                 # TODO: Implement the run step for AzureFunction.
                 expected_class=None,
-                specific_message_text="bar",
+                agent_message_regex="bar",
             )
 
     @agentClientPreparer()
@@ -3149,7 +3149,7 @@ class TestAgentClient(TestAgentClientBase):
                 # load a VM and open a browser. Use a large polling interval to avoid tons of REST API calls in test recordings.
                 polling_interval=60,
                 expected_class=RunStepBrowserAutomationToolCall,
-                specific_message_text="the year-to-date (ytd) stock price change for microsoft (msft) is",
+                agent_message_regex="the year-to-date [(]ytd[)] stock price change for microsoft [(]msft[)] is",
             )
 
     @agentClientPreparer()
@@ -3447,7 +3447,7 @@ class TestAgentClient(TestAgentClientBase):
             model_name = "gpt-4o"
             bing_custom_tool = BingCustomSearchTool(
                 connection_id=kwargs.get("azure_ai_agents_tests_bing_custom_connection_id"),
-                instance_name=kwargs.get("azure_ai_agents_tests_bing_configuration_name")
+                instance_name=kwargs.get("azure_ai_agents_tests_bing_configuration_name"),
             )
 
             self._do_test_tool(
@@ -3457,6 +3457,7 @@ class TestAgentClient(TestAgentClientBase):
                 instructions="You are helpful agent",
                 prompt="How many medals did the USA win in the 2024 summer olympics?",
                 expected_class=RunStepBingCustomSearchToolCall,
+                agent_message_regex="40.+gold.+44 silver.+42.+bronze",
                 uri_annotation=MessageTextUrlCitationDetails(
                     url="*",
                     title="*",
@@ -3471,7 +3472,7 @@ class TestAgentClient(TestAgentClientBase):
             model_name = "gpt-4o"
             bing_custom_tool = BingCustomSearchTool(
                 connection_id=kwargs.get("azure_ai_agents_tests_bing_custom_connection_id"),
-                instance_name=kwargs.get("azure_ai_agents_tests_bing_configuration_name")
+                instance_name=kwargs.get("azure_ai_agents_tests_bing_configuration_name"),
             )
 
             self._do_test_tool_streaming(
@@ -3481,6 +3482,7 @@ class TestAgentClient(TestAgentClientBase):
                 instructions="You are helpful agent",
                 prompt="How many medals did the USA win in the 2024 summer olympics?",
                 expected_delta_class=RunStepDeltaCustomBingGroundingToolCall,
+                agent_message_regex="40.+gold.+44 silver.+42.+bronze",
                 uri_annotation=MessageTextUrlCitationDetails(
                     url="*",
                     title="*",
@@ -3497,7 +3499,7 @@ class TestAgentClient(TestAgentClientBase):
         expected_class,
         headers=None,
         polling_interval=1,
-        specific_message_text=None,
+        agent_message_regex=None,
         minimal_text_length=1,
         uri_annotation=None,
         file_annotation=None,
@@ -3518,7 +3520,7 @@ class TestAgentClient(TestAgentClientBase):
         :param headers: The headers used to call the agents.
                For example: {"x-ms-enable-preview": "true"}
         :param polling_interval: The polling interval (useful, when we need to wait longer times).
-        :param specific_message_text: The specific text to search in the messages. Must be all lower-case.
+        :param agent_message_regex: The regular expression to search in the messages. Must be all lower-case.
         :param minimal_text_length: The minimal length of a text.
         :param uri_annotation: The URI annotation, which have to present in response.
         :param file_annotation: The file annotation, which have to present in response.
@@ -3566,8 +3568,8 @@ class TestAgentClient(TestAgentClientBase):
 
             # Search for the specific message when asked.
             text = "\n".join([t.text.value.lower() for t in text_messages])
-            if specific_message_text:
-                assert specific_message_text in text, f"{specific_message_text} was not found in {text}."
+            if agent_message_regex:
+                assert re.findall(agent_message_regex, text), f"{agent_message_regex} was not found in {text}."
 
             # Search for the specific URL and title in the message annotation.
             if uri_annotation is not None:
@@ -3614,6 +3616,7 @@ class TestAgentClient(TestAgentClientBase):
         headers: Dict[str, str] = None,
         uri_annotation: MessageTextUrlCitationDetails = None,
         file_annotation: MessageTextFileCitationDetails = None,
+        agent_message_regex=None,
     ):
         """
         The helper method to test the non-interactive tools in the streaming scenarios.
@@ -3627,6 +3630,7 @@ class TestAgentClient(TestAgentClientBase):
                For example: {"x-ms-enable-preview": "true"}
         :param uri_annotation: The URI annotation, which have to present in response.
         :param file_annotation: The file annotation, which have to present in response.
+        :param agent_message_regex: The regular expression to search in the messages. Must be all lower-case.
         """
         if headers is None:
             headers = {}
@@ -3656,6 +3660,8 @@ class TestAgentClient(TestAgentClientBase):
                 # Annotation checks
                 has_uri_annotation = uri_annotation is None
                 has_file_annotation = file_annotation is None
+                # Agent message regex
+                has_agent_message_regex = agent_message_regex is None
                 for event_type, event_data, _ in stream:
 
                     if isinstance(event_data, MessageDeltaChunk):
@@ -3674,6 +3680,9 @@ class TestAgentClient(TestAgentClientBase):
                                 has_file_annotation = has_file_annotation or self._has_file_annotation(
                                     event_data, file_annotation
                                 )
+                            for content in event_data.content:
+                                if not has_agent_message_regex and isinstance(content, MessageTextContent):
+                                    has_agent_message_regex = re.findall(agent_message_regex, content.text.value)
 
                     elif isinstance(event_data, RunStepDeltaChunk):
                         if expected_delta_class is not None:
@@ -3704,6 +3713,7 @@ class TestAgentClient(TestAgentClientBase):
                 assert got_expected_delta, f"The delta tool call of type {expected_delta_class} was not found."
                 assert is_completed, "The stream was not completed."
                 assert is_run_step_created, "No run steps were created."
+                assert has_agent_message_regex, f"The text {agent_message_regex} was not found."
 
                 assert (
                     has_uri_annotation

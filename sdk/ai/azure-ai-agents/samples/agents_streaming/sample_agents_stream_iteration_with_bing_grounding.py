@@ -21,7 +21,7 @@ USAGE:
                           page of your Azure AI Foundry portal.
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
-    3) BING_CONNECTION_NAME - The name of a connection to the bing search resource as it is
+    3) BING_CONNECTION_NAME - The name of a connection to the Bing search resource as it is
        listed in Azure AI Foundry connected resources.
 """
 

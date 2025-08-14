@@ -152,7 +152,7 @@ def add_sanitizers(test_proxy, mock_project_scope, mock_dataset_name, mock_vecto
         json_path="tools[*].bing_grounding.search_configurations[*].connection_id",
         value="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.CognitiveServices/accounts/00000/projects/00000/connections/00000",
     )
-    
+
     # Sanitize the custom bing grounding.
     add_body_key_sanitizer(
         json_path="tools[*].bing_custom_search.search_configurations[*].connection_id",

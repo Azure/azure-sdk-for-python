@@ -14,6 +14,8 @@
 
 ### Sample updates
 
+- Bing Grounding and Bing Custom Search samples were fixed to correctly present references.
+
 ## 1.2.0b2 (2025-08-12)
 
 ### Features Added

@@ -4425,7 +4425,8 @@ class RunStepBingCustomSearchToolCall(RunStepToolCall, discriminator="bing_custo
     :ivar type: The object type, which is always 'bing_custom_search'. Required. Default value is
      "bing_custom_search".
     :vartype type: str
-    :ivar bing_custom_search: Reserved for future use. Required.
+    :ivar bing_custom_search: The dictionary with request and response from Custom Bing Grounding
+     search tool. Required.
     :vartype bing_custom_search: dict[str, str]
     """
 
@@ -4433,7 +4434,7 @@ class RunStepBingCustomSearchToolCall(RunStepToolCall, discriminator="bing_custo
     """The object type, which is always 'bing_custom_search'. Required. Default value is
      \"bing_custom_search\"."""
     bing_custom_search: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Reserved for future use. Required."""
+    """The dictionary with request and response from Custom Bing Grounding search tool. Required."""
 
     @overload
     def __init__(
@@ -4465,7 +4466,8 @@ class RunStepBingGroundingToolCall(RunStepToolCall, discriminator="bing_groundin
     :ivar type: The object type, which is always 'bing_grounding'. Required. Default value is
      "bing_grounding".
     :vartype type: str
-    :ivar bing_grounding: Reserved for future use. Required.
+    :ivar bing_grounding: The dictionary with request and response from Bing Grounding search tool.
+     Required.
     :vartype bing_grounding: dict[str, str]
     """
 
@@ -4473,7 +4475,7 @@ class RunStepBingGroundingToolCall(RunStepToolCall, discriminator="bing_groundin
     """The object type, which is always 'bing_grounding'. Required. Default value is
      \"bing_grounding\"."""
     bing_grounding: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Reserved for future use. Required."""
+    """The dictionary with request and response from Bing Grounding search tool. Required."""
 
     @overload
     def __init__(
@@ -5079,7 +5081,8 @@ class RunStepDeltaBingGroundingToolCall(RunStepDeltaToolCall, discriminator="bin
     :ivar type: The object type, which is always "bing_grounding". Required. Default value is
      "bing_grounding".
     :vartype type: str
-    :ivar bing_grounding: Reserved for future use. Required.
+    :ivar bing_grounding: The dictionary with request and response from Bing Grounding search tool.
+     Required.
     :vartype bing_grounding: dict[str, str]
     """
 
@@ -5087,7 +5090,7 @@ class RunStepDeltaBingGroundingToolCall(RunStepDeltaToolCall, discriminator="bin
     """The object type, which is always \"bing_grounding\". Required. Default value is
      \"bing_grounding\"."""
     bing_grounding: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Reserved for future use. Required."""
+    """The dictionary with request and response from Bing Grounding search tool. Required."""
 
     @overload
     def __init__(
@@ -5420,7 +5423,7 @@ class RunStepDeltaConnectedAgentToolCall(RunStepDeltaToolCall, discriminator="co
 
 
 class RunStepDeltaCustomBingGroundingToolCall(RunStepDeltaToolCall, discriminator="bing_custom_search"):
-    """Represents the custom bing grounding tool call in a streaming run step.
+    """Represents the Custom Bing Grounding tool call in a streaming run step.
 
     :ivar index: The index of the tool call detail in the run step's tool_calls array. Required.
     :vartype index: int
@@ -5429,7 +5432,8 @@ class RunStepDeltaCustomBingGroundingToolCall(RunStepDeltaToolCall, discriminato
     :ivar type: The object type, which is always 'bing_custom_search'. Required. Default value is
      "bing_custom_search".
     :vartype type: str
-    :ivar bing_custom_search: Reserved for future use. Required.
+    :ivar bing_custom_search: The dictionary with request and response from Custom Bing Grounding
+     search tool. Required.
     :vartype bing_custom_search: dict[str, str]
     """
 
@@ -5437,7 +5441,7 @@ class RunStepDeltaCustomBingGroundingToolCall(RunStepDeltaToolCall, discriminato
     """The object type, which is always 'bing_custom_search'. Required. Default value is
      \"bing_custom_search\"."""
     bing_custom_search: Dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Reserved for future use. Required."""
+    """The dictionary with request and response from Custom Bing Grounding search tool. Required."""
 
     @overload
     def __init__(
